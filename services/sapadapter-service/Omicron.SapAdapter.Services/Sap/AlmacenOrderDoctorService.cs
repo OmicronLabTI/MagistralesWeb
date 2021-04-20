@@ -66,7 +66,7 @@ namespace Omicron.SapAdapter.Services.Sap
             ordersByFilter = this.GetSapOrdersToLookByDoctor(ordersByFilter, parameters);
             var totalFilter = ordersByFilter.Select(x => x.Medico).Distinct().ToList().Count;
 
-            var listToReturn = await this.GetCardOrdersToReturn(ordersByFilter);
+            var listToReturn = await this.GetCardOrdersToReturn(ordersByFilter, userOrdersTuple.Item1);
             listToReturn = this.GetDoctorsToProcess(listToReturn, parameters);
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{total}-{totalFilter}");
         }
@@ -103,6 +103,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     ItemCode = itemcode,
                     Description = item.LargeDescription.ToUpper(),
+                    NeedsCooling = item.NeedsCooling,
                     ProductType = $"Producto {productType}",
                     Pieces = detail.Quantity,
                     Container = detail.Container,
@@ -222,7 +223,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets card for doctor.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<AlmacenOrdersByDoctorModel> GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders)
+        private async Task<AlmacenOrdersByDoctorModel> GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders, List<UserOrderModel> userOrders)
         {
             var listOrders = new List<OrderListByDoctorModel>();
             var doctors = sapOrders.Select(x => x.Medico).Distinct().ToList();
@@ -258,7 +259,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = totalPieces,
                 };
 
-                listOrders = this.GetTotalOrdersByDoctor(orders, productsModel);
+                listOrders = this.GetTotalOrdersByDoctor(orders, productsModel, userOrders);
 
                 var saleModel = new SalesByDoctorModel
                 {
@@ -273,7 +274,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
-        private List<OrderListByDoctorModel> GetTotalOrdersByDoctor(List<CompleteAlmacenOrderModel> sapOrders, List<ProductoModel> productsModel)
+        private List<OrderListByDoctorModel> GetTotalOrdersByDoctor(List<CompleteAlmacenOrderModel> sapOrders, List<ProductoModel> productsModel, List<UserOrderModel> userOrders)
         {
             var listOrders = new List<OrderListByDoctorModel>();
             var salesIds = sapOrders.Select(x => x.DocNum).Distinct();
@@ -292,6 +293,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 order.Address = string.IsNullOrEmpty(order.Address) ? string.Empty : order.Address;
                 var invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
 
+                var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid.Equals(so.ToString()) && string.IsNullOrEmpty(x.Productionorderid));
+                var comments = userOrder == null ? string.Empty : userOrder.Comments;
+
                 var saleItem = new OrderListByDoctorModel
                 {
                     DocNum = so,
@@ -301,7 +305,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = totalpieces,
                     TypeSaleOrder = $"Pedido {productType}",
                     InvoiceType = invoiceType,
-                    Comments = string.Empty,
+                    Comments = comments,
                 };
                 listOrders.Add(saleItem);
             }

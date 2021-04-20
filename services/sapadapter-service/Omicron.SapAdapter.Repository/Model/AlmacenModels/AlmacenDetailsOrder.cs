@@ -54,6 +54,18 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public decimal Pieces { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string NeedsCooling { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<string> Batches { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
