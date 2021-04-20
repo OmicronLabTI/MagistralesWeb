@@ -8,6 +8,7 @@
 
 namespace Omicron.Reporting.Test.Services.Request
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
@@ -356,6 +357,78 @@ namespace Omicron.Reporting.Test.Services.Request
 
             // act
             var result = await service.SubmitRawMaterialRequestPdf(request);
+
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the delivery cancel test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
+        public async Task SubmitIncidentsExel()
+        {
+            // arrange
+            var request = new List<IncidentDataModel>()
+            {
+                new IncidentDataModel
+                {
+                    CreateDate = new DateTime(2021, 03, 24),
+                    SaleOrder = 8990,
+                    Delivery = 7450,
+                    Invoice = 12234,
+                    ItemCode = "Reve 14",
+                    Type = "linea",
+                    Incident = "roto",
+                    Batches = "baches",
+                    Stage = "reception",
+                    Comments = "comments",
+                    Status = "abierto",
+                },
+                new IncidentDataModel
+                {
+                    CreateDate = new DateTime(2021, 03, 24),
+                    SaleOrder = 8991,
+                    Delivery = 7452,
+                    Invoice = 12232,
+                    ItemCode = "Reve 15",
+                    Type = "linea",
+                    Incident = "perdido",
+                    Batches = "baches",
+                    Stage = "reception",
+                    Comments = "comments",
+                    Status = "atendiendo",
+                },
+            };
+
+            var listParams = new List<ParametersModel>
+            {
+                new ParametersModel { Field = "SmtpServer", Value = "192.168.0.1" },
+                new ParametersModel { Field = "SmtpPort", Value = "5434" },
+                new ParametersModel { Field = "EmailMiddlewarePassword", Value = "correo@axity.com" },
+                new ParametersModel { Field = "EmailMiddleware", Value = "correo@axity.com" },
+                new ParametersModel { Field = "EmailCCDelivery", Value = "correo@axity.com" },
+                new ParametersModel { Field = "EmailIncidentReport", Value = "correo@axity.com" },
+            };
+
+            var mockCatalog = new Mock<ICatalogsService>();
+            mockCatalog
+                .Setup(m => m.GetParams(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(listParams));
+
+            mockCatalog
+                .Setup(m => m.GetSmtpConfig())
+                .Returns(Task.FromResult(new SmtpConfigModel()));
+
+            var mockEmail = new Mock<IOmicronMailClient>();
+            mockEmail
+                .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
+                .Returns(Task.FromResult(true));
+
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+
+            // act
+            var result = await service.SubmitIncidentsExel(request);
 
             Assert.IsNotNull(result);
         }

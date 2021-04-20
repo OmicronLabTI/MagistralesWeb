@@ -182,6 +182,31 @@ namespace Omicron.Reporting.Services.Constants
         public const string Entregado = "Entregado";
 
         /// <summary>
+        /// the incidentFilename.
+        /// </summary>
+        public const string IncidentFileName = "IncidenciasInternas";
+
+        /// <summary>
+        /// email for the excel for incidents.
+        /// </summary>
+        public const string EmailIncidentReport = "EmailIncidentReport";
+
+        /// <summary>
+        /// subject for email.
+        /// </summary>
+        public const string SubjectIncidentReport = "Incidencias internas {0}";
+
+        /// <summary>
+        /// subject for email.
+        /// </summary>
+        public const string BodyIncidentReport = "Se adjunta el reporte mensual de Incidencias internas, favor de no responder este correo.";
+
+        /// <summary>
+        /// subject for email.
+        /// </summary>
+        public const string IncidentDataTableName = "Incidencias";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -194,6 +219,28 @@ namespace Omicron.Reporting.Services.Constants
           "SmtpServer",
           "SmtpPort",
           "EmailCCDelivery",
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> IncidentKeys { get; } = new Dictionary<string, string>
+        {
+            { "ID", "Id" },
+            { "FECHA INCIDENCIA", "CreateDate" },
+            { "PEDIDO", "SaleOrder" },
+            { "REMISIÓN", "Delivery" },
+            { "FACTURA", "Invoice" },
+            { "PRODUCTO", "ItemCode" },
+            { "TIPO", "Type" },
+            { "TIPO DE FALLA", "Incident" },
+            { "LOTE / PIEZAS DAÑADAS", "Batches" },
+            { "ETAPA", "Stage" },
+            { "ESTATUS INCIDENCIA", "Status" },
+            { "COMENTARIOS", "Comments" },
         };
     }
 }
