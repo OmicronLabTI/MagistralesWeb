@@ -624,5 +624,124 @@ namespace Omicron.SapAdapter.Test
                 UserError = string.Empty,
             };
         }
+
+        /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetResultGetUserPedidosForDoctorOrders()
+        {
+            var userOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 1, Productionorderid = "122808", Salesorderid = "84503", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
+                new UserOrderModel { Id = 2, Productionorderid = null, Salesorderid = "84503", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
+                new UserOrderModel { Id = 3, Productionorderid = null, Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
+                new UserOrderModel { Id = 4, Productionorderid = "122824", Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
+                new UserOrderModel { Id = 5, Productionorderid = "122825", Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
+                new UserOrderModel { Id = 6, Productionorderid = "122821", Salesorderid = "84515", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
+                new UserOrderModel { Id = 7, Productionorderid = null, Salesorderid = "84515", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
+                new UserOrderModel { Id = 7, Productionorderid = "122826", Salesorderid = "84517", Status = "Finalizado", Userid = "123", CloseDate = new DateTime(2020, 1, 20), Comments = "comments", FinishDate = new DateTime(2020, 1, 20) },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = JsonConvert.SerializeObject(new List<int>()),
+                Response = JsonConvert.SerializeObject(userOrders),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProductsForDoctorOrders()
+        {
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 84503, StatusAlmacen = "Cancelado", ItemCode = "REVE 14" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// get the product.
+        /// </summary>
+        /// <returns>the product.</returns>
+        public List<ProductoModel> GetProductoModelForDoctorOrders()
+        {
+            return new List<ProductoModel>
+            {
+                 new ProductoModel { IsMagistral = "N", ProductoId = "REVE 14", ProductoName = "REVE 14", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "150   60 ML", ProductoName = "150   60 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "2643   120 ML", ProductoName = "2643   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "3567   120 ML", ProductoName = "3567   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   120 ML", ProductoName = "567   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   30 ML", ProductoName = "567   30 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   60 ML", ProductoName = "567   30 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "708   60 ML", ProductoName = "708   30 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   240 ML", ProductoName = "567  240 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
+            };
+        }
+
+        /// <summary>
+        /// Return the asesor.
+        /// </summary>
+        /// <returns>the asesor.</returns>
+        public List<OrderModel> GetOrderModelForDoctorOrders()
+        {
+            return new List<OrderModel>
+            {
+                new OrderModel { PedidoId = 84503, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ" },
+                new OrderModel { PedidoId = 84517, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = new DateTime(2021, 04, 12), Medico = "Medico B", PedidoStatus = "O" },
+                new OrderModel { PedidoId = 84515, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = new DateTime(2021, 04, 12), Medico = "Medico B", PedidoStatus = "O" },
+            };
+        }
+
+        /// <summary>
+        /// Return the detalle pedido model.
+        /// </summary>
+        /// <returns>the asesor.</returns>
+        public List<DetallePedidoModel> GetDetallePedidoForDoctorOrders()
+        {
+            return new List<DetallePedidoModel>
+            {
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 0, PedidoId = 84503, ProductoId = "REVE 14", Container = "NA", Label = "NA", Quantity = 2 },
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 84503, ProductoId = "2643   120 ML", Container = "NA", Label = "NA", Quantity = 2 },
+
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 0, PedidoId = 84517, ProductoId = "150   60 ML", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 84517, ProductoId = "708   60 ML", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 2, PedidoId = 84517, ProductoId = "567   120 ML", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
+
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 0, PedidoId = 84515, ProductoId = "567   120 ML", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 84515, ProductoId = "REVE 14", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
+            };
+        }
+
+        /// <summary>
+        /// Return the asesor.
+        /// </summary>
+        /// <returns>the asesor.</returns>
+        public List<OrdenFabricacionModel> GetOrdenFabricacionModelForDoctorOrders()
+        {
+            return new List<OrdenFabricacionModel>
+            {
+                new OrdenFabricacionModel { ProductoId = "2643   120 ML", OrdenId = 122808, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 84503, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+                new OrdenFabricacionModel { ProductoId = "567   120 ML", OrdenId = 122821, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 84515, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 10, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
+                new OrdenFabricacionModel { ProductoId = "567   120 ML", OrdenId = 122824, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 84517, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+                new OrdenFabricacionModel { ProductoId = "708   60 ML", OrdenId = 122825, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 84517, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+                new OrdenFabricacionModel { ProductoId = "150   60 ML", OrdenId = 122826, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 84517, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
+            };
+        }
     }
 }

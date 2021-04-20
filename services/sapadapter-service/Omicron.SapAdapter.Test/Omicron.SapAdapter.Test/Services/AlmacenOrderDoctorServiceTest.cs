@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
@@ -45,13 +46,15 @@ namespace Omicron.SapAdapter.Test.Services
                 .Options;
 
             this.context = new DatabaseContext(options);
-            this.context.OrderModel.AddRange(this.GetOrderModel());
-            this.context.DetallePedido.AddRange(this.GetDetallePedido());
+            this.context.ProductoModel.AddRange(this.GetProductoModelForDoctorOrders());
+            this.context.OrderModel.AddRange(this.GetOrderModelForDoctorOrders());
+            this.context.DetallePedido.AddRange(this.GetDetallePedidoForDoctorOrders());
+            this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModelForDoctorOrders());
+
             this.context.DeliveryDetailModel.AddRange(this.GetDeliveryDetail());
             this.context.DeliverModel.AddRange(this.DeliveryModel());
             this.context.InvoiceHeaderModel.AddRange(this.GetInvoiceHeader());
             this.context.InvoiceDetailModel.AddRange(this.GetInvoiceDetails());
-            this.context.ProductoModel.AddRange(this.GetProductoModel());
             this.context.AsesorModel.AddRange(this.GetAsesorModel());
             this.context.SaveChanges();
 
@@ -59,13 +62,14 @@ namespace Omicron.SapAdapter.Test.Services
             var mockAlmacen = new Mock<IAlmacenService>();
             var userMock = new Mock<IUsersService>();
 
-            mockPedidoService
-                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultGetUserPedidosForDoctorOrders()));
 
             mockAlmacen
                 .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(this.GetLineProducts()));
+                .Returns(Task.FromResult(this.GetLineProductsForDoctorOrders()));
 
             var mockLog = new Mock<ILogger>();
 
@@ -74,6 +78,47 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
             this.almacenOrderDoctorService = new AlmacenOrderDoctorService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <param name="chip">the chips.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task SearchAlmacenOrdersByDoctor()
+        {
+            // arrange
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Type, "magistral,mixto,maquila,linea" },
+            };
+
+            // act
+            var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersByDoctor(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <param name="chip">the chips.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrderdetail()
+        {
+            // arrange
+            var salesOrderId = 125;
+
+            // act
+            var response = await this.almacenOrderDoctorService.GetOrderdetail(salesOrderId);
+
+            // assert
+            Assert.IsNotNull(response);
         }
     }
 }
