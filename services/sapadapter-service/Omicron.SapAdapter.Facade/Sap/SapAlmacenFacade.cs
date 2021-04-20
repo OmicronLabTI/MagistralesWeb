@@ -32,6 +32,8 @@ namespace Omicron.SapAdapter.Facade.Sap
 
         private readonly IAdvanceLookService advanceLookService;
 
+        private readonly IAlmacenOrderDoctorService almacenOrderDoctorService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAlmacenFacade"/> class.
         /// </summary>
@@ -40,13 +42,15 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="sapAlmacenDelivery">The sap almacen delivery.</param>
         /// <param name="sapInvoiceService">The sap invoice service.</param>
         /// <param name="advanceLookService">the advance service.</param>
-        public SapAlmacenFacade(IMapper mapper, ISapAlmacenService sapAlmacenService, ISapAlmacenDeliveryService sapAlmacenDelivery, ISapInvoiceService sapInvoiceService, IAdvanceLookService advanceLookService)
+        /// <param name="almacenOrderDoctorService">the almacen doctor service.</param>
+        public SapAlmacenFacade(IMapper mapper, ISapAlmacenService sapAlmacenService, ISapAlmacenDeliveryService sapAlmacenDelivery, ISapInvoiceService sapInvoiceService, IAdvanceLookService advanceLookService, IAlmacenOrderDoctorService almacenOrderDoctorService)
         {
             this.mapper = mapper;
             this.almacenService = sapAlmacenService ?? throw new ArgumentNullException(nameof(sapAlmacenService));
             this.sapAlmacenDeliveryService = sapAlmacenDelivery ?? throw new ArgumentNullException(nameof(sapAlmacenDelivery));
             this.sapInvoiceService = sapInvoiceService ?? throw new ArgumentException(nameof(sapInvoiceService));
             this.advanceLookService = advanceLookService ?? throw new ArgumentNullException(nameof(advanceLookService));
+            this.almacenOrderDoctorService = almacenOrderDoctorService ?? throw new ArgumentNullException(nameof(almacenOrderDoctorService));
         }
 
         /// <summary>
@@ -172,6 +176,18 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> AdvanceLookUp(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.advanceLookService.AdvanceLookUp(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenOrderDoctorService.SearchAlmacenOrdersByDoctor(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrderdetail(int saleorderid)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenOrderDoctorService.GetOrderdetail(saleorderid));
         }
     }
 }

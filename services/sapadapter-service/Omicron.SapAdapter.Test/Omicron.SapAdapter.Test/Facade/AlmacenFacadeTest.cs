@@ -50,13 +50,15 @@ namespace Omicron.SapAdapter.Test.Facade
             var mockDelivery = new Mock<ISapAlmacenDeliveryService>();
             var mockInvoice = new Mock<ISapInvoiceService>();
             var mockAdvance = new Mock<IAdvanceLookService>();
+            var mockOrdersdDoctor = new Mock<IAlmacenOrderDoctorService>();
 
             mockService.SetReturnsDefault(Task.FromResult(response));
             mockDelivery.SetReturnsDefault(Task.FromResult(response));
             mockInvoice.SetReturnsDefault(Task.FromResult(response));
             mockAdvance.SetReturnsDefault(Task.FromResult(response));
+            mockOrdersdDoctor.SetReturnsDefault(Task.FromResult(response));
 
-            this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object, mockAdvance.Object);
+            this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object, mockAdvance.Object, mockOrdersdDoctor.Object);
         }
 
         /// <summary>
@@ -319,6 +321,18 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetProductsDelivery()
         {
             var response = await this.almacenFacade.GetProductsDelivery(string.Empty);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get Almacen Orders By Doctor.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task SearchAlmacenOrdersByDoctor()
+        {
+            var response = await this.almacenFacade.SearchAlmacenOrdersByDoctor(new Dictionary<string, string>());
 
             Assert.IsNotNull(response);
         }
