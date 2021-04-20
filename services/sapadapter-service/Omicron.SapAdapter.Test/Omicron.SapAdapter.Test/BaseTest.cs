@@ -444,6 +444,7 @@ namespace Omicron.SapAdapter.Test
             var listProducts = new List<IncidentsModel>
             {
                 new IncidentsModel { SaleOrderId = 100, ItemCode = "Linea1" },
+                new IncidentsModel { SaleOrderId = 84515, ItemCode = "567   120 ML", Batches = "[{\"BatchNumber\":\"\",\"BatchQty\":2.0}]", Incidence = "producto derramado", Status = "Abierta" },
             };
 
             return new ResultDto

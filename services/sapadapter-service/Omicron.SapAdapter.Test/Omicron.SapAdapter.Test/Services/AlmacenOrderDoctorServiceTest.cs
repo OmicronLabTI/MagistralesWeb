@@ -50,15 +50,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.OrderModel.AddRange(this.GetOrderModelForDoctorOrders());
             this.context.DetallePedido.AddRange(this.GetDetallePedidoForDoctorOrders());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModelForDoctorOrders());
-
-            this.context.DeliveryDetailModel.AddRange(this.GetDeliveryDetail());
-            this.context.DeliverModel.AddRange(this.DeliveryModel());
-            this.context.InvoiceHeaderModel.AddRange(this.GetInvoiceHeader());
-            this.context.InvoiceDetailModel.AddRange(this.GetInvoiceDetails());
-            this.context.AsesorModel.AddRange(this.GetAsesorModel());
             this.context.SaveChanges();
-
-            var userMock = new Mock<IUsersService>();
 
             var mockPedidoService = new Mock<IPedidosService>();
             mockPedidoService
@@ -126,24 +118,33 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.IsNotNull(response);
         }
 
-        /*
         /// <summary>
         /// Test the method to get the orders for almacen.
         /// </summary>
-        /// <param name="chip">the chips.</param>
         /// <returns>the data.</returns>
         [Test]
         public async Task GetOrderdetail()
         {
             // arrange
-            var salesOrderId = 125;
+            var salesOrderId = 84515;
+
+            var mockPedido = new Mock<IPedidosService>();
+            mockPedido
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultGetUserPedidosForDoctorOrders()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(this.GetIncidents()));
+
+            var localService = new AlmacenOrderDoctorService(this.sapDao, mockPedido.Object, mockAlmacen.Object);
 
             // act
-            var response = await this.almacenOrderDoctorService.GetOrderdetail(salesOrderId);
+            var response = await localService.GetOrderdetail(salesOrderId);
 
             // assert
             Assert.IsNotNull(response);
         }
-        */
     }
 }
