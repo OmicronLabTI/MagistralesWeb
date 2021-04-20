@@ -57,6 +57,7 @@ namespace Omicron.Reporting.Services
         {
             var file = this.BuildPdfFile(request, false);
             var mailStatus = await this.SendRawMaterialRequestMail(file.FileStream, file.FileName);
+
             return new ResultModel { Success = true, Code = 200, Response = mailStatus, Comments = file.FileName };
         }
 
@@ -111,11 +112,7 @@ namespace Omicron.Reporting.Services
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
 
-        /// <summary>
-        /// Submit raw material request..
-        /// </summary>
-        /// <param name="request">Requests data.</param>
-        /// <returns>Operation result.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> SendEmailRejectedOrder(SendRejectedEmailModel request)
         {
             var customerServiceEmail = ServiceConstants.CustomerServiceEmail;
@@ -148,11 +145,7 @@ namespace Omicron.Reporting.Services
             return new ResultModel { Success = true, Response = resultados };
         }
 
-        /// <summary>
-        /// Send mail when orders of a delivery are canceled.
-        /// </summary>
-        /// <param name="request">Requests data.</param>
-        /// <returns>Operation result.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryModel> request)
         {
             var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.LogisticEmailCc2Field, ServiceConstants.LogisticEmailCc3Field };
@@ -186,13 +179,32 @@ namespace Omicron.Reporting.Services
             return new ResultModel { Success = true, Code = 200, Response = results };
         }
 
-        /// <summary>
-        /// Send mail when orders of a delivery are canceled.
-        /// </summary>
-        /// <param name="request">Requests data.</param>
-        /// <returns>Operation result.</returns>
+        /// <inheritdoc/>
         public async Task<ResultModel> SubmitIncidentsExel(List<IncidentDataModel> request)
         {
+            var eb = new ExcelBuilder();
+            var ms = eb.CreateIncidentExcel(request);
+
+            var listToLook = new List<string> { ServiceConstants.EmailIncidentReport };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
+            var config = await this.catalogsService.GetParams(listToLook);
+            var smtpConfig = this.GetSmtpConfig(config);
+            var incidentEmail = config.FirstOrDefault(x => x.Field.Contains(ServiceConstants.EmailIncidentReport));
+
+            var dictFile = new Dictionary<string, MemoryStream>
+            {
+                { ms.Item2, ms.Item1 },
+            };
+
+            var mailStatus = await this.omicronMailClient.SendMail(
+                smtpConfig,
+                incidentEmail.Value,
+                ServiceConstants.SubjectIncidentReport,
+                ServiceConstants.BodyIncidentReport,
+                string.Empty,
+                dictFile);
+
             return new ResultModel { Success = true, Code = 200, Response = null };
         }
 
