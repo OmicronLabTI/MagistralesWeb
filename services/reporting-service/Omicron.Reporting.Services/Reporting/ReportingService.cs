@@ -187,6 +187,16 @@ namespace Omicron.Reporting.Services
         }
 
         /// <summary>
+        /// Send mail when orders of a delivery are canceled.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        public async Task<ResultModel> SubmitIncidentsExel(List<IncidentDataModel> request)
+        {
+            return new ResultModel { Success = true, Code = 200, Response = null };
+        }
+
+        /// <summary>
         /// Gets the smtp config.
         /// </summary>
         /// <param name="parameters">the parameters.</param>

@@ -59,5 +59,12 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <returns>Operation result.</returns>
         Task<ResultModel> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryModel> request);
+
+        /// <summary>
+        /// Send mail when orders of a delivery are canceled.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> SubmitIncidentsExel(List<IncidentDataModel> request);
     }
 }
