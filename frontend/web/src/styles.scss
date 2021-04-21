@@ -421,7 +421,7 @@ th.centered {
   margin-right: 29px;
 }
 .margin-left-options2{
-  margin-left: 0px;
+  margin-left: 0;
   margin-right: 15px;
 }
 .margin-left-options-buttons{
@@ -770,9 +770,9 @@ a.breadcrumblink:hover{
   justify-content: center;
   background-color: #632289;
   font-weight: 700 !important;
-  width: 0px;
-  padding-left: 0px;
-  padding-right: 0px;
+  width: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 .background-color-mg {
   background-color: #632289;
@@ -802,6 +802,15 @@ a.breadcrumblink:hover{
   display: flex;
   justify-content: center;
   background-color: #908E8E;
+  font-weight: 700 !important;
+  width: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+.mat-stroked-button.clasification-mu {
+  display: flex;
+  justify-content: center;
+  background-color: #BC8716;
   font-weight: 700 !important;
   width: 0;
   padding-left: 0;
