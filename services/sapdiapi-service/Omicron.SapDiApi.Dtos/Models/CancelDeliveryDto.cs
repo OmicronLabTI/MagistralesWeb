@@ -29,7 +29,7 @@ namespace Omicron.SapDiApi.Dtos.Models
         /// <value>
         /// String FirstName.
         /// </value>
-        public int SaleOrderId { get; set; }
+        public List<int> SaleOrderId { get; set; }
 
         /// <summary>
         /// Gets or sets FirstName.
