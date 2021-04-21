@@ -197,7 +197,7 @@ namespace Omicron.Reporting.Services
                 { ms.Item2, ms.Item1 },
             };
 
-            var text = this.GetBodyForIncidentEmail(ms.Item3, request);
+            var text = this.GetBodyForIncidentEmail(request);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
                 incidentEmail.Value,
@@ -312,9 +312,8 @@ namespace Omicron.Reporting.Services
         /// <summary>
         /// Gets the text for the subjkect.
         /// </summary>
-        /// <param name="fechaInit">the data.</param>
         /// <returns>the text.</returns>
-        private Tuple<string, string> GetBodyForIncidentEmail(string fechaInit, List<IncidentDataModel> request)
+        private Tuple<string, string> GetBodyForIncidentEmail(List<IncidentDataModel> request)
         {
             var endDate = DateTime.Today;
             var startDate = endDate.AddDays(-4);
@@ -327,7 +326,7 @@ namespace Omicron.Reporting.Services
             });
             reportIncident += "</ul>";
 
-            var subject = string.Format(ServiceConstants.SubjectIncidentReport, fechaInit);
+            var subject = string.Format(ServiceConstants.SubjectIncidentReport, endDate.ToString("dd/MM/yyyy"));
             var greeting = string.Format(ServiceConstants.BodyIncidentReport, startDate.ToString("dd/MM/yyyy"), endDate.ToString("dd/MM/yyyy"));
             var report = string.Format(ServiceConstants.ReportIncidentClosing, reportIncident);
             var body = string.Format(ServiceConstants.SendEmailIncidentHtmlBase, greeting, report);

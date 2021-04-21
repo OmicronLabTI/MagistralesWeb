@@ -199,12 +199,12 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// subject for email.
         /// </summary>
-        public const string BodyIncidentReport = "<p> Se adjunta el reporte semanal de Incidencias internas del almacén PT creadas del lunes {0} al viernes {1}. </p> Favor de no responder este correo. </p>";
+        public const string BodyIncidentReport = "<p> Se adjunta el reporte semanal de Incidencias internas del almacén PT creadas del lunes {0} al viernes {1}.";
 
         /// <summary>
         /// refund policy.
         /// </summary>
-        public const string ReportIncidentClosing = "<p> <b>Resumen:</b> </p> {0}";
+        public const string ReportIncidentClosing = "<p> <b>Resumen:</b> </p> {0} </p> Favor de no responder este correo. </p>";
 
         /// <summary>
         /// <summary>
