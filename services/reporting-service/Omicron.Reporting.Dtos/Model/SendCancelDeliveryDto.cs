@@ -8,6 +8,8 @@
 
 namespace Omicron.Reporting.Dtos.Model
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Class for the delivery dto.
     /// </summary>
@@ -25,6 +27,12 @@ namespace Omicron.Reporting.Dtos.Model
         /// Gets or sets SalesOrders.
         /// </summary>
         /// <value>The code.</value>
-        public string SalesOrders { get; set; }
+        public List<int> SalesOrders { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string DeliveryType { get; set; }
     }
 }
