@@ -481,6 +481,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Comments = invoice.Comments,
                     TypeOrder = invoice.TypeOrder,
                     CodeClient = invoice.CardCode,
+                    TotalPieces = invoiceDetails.Where(y => y.Quantity > 0).Sum(x => (int)x.Quantity),
                 };
 
                 var invoiceModelToAdd = new InvoicesModel
