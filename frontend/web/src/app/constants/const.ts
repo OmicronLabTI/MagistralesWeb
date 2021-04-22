@@ -307,6 +307,7 @@ export const OrderType = {
     magistral: 'MG',
     mixto: 'MX',
     maquila: 'MQ',
+    muestra: 'MU'
 };
 export const ClassCssOrderType = {
     mn: 'clasification-mn',
@@ -314,4 +315,5 @@ export const ClassCssOrderType = {
     mg: 'clasification-mg',
     mx: 'clasification-mx',
     mq: 'clasification-mq',
+    mu: 'clasification-mu',
 };
