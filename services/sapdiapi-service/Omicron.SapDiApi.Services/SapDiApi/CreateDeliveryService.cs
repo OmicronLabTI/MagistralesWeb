@@ -187,15 +187,15 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.Address2 = saleOrder.Address2;
                 deliveryNote.ShipToCode = saleOrder.ShipToCode;
                 deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
-                deliveryNote.Comments = $"Basado en pedido: {ids}";
+                deliveryNote.Comments = $"Basado en pedido: {ids}"; 
 
-                foreach (var sale in createDelivery)
+                foreach (var sale in createDelivery.GroupBy(p => p.SaleOrderId).ToList())
                 {
-                    var saleOrderFoundLocal = saleOrder.GetByKey(sale.SaleOrderId);
+                    var saleOrderFoundLocal = saleOrder.GetByKey(sale.FirstOrDefault().SaleOrderId);
 
                     if (!saleOrderFoundLocal)
                     {
-                        _loggerProxy.Info($"The sale Order {sale.SaleOrderId} was not found for creating the delivery");
+                        _loggerProxy.Info($"The sale Order {sale.FirstOrDefault().SaleOrderId} was not found for creating the delivery");
                         continue;
                     }
 
@@ -204,7 +204,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         saleOrder.Lines.SetCurrentLine(i);
                         var itemCode = saleOrder.Lines.ItemCode;
 
-                        deliveryNote = this.UpdateDelivery(deliveryNote, saleOrder, sale.SaleOrderId, i, createDelivery, itemCode);
+                        deliveryNote = this.UpdateDelivery(deliveryNote, saleOrder, sale.FirstOrDefault().SaleOrderId, i, createDelivery, itemCode);
                         deliveryNote.Lines.Add();
                     }
                 }
@@ -231,6 +231,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
         }
+
         private Documents UpdateDelivery(Documents deliveryNote, Documents saleOrder, int saleOrderId, int i, List<CreateDeliveryModel> createDelivery, string itemCode)
         {
             deliveryNote.Lines.ItemCode = saleOrder.Lines.ItemCode;
@@ -247,7 +248,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             deliveryNote.Lines.BaseEntry = saleOrderId;
             deliveryNote.Lines.BaseLine = i;
 
-            var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode));
+            var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId);
             product = product ?? new CreateDeliveryModel { OrderType = ServiceConstants.Magistral };
 
             if (product.OrderType != ServiceConstants.Magistral)
