@@ -218,6 +218,31 @@ namespace Omicron.Reporting.Services.Constants
         public const string IncidentDataTableName = "Incidencias";
 
         /// <summary>
+        /// bioequal email.
+        /// </summary>
+        public const string EmailBioEqual = "EmailBioEqual";
+
+        /// <summary>
+        /// bioelite email.
+        /// </summary>
+        public const string EmailBioElite = "EmailBioElite";
+
+        /// <summary>
+        /// bioelite email.
+        /// </summary>
+        public const string BioEqual = "BE";
+
+        /// <summary>
+        /// bioelite email.
+        /// </summary>
+        public const string BioElite = "MN";
+
+        /// <summary>
+        /// bioelite email.
+        /// </summary>
+        public const string Mixture = "MX";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

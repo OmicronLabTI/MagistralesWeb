@@ -91,12 +91,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             var deliveryType = delivery.UserFields.Fields.Item("U_TipoPedido").Value;
             var finalWhs = ServiceConstants.DictWhs.ContainsKey(deliveryType) ? ServiceConstants.DictWhs[deliveryType] : "MG";
+            var saleOrders = JsonConvert.SerializeObject(deliveryIds.SaleOrderId).Replace("[", string.Empty).Replace("]", string.Empty);
 
             var transfer = (StockTransfer)company.GetBusinessObject(BoObjectTypes.oStockTransfer);
             transfer.DocDate = DateTime.Today;
             transfer.FromWarehouse = "PT";
             transfer.ToWarehouse = finalWhs;
-            transfer.JournalMemo = $"Traspaso por Cancelación: {deliveryIds.SaleOrderId}";
+            transfer.JournalMemo = $"Traspaso por Cancelación: {saleOrders}";
 
             for (var i = 0; i < deliveryIds.MagistralProducts.Count; i++)
             {

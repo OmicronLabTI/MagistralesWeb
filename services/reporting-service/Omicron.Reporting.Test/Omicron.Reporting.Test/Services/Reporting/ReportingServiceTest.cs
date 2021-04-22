@@ -180,12 +180,26 @@ namespace Omicron.Reporting.Test.Services.Request
                 new SendCancelDeliveryModel
                 {
                     DeliveryId = 1,
-                    SalesOrders = "1478",
+                    SalesOrders = new List<int> { 1478 },
+                    DeliveryType = "BE",
                 },
                 new SendCancelDeliveryModel
                 {
                     DeliveryId = 2,
-                    SalesOrders = "1479",
+                    SalesOrders = new List<int> { 1479 },
+                    DeliveryType = "MN",
+                },
+                new SendCancelDeliveryModel
+                {
+                    DeliveryId = 3,
+                    SalesOrders = new List<int> { 1479 },
+                    DeliveryType = "MX",
+                },
+                new SendCancelDeliveryModel
+                {
+                    DeliveryId = 4,
+                    SalesOrders = new List<int> { 1479 },
+                    DeliveryType = "MG",
                 },
             };
 
@@ -199,6 +213,8 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailAtencionAClientes", Value = string.Empty },
                 new ParametersModel { Field = "EmailLogisticaCc2", Value = string.Empty },
                 new ParametersModel { Field = "EmailLogisticaCc3", Value = string.Empty },
+                new ParametersModel { Field = "EmailBioEqual", Value = string.Empty },
+                new ParametersModel { Field = "EmailBioElite", Value = string.Empty },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();

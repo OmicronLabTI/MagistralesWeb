@@ -11,6 +11,7 @@ namespace Omicron.Reporting.Services
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services.Clients;
@@ -148,7 +149,7 @@ namespace Omicron.Reporting.Services
         /// <inheritdoc/>
         public async Task<ResultModel> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryModel> request)
         {
-            var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.LogisticEmailCc2Field, ServiceConstants.LogisticEmailCc3Field };
+            var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.LogisticEmailCc2Field, ServiceConstants.LogisticEmailCc3Field, ServiceConstants.EmailBioEqual, ServiceConstants.EmailBioElite };
             listToLook.AddRange(ServiceConstants.ValuesForEmail);
 
             var config = await this.catalogsService.GetParams(listToLook);
@@ -156,6 +157,7 @@ namespace Omicron.Reporting.Services
             var customerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.CustomerServiceEmail)).Value;
             var logisticEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.LogisticEmailCc2Field)).Value;
             var logisticEmail2 = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.LogisticEmailCc3Field)).Value;
+
             List<ResultModel> results = new List<ResultModel> { };
             var deliveryLists = this.GetGroupsOfList(request, 3);
 
@@ -169,7 +171,7 @@ namespace Omicron.Reporting.Services
                         logisticEmail,
                         text.Item1,
                         text.Item2,
-                        $"{customerServiceEmail};{logisticEmail2}");
+                        $"{customerServiceEmail};{logisticEmail2}{this.CalculateExtraCcCancelation(delivery, config)}");
                     results.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
                 }));
 
@@ -303,8 +305,11 @@ namespace Omicron.Reporting.Services
         /// <returns>the text.</returns>
         private Tuple<string, string> GetBodyForCancelDeliveryEmail(SendCancelDeliveryModel delivery)
         {
+            var salesOrder = new StringBuilder();
+            delivery.SalesOrders.ForEach(x => salesOrder.Append($" {x},"));
+            salesOrder.Remove(salesOrder.Length - 1, 1);
             var subject = string.Format(ServiceConstants.InCancelDeliveryEmailSubject, delivery.DeliveryId);
-            var greeting = string.Format(ServiceConstants.SentCancelDelivery, delivery.DeliveryId, delivery.SalesOrders);
+            var greeting = string.Format(ServiceConstants.SentCancelDelivery, delivery.DeliveryId, salesOrder.ToString());
             var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, ServiceConstants.EmailFarewallCancelDelivery, ServiceConstants.EmailCancelDeliveryClosing);
             return new Tuple<string, string>(subject, body);
         }
@@ -365,7 +370,33 @@ namespace Omicron.Reporting.Services
                 ServiceConstants.RawMaterialRequestEmailSubject,
                 ServiceConstants.RawMaterialRequestEmailBody,
                 mailConfig.CopyTo,
-                new System.Collections.Generic.Dictionary<string, MemoryStream> { { fileName, fileStream } });
+                new Dictionary<string, MemoryStream> { { fileName, fileStream } });
+        }
+
+        /// <summary>
+        /// Gets the extra CC.
+        /// </summary>
+        /// <param name="delivery">the delivery.</param>
+        /// <param name="parametersModels">the parameters.</param>
+        /// <returns>the extra cc.</returns>
+        private string CalculateExtraCcCancelation(SendCancelDeliveryModel delivery, List<ParametersModel> parametersModels)
+        {
+            var bioEliteEmail = parametersModels.FirstOrDefault(x => x.Field.Equals(ServiceConstants.EmailBioElite)).Value;
+            var bioEqualEmail = parametersModels.FirstOrDefault(x => x.Field.Equals(ServiceConstants.EmailBioEqual)).Value;
+            switch (delivery.DeliveryType)
+            {
+                case ServiceConstants.BioElite:
+                    return $";{bioEliteEmail}";
+
+                case ServiceConstants.BioEqual:
+                    return $";{bioEqualEmail}";
+
+                case ServiceConstants.Mixture:
+                    return $";{bioEliteEmail};{bioEqualEmail}";
+
+                default:
+                    return string.Empty;
+            }
         }
     }
 }
