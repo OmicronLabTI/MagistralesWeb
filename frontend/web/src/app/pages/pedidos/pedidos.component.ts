@@ -123,9 +123,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-              element.pedidoStatus = element.pedidoStatus === ConstStatus.initial && element.canceled === ConstStatus.canceled ?
+            element.pedidoStatus = element.pedidoStatus === ConstStatus.initial && element.canceled === ConstStatus.canceled ?
                   ConstStatus.cancelado : element.pedidoStatus;
-              switch (element.pedidoStatus) {
+            switch (element.pedidoStatus) {
                   case ConstStatus.abierto:
                       element.class = 'abierto';
                       break;
@@ -155,7 +155,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
                       element.class = ConstStatus.almacenado.toLowerCase();
                       break;
               }
-              element.classClasification = this.getClassClasification(element.orderType);
+            element.classClasification = this.getClassClasification(element.orderType);
           });
         this.isTherePedidosToViewPdf = false;
         this.isCheckedOrders = false;
@@ -428,6 +428,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
                 return ClassCssOrderType.mx;
             case OrderType.maquila:
                 return ClassCssOrderType.mq;
+            case OrderType.muestra:
+                return ClassCssOrderType.mu;
         }
     }
 

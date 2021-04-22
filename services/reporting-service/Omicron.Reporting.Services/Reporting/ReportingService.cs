@@ -199,11 +199,12 @@ namespace Omicron.Reporting.Services
                 { ms.Item2, ms.Item1 },
             };
 
+            var text = this.GetBodyForIncidentEmail(request);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
                 incidentEmail.Value,
-                string.Format(ServiceConstants.SubjectIncidentReport, ms.Item3),
-                ServiceConstants.BodyIncidentReport,
+                text.Item1,
+                text.Item2,
                 string.Empty,
                 dictFile);
 
@@ -310,6 +311,30 @@ namespace Omicron.Reporting.Services
             var subject = string.Format(ServiceConstants.InCancelDeliveryEmailSubject, delivery.DeliveryId);
             var greeting = string.Format(ServiceConstants.SentCancelDelivery, delivery.DeliveryId, salesOrder.ToString());
             var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, ServiceConstants.EmailFarewallCancelDelivery, ServiceConstants.EmailCancelDeliveryClosing);
+            return new Tuple<string, string>(subject, body);
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForIncidentEmail(List<IncidentDataModel> request)
+        {
+            var endDate = DateTime.Today;
+            var startDate = endDate.AddDays(-4);
+
+            var reportIncident = "<ul>";
+            request.GroupBy(x => x.Incident).ToList().ForEach(x =>
+            {
+                var wordIncident = x.Count() <= 1 ? "incidencia" : "incidencias";
+                reportIncident += $" <li> {x.FirstOrDefault().Incident} : {x.Count()} {wordIncident} </li>";
+            });
+            reportIncident += "</ul>";
+
+            var subject = string.Format(ServiceConstants.SubjectIncidentReport, endDate.ToString("dd/MM/yyyy"));
+            var greeting = string.Format(ServiceConstants.BodyIncidentReport, startDate.ToString("dd/MM/yyyy"), endDate.ToString("dd/MM/yyyy"));
+            var report = string.Format(ServiceConstants.ReportIncidentClosing, reportIncident);
+            var body = string.Format(ServiceConstants.SendEmailIncidentHtmlBase, greeting, report);
             return new Tuple<string, string>(subject, body);
         }
 

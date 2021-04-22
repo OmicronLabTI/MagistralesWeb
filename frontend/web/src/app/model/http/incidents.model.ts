@@ -11,6 +11,7 @@ export class IIncidentsListRes extends BaseResponseHttp {
     response: IncidentItem[];
 }
 export class IncidentItem  {
+    id: number;
     createDate: Date;
     saleOrder: number;
     delivery: number;

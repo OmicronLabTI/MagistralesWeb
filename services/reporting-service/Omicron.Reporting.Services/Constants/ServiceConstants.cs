@@ -184,7 +184,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// the incidentFilename.
         /// </summary>
-        public const string IncidentFileName = "IncidenciasInternas";
+        public const string IncidentFileName = "IncidenciasInternasPT-";
 
         /// <summary>
         /// email for the excel for incidents.
@@ -194,12 +194,23 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// subject for email.
         /// </summary>
-        public const string SubjectIncidentReport = "Incidencias internas {0}";
+        public const string SubjectIncidentReport = "Incidencias internas almacén PT {0}";
 
         /// <summary>
         /// subject for email.
         /// </summary>
-        public const string BodyIncidentReport = "Se adjunta el reporte mensual de Incidencias internas, favor de no responder este correo.";
+        public const string BodyIncidentReport = "<p> Se adjunta el reporte semanal de Incidencias internas del almacén PT creadas del lunes {0} al viernes {1}.";
+
+        /// <summary>
+        /// refund policy.
+        /// </summary>
+        public const string ReportIncidentClosing = "<p> <b>Resumen:</b> </p> {0} </p> Favor de no responder este correo. </p>";
+
+        /// <summary>
+        /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string SendEmailIncidentHtmlBase = @"<html><body>{0}{1}</body></html>";
 
         /// <summary>
         /// subject for email.
