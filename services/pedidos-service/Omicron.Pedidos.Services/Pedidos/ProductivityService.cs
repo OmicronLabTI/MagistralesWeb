@@ -141,7 +141,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
                 }
 
-                var tupleResponse = this.GetDataByUser(u, orderByUser, ordersSap, dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin], valuesMonths.Item2);
+                var tupleResponse = this.GetDataByUser(u, orderByUser, ordersSap, valuesMonths.Item2);
                 matrixToReturn.Add(tupleResponse.Item1);
                 listProductivty.Add(tupleResponse.Item2);
             }
@@ -188,11 +188,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="user">the user.</param>
         /// <param name="userOrder">the users userOrder.</param>
         /// <param name="fabOrder">the orders from sap.</param>
-        /// <param name="initDate">the init date.</param>
-        /// <param name="endDate">the end date.</param>
         /// <param name="months">The list of months.</param>
         /// <returns>the data.</returns>
-        private Tuple<List<string>, ProductiityTotalsModel> GetDataByUser(UserModel user, List<UserOrderModel> userOrder, List<FabricacionOrderModel> fabOrder, DateTime initDate, DateTime endDate, List<int> months)
+        private Tuple<List<string>, ProductiityTotalsModel> GetDataByUser(UserModel user, List<UserOrderModel> userOrder, List<FabricacionOrderModel> fabOrder, List<int> months)
         {
             var listToReturn = new List<string>();
             listToReturn.Add($"{user.FirstName} {user.LastName}");
