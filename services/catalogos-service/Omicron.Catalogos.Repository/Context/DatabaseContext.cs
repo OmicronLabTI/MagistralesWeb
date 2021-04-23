@@ -8,8 +8,8 @@
 
 namespace Omicron.Catalogos.Entities.Context
 {
-    using Omicron.Catalogos.Entities.Model;
     using Microsoft.EntityFrameworkCore;
+    using Omicron.Catalogos.Entities.Model;
 
     /// <summary>
     /// Class DBcontext.
