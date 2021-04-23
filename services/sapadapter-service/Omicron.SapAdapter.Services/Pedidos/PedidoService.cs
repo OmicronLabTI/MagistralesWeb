@@ -15,7 +15,6 @@ namespace Omicron.SapAdapter.Services.Pedidos
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.LeadToCash.Resources.Exceptions;
 
     /// <summary>
     /// clase de pedido Service.
