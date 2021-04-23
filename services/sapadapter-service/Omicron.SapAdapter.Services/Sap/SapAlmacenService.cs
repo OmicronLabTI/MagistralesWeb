@@ -288,49 +288,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var granTotal = sapOrders.Select(x => x.DocNum).Distinct().ToList().Count;
             var sapOrdersGroup = sapOrders.GroupBy(x => x.DocNum).ToList();
 
-            if (types.Contains(ServiceConstants.Magistral.ToLower()))
-            {
-                var listMagistral = sapOrdersGroup.Where(x => x.Count() == orderHeaders.Where(y => y.PedidoId == x.Key).Count());
-                var keys = listMagistral.Select(x => x.Key).ToList();
-
-                listHeaderToReturn.AddRange(sapOrders.Where(x => keys.Contains(x.DocNum)));
-            }
-
-            if (types.Contains(ServiceConstants.Mixto.ToLower()))
-            {
-                var listMixta = sapOrdersGroup.Where(x => x.Count() != orderHeaders.Where(y => y.PedidoId == x.Key).Count() && orderHeaders.Where(y => y.PedidoId == x.Key).Count() > 0);
-                var keysMixta = listMixta.Select(x => x.Key).ToList();
-
-                listHeaderToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
-            }
-
-            if (types.Contains(ServiceConstants.Line))
-            {
-                var listMixta = sapOrdersGroup.Where(x => orderHeaders.Where(y => y.PedidoId == x.Key).Count() == 0 && x.All(y => lineProducts.Contains(y.Detalles.ProductoId)));
-                var keysMixta = listMixta.Select(x => x.Key).ToList();
-
-                listHeaderToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
-            }
-
-            if (types.Contains(ServiceConstants.Maquila.ToLower()))
-            {
-                var ordersMaquila = sapOrders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
-                var orderListToAdd = new List<CompleteAlmacenOrderModel>();
-                foreach (var order in ordersMaquila)
-                {
-                    var orderExists = listHeaderToReturn.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
-                    if (orderExists == null)
-                    {
-                        orderListToAdd.Add(order);
-                    }
-                }
-
-                listHeaderToReturn.AddRange(orderListToAdd);
-            }
-            else
-            {
-                listHeaderToReturn = listHeaderToReturn.Where(x => x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
-            }
+            listHeaderToReturn = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, orderHeaders, lineProducts);
 
             return new Tuple<List<CompleteAlmacenOrderModel>, int>(listHeaderToReturn, granTotal);
         }
