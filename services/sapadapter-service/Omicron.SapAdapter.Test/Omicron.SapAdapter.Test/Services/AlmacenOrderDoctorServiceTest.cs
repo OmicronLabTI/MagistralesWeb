@@ -108,7 +108,7 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Doctor, "Medico B" },
+                { ServiceConstants.Chips, "Medico B" },
             };
 
             // act

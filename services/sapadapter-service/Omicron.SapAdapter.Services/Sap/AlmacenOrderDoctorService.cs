@@ -211,12 +211,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private List<CompleteAlmacenOrderModel> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
         {
-            if (!parameters.ContainsKey(ServiceConstants.Doctor))
+            if (!parameters.ContainsKey(ServiceConstants.Chips))
             {
                 return sapOrders;
             }
 
-            var doctorName = parameters[ServiceConstants.Doctor].Split(",").ToList();
+            var doctorName = parameters[ServiceConstants.Chips].Split(",").ToList();
             return sapOrders.Where(x => doctorName.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
         }
 
@@ -243,7 +243,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalItems = orders.DistinctBy(y => new { y.DocNum, y.Detalles.ProductoId }).Count();
                 var totalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
                 var doctorAddress = sapOrders.Where(x => x.Medico == doctor).FirstOrDefault();
-                var address = doctorAddress == null ? string.Empty : doctorAddress.Address.Replace("\r", " ").Replace("  ", " ");
+                doctorAddress ??= new CompleteAlmacenOrderModel();
+                var address = string.IsNullOrEmpty(doctorAddress.Address) ? string.Empty : doctorAddress.Address.Replace("\r", " ").Replace("  ", " ");
 
                 var sale = new AlmacenSalesByDoctorModel
                 {
