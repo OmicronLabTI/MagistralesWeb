@@ -123,7 +123,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-            element.pedidoStatus = element.pedidoStatus === ConstStatus.initial && element.canceled === ConstStatus.canceled ?
+            element.pedidoStatus = element.canceled === ConstStatus.canceled ?
                   ConstStatus.cancelado : element.pedidoStatus;
             switch (element.pedidoStatus) {
                   case ConstStatus.abierto:
