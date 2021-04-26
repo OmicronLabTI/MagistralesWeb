@@ -60,10 +60,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProductsTuple = await this.GetLineProducts(ids);
             var sapOrders = await this.GetSapOrders(userOrdersTuple, lineProductsTuple, types);
 
-            var ordersByFilter = this.FilterByStatusToReceive(sapOrders.Item1, userOrdersTuple, lineProductsTuple);
-            ordersByFilter = await this.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductsTuple.Item1, ordersByFilter);
-            var total = ordersByFilter.Select(x => x.Medico).Distinct().ToList().Count;
-            ordersByFilter = this.GetSapOrdersToLookByDoctor(ordersByFilter, parameters);
+            var total = sapOrders.Item2;
+            var ordersByFilter = this.GetSapOrdersToLookByDoctor(sapOrders.Item1, parameters);
             var totalFilter = ordersByFilter.Select(x => x.Medico).Distinct().ToList().Count;
 
             var listToReturn = await this.GetCardOrdersToReturn(ordersByFilter, userOrdersTuple.Item1);
@@ -180,6 +178,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var possibleIdsToIgnore = sapOrders.Where(x => !orderHeaders.Any(y => y.PedidoId.Value == x.DocNum)).ToList();
             var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).ToList().Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
+
+            sapOrders = this.FilterByStatusToReceive(sapOrders, userOrdersTuple, lineProductTuple);
+            sapOrders = await this.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductTuple.Item1, sapOrders);
             var granTotal = sapOrders.Select(x => x.Medico).Distinct().ToList().Count;
 
             sapOrders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, orderHeaders, lineProducts);
@@ -242,11 +243,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalItems = orders.DistinctBy(y => new { y.DocNum, y.Detalles.ProductoId }).Count();
                 var totalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
                 var doctorAddress = sapOrders.Where(x => x.Medico == doctor).FirstOrDefault();
+                var address = doctorAddress == null ? string.Empty : doctorAddress.Address.Replace("\r", " ").Replace("  ", " ");
 
                 var sale = new AlmacenSalesByDoctorModel
                 {
                     Doctor = doctor,
-                    Address = doctorAddress == null ? string.Empty : doctorAddress.Address,
+                    Address = address,
                     TotalOrders = totalOrders,
                     TotalItems = totalItems,
                 };
@@ -254,7 +256,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var saleHeader = new AlmacenSalesByDoctorHeaderModel
                 {
                     Doctor = doctor,
-                    Address = doctorAddress == null ? string.Empty : doctorAddress.Address,
+                    Address = address,
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
                 };
@@ -277,7 +279,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private List<OrderListByDoctorModel> GetTotalOrdersByDoctor(List<CompleteAlmacenOrderModel> sapOrders, List<ProductoModel> productsModel, List<UserOrderModel> userOrders)
         {
             var listOrders = new List<OrderListByDoctorModel>();
-            var salesIds = sapOrders.Select(x => x.DocNum).Distinct();
+            var salesIds = sapOrders.Select(x => x.DocNum).Distinct().OrderByDescending(x => x);
 
             foreach (var so in salesIds)
             {
