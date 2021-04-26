@@ -62,7 +62,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var granTotal = deliveryIds.Where(x => x != 0).Distinct().ToList().Count;
 
             var sapResponse = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
-            var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders, lineProducts);
+            var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders);
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{granTotal}-{sapResponse.Item3}");
         }
 
@@ -231,7 +231,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="headers">the delivery header.</param>
         /// <param name="userOrders">the user orders.</param>
         /// <returns>the data.</returns>
-        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<UserOrderModel> userOrders)
         {
             var listIds = details.Select(x => x.DeliveryId).Distinct().ToList();
 
@@ -374,7 +374,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     lineProduct ??= new LineProductsModel();
 
                     var batchName = string.IsNullOrEmpty(lineProduct.BatchName) ? new List<AlmacenBatchModel>() : JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
-                    listBatches = await this.GetBatchesByDelivery(order.ProductoId, batchesQty, batches, batchName);
+                    listBatches = this.GetBatchesByDelivery(order.ProductoId, batchesQty, batches, batchName);
                 }
 
                 var orderNum = string.IsNullOrEmpty(orderId) ? 0 : int.Parse(orderId);
@@ -460,7 +460,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="validBatches">the valid batches.</param>
         /// <param name="batchName">the batches from sales.</param>
         /// <returns>the data.</returns>
-        private async Task<List<string>> GetBatchesByDelivery(string itemCode, List<BatchesTransactionQtyModel> batchTrans, List<CompleteBatchesJoinModel> validBatches,  List<AlmacenBatchModel> batchName)
+        private List<string> GetBatchesByDelivery(string itemCode, List<BatchesTransactionQtyModel> batchTrans, List<CompleteBatchesJoinModel> validBatches,  List<AlmacenBatchModel> batchName)
         {
             var listToReturn = new List<string>();
             var batchTransLocal = batchTrans.Where(x => x.ItemCode == itemCode);

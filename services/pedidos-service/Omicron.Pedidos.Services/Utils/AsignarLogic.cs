@@ -81,7 +81,7 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var listToUpdate = new List<UpdateFabOrderModel>();
             var listProdOrders = new List<string>();
-            var listOrderLogToInsert = new List<SalesLogs>();
+
             assignModel.DocEntry.ForEach(x =>
             {
                 listToUpdate.Add(new UpdateFabOrderModel
@@ -106,7 +106,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic);
             userOrdersByProd = getUpdateUserOrderModel.Item1;
-            listOrderLogToInsert = getUpdateUserOrderModel.Item2;
+            var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.AsignarVenta, assignModel.UserId), ServiceConstants.OrdenVenta));

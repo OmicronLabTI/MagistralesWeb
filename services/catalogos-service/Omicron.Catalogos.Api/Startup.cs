@@ -9,21 +9,19 @@
 namespace Omicron.Catalogos.Api
 {
     using System;
-    using Omicron.Catalogos.Api.Filters;
-    using Omicron.Catalogos.DependencyInjection;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
+    using Microsoft.OpenApi.Models;
+    using Omicron.Catalogos.Api.Filters;
+    using Omicron.Catalogos.DependencyInjection;
     using Prometheus;
     using Serilog;
-    using Serilog.Events;
     using StackExchange.Redis;
     using Steeltoe.Discovery.Client;
-    using Microsoft.OpenApi.Models;
 
     /// <summary>
     /// Class Startup.
