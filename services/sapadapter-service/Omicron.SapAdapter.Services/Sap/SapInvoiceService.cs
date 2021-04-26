@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -683,6 +684,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listSales = products.Select(x => x.SaleOrderId).Distinct().ToList();
 
+            var listIds = new StringBuilder();
+            foreach (var item in listSales)
+            {
+                listIds.Append($" {item},");
+            }
+
             var deliveryData = new DeliveryScannedModel
             {
                 Client = invoice.Cliente,
@@ -693,7 +700,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Products = products,
                 TotalItems = products.Count,
                 Status = products.Any() && products.All(x => x.Status.Equals(ServiceConstants.Empaquetado)) ? ServiceConstants.Empaquetado : ServiceConstants.Almacenado,
-                ListSalesOrder = JsonConvert.SerializeObject(listSales).Replace("[", string.Empty).Replace("]", string.Empty),
+                ListSalesOrder = listIds.Length > 0 ? listIds.Remove(listIds.Length - 1, 1).ToString() : string.Empty,
             };
 
             return deliveryData;
