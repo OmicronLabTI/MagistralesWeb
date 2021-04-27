@@ -426,6 +426,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalItems = totalItems,
                     TotalPieces = totalpieces,
                     TypeOrder = order.TypeOrder,
+                    OrderMuestra = order.PedidoMuestra,
                 };
 
                 var saleHeader = new AlmacenSalesHeaderModel
