@@ -442,6 +442,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     OrderCounter = $"{totalAlmacenados}/{orders.Count}",
                     InvoiceType = invoiceType,
                     TypeOrder = order.TypeOrder,
+                    OrderMuestra = order.PedidoMuestra,
                 };
 
                 var saleModel = new SalesModel

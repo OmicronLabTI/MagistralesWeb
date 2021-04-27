@@ -78,6 +78,29 @@ namespace Omicron.SapAdapter.Services.Utils
                 listToReturn = listToReturn.Where(x => x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
             }
 
+            /***/
+            if (types.Contains(ServiceConstants.Muestra.ToLower()))
+            {
+                var ordersMuestra = sapOrders.Where(x => x.PedidoMuestra == ServiceConstants.OrderTypeMU).ToList();
+                var orderListToAdd = new List<CompleteAlmacenOrderModel>();
+                foreach (var order in ordersMuestra)
+                {
+                    var orderExists = listToReturn.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
+                    if (orderExists == null)
+                    {
+                        orderListToAdd.Add(order);
+                    }
+                }
+
+                listToReturn.AddRange(orderListToAdd);
+            }
+            else
+            {
+                listToReturn = listToReturn.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
+            }
+
+            /****/
+
             return listToReturn;
         }
     }

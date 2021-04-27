@@ -393,7 +393,12 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypes = "magistral,mixto,linea,maquila";
+        public const string AllTypes = "magistral,mixto,linea,maquila,muestra";
+
+        /// <summary>
+        /// all types.
+        /// </summary>
+        public const string AllTypesByDoctor = "magistral,mixto,linea,maquila";
 
         /// <summary>
         /// all types.
@@ -453,7 +458,17 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// the insert value.
         /// </summary>
+        public const string OrderTypeMU = "MU";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
         public const string Maquila = "Maquila";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string Muestra = "Muestra";
 
         /// <summary>
         /// the insert value.
