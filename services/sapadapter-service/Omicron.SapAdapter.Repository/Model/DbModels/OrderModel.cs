@@ -116,5 +116,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("PedidoMuestra")]
         public string PedidoMuestra { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("Comments")]
+        public string Comments { get; set; }
     }
 }

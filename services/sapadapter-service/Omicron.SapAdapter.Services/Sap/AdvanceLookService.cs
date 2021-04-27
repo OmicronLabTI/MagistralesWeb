@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -249,6 +250,7 @@ namespace Omicron.SapAdapter.Services.Sap
             tupleIds.ForEach(order =>
             {
                 cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, objectCardOrder));
+                cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrdersSample(order, objectCardOrder));
                 cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, objectCardOrder));
                 cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, objectCardOrder));
                 cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, objectCardOrder));
@@ -285,6 +287,31 @@ namespace Omicron.SapAdapter.Services.Sap
             return this.GenerateCardForReceptionOrders(tuple, paramentsCards);
         }
 
+        private List<AlmacenSalesHeaderModel> GetIsReceptionOrdersSample(Tuple<int, string> tuple, ParamentsCards paramentsCards)
+        {
+            if (tuple.Item2 != ServiceConstants.SaleOrder)
+            {
+                return new List<AlmacenSalesHeaderModel>();
+            }
+
+            var existanceMag = paramentsCards.UserOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString());
+            existanceMag ??= new UserOrderModel { Status = ServiceConstants.Almacenado };
+            var existanceLin = paramentsCards.LineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1);
+            existanceLin ??= new LineProductsModel { StatusAlmacen = ServiceConstants.Almacenado };
+
+            if (existanceMag.Status != ServiceConstants.Almacenado || existanceLin.StatusAlmacen != ServiceConstants.Almacenado)
+            {
+                return new List<AlmacenSalesHeaderModel>();
+            }
+
+            var userOrder = paramentsCards.UserOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && x.Status == ServiceConstants.Almacenado && x.StatusAlmacen == ServiceConstants.Almacenado);
+            var lineProductOrder = paramentsCards.LineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Almacenado);
+            paramentsCards.UserOrder = userOrder;
+            paramentsCards.LineProductOrder = lineProductOrder;
+
+            return this.GenerateCardForReceptionOrders(tuple, paramentsCards);
+        }
+
         private List<AlmacenSalesHeaderModel> GenerateCardForReceptionOrders(Tuple<int, string> tuple, ParamentsCards paramentsCards)
         {
             var order = new CompleteOrderModel();
@@ -299,6 +326,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var initDate = DateTime.Now;
             var userOrder = paramentsCards.UserOrder;
             var lineProductOrder = paramentsCards.LineProductOrder;
+            var comments = new StringBuilder();
 
             if (userOrder != null)
             {
@@ -309,6 +337,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = userOrder.Status != ServiceConstants.Finalizado && userOrder.Status != ServiceConstants.Almacenado && status != ServiceConstants.BackOrder ? ServiceConstants.Pendiente : status;
                 productType = saporders.Any(x => x.Detalles != null && paramentsCards.ProductModel.Any(p => p.ProductoId == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
+                comments.Append($"{userOrder.Comments}&");
                 hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status);
             }
 
@@ -335,6 +364,7 @@ namespace Omicron.SapAdapter.Services.Sap
             totalItems = saporders.Count;
             totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
             initDate = order.FechaInicio != null ? DateTime.ParseExact(order.FechaInicio, "dd/MM/yyyy", null) : initDate;
+            status = order.PedidoMuestra == null ? status : ServiceConstants.Almacenado;
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
@@ -348,6 +378,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 Client = order.Cliente,
                 TotalPieces = totalPieces,
                 DataCheckin = porRecibirDate,
+                OrderMuestra = order.PedidoMuestra,
+                Comments = comments.ToString(),
+                SapComments = order.Comments,
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };
