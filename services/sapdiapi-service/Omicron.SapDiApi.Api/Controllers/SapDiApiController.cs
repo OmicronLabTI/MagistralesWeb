@@ -191,6 +191,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="orderId">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("close/sample")]
+        public async Task<IHttpActionResult> CloseMuestra([FromBody] List<CloseSampleOrderDto> orderId)
+        {
+            var result = await this.sapFacade.CloseMuestra(orderId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

@@ -232,6 +232,85 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> CloseMuestra(List<CloseSampleOrderModel> ordersId)
+        {
+            var dictionaryResult = new Dictionary<string, string>();
+            foreach (var order in ordersId)
+            {
+                try
+                {
+                    dictionaryResult = this.CloseOrders(order.FabOrdersId, dictionaryResult);
+                    var saleOrder = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
+                    var inventoryGenExit = (Documents)this.company.GetBusinessObject(BoObjectTypes.oInventoryGenExit);
+
+                    if (!saleOrder.GetByKey(order.SaleOrderId))
+                    {
+                        dictionaryResult.Add($"{order.SaleOrderId}-Error", ServiceConstants.OrderNotFound);
+                        return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+                    }
+
+                    inventoryGenExit.Comments = $"Pedido muestra basado en {order.SaleOrderId}";
+                    for (var i = 0; i < saleOrder.Lines.Count; i++)
+                    {
+                        var itemCode = saleOrder.Lines.ItemCode;
+                        inventoryGenExit.Lines.SetCurrentLine(i);
+                        inventoryGenExit.Lines.BaseType = -1;
+                        inventoryGenExit.Lines.BaseLine = i;
+                        inventoryGenExit.Lines.Quantity = saleOrder.Lines.Quantity;
+                        inventoryGenExit.Lines.WarehouseCode = "PT";
+                        inventoryGenExit.Lines.AccountCode = "6213001";
+                        inventoryGenExit.Lines.ItemCode = itemCode;
+
+                        var product = order.ItemsList.FirstOrDefault(x => x.ItemCode.Equals(itemCode));
+                        product = product ?? new CreateDeliveryModel { OrderType = ServiceConstants.Magistral };
+
+                        if (product.OrderType != ServiceConstants.Magistral)
+                        {
+                            foreach (var b in product.Batches)
+                            {
+                                double.TryParse(b.BatchQty.ToString(), out var doubleQuantity);
+                                inventoryGenExit.Lines.BatchNumbers.Add();
+                                inventoryGenExit.Lines.BatchNumbers.Quantity = doubleQuantity;
+                                inventoryGenExit.Lines.BatchNumbers.BatchNumber = b.BatchNumber;
+                            }
+                        }
+
+                        inventoryGenExit.Lines.Add();
+                    }
+
+                    if (inventoryGenExit.Add() != 0)
+                    {
+                        this.company.GetLastError(out int errorCode, out string errorMessage);
+                        _loggerProxy.Debug($"An error has ocurred on create oInventoryGenExit { errorCode } - { errorMessage }.");
+                        dictionaryResult.Add($"{order.SaleOrderId}-Inventory-Error", $"Error - {errorMessage}");
+                    }
+
+                    if (saleOrder.Close() != 0)
+                    {
+                        this.company.GetLastError(out int errorCode, out string errorMessage);
+                        _loggerProxy.Debug($"An error has ocurred while closing sale order {order.SaleOrderId} { errorCode } - { errorMessage }.");
+                        dictionaryResult.Add($"{order.SaleOrderId}-Error", $"Error - {errorMessage}");
+                    }
+
+                    if(!dictionaryResult.Keys.Any(x => x.Contains("Error")))
+                    {
+                        _loggerProxy.Info($"The saleORder {order.SaleOrderId} was closed and the exit merchandise was done");
+                        dictionaryResult.Add($"{order.SaleOrderId}-Ok", "Ok");
+                        
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _loggerProxy.Info($"Error while Closing and create inventory exit for {order.SaleOrderId} - ex: {ex.Message} - stackTrace: {ex.StackTrace}");
+                    dictionaryResult.Add($"{order.SaleOrderId}-ErrorHandled", $"{ex.Message}");
+                }
+            }
+            
+
+            return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+        }
+
         private Documents UpdateDelivery(Documents deliveryNote, Documents saleOrder, int saleOrderId, int i, List<CreateDeliveryModel> createDelivery, string itemCode)
         {
             deliveryNote.Lines.ItemCode = saleOrder.Lines.ItemCode;
@@ -263,6 +342,26 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
 
             return deliveryNote;
+        }
+
+        private Dictionary<string, string> CloseOrders(List<int> ordersId, Dictionary<string, string> dictionaryResult)
+        {
+            foreach (var order in ordersId)
+            {
+                var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
+                productionOrderObj.GetByKey(order);
+                productionOrderObj.ProductionOrderStatus = BoProductionOrderStatusEnum.boposClosed;
+                var updated = productionOrderObj.Update();
+
+                if (updated != 0)
+                {
+                    company.GetLastError(out int errorCode, out string errMsg);
+                    _loggerProxy.Info($"The next order was tried to be updated: {errorCode} - {errMsg} - {order}");
+                    dictionaryResult.Add($"{order}-Error", ServiceConstants.ErrorUpdateFabOrd);
+                }
+            }
+
+            return dictionaryResult;
         }
     }
 }
