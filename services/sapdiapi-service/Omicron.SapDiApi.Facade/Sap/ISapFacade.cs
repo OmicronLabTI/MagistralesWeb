@@ -99,6 +99,13 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> CreateDeliveryBatch(List<CreateDeliveryDto> createDeliveries);
 
         /// <summary>
+        /// cerates the output and closes de muestra.
+        /// </summary>
+        /// <param name="orderIds">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CloseMuestra(List<CloseSampleOrderDto> orderIds);
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>
