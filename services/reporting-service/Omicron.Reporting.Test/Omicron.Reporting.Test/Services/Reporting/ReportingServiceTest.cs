@@ -400,6 +400,7 @@ namespace Omicron.Reporting.Test.Services.Request
                     Stage = "reception",
                     Comments = "comments",
                     Status = "abierto",
+                    CreateDateString = "26/04/2021 10:50:20",
                 },
                 new IncidentDataModel
                 {
@@ -414,6 +415,7 @@ namespace Omicron.Reporting.Test.Services.Request
                     Stage = "reception",
                     Comments = "comments",
                     Status = "atendiendo",
+                    CreateDateString = "26/04/2021 10:50:20",
                 },
             };
 
