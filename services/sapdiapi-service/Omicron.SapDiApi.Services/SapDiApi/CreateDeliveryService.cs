@@ -240,7 +240,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 try
                 {
-                    dictionaryResult = this.CloseOrders(order.FabOrdersId, dictionaryResult);
                     var saleOrder = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
                     var inventoryGenExit = (Documents)this.company.GetBusinessObject(BoObjectTypes.oInventoryGenExit);
 
@@ -342,26 +341,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
 
             return deliveryNote;
-        }
-
-        private Dictionary<string, string> CloseOrders(List<int> ordersId, Dictionary<string, string> dictionaryResult)
-        {
-            foreach (var order in ordersId)
-            {
-                var productionOrderObj = (ProductionOrders)company.GetBusinessObject(BoObjectTypes.oProductionOrders);
-                productionOrderObj.GetByKey(order);
-                productionOrderObj.ProductionOrderStatus = BoProductionOrderStatusEnum.boposClosed;
-                var updated = productionOrderObj.Update();
-
-                if (updated != 0)
-                {
-                    company.GetLastError(out int errorCode, out string errMsg);
-                    _loggerProxy.Info($"The next order was tried to be updated: {errorCode} - {errMsg} - {order}");
-                    dictionaryResult.Add($"{order}-Error", ServiceConstants.ErrorUpdateFabOrd);
-                }
-            }
-
-            return dictionaryResult;
         }
     }
 }

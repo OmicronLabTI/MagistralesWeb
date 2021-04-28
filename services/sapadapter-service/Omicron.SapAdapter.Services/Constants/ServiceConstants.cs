@@ -631,6 +631,19 @@ namespace Omicron.SapAdapter.Services.Constants
             Abierto,
             Planificado,
             Terminado,
+            Almacenado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusToIgnoreLineOrderAdvancedLook { get; } = new List<string>
+        {
+            Cancelado,
+            Almacenado,
         };
 
         /// <summary>
