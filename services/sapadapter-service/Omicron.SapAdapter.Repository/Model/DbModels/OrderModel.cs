@@ -114,7 +114,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("PedidoMuestra")]
+        [Column("U_PedidoMuestra")]
         public string PedidoMuestra { get; set; }
 
         /// <summary>

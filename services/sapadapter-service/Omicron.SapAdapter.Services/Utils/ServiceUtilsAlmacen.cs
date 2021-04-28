@@ -78,10 +78,9 @@ namespace Omicron.SapAdapter.Services.Utils
                 listToReturn = listToReturn.Where(x => x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
             }
 
-            /***/
             if (types.Contains(ServiceConstants.Muestra.ToLower()))
             {
-                var ordersMuestra = sapOrders.Where(x => x.PedidoMuestra == ServiceConstants.OrderTypeMU).ToList();
+                var ordersMuestra = sapOrders.Where(x => !string.IsNullOrEmpty(x.PedidoMuestra) && x.PedidoMuestra == ServiceConstants.IsSampleOrder).ToList();
                 var orderListToAdd = new List<CompleteAlmacenOrderModel>();
                 foreach (var order in ordersMuestra)
                 {
@@ -96,10 +95,8 @@ namespace Omicron.SapAdapter.Services.Utils
             }
             else
             {
-                listToReturn = listToReturn.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
+                listToReturn = listToReturn.Where(x => string.IsNullOrEmpty(x.PedidoMuestra) || x.PedidoMuestra != ServiceConstants.IsSampleOrder).ToList();
             }
-
-            /****/
 
             return listToReturn;
         }

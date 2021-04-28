@@ -476,6 +476,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string DontExistsTable = "DontExistsTable";
 
         /// <summary>
+        /// valor for Si.
+        /// </summary>
+        public const string IsSampleOrder = "SI";
+
+        /// <summary>
+        /// valor for No.
+        /// </summary>
+        public const string IsNotSampleOrder = "NO";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
