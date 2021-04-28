@@ -68,6 +68,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        Detalles = dp,
                                        OrderType = order.OrderType,
                                        Canceled = order.Canceled,
+                                       PedidoMuestra = order.PedidoMuestra,
                                    });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -98,6 +99,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    Detalles = dp,
                                    OrderType = order.OrderType,
                                    Canceled = order.Canceled,
+                                   PedidoMuestra = order.PedidoMuestra,
                                });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -129,6 +131,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                   Detalles = detalle,
                                   OrderType = order.OrderType,
                                   Canceled = order.Canceled,
+                                  PedidoMuestra = order.PedidoMuestra,
                               });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -562,6 +565,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Detalles = dp,
                              Address = order.Address,
                              TypeOrder = order.OrderType,
+                             PedidoMuestra = order.PedidoMuestra,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -762,6 +766,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Detalles = dp,
                              OrderType = order.OrderType,
                              Address = order.Address,
+                             PedidoMuestra = order.PedidoMuestra,
+                             Comments = order.Comments,
                          });
 
             return await this.RetryQuery<CompleteOrderModel>(query);

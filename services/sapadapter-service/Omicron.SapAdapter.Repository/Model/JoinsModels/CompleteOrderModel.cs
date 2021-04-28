@@ -120,5 +120,17 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The IsChecked.</value>
         public string Canceled { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string PedidoMuestra { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string Comments { get; set; }
     }
 }

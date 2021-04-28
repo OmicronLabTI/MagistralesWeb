@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -299,6 +300,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var initDate = DateTime.Now;
             var userOrder = paramentsCards.UserOrder;
             var lineProductOrder = paramentsCards.LineProductOrder;
+            var comments = new StringBuilder();
 
             if (userOrder != null)
             {
@@ -309,6 +311,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = userOrder.Status != ServiceConstants.Finalizado && userOrder.Status != ServiceConstants.Almacenado && status != ServiceConstants.BackOrder ? ServiceConstants.Pendiente : status;
                 productType = saporders.Any(x => x.Detalles != null && paramentsCards.ProductModel.Any(p => p.ProductoId == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
+                comments.Append($"{userOrder.Comments}&");
                 hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status);
             }
 
@@ -335,6 +338,7 @@ namespace Omicron.SapAdapter.Services.Sap
             totalItems = saporders.Count;
             totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
             initDate = order.FechaInicio != null ? DateTime.ParseExact(order.FechaInicio, "dd/MM/yyyy", null) : initDate;
+            status = order.PedidoMuestra == null ? status : ServiceConstants.Almacenado;
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
@@ -348,6 +352,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 Client = order.Cliente,
                 TotalPieces = totalPieces,
                 DataCheckin = porRecibirDate,
+                OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
+                Comments = comments.ToString(),
+                SapComments = order.Comments,
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };

@@ -52,7 +52,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters)
         {
-            var typesString = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.AllTypes;
+            var typesString = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.AllTypesByDoctor;
             var types = typesString.Split(",").ToList();
 
             var userOrdersTuple = await this.GetUserOrders();
@@ -181,6 +181,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             sapOrders = this.FilterByStatusToReceive(sapOrders, userOrdersTuple, lineProductTuple);
             sapOrders = await this.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductTuple.Item1, sapOrders);
+            sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
             var granTotal = sapOrders.Select(x => x.Medico).Distinct().ToList().Count;
 
             sapOrders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, orderHeaders, lineProducts);
