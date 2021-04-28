@@ -15,8 +15,24 @@ eureka:
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
 
+keycloak:
+  enabled: true
+  auth-server-url: https://devtools.axity.com/auth
+  use-resource-role-mappings: true
+  public-client: true
+  realm: omicron
+  resource: omicron-dxp
+  securityConstraints:
+    - authRoles:
+        - external-dxp
+      securityCollections:
+        - name: protected-dxp
+          patterns:
+            - /api/dxp/*
+  ssl-required: external
+
 zuul:
-  ignoredServices: '*'
+  ignoredServices: "*"
   prefix: /api
   routes:
     oauth:
@@ -43,6 +59,9 @@ zuul:
     almacen:
       path: /almacen/**
       serviceId: almacenservice
+    dxp:
+      path: /dxp/**
+      url: https://reqres.in/api/ #mock endpoint, agregar serviceId de eureka
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
