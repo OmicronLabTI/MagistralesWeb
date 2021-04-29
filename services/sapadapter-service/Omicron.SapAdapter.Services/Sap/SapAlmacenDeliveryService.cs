@@ -460,12 +460,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="validBatches">the valid batches.</param>
         /// <param name="batchName">the batches from sales.</param>
         /// <returns>the data.</returns>
-        private async Task<List<string>> GetBatchesByDelivery(string itemCode, List<BatchesTransactionQtyModel> batchTrans, List<CompleteBatchesJoinModel> validBatches,  List<AlmacenBatchModel> batchName)
+        private List<string> GetBatchesByDelivery(string itemCode, List<BatchesTransactionQtyModel> batchTrans, List<CompleteBatchesJoinModel> validBatches,  List<AlmacenBatchModel> batchName)
         {
             var listToReturn = new List<string>();
-            var batchTransLocal = batchTrans.Where(x => x.ItemCode == itemCode);
-
-            validBatches.Where(x => batchTransLocal.Any(y => y.SysNumber == x.SysNumber)).ToList().ForEach(z =>
+            var batchTransLocal = batchTrans.Where(x => x.ItemCode == itemCode).ToList();
+            var batchesToLoop = validBatches.Where(x => batchTransLocal.Any(y => y.SysNumber == x.SysNumber) && x.ItemCode == itemCode).ToList();
+            batchesToLoop.ForEach(z =>
             {
                 var batch = batchName.FirstOrDefault(a => a.BatchNumber == z.DistNumber);
                 batch ??= new AlmacenBatchModel() { BatchQty = 0 };
