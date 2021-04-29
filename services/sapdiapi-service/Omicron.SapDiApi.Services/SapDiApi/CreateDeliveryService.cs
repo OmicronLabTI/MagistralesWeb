@@ -176,7 +176,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
                 }
 
-                var ids = JsonConvert.SerializeObject(createDelivery.Select(x => x.SaleOrderId).ToList()).Replace("[", string.Empty).Replace("]", string.Empty);
+                var ids = JsonConvert.SerializeObject(createDelivery.Select(x => x.SaleOrderId).Distinct().ToList()).Replace("[", string.Empty).Replace("]", string.Empty);
 
                 var deliveryNote = (Documents)company.GetBusinessObject(BoObjectTypes.oDeliveryNotes);
                 deliveryNote.CardCode = saleOrder.CardCode;

@@ -591,7 +591,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Batches = listBatches,
                     Container = invoice.Container,
                     Description = item.LargeDescription.ToUpper(),
-                    ItemCode = item.IsMagistral.Equals("Y") ? $"{item.ProductoId}- {product.Item2}" : item.ProductoId,
+                    ItemCode = item.IsMagistral.Equals("Y") ? $"{item.ProductoId} - {product.Item2}" : item.ProductoId,
                     NeedsCooling = item.NeedsCooling.Equals("Y"),
                     ProductType = $"Producto {productType}",
                     Quantity = invoice.Quantity,
