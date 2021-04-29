@@ -689,7 +689,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
                     {
-                        Address = invoiceHeader.Address.Replace("\r", string.Empty),
+                        Address = invoiceHeader.Address.Replace("\r", string.Empty).ToUpper(),
                         Client = invoiceHeader.Cliente,
                         Doctor = invoiceHeader.Medico ?? string.Empty,
                         Invoice = invoiceHeader.DocNum,
@@ -743,7 +743,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     {
                         var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
                         {
-                            Address = invoiceHeader.Address.Replace("\r", string.Empty),
+                            Address = invoiceHeader.Address.Replace("\r", string.Empty).ToUpper(),
                             Client = invoiceHeader.Cliente,
                             Doctor = invoiceHeader.Medico ?? string.Empty,
                             Invoice = invoiceHeader.DocNum,
@@ -788,7 +788,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
                     {
-                        Address = invoiceHeaders.Address.Replace("\r", string.Empty),
+                        Address = invoiceHeaders.Address.Replace("\r", string.Empty).ToUpper(),
                         Client = invoiceHeaders.Cliente,
                         Doctor = invoiceHeaders.Medico ?? string.Empty,
                         Invoice = invoiceHeaders.DocNum,
@@ -992,7 +992,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 DeliverId = !isFromInvoice ? userOrder.DeliveryId : 0,
                 SalesOrder = !isFromInvoice ? int.Parse(userOrder.Salesorderid) : totalSales.Count,
                 StatusDelivery = userOrder.StatusInvoice,
-                Address = invoice.Address.Replace("\r", string.Empty),
+                Address = invoice.Address.Replace("\r", string.Empty).ToUpper(),
                 ProductType = invoice.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                 Doctor = invoice.Medico,
                 TotalDeliveries = localInvoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),

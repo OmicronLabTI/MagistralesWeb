@@ -470,7 +470,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var invoiceHeader = new InvoiceSaleHeaderModel
                 {
-                    Address = invoice.Address.Replace("\r", string.Empty),
+                    Address = invoice.Address.Replace("\r", string.Empty).ToUpper(),
                     Client = invoice.Cliente,
                     Doctor = doctor,
                     Invoice = invoice.DocNum,
