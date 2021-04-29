@@ -523,7 +523,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 header ??= new DeliverModel();
                 var deliveryDetail = deliveryDetailModels.Where(x => x.DeliveryId == delivery).ToList();
 
-                var salesOrders = deliveryDetail.Select(x => x.BaseEntry).Distinct().ToList();
+                var salesOrders = deliveryDetail.Select(x => x.BaseEntry).Distinct().OrderByDescending(y => y).ToList();
 
                 var listSalesOrders = new StringBuilder();
                 salesOrders.ForEach(x => listSalesOrders.Append($" {x},"));
