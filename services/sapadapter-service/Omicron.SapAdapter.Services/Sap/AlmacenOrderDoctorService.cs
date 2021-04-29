@@ -310,6 +310,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeSaleOrder = $"Pedido {productType}",
                     InvoiceType = invoiceType,
                     Comments = comments,
+                    OrderType = order.TypeOrder,
                 };
                 listOrders.Add(saleItem);
             }

@@ -83,7 +83,7 @@ namespace Omicron.SapAdapter.Api.Filters
                         await command.ExecuteNonQueryAsync(cancellationToken);
                     }
                 }
-                catch (DbException ex)
+                catch (Exception ex)
                 {
                     return new HealthCheckResult(status: context.Registration.FailureStatus, exception: ex);
                 }
