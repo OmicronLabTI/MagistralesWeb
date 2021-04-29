@@ -374,7 +374,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     lineProduct ??= new LineProductsModel();
 
                     var batchName = string.IsNullOrEmpty(lineProduct.BatchName) ? new List<AlmacenBatchModel>() : JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
-                    listBatches = await this.GetBatchesByDelivery(order.ProductoId, batchesQty, batches, batchName);
+                    listBatches = this.GetBatchesByDelivery(order.ProductoId, batchesQty, batches, batchName);
                 }
 
                 var orderNum = string.IsNullOrEmpty(orderId) ? 0 : int.Parse(orderId);
