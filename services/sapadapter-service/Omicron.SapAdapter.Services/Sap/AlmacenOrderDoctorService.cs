@@ -245,7 +245,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
                 var doctorAddress = sapOrders.Where(x => x.Medico == doctor).FirstOrDefault();
                 doctorAddress ??= new CompleteAlmacenOrderModel();
-                var address = string.IsNullOrEmpty(doctorAddress.Address) ? string.Empty : doctorAddress.Address.Replace("\r", " ").Replace("  ", " ");
+                var address = string.IsNullOrEmpty(doctorAddress.Address) ? string.Empty : doctorAddress.Address.Replace("\r", " ").Replace("  ", " ").ToUpper();
 
                 var sale = new AlmacenSalesByDoctorModel
                 {
