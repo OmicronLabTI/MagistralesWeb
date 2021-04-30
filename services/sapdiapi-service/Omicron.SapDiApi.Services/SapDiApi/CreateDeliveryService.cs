@@ -177,6 +177,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 }
 
                 var ids = JsonConvert.SerializeObject(createDelivery.Select(x => x.SaleOrderId).Distinct().ToList()).Replace("[", string.Empty).Replace("]", string.Empty);
+                var listOrderType = new List<string>();
 
                 var deliveryNote = (Documents)company.GetBusinessObject(BoObjectTypes.oDeliveryNotes);
                 deliveryNote.CardCode = saleOrder.CardCode;
@@ -192,7 +193,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 foreach (var sale in createDelivery.GroupBy(p => p.SaleOrderId).ToList())
                 {
                     var saleOrderFoundLocal = saleOrder.GetByKey(sale.FirstOrDefault().SaleOrderId);
-
+                    listOrderType.Add(saleOrder.UserFields.Fields.Item("U_TipoPedido").Value);
                     if (!saleOrderFoundLocal)
                     {
                         _loggerProxy.Info($"The sale Order {sale.FirstOrDefault().SaleOrderId} was not found for creating the delivery");
@@ -209,6 +210,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
                 }
 
+                var areAllSame = listOrderType.All(o => o == listOrderType.FirstOrDefault());
+                deliveryNote.UserFields.Fields.Item("U_TipoPedido").Value = areAllSame ? listOrderType.FirstOrDefault() : "MX";
                 var update = deliveryNote.Add();
                 company.GetLastError(out int errCode, out string errMsg);
 
@@ -253,6 +256,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     for (var i = 0; i < saleOrder.Lines.Count; i++)
                     {
                         inventoryGenExit.Lines.SetCurrentLine(i);
+                        saleOrder.Lines.SetCurrentLine(i);
                         var itemCode = saleOrder.Lines.ItemCode;
                         inventoryGenExit.Lines.BaseType = -1;
                         inventoryGenExit.Lines.BaseLine = i;
