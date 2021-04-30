@@ -252,8 +252,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     inventoryGenExit.Comments = $"Pedido muestra basado en {order.SaleOrderId}";
                     for (var i = 0; i < saleOrder.Lines.Count; i++)
                     {
-                        var itemCode = saleOrder.Lines.ItemCode;
                         inventoryGenExit.Lines.SetCurrentLine(i);
+                        var itemCode = saleOrder.Lines.ItemCode;
                         inventoryGenExit.Lines.BaseType = -1;
                         inventoryGenExit.Lines.BaseLine = i;
                         inventoryGenExit.Lines.Quantity = saleOrder.Lines.Quantity;

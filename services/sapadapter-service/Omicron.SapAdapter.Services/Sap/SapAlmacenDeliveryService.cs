@@ -352,7 +352,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var saleId = deliveryDetails.FirstOrDefault().BaseEntry;
             var baseDelivery = deliveryDetails.FirstOrDefault().DeliveryId;
             var prodOrders = (await this.sapDao.GetFabOrderBySalesOrderId(new List<int> { saleId })).ToList();
-            var batchesQty = await this.GetBatchesBySale(baseDelivery, deliveryDetails.Select(x => x.ProductoId).ToList());
+            var batchesQty = await this.GetBatchesBySale(baseDelivery, saleId, deliveryDetails.Select(x => x.ProductoId).ToList());
             var batches = await this.GetValidBatches(deliveryDetails.Select(x => x.ProductoId).ToList(), ServiceConstants.PT);
 
             foreach (var order in deliveryDetails)
@@ -415,14 +415,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Gets the batches by the sale.
         /// </summary>
-        /// <param name="saleId">the sales.</param>
+        /// <param name="deliveryId">the delivery.</param>
+        /// <param name="saleId">The sale id.</param>
         /// <param name="itemCode">The codes.</param>
         /// <returns>the data.</returns>
-        private async Task<List<BatchesTransactionQtyModel>> GetBatchesBySale(int saleId, List<string> itemCode)
+        private async Task<List<BatchesTransactionQtyModel>> GetBatchesBySale(int deliveryId, int saleId, List<string> itemCode)
         {
             var listLastTransactions = new List<BatchTransacitions>();
-            var batchesBySale = (await this.sapDao.GetBatchesTransactionByOrderItem(new List<int> { saleId })).ToList();
-            batchesBySale = batchesBySale.Where(x => itemCode.Contains(x.ItemCode)).ToList();
+            var batchesBySale = (await this.sapDao.GetBatchesTransactionByOrderItem(new List<int> { deliveryId })).ToList();
+            batchesBySale = batchesBySale.Where(x => itemCode.Contains(x.ItemCode) && x.BaseEntry == saleId).ToList();
             batchesBySale.GroupBy(x => x.ItemCode).Where(a => a.Any()).ToList().ForEach(y =>
             {
                 var logs = y.OrderBy(z => z.LogEntry).ToList();

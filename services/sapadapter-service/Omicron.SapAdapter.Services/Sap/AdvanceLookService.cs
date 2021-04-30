@@ -336,6 +336,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 order = saporders.FirstOrDefault();
                 status = ServiceConstants.StatusForBackOrder.Contains(userOrder.Status) && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
                 status = userOrder.Status != ServiceConstants.Finalizado && userOrder.Status != ServiceConstants.Almacenado && status != ServiceConstants.BackOrder ? ServiceConstants.Pendiente : status;
+                status = userOrder.Status == ServiceConstants.Almacenado && order.PedidoMuestra == ServiceConstants.IsSampleOrder ? ServiceConstants.Almacenado : status;
                 productType = saporders.Any(x => x.Detalles != null && paramentsCards.ProductModel.Any(p => p.ProductoId == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
                 comments.Append($"{userOrder.Comments}&");
@@ -351,6 +352,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 order = saporders.FirstOrDefault();
                 status = lineProductOrder == null ? ServiceConstants.PorRecibir : lineProductOrder.StatusAlmacen;
                 status = lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : status;
+                status = lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Almacenado && order.PedidoMuestra == ServiceConstants.IsSampleOrder ? ServiceConstants.Almacenado : status;
                 productType = ServiceConstants.Linea;
                 porRecibirDate = order.FechaInicio != null ? DateTime.ParseExact(order.FechaInicio, "dd/MM/yyyy", null) : porRecibirDate;
                 hasCandidate = this.CalculateIfLineOrderIsCandidate(lineProductOrder, status, order);
@@ -365,7 +367,6 @@ namespace Omicron.SapAdapter.Services.Sap
             totalItems = saporders.Count;
             totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
             initDate = order.FechaInicio != null ? DateTime.ParseExact(order.FechaInicio, "dd/MM/yyyy", null) : initDate;
-            status = order.PedidoMuestra == null ? status : ServiceConstants.Almacenado;
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
