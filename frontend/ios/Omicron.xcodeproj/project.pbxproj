@@ -33,6 +33,12 @@
 		381B3BDC25E032460077F764 /* container.json in Resources */ = {isa = PBXBuildFile; fileRef = 381B3BDB25E032460077F764 /* container.json */; };
 		381B3BE725E032B40077F764 /* ContainerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381B3BE625E032B40077F764 /* ContainerModel.swift */; };
 		381B3BF225E034B80077F764 /* ContainerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 381B3BF125E034B80077F764 /* ContainerTableViewCell.swift */; };
+		382707C025F6EB4D001F4057 /* SnapCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382707BF25F6EB4D001F4057 /* SnapCollectionView.swift */; };
+		382707C125F6EB4D001F4057 /* SnapCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382707BF25F6EB4D001F4057 /* SnapCollectionView.swift */; };
+		382707C225F6EB4D001F4057 /* SnapCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382707BF25F6EB4D001F4057 /* SnapCollectionView.swift */; };
+		383DD58925F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 383DD58825F697B8002E2C2B /* ChartCollectionViewCell.swift */; };
+		383DD58A25F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 383DD58825F697B8002E2C2B /* ChartCollectionViewCell.swift */; };
+		383DD58B25F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 383DD58825F697B8002E2C2B /* ChartCollectionViewCell.swift */; };
 		388172AA25D1A5940089B8C8 /* SF-Pro-Display-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A825D1A5940089B8C8 /* SF-Pro-Display-Light.ttf */; };
 		388172AB25D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */; };
 		38A4296925EEA1B800309B8F /* ContainerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A4296825EEA1B800309B8F /* ContainerTest.swift */; };
@@ -371,6 +377,8 @@
 		381B3BDB25E032460077F764 /* container.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = container.json; sourceTree = "<group>"; };
 		381B3BE625E032B40077F764 /* ContainerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerModel.swift; sourceTree = "<group>"; };
 		381B3BF125E034B80077F764 /* ContainerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerTableViewCell.swift; sourceTree = "<group>"; };
+		382707BF25F6EB4D001F4057 /* SnapCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCollectionView.swift; sourceTree = "<group>"; };
+		383DD58825F697B8002E2C2B /* ChartCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartCollectionViewCell.swift; sourceTree = "<group>"; };
 		38554C8225DF2BAC006F476B /* Info-QA.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-QA.plist"; sourceTree = "<group>"; };
 		388172A825D1A5940089B8C8 /* SF-Pro-Display-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Light.ttf"; sourceTree = "<group>"; };
 		388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Semibold.ttf"; sourceTree = "<group>"; };
@@ -540,6 +548,7 @@
 			isa = PBXGroup;
 			children = (
 				1EF0321B25192C5C0040DC65 /* ChartViewController.swift */,
+				383DD58825F697B8002E2C2B /* ChartCollectionViewCell.swift */,
 			);
 			path = Chart;
 			sourceTree = "<group>";
@@ -971,6 +980,7 @@
 				98532B3124B3933C0015BBC6 /* LottieManager.swift */,
 				7CED3DA224DC0FBA00C52225 /* AlertManager.swift */,
 				7CB6332724DDEE3F0055425C /* Utils.swift */,
+				382707BF25F6EB4D001F4057 /* SnapCollectionView.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1627,6 +1637,7 @@
 				49CF65C025F2D4AB002CD598 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				49CF65C125F2D4AB002CD598 /* NetworkManager.swift in Sources */,
 				49CF65C225F2D4AB002CD598 /* DetailTableViewCell.swift in Sources */,
+				383DD58A25F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
 				49CF65C325F2D4AB002CD598 /* Utils.swift in Sources */,
 				49CF65C425F2D4AB002CD598 /* FileManager.swift in Sources */,
 				49CF65C525F2D4AB002CD598 /* SignaturePadViewModel.swift in Sources */,
@@ -1669,6 +1680,7 @@
 				49CF65EA25F2D4AB002CD598 /* PDFViewController.swift in Sources */,
 				49CF65EB25F2D4AB002CD598 /* SceneDelegate.swift in Sources */,
 				49CF65EC25F2D4AB002CD598 /* ExtensionOrderDetailFormViewController.swift in Sources */,
+				382707C125F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
 				49CF65ED25F2D4AB002CD598 /* LotsAvailableTableViewCell.swift in Sources */,
 				49CF65EE25F2D4AB002CD598 /* ContainerViewModel.swift in Sources */,
 				49CF65EF25F2D4AB002CD598 /* NetworkModel.swift in Sources */,
@@ -1698,6 +1710,7 @@
 				49CF664325F2D821002CD598 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				49CF664425F2D821002CD598 /* NetworkManager.swift in Sources */,
 				49CF664525F2D821002CD598 /* DetailTableViewCell.swift in Sources */,
+				383DD58B25F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
 				49CF664625F2D821002CD598 /* Utils.swift in Sources */,
 				49CF664725F2D821002CD598 /* FileManager.swift in Sources */,
 				49CF664825F2D821002CD598 /* SignaturePadViewModel.swift in Sources */,
@@ -1740,6 +1753,7 @@
 				49CF666D25F2D821002CD598 /* PDFViewController.swift in Sources */,
 				49CF666E25F2D821002CD598 /* SceneDelegate.swift in Sources */,
 				49CF666F25F2D821002CD598 /* ExtensionOrderDetailFormViewController.swift in Sources */,
+				382707C225F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
 				49CF667025F2D821002CD598 /* LotsAvailableTableViewCell.swift in Sources */,
 				49CF667125F2D821002CD598 /* ContainerViewModel.swift in Sources */,
 				49CF667225F2D821002CD598 /* NetworkModel.swift in Sources */,
@@ -1769,6 +1783,7 @@
 				1E85E51D25224505007636E8 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				98C8C04024AFCE3500018A88 /* NetworkManager.swift in Sources */,
 				7CB6736024E1D51D0072F2F6 /* DetailTableViewCell.swift in Sources */,
+				383DD58925F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
 				7CB6332824DDEE3F0055425C /* Utils.swift in Sources */,
 				7CCC6A4824F880E200ACBBE8 /* FileManager.swift in Sources */,
 				7CF2EA3A24F6C6500005602F /* SignaturePadViewModel.swift in Sources */,
@@ -1811,6 +1826,7 @@
 				1E83B0732534F34C00755026 /* PDFViewController.swift in Sources */,
 				98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */,
 				4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */,
+				382707C025F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
 				7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */,
 				381B3BD525E0316B0077F764 /* ContainerViewModel.swift in Sources */,
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
@@ -1945,7 +1961,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 19;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron copy3-Info.plist";
@@ -1970,7 +1986,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron copy3-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2148,7 +2164,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 19;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron copy3-Info.plist";

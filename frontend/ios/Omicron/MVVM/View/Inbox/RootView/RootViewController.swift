@@ -19,12 +19,18 @@ class RootViewController: UIViewController {
     @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var kpiButton: UIButton!
     @IBOutlet weak var versionLabel: UILabel!
+
+    @IBAction func logoutAction(_ sender: UIButton) {
+        isLogOut = true
+    }
+
     // Variables
     @Injected var rootViewModel: RootViewModel
     @Injected var inboxViewModel: InboxViewModel
     @Injected var lottieManager: LottieManager
     var refreshControl = UIRefreshControl()
     let disposeBag = DisposeBag()
+    var isLogOut = false
     private var lastRow = IndexPath(row: 0, section: 0)
     // MARK: Life Cycles
     override func viewDidLoad() {
@@ -42,8 +48,10 @@ class RootViewController: UIViewController {
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.searchOrdesSearchBar.text = ""
-        self.rootViewModel.resetFilter()
+        self.searchOrdesSearchBar.text = String()
+        if !isLogOut {
+            self.rootViewModel.resetFilter()
+        }
     }
     // MARK: - Functions
     @objc func refreshOrders() {
@@ -156,6 +164,11 @@ class RootViewController: UIViewController {
         rootViewModel.showRefreshControl.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.refreshControl.endRefreshing()
         }).disposed(by: self.disposeBag)
+        rootViewModel.refreshSearch.subscribe(onNext: { [weak self] itemToSearch in
+            guard let self = self else { return }
+            self.searchOrdesSearchBar.text = itemToSearch
+            self.rootViewModel.searchFilter.onNext(itemToSearch)
+        }).disposed(by: disposeBag)
     }
     func initComponents() {
         self.viewTable.tableFooterView = UIView()

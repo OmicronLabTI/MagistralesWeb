@@ -135,7 +135,7 @@ class InboxViewController: UIViewController {
             cell?.isSelected = false
         }
         cell?.itemCode.text = element.itemCode
-        return cell ?? CardIsolatedOrderCollectionViewCell()
+        return cell!
     }
 
     func returnCardCollectionViewCell(indexPath: IndexPath, element: SectionModel<String, Order>.Item,
@@ -170,7 +170,7 @@ class InboxViewController: UIViewController {
         }
         cell?.itemCode.text = element.itemCode
         cell?.destiny.text = element.destiny
-        return cell ?? CardCollectionViewCell()
+        return cell!
     }
 
     func viewModelBindingCollectionView() {
@@ -188,7 +188,7 @@ class InboxViewController: UIViewController {
                 let cell = self?.returnCardIsolateOrderCollectionViewCell(
                     indexPath: indexPath, element: element, decimalPart: decimalPart)
                 cell?.delegate = self
-                return cell ?? CardIsolatedOrderCollectionViewCell()
+                return cell!
             }
         })
         dataSource
