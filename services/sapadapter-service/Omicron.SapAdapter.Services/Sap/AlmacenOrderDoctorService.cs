@@ -176,7 +176,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(sapOrders.Select(x => x.DocNum).ToList())).ToList();
 
             var possibleIdsToIgnore = sapOrders.Where(x => !orderHeaders.Any(y => y.PedidoId.Value == x.DocNum)).ToList();
-            var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).ToList().Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();
+            var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
 
             sapOrders = this.FilterByStatusToReceive(sapOrders, userOrdersTuple, lineProductTuple);
@@ -227,7 +227,6 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<AlmacenOrdersByDoctorModel> GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders, List<UserOrderModel> userOrders)
         {
-            var listOrders = new List<OrderListByDoctorModel>();
             var doctors = sapOrders.Select(x => x.Medico).Distinct().ToList();
 
             var listToReturn = new AlmacenOrdersByDoctorModel
@@ -263,7 +262,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = totalPieces,
                 };
 
-                listOrders = this.GetTotalOrdersByDoctor(orders, productsModel, userOrders);
+                var listOrders = this.GetTotalOrdersByDoctor(orders, productsModel, userOrders);
 
                 var saleModel = new SalesByDoctorModel
                 {
@@ -329,7 +328,7 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
             ordersByDoctorModel.SalesOrders = salesByDoctorModel.Skip(offsetNumber).Take(limitNumber).ToList();
-            ordersByDoctorModel.TotalSalesOrders = ordersByDoctorModel.SalesOrders.Count();
+            ordersByDoctorModel.TotalSalesOrders = ordersByDoctorModel.SalesOrders.Count;
             return ordersByDoctorModel;
         }
 
@@ -376,7 +375,6 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private async Task<List<CompleteAlmacenOrderModel>> GetOrdersValidsToReceiveByProducts(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<CompleteAlmacenOrderModel> sapOrders)
         {
-            var listToReturn = new List<CompleteAlmacenOrderModel>();
             var salesIds = sapOrders.Select(x => x.DocNum).Distinct();
             var productsIds = sapOrders.Where(x => salesIds.Contains(x.DocNum)).Select(y => y.Detalles.ProductoId).Distinct().ToList();
             var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
@@ -394,7 +392,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
             }
 
-            listToReturn = sapOrders.Where(x => validSalesIds.Contains(x.DocNum)).ToList();
+            var listToReturn = sapOrders.Where(x => validSalesIds.Contains(x.DocNum)).ToList();
 
             return listToReturn;
         }

@@ -207,7 +207,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return this.GetstatusForTotal(userOrders, detalles, cancelDeliveries);
             }
 
-            return this.GetstatusForPartial(userOrders, detalles, cancelDeliveries);
+            return this.GetstatusForPartial(userOrders, cancelDeliveries);
         }
 
         /// <summary>
@@ -267,9 +267,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// Calculate status.
         /// </summary>
         /// <param name="userOrders">the usr orders.</param>
-        /// <param name="details">The details.</param>
+        /// <param name="cancelDeliveries">the cancelDeliveries.</param>
         /// <returns>the data.</returns>
-        private Tuple<string, string> GetstatusForPartial(List<UserOrderModel> userOrders, List<DetallePedidoModel> details, List<CancelDeliveryPedidoModel> cancelDeliveries)
+        private Tuple<string, string> GetstatusForPartial(List<UserOrderModel> userOrders, List<CancelDeliveryPedidoModel> cancelDeliveries)
         {
             var areAnyAlmacenado = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado);
             var areAnyPending = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
@@ -458,7 +458,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var newUserOrders = sapOrder.ToUserOrderModels();
                 var listOrderLogToInsert = new List<SalesLogs>();
 
-                // newUserOrders.ForEach(x => x.Status = ServiceConstants.Cancelled);
                 foreach (var userOrders in newUserOrders)
                 {
                     userOrders.Status = ServiceConstants.Cancelled;

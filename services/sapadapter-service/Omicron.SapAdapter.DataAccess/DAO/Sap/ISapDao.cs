@@ -326,9 +326,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// Gets the invoice header by docnum.
         /// </summary>
-        /// <param name="docNums">the docnum</param>
+        /// <param name="docNum">the docnum</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNum(List<int> docNums);
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNum(List<int> docNum);
 
         /// <summary>
         /// Gets the deliveries by the sale order.

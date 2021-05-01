@@ -12,10 +12,10 @@ namespace Omicron.Pedidos.Services.Utils
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Redis;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// Class for pedidos utils.

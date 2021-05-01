@@ -8,8 +8,8 @@
 
 namespace Omicron.Reporting.Api.Controllers
 {
-    using System.Threading.Tasks;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Net.Http.Headers;
     using Omicron.Reporting.Dtos.Model;

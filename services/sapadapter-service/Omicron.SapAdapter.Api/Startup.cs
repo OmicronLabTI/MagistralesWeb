@@ -18,18 +18,15 @@ namespace Omicron.SapAdapter.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
-    using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
     using Omicron.SapAdapter.Api.Filters;
     using Omicron.SapAdapter.DependencyInjection;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
-    using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.User;
     using Prometheus;
     using Serilog;
-    using Serilog.Events;
     using StackExchange.Redis;
     using Steeltoe.Common.Http.Discovery;
     using Steeltoe.Discovery.Client;

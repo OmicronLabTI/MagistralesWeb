@@ -162,9 +162,8 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the automatic assign test.
         /// </summary>
-        /// <returns>return nothing.</returns>
         [Test]
-        public async Task AutomaticAssign()
+        public void AutomaticAssign()
         {
             var assign = new AutomaticAssingModel
             {

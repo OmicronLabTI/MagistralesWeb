@@ -17,16 +17,15 @@ namespace Omicron.Pedidos.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
-    using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
     using Omicron.Pedidos.Api.Filters;
     using Omicron.Pedidos.DependencyInjection;
     using Omicron.Pedidos.Services.AlmacenService;
+    using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
-    using Omicron.Pedidos.Services.Reporting;
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;

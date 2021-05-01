@@ -62,7 +62,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var granTotal = deliveryIds.Where(x => x != 0).Distinct().ToList().Count;
 
             var sapResponse = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
-            var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders, lineProducts);
+            var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders);
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{granTotal}-{sapResponse.Item3}");
         }
 
@@ -231,7 +231,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="headers">the delivery header.</param>
         /// <param name="userOrders">the user orders.</param>
         /// <returns>the data.</returns>
-        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<UserOrderModel> userOrders)
         {
             var listIds = details.Select(x => x.DeliveryId).Distinct().ToList();
 

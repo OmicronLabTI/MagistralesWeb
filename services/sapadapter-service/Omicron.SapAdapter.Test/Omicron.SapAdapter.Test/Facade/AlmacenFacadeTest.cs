@@ -15,7 +15,6 @@ namespace Omicron.SapAdapter.Test.Facade
     using NUnit.Framework;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Sap;
@@ -213,7 +212,7 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
-        public async Task GetInvoiceHeader()
+        public async Task GetInvoiceHeaders()
         {
             // arrange
             var data = new InvoicePackageSapLookDto();
