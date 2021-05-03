@@ -60,8 +60,14 @@ zuul:
       path: /almacen/**
       serviceId: almacenservice
     dxp:
-      path: /dxp/**
+      path: /dxp/mock/**
       url: https://reqres.in/api/ #mock endpoint, agregar serviceId de eureka
+    dxp-favorites:
+      path: /dxp/favorites/**
+      serviceId: favoritiesservice
+    dxp-sapordersadapter:
+      path: /dxp/sapordersadapter/**
+      serviceId: sapordersadapterservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
