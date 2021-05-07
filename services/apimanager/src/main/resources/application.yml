@@ -20,7 +20,7 @@ keycloak:
   auth-server-url: https://devtools.axity.com/auth
   use-resource-role-mappings: true
   public-client: true
-  enable-cors: true
+  cors: true
   realm: omicron
   resource: omicron-dxp
   securityConstraints:
