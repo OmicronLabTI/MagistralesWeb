@@ -15,6 +15,22 @@ eureka:
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
 
+keycloak:
+  enabled: true
+  auth-server-url: https://http://201.163.179.28:9090/
+  use-resource-role-mappings: true
+  public-client: true
+  cors: true
+  realm: omicron
+  resource: omicron-dxp
+  securityConstraints:
+    - authRoles:
+        - external-dxp
+      securityCollections:
+        - name: protected-dxp
+          patterns:
+            - /api/dxp/*
+  ssl-required: external
 zuul:
   ignoredServices: '*'
   prefix: /api
@@ -43,6 +59,21 @@ zuul:
     almacen:
       path: /almacen/**
       serviceId: almacenservice
+    dxp:
+      path: /dxp/mock/**
+      url: https://reqres.in/api/ #mock endpoint, agregar serviceId de eureka
+    dxp-favorites:
+      path: /dxp/favorites/**
+      serviceId: favoritiesservice
+    dxp-sapordersadapter:
+      path: /dxp/sapordersadapter/**
+      serviceId: sapordersadapterservice
+    dxp-shoppingcart:
+      path: /dxp/shoppingcart/**
+      serviceId: shoppingcartservice
+    dxp-catalog:
+      path: /dxp/catalog/**
+      serviceId: catalogsdxpservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
