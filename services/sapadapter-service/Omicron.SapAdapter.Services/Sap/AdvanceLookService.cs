@@ -689,21 +689,22 @@ namespace Omicron.SapAdapter.Services.Sap
             var totalProducts = invoiceDetail.Count;
 
             var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
-                    {
-                        Address = invoiceHeader.Address.Replace("\r", string.Empty).ToUpper(),
-                        Client = invoiceHeader.Cliente,
-                        Doctor = invoiceHeader.Medico ?? string.Empty,
-                        Invoice = invoiceHeader.DocNum,
-                        DocEntry = invoiceHeader.InvoiceId,
-                        InvoiceDocDate = invoiceHeader.FechaInicio,
-                        ProductType = invoiceHeader.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
-                        TotalDeliveries = invoiceDetail.DistinctBy(x => x.BaseEntry.Value).Count(),
-                        TotalProducts = totalProducts,
-                        StatusDelivery = ServiceConstants.Cancelado,
-                        DataCheckin = canceled.CancelDate,
-                        SalesOrder = deliverysToLookSaleOrder.DistinctBy(x => x.BaseEntry).Count(),
-                        IsLookUpInvoices = true,
-                    };
+            {
+                Address = invoiceHeader.Address.Replace("\r", string.Empty).ToUpper(),
+                Client = invoiceHeader.Cliente,
+                Doctor = invoiceHeader.Medico ?? string.Empty,
+                Invoice = invoiceHeader.DocNum,
+                DocEntry = invoiceHeader.InvoiceId,
+                InvoiceDocDate = invoiceHeader.FechaInicio,
+                ProductType = invoiceHeader.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                TotalDeliveries = invoiceDetail.DistinctBy(x => x.BaseEntry.Value).Count(),
+                TotalProducts = totalProducts,
+                StatusDelivery = ServiceConstants.Cancelado,
+                DataCheckin = canceled.CancelDate,
+                SalesOrder = deliverysToLookSaleOrder.DistinctBy(x => x.BaseEntry).Count(),
+                IsLookUpInvoices = true,
+                IsRefactura = false,
+            };
             invoicesHeaders.Add(invoiceHeaderLookUp);
             return invoicesHeaders;
         }
@@ -758,6 +759,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             StatusDelivery = deliveryHeader.Status,
                             DataCheckin = initDate,
                             IsLookUpInvoices = false,
+                            IsRefactura = !string.IsNullOrEmpty(invoiceHeader.Refactura) && invoiceHeader.Refactura == ServiceConstants.IsRefactura,
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
@@ -802,6 +804,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         DataCheckin = initDate,
                         SalesOrder = deliverys.DistinctBy(x => x.SaleOrder).Count(),
                         IsLookUpInvoices = true,
+                        IsRefactura = !string.IsNullOrEmpty(invoiceHeaders.Refactura) && invoiceHeaders.Refactura == ServiceConstants.IsRefactura,
                     };
                     invoicesHeaders.Add(invoiceHeaderLookUp);
                 }
