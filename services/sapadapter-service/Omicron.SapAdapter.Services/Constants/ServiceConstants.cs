@@ -486,6 +486,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string IsNotSampleOrder = "NO";
 
         /// <summary>
+        /// value for refactua.
+        /// </summary>
+        public const string IsRefactura = "Si";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
