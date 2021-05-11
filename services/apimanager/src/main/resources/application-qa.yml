@@ -74,6 +74,9 @@ zuul:
     dxp-catalog:
       path: /dxp/catalog/**
       serviceId: catalogsdxpservice
+    dxp-advisor:
+      path: /dxp/advisor/**
+      serviceId: advisorservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
