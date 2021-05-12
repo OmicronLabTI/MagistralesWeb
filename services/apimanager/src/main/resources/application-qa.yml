@@ -17,7 +17,7 @@ eureka:
 
 keycloak:
   enabled: true
-  auth-server-url: https://201.163.179.28:9090/auth
+  auth-server-url: http://201.163.179.28:9090/auth
   use-resource-role-mappings: true
   public-client: true
   cors: true
