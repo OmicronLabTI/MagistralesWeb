@@ -15,14 +15,14 @@ spec:
         app: web
     spec:
       containers:
-      - name: web
-        image: omicron-web-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        ports:
-        - containerPort: 80
+        - name: web
+          image: omicron-web-repository
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Mexico_City
+          ports:
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -31,9 +31,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
-    targetPort: 80
-    protocol: TCP
+    - port: 80
+      targetPort: 80
+      protocol: TCP
   externalIPs:
     - 192.168.0.101
   selector:
@@ -56,16 +56,16 @@ spec:
         app: apimanager
     spec:
       containers:
-      - name: apimanager
-        image: omicron-apimanager-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: SPRING_PROFILES_ACTIVE
-          value: dev
-        ports:
-        - containerPort: 8000
+        - name: apimanager
+          image: omicron-apimanager-repository
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: SPRING_PROFILES_ACTIVE
+              value: dev
+          ports:
+            - containerPort: 8000
 ---
 apiVersion: v1
 kind: Service
@@ -76,10 +76,10 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 8000
-    targetPort: 8000
-    protocol: TCP
-    name: apimanager
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: apimanager
   externalIPs:
     - 192.168.0.101
   selector:
@@ -102,16 +102,16 @@ spec:
         app: oauthserver
     spec:
       containers:
-      - name: oauthserver
-        image: omicron-oauthserver-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: SPRING_PROFILES_ACTIVE
-          value: dev
-        ports:
-        - containerPort: 8090
+        - name: oauthserver
+          image: omicron-oauthserver-repository
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: SPRING_PROFILES_ACTIVE
+              value: dev
+          ports:
+            - containerPort: 8090
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -130,16 +130,16 @@ spec:
         app: catalogos
     spec:
       containers:
-      - name: catalogos
-        image: omicron-catalogos-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        ports:
-        - containerPort: 9010
+        - name: catalogos
+          image: omicron-catalogos-repository
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+          ports:
+            - containerPort: 9010
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -158,16 +158,16 @@ spec:
         app: usuarios
     spec:
       containers:
-      - name: usuarios
-        image: omicron-usuarios-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        ports:
-        - containerPort: 5101
+        - name: usuarios
+          image: omicron-usuarios-repository
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+          ports:
+            - containerPort: 5101
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -186,23 +186,23 @@ spec:
         app: sapadapter
     spec:
       containers:
-      - name: sapadapter
-        image: omicron-sapadapter-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        ports:
-        - containerPort: 5102
-        livenessProbe:
-          httpGet:
-            path: /hc
-            port: 5102
-          initialDelaySeconds: 30
-          periodSeconds: 300
-          timeoutSeconds: 40
+        - name: sapadapter
+          image: omicron-sapadapter-repository
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+          ports:
+            - containerPort: 5102
+          livenessProbe:
+            httpGet:
+              path: /hc
+              port: 5102
+            initialDelaySeconds: 30
+            periodSeconds: 300
+            timeoutSeconds: 40
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -221,16 +221,16 @@ spec:
         app: pedidos
     spec:
       containers:
-      - name: pedidos
-        image: omicron-pedidos-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        ports:
-        - containerPort: 5103
+        - name: pedidos
+          image: omicron-pedidos-repository
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+          ports:
+            - containerPort: 5103
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -249,16 +249,16 @@ spec:
         app: warehouses
     spec:
       containers:
-      - name: warehouses
-        image: omicron-warehouses-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        ports:
-        - containerPort: 5104
+        - name: warehouses
+          image: omicron-warehouses-repository
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+          ports:
+            - containerPort: 5104
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -277,16 +277,16 @@ spec:
         app: reporting
     spec:
       containers:
-      - name: reporting
-        image: omicron-reporting-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        ports:
-        - containerPort: 5105
+        - name: reporting
+          image: omicron-reporting-repository
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+          ports:
+            - containerPort: 5105
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -305,20 +305,20 @@ spec:
         app: seqlog
     spec:
       containers:
-      - name: seqlog
-        image: datalust/seq:latest
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        - name: ACCEPT_EULA
-          value: "Y"
-        ports:
-        - containerPort: 80
-          name: intra
-        - containerPort: 5341
-          name: extra
+        - name: seqlog
+          image: datalust/seq:latest
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: ACCEPT_EULA
+              value: "Y"
+          ports:
+            - containerPort: 80
+              name: intra
+            - containerPort: 5341
+              name: extra
 ---
 apiVersion: v1
 kind: Service
@@ -329,18 +329,25 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - name: default
-    port: 81
-    targetPort: 80
-    protocol: TCP
-  - name: alt
-    port: 5341
-    targetPort: 5341
-    protocol: TCP
+    - name: default
+      port: 81
+      targetPort: 80
+      protocol: TCP
+    - name: alt
+      port: 5341
+      targetPort: 5341
+      protocol: TCP
   externalIPs:
     - 192.168.0.101
   selector:
     app: seqlog
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+data:
+  redis.conf: notify-keyspace-events KEx
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -359,10 +366,19 @@ spec:
         app: redisdata
     spec:
       containers:
-      - name: redisdata
-        image: redis:alpine
-        ports:
-        - containerPort: 6379
+        - name: redisdata
+          image: redis:alpine
+          args:
+            - /etc/redis/redis.conf
+          volumeMounts:
+            - name: redis-config
+              mountPath: /etc/redis
+          ports:
+            - containerPort: 6379
+      volumes:
+        - name: redis-config
+          configMap:
+            name: redis-config
 ---
 apiVersion: v1
 kind: Service
@@ -373,9 +389,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 6379
-    targetPort: 6379
-    protocol: TCP
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
   externalIPs:
     - 192.168.0.101
   selector:
@@ -398,11 +414,11 @@ spec:
         app: kafkaconsumer
     spec:
       containers:
-      - name: kafkaconsumer
-        image: omicron-kafkaconsumer-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
+        - name: kafkaconsumer
+          image: omicron-kafkaconsumer-repository
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
