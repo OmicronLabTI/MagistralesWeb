@@ -347,7 +347,7 @@ kind: ConfigMap
 metadata:
   name: redis-config
 data:
-  redis.conf: notify-keyspace-events KEx
+  redis.conf: notify-keyspace-events KEg
 ---
 apiVersion: apps/v1
 kind: Deployment
