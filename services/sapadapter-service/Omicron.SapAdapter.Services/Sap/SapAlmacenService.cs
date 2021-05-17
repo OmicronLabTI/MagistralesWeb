@@ -444,6 +444,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     InvoiceType = invoiceType,
                     TypeOrder = order.TypeOrder,
                     OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
+                    SapComments = order.Comments,
                 };
 
                 var saleModel = new SalesModel

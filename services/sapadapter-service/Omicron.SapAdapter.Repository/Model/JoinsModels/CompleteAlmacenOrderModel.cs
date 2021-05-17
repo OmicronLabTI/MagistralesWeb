@@ -61,5 +61,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The IsChecked.</value>
         public string PedidoMuestra { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Order Type.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public string Comments { get; set; }
     }
 }
