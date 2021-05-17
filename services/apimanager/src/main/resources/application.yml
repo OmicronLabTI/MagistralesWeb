@@ -78,6 +78,9 @@ zuul:
     dxp-advisor:
       path: /dxp/advisor/**
       serviceId: advisorservice
+    dxp-notifications:
+      path: /dxp/notifications/**
+      serviceId: notificationsservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
