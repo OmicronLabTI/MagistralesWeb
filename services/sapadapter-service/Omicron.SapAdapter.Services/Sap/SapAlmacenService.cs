@@ -426,6 +426,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalItems = totalItems,
                     TotalPieces = totalpieces,
                     TypeOrder = order.TypeOrder,
+                    OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
                 };
 
                 var saleHeader = new AlmacenSalesHeaderModel
@@ -442,6 +443,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     OrderCounter = $"{totalAlmacenados}/{orders.Count}",
                     InvoiceType = invoiceType,
                     TypeOrder = order.TypeOrder,
+                    OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
+                    SapComments = order.Comments,
                 };
 
                 var saleModel = new SalesModel

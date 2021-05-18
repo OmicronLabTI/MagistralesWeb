@@ -67,6 +67,7 @@
     <Compile Include="Models\BatchesConfigurationDto.cs" />
     <Compile Include="Models\CancelDeliveryDto.cs" />
     <Compile Include="Models\CloseProductionOrderDto.cs" />
+    <Compile Include="Models\CloseSampleOrderDto.cs" />
     <Compile Include="Models\CompleteDetailDto.cs" />
     <Compile Include="Models\CompleteDetalleFormulaDto.cs" />
     <Compile Include="Models\CreateDeliveryDto.cs" />

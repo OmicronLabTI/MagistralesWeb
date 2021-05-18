@@ -37,5 +37,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <param name="createDelivery">the delivery.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> CreateDeliveryBatch(List<CreateDeliveryModel> createDelivery);
+
+        /// <summary>
+        /// cerates the output and closes de muestra.
+        /// </summary>
+        /// <param name="ordersId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CloseMuestra(List<CloseSampleOrderModel> ordersId);
     }
 }

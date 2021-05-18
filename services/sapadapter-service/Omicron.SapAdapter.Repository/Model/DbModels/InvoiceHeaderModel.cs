@@ -133,6 +133,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string Canceled { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_Refactura")]
+        public string Refactura { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>

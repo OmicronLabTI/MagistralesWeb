@@ -27,11 +27,15 @@ class RootViewModel {
     var searchFilter = PublishSubject<String>()
     var needsRefresh = true
     var removeSelecteds = false
+    var refreshSearch = PublishSubject<String>()
+    var searchStore = String()
+    var needSearch = false
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
     init() {
         self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(true)
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 Persistence.shared.removePersistenceData()
                 self?.goToLoginViewController.onNext(())
@@ -39,10 +43,13 @@ class RootViewModel {
             }
         }).disposed(by: self.disposeBag)
         self.searchFilter.subscribe(onNext: { [weak self] text in
+            self?.searchStore = text
             if text.count == 0 {
+                self?.needSearch = false
                 self?.dataFilter.onNext(nil)
                 return
             }
+            self?.needSearch = true
             let orders = self?.sections.map({ $0.orders }).reduce([], +)
             let filter = orders?.filter({ order in
                 guard let orderId = order.productionOrderId else { return false }
@@ -89,7 +96,7 @@ class RootViewModel {
         needsRefresh = true
         if let userData = Persistence.shared.getUserData(), let userId = userData.id {
             if needsRefresh { self.loading.onNext(true) }
-            chartViewModel.getWorkload()
+            chartViewModel.getWorkloads()
             removeSelecteds = needsRefresh
             self.networkManager.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
@@ -111,6 +118,9 @@ class RootViewModel {
                 }
                 if isUpdate {
                     self.showRefreshControl.onNext(())
+                }
+                if self.needSearch {
+                    self.refreshSearch.onNext(self.searchStore)
                 }
                 }, onError: { [weak self] err in
                     guard let self = self else { return }

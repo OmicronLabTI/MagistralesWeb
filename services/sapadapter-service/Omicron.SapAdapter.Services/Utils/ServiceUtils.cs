@@ -133,6 +133,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 x.FinishedLabel = order == null ? 0 : order.FinishedLabel;
                 x.Detalles = null;
                 x.FechaFin = order != null && order.CloseDate.HasValue ? order.CloseDate.Value.ToString("dd/MM/yyyy") : string.Empty;
+                x.OrderType = !string.IsNullOrEmpty(x.PedidoMuestra) && x.PedidoMuestra == ServiceConstants.IsSampleOrder ? ServiceConstants.OrderTypeMU : x.OrderType;
             });
 
             if (parameters.ContainsKey(ServiceConstants.DocNum))

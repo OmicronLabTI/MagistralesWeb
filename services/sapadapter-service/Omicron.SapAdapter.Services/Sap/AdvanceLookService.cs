@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -178,6 +179,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIds(tupleIds.Where(x => x.Item2 == ServiceConstants.SaleOrder || x.Item2 == ServiceConstants.DontExistsTable).Select(y => y.Item1).ToList())).ToList();
             var sapDeliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(tupleIds.Where(x => x.Item2 == ServiceConstants.Delivery).Select(y => y.Item1).ToList())).ToList();
             sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryBySaleOrder(sapSaleOrder.Select(x => x.DocNum).ToList()));
+            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryByDocEntry(sapDeliveryDetails.Select(x => x.DeliveryId).ToList()));
             var sapDelivery = (await this.sapDao.GetDeliveryModelByDocNum(sapDeliveryDetails.Select(y => y.DeliveryId).ToList())).ToList();
 
             var sapInvoicesHeaders = (await this.sapDao.GetInvoiceHeadersByDocNum(tupleIds.Where(x => x.Item2 == ServiceConstants.Invoice || x.Item2 == ServiceConstants.DontExistsTable).Select(y => y.Item1).ToList())).ToList();
@@ -206,7 +208,7 @@ namespace Omicron.SapAdapter.Services.Sap
             });
             sapInvoicesDeatils = temporalsapInvoicesDeatils;
             sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryByDocEntry(sapInvoicesDeatils.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList()));
-            sapDeliveryDetails.GroupBy(x => x.DeliveryId).ToList().ForEach(x =>
+            sapDeliveryDetails.GroupBy(x => new { x.DeliveryId, x.BaseEntry }).ToList().ForEach(x =>
             {
                 temporalsapDeliveryDetails.AddRange(x.DistinctBy(d => d.ProductoId));
             });
@@ -249,6 +251,7 @@ namespace Omicron.SapAdapter.Services.Sap
             tupleIds.ForEach(order =>
             {
                 cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, objectCardOrder));
+                cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrdersSample(order, objectCardOrder));
                 cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, objectCardOrder));
                 cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, objectCardOrder));
                 cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, objectCardOrder));
@@ -272,13 +275,38 @@ namespace Omicron.SapAdapter.Services.Sap
             var existanceLin = paramentsCards.LineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1);
             existanceLin ??= new LineProductsModel { StatusAlmacen = string.Empty };
 
-            if (ServiceConstants.StatusToIgnoreUserOrderAdvancedLook.Contains(existanceMag.Status) || existanceLin.StatusAlmacen == ServiceConstants.Cancelado)
+            if (ServiceConstants.StatusToIgnoreUserOrderAdvancedLook.Contains(existanceMag.Status) || ServiceConstants.StatusToIgnoreLineOrderAdvancedLook.Contains(existanceLin.StatusAlmacen))
             {
                 return new List<AlmacenSalesHeaderModel>();
             }
 
             var userOrder = paramentsCards.UserOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)));
             var lineProductOrder = paramentsCards.LineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Recibir);
+            paramentsCards.UserOrder = userOrder;
+            paramentsCards.LineProductOrder = lineProductOrder;
+
+            return this.GenerateCardForReceptionOrders(tuple, paramentsCards);
+        }
+
+        private List<AlmacenSalesHeaderModel> GetIsReceptionOrdersSample(Tuple<int, string> tuple, ParamentsCards paramentsCards)
+        {
+            if (tuple.Item2 != ServiceConstants.SaleOrder)
+            {
+                return new List<AlmacenSalesHeaderModel>();
+            }
+
+            var existanceMag = paramentsCards.UserOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString());
+            existanceMag ??= new UserOrderModel { Status = ServiceConstants.Almacenado };
+            var existanceLin = paramentsCards.LineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1);
+            existanceLin ??= new LineProductsModel { StatusAlmacen = ServiceConstants.Almacenado };
+
+            if (existanceMag.Status != ServiceConstants.Almacenado || existanceLin.StatusAlmacen != ServiceConstants.Almacenado)
+            {
+                return new List<AlmacenSalesHeaderModel>();
+            }
+
+            var userOrder = paramentsCards.UserOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && x.Status == ServiceConstants.Almacenado && x.StatusAlmacen == ServiceConstants.Almacenado);
+            var lineProductOrder = paramentsCards.LineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Almacenado);
             paramentsCards.UserOrder = userOrder;
             paramentsCards.LineProductOrder = lineProductOrder;
 
@@ -299,6 +327,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var initDate = DateTime.Now;
             var userOrder = paramentsCards.UserOrder;
             var lineProductOrder = paramentsCards.LineProductOrder;
+            var comments = new StringBuilder();
 
             if (userOrder != null)
             {
@@ -307,9 +336,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 order = saporders.FirstOrDefault();
                 status = ServiceConstants.StatusForBackOrder.Contains(userOrder.Status) && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
                 status = userOrder.Status != ServiceConstants.Finalizado && userOrder.Status != ServiceConstants.Almacenado && status != ServiceConstants.BackOrder ? ServiceConstants.Pendiente : status;
+                status = userOrder.Status == ServiceConstants.Almacenado && order.PedidoMuestra == ServiceConstants.IsSampleOrder ? ServiceConstants.Almacenado : status;
                 productType = saporders.Any(x => x.Detalles != null && paramentsCards.ProductModel.Any(p => p.ProductoId == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
-                hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status);
+                comments.Append($"{userOrder.Comments}&");
+                hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status, order);
             }
 
             var hasDeliveries = paramentsCards.DeliveryDetails.Where(x => x.BaseEntry == tuple.Item1).Select(x => x.DeliveryId).ToList();
@@ -321,9 +352,10 @@ namespace Omicron.SapAdapter.Services.Sap
                 order = saporders.FirstOrDefault();
                 status = lineProductOrder == null ? ServiceConstants.PorRecibir : lineProductOrder.StatusAlmacen;
                 status = lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : status;
+                status = lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Almacenado && order.PedidoMuestra == ServiceConstants.IsSampleOrder ? ServiceConstants.Almacenado : status;
                 productType = ServiceConstants.Linea;
                 porRecibirDate = order.FechaInicio != null ? DateTime.ParseExact(order.FechaInicio, "dd/MM/yyyy", null) : porRecibirDate;
-                hasCandidate = true;
+                hasCandidate = this.CalculateIfLineOrderIsCandidate(lineProductOrder, status, order);
             }
 
             if (!hasCandidate)
@@ -348,12 +380,15 @@ namespace Omicron.SapAdapter.Services.Sap
                 Client = order.Cliente,
                 TotalPieces = totalPieces,
                 DataCheckin = porRecibirDate,
+                OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
+                Comments = comments.ToString(),
+                SapComments = order.Comments,
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };
         }
 
-        private bool CalulateIfSaleOrderIsCandidate(List<UserOrderModel> userOrders, string statusOrder)
+        private bool CalulateIfSaleOrderIsCandidate(List<UserOrderModel> userOrders, string statusOrder, CompleteOrderModel order)
         {
             var hasCandidate = false;
             if (statusOrder == ServiceConstants.Finalizado)
@@ -374,7 +409,25 @@ namespace Omicron.SapAdapter.Services.Sap
                 return hasCandidate;
             }
 
+            if (statusOrder == ServiceConstants.Almacenado && !string.IsNullOrEmpty(order.PedidoMuestra) && order.PedidoMuestra == ServiceConstants.IsSampleOrder)
+            {
+                return true;
+            }
+
             return hasCandidate;
+        }
+
+        private bool CalculateIfLineOrderIsCandidate(LineProductsModel lineProduct, string statusOrder, CompleteOrderModel order)
+        {
+            var statusToValidate = lineProduct == null ? statusOrder : lineProduct.StatusAlmacen;
+            switch (statusToValidate)
+            {
+                case ServiceConstants.Almacenado:
+                    return !string.IsNullOrEmpty(order.PedidoMuestra) && order.PedidoMuestra == ServiceConstants.IsSampleOrder;
+
+                default:
+                    return true;
+            }
         }
 
         private List<AlmacenSalesHeaderModel> GetIsReceptionDelivery(Tuple<int, string> tuple, ParamentsCards paramsCard)
@@ -469,8 +522,14 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var header = deliveryHeaders.FirstOrDefault(x => x.DocNum == delivery);
                 header ??= new DeliverModel();
-                var deliveryDetail = deliveryDetailModels.Where(x => x.DeliveryId == delivery).DistinctBy(x => x.ProductoId).ToList();
-                var saleOrder = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.FirstOrDefault().BaseEntry : 0;
+                var deliveryDetail = deliveryDetailModels.Where(x => x.DeliveryId == delivery).ToList();
+
+                var salesOrders = deliveryDetail.Select(x => x.BaseEntry).Distinct().OrderByDescending(y => y).ToList();
+
+                var listSalesOrders = new StringBuilder();
+                salesOrders.ForEach(x => listSalesOrders.Append($" {x},"));
+                listSalesOrders.Remove(listSalesOrders.Length - 1, 1);
+
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
                 var invoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
@@ -484,7 +543,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var saleHeaderItem = new AlmacenSalesHeaderModel
                 {
                     Client = header.Cliente,
-                    DocNum = saleOrder,
+                    DocNum = salesOrders.Count,
                     Doctor = header.Medico,
                     InitDate = header.FechaInicio,
                     Status = status,
@@ -494,6 +553,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeSaleOrder = $"Pedido {productType}",
                     InvoiceType = invoiceType,
                     DataCheckin = initDate.Value,
+                    ListSaleOrder = listSalesOrders.ToString(),
                 };
                 saleHeader.Add(saleHeaderItem);
             }
@@ -629,21 +689,22 @@ namespace Omicron.SapAdapter.Services.Sap
             var totalProducts = invoiceDetail.Count;
 
             var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
-                    {
-                        Address = invoiceHeader.Address.Replace("\r", string.Empty),
-                        Client = invoiceHeader.Cliente,
-                        Doctor = invoiceHeader.Medico ?? string.Empty,
-                        Invoice = invoiceHeader.DocNum,
-                        DocEntry = invoiceHeader.InvoiceId,
-                        InvoiceDocDate = invoiceHeader.FechaInicio,
-                        ProductType = invoiceHeader.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
-                        TotalDeliveries = invoiceDetail.DistinctBy(x => x.BaseEntry.Value).Count(),
-                        TotalProducts = totalProducts,
-                        StatusDelivery = ServiceConstants.Cancelado,
-                        DataCheckin = canceled.CancelDate,
-                        SalesOrder = deliverysToLookSaleOrder.DistinctBy(x => x.BaseEntry).Count(),
-                        IsLookUpInvoices = true,
-                    };
+            {
+                Address = invoiceHeader.Address.Replace("\r", string.Empty).ToUpper(),
+                Client = invoiceHeader.Cliente,
+                Doctor = invoiceHeader.Medico ?? string.Empty,
+                Invoice = invoiceHeader.DocNum,
+                DocEntry = invoiceHeader.InvoiceId,
+                InvoiceDocDate = invoiceHeader.FechaInicio,
+                ProductType = invoiceHeader.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                TotalDeliveries = invoiceDetail.DistinctBy(x => x.BaseEntry.Value).Count(),
+                TotalProducts = totalProducts,
+                StatusDelivery = ServiceConstants.Cancelado,
+                DataCheckin = canceled.CancelDate,
+                SalesOrder = deliverysToLookSaleOrder.DistinctBy(x => x.BaseEntry).Count(),
+                IsLookUpInvoices = true,
+                IsRefactura = false,
+            };
             invoicesHeaders.Add(invoiceHeaderLookUp);
             return invoicesHeaders;
         }
@@ -684,7 +745,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     {
                         var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
                         {
-                            Address = invoiceHeader.Address.Replace("\r", string.Empty),
+                            Address = invoiceHeader.Address.Replace("\r", string.Empty).ToUpper(),
                             Client = invoiceHeader.Cliente,
                             Doctor = invoiceHeader.Medico ?? string.Empty,
                             Invoice = invoiceHeader.DocNum,
@@ -698,6 +759,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             StatusDelivery = deliveryHeader.Status,
                             DataCheckin = initDate,
                             IsLookUpInvoices = false,
+                            IsRefactura = !string.IsNullOrEmpty(invoiceHeader.Refactura) && invoiceHeader.Refactura == ServiceConstants.IsRefactura,
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
@@ -729,7 +791,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
                     {
-                        Address = invoiceHeaders.Address.Replace("\r", string.Empty),
+                        Address = invoiceHeaders.Address.Replace("\r", string.Empty).ToUpper(),
                         Client = invoiceHeaders.Cliente,
                         Doctor = invoiceHeaders.Medico ?? string.Empty,
                         Invoice = invoiceHeaders.DocNum,
@@ -742,6 +804,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         DataCheckin = initDate,
                         SalesOrder = deliverys.DistinctBy(x => x.SaleOrder).Count(),
                         IsLookUpInvoices = true,
+                        IsRefactura = !string.IsNullOrEmpty(invoiceHeaders.Refactura) && invoiceHeaders.Refactura == ServiceConstants.IsRefactura,
                     };
                     invoicesHeaders.Add(invoiceHeaderLookUp);
                 }
@@ -933,7 +996,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 DeliverId = !isFromInvoice ? userOrder.DeliveryId : 0,
                 SalesOrder = !isFromInvoice ? int.Parse(userOrder.Salesorderid) : totalSales.Count,
                 StatusDelivery = userOrder.StatusInvoice,
-                Address = invoice.Address.Replace("\r", string.Empty),
+                Address = invoice.Address.Replace("\r", string.Empty).ToUpper(),
                 ProductType = invoice.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                 Doctor = invoice.Medico,
                 TotalDeliveries = localInvoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),

@@ -59,11 +59,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryIds = userOrders.Select(x => x.DeliveryId).Distinct().ToList();
             deliveryIds.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct().ToList());
 
-            var granTotal = deliveryIds.Where(x => x != 0).Distinct().ToList().Count;
-
             var sapResponse = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
-            var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders);
-            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{granTotal}-{sapResponse.Item3}");
+            var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders, sapResponse.Item5);
+            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{sapResponse.Item4}-{sapResponse.Item3}");
         }
 
         /// <inheritdoc/>
@@ -119,14 +117,19 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="lineModels">the line produtcs.</param>
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int>> GetOrdersByType(List<string> types, List<UserOrderModel> userOrders, List<LineProductsModel> lineModels, Dictionary<string, string> parameters)
+        private async Task<Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, int, List<InvoiceHeaderModel>>> GetOrdersByType(List<string> types, List<UserOrderModel> userOrders, List<LineProductsModel> lineModels, Dictionary<string, string> parameters)
         {
             var listDeliveryIds = lineModels.Select(x => x.DeliveryId).ToList();
             listDeliveryIds.AddRange(userOrders.Select(x => x.DeliveryId).ToList());
             listDeliveryIds = listDeliveryIds.OrderBy(x => x).Distinct().ToList();
 
             var deliveryDetailDb = (await this.sapDao.GetDeliveryByDocEntry(listDeliveryIds)).ToList();
+            var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(deliveryDetailDb.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList())).ToList();
+            var invoiceRefactura = invoices.Where(x => !string.IsNullOrEmpty(x.Refactura) && x.Refactura == ServiceConstants.IsRefactura).Select(y => y.InvoiceId).ToList();
+            invoices = invoices.Where(x => string.IsNullOrEmpty(x.Refactura) || x.Refactura != ServiceConstants.IsRefactura).ToList();
+            deliveryDetailDb = deliveryDetailDb.Where(x => !x.InvoiceId.HasValue || !invoiceRefactura.Contains(x.InvoiceId.Value)).ToList();
             var sapOrdersGroup = deliveryDetailDb.GroupBy(x => x.DeliveryId).ToList();
+            var granTotal = sapOrdersGroup.Count;
 
             var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
 
@@ -179,7 +182,7 @@ namespace Omicron.SapAdapter.Services.Sap
             deliveryToReturn = deliveryToReturn.Where(x => deliveryHeaders.Any(y => y.DocNum == x.DeliveryId)).ToList();
             deliveryToReturn = deliveryToReturn.OrderByDescending(x => x.DeliveryId).ToList();
 
-            return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int>(deliveryToReturn, deliveryHeaders, filterCount);
+            return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, granTotal, invoices);
         }
 
         /// <summary>
@@ -230,8 +233,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="details">the delivery details.</param>
         /// <param name="headers">the delivery header.</param>
         /// <param name="userOrders">the user orders.</param>
+        /// <param name="invoices">The invoices.</param>
         /// <returns>the data.</returns>
-        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<UserOrderModel> userOrders)
+        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<UserOrderModel> userOrders, List<InvoiceHeaderModel> invoices)
         {
             var listIds = details.Select(x => x.DeliveryId).Distinct().ToList();
 
@@ -244,7 +248,6 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var productsIds = details.Where(x => listIds.Contains(x.DeliveryId)).Select(y => y.ProductoId).Distinct().ToList();
             var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
-            var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(details.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList())).ToList();
             var saleOrdersByDeliveries = (await this.sapDao.GetOrdersById(details.Select(x => x.BaseEntry).ToList())).ToList();
 
             foreach (var d in listIds)
@@ -252,7 +255,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
                 header ??= new DeliverModel { Medico = string.Empty, FechaInicio = DateTime.Now, Cliente = string.Empty, Address = string.Empty };
                 header.Address = string.IsNullOrEmpty(header.Address) ? string.Empty : header.Address;
-                var deliveryDetail = details.Where(x => x.DeliveryId == d).DistinctBy(x => x.ProductoId).ToList();
+                var deliveryDetail = details.Where(x => x.DeliveryId == d).ToList();
                 var saleOrders = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.Select(x => x.BaseEntry).ToList() : new List<int> { 0 };
                 var saleOrdersString = saleOrders.Select(y => y.ToString()).ToList();
                 var totalItems = deliveryDetail.Count;
@@ -352,7 +355,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var saleId = deliveryDetails.FirstOrDefault().BaseEntry;
             var baseDelivery = deliveryDetails.FirstOrDefault().DeliveryId;
             var prodOrders = (await this.sapDao.GetFabOrderBySalesOrderId(new List<int> { saleId })).ToList();
-            var batchesQty = await this.GetBatchesBySale(baseDelivery, deliveryDetails.Select(x => x.ProductoId).ToList());
+            var batchesQty = await this.GetBatchesBySale(baseDelivery, saleId, deliveryDetails.Select(x => x.ProductoId).ToList());
             var batches = await this.GetValidBatches(deliveryDetails.Select(x => x.ProductoId).ToList(), ServiceConstants.PT);
 
             foreach (var order in deliveryDetails)
@@ -415,14 +418,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Gets the batches by the sale.
         /// </summary>
-        /// <param name="saleId">the sales.</param>
+        /// <param name="deliveryId">the delivery.</param>
+        /// <param name="saleId">The sale id.</param>
         /// <param name="itemCode">The codes.</param>
         /// <returns>the data.</returns>
-        private async Task<List<BatchesTransactionQtyModel>> GetBatchesBySale(int saleId, List<string> itemCode)
+        private async Task<List<BatchesTransactionQtyModel>> GetBatchesBySale(int deliveryId, int saleId, List<string> itemCode)
         {
             var listLastTransactions = new List<BatchTransacitions>();
-            var batchesBySale = (await this.sapDao.GetBatchesTransactionByOrderItem(new List<int> { saleId })).ToList();
-            batchesBySale = batchesBySale.Where(x => itemCode.Contains(x.ItemCode)).ToList();
+            var batchesBySale = (await this.sapDao.GetBatchesTransactionByOrderItem(new List<int> { deliveryId })).ToList();
+            batchesBySale = batchesBySale.Where(x => itemCode.Contains(x.ItemCode) && x.BaseEntry == saleId).ToList();
             batchesBySale.GroupBy(x => x.ItemCode).Where(a => a.Any()).ToList().ForEach(y =>
             {
                 var logs = y.OrderBy(z => z.LogEntry).ToList();
@@ -463,9 +467,9 @@ namespace Omicron.SapAdapter.Services.Sap
         private List<string> GetBatchesByDelivery(string itemCode, List<BatchesTransactionQtyModel> batchTrans, List<CompleteBatchesJoinModel> validBatches,  List<AlmacenBatchModel> batchName)
         {
             var listToReturn = new List<string>();
-            var batchTransLocal = batchTrans.Where(x => x.ItemCode == itemCode);
-
-            validBatches.Where(x => batchTransLocal.Any(y => y.SysNumber == x.SysNumber)).ToList().ForEach(z =>
+            var batchTransLocal = batchTrans.Where(x => x.ItemCode == itemCode).ToList();
+            var batchesToLoop = validBatches.Where(x => batchTransLocal.Any(y => y.SysNumber == x.SysNumber) && x.ItemCode == itemCode).ToList();
+            batchesToLoop.ForEach(z =>
             {
                 var batch = batchName.FirstOrDefault(a => a.BatchNumber == z.DistNumber);
                 batch ??= new AlmacenBatchModel() { BatchQty = 0 };

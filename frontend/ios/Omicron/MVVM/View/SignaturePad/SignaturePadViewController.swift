@@ -55,20 +55,16 @@ class SignaturePadViewController: UIViewController {
     }
     func initComponents() {
         signaturePadView.delegate = self
-        signatureTitleView.backgroundColor = UIColor.init(named: "darkGray")
-        buttonsView.backgroundColor = UIColor.init(named: "darkGray")
+        view.layer.cornerRadius = 10
         signatureTitleLabel.text = self.titleView
-        signatureTitleLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
-        signatureTitleLabel.textColor = .white
+        signatureTitleLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
         clearButton.setTitle(CommonStrings.clear, for: .normal)
-        clearButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 20)
-        cancelButton.setTitle(CommonStrings.cancel.uppercased(), for: .normal)
-        cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
-        cancelButton.setTitleColor(.white, for: .normal)
-        acceptButton.setTitle(CommonStrings.accept.uppercased(), for: .normal)
-        acceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 20)
-        acceptButton.setTitleColor(.white, for: .normal)
-        acceptButton.backgroundColor = UIColor.systemGreen
+        clearButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 17)
+        cancelButton.setTitle(CommonStrings.cancel, for: .normal)
+        cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 17)
+        cancelButton.setTitleColor(.systemRed, for: .normal)
+        acceptButton.setTitle(CommonStrings.accept, for: .normal)
+        acceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 17)
     }
 }
 extension SignaturePadViewController: SignaturePadDelegate {

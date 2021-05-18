@@ -199,7 +199,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// subject for email.
         /// </summary>
-        public const string BodyIncidentReport = "<p> Se adjunta el reporte semanal de Incidencias internas del almacén PT creadas del lunes {0} al viernes {1}.";
+        public const string BodyIncidentReport = "<p> Se adjunta el reporte semanal de Incidencias internas del almacén PT creadas del {0} al {1}.";
 
         /// <summary>
         /// refund policy.
@@ -243,6 +243,16 @@ namespace Omicron.Reporting.Services.Constants
         public const string Mixture = "MX";
 
         /// <summary>
+        /// comments.
+        /// </summary>
+        public const string Comments = "Comments";
+
+        /// <summary>
+        /// Create date.
+        /// </summary>
+        public const string CreateDate = "CreateDateString";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -266,7 +276,7 @@ namespace Omicron.Reporting.Services.Constants
         public static Dictionary<string, string> IncidentKeys { get; } = new Dictionary<string, string>
         {
             { "ID", "Id" },
-            { "FECHA INCIDENCIA", "CreateDate" },
+            { "FECHA INCIDENCIA", CreateDate },
             { "PEDIDO", "SaleOrder" },
             { "REMISIÓN", "Delivery" },
             { "FACTURA", "Invoice" },
@@ -276,7 +286,7 @@ namespace Omicron.Reporting.Services.Constants
             { "LOTE / PIEZAS DAÑADAS", "Batches" },
             { "ETAPA", "Stage" },
             { "ESTATUS INCIDENCIA", "Status" },
-            { "COMENTARIOS", "Comments" },
+            { "COMENTARIOS", Comments },
         };
     }
 }

@@ -61,6 +61,16 @@ class UtilsManager {
            }
            return nil
     }
+    func formattedDateFromString(dateString: String, inputFormat: String, outputFormat: String) -> String? {
+           let inputFormatter = DateFormatter()
+           inputFormatter.dateFormat = inputFormat
+           if let date = inputFormatter.date(from: dateString) {
+               let outputFormatter = DateFormatter()
+             outputFormatter.dateFormat = outputFormat
+               return outputFormatter.string(from: date)
+           }
+           return nil
+    }
     func formattedDateToString(date: Date, withFormat format: String = "dd/MM/yyyy") -> String {
         let inputFormatter = DateFormatter()
         inputFormatter.dateFormat = format

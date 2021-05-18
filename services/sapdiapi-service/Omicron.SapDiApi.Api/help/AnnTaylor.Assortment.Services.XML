@@ -234,6 +234,13 @@
             <param name="createDelivery">Isolated production order.</param>
             <returns>Operation result.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateDeliveryBatch(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CreateDeliveryDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="createDelivery">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateTracking(Omicron.SapDiApi.Dtos.Models.SendPackageDto)">
             <summary>
             Create new isolated production order.
@@ -247,6 +254,13 @@
             </summary>
             /// <param name="type">the type.</param>
             <param name="deliveries">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CloseMuestra(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CloseSampleOrderDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="orderId">Isolated production order.</param>
             <returns>Operation result.</returns>
         </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
