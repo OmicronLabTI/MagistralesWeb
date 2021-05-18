@@ -13,10 +13,12 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.Utils;
@@ -34,6 +36,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IKafkaConnector kafkaConnector;
 
+        private readonly IRedisService redisService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProcessOrdersService"/> class.
         /// </summary>
@@ -41,12 +45,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="pedidosDao">pedidos dao.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
-        public ProcessOrdersService(ISapAdapter sapAdapter, ISapDiApi sapDiApi, IPedidosDao pedidosDao, IKafkaConnector kafkaConnector)
+        /// <param name="redisService">The redis service.</param>
+        public ProcessOrdersService(ISapAdapter sapAdapter, ISapDiApi sapDiApi, IPedidosDao pedidosDao, IKafkaConnector kafkaConnector, IRedisService redisService)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
             this.kafkaConnector = kafkaConnector ?? throw new ArgumentNullException(nameof(kafkaConnector));
+            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
         /// <summary>
@@ -56,6 +62,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the result.</returns>
         public async Task<ResultModel> ProcessOrders(ProcessOrderModel pedidosId)
         {
+            await this.BlockSaleOrderWhilePlaning(pedidosId.ListIds);
+
             var listToSend = await this.GetListToCreateFromOrders(pedidosId);
             var dictResult = await this.CreateFabOrders(listToSend);
             var listOrders = await this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok]);
@@ -82,6 +90,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
+            await this.UnBlockSaleOrderWhilePlanning(pedidosId.ListIds);
             return ServiceUtils.CreateResult(true, 200, userError, dictResult[ServiceConstants.ErrorCreateFabOrd], null);
         }
 
@@ -92,6 +101,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> ProcessByOrder(ProcessByOrderModel processByOrder)
         {
+            await this.BlockSaleOrderWhilePlaning(new List<int> { processByOrder.PedidoId });
             var ordersSap = await this.GetOrdersWithDetail(new List<int> { processByOrder.PedidoId });
 
             var orders = ordersSap.FirstOrDefault(x => x.Order.PedidoId == processByOrder.PedidoId);
@@ -151,6 +161,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
+            await this.UnBlockSaleOrderWhilePlanning(new List<int> { processByOrder.PedidoId });
             return ServiceUtils.CreateResult(true, 200, userError, dictResult[ServiceConstants.ErrorCreateFabOrd], null);
         }
 
@@ -367,6 +378,31 @@ namespace Omicron.Pedidos.Services.Pedidos
                 },
                 Detalle = new List<CompleteDetailOrderModel>(listUpdated),
             };
+        }
+
+        private async Task BlockSaleOrderWhilePlaning(List<int> saleOrder)
+        {
+            foreach (var pedido in saleOrder)
+            {
+                var redisvalue = await this.redisService.GetRedisKey(string.Format(ServiceConstants.PedidoRedisPlanificado, pedido));
+
+                if (string.IsNullOrEmpty(redisvalue))
+                {
+                    await this.redisService.WriteToRedis(string.Format(ServiceConstants.PedidoRedisPlanificado, pedido), string.Format(ServiceConstants.PedidoRedisPlanificado, pedido), new TimeSpan(0, 1, 0));
+                }
+                else
+                {
+                    throw new CustomServiceException(string.Format(ServiceConstants.ErrorWhenPlanning, pedido), System.Net.HttpStatusCode.BadRequest);
+                }
+            }
+        }
+
+        private async Task UnBlockSaleOrderWhilePlanning(List<int> saleOrder)
+        {
+            foreach (var pedido in saleOrder)
+            {
+                await this.redisService.DeleteKey(string.Format(ServiceConstants.PedidoRedisPlanificado, pedido));
+            }
         }
     }
 }
