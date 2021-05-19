@@ -81,6 +81,9 @@ zuul:
     dxp-notifications:
       path: /dxp/notifications/**
       serviceId: notificationsservice
+    dxp-doctors:
+      path: /dxp/doctors/**
+      serviceId: doctorservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
