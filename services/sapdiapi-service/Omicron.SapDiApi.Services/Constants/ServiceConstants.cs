@@ -206,6 +206,21 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string Total = "total";
 
         /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionUpdate = "u";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionInsert = "i";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionDelete = "d";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -50,11 +50,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 return ServiceUtils.CreateResult(false, 400, ServiceConstants.DoctorNotFound, ServiceConstants.DoctorNotFound, null);
             }
 
-            var addressToUpdate = addresses.Where(x => x.Action == "update").ToList();
-            var addressToInsert = addresses.Where(x => x.Action == "insert").ToList();
-            var addressToDelete = addresses.Where(x => x.Action == "delete").ToList();
+            var addressToUpdate = addresses.Where(x => x.Action == ServiceConstants.ActionUpdate).ToList();
+            var addressToInsert = addresses.Where(x => x.Action == ServiceConstants.ActionInsert).ToList();
+            var addressToDelete = addresses.Where(x => x.Action == ServiceConstants.ActionDelete).ToList();
 
-            doctorSap = this.InsertAddress(addressToInsert, doctor, ServiceConstants.AddresShip, doctorSap);
+            doctorSap = this.InsertAddress(addressToInsert, ServiceConstants.AddresShip, doctorSap);
             doctorSap = this.UpdateAddress(addressToUpdate, doctor, ServiceConstants.AddresShip, doctorSap);
             var updated = doctorSap.Update();
 
@@ -71,7 +71,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             return ServiceUtils.CreateResult(responseDelete.Item1, code, responseDelete.Item2, null, null);
         }
 
-        private BusinessPartners InsertAddress(List<DoctorDeliveryAddressModel> addresses, string doctor, string type, BusinessPartners doctorSap)
+        private BusinessPartners InsertAddress(List<DoctorDeliveryAddressModel> addresses, string type, BusinessPartners doctorSap)
         {
             foreach (var address in addresses)
             {
