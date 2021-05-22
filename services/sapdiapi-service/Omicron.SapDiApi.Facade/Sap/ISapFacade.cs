@@ -121,6 +121,13 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> UpdateDoctorAddress(List<DoctorInvoiceAddressDto> address);
 
         /// <summary>
+        /// Set as default an address.
+        /// </summary>
+        /// <param name="address">the address.</param>
+        /// <returns>the dta.</returns>
+        Task<ResultDto> UpdateDoctorDefaultAddress(DoctorDefaultAddressDto address);
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>

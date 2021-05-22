@@ -231,6 +231,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="address">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("doctor/default/address")]
+        public async Task<IHttpActionResult> UpdateDoctorDefaultAddress([FromBody] DoctorDefaultAddressDto address)
+        {
+            var result = await this.sapFacade.UpdateDoctorDefaultAddress(address);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

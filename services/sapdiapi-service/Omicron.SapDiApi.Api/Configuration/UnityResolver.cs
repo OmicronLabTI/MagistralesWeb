@@ -67,6 +67,7 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<CloseSampleOrderDto, CloseSampleOrderModel>();
                 cfg.CreateMap<DoctorDeliveryAddressDto, DoctorDeliveryAddressModel>();
                 cfg.CreateMap<DoctorInvoiceAddressDto, DoctorInvoiceAddressModel>();
+                cfg.CreateMap<DoctorDefaultAddressDto, DoctorDefaultAddressModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 

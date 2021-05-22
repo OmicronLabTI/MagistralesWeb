@@ -106,6 +106,30 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             return ServiceUtils.CreateResult(responseDelete.Item1, code, responseDelete.Item2, null, null);
         }
 
+        public async Task<ResultModel> UpdateDoctorDefaultAddress(DoctorDefaultAddressModel address)
+        {
+            var doctorSap = (BusinessPartners)company.GetBusinessObject(BoObjectTypes.oBusinessPartners);
+            var doctorFound = doctorSap.GetByKey(address.DoctorId);
+
+            if (!doctorFound)
+            {
+                return ServiceUtils.CreateResult(false, 400, ServiceConstants.DoctorNotFound, ServiceConstants.DoctorNotFound, null);
+            }
+
+            doctorSap = this.SetAddressAsDefault(address.AddressName, address.Type, address.DoctorId, doctorSap);
+
+            var updated = doctorSap.Update();
+
+            if (updated != 0)
+            {
+                company.GetLastError(out int errorCode, out string errMsg);
+                _loggerProxy.Info($"The next addresses were tried to be updated to the doctor: {address.DoctorId} - {errorCode} - {errMsg} - {JsonConvert.SerializeObject(address)}");
+                return ServiceUtils.CreateResult(false, 400, errMsg, null, null);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, string.Empty, null, null);
+        }
+
         private BusinessPartners InsertAddress(List<DoctorDeliveryAddressModel> addressesDelivery, List<DoctorInvoiceAddressModel> addressInvoice, BusinessPartners doctorSap)
         {
             foreach (var address in addressesDelivery)
@@ -216,6 +240,55 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             return doctorSap;
         }
 
+        private BusinessPartners SetAddressAsDefault(string address, string type, string doctorId, BusinessPartners doctorSap)
+        {
+            if (string.IsNullOrEmpty(address))
+            {
+                if (type == ServiceConstants.AddresBill)
+                {
+                    doctorSap.BilltoDefault = string.Empty;
+                }
+                else
+                {
+                    doctorSap.ShipToDefault = string.Empty;
+                }
+
+                return doctorSap;
+            }
+
+            var recordSet = this.ExecuteQuery(ServiceConstants.GetAddressesByDoctor, doctorId);
+
+            if (recordSet.RecordCount == 0)
+            {
+                return doctorSap;
+            }
+
+            for (var i = 0; i < recordSet.RecordCount; i++)
+            {
+                var addressType = recordSet.Fields.Item("AdresType").Value;
+                var adressName = recordSet.Fields.Item("Address").Value;
+
+                if (address != adressName || addressType != type)
+                {
+                    recordSet.MoveNext();
+                    continue;
+                }
+
+                if (type == ServiceConstants.AddresBill)
+                {
+                    doctorSap.BilltoDefault = adressName;
+                }
+                else
+                {
+                    doctorSap.ShipToDefault = adressName;
+                }
+                
+                recordSet.MoveNext();
+            }
+
+            return doctorSap;
+        }
+
         private Tuple<bool, string> DeleteAddress(List<string> address, string doctor, string type)
         {
             var doctorSap = (BusinessPartners)company.GetBusinessObject(BoObjectTypes.oBusinessPartners);
@@ -289,6 +362,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             doctorSap.Addresses.AddressName = address.NickName;
             doctorSap.Addresses.UserFields.Fields.Item("U_RAZON").Value = address.BussinessName;
             doctorSap.Addresses.UserFields.Fields.Item("U_RFC").Value = address.Rfc;
+            doctorSap.Addresses.FederalTaxID = address.Rfc;
             doctorSap.Addresses.ZipCode = address.ZipCode;
             doctorSap.Addresses.GlobalLocationNumber = address.Email;
             doctorSap.Addresses.AddressType = BoAddressType.bo_BillTo;
