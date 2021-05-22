@@ -55,6 +55,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             var addressToDelete = addresses.Where(x => x.Action == ServiceConstants.ActionDelete).Select(y => y.AddressId).ToList();
 
             doctorSap = this.InsertAddress(addressToInsert, new List<DoctorInvoiceAddressModel>(), doctorSap);
+
             doctorSap = this.UpdateDeliveryAddress(addressToUpdate, doctor, doctorSap);
             var updated = doctorSap.Update();
 
@@ -87,6 +88,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             var addressToDelete = addresses.Where(x => x.Action == ServiceConstants.ActionDelete).Select(y => y.NickName).ToList();
 
             doctorSap = this.InsertAddress(new List<DoctorDeliveryAddressModel>(), addressToInsert, doctorSap);
+
             var needUpdate = addressToInsert.Any() || addressToUpdate.Any();
             doctorSap = this.UpdateInvoiceAddress(addressToUpdate, doctor, doctorSap, needUpdate, addresses.FirstOrDefault().Email);
             var updated = doctorSap.Update();
@@ -196,9 +198,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                 var localAddress = address.FirstOrDefault(x => x.NickName == adressName);
 
-                if (localAddress == null || addressType != ServiceConstants.AddresBill)
+                if (addressType == ServiceConstants.AddresBill)
                 {
                     doctorSap.Addresses.GlobalLocationNumber = email;
+                }
+
+                if (localAddress == null || addressType != ServiceConstants.AddresBill)
+                {
                     recordSet.MoveNext();
                     continue;
                 }
