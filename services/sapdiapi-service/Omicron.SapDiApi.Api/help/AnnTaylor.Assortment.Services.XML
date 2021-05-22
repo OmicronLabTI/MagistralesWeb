@@ -277,6 +277,13 @@
             <param name="addresses">Isolated production order.</param>
             <returns>Operation result.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateDoctorDefaultAddress(Omicron.SapDiApi.Dtos.Models.Experience.DoctorDefaultAddressDto)">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="address">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.
