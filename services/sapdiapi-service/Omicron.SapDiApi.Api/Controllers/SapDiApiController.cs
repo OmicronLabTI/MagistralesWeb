@@ -218,6 +218,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="addresses">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("doctor/invoice/address")]
+        public async Task<IHttpActionResult> UpdateDoctorAddress([FromBody] List<DoctorInvoiceAddressDto> addresses)
+        {
+            var result = await this.sapFacade.UpdateDoctorAddress(addresses);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

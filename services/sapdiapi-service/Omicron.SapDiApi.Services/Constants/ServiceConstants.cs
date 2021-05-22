@@ -188,7 +188,7 @@ namespace Omicron.SapDiApi.Services.Constants
         /// <summary>
         /// Get available product quantity in warehouse.
         /// </summary>
-        public const string GetAddressesByDoctor = "SELECT LineNum, Address, CardCode FROM CRD1 WHERE CardCode = '{0}' AND AdresType = '{1}'";
+        public const string GetAddressesByDoctor = "SELECT Address, CardCode, AdresType FROM CRD1 WHERE CardCode = '{0}' order by LineNum";
 
         /// <summary>
         /// Get available product quantity in warehouse.
@@ -199,6 +199,11 @@ namespace Omicron.SapDiApi.Services.Constants
         /// Get available product quantity in warehouse.
         /// </summary>
         public const string AddresShip = "S";
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string AddresBill = "B";
 
         /// <summary>
         /// the total values.

@@ -25,5 +25,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <param name="addresses">the addresses.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> UpdateDoctorDeliveryAddress(List<DoctorDeliveryAddressModel> addresses);
+
+        /// <summary>
+        /// Updates or add new addresses.
+        /// </summary>
+        /// <param name="addresses">the addresses.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> UpdateDoctorDeliveryAddress(List<DoctorInvoiceAddressModel> addresses);
     }
 }

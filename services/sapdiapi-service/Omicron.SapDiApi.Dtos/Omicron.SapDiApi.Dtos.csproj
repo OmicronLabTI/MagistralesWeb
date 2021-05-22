@@ -72,6 +72,7 @@
     <Compile Include="Models\CompleteDetalleFormulaDto.cs" />
     <Compile Include="Models\CreateDeliveryDto.cs" />
     <Compile Include="Models\Experience\DoctorDeliveryAddressDto.cs" />
+    <Compile Include="Models\Experience\DoctorInvoiceAddressDto.cs" />
     <Compile Include="Models\OrderDto.cs" />
     <Compile Include="Models\OrderWithDetailDto.cs" />
     <Compile Include="Models\ProductDeliveryDto.cs" />

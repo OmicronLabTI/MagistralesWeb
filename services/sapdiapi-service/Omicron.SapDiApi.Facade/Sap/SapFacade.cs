@@ -165,9 +165,16 @@ namespace Omicron.SapDiApi.Facade.Sap
             return this.mapper.Map<ResultDto>(await this.createDeliveryService.CloseMuestra(this.mapper.Map<List< CloseSampleOrderModel>>(orderIds)));
         }
 
+        /// <inheritdoc/>
         public async Task<ResultDto> UpdateDoctorAddress(List<DoctorDeliveryAddressDto> address)
         {
             return this.mapper.Map<ResultDto>(await this.doctorAddress.UpdateDoctorDeliveryAddress(this.mapper.Map<List<DoctorDeliveryAddressModel>>(address)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateDoctorAddress(List<DoctorInvoiceAddressDto> address)
+        {
+            return this.mapper.Map<ResultDto>(await this.doctorAddress.UpdateDoctorDeliveryAddress(this.mapper.Map<List<DoctorInvoiceAddressModel>>(address)));
         }
     }
 }
