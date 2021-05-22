@@ -12,8 +12,10 @@ namespace Omicron.SapDiApi.Facade.Sap
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.SapDiApi.Dtos.Models;
+    using Omicron.SapDiApi.Dtos.Models.Experience;
     using Omicron.SapDiApi.Entities.Context;
     using Omicron.SapDiApi.Entities.Models;
+    using Omicron.SapDiApi.Entities.Models.Experience;
     using Omicron.SapDiApi.Services.SapDiApi;
     using SAPbobsCOM;
     public class SapFacade : ISapFacade
@@ -26,6 +28,8 @@ namespace Omicron.SapDiApi.Facade.Sap
 
         private readonly ICreateDeliveryService createDeliveryService;
 
+        private readonly IDoctorAddress doctorAddress;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>        
@@ -33,12 +37,14 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// <param name="sapDiApiService">the sap di api.</param>
         /// <param name="cancelService">cancel service.</param>
         /// <param name="createDeliveryService">the create delivery service.</param>
-        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService, ICancelService cancelService, ICreateDeliveryService createDeliveryService)
+        /// <param name="doctorAddress">The doctor addresses.</param>
+        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService, ICancelService cancelService, ICreateDeliveryService createDeliveryService, IDoctorAddress doctorAddress)
         {
             this.mapper = mapper;
             this.sapDiApiService = sapDiApiService;
             this.cancelService = cancelService;
             this.createDeliveryService = createDeliveryService;
+            this.doctorAddress = doctorAddress;
         }
 
         /// <summary>
@@ -157,6 +163,18 @@ namespace Omicron.SapDiApi.Facade.Sap
         public async Task<ResultDto> CloseMuestra(List<CloseSampleOrderDto> orderIds)
         {
             return this.mapper.Map<ResultDto>(await this.createDeliveryService.CloseMuestra(this.mapper.Map<List< CloseSampleOrderModel>>(orderIds)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateDoctorAddress(List<DoctorDeliveryAddressDto> address)
+        {
+            return this.mapper.Map<ResultDto>(await this.doctorAddress.UpdateDoctorDeliveryAddress(this.mapper.Map<List<DoctorDeliveryAddressModel>>(address)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateDoctorAddress(List<DoctorInvoiceAddressDto> address)
+        {
+            return this.mapper.Map<ResultDto>(await this.doctorAddress.UpdateDoctorDeliveryAddress(this.mapper.Map<List<DoctorInvoiceAddressModel>>(address)));
         }
     }
 }

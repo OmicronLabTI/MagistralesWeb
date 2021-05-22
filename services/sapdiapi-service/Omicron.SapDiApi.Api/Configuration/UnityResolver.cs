@@ -11,7 +11,9 @@ namespace Omicron.SapDiApi.Api.Configuration
     using System.Web.Http.Dependencies;
     using AutoMapper;
     using Omicron.SapDiApi.Dtos.Models;
+    using Omicron.SapDiApi.Dtos.Models.Experience;
     using Omicron.SapDiApi.Entities.Models;
+    using Omicron.SapDiApi.Entities.Models.Experience;
     using Omicron.SapDiApi.Facade.Sap;
     using Omicron.SapDiApi.Log;
     using Omicron.SapDiApi.Services.SapDiApi;
@@ -63,6 +65,8 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<ProductDeliveryDto, ProductDeliveryModel>();
                 cfg.CreateMap<CancelDeliveryDto, CancelDeliveryModel>();
                 cfg.CreateMap<CloseSampleOrderDto, CloseSampleOrderModel>();
+                cfg.CreateMap<DoctorDeliveryAddressDto, DoctorDeliveryAddressModel>();
+                cfg.CreateMap<DoctorInvoiceAddressDto, DoctorInvoiceAddressModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 
@@ -71,6 +75,7 @@ namespace Omicron.SapDiApi.Api.Configuration
             container.RegisterType<ILoggerProxy, LoggerProxy>();
             container.RegisterType<ICancelService, CancelService>();
             container.RegisterType<ICreateDeliveryService, CreateDeliveryService>();
+            container.RegisterType<IDoctorAddress, DoctorAddress>();
 
             if (container == null)
             {

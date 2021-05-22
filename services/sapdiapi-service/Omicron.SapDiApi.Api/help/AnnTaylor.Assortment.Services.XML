@@ -263,6 +263,20 @@
             <param name="orderId">Isolated production order.</param>
             <returns>Operation result.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateDoctorAddress(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.Experience.DoctorDeliveryAddressDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="addresses">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateDoctorAddress(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.Experience.DoctorInvoiceAddressDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="addresses">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.
