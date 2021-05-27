@@ -31,6 +31,7 @@ keycloak:
           patterns:
             - /api/dxp/*
   ssl-required: external
+
 zuul:
   ignoredServices: '*'
   prefix: /api
@@ -80,9 +81,6 @@ zuul:
     dxp-notifications:
       path: /dxp/notifications/**
       serviceId: notificationsservice
-    dxp-doctors:
-      path: /dxp/doctors/**
-      serviceId: doctorservice
     dxp-doctors:
       path: /dxp/doctors/**
       serviceId: doctorservice
