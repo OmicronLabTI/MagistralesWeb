@@ -11,6 +11,7 @@ namespace Omicron.SapDiApi.Api.Controllers
     using System.Web.Http;
     using AutoMapper;
     using Omicron.SapDiApi.Dtos.Models;
+    using Omicron.SapDiApi.Dtos.Models.Experience;
     using Omicron.SapDiApi.Facade.Sap;
     
     /// <summary>
@@ -200,6 +201,45 @@ namespace Omicron.SapDiApi.Api.Controllers
         public async Task<IHttpActionResult> CloseMuestra([FromBody] List<CloseSampleOrderDto> orderId)
         {
             var result = await this.sapFacade.CloseMuestra(orderId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="addresses">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("doctor/delivery/address")]
+        public async Task<IHttpActionResult> UpdateDoctorAddress([FromBody] List<DoctorDeliveryAddressDto> addresses)
+        {
+            var result = await this.sapFacade.UpdateDoctorAddress(addresses);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="addresses">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("doctor/invoice/address")]
+        public async Task<IHttpActionResult> UpdateDoctorAddress([FromBody] List<DoctorInvoiceAddressDto> addresses)
+        {
+            var result = await this.sapFacade.UpdateDoctorAddress(addresses);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="address">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("doctor/default/address")]
+        public async Task<IHttpActionResult> UpdateDoctorDefaultAddress([FromBody] DoctorDefaultAddressDto address)
+        {
+            var result = await this.sapFacade.UpdateDoctorDefaultAddress(address);
             return this.Ok(result);
         }
 

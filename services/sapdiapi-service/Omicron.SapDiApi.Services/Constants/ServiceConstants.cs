@@ -186,9 +186,44 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string QueryAvailableQuantityByWarehouse = "SELECT OITM.ItemCode, SUM(OITW.OnHand) Available FROM OITM INNER JOIN  OITW ON OITM.ItemCode = OITW.ItemCode WHERE OITM.ItemCode = '{0}' AND WhsCode = '{1}' GROUP BY OITM.ItemCode";
 
         /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string GetAddressesByDoctor = "SELECT Address, CardCode, AdresType FROM CRD1 WHERE CardCode = '{0}' order by LineNum";
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string DoctorNotFound = "El doctor no se encontró en SAP";
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string AddresShip = "S";
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string AddresBill = "B";
+
+        /// <summary>
         /// the total values.
         /// </summary>
         public const string Total = "total";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionUpdate = "u";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionInsert = "i";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionDelete = "d";
 
         /// <summary>
         /// Gets the status of the order.

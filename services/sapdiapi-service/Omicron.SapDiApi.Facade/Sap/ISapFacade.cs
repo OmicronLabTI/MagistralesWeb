@@ -11,6 +11,7 @@ namespace Omicron.SapDiApi.Facade.Sap
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapDiApi.Dtos.Models;
+    using Omicron.SapDiApi.Dtos.Models.Experience;
 
     public interface ISapFacade
     {
@@ -104,6 +105,27 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// <param name="orderIds">the order id.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> CloseMuestra(List<CloseSampleOrderDto> orderIds);
+
+        /// <summary>
+        /// Updates or add nes addresses.
+        /// </summary>
+        /// <param name="address">the address.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateDoctorAddress(List<DoctorDeliveryAddressDto> address);
+
+        /// <summary>
+        /// Updates or add nes addresses.
+        /// </summary>
+        /// <param name="address">the address.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateDoctorAddress(List<DoctorInvoiceAddressDto> address);
+
+        /// <summary>
+        /// Set as default an address.
+        /// </summary>
+        /// <param name="address">the address.</param>
+        /// <returns>the dta.</returns>
+        Task<ResultDto> UpdateDoctorDefaultAddress(DoctorDefaultAddressDto address);
 
         /// <summary>
         /// connecto to sap.
