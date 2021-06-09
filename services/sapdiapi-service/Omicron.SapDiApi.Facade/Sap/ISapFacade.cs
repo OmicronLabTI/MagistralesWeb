@@ -128,6 +128,13 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> UpdateDoctorDefaultAddress(DoctorDefaultAddressDto address);
 
         /// <summary>
+        /// Set the profile info by doctor.
+        /// </summary>
+        /// <param name="profileDto">Profile Info</param>
+        /// <returns>The data.</returns>
+        Task<ResultDto> UpdateDoctorProfileInfo(DoctorProfileDto profileDto);
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>

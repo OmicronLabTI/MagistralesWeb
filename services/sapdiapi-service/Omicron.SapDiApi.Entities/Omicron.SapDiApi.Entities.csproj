@@ -78,6 +78,7 @@
     <Compile Include="Models\Experience\DoctorDefaultAddressModel.cs" />
     <Compile Include="Models\Experience\DoctorDeliveryAddressModel.cs" />
     <Compile Include="Models\Experience\DoctorInvoiceAddressModel.cs" />
+    <Compile Include="Models\Experience\DoctorProfileModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\OrderWithDetailModel.cs" />
     <Compile Include="Models\ProductDeliveryModel.cs" />
