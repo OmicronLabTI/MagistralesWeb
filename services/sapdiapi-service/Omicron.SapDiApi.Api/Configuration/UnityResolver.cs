@@ -68,6 +68,7 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<DoctorDeliveryAddressDto, DoctorDeliveryAddressModel>();
                 cfg.CreateMap<DoctorInvoiceAddressDto, DoctorInvoiceAddressModel>();
                 cfg.CreateMap<DoctorDefaultAddressDto, DoctorDefaultAddressModel>();
+                cfg.CreateMap<DoctorProfileDto, DoctorProfileModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 
@@ -77,6 +78,7 @@ namespace Omicron.SapDiApi.Api.Configuration
             container.RegisterType<ICancelService, CancelService>();
             container.RegisterType<ICreateDeliveryService, CreateDeliveryService>();
             container.RegisterType<IDoctorAddress, DoctorAddress>();
+            container.RegisterType<IDoctorProfileService, DoctorProfileService>();
 
             if (container == null)
             {

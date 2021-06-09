@@ -284,6 +284,13 @@
             <param name="address">Isolated production order.</param>
             <returns>Operation result.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateDoctorProfileInfo(Omicron.SapDiApi.Dtos.Models.Experience.DoctorProfileDto)">
+            <summary>
+            Update the profile the doctor profile info.
+            </summary>
+            <param name="profileDto">Doctor profile info.</param>
+            <returns>Operation result.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.

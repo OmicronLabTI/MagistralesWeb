@@ -30,6 +30,8 @@ namespace Omicron.SapDiApi.Facade.Sap
 
         private readonly IDoctorAddress doctorAddress;
 
+        private readonly IDoctorProfileService doctorProfileService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>        
@@ -38,13 +40,14 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// <param name="cancelService">cancel service.</param>
         /// <param name="createDeliveryService">the create delivery service.</param>
         /// <param name="doctorAddress">The doctor addresses.</param>
-        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService, ICancelService cancelService, ICreateDeliveryService createDeliveryService, IDoctorAddress doctorAddress)
+        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService, ICancelService cancelService, ICreateDeliveryService createDeliveryService, IDoctorAddress doctorAddress, IDoctorProfileService doctorProfileService)
         {
             this.mapper = mapper;
             this.sapDiApiService = sapDiApiService;
             this.cancelService = cancelService;
             this.createDeliveryService = createDeliveryService;
             this.doctorAddress = doctorAddress;
+            this.doctorProfileService = doctorProfileService;
         }
 
         /// <summary>
@@ -180,6 +183,12 @@ namespace Omicron.SapDiApi.Facade.Sap
         public async Task<ResultDto> UpdateDoctorDefaultAddress(DoctorDefaultAddressDto address)
         {
             return this.mapper.Map<ResultDto>(await this.doctorAddress.UpdateDoctorDefaultAddress(this.mapper.Map<DoctorDefaultAddressModel>(address)));
+        }
+
+        /// <inheritdoc />
+        public async Task<ResultDto> UpdateDoctorProfileInfo(DoctorProfileDto profileDto)
+        {
+            return this.mapper.Map<ResultDto>(await this.doctorProfileService.UpdateDoctorProfileInfo(this.mapper.Map<DoctorProfileModel>(profileDto)));
         }
     }
 }

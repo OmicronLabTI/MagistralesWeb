@@ -82,9 +82,11 @@
     <Compile Include="SapDiApi\CancelService.cs" />
     <Compile Include="SapDiApi\CreateDeliveryService.cs" />
     <Compile Include="SapDiApi\DoctorAddress.cs" />
+    <Compile Include="SapDiApi\DoctorProfileService.cs" />
     <Compile Include="SapDiApi\ICancelService.cs" />
     <Compile Include="SapDiApi\ICreateDeliveryService.cs" />
     <Compile Include="SapDiApi\IDoctorAddress.cs" />
+    <Compile Include="SapDiApi\IDoctorProfileService.cs" />
     <Compile Include="SapDiApi\ISapDiApiService.cs" />
     <Compile Include="SapDiApi\SapDiApiService.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
