@@ -87,6 +87,12 @@ zuul:
     dxp-files:
       path: /dxp/files/**
       serviceId: filesservice
+    dxp-processpayments:
+      path: /dxp/processpayments/**
+      serviceId: processpaymentservice
+    dxp-files:
+      path: /dxp/payments/**
+      serviceId: paymentsservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
