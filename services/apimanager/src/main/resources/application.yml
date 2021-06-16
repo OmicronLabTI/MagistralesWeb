@@ -90,7 +90,7 @@ zuul:
     dxp-processpayments:
       path: /dxp/processpayments/**
       serviceId: processpaymentservice
-    dxp-files:
+    dxp-payments:
       path: /dxp/payments/**
       serviceId: paymentsservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
