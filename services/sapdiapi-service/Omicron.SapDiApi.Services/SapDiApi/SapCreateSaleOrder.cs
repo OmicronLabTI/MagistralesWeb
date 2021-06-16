@@ -20,6 +20,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using System.Linq;
+    using System.IO;
 
     /// <summary>
     /// class create order.
@@ -44,6 +45,17 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             try
             {
                 var prescription = await this.SavePresciptionToServer(saleOrderModel.PrescriptionUrl);
+                var attachment = string.Empty;
+                if (!string.IsNullOrEmpty(prescription))
+                {
+                    attachment = this.CreateAttachment(prescription);
+
+                    if (string.IsNullOrEmpty(attachment))
+                    {
+                        return ServiceUtils.CreateResult(false, 400, null, null, null);
+                    }
+                }
+
                 var order = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
 
                 order.CardCode = saleOrderModel.CardCode;
@@ -51,6 +63,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.DocDueDate = DateTime.Now.AddDays(10);
                 order.ShipToCode = saleOrderModel.ShippinAddress;
                 order.PayToCode = saleOrderModel.BillingAddress;
+
+                if (!string.IsNullOrEmpty(attachment))
+                {
+                    order.AttachmentEntry = int.Parse(attachment);
+                }
 
                 for(var i = 0; i < saleOrderModel.Items.Count; i++)
                 {
@@ -74,7 +91,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                 company.GetNewObjectCode(out var orderId);
                 _loggerProxy.Info($"The sale order {orderId} was created {JsonConvert.SerializeObject(saleOrderModel)}");
-                return ServiceUtils.CreateResult(true, 200, null, null, orderId);
+                return ServiceUtils.CreateResult(true, 200, null, orderId, null);
             }
             catch(Exception ex)
             {
@@ -103,6 +120,28 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             await azureObj.SaveToPathFromAzure(containerRoute, fileName, routeFile);
 
             return routeFile;
+        }
+
+        private string CreateAttachment(string pathfile)
+        {
+            var attachment = (Attachments2)company.GetBusinessObject(BoObjectTypes.oAttachments2);
+            attachment.Lines.Add();
+            attachment.Lines.FileName = Path.GetFileNameWithoutExtension(pathfile);
+            attachment.Lines.FileExtension = Path.GetExtension(pathfile).Substring(1);
+            attachment.Lines.SourcePath = Path.GetDirectoryName(pathfile);
+            attachment.Lines.Override = BoYesNoEnum.tYES;
+            
+
+            if (attachment.Add() != 0)
+            {
+                company.GetLastError(out int code, out string errMSg);
+                _loggerProxy.Info($"The attachement could not be saved {code} - {errMSg}");
+                return string.Empty;
+            }
+
+            company.GetNewObjectCode(out var orderId);
+            _loggerProxy.Info($"The attachmentid is {orderId}");
+            return orderId;
         }
     }
 }
