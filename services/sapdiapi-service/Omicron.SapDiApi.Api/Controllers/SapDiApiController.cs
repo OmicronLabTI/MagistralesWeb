@@ -25,6 +25,9 @@ namespace Omicron.SapDiApi.Api.Controllers
         /// </summary>
         private readonly ISapFacade sapFacade;
 
+        /// <summary>
+        /// Gets or sets the sa.
+        /// </summary>
         private readonly ISapDxpFacade sapDxpFacade;
 
         /// <summary>
