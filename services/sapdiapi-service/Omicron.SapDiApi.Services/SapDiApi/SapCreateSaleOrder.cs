@@ -52,7 +52,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                     if (string.IsNullOrEmpty(attachment))
                     {
-                        return ServiceUtils.CreateResult(false, 400, null, null, null);
+                        return ServiceUtils.CreateResult(false, 400, null, "The attachment could not be created", null);
                     }
                 }
 
@@ -86,7 +86,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     company.GetLastError(out int code, out string errMSg);
                     _loggerProxy.Info($"The sale order was tried to be created: {code} - {errMSg} - {JsonConvert.SerializeObject(saleOrderModel)}");
-                    return ServiceUtils.CreateResult(false, 400, null, null, null);
+                    return ServiceUtils.CreateResult(false, 400, null, errMSg, null);
                 }
 
                 company.GetNewObjectCode(out var orderId);
@@ -96,7 +96,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             catch(Exception ex)
             {
                 _loggerProxy.Info($"There was an error while creating the sale order {ex.Message} - {ex.StackTrace} - {JsonConvert.SerializeObject(saleOrderModel)}");
-                return ServiceUtils.CreateResult(false, 400, null, null, null);
+                return ServiceUtils.CreateResult(false, 400, null, ex.Message, null);
             }
         }
 
