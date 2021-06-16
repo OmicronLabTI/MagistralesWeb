@@ -26,5 +26,11 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// </summary>
         /// <value>The user that is assigning.</value>
         public DateTime? BirthDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor phone number.
+        /// </summary>
+        /// <value>Phone Number.</value>
+        public string PhoneNumber { get; set; }
     }
 }

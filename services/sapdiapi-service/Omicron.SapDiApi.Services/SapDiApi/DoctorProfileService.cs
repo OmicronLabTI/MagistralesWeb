@@ -51,8 +51,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 return ServiceUtils.CreateResult(false, 400, ServiceConstants.DoctorNotFound, ServiceConstants.DoctorNotFound, null);
             }
 
-            doctorSap = this.SetProfileInfo(profileModel.BirthDate, profileModel.DoctorId, doctorSap);
-
+            doctorSap = this.SetProfileInfo(profileModel.BirthDate, profileModel.PhoneNumber, profileModel.DoctorId, doctorSap);
             var updated = doctorSap.Update();
 
             if (updated != 0)
@@ -66,7 +65,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         }
 
 
-        private BusinessPartners SetProfileInfo(DateTime? birthDate, string doctorId, BusinessPartners doctorSap)
+        private BusinessPartners SetProfileInfo(DateTime? birthDate, string phoneNumber, string doctorId, BusinessPartners doctorSap)
         {
             if (birthDate == null)
             {
@@ -82,16 +81,18 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             for (var i = 0; i < recordSet.RecordCount; i++)
             {
-                var sapDate = recordSet.Fields.Item("U_Fecha_Nacimiento").Value;
+                //var sapDate = recordSet.Fields.Item("U_Fecha_Nacimiento").Value;
+                //var sapPhone = recordSet.Fields.Item("Phone1").Value;
 
-                if (sapDate == birthDate)
-                {
-                    recordSet.MoveNext();
-                    continue;
-                }
+
+                //if (sapDate == birthDate && sapPhone.Equals(phoneNumber))
+                //{
+                //    recordSet.MoveNext();
+                //    continue;
+                //}
 
                 doctorSap.UserFields.Fields.Item("U_Fecha_Nacimiento").Value = birthDate;
-
+                doctorSap.Phone1 = phoneNumber;
                 recordSet.MoveNext();
             }
 
