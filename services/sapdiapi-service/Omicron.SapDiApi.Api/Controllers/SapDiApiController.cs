@@ -25,13 +25,17 @@ namespace Omicron.SapDiApi.Api.Controllers
         /// </summary>
         private readonly ISapFacade sapFacade;
 
+        private readonly ISapDxpFacade sapDxpFacade;
+
         /// <summary>
         /// /// Initializes a new instance of the <see cref="SapDiApiController"/> class.
         /// </summary>
         /// <param name="sapFacade">the facade.</param>
-        public SapDiApiController(ISapFacade sapFacade)
+        /// <param name="sapDxpFacade">The sap dacade.</param>
+        public SapDiApiController(ISapFacade sapFacade, ISapDxpFacade sapDxpFacade)
         {
             this.sapFacade = sapFacade;
+            this.sapDxpFacade = sapDxpFacade;
         }
 
         /// <summary>
@@ -253,6 +257,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         public async Task<IHttpActionResult> UpdateDoctorProfileInfo([FromBody] DoctorProfileDto profileDto)
         {
             var result = await this.sapFacade.UpdateDoctorProfileInfo(profileDto);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Update the profile the doctor profile info.
+        /// </summary>
+        /// <param name="saleOrderDto">Doctor profile info.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("create/saleorder")]
+        public async Task<IHttpActionResult> CreateSaleOrder([FromBody] CreateSaleOrderDto saleOrderDto)
+        {
+            var result = await this.sapDxpFacade.CreateSaleOrder(saleOrderDto);
             return this.Ok(result);
         }
 

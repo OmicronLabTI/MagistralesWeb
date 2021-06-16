@@ -87,7 +87,9 @@
     <Compile Include="SapDiApi\ICreateDeliveryService.cs" />
     <Compile Include="SapDiApi\IDoctorAddress.cs" />
     <Compile Include="SapDiApi\IDoctorProfileService.cs" />
+    <Compile Include="SapDiApi\ISapCreateSaleOrder.cs" />
     <Compile Include="SapDiApi\ISapDiApiService.cs" />
+    <Compile Include="SapDiApi\SapCreateSaleOrder.cs" />
     <Compile Include="SapDiApi\SapDiApiService.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
   </ItemGroup>
