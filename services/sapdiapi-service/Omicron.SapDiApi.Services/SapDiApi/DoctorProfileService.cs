@@ -81,16 +81,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             for (var i = 0; i < recordSet.RecordCount; i++)
             {
-                //var sapDate = recordSet.Fields.Item("U_Fecha_Nacimiento").Value;
-                //var sapPhone = recordSet.Fields.Item("Phone1").Value;
-
-
-                //if (sapDate == birthDate && sapPhone.Equals(phoneNumber))
-                //{
-                //    recordSet.MoveNext();
-                //    continue;
-                //}
-
                 doctorSap.UserFields.Fields.Item("U_Fecha_Nacimiento").Value = birthDate;
                 doctorSap.Phone1 = phoneNumber;
                 recordSet.MoveNext();
