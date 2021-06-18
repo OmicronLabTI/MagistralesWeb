@@ -165,11 +165,17 @@
             Gets or sets the sa.
             </summary>
         </member>
-        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.#ctor(Omicron.SapDiApi.Facade.Sap.ISapFacade)">
+        <member name="F:Omicron.SapDiApi.Api.Controllers.SapDiApiController.sapDxpFacade">
+            <summary>
+            Gets or sets the sa.
+            </summary>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.#ctor(Omicron.SapDiApi.Facade.Sap.ISapFacade,Omicron.SapDiApi.Facade.Sap.ISapDxpFacade)">
             <summary>
             /// Initializes a new instance of the <see cref="T:Omicron.SapDiApi.Api.Controllers.SapDiApiController"/> class.
             </summary>
             <param name="sapFacade">the facade.</param>
+            <param name="sapDxpFacade">The sap dacade.</param>
         </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateFabOrder(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.OrderWithDetailDto})">
             <summary>
@@ -289,6 +295,13 @@
             Update the profile the doctor profile info.
             </summary>
             <param name="profileDto">Doctor profile info.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateSaleOrder(Omicron.SapDiApi.Dtos.Models.Experience.CreateSaleOrderDto)">
+            <summary>
+            Update the profile the doctor profile info.
+            </summary>
+            <param name="saleOrderDto">Doctor profile info.</param>
             <returns>Operation result.</returns>
         </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
