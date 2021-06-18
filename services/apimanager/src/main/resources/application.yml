@@ -1,7 +1,6 @@
 spring:
   application:
     name: eureka-service
-  profiles: dev
 
 server:
   port: 8000
@@ -20,18 +19,18 @@ keycloak:
   auth-server-url: https://devtools.axity.com/auth
   use-resource-role-mappings: true
   public-client: true
+  cors: true
   realm: omicron
   resource: omicron-dxp
   securityConstraints:
-    securityCollections:
-      - name: protected-dxp
-        - authRoles:
-          - external-dxp
-        patterns:
-          - /api/dxp/*
-      - name: public-dxp
-        patterns:
-          - /api/dxp/public/*
+    - authRoles: [external-dxp]
+      securityCollections:
+        - name: protected-dxp
+          patterns: [/api/dxp/*]
+    - authRoles: []
+      securityCollections:
+        - name: public-dxp
+          patterns: [/api/dxp/public/*]
   ssl-required: external
 
 zuul:
