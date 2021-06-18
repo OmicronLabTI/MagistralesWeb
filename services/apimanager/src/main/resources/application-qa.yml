@@ -24,16 +24,18 @@ keycloak:
   realm: omicron
   resource: omicron-dxp
   securityConstraints:
-    - authRoles:
-        - external-dxp
+    - authRoles: [external-dxp]
       securityCollections:
         - name: protected-dxp
-          patterns:
-            - /api/dxp/*
+          patterns: [/api/dxp/*]
+    - authRoles: []
+      securityCollections:
+        - name: public-dxp
+          patterns: [/api/dxp/public/*]
   ssl-required: external
 
 zuul:
-  ignoredServices: '*'
+  ignoredServices: "*"
   prefix: /api
   routes:
     oauth:
