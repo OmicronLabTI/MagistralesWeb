@@ -30,14 +30,18 @@ namespace Omicron.Pedidos.Facade.Pedidos
 
         private readonly IBusquedaPedidoService busquedaPedidoService;
 
+        private readonly IPedidosDxpService pedidosDxpService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="BusquedaPedidoFacade"/> class.
         /// </summary>
         /// <param name="busquedaPedido">the pedido service.</param>
         /// <param name="mapper">the mapper.</param>
-        public BusquedaPedidoFacade(IMapper mapper, IBusquedaPedidoService busquedaPedido)
+        /// <param name="pedidosDxpService">the dxp service.</param>
+        public BusquedaPedidoFacade(IMapper mapper, IBusquedaPedidoService busquedaPedido, IPedidosDxpService pedidosDxpService)
         {
             this.busquedaPedidoService = busquedaPedido ?? throw new ArgumentNullException(nameof(busquedaPedido));
+            this.pedidosDxpService = pedidosDxpService ?? throw new ArgumentNullException(nameof(pedidosDxpService));
             this.mapper = mapper;
         }
 
@@ -45,6 +49,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> GetOrders(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.busquedaPedidoService.GetOrders(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersActive(List<int> ordersid)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidosDxpService.GetOrdersActive(ordersid));
         }
     }
 }

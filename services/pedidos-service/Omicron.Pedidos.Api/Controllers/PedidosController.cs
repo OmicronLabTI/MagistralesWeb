@@ -533,6 +533,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Method to get orders active.
+        /// </summary>
+        /// <param name="ordersid">The orders id.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/dxp/get/userorders/active")]
+        [HttpPost]
+        public async Task<IActionResult> GetOrdersActive([FromBody] List<int> ordersid)
+        {
+            var response = await this.busquedaPedidoFacade.GetOrdersActive(ordersid);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

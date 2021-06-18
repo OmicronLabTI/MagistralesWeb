@@ -169,5 +169,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="userId">The parameters.</param>
         /// <returns>List.</returns>
         Task<ResultDto> GetPackingRequiredForOrderInAssignedStatus(string userId);
+
+        /// <summary>
+        /// Method to get orders active.
+        /// </summary>
+        /// <param name="ordersid">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        Task<ResultDto> GetOrdersActive(List<int> ordersid);
     }
 }
