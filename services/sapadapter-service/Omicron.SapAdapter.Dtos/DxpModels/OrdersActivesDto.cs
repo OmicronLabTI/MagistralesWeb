@@ -48,5 +48,17 @@ namespace Omicron.SapAdapter.Dtos.DxpModels
         /// </summary>
         /// <value>The code.</value>
         public string IsLine { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string EmailAsesor { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string PhoneAsesor { get; set; }
     }
 }

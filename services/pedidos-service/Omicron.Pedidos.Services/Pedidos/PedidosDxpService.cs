@@ -60,6 +60,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 statusInvoice = x.StatusInvoice,
                 productionOrder = x.Productionorderid,
                 isOrder = x.IsSalesOrder,
+                invoiceStoreDate = x.InvoiceStoreDate,
+                invoiceId = x.InvoiceId,
             }).ToList();
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }

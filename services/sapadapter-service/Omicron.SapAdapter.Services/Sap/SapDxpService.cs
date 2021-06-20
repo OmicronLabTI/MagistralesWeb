@@ -57,6 +57,8 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var ordersSap = (await this.sapDao.GetAllOrdersWIthDetailByIds(ordersid)).ToList();
             var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
+            var asesorsIdsToLook = ordersSap.Select(x => x.AsesorId).Distinct().ToList();
+            var asesors = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(asesorsIdsToLook)).ToList();
             var listIds = ordersSap.Select(x => x.DocNum).Distinct().ToList();
             var ordersToReturn = new List<OrdersActivesDto>();
 
@@ -65,6 +67,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var items = ordersSap.Where(x => x.DocNum == id).ToList();
                 var order = items.FirstOrDefault();
                 var isLine = items.All(x => lineProducts.Contains(x.Detalles.ProductoId));
+                var asesor = asesors.FirstOrDefault(x => x.AsesorId == order.AsesorId);
+                asesor ??= new SalesPersonModel { Email = string.Empty, PhoneMobile = string.Empty };
                 ordersToReturn.Add(new OrdersActivesDto
                 {
                     CardCode = order.Codigo,
@@ -73,10 +77,30 @@ namespace Omicron.SapAdapter.Services.Sap
                     AsesorId = order.AsesorId,
                     PedidoStatus = order.PedidoStatus,
                     IsLine = isLine ? "Y" : "N",
+                    EmailAsesor = asesor.Email,
+                    PhoneAsesor = asesor.PhoneMobile,
                 });
             }
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, ordersToReturn, null, null);
+            var deliveries = (await this.sapDao.GetDeliveryBySaleOrder(ordersid)).ToList();
+            var invoicesIdToLook = deliveries.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).Distinct().ToList();
+            var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesIdToLook)).ToList();
+            var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoices.Select(x => x.TransportCode).Distinct().ToList())).ToList();
+
+            invoices.ForEach(x =>
+            {
+                var company = deliveryCompanies.FirstOrDefault(y => y.TrnspCode == x.TransportCode);
+                company ??= new Repartidores { TrnspName = string.Empty };
+                x.TransportName = company.TrnspName;
+            });
+
+            var objectToReturn = new
+            {
+                invoicesSap = invoices,
+                ordersSap = ordersToReturn,
+            };
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, objectToReturn, null, null);
         }
     }
 }
