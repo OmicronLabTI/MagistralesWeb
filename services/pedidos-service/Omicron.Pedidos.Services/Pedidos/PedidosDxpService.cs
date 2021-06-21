@@ -11,23 +11,9 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Configuration;
-    using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Resources.Enums;
-    using Omicron.Pedidos.Resources.Extensions;
-    using Omicron.Pedidos.Services.Broker;
-    using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.Redis;
-    using Omicron.Pedidos.Services.Reporting;
-    using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
-    using Omicron.Pedidos.Services.SapFile;
-    using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
 
     /// <summary>
