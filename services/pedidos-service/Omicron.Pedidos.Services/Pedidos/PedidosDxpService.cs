@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Threading.Tasks;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Utils;
 
     /// <summary>
@@ -49,6 +50,34 @@ namespace Omicron.Pedidos.Services.Pedidos
                 invoiceStoreDate = x.InvoiceStoreDate,
                 invoiceId = x.InvoiceId,
             }).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetDeliveredPayments(List<int> ordersId)
+        {
+            var listIds = ordersId.Select(x => x.ToString()).ToList();
+            var salesOrdersGroups = (await this.pedidosDao.GetUserOrderBySaleOrder(listIds)).GroupBy(x => x.Salesorderid).ToList();
+            var listSent = new List<UserOrderModel>();
+            salesOrdersGroups.ForEach(x =>
+            {
+                if (x.Any(y => y.StatusInvoice == ServiceConstants.Entregado || y.StatusInvoice == ServiceConstants.Almacenado))
+                {
+                    var orderSent = x.Where(y => y.StatusInvoice == ServiceConstants.Entregado || y.StatusInvoice == ServiceConstants.Almacenado);
+                    var order = orderSent.FirstOrDefault(x => x.IsProductionOrder);
+                    order ??= new UserOrderModel();
+                    listSent.Add(order);
+                }
+            });
+
+            var listToReturn = listSent.Select(x => new
+            {
+                x.Salesorderid,
+                x.StatusInvoice,
+                x.InvoiceId,
+                x.InvoiceType,
+            });
+
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
     }
