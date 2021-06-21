@@ -1,64 +1,64 @@
 ﻿// <summary>
-// <copyright file="SalesPersonModel.cs" company="Axity">
+// <copyright file="OrdersActivesDto.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.SapAdapter.Entities.Model.DbModels
+namespace Omicron.SapAdapter.Dtos.DxpModels
 {
-    using System;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-
     /// <summary>
-    /// The OHEM table.
+    /// class for the complete order.
     /// </summary>
-    [Table("OHEM")]
-    public class SalesPersonModel
+    public class OrdersActivesDto
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Key]
-        [Column("empID")]
-        public int EmpleadoId { get; set; }
+        public int DocNum { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("salesPrson")]
+        public string CardCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string PedidoStatus { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public int AsesorId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("firstName")]
-        public string FirstName { get; set; }
+        public string InitDate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("lastName")]
-        public string LastName { get; set; }
+        public string IsLine { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("email")]
-        public string Email { get; set; }
+        public string EmailAsesor { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("mobile")]
-        public string PhoneMobile { get; set; }
+        public string PhoneAsesor { get; set; }
     }
 }

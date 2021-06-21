@@ -769,6 +769,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = order.Address,
                              PedidoMuestra = order.PedidoMuestra,
                              Comments = order.Comments,
+                             AsesorId = order.AsesorId,
                          });
 
             return await this.RetryQuery<CompleteOrderModel>(query);

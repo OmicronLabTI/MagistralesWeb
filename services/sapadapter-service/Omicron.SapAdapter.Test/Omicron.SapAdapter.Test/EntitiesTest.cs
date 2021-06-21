@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Test
 {
     using AutoFixture;
     using NUnit.Framework;
+    using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
@@ -62,6 +63,7 @@ namespace Omicron.SapAdapter.Test
             new ValidBatches(),
             new CompleteFormulaWithDetalle(),
             new OrdenFabricacionModel(),
+            new OrdersActivesDto(),
         };
 
         /// <summary>

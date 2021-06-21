@@ -40,6 +40,7 @@ namespace Omicron.SapAdapter.Test.Facade
 
             var mockSapServices = new Mock<ISapService>();
             var mockComponentes = new Mock<IComponentsService>();
+            var mockSapdxpService = new Mock<ISapDxpService>();
 
             var response = new ResultModel
             {
@@ -52,8 +53,9 @@ namespace Omicron.SapAdapter.Test.Facade
 
             mockSapServices.SetReturnsDefault(Task.FromResult(response));
             mockComponentes.SetReturnsDefault(Task.FromResult(response));
+            mockSapdxpService.SetReturnsDefault(Task.FromResult(response));
 
-            this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper, mockComponentes.Object);
+            this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper, mockComponentes.Object, mockSapdxpService.Object);
         }
 
         /// <summary>
@@ -408,6 +410,23 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.sapFacade.GetPackingRequiredForOrderInAssignedStatus(userId);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Get possible orders active to dxp project.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        [Test]
+        public async Task GetOrdersActive()
+        {
+            // Arrange
+            var ordersId = new List<int>();
+
+            // act
+            var response = await this.sapFacade.GetOrdersActive(ordersId);
 
             // assert
             this.AssertResponse(response);
