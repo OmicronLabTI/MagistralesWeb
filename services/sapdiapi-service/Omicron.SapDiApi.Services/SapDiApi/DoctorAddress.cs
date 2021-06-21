@@ -312,7 +312,10 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 var addressType = recordSet.Fields.Item("AdresType").Value;
                 var adressName = recordSet.Fields.Item("Address").Value;
 
-                var localAddress = address.FirstOrDefault(x => x == adressName);
+                _loggerProxy.Info($"el address es {(string)adressName}");
+                var addressString = (string)adressName;
+
+                var localAddress = address.FirstOrDefault(x => x.ToUpper() == addressString.ToUpper());
 
                 if (localAddress == null || addressType != type)
                 {
