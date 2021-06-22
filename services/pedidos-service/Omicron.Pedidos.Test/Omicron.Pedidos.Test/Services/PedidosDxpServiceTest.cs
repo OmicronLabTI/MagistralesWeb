@@ -62,5 +62,22 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// the test for get orders active for dxp project.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetDeliveredPayments()
+        {
+            // arrange
+            var listIds = new List<int> { 204, 205 };
+
+            // act
+            var response = await this.pedidosDxpService.GetDeliveredPayments(listIds);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }
