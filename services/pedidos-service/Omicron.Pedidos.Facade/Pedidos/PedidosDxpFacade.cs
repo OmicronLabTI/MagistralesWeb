@@ -35,7 +35,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="pedidosDxpService">the pedido service.</param>
         /// <param name="mapper">the mapper.</param>
-        public PedidosDxpFacade(PedidosDxpService pedidosDxpService, IMapper mapper)
+        public PedidosDxpFacade(IPedidosDxpService pedidosDxpService, IMapper mapper)
         {
             this.pedidosDxpService = pedidosDxpService ?? throw new ArgumentNullException(nameof(pedidosDxpService));
             this.mapper = mapper;

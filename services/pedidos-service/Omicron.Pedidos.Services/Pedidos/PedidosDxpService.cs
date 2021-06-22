@@ -61,9 +61,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listSent = new List<UserOrderModel>();
             salesOrdersGroups.ForEach(x =>
             {
-                if (x.Any(y => y.StatusInvoice == ServiceConstants.Entregado || y.StatusInvoice == ServiceConstants.Almacenado))
+                if (x.Any(y => y.StatusInvoice == ServiceConstants.Entregado || y.StatusInvoice == ServiceConstants.Enviado))
                 {
-                    var orderSent = x.Where(y => y.StatusInvoice == ServiceConstants.Entregado || y.StatusInvoice == ServiceConstants.Almacenado);
+                    var orderSent = x.Where(y => y.StatusInvoice == ServiceConstants.Entregado || y.StatusInvoice == ServiceConstants.Enviado);
                     var order = orderSent.FirstOrDefault(x => x.IsProductionOrder);
                     order ??= new UserOrderModel();
                     listSent.Add(order);

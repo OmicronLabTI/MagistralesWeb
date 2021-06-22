@@ -71,7 +71,7 @@ namespace Omicron.Pedidos.Test.Services
         public async Task GetDeliveredPayments()
         {
             // arrange
-            var listIds = new List<int> { 1, 2, 3 };
+            var listIds = new List<int> { 204, 205 };
 
             // act
             var response = await this.pedidosDxpService.GetDeliveredPayments(listIds);

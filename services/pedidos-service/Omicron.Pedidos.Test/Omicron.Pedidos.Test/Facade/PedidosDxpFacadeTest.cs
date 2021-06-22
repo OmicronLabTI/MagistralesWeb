@@ -44,13 +44,11 @@ namespace Omicron.Pedidos.Test.Facade
                 UserError = string.Empty,
             };
 
-            var mockBusquedaService = new Mock<IPedidosDxpFacade>();
+            var mockBusquedaService = new Mock<IPedidosDxpService>();
 
             mockBusquedaService.SetReturnsDefault(Task.FromResult(response));
 
-            this.pedidosFacade = new PedidosDxpFacade(
-                mapper,
-                mockBusquedaService.Object);
+            this.pedidosFacade = new PedidosDxpFacade(mockBusquedaService.Object, mapper);
         }
 
         /// <summary>
@@ -61,7 +59,7 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task GetDeliveredPayments()
         {
             // arrange
-            var order = new Dictionary<string, string>();
+            var order = new List<int>();
 
             // act
             var response = await this.pedidosFacade.GetDeliveredPayments(order);
