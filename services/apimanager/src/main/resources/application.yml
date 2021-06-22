@@ -98,6 +98,9 @@ zuul:
     dxp-payments:
       path: /dxp/payments/**
       serviceId: paymentsservice
+    dxp-pedidosdxp:
+      path: /dxp/pedidosdxp/**
+      serviceId: pedidosdxpservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
