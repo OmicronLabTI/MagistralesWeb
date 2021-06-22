@@ -64,6 +64,8 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IRedisService, RedisService>();
             Services.AddTransient<IKafkaConnector, KafkaConnector>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
+            Services.AddTransient<IPedidosDxpFacade, PedidosDxpFacade>();
+            Services.AddTransient<IPedidosDxpService, PedidosDxpService>();
             return Services;
         }
 

@@ -45,12 +45,15 @@ namespace Omicron.Pedidos.Test.Facade
             };
 
             var mockBusquedaService = new Mock<IBusquedaPedidoService>();
+            var mockPedidosDxpService = new Mock<IPedidosDxpService>();
 
             mockBusquedaService.SetReturnsDefault(Task.FromResult(response));
+            mockPedidosDxpService.SetReturnsDefault(Task.FromResult(response));
 
             this.busquedaFacade = new BusquedaPedidoFacade(
                 mapper,
-                mockBusquedaService.Object);
+                mockBusquedaService.Object,
+                mockPedidosDxpService.Object);
         }
 
         /// <summary>
@@ -65,6 +68,23 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.busquedaFacade.GetOrders(order);
+
+            // arrange
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the possible orders active for dxp service.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetOrdersActive()
+        {
+            // arrange
+            var order = new Dictionary<string, string>();
+
+            // act
+            var response = await this.busquedaFacade.GetOrdersActive(new List<int>());
 
             // arrange
             Assert.IsNotNull(response);

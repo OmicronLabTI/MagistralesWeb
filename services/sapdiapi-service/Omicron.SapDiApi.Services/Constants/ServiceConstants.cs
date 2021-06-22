@@ -191,6 +191,11 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string GetAddressesByDoctor = "SELECT Address, CardCode, AdresType FROM CRD1 WHERE CardCode = '{0}' order by LineNum";
 
         /// <summary>
+        /// Get the doct
+        /// </summary>
+        public const string GetDoctorInfo = "SELECT U_Fecha_Nacimiento FROM OCRD where CardCode = '{0}'";
+
+        /// <summary>
         /// Get available product quantity in warehouse.
         /// </summary>
         public const string DoctorNotFound = "El doctor no se encontró en SAP";

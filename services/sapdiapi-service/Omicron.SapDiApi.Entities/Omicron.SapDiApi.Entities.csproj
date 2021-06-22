@@ -75,9 +75,12 @@
     <Compile Include="Models\CompleteDetalleFormulaModel.cs" />
     <Compile Include="Models\CreateDeliveryModel.cs" />
     <Compile Include="Models\CreateIsolatedFabOrderModel.cs" />
+    <Compile Include="Models\Experience\CreateSaleOrderModel.cs" />
     <Compile Include="Models\Experience\DoctorDefaultAddressModel.cs" />
     <Compile Include="Models\Experience\DoctorDeliveryAddressModel.cs" />
     <Compile Include="Models\Experience\DoctorInvoiceAddressModel.cs" />
+    <Compile Include="Models\Experience\DoctorProfileModel.cs" />
+    <Compile Include="Models\Experience\ShoppingCartItemModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\OrderWithDetailModel.cs" />
     <Compile Include="Models\ProductDeliveryModel.cs" />

@@ -24,12 +24,14 @@ keycloak:
   realm: omicron
   resource: omicron-dxp
   securityConstraints:
-    - authRoles:
-        - external-dxp
+    - authRoles: [external-dxp]
       securityCollections:
         - name: protected-dxp
-          patterns:
-            - /api/dxp/*
+          patterns: [/api/dxp/*]
+    - authRoles: []
+      securityCollections:
+        - name: public-dxp
+          patterns: [/api/dxp/public/*]
   ssl-required: external
 
 zuul:
@@ -63,6 +65,9 @@ zuul:
     dxp:
       path: /dxp/mock/**
       url: https://reqres.in/api/ #mock endpoint, agregar serviceId de eureka
+    dxp-public:
+      path: /dxp/public/mock/**
+      url: https://reqres.in/api/ #mock endpoint, agregar serviceId de eureka
     dxp-favorites:
       path: /dxp/favorites/**
       serviceId: favoritiesservice
@@ -87,6 +92,15 @@ zuul:
     dxp-files:
       path: /dxp/files/**
       serviceId: filesservice
+    dxp-processpayments:
+      path: /dxp/processpayments/**
+      serviceId: processpaymentservice
+    dxp-payments:
+      path: /dxp/payments/**
+      serviceId: paymentsservice
+    dxp-pedidosdxp:
+      path: /dxp/pedidosdxp/**
+      serviceId: pedidosdxpservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
