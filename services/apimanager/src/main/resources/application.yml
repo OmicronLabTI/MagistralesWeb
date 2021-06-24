@@ -26,12 +26,12 @@ keycloak:
   securityConstraints:
     - authRoles: [doctor]
       securityCollections:
-        - name: doctor
+        - name: doctor-dxp
           patterns: [/api/dxp/*]
     - authRoles: [advisor]
       securityCollections:
-        - name: advisor
-          patterns: [/api/dxp/advisor/*, /api/dxp/sapordersadapter/*]
+        - name: advisor-dxp
+          patterns: [/api/dxp/*]
     - authRoles: []
       securityCollections:
         - name: public-dxp
