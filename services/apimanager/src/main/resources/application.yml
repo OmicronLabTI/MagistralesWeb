@@ -35,7 +35,7 @@ keycloak:
     - authRoles: []
       securityCollections:
         - name: public-dxp
-          patterns: [/api/dxp/public/*]
+          patterns: [/api/dxp/payments/public/*]
   ssl-required: external
 
 zuul:
