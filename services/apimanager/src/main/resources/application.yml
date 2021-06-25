@@ -16,7 +16,7 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
 
 keycloak:
-  enabled: true
+  enabled: false
   auth-server-url: https://devtools.axity.com/auth
   use-resource-role-mappings: true
   public-client: true
