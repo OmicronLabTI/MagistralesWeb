@@ -100,7 +100,7 @@ zuul:
       path: /dxp/processpayments/**
       serviceId: processpaymentservice
     dxp-payments:
-      sensitiveHeaders: Authorization
+      sensitiveHeaders:
       path: /dxp/payments/**
       serviceId: paymentsservice
     dxp-pedidosdxp:
