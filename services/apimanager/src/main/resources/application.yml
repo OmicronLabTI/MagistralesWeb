@@ -39,7 +39,6 @@ keycloak:
   ssl-required: external
 
 zuul:
-  sensitiveHeaders: Authorization
   ignoredServices: "*"
   prefix: /api
   routes:
@@ -101,6 +100,7 @@ zuul:
       path: /dxp/processpayments/**
       serviceId: processpaymentservice
     dxp-payments:
+      sensitiveHeaders:Authorization
       path: /dxp/payments/**
       serviceId: paymentsservice
     dxp-pedidosdxp:
