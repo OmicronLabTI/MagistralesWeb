@@ -35,7 +35,7 @@ keycloak:
     - authRoles: []
       securityCollections:
         - name: public-dxp
-          patterns: [/api/dxp/public/*]
+          patterns: [/api/dxp/payments/public/*]
   ssl-required: external
 
 zuul:
@@ -100,6 +100,7 @@ zuul:
       path: /dxp/processpayments/**
       serviceId: processpaymentservice
     dxp-payments:
+      sensitiveHeaders:
       path: /dxp/payments/**
       serviceId: paymentsservice
     dxp-pedidosdxp:
