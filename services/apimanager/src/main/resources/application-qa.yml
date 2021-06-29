@@ -24,9 +24,13 @@ keycloak:
   realm: omicron
   resource: omicron-dxp
   securityConstraints:
-    - authRoles: [external-dxp]
+    - authRoles: [doctor]
       securityCollections:
-        - name: protected-dxp
+        - name: doctor-dxp
+          patterns: [/api/dxp/*]
+    - authRoles: [advisor]
+      securityCollections:
+        - name: advisor-dxp
           patterns: [/api/dxp/*]
     - authRoles: []
       securityCollections:
