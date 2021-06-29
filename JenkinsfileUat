@@ -175,8 +175,9 @@ pipeline {
             steps {
                 dir ('database/'){
 				    sh '/opt/liquibase/liquibase --version'
-					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
-                    echo 'Applying Db changes'
+					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-uat.properties" update'
+					echo 'Applying Db changes'
+                    
                 }
             }
         }
