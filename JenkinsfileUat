@@ -17,6 +17,7 @@ pipeline {
 		PROJECT_NAME = "AppiOSFormulas"
         SLACK_CHANNEL = "#omicron_notifications"
         ENVIRONMENT = "QA"
+		ACR = "omicron.azurecr.io"
 
 		// General configurations		
 		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_QA";
