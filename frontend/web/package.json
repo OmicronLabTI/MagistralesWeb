@@ -8,6 +8,7 @@
     "build": "ng build",
     "build-prod": "ng build --prod",
     "build-staging": "ng build --configuration=staging",
+    "build-uat": "ng build --configuration=uat",
     "test": "ng test",
     "test-ci": "ng test --code-coverage --watch=false --browsers ChromeHeadlessCI",
     "lint": "ng lint",

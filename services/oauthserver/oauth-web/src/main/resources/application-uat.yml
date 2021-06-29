@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://omicron.postgres.database.azure.com:5432/omicronprod?user=omicronadmin@omicron&password=e0F6gH4CfrBeZdiO.2020&sslmode=require
+    url: jdbc:postgresql://omicronuat.postgres.database.azure.com:5432/omicron_uat?user=omicronadmin@omicronuat&password=H@Sh1CoR3!&sslmode=require
     driver-class-name: org.postgresql.Driver
     hikari:
       maximumPoolSize: 1000
