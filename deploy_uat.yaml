@@ -35,42 +35,6 @@ spec:
       imagePullSecrets:
       - name: pullsecret
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: apimanager-svc
-  name: apimanager-svc
-spec:
-  ports:
-  - name: apimanager
-    port: 8000
-    protocol: TCP
-    targetPort: 8000
-  selector:
-    app: apimanager
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: seqlog
-  name: seqlog-svc
-spec:
-  ports:
-  - name: default
-    port: 81
-    protocol: TCP
-    targetPort: 80
-  - name: alt
-    port: 5341
-    protocol: TCP
-    targetPort: 5341
-  selector:
-    app: seqlog
-  type: ClusterIP
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
