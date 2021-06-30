@@ -696,4 +696,10 @@
           ALTER TABLE usersorders ALTER COLUMN finishdate TYPE Date using finishdate::date;
       </sql>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.78">
+      <sql endDelimiter=";">
+          insert into usersorders (salesorderid , productionorderid , status) values('', '1', 'Planificado');
+		  INSERT INTO public."user" (id,username,firstname,lastname,"role","password",activo,pieces,asignable,deleted,classification) VALUES ('00197298-0e73-4299-b004-092de34c5aab','admin','admin','admin',1,'QXhpdHkyMDIw',1,200,1,false,'');
+      </sql>
+  </changeSet>
 </databaseChangeLog> 
