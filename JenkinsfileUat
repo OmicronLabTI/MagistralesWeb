@@ -162,16 +162,16 @@ pipeline {
                 echo 'Running Kubernetes'
                 sh 'kubectl apply -f deploy_uat.yaml'
             }
-        }/*
+        }
 		stage('Deploy App Service'){
 			steps{
 				azureWebAppPublish azureCredentialsId: 'Omicronapp', publishType: 'docker',
-								    resourceGroup: 'OmicronProduccion', appName: 'omicronlab',
+								    resourceGroup: 'OmicronUAT', appName: 'omicronlabmagistaluat',
 									dockerImageName: 'omicron.azurecr.io/omicron-web-repository-uat', dockerImageTag: 'latest',
 									dockerRegistryEndpoint: [credentialsId: 'omicronacr', url: 'https://omicron.azurecr.io'],
 									skipDockerBuild: true
 			}
-		}*/
+		}
         stage('Database') {
             steps {
                 dir ('database/'){
