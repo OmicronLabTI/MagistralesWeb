@@ -35,6 +35,42 @@ spec:
       imagePullSecrets:
       - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: apimanager-svc
+  name: apimanager-svc
+spec:
+  ports:
+  - name: apimanager
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: apimanager-svc
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: seqlog
+  name: seqlog-svc
+spec:
+  ports:
+  - name: default
+    port: 81
+    protocol: TCP
+    targetPort: 80
+  - name: alt
+    port: 5341
+    protocol: TCP
+    targetPort: 5341
+  selector:
+    app: seqlog-svc
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -293,3 +329,35 @@ spec:
             memory: 256Mi
       imagePullSecrets:
       - name: pullsecret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seqlog-deployment
+  labels:
+    app: seqlog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seqlog
+  template:
+    metadata:
+      labels:
+        app: seqlog
+    spec:
+      containers:
+      - name: seqlog
+        image: datalust/seq:latest
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Uat
+        - name: ACCEPT_EULA
+          value: "Y"
+        ports:
+        - containerPort: 80
+          name: intra
+        - containerPort: 5341
+          name: extra
