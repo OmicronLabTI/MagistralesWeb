@@ -4,7 +4,7 @@ metadata:
   name: omicron-ingress-api
   annotations:
     kubernetes.io/ingress.class: nginx-api
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
 spec:
   rules:
   - host: omicronapiuat.eastus2.cloudapp.azure.com
