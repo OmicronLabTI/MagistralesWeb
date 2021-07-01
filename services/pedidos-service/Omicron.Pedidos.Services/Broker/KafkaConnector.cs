@@ -41,16 +41,18 @@ namespace Omicron.Pedidos.Services.Broker
             this.producer = new ProducerConfig
             {
                 BootstrapServers = this.configuration["kafka:EH_FQDN"],
-
-                //// Security Enabled for Prod
-                /*
-                SecurityProtocol = SecurityProtocol.SaslSsl,
-                SaslMechanism = SaslMechanism.Plain,
-                SaslUsername = "$ConnectionString",
-                SaslPassword = connStr,
-                SslCaLocation = cacertlocation,*/
-                //// Debug = "security,broker,protocol"        //Uncomment for librdkafka debugging information
             };
+
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            if (environment == "Uat")
+            {
+                this.producer.SecurityProtocol = SecurityProtocol.SaslSsl;
+                this.producer.SaslMechanism = SaslMechanism.Plain;
+                this.producer.SaslUsername = "$ConnectionString";
+                this.producer.SaslPassword = this.configuration["kafka:EH_CONNECTION_STRING"];
+                this.producer.SslCaLocation = string.Empty;
+            }
         }
 
         /// <inheritdoc/>
