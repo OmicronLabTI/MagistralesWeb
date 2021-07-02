@@ -24,6 +24,8 @@ struct Config {
     static let baseUrl = URLRoot.QA
     #elseif RELEASE
     static let baseUrl = URLRoot.RELEASE
+    #elseif UAT
+    static let baseUrl = URLRoot.UAT
     #endif
 
     static let serverOmicron = URLRoot.omicronServer

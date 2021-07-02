@@ -1,0 +1,340 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apimanager-deployment
+  labels:
+    app: apimanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apimanager
+  template:
+    metadata:
+      labels:
+        app: apimanager
+    spec:
+      containers:
+      - name: apimanager
+        image: omicron.azurecr.io/omicron-apimanager-repository-uat:latest
+        imagePullPolicy: Always
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: SPRING_PROFILES_ACTIVE
+          value: uat
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            cpu: 200m
+            memory: 768Mi
+          requests:
+            cpu: 100m
+            memory: 384Mi
+      imagePullSecrets:
+      - name: pullsecret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauthserver-deployment
+  labels:
+    app: oauthserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauthserver
+  template:
+    metadata:
+      labels:
+        app: oauthserver
+    spec:
+      containers:
+      - name: oauthserver
+        image: omicron.azurecr.io/omicron-oauthserver-repository-uat:latest
+        imagePullPolicy: Always
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: SPRING_PROFILES_ACTIVE
+          value: uat
+        - name: POSTGRESS_JDBC_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-uat
+              key: omicron_jdbc_postgress_db
+        ports:
+        - containerPort: 8090
+        resources:
+          limits:
+            cpu: 200m
+            memory: 768Mi
+          requests:
+            cpu: 100m
+            memory: 384Mi
+      imagePullSecrets:
+      - name: pullsecret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogos-deployment
+  labels:
+    app: catalogos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalogos
+  template:
+    metadata:
+      labels:
+        app: catalogos
+    spec:
+      containers:
+      - name: catalogos
+        image: omicron.azurecr.io/omicron-catalogos-repository-uat:latest
+        imagePullPolicy: Always
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Uat
+        - name: POSTGRESS_NET_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-uat
+              key: omicron_net_postgress_db
+        ports:
+        - containerPort: 9010
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: pullsecret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usuarios-deployment
+  labels:
+    app: usuarios
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: usuarios
+  template:
+    metadata:
+      labels:
+        app: usuarios
+    spec:
+      containers:
+      - name: usuarios
+        image: omicron.azurecr.io/omicron-usuarios-repository-uat:latest
+        imagePullPolicy: Always
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Uat
+        - name: POSTGRESS_NET_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-uat
+              key: omicron_net_postgress_db
+        ports:
+        - containerPort: 5101
+        resources:
+          limits:
+            cpu: 200m
+            memory: 768Mi
+          requests:
+            cpu: 100m
+            memory: 384Mi
+      imagePullSecrets:
+      - name: pullsecret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sapadapter-deployment
+  labels:
+    app: sapadapter
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sapadapter
+  template:
+    metadata:
+      labels:
+        app: sapadapter
+    spec:
+      containers:
+      - name: sapadapter
+        image: omicron.azurecr.io/omicron-sapadapter-repository-uat:latest
+        imagePullPolicy: Always
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Uat
+        - name: REDIS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-uat
+              key: redis
+        - name: SAP_CONNECTION_STRING_SQL_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: omicron-uat
+              key: sap_connection_string_sql_server
+        ports:
+        - containerPort: 5102
+        resources:
+          limits:
+            cpu: 250m
+            memory: 768Mi
+          requests:
+            cpu: 125m
+            memory: 384Mi
+      imagePullSecrets:
+      - name: pullsecret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pedidos-deployment
+  labels:
+    app: pedidos
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pedidos
+  template:
+    metadata:
+      labels:
+        app: pedidos
+    spec:
+      containers:
+      - name: pedidos
+        image: omicron.azurecr.io/omicron-pedidos-repository-uat:latest
+        imagePullPolicy: Always
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Uat
+        - name: REDIS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-uat
+              key: redis
+        - name: POSTGRESS_NET_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-uat
+              key: omicron_net_postgress_db
+        - name: EVENHUB_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-uat
+              key: eventhub_net_connection
+        ports:
+        - containerPort: 5103
+        resources:
+          limits:
+            cpu: 200m
+            memory: 768Mi
+          requests:
+            cpu: 100m
+            memory: 384Mi
+      imagePullSecrets:
+      - name: pullsecret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: warehouses-deployment
+  labels:
+    app: warehouses
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warehouses
+  template:
+    metadata:
+      labels:
+        app: warehouses
+    spec:
+      containers:
+      - name: warehouses
+        image: omicron.azurecr.io/omicron-warehouses-repository-uat:latest
+        imagePullPolicy: Always
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Uat
+        - name: POSTGRESS_NET_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-uat
+              key: omicron_net_postgress_db
+        ports:
+        - containerPort: 5104
+        resources:
+          limits:
+            cpu: 100m
+            memory: 256Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+      imagePullSecrets:
+      - name: pullsecret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-deployment
+  labels:
+    app: reporting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reporting
+  template:
+    metadata:
+      labels:
+        app: reporting
+    spec:
+      containers:
+      - name: reporting
+        image: omicron.azurecr.io/omicron-reporting-repository-uat:latest
+        imagePullPolicy: Always
+        env:
+        - name: TZ
+          value: America/Mexico_City
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Uat
+        ports:
+        - containerPort: 5105
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
+          requests:
+            cpu: 50m
+            memory: 256Mi
+      imagePullSecrets:
+      - name: pullsecret
