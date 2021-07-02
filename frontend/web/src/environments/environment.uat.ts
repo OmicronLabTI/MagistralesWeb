@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    baseUrl: 'https://omicronlabapiuat.eastus2.cloudapp.azure.com', // uat
+    baseUrl: 'http://omicronlabapiuat.eastus2.cloudapp.azure.com', // uat
     apiLogin: '/api/oauth/oauthrs',
     apiCatalogs: '/api/catalogos',
     apiUsers: '/api/usuarios',
