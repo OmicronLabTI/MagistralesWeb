@@ -10,7 +10,7 @@ spec:
   tls:
   - hosts:
     - omicronlabloguat.eastus2.cloudapp.azure.com
-    secretName: tls-secret-log
+    secretName: tls-secret
   rules:
   - host: omicronlabloguat.eastus2.cloudapp.azure.com
     http:
