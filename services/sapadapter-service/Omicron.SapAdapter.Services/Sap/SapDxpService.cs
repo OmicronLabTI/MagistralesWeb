@@ -82,21 +82,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 });
             }
 
-            var deliveries = (await this.sapDao.GetDeliveryBySaleOrder(ordersid)).ToList();
-            var invoicesIdToLook = deliveries.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).Distinct().ToList();
-            var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesIdToLook)).ToList();
-            var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoices.Select(x => x.TransportCode).Distinct().ToList())).ToList();
-
-            invoices.ForEach(x =>
-            {
-                var company = deliveryCompanies.FirstOrDefault(y => y.TrnspCode == x.TransportCode);
-                company ??= new Repartidores { TrnspName = string.Empty };
-                x.TransportName = company.TrnspName;
-            });
-
             var objectToReturn = new
             {
-                invoicesSap = invoices,
                 ordersSap = ordersToReturn,
             };
 
