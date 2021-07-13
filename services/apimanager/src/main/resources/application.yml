@@ -106,6 +106,9 @@ zuul:
     dxp-pedidosdxp:
       path: /dxp/pedidosdxp/**
       serviceId: pedidosdxpservice
+    dxp-discounts:
+      path: /dxp/discounts/**
+      serviceId: discountsservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
