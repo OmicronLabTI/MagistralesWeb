@@ -103,6 +103,9 @@ zuul:
     dxp-pedidosdxp:
       path: /dxp/pedidosdxp/**
       serviceId: pedidosdxpservice
+    dxp-incidencia:
+      path: /dxp/incidencia/**
+      serviceId: incidenceservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
