@@ -103,6 +103,9 @@ zuul:
     dxp-pedidosdxp:
       path: /dxp/pedidosdxp/**
       serviceId: pedidosdxpservice
+    dxp-incidencia:
+      path: /dxp/incidencia/**
+      serviceId: incidenceservice
     dxp-discounts:
       path: /dxp/discounts/**
       serviceId: discountsservice
