@@ -198,8 +198,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             });
 
             await this.pedidosDao.UpdateUserOrders(orders);
-
-            return ServiceUtils.CreateResult(true, 200, null, null, null, null);
+            var objectToReturn = new { SaleOrderId = orders.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList() };
+            return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
         }
 
         /// <inheritdoc/>
