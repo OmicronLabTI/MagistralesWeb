@@ -277,6 +277,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Update the profile the advisor profile info.
+        /// </summary>
+        /// <param name="profileDto">Advisor profile info.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("advisor/profileinfo")]
+        public async Task<IHttpActionResult> UpdateAdvisorProfileInfo([FromBody] AdvisorProfileDto profileDto)
+        {
+            var result = await this.sapFacade.UpdateAdvisorProfileInfo(profileDto);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

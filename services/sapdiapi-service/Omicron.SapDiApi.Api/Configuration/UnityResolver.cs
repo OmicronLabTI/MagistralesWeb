@@ -71,6 +71,7 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<DoctorProfileDto, DoctorProfileModel>();
                 cfg.CreateMap<ShoppingCartItemDto, ShoppingCartItemModel>();
                 cfg.CreateMap<CreateSaleOrderDto, CreateSaleOrderModel>();
+                cfg.CreateMap<AdvisorProfileDto, AdvisorProfileModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 
@@ -83,6 +84,7 @@ namespace Omicron.SapDiApi.Api.Configuration
             container.RegisterType<IDoctorProfileService, DoctorProfileService>();
             container.RegisterType<ISapDxpFacade, SapDxpFacade>();
             container.RegisterType<ISapCreateSaleOrder, SapCreateSaleOrder>();
+            container.RegisterType<IAdvisorProfileService, AdvisorProfileService>();
             
             if (container == null)
             {

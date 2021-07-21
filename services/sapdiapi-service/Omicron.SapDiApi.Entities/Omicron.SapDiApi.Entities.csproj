@@ -75,6 +75,7 @@
     <Compile Include="Models\CompleteDetalleFormulaModel.cs" />
     <Compile Include="Models\CreateDeliveryModel.cs" />
     <Compile Include="Models\CreateIsolatedFabOrderModel.cs" />
+    <Compile Include="Models\Experience\AdvisorProfileModel.cs" />
     <Compile Include="Models\Experience\CreateSaleOrderModel.cs" />
     <Compile Include="Models\Experience\DoctorDefaultAddressModel.cs" />
     <Compile Include="Models\Experience\DoctorDeliveryAddressModel.cs" />
