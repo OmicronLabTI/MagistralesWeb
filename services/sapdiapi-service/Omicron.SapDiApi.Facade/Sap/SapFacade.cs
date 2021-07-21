@@ -32,6 +32,8 @@ namespace Omicron.SapDiApi.Facade.Sap
 
         private readonly IDoctorProfileService doctorProfileService;
 
+        private readonly IAdvisorProfileService advisorProfileService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>        
@@ -40,7 +42,8 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// <param name="cancelService">cancel service.</param>
         /// <param name="createDeliveryService">the create delivery service.</param>
         /// <param name="doctorAddress">The doctor addresses.</param>
-        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService, ICancelService cancelService, ICreateDeliveryService createDeliveryService, IDoctorAddress doctorAddress, IDoctorProfileService doctorProfileService)
+        /// <param name="advisorProfileService">Advisor profile service.</param>
+        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService, ICancelService cancelService, ICreateDeliveryService createDeliveryService, IDoctorAddress doctorAddress, IDoctorProfileService doctorProfileService, IAdvisorProfileService advisorProfileService)
         {
             this.mapper = mapper;
             this.sapDiApiService = sapDiApiService;
@@ -48,6 +51,7 @@ namespace Omicron.SapDiApi.Facade.Sap
             this.createDeliveryService = createDeliveryService;
             this.doctorAddress = doctorAddress;
             this.doctorProfileService = doctorProfileService;
+            this.advisorProfileService = advisorProfileService;
         }
 
         /// <summary>
@@ -189,6 +193,12 @@ namespace Omicron.SapDiApi.Facade.Sap
         public async Task<ResultDto> UpdateDoctorProfileInfo(DoctorProfileDto profileDto)
         {
             return this.mapper.Map<ResultDto>(await this.doctorProfileService.UpdateDoctorProfileInfo(this.mapper.Map<DoctorProfileModel>(profileDto)));
+        }
+
+        /// <inheritdoc />
+        public async Task<ResultDto> UpdateAdvisorProfileInfo(AdvisorProfileDto profileDto)
+        {
+            return this.mapper.Map<ResultDto>(await this.advisorProfileService.UpdateAdvisorProfileInfo(this.mapper.Map<AdvisorProfileModel>(profileDto)));
         }
     }
 }

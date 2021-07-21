@@ -134,6 +134,14 @@ namespace Omicron.SapDiApi.Facade.Sap
         /// <returns>The data.</returns>
         Task<ResultDto> UpdateDoctorProfileInfo(DoctorProfileDto profileDto);
 
+
+        /// <summary>
+        /// Set the profile info by advisor.
+        /// </summary>
+        /// <param name="profileDto">Profile Info</param>
+        /// <returns>The data.</returns>
+        Task<ResultDto> UpdateAdvisorProfileInfo(AdvisorProfileDto profileDto);
+
         /// <summary>
         /// connecto to sap.
         /// </summary>
