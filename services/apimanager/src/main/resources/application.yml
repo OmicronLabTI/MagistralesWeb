@@ -2,10 +2,10 @@ spring:
   application:
     name: eureka-service
   profiles: dev
-  http:
+  servlet:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 20MB
+      max-file-size: 15MB
+      max-request-size: 15MB
 
 server:
   port: 8000
