@@ -802,5 +802,20 @@ namespace Omicron.Pedidos.Services.Constants
             Entregado,
             Almacenado,
         };
+
+        /// <summary>
+        /// Gets list of thw status for the orders.
+        /// </summary>
+        /// <value>
+        /// List of thw status for the orders.
+        /// </value>
+        public static List<string> ListStatusOrdenesForQfbCount { get; } = new List<string>
+        {
+            Asignado,
+            Proceso,
+            Pendiente,
+            Reasignado,
+            Terminado,
+        };
     }
 }
