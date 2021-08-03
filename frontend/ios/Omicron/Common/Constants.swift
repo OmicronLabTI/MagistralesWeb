@@ -242,7 +242,7 @@ struct URLRoot {
     static let QA = "http://201.163.179.28:8000/api"
     static let RELEASE = "https://magistralesprod.omicronlab.com.mx/api"
     static let omicronServer = "http://172.30.5.49:5100/"
-    static let UAT = "https://omicronlabapiuat.eastus2.cloudapp.azure.com"
+    static let UAT = "https://omicronlabapiuat.eastus2.cloudapp.azure.com/api"
 }
 
 enum Actions: String {
