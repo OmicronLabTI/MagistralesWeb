@@ -60,5 +60,17 @@ namespace Omicron.SapDiApi.Dtos.Models.Experience
         /// </summary>
         /// <value>The code.</value>
         public string CardCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the unit price.
+        /// </summary>
+        /// <value>Unit Price.</value>
+        public double CostPerPiece { get; set; }
+
+        /// <summary>
+        /// Gets or sets the discount percentage.
+        /// </summary>
+        /// <value>Discount Percentage.</value>
+        public double DiscountPercentage { get; set; }
     }
 }

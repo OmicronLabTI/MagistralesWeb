@@ -74,6 +74,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     order.Lines.SetCurrentLine(i);
                     order.Lines.ItemCode = saleOrderModel.Items[i].ItemCode;
                     order.Lines.Quantity = saleOrderModel.Items[i].Quantity;
+                    order.Lines.UnitPrice = saleOrderModel.Items[i].CostPerPiece;
+                    order.Lines.DiscountPercent = saleOrderModel.Items[i].DiscountPercentage;
                     order.Lines.UserFields.Fields.Item("U_ENVASE").Value = saleOrderModel.Items[i].Container;
                     order.Lines.UserFields.Fields.Item("U_ETIQUETA").Value = saleOrderModel.Items[i].Label;
                     order.Lines.UserFields.Fields.Item("U_RECETA").Value = saleOrderModel.Items[i].NeedRecipe == "Y" ? "Si" : "No";
