@@ -63,6 +63,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.DocDueDate = DateTime.Now.AddDays(10);
                 order.ShipToCode = saleOrderModel.ShippinAddress;
                 order.PayToCode = saleOrderModel.BillingAddress;
+                order.UserFields.Fields.Item("U_Pedido_DXP").Value = saleOrderModel.TransactionId;
 
                 if (!string.IsNullOrEmpty(attachment))
                 {
