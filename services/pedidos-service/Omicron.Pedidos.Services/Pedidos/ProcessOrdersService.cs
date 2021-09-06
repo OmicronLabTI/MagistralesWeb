@@ -139,6 +139,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             if (insertUserOrdersale)
             {
+                saleOrder.PlanningDate = DateTime.Now;
                 dataToInsert.Add(saleOrder);
             }
             else
@@ -269,6 +270,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     Status = ServiceConstants.Planificado,
                     MagistralQr = JsonConvert.SerializeObject(this.ReturnQrStructure(x, saleOrder)),
                     TypeOrder = saleOrder.Order.OrderType,
+                    PlanningDate = DateTime.Now,
                 };
                 listToReturn.Add(userOrder);
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));
@@ -336,6 +338,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (insertUserOrdersale)
                 {
+                    saleOrder.PlanningDate = DateTime.Now;
                     listToInsert.Add(saleOrder);
                 }
                 else
