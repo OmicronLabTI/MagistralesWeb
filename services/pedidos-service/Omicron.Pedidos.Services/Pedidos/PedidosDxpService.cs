@@ -40,15 +40,17 @@ namespace Omicron.Pedidos.Services.Pedidos
             var orders = (await this.pedidosDao.GetUserOrderBySaleOrder(listIds)).ToList();
             var listToReturn = orders.Select(x => new
             {
-                id = x.Id,
-                saleOrderId = x.Salesorderid,
-                status = x.Status,
-                statusAlmacen = x.StatusAlmacen,
-                statusInvoice = x.StatusInvoice,
-                productionOrder = x.Productionorderid,
-                isOrder = x.IsSalesOrder,
-                invoiceStoreDate = x.InvoiceStoreDate,
-                invoiceId = x.InvoiceId,
+                x.Id,
+                x.Salesorderid,
+                x.Productionorderid,
+                x.Status,
+                x.StatusAlmacen,
+                x.StatusInvoice,
+                x.IsSalesOrder,
+                x.InvoiceStoreDate,
+                x.InvoiceId,
+                x.PlanningDate,
+                x.InvoiceType,
             }).ToList();
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
