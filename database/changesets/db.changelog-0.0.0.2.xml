@@ -284,4 +284,12 @@
 		</column>
 	</addColumn>  
   </changeSet>
+  <changeSet author="gramirez" id="changelog-2.36">
+	<addColumn tableName ="usersorders">
+		<column 
+			name="planningdate" type="timestamp">
+			<constraints nullable="true" />
+		</column>
+	</addColumn>  
+  </changeSet>
 </databaseChangeLog> 

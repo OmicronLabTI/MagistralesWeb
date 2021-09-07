@@ -44,5 +44,11 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// </summary>
         /// <value>The code.</value>
         public string CardCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the identifier of the transaction record in the payment table (id field).
+        /// </summary>
+        /// <value>The code.</value>
+        public string TransactionId { get; set; }
     }
 }
