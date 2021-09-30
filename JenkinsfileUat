@@ -35,7 +35,7 @@ pipeline {
 				sh 'kubectl config use-context omicron_aks_uat'
                 sh 'kubectl delete -f deploy_uat.yaml --grace-period=0 --force --ignore-not-found'
             }
-        }		
+        }/*		
         stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
@@ -79,7 +79,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
         stage('Build Micro Services') {
             steps {
                 echo 'Building ms1'
@@ -161,7 +161,7 @@ pipeline {
                 echo 'Running Kubernetes'
                 sh 'kubectl apply -f deploy_uat.yaml'
             }
-        }
+        }/*
 		stage('Deploy App Service'){
 			steps{
 				azureWebAppPublish azureCredentialsId: 'Omicronapp', publishType: 'docker',
@@ -180,7 +180,7 @@ pipeline {
                     
                 }
             }
-        }
+        }*/
     }
     post { 
         always { 
