@@ -45,5 +45,18 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidosDxpFacade.GetDeliveredPayments(orderDto);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// process the orders.
+        /// </summary>
+        /// <param name="orders">the orders to search.</param>
+        /// <returns>the result.</returns>
+        [Route("/dxp/orders/status")]
+        [HttpPost]
+        public async Task<IActionResult> GetOrdersHeaderStatus(List<string> orders)
+        {
+            var response = await this.pedidosDxpFacade.GetOrdersHeaderStatus(orders);
+            return this.Ok(response);
+        }
     }
 }
