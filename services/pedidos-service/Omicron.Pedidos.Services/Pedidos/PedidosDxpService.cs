@@ -82,5 +82,20 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersHeaderStatus(List<string> orders)
+        {
+            var userOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(orders)).Select(o => new
+            {
+                o.Salesorderid,
+                o.Productionorderid,
+                o.Status,
+                o.StatusAlmacen,
+                o.StatusInvoice,
+            }).ToList();
+            userOrders = userOrders.Where(o => string.IsNullOrEmpty(o.Productionorderid)).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, userOrders, null, userOrders.Count.ToString());
+        }
     }
 }

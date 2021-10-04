@@ -46,5 +46,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidosDxpService.GetDeliveredPayments(ordersId));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersHeaderStatus(List<string> orders)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidosDxpService.GetOrdersHeaderStatus(orders));
+        }
     }
 }

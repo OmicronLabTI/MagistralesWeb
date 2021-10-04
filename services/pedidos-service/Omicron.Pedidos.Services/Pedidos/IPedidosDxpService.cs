@@ -30,5 +30,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="ordersId">the orders id.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetDeliveredPayments(List<int> ordersId);
+
+        /// <summary>
+        /// returns the sale order status.
+        /// </summary>
+        /// <param name="orders">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOrdersHeaderStatus(List<string> orders);
     }
 }

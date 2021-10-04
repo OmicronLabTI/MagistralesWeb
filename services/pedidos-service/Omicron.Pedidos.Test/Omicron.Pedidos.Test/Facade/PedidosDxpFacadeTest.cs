@@ -13,6 +13,7 @@ namespace Omicron.Pedidos.Test.Facade
     using AutoMapper;
     using Moq;
     using NUnit.Framework;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Facade.Pedidos;
     using Omicron.Pedidos.Services.Mapping;
@@ -66,6 +67,37 @@ namespace Omicron.Pedidos.Test.Facade
 
             // arrange
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Get Orders Header Status.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetOrdersHeaderStatus()
+        {
+            // arrange
+            var orders = new List<string>();
+
+            // act
+            var response = await this.pedidosFacade.GetOrdersHeaderStatus(orders);
+
+            // arrange
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Assert response.
+        /// </summary>
+        /// <param name="response">Response to validate.</param>
+        public void AssertResponse(ResultDto response)
+        {
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
         }
     }
 }
