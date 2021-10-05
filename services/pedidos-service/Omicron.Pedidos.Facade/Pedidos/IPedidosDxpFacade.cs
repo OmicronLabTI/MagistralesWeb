@@ -23,5 +23,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="ordersId">the orders id.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetDeliveredPayments(List<int> ordersId);
+
+        /// <summary>
+        /// returns the sale order status.
+        /// </summary>
+        /// <param name="orders">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersHeaderStatus(List<string> orders);
     }
 }

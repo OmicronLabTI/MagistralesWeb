@@ -44,5 +44,23 @@ namespace Omicron.SapDiApi.Dtos.Models.Experience
         /// </summary>
         /// <value>The code.</value>
         public string CardCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the identifier of the transaction record in the payment table (id field).
+        /// </summary>
+        /// <value>The code.</value>
+        public string TransactionId { get; set; }
+
+        /// <summary>
+        /// The patient name.
+        /// </summary>
+        /// <value>The code.</value>
+        public string PatientName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the bool value id name is printed.
+        /// </summary>
+        /// <value>The code.</value>
+        public int IsNamePrinted { get; set; }
     }
 }

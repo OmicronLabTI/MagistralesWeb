@@ -2,6 +2,10 @@ spring:
   application:
     name: eureka-service
   profiles: dev
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
 
 server:
   port: 8000
@@ -31,6 +35,10 @@ keycloak:
     - authRoles: [advisor]
       securityCollections:
         - name: advisor-dxp
+          patterns: [/api/dxp/*]
+    - authRoles: [reporter]
+      securityCollections:
+        - name: reporter-dxp
           patterns: [/api/dxp/*]
     - authRoles: []
       securityCollections:
@@ -106,6 +114,15 @@ zuul:
     dxp-pedidosdxp:
       path: /dxp/pedidosdxp/**
       serviceId: pedidosdxpservice
+    dxp-incidencia:
+      path: /dxp/incidencia/**
+      serviceId: incidenceservice
+    dxp-discounts:
+      path: /dxp/discounts/**
+      serviceId: discountsservice
+    dxp-reportdxp:
+      path: /dxp/report/**
+      serviceId: reportdxpservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000

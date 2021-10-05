@@ -40,15 +40,17 @@ namespace Omicron.Pedidos.Services.Pedidos
             var orders = (await this.pedidosDao.GetUserOrderBySaleOrder(listIds)).ToList();
             var listToReturn = orders.Select(x => new
             {
-                id = x.Id,
-                saleOrderId = x.Salesorderid,
-                status = x.Status,
-                statusAlmacen = x.StatusAlmacen,
-                statusInvoice = x.StatusInvoice,
-                productionOrder = x.Productionorderid,
-                isOrder = x.IsSalesOrder,
-                invoiceStoreDate = x.InvoiceStoreDate,
-                invoiceId = x.InvoiceId,
+                x.Id,
+                x.Salesorderid,
+                x.Productionorderid,
+                x.Status,
+                x.StatusAlmacen,
+                x.StatusInvoice,
+                x.IsSalesOrder,
+                x.InvoiceStoreDate,
+                x.InvoiceId,
+                x.PlanningDate,
+                x.InvoiceType,
             }).ToList();
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
@@ -79,6 +81,21 @@ namespace Omicron.Pedidos.Services.Pedidos
             });
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersHeaderStatus(List<string> orders)
+        {
+            var userOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(orders)).Select(o => new
+            {
+                o.Salesorderid,
+                o.Productionorderid,
+                o.Status,
+                o.StatusAlmacen,
+                o.StatusInvoice,
+            }).ToList();
+            userOrders = userOrders.Where(o => string.IsNullOrEmpty(o.Productionorderid)).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, userOrders, null, userOrders.Count.ToString());
         }
     }
 }

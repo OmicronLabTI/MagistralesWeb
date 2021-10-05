@@ -196,9 +196,25 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string GetDoctorInfo = "SELECT U_Fecha_Nacimiento FROM OCRD where CardCode = '{0}'";
 
         /// <summary>
+        /// Get the advisor info.
+        /// </summary>
+        public const string GetAdvisorInfo = "select officeTel, birthDate from OHEM where empID = {0}";
+
+        /// <summary>
         /// Get available product quantity in warehouse.
         /// </summary>
         public const string DoctorNotFound = "El doctor no se encontró en SAP";
+
+        /// <summary>
+        /// Advisor not found message.
+        /// </summary>
+        public const string AdvisorNotFound = "El asesor no se encontró en SAP";
+
+        /// <summary>
+        /// Invalid advisor id message.
+        /// </summary>
+        public const string InvalidAdvisorId = "El identificador del asesor no es valido";
+
 
         /// <summary>
         /// Get available product quantity in warehouse.

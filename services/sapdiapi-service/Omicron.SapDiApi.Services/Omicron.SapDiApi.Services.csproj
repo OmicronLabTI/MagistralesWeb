@@ -88,10 +88,12 @@
     <Compile Include="Constants\ServiceConstants.cs" />
     <Compile Include="Exceptions\ValidationException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SapDiApi\AdvisorProfileService.cs" />
     <Compile Include="SapDiApi\CancelService.cs" />
     <Compile Include="SapDiApi\CreateDeliveryService.cs" />
     <Compile Include="SapDiApi\DoctorAddress.cs" />
     <Compile Include="SapDiApi\DoctorProfileService.cs" />
+    <Compile Include="SapDiApi\IAdvisorProfileService.cs" />
     <Compile Include="SapDiApi\ICancelService.cs" />
     <Compile Include="SapDiApi\ICreateDeliveryService.cs" />
     <Compile Include="SapDiApi\IDoctorAddress.cs" />
