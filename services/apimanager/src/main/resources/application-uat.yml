@@ -22,7 +22,7 @@ eureka:
 
 keycloak:
   enabled: true
-  auth-server-url: https://omicronauthuat/auth
+  auth-server-url: https://omicronauthuat.azurewebsites.net/auth
   use-resource-role-mappings: true
   public-client: true
   cors: true
