@@ -27,11 +27,11 @@ spec:
             - containerPort: 8000
           resources:
             limits:
-              cpu: 110m
-              memory: 436Mi
+              cpu: 120m
+              memory: 480Mi
             requests:
-              cpu: 54m
-              memory: 218Mi
+              cpu: 60m
+              memory: 280Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -69,11 +69,11 @@ spec:
             - containerPort: 8090
           resources:
             limits:
-              cpu: 55m
-              memory: 218Mi
+              cpu: 60m
+              memory: 240Mi
             requests:
-              cpu: 27m
-              memory: 109Mi
+              cpu: 30m
+              memory: 120Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -111,11 +111,11 @@ spec:
             - containerPort: 9010
           resources:
             limits:
-              cpu: 55m
-              memory: 218Mi
+              cpu: 60m
+              memory: 240Mi
             requests:
-              cpu: 27m
-              memory: 109Mi
+              cpu: 30m
+              memory: 120Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -126,7 +126,7 @@ metadata:
   labels:
     app: usuarios
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: usuarios
@@ -153,11 +153,11 @@ spec:
             - containerPort: 5101
           resources:
             limits:
-              cpu: 55m
-              memory: 218Mi
+              cpu: 60m
+              memory: 240Mi
             requests:
-              cpu: 27m
-              memory: 109Mi
+              cpu: 30m
+              memory: 120Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -200,11 +200,11 @@ spec:
             - containerPort: 5102
           resources:
             limits:
-              cpu: 55m
-              memory: 218Mi
+              cpu: 60m
+              memory: 240Mi
             requests:
-              cpu: 27m
-              memory: 109Mi
+              cpu: 30m
+              memory: 120Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -215,7 +215,7 @@ metadata:
   labels:
     app: pedidos
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: pedidos
@@ -252,11 +252,11 @@ spec:
             - containerPort: 5103
           resources:
             limits:
-              cpu: 55m
-              memory: 218Mi
+              cpu: 60m
+              memory: 240Mi
             requests:
-              cpu: 27m
-              memory: 109Mi
+              cpu: 30m
+              memory: 120Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -294,11 +294,11 @@ spec:
             - containerPort: 5104
           resources:
             limits:
-              cpu: 55m
-              memory: 218Mi
+              cpu: 60m
+              memory: 240Mi
             requests:
-              cpu: 27m
-              memory: 109Mi
+              cpu: 30m
+              memory: 120Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -331,10 +331,10 @@ spec:
             - containerPort: 5105
           resources:
             limits:
-              cpu: 55m
-              memory: 218Mi
+              cpu: 60m
+              memory: 240Mi
             requests:
-              cpu: 27m
-              memory: 109Mi
+              cpu: 30m
+              memory: 120Mi
       imagePullSecrets:
         - name: pullsecret
