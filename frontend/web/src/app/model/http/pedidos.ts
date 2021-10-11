@@ -59,6 +59,7 @@ export class ParamsPedidos {
     advance?: string;
     clasification?: string;
     docNumUntil?: any;
+    pageIndex?: any;
 }
 
 export class ProcessOrders {
