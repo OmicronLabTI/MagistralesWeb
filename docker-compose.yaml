@@ -1,14 +1,14 @@
 version: "3.4"
 services:
-   postgres:
-    image: postgres
+  postgres:
+    image: postgres:13.3
     container_name: postgres
     ports:
       - "5432:5432"
     environment:
-     - POSTGRES_PASSWORD=Axity2020
-     - POSTGRES_USER=omicronuser
-     - POSTGRES_DB=omicrondev
-     - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_PASSWORD=Axity2020
+      - POSTGRES_USER=omicronuser
+      - POSTGRES_DB=omicrondev
+      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-     - $HOME/volumes/postgres:/var/lib/postgresql/data 
+      - $HOME/volumes/postgres:/var/lib/postgresql/data
