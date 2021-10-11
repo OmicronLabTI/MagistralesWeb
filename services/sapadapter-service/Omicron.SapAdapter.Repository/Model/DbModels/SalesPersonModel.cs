@@ -53,5 +53,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("email")]
         public string Email { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("mobile")]
+        public string PhoneMobile { get; set; }
     }
 }

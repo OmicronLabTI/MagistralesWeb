@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: ${POSTGRESS_JDBC_CONNECTION_STRING}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximumPoolSize: 1000
+      minimumIdle: 3
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  application:
+    name: oauth-service
+  profiles: uat
+
+server:
+  port: 8090
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${APIMANAGER_SVC_SERVICE_HOST}:${APIMANAGER_SVC_SERVICE_PORT}/eureka
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    preferIpAddress: true
+
+security:
+    values:
+      secret: Prueba
+      ttl: 43200
+      ttl-refresh: 604800

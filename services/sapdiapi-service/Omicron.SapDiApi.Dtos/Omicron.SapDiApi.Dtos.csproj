@@ -67,9 +67,17 @@
     <Compile Include="Models\BatchesConfigurationDto.cs" />
     <Compile Include="Models\CancelDeliveryDto.cs" />
     <Compile Include="Models\CloseProductionOrderDto.cs" />
+    <Compile Include="Models\CloseSampleOrderDto.cs" />
     <Compile Include="Models\CompleteDetailDto.cs" />
     <Compile Include="Models\CompleteDetalleFormulaDto.cs" />
     <Compile Include="Models\CreateDeliveryDto.cs" />
+    <Compile Include="Models\Experience\AdvisorProfileDto.cs" />
+    <Compile Include="Models\Experience\CreateSaleOrderDto.cs" />
+    <Compile Include="Models\Experience\DoctorDefaultAddressDto.cs" />
+    <Compile Include="Models\Experience\DoctorDeliveryAddressDto.cs" />
+    <Compile Include="Models\Experience\DoctorInvoiceAddressDto.cs" />
+    <Compile Include="Models\Experience\DoctorProfileDto.cs" />
+    <Compile Include="Models\Experience\ShoppingCartItemDto.cs" />
     <Compile Include="Models\OrderDto.cs" />
     <Compile Include="Models\OrderWithDetailDto.cs" />
     <Compile Include="Models\ProductDeliveryDto.cs" />

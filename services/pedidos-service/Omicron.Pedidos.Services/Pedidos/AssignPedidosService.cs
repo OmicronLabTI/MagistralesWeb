@@ -16,8 +16,8 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -208,7 +208,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(orders);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
-            await this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
 
@@ -230,8 +230,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var getUpdateUserOrderModel = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic);
             var ordersToUpdate = getUpdateUserOrderModel.Item1;
-            var listOrderLogToInsert = new List<SalesLogs>();
-            listOrderLogToInsert = getUpdateUserOrderModel.Item2;
+            var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.ReasignarOrden, assignModel.UserId), ServiceConstants.OrdenFab));

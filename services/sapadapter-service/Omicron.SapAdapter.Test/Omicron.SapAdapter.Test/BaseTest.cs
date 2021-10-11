@@ -198,6 +198,7 @@ namespace Omicron.SapAdapter.Test
             {
                 new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 46036, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1, InvoiceId = 1 },
                 new DeliveryDetailModel { BaseEntry = 75001, DeliveryId = 46037, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
+                new DeliveryDetailModel { BaseEntry = 100, DeliveryId = 46038, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
             };
         }
 
@@ -213,8 +214,8 @@ namespace Omicron.SapAdapter.Test
                 new BatchTransacitions { ItemCode = "Abc Aspirina", LogEntry = 4, DocNum = 200, DocQuantity = 10 },
 
                 // almacen
-                new BatchTransacitions { ItemCode = "Linea1", LogEntry = 2, DocNum = 46037, DocQuantity = 10 },
-                new BatchTransacitions { ItemCode = "Linea1", LogEntry = 3, DocNum = 1, DocQuantity = 10 },
+                new BatchTransacitions { ItemCode = "Linea1", LogEntry = 2, DocNum = 46037, DocQuantity = 10, BaseEntry = 75001 },
+                new BatchTransacitions { ItemCode = "Linea1", LogEntry = 3, DocNum = 1, DocQuantity = 10, BaseEntry = 75001 },
             };
         }
 

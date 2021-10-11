@@ -33,4 +33,37 @@
       </column>
     </createTable>
   </changeSet>
+  <changeSet author="erosas" id="changelog-3.2">
+	<dropTable  cascadeConstraints="true"  
+            tableName="SalesLogs"/> 
+  </changeSet>
+  <changeSet author="erosas" id="changelog-3.3">
+    <createTable tableName="SalesLogs">
+      <column name="Id" type="VARCHAR(60)">
+        <constraints nullable="false" primaryKey="true" unique="true"/>
+      </column>	  
+	  
+	  <column name="SalesOrderId" type="INT">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+	  <column name="ProductionOrderId" type="INT">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+      <column name="StatusSalesOrder" type="VARCHAR(20)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	
+	  <column name="StatusProductionOrder" type="VARCHAR(20)">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	
+      <column name="DataCheckin" type="TIMESTAMP">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>	  
+	  <column name="UserId" type="VARCHAR(50)">
+		<constraints nullable="true"/>
+	  </column>
+	  <column name="IsProductionOrder" type="BOOLEAN">
+        <constraints nullable="false" primaryKey="false" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
 </databaseChangeLog> 

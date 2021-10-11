@@ -27,17 +27,21 @@ namespace Omicron.SapAdapter.Facade.Sap
 
         private readonly IComponentsService componentsService;
 
+        private readonly ISapDxpService sapDxpService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>
         /// <param name="sapService">the sap service.</param>
         /// <param name="mapper">the mapper.</param>
+        /// <param name="sapDxpService">the sap dxp service.</param>
         /// <param name="componentsService">The component Service.</param>
-        public SapFacade(ISapService sapService, IMapper mapper, IComponentsService componentsService)
+        public SapFacade(ISapService sapService, IMapper mapper, IComponentsService componentsService, ISapDxpService sapDxpService)
         {
             this.mapper = mapper;
             this.sapService = sapService ?? throw new ArgumentNullException(nameof(sapService));
             this.componentsService = componentsService ?? throw new ArgumentNullException(nameof(componentsService));
+            this.sapDxpService = sapDxpService ?? throw new ArgumentException(nameof(sapDxpService));
         }
 
         /// <summary>
@@ -247,6 +251,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetPackingRequiredForOrderInAssignedStatus(string userId)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetPackingRequiredForOrderInAssignedStatus(userId));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersActive(List<int> ordersid)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDxpService.GetOrdersActive(ordersid));
         }
     }
 }

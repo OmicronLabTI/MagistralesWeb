@@ -64,6 +64,14 @@ namespace Omicron.Pedidos.Entities.Model
         public string Status { get; set; }
 
         /// <summary>
+        /// Gets or sets status.
+        /// </summary>
+        /// <value>
+        /// String status.
+        [Column("planningdate")]
+        public DateTime? PlanningDate { get; set; }
+
+        /// <summary>
         /// Gets or sets comments.
         /// </summary>
         /// <value>

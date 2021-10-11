@@ -643,6 +643,21 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// for total cancelation.
         /// </summary>
+        public const string PedidoRedisPlanificado = "SaleOrderPlan{0}";
+
+        /// <summary>
+        /// for total cancelation.
+        /// </summary>
+        public const string ErrorWhenPlnanningIntro = "Error al planificar, ";
+
+        /// <summary>
+        /// for total cancelation.
+        /// </summary>
+        public const string ErrorWhenPlanning = "El pedido {0} se encuentra en proceso de planificación, favor de intentar más tarde";
+
+        /// <summary>
+        /// for total cancelation.
+        /// </summary>
         public const bool IsProductionOrder = true;
 
         /// <summary>
@@ -665,7 +680,6 @@ namespace Omicron.Pedidos.Services.Constants
         public static List<string> StatusDelivered { get; } = new List<string>
         {
             Enviado,
-            Entregado,
         };
 
         /// <summary>
@@ -792,6 +806,21 @@ namespace Omicron.Pedidos.Services.Constants
             Finalizado,
             Entregado,
             Almacenado,
+        };
+
+        /// <summary>
+        /// Gets list of thw status for the orders.
+        /// </summary>
+        /// <value>
+        /// List of thw status for the orders.
+        /// </value>
+        public static List<string> ListStatusOrdenesForQfbCount { get; } = new List<string>
+        {
+            Asignado,
+            Proceso,
+            Pendiente,
+            Reasignado,
+            Terminado,
         };
     }
 }

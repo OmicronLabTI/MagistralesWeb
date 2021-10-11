@@ -131,6 +131,10 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 118, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 7, InvoiceType = "foraneo", StatusInvoice = "Enviado" },
                 new UserOrderModel { Id = 119, Productionorderid = null, Salesorderid = "202", Status = "Recibir", StatusAlmacen = "Back Order", FinalizedDate = DateTime.Now },
                 new UserOrderModel { Id = 120, Productionorderid = null, Salesorderid = "203", Status = "Almacenado", FinalizedDate = DateTime.Now },
+
+                // orders DXP
+                new UserOrderModel { Id = 121, Productionorderid = null, Salesorderid = "204", StatusInvoice = "Enviado" },
+                new UserOrderModel { Id = 122, Productionorderid = null, Salesorderid = "205", StatusInvoice = "Entregado" },
             };
         }
 
@@ -324,7 +328,7 @@ namespace Omicron.Pedidos.Test
         {
             var listOrders = new Dictionary<string, string>
             {
-                { "100-Aspirina", ServiceConstants.Ok },
+                { "100-Aspirina-1-100", ServiceConstants.Ok },
                 { "200-Aspirina", ServiceConstants.ErrorCreateFabOrd },
             };
 

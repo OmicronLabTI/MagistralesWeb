@@ -45,5 +45,20 @@ namespace Omicron.Pedidos.Services.Redis
             await this.database.StringSetAsync(key, value);
             return true;
         }
+
+        /// <inheritdoc/>
+        public async Task<bool> WriteToRedis(string key, string value, TimeSpan timeToLive)
+        {
+            await this.database.KeyDeleteAsync(key);
+            await this.database.StringSetAsync(key, value, timeToLive);
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> DeleteKey(string key)
+        {
+            await this.database.KeyDeleteAsync(key);
+            return true;
+        }
     }
 }

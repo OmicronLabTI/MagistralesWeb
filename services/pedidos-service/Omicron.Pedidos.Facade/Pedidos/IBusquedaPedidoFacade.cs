@@ -23,5 +23,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetOrders(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Method to get orders active.
+        /// </summary>
+        /// <param name="ordersid">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        Task<ResultDto> GetOrdersActive(List<int> ordersid);
     }
 }

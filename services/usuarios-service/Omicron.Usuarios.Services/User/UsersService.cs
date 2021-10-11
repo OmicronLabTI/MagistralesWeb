@@ -220,10 +220,11 @@ namespace Omicron.Usuarios.Services.User
         {
             var listToReturn = new List<UserWithOrderCountModel>();
 
-            await Task.WhenAll(users.Select(async x =>
+            var options = new ParallelOptions() { MaxDegreeOfParallelism = 5 };
+            Parallel.ForEach(users, options, x =>
             {
-                var usersOrders = orders.Where(y => y.Userid.Equals(x.Id) && ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList();
-                var sapOrders = await this.GetFabOrders(usersOrders);
+                var usersOrders = orders.Where(y => y.Userid.Equals(x.Id)).ToList();
+                var sapOrders = this.GetFabOrders(usersOrders).Result;
 
                 lock (listToReturn)
                 {
@@ -238,7 +239,7 @@ namespace Omicron.Usuarios.Services.User
                         Clasification = x.Classification,
                     });
                 }
-            }));
+            });
 
             return listToReturn.OrderBy(x => x.UserName).ToList();
         }

@@ -186,9 +186,65 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string QueryAvailableQuantityByWarehouse = "SELECT OITM.ItemCode, SUM(OITW.OnHand) Available FROM OITM INNER JOIN  OITW ON OITM.ItemCode = OITW.ItemCode WHERE OITM.ItemCode = '{0}' AND WhsCode = '{1}' GROUP BY OITM.ItemCode";
 
         /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string GetAddressesByDoctor = "SELECT Address, CardCode, AdresType FROM CRD1 WHERE CardCode = '{0}' order by LineNum";
+
+        /// <summary>
+        /// Get the doct
+        /// </summary>
+        public const string GetDoctorInfo = "SELECT U_Fecha_Nacimiento FROM OCRD where CardCode = '{0}'";
+
+        /// <summary>
+        /// Get the advisor info.
+        /// </summary>
+        public const string GetAdvisorInfo = "select officeTel, birthDate from OHEM where empID = {0}";
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string DoctorNotFound = "El doctor no se encontró en SAP";
+
+        /// <summary>
+        /// Advisor not found message.
+        /// </summary>
+        public const string AdvisorNotFound = "El asesor no se encontró en SAP";
+
+        /// <summary>
+        /// Invalid advisor id message.
+        /// </summary>
+        public const string InvalidAdvisorId = "El identificador del asesor no es valido";
+
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string AddresShip = "S";
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string AddresBill = "B";
+
+        /// <summary>
         /// the total values.
         /// </summary>
         public const string Total = "total";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionUpdate = "u";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionInsert = "i";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionDelete = "d";
 
         /// <summary>
         /// Gets the status of the order.

@@ -16,15 +16,15 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Facade.Pedidos;
     using Omicron.Pedidos.Services.AlmacenService;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.Redis;
+    using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
-    using Omicron.Pedidos.Services.Reporting;
-    using Omicron.Pedidos.Services.Redis;
-    using Omicron.Pedidos.Services.Broker;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -64,6 +64,8 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IRedisService, RedisService>();
             Services.AddTransient<IKafkaConnector, KafkaConnector>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
+            Services.AddTransient<IPedidosDxpFacade, PedidosDxpFacade>();
+            Services.AddTransient<IPedidosDxpService, PedidosDxpService>();
             return Services;
         }
 

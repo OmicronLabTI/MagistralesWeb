@@ -108,6 +108,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> GetUserOrdersByUserId(List<string> listIds)
         {
             var userOrder = await this.pedidosDao.GetUserOrderByUserId(listIds);
+            userOrder = userOrder.Where(y => ServiceConstants.ListStatusOrdenesForQfbCount.Contains(y.Status)).ToList();
             return ServiceUtils.CreateResult(true, 200, null, userOrder, null);
         }
 
@@ -659,10 +660,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listOrderLogToInsert = new List<SalesLogs>();
             orders.ForEach(o =>
             {
-                var previousStatus = o.Status;
                 o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
-                /** add logs**/
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
             });
 

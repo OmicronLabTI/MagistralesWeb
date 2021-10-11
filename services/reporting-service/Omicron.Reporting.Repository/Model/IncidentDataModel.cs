@@ -88,5 +88,11 @@ namespace Omicron.Reporting.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string CreateDateString { get; set; }
     }
 }

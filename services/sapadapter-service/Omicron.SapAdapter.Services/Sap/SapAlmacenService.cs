@@ -283,7 +283,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(sapOrders.Select(x => x.DocNum).ToList())).ToList();
 
             var possibleIdsToIgnore = sapOrders.Where(x => !orderHeaders.Any(y => y.PedidoId.Value == x.DocNum)).ToList();
-            var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).ToList().Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();
+            var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
             var granTotal = sapOrders.Select(x => x.DocNum).Distinct().ToList().Count;
             var sapOrdersGroup = sapOrders.GroupBy(x => x.DocNum).ToList();
@@ -426,6 +426,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalItems = totalItems,
                     TotalPieces = totalpieces,
                     TypeOrder = order.TypeOrder,
+                    OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
                 };
 
                 var saleHeader = new AlmacenSalesHeaderModel
@@ -442,6 +443,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     OrderCounter = $"{totalAlmacenados}/{orders.Count}",
                     InvoiceType = invoiceType,
                     TypeOrder = order.TypeOrder,
+                    OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
+                    SapComments = order.Comments,
                 };
 
                 var saleModel = new SalesModel

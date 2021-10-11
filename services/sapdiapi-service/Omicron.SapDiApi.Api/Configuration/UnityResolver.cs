@@ -11,7 +11,9 @@ namespace Omicron.SapDiApi.Api.Configuration
     using System.Web.Http.Dependencies;
     using AutoMapper;
     using Omicron.SapDiApi.Dtos.Models;
+    using Omicron.SapDiApi.Dtos.Models.Experience;
     using Omicron.SapDiApi.Entities.Models;
+    using Omicron.SapDiApi.Entities.Models.Experience;
     using Omicron.SapDiApi.Facade.Sap;
     using Omicron.SapDiApi.Log;
     using Omicron.SapDiApi.Services.SapDiApi;
@@ -62,6 +64,14 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<SendPackageDto, SendPackageModel>();
                 cfg.CreateMap<ProductDeliveryDto, ProductDeliveryModel>();
                 cfg.CreateMap<CancelDeliveryDto, CancelDeliveryModel>();
+                cfg.CreateMap<CloseSampleOrderDto, CloseSampleOrderModel>();
+                cfg.CreateMap<DoctorDeliveryAddressDto, DoctorDeliveryAddressModel>();
+                cfg.CreateMap<DoctorInvoiceAddressDto, DoctorInvoiceAddressModel>();
+                cfg.CreateMap<DoctorDefaultAddressDto, DoctorDefaultAddressModel>();
+                cfg.CreateMap<DoctorProfileDto, DoctorProfileModel>();
+                cfg.CreateMap<ShoppingCartItemDto, ShoppingCartItemModel>();
+                cfg.CreateMap<CreateSaleOrderDto, CreateSaleOrderModel>();
+                cfg.CreateMap<AdvisorProfileDto, AdvisorProfileModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 
@@ -70,7 +80,12 @@ namespace Omicron.SapDiApi.Api.Configuration
             container.RegisterType<ILoggerProxy, LoggerProxy>();
             container.RegisterType<ICancelService, CancelService>();
             container.RegisterType<ICreateDeliveryService, CreateDeliveryService>();
-
+            container.RegisterType<IDoctorAddress, DoctorAddress>();
+            container.RegisterType<IDoctorProfileService, DoctorProfileService>();
+            container.RegisterType<ISapDxpFacade, SapDxpFacade>();
+            container.RegisterType<ISapCreateSaleOrder, SapCreateSaleOrder>();
+            container.RegisterType<IAdvisorProfileService, AdvisorProfileService>();
+            
             if (container == null)
             {
                 throw new ArgumentNullException("container");

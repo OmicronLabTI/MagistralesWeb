@@ -176,7 +176,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
                 }
 
-                var ids = JsonConvert.SerializeObject(createDelivery.Select(x => x.SaleOrderId).ToList()).Replace("[", string.Empty).Replace("]", string.Empty);
+                var ids = JsonConvert.SerializeObject(createDelivery.Select(x => x.SaleOrderId).Distinct().ToList()).Replace("[", string.Empty).Replace("]", string.Empty);
+                var listOrderType = new List<string>();
 
                 var deliveryNote = (Documents)company.GetBusinessObject(BoObjectTypes.oDeliveryNotes);
                 deliveryNote.CardCode = saleOrder.CardCode;
@@ -192,7 +193,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 foreach (var sale in createDelivery.GroupBy(p => p.SaleOrderId).ToList())
                 {
                     var saleOrderFoundLocal = saleOrder.GetByKey(sale.FirstOrDefault().SaleOrderId);
-
+                    listOrderType.Add(saleOrder.UserFields.Fields.Item("U_TipoPedido").Value);
                     if (!saleOrderFoundLocal)
                     {
                         _loggerProxy.Info($"The sale Order {sale.FirstOrDefault().SaleOrderId} was not found for creating the delivery");
@@ -209,6 +210,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
                 }
 
+                var areAllSame = listOrderType.All(o => o == listOrderType.FirstOrDefault());
+                deliveryNote.UserFields.Fields.Item("U_TipoPedido").Value = areAllSame ? listOrderType.FirstOrDefault() : "MX";
                 var update = deliveryNote.Add();
                 company.GetLastError(out int errCode, out string errMsg);
 
@@ -228,6 +231,85 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 _loggerProxy.Info($"Error while creating the Delivery for multiple sales: {JsonConvert.SerializeObject(createDelivery)} - ex: {ex.Message} - stackTrace: {ex.StackTrace}");
                 dictionaryResult.Add($"{saleOrderId}-ErrorHandled", "Error mientras se crea remisión");
             }
+
+            return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CloseMuestra(List<CloseSampleOrderModel> ordersId)
+        {
+            var dictionaryResult = new Dictionary<string, string>();
+            foreach (var order in ordersId)
+            {
+                try
+                {
+                    var saleOrder = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
+                    var inventoryGenExit = (Documents)this.company.GetBusinessObject(BoObjectTypes.oInventoryGenExit);
+
+                    if (!saleOrder.GetByKey(order.SaleOrderId))
+                    {
+                        dictionaryResult.Add($"{order.SaleOrderId}-Error", ServiceConstants.OrderNotFound);
+                        return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+                    }
+
+                    inventoryGenExit.Comments = $"Pedido muestra basado en {order.SaleOrderId}";
+                    for (var i = 0; i < saleOrder.Lines.Count; i++)
+                    {
+                        inventoryGenExit.Lines.SetCurrentLine(i);
+                        saleOrder.Lines.SetCurrentLine(i);
+                        var itemCode = saleOrder.Lines.ItemCode;
+                        inventoryGenExit.Lines.BaseType = -1;
+                        inventoryGenExit.Lines.BaseLine = i;
+                        inventoryGenExit.Lines.Quantity = saleOrder.Lines.Quantity;
+                        inventoryGenExit.Lines.WarehouseCode = "PT";
+                        inventoryGenExit.Lines.AccountCode = "6213001";
+                        inventoryGenExit.Lines.ItemCode = itemCode;
+
+                        var product = order.ItemsList.FirstOrDefault(x => x.ItemCode.Equals(itemCode));
+                        product = product ?? new CreateDeliveryModel { OrderType = ServiceConstants.Magistral };
+
+                        if (product.OrderType != ServiceConstants.Magistral)
+                        {
+                            foreach (var b in product.Batches)
+                            {
+                                double.TryParse(b.BatchQty.ToString(), out var doubleQuantity);
+                                inventoryGenExit.Lines.BatchNumbers.Add();
+                                inventoryGenExit.Lines.BatchNumbers.Quantity = doubleQuantity;
+                                inventoryGenExit.Lines.BatchNumbers.BatchNumber = b.BatchNumber;
+                            }
+                        }
+
+                        inventoryGenExit.Lines.Add();
+                    }
+
+                    if (inventoryGenExit.Add() != 0)
+                    {
+                        this.company.GetLastError(out int errorCode, out string errorMessage);
+                        _loggerProxy.Debug($"An error has ocurred on create oInventoryGenExit { errorCode } - { errorMessage }.");
+                        dictionaryResult.Add($"{order.SaleOrderId}-Inventory-Error", $"Error - {errorMessage}");
+                    }
+
+                    if (saleOrder.Close() != 0)
+                    {
+                        this.company.GetLastError(out int errorCode, out string errorMessage);
+                        _loggerProxy.Debug($"An error has ocurred while closing sale order {order.SaleOrderId} { errorCode } - { errorMessage }.");
+                        dictionaryResult.Add($"{order.SaleOrderId}-Error", $"Error - {errorMessage}");
+                    }
+
+                    if(!dictionaryResult.Keys.Any(x => x.Contains("Error")))
+                    {
+                        _loggerProxy.Info($"The saleORder {order.SaleOrderId} was closed and the exit merchandise was done");
+                        dictionaryResult.Add($"{order.SaleOrderId}-Ok", "Ok");
+                        
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _loggerProxy.Info($"Error while Closing and create inventory exit for {order.SaleOrderId} - ex: {ex.Message} - stackTrace: {ex.StackTrace}");
+                    dictionaryResult.Add($"{order.SaleOrderId}-ErrorHandled", $"{ex.Message}");
+                }
+            }
+            
 
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
         }

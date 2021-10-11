@@ -67,6 +67,7 @@ namespace Omicron.Reporting.Services.ReportBuilder
                     var dictValue = columns[k];
                     var property = i.GetType().GetProperty(dictValue);
                     var propertyValue = property.GetValue(i, null).ToString();
+                    propertyValue = this.FormatData(dictValue, propertyValue);
                     listValues.Add(propertyValue);
                 }
 
@@ -74,6 +75,24 @@ namespace Omicron.Reporting.Services.ReportBuilder
             });
 
             return dt;
+        }
+
+        /// <summary>
+        /// formats data to a needed value.
+        /// </summary>
+        /// <param name="property">the property.</param>
+        /// <param name="value">the value.</param>
+        /// <returns>the data.</returns>
+        private string FormatData(string property, string value)
+        {
+            switch (property)
+            {
+                case ServiceConstants.Comments:
+                    return value.Replace("&", " ");
+
+                default:
+                    return value;
+            }
         }
     }
 }

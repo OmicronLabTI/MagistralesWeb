@@ -1,0 +1,228 @@
+pipeline {
+    agent {
+        label 'OmicronQA'
+    }
+    tools {
+        maven 'M3'
+        nodejs 'NodeJs12'
+    }
+    environment
+	{
+		//Functions
+		DEPLOY_PATTERN = NewPatterName()
+		
+		// Projtect configurations
+        COMPANY = "Omicron"
+        COMPANY_LOWERCASE = "omicron"
+		PROJECT_NAME = "AppiOSFormulas"
+        SLACK_CHANNEL = "#omicron_notifications"
+        ENVIRONMENT = "QA"
+		ACR = "omicron.azurecr.io"
+
+		// General configurations		
+		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_QA";
+		SONAR_SERVER = "https://devtools.axity.com/sonarlts";
+		SONAR_TOKEN = "d54f4f0b0ecc98ca94c88640833783fe52216269";
+        COMMITER_EMAIL = sh (
+            script: 'git --no-pager show -s --format=\'%an - %ae\'',
+            returnStdout: true
+        ).trim()
+	}
+    stages {
+		stage('Kubernetes Down') {
+            steps {
+                echo 'Running Kubernetes down'
+				sh 'kubectl config use-context omicron_aks_uat'
+                sh 'kubectl delete -f deploy_uat.yaml --grace-period=0 --force --ignore-not-found'
+            }
+        }/*
+        stage('Build Front Web') {
+            steps {
+                echo 'Building Frontend'
+                dir ('frontend/web/'){
+                    sh 'npm install'
+					sh 'npm run build-uat'
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${ACR}/${COMPANY_LOWERCASE}-web-repository-uat:latest ."    
+                    }
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
+                        sh "docker push ${ACR}/${COMPANY_LOWERCASE}-web-repository-uat:latest"
+                    }
+                }
+            }
+        }*/
+        stage('Build Federated Services') {
+            steps {
+                echo 'Building Fedetared Services'
+                dir ('services/apimanager/'){
+                    sh 'mvn clean package'
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${ACR}/${COMPANY_LOWERCASE}-apimanager-repository-uat:latest ."    
+                    }
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
+                        sh "docker push ${ACR}/${COMPANY_LOWERCASE}-apimanager-repository-uat:latest"
+                    }
+                }
+                // dir ('services/oauthserver/'){
+                //     sh 'mvn clean package'
+				// 	withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                //         sh 'docker login -u $USERNAME -p $PASSWORD'
+                //         sh "docker build -f 'Dockerfile' -t ${ACR}/${COMPANY_LOWERCASE}-oauthserver-repository-uat:latest ."    
+                //     }
+                //     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                //         sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
+                //         sh "docker push ${ACR}/${COMPANY_LOWERCASE}-oauthserver-repository-uat:latest"
+                //     }
+                // }
+            }
+        }/*
+        stage('Build Micro Services') {
+            steps {
+                echo 'Building ms1'
+                dir ('services/catalogos-service/'){
+                    sh 'dotnet publish Omicron.Catalogos.Api/Omicron.Catalogos.Api.csproj -c Release -o app/'
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${ACR}/${COMPANY_LOWERCASE}-catalogos-repository-uat:latest ."    
+                    }
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
+                        sh "docker push ${ACR}/${COMPANY_LOWERCASE}-catalogos-repository-uat:latest"
+                    }
+                }
+				echo 'Building Usuarios'
+                dir ('services/usuarios-service/'){
+                    sh 'dotnet publish Omicron.Usuarios.Api/Omicron.Usuarios.Api.csproj -c Release -o app/'
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${ACR}/${COMPANY_LOWERCASE}-usuarios-repository-uat:latest ."    
+                    }
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
+                        sh "docker push ${ACR}/${COMPANY_LOWERCASE}-usuarios-repository-uat:latest"
+                    }
+                }
+                echo 'Building Pedidos'
+                dir ('services/pedidos-service/'){
+                    sh 'dotnet publish Omicron.Pedidos.Api/Omicron.Pedidos.Api.csproj -c Release -o app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${ACR}/${COMPANY_LOWERCASE}-pedidos-repository-uat:latest ."    
+                    }
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
+                        sh "docker push ${ACR}/${COMPANY_LOWERCASE}-pedidos-repository-uat:latest"
+                    }
+                }
+				echo 'Building SapAdapter'
+                dir ('services/sapadapter-service/'){
+                    sh 'dotnet publish Omicron.SapAdapter.Api/Omicron.SapAdapter.Api.csproj -c Release -o app/'
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${ACR}/${COMPANY_LOWERCASE}-sapadapter-repository-uat:latest ."    
+                    }
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
+                        sh "docker push ${ACR}/${COMPANY_LOWERCASE}-sapadapter-repository-uat:latest"
+                    }
+                }
+				echo 'Building warehouses'
+                dir ('services/warehouses-service/'){
+                    sh 'dotnet publish Omicron.Warehouses.Api/Omicron.Warehouses.Api.csproj -c Release -o app/'
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${ACR}/${COMPANY_LOWERCASE}-warehouses-repository-uat:latest ."    
+                    }
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
+                        sh "docker push ${ACR}/${COMPANY_LOWERCASE}-warehouses-repository-uat:latest"
+                    }
+                }
+                echo 'Building reporting'
+                dir ('services/reporting-service/'){
+                    sh 'dotnet publish Omicron.Reporting.Api/Omicron.Reporting.Api.csproj -c Release -o app/'
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${ACR}/${COMPANY_LOWERCASE}-reporting-repository-uat:latest ."    
+                    }
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'omicronacr', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login ${ACR} -u $USERNAME -p $PASSWORD'
+                        sh "docker push ${ACR}/${COMPANY_LOWERCASE}-reporting-repository-uat:latest"
+                    }
+                }
+            }
+        }*/
+        stage('Kubernetes Up') {
+            steps {
+                echo 'Running Kubernetes'
+                sh 'kubectl apply -f deploy_uat.yaml'
+            }
+        }/*
+		stage('Deploy App Service'){
+			steps{
+				azureWebAppPublish azureCredentialsId: 'Omicronapp', publishType: 'docker',
+								    resourceGroup: 'OmicronUAT', appName: 'omicronlabmagistaluat',
+									dockerImageName: 'omicron.azurecr.io/omicron-web-repository-uat', dockerImageTag: 'latest',
+									dockerRegistryEndpoint: [credentialsId: 'omicronacr', url: 'https://omicron.azurecr.io'],
+									skipDockerBuild: true
+			}
+		}
+        stage('Database') {
+            steps {
+                dir ('database/'){
+				    sh '/opt/liquibase/liquibase --version'
+					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-uat.properties" update'
+					echo 'Applying Db changes'
+                    
+                }
+            }
+        }*/
+    }
+    post { 
+        always { 
+            deleteDir()
+            echo 'Slack'
+            SlackMsg(currentBuild.currentResult) 
+        }
+        success {
+            echo 'I succeeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+        }
+        changed {
+            echo 'Things were different before...'
+        }
+    }
+}
+
+def NewPatterName()
+{
+	return "_" + new Date().format( 'ddMMyyyy' ) + "_" + "${env.BUILD_NUMBER}";
+}
+
+def SlackMsg(String buildResult) 
+{
+	String message = "Compilation result ${env.BUILD_DISPLAY_NAME} for job  \"${env.JOB_NAME}\"  is " + buildResult +  " launched by ${env.COMMITER_EMAIL}. For more details got to ${env.JOB_URL}"
+    echo "${env.BUILD_DISPLAY_NAME}"
+	
+	if(buildResult == "SUCCESS")
+	{
+		slackSend channel: "${SLACK_CHANNEL}", color: "good", message: message
+	}
+	else if(buildResult == "UNSTABLE")
+	{ 
+		slackSend channel: "${SLACK_CHANNEL}", color: "warning", message: message
+	}
+	else
+	{
+		slackSend channel: "${SLACK_CHANNEL}", color: "danger", message: message
+	}
+}

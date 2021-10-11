@@ -25,13 +25,12 @@ extension UIView {
 }
 extension UIViewController {
     func getOmniconLogo() -> UIBarButtonItem {
-        let logo = UIImage(named: "AppIcon")
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = logo
-        imageView.layer.cornerRadius = imageView.frame.size.height / 2
-        imageView.clipsToBounds = true
-        return UIBarButtonItem(customView: imageView)
+        let barButtomItem = UIButton(type: .custom)
+        barButtomItem.widthAnchor.constraint(equalToConstant: 200.0).isActive = true
+        barButtomItem.heightAnchor.constraint(equalToConstant: 40.0).isActive = true
+        barButtomItem.setImage(UIImage(named: "OmicronLogo"), for: .normal)
+        barButtomItem.contentMode = .scaleToFill
+        return  UIBarButtonItem(customView: barButtomItem)
     }
 }
 

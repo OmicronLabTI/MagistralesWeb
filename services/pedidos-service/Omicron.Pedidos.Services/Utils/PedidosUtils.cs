@@ -12,10 +12,10 @@ namespace Omicron.Pedidos.Services.Utils
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Redis;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// Class for pedidos utils.
@@ -66,6 +66,8 @@ namespace Omicron.Pedidos.Services.Utils
             var listItemsToInsert = listToUpdate.Select(x => x.ItemCode).ToList();
             var missing = redisComponents.Where(x => !listItemsToInsert.Contains(x.ItemCode));
             listToUpdate.AddRange(missing);
+            listToUpdate = listToUpdate.OrderByDescending(x => x.Total).ToList();
+            listToUpdate = listToUpdate.Skip(0).Take(10).ToList();
             await this.redisService.WriteToRedis(ServiceConstants.RedisComponents, JsonConvert.SerializeObject(listToUpdate));
         }
     }

@@ -112,7 +112,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var key = ServiceUtils.PrepareKeyForRedisFromDic(parameters, ServiceConstants.Pedido);
             var ids = JsonConvert.SerializeObject(orders.Select(x => x.DocNum).OrderBy(x => x).ToList());
-            await this.redisService.WriteToRedis(key, ids, new TimeSpan(24, 0, 0));
+            await this.redisService.WriteToRedis(key, ids, new TimeSpan(8, 0, 0));
 
             var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
@@ -537,7 +537,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orderCount = orders.Count;
 
                 var idsForRedis = JsonConvert.SerializeObject(orders.Select(x => x.OrdenId).OrderBy(x => x).ToList());
-                await this.redisService.WriteToRedis(key, idsForRedis, new TimeSpan(24, 0, 0));
+                await this.redisService.WriteToRedis(key, idsForRedis, new TimeSpan(8, 0, 0));
 
                 orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
                 orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(orders) : orders;
@@ -549,7 +549,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var total = dataBaseOrders.Count;
 
             var ids = JsonConvert.SerializeObject(dataBaseOrders.Select(x => x.OrdenId).OrderBy(x => x).ToList());
-            await this.redisService.WriteToRedis(key, ids, new TimeSpan(24, 0, 0));
+            await this.redisService.WriteToRedis(key, ids, new TimeSpan(8, 0, 0));
 
             var ordersToReturn = this.ApplyOffsetLimit(dataBaseOrders, orderFabModel.Filters);
             ordersToReturn = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(ordersToReturn) : ordersToReturn;
