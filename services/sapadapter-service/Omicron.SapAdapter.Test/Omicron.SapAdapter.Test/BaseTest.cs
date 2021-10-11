@@ -113,7 +113,7 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<DetalleFormulaModel>
             {
-                new DetalleFormulaModel { Almacen = "MN", BaseQuantity = 10, ConsumidoQty = 10, ItemCode = "Abc Aspirina", LineNum = 1, OrderFabId = 100, RequiredQty = 100, UnidadCode = "KG" },
+                new DetalleFormulaModel { Almacen = "MN", BaseQuantity = 10.12345678M, ConsumidoQty = 10, ItemCode = "Abc Aspirina", LineNum = 1, OrderFabId = 100, RequiredQty = 100, UnidadCode = "KG" },
                 new DetalleFormulaModel { Almacen = "MN", BaseQuantity = 10, ConsumidoQty = 10, ItemCode = "Abc Aspirina", LineNum = 1, OrderFabId = 200, RequiredQty = 100, UnidadCode = "KG" },
             };
         }

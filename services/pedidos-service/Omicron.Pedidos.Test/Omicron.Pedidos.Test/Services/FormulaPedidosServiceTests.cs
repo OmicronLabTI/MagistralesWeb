@@ -56,7 +56,7 @@ namespace Omicron.Pedidos.Test.Services
             return new List<ComponentCustomComponentListModel>
             {
                 new ComponentCustomComponentListModel { Id = 1, CustomListId = 1, ProductId = "003", Description = "COMP 003", BaseQuantity = 10 },
-                new ComponentCustomComponentListModel { Id = 2, CustomListId = 1, ProductId = "004", Description = "COMP 004", BaseQuantity = 11 },
+                new ComponentCustomComponentListModel { Id = 2, CustomListId = 1, ProductId = "004", Description = "COMP 004", BaseQuantity = 11.12345678M },
                 new ComponentCustomComponentListModel { Id = 3, CustomListId = 2, ProductId = "005", Description = "COMP 005", BaseQuantity = 11 },
                 new ComponentCustomComponentListModel { Id = 4, CustomListId = 3, ProductId = "006", Description = "COMP 006", BaseQuantity = 11 },
             };
@@ -92,6 +92,11 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 4, 6));
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsInstanceOf<int>(response.Response);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.Comments);
         }
 
         /// <summary>
@@ -132,6 +137,10 @@ namespace Omicron.Pedidos.Test.Services
             Assert.AreEqual(listsInResponse.Count, 2);
             Assert.AreEqual(listsInResponse[0].Components.Count, 2);
             Assert.AreEqual(listsInResponse[1].Components.Count, 1);
+            Assert.IsInstanceOf<List<CustomComponentListModel>>(response.Response);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.Comments);
         }
 
         /// <summary>
@@ -193,7 +202,7 @@ namespace Omicron.Pedidos.Test.Services
                     {
                         ProductId = "003",
                         Description = "COMP 003",
-                        BaseQuantity = 10,
+                        BaseQuantity = 10.12345678M,
                     },
                     new ComponentCustomComponentListModel
                     {
