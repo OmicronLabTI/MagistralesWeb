@@ -328,7 +328,7 @@ namespace Omicron.Pedidos.Test
         {
             var listOrders = new Dictionary<string, string>
             {
-                { "100-Aspirina", ServiceConstants.Ok },
+                { "100-Aspirina-1-100", ServiceConstants.Ok },
                 { "200-Aspirina", ServiceConstants.ErrorCreateFabOrd },
             };
 

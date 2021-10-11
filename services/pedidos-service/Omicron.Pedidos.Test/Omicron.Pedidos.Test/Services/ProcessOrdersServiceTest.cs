@@ -128,10 +128,6 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
 
-            mockSaDiApi
-                .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
-                .Returns(Task.FromResult(new ResultModel()));
-
             var mockRedis = new Mock<IRedisService>();
             mockRedis.Setup(x => x.GetRedisKey(It.IsAny<string>())).Returns(Task.FromResult(string.Empty));
             mockRedis.Setup(x => x.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
@@ -171,10 +167,6 @@ namespace Omicron.Pedidos.Test.Services
             mockSaDiApi
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
-
-            mockSaDiApi
-                .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
-                .Returns(Task.FromResult(new ResultModel()));
 
             var mockRedis = new Mock<IRedisService>();
             mockRedis.Setup(x => x.GetRedisKey(It.IsAny<string>())).Returns(Task.FromResult(string.Empty));
