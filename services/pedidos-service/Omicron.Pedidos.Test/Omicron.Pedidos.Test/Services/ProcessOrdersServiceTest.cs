@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -137,9 +138,16 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var response = await pedidosServiceLocal.ProcessOrders(process);
+            var errorsList = response.Response as List<string>;
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsTrue(errorsList.Any());
+            Assert.IsInstanceOf<List<string>>(errorsList);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.Comments);
         }
 
         /// <summary>
@@ -177,9 +185,16 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var response = await pedidosServiceLocal.ProcessByOrder(process);
+            var errorsList = response.Response as List<string>;
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsTrue(errorsList.Any());
+            Assert.IsInstanceOf<List<string>>(errorsList);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.Comments);
         }
     }
 }
