@@ -21,6 +21,8 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.AlmacenService;
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.Azure;
 
     /// <summary>
     /// class for the test.
@@ -52,12 +54,18 @@ namespace Omicron.Pedidos.Test.Services
 
             this.configuration = new Mock<IConfiguration>();
             this.configuration.SetupGet(x => x[It.Is<string>(s => s == "QrImagesBaseRoute")]).Returns("http://localhost:5002/");
+            this.configuration.SetupGet(x => x[It.Is<string>(s => s == ServiceConstants.AzureAccountName)]).Returns("test");
+            this.configuration.SetupGet(x => x[It.Is<string>(s => s == ServiceConstants.AzureAccountKey)]).Returns("aa2");
 
-            var mockSapAdapter = new Mock<ISapAdapter>();
+            this.configuration.SetupGet(x => x[It.Is<string>(s => s == ServiceConstants.OrderQrContainer)]).Returns("aa2");
+            this.configuration.SetupGet(x => x[It.Is<string>(s => s == ServiceConstants.DeliveryQrContainer)]).Returns("aa2");
+            this.configuration.SetupGet(x => x[It.Is<string>(s => s == ServiceConstants.InvoiceQrContainer)]).Returns("aa2");
+
+            var mockAzure = new Mock<IAzureService>();
             var mockAlmacen = new Mock<IAlmacenService>();
 
             this.pedidosDao = new PedidosDao(this.context);
-            this.qrsService = new QrService(this.pedidosDao, this.configuration.Object, mockSapAdapter.Object, mockAlmacen.Object);
+            this.qrsService = new QrService(this.pedidosDao, this.configuration.Object, mockAzure.Object, mockAlmacen.Object);
         }
 
         /// <summary>
@@ -84,9 +92,9 @@ namespace Omicron.Pedidos.Test.Services
         {
             // arrange
             var mockAlmacen = new Mock<IAlmacenService>();
-            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockAzure = new Mock<IAzureService>();
 
-            var service = new QrService(this.pedidosDao, this.configuration.Object, mockSapAdapter.Object, mockAlmacen.Object);
+            var service = new QrService(this.pedidosDao, this.configuration.Object, mockAzure.Object, mockAlmacen.Object);
             var listOrdersId = new List<int> { 105 };
 
             var response = await service.CreateRemisionQr(listOrdersId);
@@ -123,9 +131,9 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.GetAlmacenData(It.IsAny<string>()))
                 .Returns(Task.FromResult(responseAlmacen));
 
-            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockAzure = new Mock<IAzureService>();
 
-            var service = new QrService(this.pedidosDao, this.configuration.Object, mockSapAdapter.Object, mockAlmacen.Object);
+            var service = new QrService(this.pedidosDao, this.configuration.Object, mockAzure.Object, mockAlmacen.Object);
 
             var listOrdersId = new List<int> { 106 };
 
@@ -143,9 +151,9 @@ namespace Omicron.Pedidos.Test.Services
         public async Task CreateInvoiceQrMagistral()
         {
             var mockAlmacen = new Mock<IAlmacenService>();
-            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockAzure = new Mock<IAzureService>();
 
-            var service = new QrService(this.pedidosDao, this.configuration.Object, mockSapAdapter.Object, mockAlmacen.Object);
+            var service = new QrService(this.pedidosDao, this.configuration.Object, mockAzure.Object, mockAlmacen.Object);
 
             var listOrdersId = new List<int> { 100 };
 
@@ -181,9 +189,9 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostAlmacenData(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(responseAlmacen));
 
-            var mockSapAdapter = new Mock<ISapAdapter>();
+            var mockAzure = new Mock<IAzureService>();
 
-            var service = new QrService(this.pedidosDao, this.configuration.Object, mockSapAdapter.Object, mockAlmacen.Object);
+            var service = new QrService(this.pedidosDao, this.configuration.Object, mockAzure.Object, mockAlmacen.Object);
 
             var listOrdersId = new List<int> { 107 };
 
