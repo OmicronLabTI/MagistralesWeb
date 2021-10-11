@@ -648,6 +648,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// for total cancelation.
         /// </summary>
+        public const string ErrorWhenPlnanningIntro = "Error al planificar, ";
+
+        /// <summary>
+        /// for total cancelation.
+        /// </summary>
         public const string ErrorWhenPlanning = "El pedido {0} se encuentra en proceso de planificación, favor de intentar más tarde";
 
         /// <summary>

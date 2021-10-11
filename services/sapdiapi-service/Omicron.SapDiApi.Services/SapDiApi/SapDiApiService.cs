@@ -59,6 +59,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             var dictResult = new Dictionary<string, string>();
             foreach(var pedido in orderWithDetail)
             {
+                _loggerProxy.Info($"The next order will be tried to be created: {pedido.Order.PedidoId} - {pedido.Detalle}");
                 var count = 0;
 
                 foreach (var orf in pedido.Detalle)
@@ -86,7 +87,9 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
                     else
                     {
-                        dictResult.Add(string.Format("{0}-{1}-{2}", pedido.Order.PedidoId, orf.CodigoProducto, count), "Ok");
+                        company.GetNewObjectCode(out var fabOrderId);
+                        _loggerProxy.Info($"The order was created: {pedido.Order.PedidoId} - {fabOrderId} - {orf.CodigoProducto}");
+                        dictResult.Add(string.Format("{0}-{1}-{2}-{3}", pedido.Order.PedidoId, orf.CodigoProducto, count, fabOrderId), "Ok");
                     }
 
                     count++;
