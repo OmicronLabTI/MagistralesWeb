@@ -42,6 +42,8 @@ namespace Omicron.Pedidos.Services.Mapping
             this.CreateMap<ProcessByOrderDto, ProcessByOrderModel>();
             this.CreateMap<OrderIdDto, OrderIdModel>();
             this.CreateMap<OrderIdModel, OrderIdDto>();
+            this.CreateMap<RejectOrdersDto, RejectOrdersModel>();
+            this.CreateMap<RejectOrdersModel, RejectOrdersDto>();
             this.CreateMap<AutomaticAssingDto, AutomaticAssingModel>();
             this.CreateMap<AutomaticAssingModel, AutomaticAssingDto>();
             this.CreateMap<AssignBatchDto, AssignBatchModel>();
@@ -63,6 +65,10 @@ namespace Omicron.Pedidos.Services.Mapping
             this.CreateMap<ComponentCustomComponentListDto, ComponentCustomComponentListModel>();
             this.CreateMap<UpdateDesignerLabelDto, UpdateDesignerLabelModel>();
             this.CreateMap<UpdateDesignerLabelDetailDto, UpdateDesignerLabelDetailModel>();
+            this.CreateMap<UserOrderDto, UserOrderModel>();
+            this.CreateMap<CancelDeliveryPedidoDto, CancelDeliveryPedidoModel>();
+            this.CreateMap<DetallePedidoDto, DetallePedidoModel>();
+            this.CreateMap<CancelDeliveryPedidoCompleteDto, CancelDeliveryPedidoCompleteModel>();
         }
     }
 }

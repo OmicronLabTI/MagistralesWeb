@@ -30,6 +30,9 @@ export class IExistsBachCodeRes extends BaseResponseHttp {
 export class IRecipesRes extends  BaseResponseHttp {
     response: RecipesRes[];
 }
+export class ICatalogRes extends  BaseResponseHttp {
+    response: Catalogs[];
+}
 export class RecipesRes {
     order: number;
     recipe: string;
@@ -46,11 +49,16 @@ export class ParamsPedidos {
     dateFull?: string;
     productCode?: string;
     isFromOrders?: boolean;
+    isfromCreateOrderIsolate?: boolean;
     clientName?: string;
     label?: string;
     finlabel: string;
-
-
+    isFromIncidents?: boolean;
+    orderIncidents?: number;
+    current?: string;
+    advance?: string;
+    clasification?: string;
+    docNumUntil?: any;
 }
 
 export class ProcessOrders {
@@ -79,8 +87,11 @@ export class IPedidoReq {
     hasRecipte?: string;
     qfb?: string;
     class?: string;
+    classClasification?: string;
     labelType: string;
     finishedLabel: number;
+    orderType: string;
+    canceled?: string;
 }
 
 export class CancelOrderReq {
@@ -122,4 +133,10 @@ export class ICreatePdfOrdersRes extends BaseResponseHttp {
 export class OrderToDelivered {
     orderId: number;
     status: string;
+}
+export class Catalogs {
+    id: number;
+    value: string;
+    type: string;
+    field: string;
 }

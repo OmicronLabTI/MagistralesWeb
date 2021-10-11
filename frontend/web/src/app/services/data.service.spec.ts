@@ -1,10 +1,20 @@
 import {TestBed} from '@angular/core/testing';
 import {DatePipe} from '@angular/common';
 import {DataService} from './data.service';
-import {ConstStatus, FromToFilter, HttpServiceTOCall, MessageType} from '../constants/const';
+import {
+  ConstOrders,
+  ConstStatus,
+  FromToFilter,
+  HttpServiceTOCall,
+  MessageType,
+} from '../constants/const';
+import {CommentsConfig} from '../model/device/incidents.model';
+import {ParamsPedidos} from '../model/http/pedidos';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('DataService', () => {
   beforeEach(() => TestBed.configureTestingModule({
+    imports: [RouterTestingModule],
     providers: [DatePipe]
   }));
 
@@ -21,7 +31,81 @@ describe('DataService', () => {
     });
     service.setIsLoading(true);
   });
+  it('should newCommentsResult', (done) => {
+    const service: DataService = TestBed.get(DataService);
+    const commentsConfig = {isReadOnly: true, isForClose: true, comments: 'anyComments'} as CommentsConfig;
+    service.getNewCommentsResult().subscribe(res => {
+      expect(res).toEqual(commentsConfig);
+      done();
+    });
+    service.setNewCommentsResult(commentsConfig);
+  });
+  it('should openDialog', (done) => {
+    const service: DataService = TestBed.get(DataService);
+    const commentsConfig = {isReadOnly: true, isForClose: true, comments: 'anyComments'} as CommentsConfig;
+    service.getOpenCommentsDialog().subscribe(res => {
+      expect(res).toEqual(commentsConfig);
+      done();
+    });
+    service.setOpenCommentsDialog(commentsConfig);
+  });
+  it('should newDataSignature', (done) => {
+    const service: DataService = TestBed.get(DataService);
+    service.getNewDataSignature().subscribe(res => {
+      expect(res).toEqual('signature on base 64');
+      done();
+    });
+    service.setNewDataSignature('signature on base 64');
+  });
+  it('should openSignatureDialog', (done) => {
+    const service: DataService = TestBed.get(DataService);
+    service.getOpenSignatureDialog().subscribe(res => {
+      expect(res).toEqual('signature on base 64');
+      done();
+    });
+    service.setOpenSignatureDialog('signature on base 64');
+  });
 
+  it('should newFormulaComponent', (done) => {
+    const service: DataService = TestBed.get(DataService);
+    service.getNewFormulaComponent().subscribe(res => {
+      expect(res).toEqual({modalType: 'formulaComponent'});
+      done();
+    });
+    service.setNewFormulaComponent({modalType: 'formulaComponent'});
+  });
+  it('should materialComponent', (done) => {
+    const service: DataService = TestBed.get(DataService);
+    service.getNewMaterialComponent().subscribe(res => {
+      expect(res).toEqual('materialComponentData');
+      done();
+    });
+    service.setNewMaterialComponent('materialComponentData');
+  });
+  it('should searchOrdersModal', (done) => {
+    const service: DataService = TestBed.get(DataService);
+    const filterOrdersDataConfig = { dateType: ConstOrders.defaultDateInit,
+      dateFull: '20/12/2020-01/12/2021', isFromIncidents: true, clientName: 'Client name',
+      status: ConstStatus.finalizado, docNum: 12345} as ParamsPedidos;
+    service.getSearchOrdersModal().subscribe(res => {
+      expect(res.filterOrdersData).toEqual(filterOrdersDataConfig);
+      done();
+    });
+    service.setSearchOrdersModal({modalType: 'search',
+                                 filterOrdersData: filterOrdersDataConfig, data: [123, 1234, 1345] });
+  });
+  it('should searchComponentModal', (done) => {
+    const service: DataService = TestBed.get(DataService);
+    const filterOrdersDataConfig = { dateType: ConstOrders.defaultDateInit,
+      dateFull: '20/12/2020-01/12/2021', isFromIncidents: true, clientName: 'Client name',
+      status: ConstStatus.finalizado, docNum: 12345} as ParamsPedidos;
+    service.getSearchComponentModal().subscribe(res => {
+      expect(res.filterOrdersData).toEqual(filterOrdersDataConfig);
+      done();
+    });
+    service.setSearchComponentModal({modalType: 'search',
+      filterOrdersData: filterOrdersDataConfig, data: [123, 1234, 1345] });
+  });
   it('should is loading false', (done) => {
     const service: DataService = TestBed.get(DataService);
     service.getIsLoading().subscribe(res => {
@@ -134,9 +218,9 @@ describe('DataService', () => {
   });
   it('should getMessageTitle', () => {
     const service: DataService = TestBed.get(DataService);
-    expect(service.getMessageTitle(['1234'], MessageType.processOrder)).toEqual('El producto  1234 no pudo ser Planificado \n');
+    expect(service.getMessageTitle(['1234'], MessageType.processOrder)).toEqual(' 1234 \n');
     expect(service.getMessageTitle(['1234'], MessageType.processDetailOrder))
-        .toEqual('La orden de fabricación  1234 no pudo ser Planificado \n');
+        .toEqual(' 1234 \n');
     expect(service.getMessageTitle(['1234'], MessageType.placeOrder))
         .toEqual('La orden de fabricación  1234 no pudo ser Asignada \n');
     expect(service.getMessageTitle([{reason: 'Hubo un error'}], MessageType.cancelOrder, true))
@@ -207,10 +291,26 @@ describe('DataService', () => {
     expect(service.getItemOnDateWithFilter([], FromToFilter.fromDefault, ConstStatus.cancelado).length).toEqual(0);
 
   });
-  it('should getIsWithFilter', () => {
+  it('should transformDate', () => {
     const service: DataService = TestBed.get(DataService);
-    // expect(service.getIsWithFilter({i})).toEqual(0);
+    expect(service.transformDate(new Date(), true).includes('-')).toBeTruthy();
+  });
+  it('should getDateArray', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.getDateArray(new Date()).length > 0).toBeTruthy();
+  });
+  it('should getMaxMinDate', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.getMaxMinDate(new Date(), 3, false).getMonth()
+            !== new Date().getMonth()).toBeTruthy();
+    expect(service.getMaxMinDate(new Date(), 3, true).getMonth()
+        !== new Date().getMonth()).toBeTruthy();
 
+  });
+  it('should userRole', () => {
+    const service: DataService = TestBed.get(DataService);
+    service.setUserRole(3);
+    expect(service.getUserRole).toBeTruthy('3');
   });
 
 });

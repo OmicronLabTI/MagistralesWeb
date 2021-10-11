@@ -3,14 +3,13 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { BatchesService } from './batches.service';
 import { DatePipe } from '@angular/common';
 import { ConsumeService } from './consume.service';
-import { ILotesFormulaReq, ILotesToSaveReq } from '../model/http/lotesformula';
-import { Endpoints } from 'src/environments/endpoints';
+import { ILotesToSaveReq } from '../model/http/lotesformula';
 import { Observable } from 'rxjs';
-import { Component } from '@angular/core';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('BatchesService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule],
+    imports: [HttpClientTestingModule, RouterTestingModule],
     providers: [DatePipe, ConsumeService]
   }));
 
@@ -19,7 +18,7 @@ describe('BatchesService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should return an observable', () =>{
+  it('should return an observable', () => {
     const batchesService: BatchesService = TestBed.get(BatchesService);
     const obs = batchesService.getInventoryBatches('1234');
     expect(obs instanceof Observable).toBeTruthy();
@@ -39,7 +38,7 @@ describe('BatchesService', () => {
         itemCode: 'MP   009',
         action: 'insert'
       }
-    ]
+    ];
     const service: BatchesService = TestBed.get(BatchesService);
     expect(service.updateBatches(objeto)).toBeTruthy();
   });

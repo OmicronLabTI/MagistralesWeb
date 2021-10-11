@@ -24,6 +24,7 @@ export class IOrdersReq {
     isWithError?: boolean;
     isWithErrorBatch?: boolean;
     hasMissingStock?: boolean;
+    batch: string;
 }
 
 export class ParamsOrders {

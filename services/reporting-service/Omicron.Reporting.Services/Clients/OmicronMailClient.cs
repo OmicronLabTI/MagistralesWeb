@@ -48,6 +48,9 @@ namespace Omicron.Reporting.Services.Clients
             {
                 var client = this.GetSmtpClient(smtpConfig);
                 var message = new MailMessage(smtpConfig.SmtpDefaultUser, to, subject, body);
+
+                message.IsBodyHtml = body.Contains("html");
+
                 this.CreateMailAddressList(copyTo).ForEach(x => message.CC.Add(x.Address));
 
                 if (files != null)

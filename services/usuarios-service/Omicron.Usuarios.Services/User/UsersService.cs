@@ -152,6 +152,7 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.Activo = user.Activo;
             usertoUpdate.Piezas = user.Piezas;
             usertoUpdate.Asignable = user.Asignable;
+            usertoUpdate.Classification = user.Classification;
 
             var response = await this.userDao.UpdateUser(usertoUpdate);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
@@ -219,10 +220,11 @@ namespace Omicron.Usuarios.Services.User
         {
             var listToReturn = new List<UserWithOrderCountModel>();
 
-            await Task.WhenAll(users.Select(async x =>
+            var options = new ParallelOptions() { MaxDegreeOfParallelism = 5 };
+            Parallel.ForEach(users, options, x =>
             {
-                var usersOrders = orders.Where(y => y.Userid.Equals(x.Id) && ServiceConstants.ListStatusOrdenes.Contains(y.Status)).ToList();
-                var sapOrders = await this.GetFabOrders(usersOrders);
+                var usersOrders = orders.Where(y => y.Userid.Equals(x.Id)).ToList();
+                var sapOrders = this.GetFabOrders(usersOrders).Result;
 
                 lock (listToReturn)
                 {
@@ -234,9 +236,10 @@ namespace Omicron.Usuarios.Services.User
                         CountTotalOrders = usersOrders.Select(y => y.Salesorderid).Distinct().Count(),
                         CountTotalPieces = sapOrders.Sum(y => (int)y.Quantity),
                         Asignable = x.Asignable,
+                        Clasification = x.Classification,
                     });
                 }
-            }));
+            });
 
             return listToReturn.OrderBy(x => x.UserName).ToList();
         }

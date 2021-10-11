@@ -1,0 +1,41 @@
+import {BaseResponseHttp} from './commons';
+
+export class IIncidentsGraphicRes extends BaseResponseHttp {
+    response: IncidentsGraphicsMatrix[][];
+}
+export class IWarehouseGraphicRes extends BaseResponseHttp {
+    response: IncidentsGraphicsMatrix[];
+}
+
+export class IIncidentsListRes extends BaseResponseHttp {
+    response: IncidentItem[];
+}
+export class IncidentItem  {
+    id: number;
+    createDate: Date;
+    saleOrder: number;
+    delivery: number;
+    invoice: number;
+    itemCode: string;
+    type: string;
+    incident: string;
+    batches: string;
+    stage: string;
+    comments: string;
+    status: string;
+    classButton?: string;
+    batchesDisplay?: any;
+    batchesTooltip?: string;
+}
+export class IncidentsGraphicsMatrix {
+    fieldKey: string;
+    totalCount: number;
+    graphType: string;
+    color?: string;
+}
+export class ChangeStatusIncidentReq {
+    saleOrderId: number;
+    itemCode: string;
+    comments: string;
+    status: string;
+}

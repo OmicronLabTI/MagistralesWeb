@@ -8,6 +8,8 @@
 
 namespace Omicron.SapDiApi.Services.Constants
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// the service constants.
     /// </summary>
@@ -59,6 +61,11 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string Ok = "Ok";
 
         /// <summary>
+        /// selects the ships code.
+        /// </summary>
+        public const string FindShipCodes = "SELECT TrnspCode ,TrnspName FROM OSHP";
+
+        /// <summary>
         /// selects data from WOR1 by DocEntry.
         /// </summary>
         public const string FindWor1ByDocEntry = "SELECT DocEntry, LineNum, BaseQty, IssuedQty, wareHouse, ItemCode, VisOrder FROM WOR1 WHERE DocEntry = {0}";
@@ -86,7 +93,7 @@ namespace Omicron.SapDiApi.Services.Constants
         /// <summary>
         /// Select batch code by item code, warehouse code and sys number.
         /// </summary>
-        public const string FindBatchCode = "SELECT B.DistNumber FROM OBTQ A INNER JOIN OBTN B ON A.ItemCode = B.ItemCode AND A.SysNumber = B.SysNumber WHERE A.ItemCode = '{0}' AND A.WhsCode = '{1}' AND A.Quantity > 0 AND A.SysNumber = {2}";
+        public const string FindBatchCode = "SELECT B.DistNumber FROM OBTQ A INNER JOIN OBTN B ON A.ItemCode = B.ItemCode AND A.SysNumber = B.SysNumber WHERE A.ItemCode = '{0}' AND A.WhsCode = '{1}' AND A.Quantity >= 0 AND A.SysNumber = {2}";
 
         /// <summary>
         /// Select assigned batches by log entry.
@@ -112,6 +119,11 @@ namespace Omicron.SapDiApi.Services.Constants
         /// deletes the batch.
         /// </summary>
         public const string DeleteBatch = "delete";
+
+        /// <summary>
+        /// Const for he magistral.
+        /// </summary>
+        public const string Magistral = "magistral";
 
         /// <summary>
         /// Fail reason.
@@ -172,5 +184,80 @@ namespace Omicron.SapDiApi.Services.Constants
         /// Get available product quantity in warehouse.
         /// </summary>
         public const string QueryAvailableQuantityByWarehouse = "SELECT OITM.ItemCode, SUM(OITW.OnHand) Available FROM OITM INNER JOIN  OITW ON OITM.ItemCode = OITW.ItemCode WHERE OITM.ItemCode = '{0}' AND WhsCode = '{1}' GROUP BY OITM.ItemCode";
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string GetAddressesByDoctor = "SELECT Address, CardCode, AdresType FROM CRD1 WHERE CardCode = '{0}' order by LineNum";
+
+        /// <summary>
+        /// Get the doct
+        /// </summary>
+        public const string GetDoctorInfo = "SELECT U_Fecha_Nacimiento FROM OCRD where CardCode = '{0}'";
+
+        /// <summary>
+        /// Get the advisor info.
+        /// </summary>
+        public const string GetAdvisorInfo = "select officeTel, birthDate from OHEM where empID = {0}";
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string DoctorNotFound = "El doctor no se encontró en SAP";
+
+        /// <summary>
+        /// Advisor not found message.
+        /// </summary>
+        public const string AdvisorNotFound = "El asesor no se encontró en SAP";
+
+        /// <summary>
+        /// Invalid advisor id message.
+        /// </summary>
+        public const string InvalidAdvisorId = "El identificador del asesor no es valido";
+
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string AddresShip = "S";
+
+        /// <summary>
+        /// Get available product quantity in warehouse.
+        /// </summary>
+        public const string AddresBill = "B";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string Total = "total";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionUpdate = "u";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionInsert = "i";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionDelete = "d";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictWhs { get; } = new Dictionary<string, string>
+        {
+            { "MN", "MN" },
+            { "MG", "MG" },
+            { "BE", "BE" },
+            { "MX", "MG" },
+        };
     }
 }

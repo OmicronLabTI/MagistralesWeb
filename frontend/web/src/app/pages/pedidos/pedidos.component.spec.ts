@@ -15,6 +15,7 @@ import {DataService} from '../../services/data.service';
 import Swal from 'sweetalert2';
 import {IProcessOrdersRes} from '../../model/http/pedidos';
 import {PipesModule} from '../../pipes/pipes.module';
+import {RangeDateMOck} from '../../../mocks/rangeDateMock';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
@@ -24,13 +25,17 @@ describe('PedidosComponent', () => {
   beforeEach(async(() => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setQbfToPlace',
-      'transformDate', 'setRefreshToken'
+      'transformDate', 'setRefreshToken', 'setFiltersActives', 'getFiltersActives', 'removeFiltersActive',
+        'getFiltersActivesAsModel'
     ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
-      'getPedidos', 'processOrders'
+      'getPedidos', 'processOrders', 'getInitRangeDate'
     ]);
     pedidosServiceSpy.processOrders.and.callFake(() => {
       return of({success: true, response: ['id']} as IProcessOrdersRes);
+    });
+    pedidosServiceSpy.getInitRangeDate.and.callFake(() => {
+      return of(RangeDateMOck);
     });
     pedidosServiceSpy.getPedidos.and.callFake(() => {
       return of(PedidosListMock);
@@ -58,7 +63,8 @@ describe('PedidosComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
     expect(component.displayedColumns)
-        .toEqual(['seleccion', 'cons', 'codigo', 'cliente', 'medico', 'asesor', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions']);
+        .toEqual(['seleccion', 'codigo',
+          'cliente', 'medico', 'asesor', 'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions']);
     expect(component.limit).toEqual(10);
     expect(component.offset).toEqual(0);
   });

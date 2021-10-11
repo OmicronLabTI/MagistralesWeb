@@ -165,11 +165,17 @@
             Gets or sets the sa.
             </summary>
         </member>
-        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.#ctor(Omicron.SapDiApi.Facade.Sap.ISapFacade)">
+        <member name="F:Omicron.SapDiApi.Api.Controllers.SapDiApiController.sapDxpFacade">
+            <summary>
+            Gets or sets the sa.
+            </summary>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.#ctor(Omicron.SapDiApi.Facade.Sap.ISapFacade,Omicron.SapDiApi.Facade.Sap.ISapDxpFacade)">
             <summary>
             /// Initializes a new instance of the <see cref="T:Omicron.SapDiApi.Api.Controllers.SapDiApiController"/> class.
             </summary>
             <param name="sapFacade">the facade.</param>
+            <param name="sapDxpFacade">The sap dacade.</param>
         </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateFabOrder(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.OrderWithDetailDto})">
             <summary>
@@ -218,6 +224,91 @@
             Create new isolated production order.
             </summary>
             <param name="isolatedFabOrder">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateDelivery(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CreateDeliveryDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="createDelivery">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateDeliveryPartial(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CreateDeliveryDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="createDelivery">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateDeliveryBatch(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CreateDeliveryDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="createDelivery">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateTracking(Omicron.SapDiApi.Dtos.Models.SendPackageDto)">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="updateTracking">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CancelDelivery(System.String,System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CancelDeliveryDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            /// <param name="type">the type.</param>
+            <param name="deliveries">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CloseMuestra(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.CloseSampleOrderDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="orderId">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateDoctorAddress(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.Experience.DoctorDeliveryAddressDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="addresses">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateDoctorAddress(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.Experience.DoctorInvoiceAddressDto})">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="addresses">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateDoctorDefaultAddress(Omicron.SapDiApi.Dtos.Models.Experience.DoctorDefaultAddressDto)">
+            <summary>
+            Create new isolated production order.
+            </summary>
+            <param name="address">Isolated production order.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateDoctorProfileInfo(Omicron.SapDiApi.Dtos.Models.Experience.DoctorProfileDto)">
+            <summary>
+            Update the profile the doctor profile info.
+            </summary>
+            <param name="profileDto">Doctor profile info.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateSaleOrder(Omicron.SapDiApi.Dtos.Models.Experience.CreateSaleOrderDto)">
+            <summary>
+            Update the profile the doctor profile info.
+            </summary>
+            <param name="saleOrderDto">Doctor profile info.</param>
+            <returns>Operation result.</returns>
+        </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.UpdateAdvisorProfileInfo(Omicron.SapDiApi.Dtos.Models.Experience.AdvisorProfileDto)">
+            <summary>
+            Update the profile the advisor profile info.
+            </summary>
+            <param name="profileDto">Advisor profile info.</param>
             <returns>Operation result.</returns>
         </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">

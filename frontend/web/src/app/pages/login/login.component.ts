@@ -5,7 +5,7 @@ import { ILoginReq } from 'src/app/model/http/security.model';
 import { DataService } from 'src/app/services/data.service';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import {ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS, RolesType} from '../../constants/const';
+import {CONST_STRING, ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS, RolesType, RouterPaths} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {Messages} from '../../constants/messages';
@@ -96,8 +96,10 @@ export class LoginComponent implements OnInit {
       if (this.dataService.getUserRole() === RolesType.logistic || this.dataService.getUserRole() === RolesType.design
           || this.dataService.getUserRole() === RolesType.warehouse) {
             this.goToPedidos();
+      } else if (this.dataService.getUserRole() === RolesType.incidents) {
+          this.router.navigate([RouterPaths.incidentsList]);
       } else {
-            this.goToUsers();
+          this.goToUsers();
       }
     }
 }

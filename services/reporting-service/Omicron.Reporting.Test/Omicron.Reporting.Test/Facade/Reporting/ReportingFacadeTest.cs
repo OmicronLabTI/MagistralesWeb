@@ -9,6 +9,7 @@
 namespace Omicron.Reporting.Test.Facade.Request
 {
     using System.IO;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
     using Moq;
@@ -45,6 +46,25 @@ namespace Omicron.Reporting.Test.Facade.Request
             var mockReportingService = new Mock<IReportingService>();
             mockReportingService.SetReturnsDefault(fileResultModel);
             mockReportingService.SetReturnsDefault(Task.FromResult(resultModel));
+            mockReportingService
+                .Setup(m => m.SendEmailRejectedOrder(It.IsAny<SendRejectedEmailModel>()))
+                .Returns(Task.FromResult(resultModel));
+
+            mockReportingService
+                .Setup(m => m.SendEmailForeignPackage(It.IsAny<SendPackageModel>()))
+                .Returns(Task.FromResult(resultModel));
+
+            mockReportingService
+                .Setup(m => m.SendEmailLocalPackage(It.IsAny<SendLocalPackageModel>()))
+                .Returns(Task.FromResult(resultModel));
+
+            mockReportingService
+                .Setup(m => m.SendEmailCancelDeliveryOrders(It.IsAny<List<SendCancelDeliveryModel>>()))
+                .Returns(Task.FromResult(resultModel));
+
+            mockReportingService
+                .Setup(m => m.SubmitIncidentsExel(It.IsAny<List<IncidentDataModel>>()))
+                .Returns(Task.FromResult(resultModel));
 
             this.reportingFacade = new ReportingFacade(mockReportingService.Object, mapper);
         }
@@ -83,6 +103,95 @@ namespace Omicron.Reporting.Test.Facade.Request
 
             // act
             var response = await this.reportingFacade.SubmitRawMaterialRequestPdf(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SendEmailForeignPackage()
+        {
+            // arrange
+            var requests = new SendPackageDto();
+
+            // act
+            var response = await this.reportingFacade.SendEmailForeignPackage(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SendEmailLocalPackage()
+        {
+            // arrange
+            var requests = new SendLocalPackageDto();
+
+            // act
+            var response = await this.reportingFacade.SendEmailLocalPackage(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SendEmailRejectedOrder()
+        {
+            // arrange
+            var requests = new SendRejectedEmailDto();
+
+            // act
+            var response = await this.reportingFacade.SendEmailRejectedOrder(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SendEmailCancelDeliveryOrders()
+        {
+            // arrange
+            var requests = new List<SendCancelDeliveryDto>();
+
+            // act
+            var response = await this.reportingFacade.SendEmailCancelDeliveryOrders(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SubmitIncidentsExel()
+        {
+            // arrange
+            var requests = new List<IncidentDataDto>();
+
+            // act
+            var response = await this.reportingFacade.SubmitIncidentsExel(requests);
 
             // arrange
             Assert.IsNotNull(response);

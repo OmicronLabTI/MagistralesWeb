@@ -13,9 +13,12 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.Utils;
@@ -31,17 +34,25 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IPedidosDao pedidosDao;
 
+        private readonly IKafkaConnector kafkaConnector;
+
+        private readonly IRedisService redisService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProcessOrdersService"/> class.
         /// </summary>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="pedidosDao">pedidos dao.</param>
-        public ProcessOrdersService(ISapAdapter sapAdapter, ISapDiApi sapDiApi, IPedidosDao pedidosDao)
+        /// <param name="kafkaConnector">The kafka conector.</param>
+        /// <param name="redisService">The redis service.</param>
+        public ProcessOrdersService(ISapAdapter sapAdapter, ISapDiApi sapDiApi, IPedidosDao pedidosDao, IKafkaConnector kafkaConnector, IRedisService redisService)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
+            this.kafkaConnector = kafkaConnector ?? throw new ArgumentNullException(nameof(kafkaConnector));
+            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
         /// <summary>
@@ -51,6 +62,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the result.</returns>
         public async Task<ResultModel> ProcessOrders(ProcessOrderModel pedidosId)
         {
+            await this.BlockSaleOrderWhilePlaning(pedidosId.ListIds);
+
             var listToSend = await this.GetListToCreateFromOrders(pedidosId);
             var dictResult = await this.CreateFabOrders(listToSend);
             var listOrders = await this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok]);
@@ -58,10 +71,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listPedidos = pedidosId.ListIds.Select(x => x.ToString()).ToList();
             var dataBaseSaleOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(listPedidos)).ToList();
 
-            var listToInsert = this.CreateUserModelOrders(listOrders);
-            var dataToInsertUpdate = this.GetListToUpdateInsert(pedidosId.ListIds, dataBaseSaleOrders, dictResult[ServiceConstants.ErrorCreateFabOrd], listToSend);
+            var createUserModelOrders = this.CreateUserModelOrders(listOrders, listToSend, pedidosId.User);
+            var listToInsert = createUserModelOrders.Item1;
+            var listOrderLogToInsert = new List<SalesLogs>();
+            listOrderLogToInsert.AddRange(createUserModelOrders.Item2);
+            var dataToInsertUpdate = this.GetListToUpdateInsert(pedidosId.ListIds, dataBaseSaleOrders, dictResult[ServiceConstants.ErrorCreateFabOrd], listToSend, pedidosId.User);
             listToInsert.AddRange(dataToInsertUpdate.Item1);
             var listToUpdate = new List<UserOrderModel>(dataToInsertUpdate.Item2);
+            listOrderLogToInsert.AddRange(dataToInsertUpdate.Item3);
 
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, pedidosId.ListIds, ServiceConstants.OrdenVentaPlan, ServiceConstants.OrdenVenta));
@@ -70,8 +87,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.InsertUserOrder(listToInsert);
             await this.pedidosDao.UpdateUserOrders(listToUpdate);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
+            await this.UnBlockSaleOrderWhilePlanning(pedidosId.ListIds);
             return ServiceUtils.CreateResult(true, 200, userError, dictResult[ServiceConstants.ErrorCreateFabOrd], null);
         }
 
@@ -82,6 +101,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> ProcessByOrder(ProcessByOrderModel processByOrder)
         {
+            await this.BlockSaleOrderWhilePlaning(new List<int> { processByOrder.PedidoId });
             var ordersSap = await this.GetOrdersWithDetail(new List<int> { processByOrder.PedidoId });
 
             var orders = ordersSap.FirstOrDefault(x => x.Order.PedidoId == processByOrder.PedidoId);
@@ -93,7 +113,12 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listOrders = await this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok]);
             var dataBaseOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { processByOrder.PedidoId.ToString() })).ToList();
-            var dataToInsert = this.CreateUserModelOrders(listOrders);
+            var createUserModelOrders = this.CreateUserModelOrders(listOrders, ordersSap, processByOrder.UserId);
+            var dataToInsert = createUserModelOrders.Item1;
+
+            // logs
+            var listOrderLogToInsert = new List<SalesLogs>();
+            listOrderLogToInsert.AddRange(createUserModelOrders.Item2);
 
             var saleOrder = dataBaseOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             bool insertUserOrdersale = false;
@@ -108,15 +133,24 @@ namespace Omicron.Pedidos.Services.Pedidos
                 insertUserOrdersale = true;
             }
 
+            var previousStatus = saleOrder.Status;
             saleOrder.Status = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders ? ServiceConstants.Planificado : ServiceConstants.Abierto;
+            saleOrder.TypeOrder = orders.Order.OrderType;
 
             if (insertUserOrdersale)
             {
+                saleOrder.PlanningDate = DateTime.Now;
                 dataToInsert.Add(saleOrder);
             }
             else
             {
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
+            }
+
+            // logs
+            if (previousStatus != saleOrder.Status)
+            {
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, new List<UserOrderModel> { saleOrder }));
             }
 
             var listOrderToInsert = new List<OrderLogModel>();
@@ -125,8 +159,10 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.InsertUserOrder(dataToInsert);
             await this.pedidosDao.InsertOrderLog(listOrderToInsert);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
+            await this.UnBlockSaleOrderWhilePlanning(new List<int> { processByOrder.PedidoId });
             return ServiceUtils.CreateResult(true, 200, userError, dictResult[ServiceConstants.ErrorCreateFabOrd], null);
         }
 
@@ -196,11 +232,13 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);
-            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var listErrorsToReturn = new List<string>();
-            listErrorId.ForEach(x =>
+            listWithError.ForEach(x =>
             {
-                listErrorsToReturn.Add(x.Split("-")[0]);
+                var dictValue = dictResult[x].Split("-").ToList();
+                var key = x.Split("-");
+
+                listErrorsToReturn.Add($"{key[0]}-{key[1]}: {dictValue.LastOrDefault()}");
             });
 
             return new Dictionary<string, List<string>>
@@ -214,21 +252,51 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// creates the user model from fabrication.
         /// </summary>
         /// <param name="dataToCreate">the data to create.</param>
+        /// <param name="salesOrders">The sales orders.</param>
+        /// <param name="userLogistic">The sales user.</param>
         /// <returns>the data.</returns>
-        private List<UserOrderModel> CreateUserModelOrders(List<FabricacionOrderModel> dataToCreate)
+        private Tuple<List<UserOrderModel>, List<SalesLogs>> CreateUserModelOrders(List<FabricacionOrderModel> dataToCreate, List<OrderWithDetailModel> salesOrders, string userLogistic)
         {
+            var listOrderLogToInsert = new List<SalesLogs>();
             var listToReturn = new List<UserOrderModel>();
             dataToCreate.ForEach(x =>
             {
-                listToReturn.Add(new UserOrderModel
+                var saleOrder = salesOrders.FirstOrDefault(y => y.Order != null && y.Order.DocNum == x.PedidoId);
+
+                var userOrder = new UserOrderModel
                 {
                     Productionorderid = x.OrdenId.ToString(),
                     Salesorderid = x.PedidoId.ToString(),
                     Status = ServiceConstants.Planificado,
-                });
+                    MagistralQr = JsonConvert.SerializeObject(this.ReturnQrStructure(x, saleOrder)),
+                    TypeOrder = saleOrder.Order.OrderType,
+                    PlanningDate = DateTime.Now,
+                };
+                listToReturn.Add(userOrder);
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));
             });
+            return new Tuple<List<UserOrderModel>, List<SalesLogs>>(listToReturn, listOrderLogToInsert);
+        }
 
-            return listToReturn;
+        /// <summary>
+        /// Creates the QR data structure.
+        /// </summary>
+        /// <param name="model">the fabrication model.</param>
+        /// <param name="orderModel">the order model.</param>
+        /// <returns>the data.</returns>
+        private object ReturnQrStructure(FabricacionOrderModel model, OrderWithDetailModel orderModel)
+        {
+            var prodOrder = orderModel.Detalle.FirstOrDefault(x => x.CodigoProducto == model.ProductoId);
+
+            var modelQr = new MagistralQrModel
+            {
+                SaleOrder = model.PedidoId.HasValue ? model.PedidoId.Value : 0,
+                ProductionOrder = model.OrdenId,
+                Quantity = model.Quantity,
+                NeedsCooling = prodOrder != null ? prodOrder.NeedsCooling : "N",
+            };
+
+            return modelQr;
         }
 
         /// <summary>
@@ -238,12 +306,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="dataBaseSaleOrders">the database sale orders.</param>
         /// <param name="errors">if there are erros.</param>
         /// <param name="listOrders">List with orders.</param>
+        /// <param name="userLogistic">List with user.</param>
         /// <returns>the first is the list to insert the second the list to update.</returns>
-        private Tuple<List<UserOrderModel>, List<UserOrderModel>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders,  List<string> errors, List<OrderWithDetailModel> listOrders)
+        private Tuple<List<UserOrderModel>, List<UserOrderModel>, List<SalesLogs>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders,  List<string> errors, List<OrderWithDetailModel> listOrders, string userLogistic)
         {
             var listToInsert = new List<UserOrderModel>();
             var listToUpdate = new List<UserOrderModel>();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             pedidosId.ForEach(p =>
             {
                 var insertUserOrdersale = false;
@@ -259,23 +328,31 @@ namespace Omicron.Pedidos.Services.Pedidos
                     insertUserOrdersale = true;
                 }
 
+                var previousStatus = saleOrder.Status;
                 var order = listOrders.FirstOrDefault(x => x.Order.DocNum == p);
                 var codes = order.Detalle.Select(x => x.CodigoProducto);
                 var haveErrors = errors.Any(x => codes.Contains(x));
 
                 saleOrder.Status = haveErrors ? ServiceConstants.Abierto : ServiceConstants.Planificado;
+                saleOrder.TypeOrder = order.Order.OrderType;
 
                 if (insertUserOrdersale)
                 {
+                    saleOrder.PlanningDate = DateTime.Now;
                     listToInsert.Add(saleOrder);
                 }
                 else
                 {
                     listToUpdate.Add(saleOrder);
                 }
+
+                if (previousStatus != saleOrder.Status)
+                {
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { saleOrder }));
+                }
             });
 
-            return new Tuple<List<UserOrderModel>, List<UserOrderModel>>(listToInsert, listToUpdate);
+            return new Tuple<List<UserOrderModel>, List<UserOrderModel>, List<SalesLogs>>(listToInsert, listToUpdate, listOrderLogToInsert);
         }
 
         /// <summary>
@@ -304,6 +381,31 @@ namespace Omicron.Pedidos.Services.Pedidos
                 },
                 Detalle = new List<CompleteDetailOrderModel>(listUpdated),
             };
+        }
+
+        private async Task BlockSaleOrderWhilePlaning(List<int> saleOrder)
+        {
+            foreach (var pedido in saleOrder)
+            {
+                var redisvalue = await this.redisService.GetRedisKey(string.Format(ServiceConstants.PedidoRedisPlanificado, pedido));
+
+                if (string.IsNullOrEmpty(redisvalue))
+                {
+                    await this.redisService.WriteToRedis(string.Format(ServiceConstants.PedidoRedisPlanificado, pedido), string.Format(ServiceConstants.PedidoRedisPlanificado, pedido), new TimeSpan(0, 1, 0));
+                }
+                else
+                {
+                    throw new CustomServiceException(string.Format(ServiceConstants.ErrorWhenPlanning, pedido), System.Net.HttpStatusCode.BadRequest);
+                }
+            }
+        }
+
+        private async Task UnBlockSaleOrderWhilePlanning(List<int> saleOrder)
+        {
+            foreach (var pedido in saleOrder)
+            {
+                await this.redisService.DeleteKey(string.Format(ServiceConstants.PedidoRedisPlanificado, pedido));
+            }
         }
     }
 }

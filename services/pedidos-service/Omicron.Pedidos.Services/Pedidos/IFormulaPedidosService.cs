@@ -7,6 +7,7 @@
 // </summary>
 namespace Omicron.Pedidos.Services.Pedidos
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
@@ -30,5 +31,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="productId">The product id.</param>
         /// <returns>Custom lists.</returns>
         Task<ResultModel> GetCustomComponentListByProductId(string productId);
+
+        /// <summary>
+        /// Delete custom component list.
+        /// </summary>
+        /// <param name="parameters">The user id.</param>
+        /// <returns>New custom list.</returns>
+        Task<ResultModel> DeleteCustomComponentList(Dictionary<string, string> parameters);
     }
 }

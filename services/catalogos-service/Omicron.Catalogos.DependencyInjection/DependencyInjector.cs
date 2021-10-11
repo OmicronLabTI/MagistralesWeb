@@ -9,17 +9,17 @@
 namespace Omicron.Catalogos.DependencyInjection
 {
     using AutoMapper;
-    using Omicron.Catalogos.DataAccess.DAO.User;
-    using Omicron.Catalogos.Entities.Context;
-    using Omicron.Catalogos.Facade.Catalogs.Users;
-    using Omicron.Catalogos.Services.Mapping;
-    using Omicron.Catalogos.Services.User;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Omicron.Catalogos.Facade.Catalogs;
-    using Omicron.Catalogos.Services.Catalogs;
     using Omicron.Catalogos.DataAccess.DAO.Catalog;
+    using Omicron.Catalogos.DataAccess.DAO.User;
+    using Omicron.Catalogos.Entities.Context;
+    using Omicron.Catalogos.Facade.Catalogs;
+    using Omicron.Catalogos.Facade.Catalogs.Users;
+    using Omicron.Catalogos.Services.Catalogs;
+    using Omicron.Catalogos.Services.Mapping;
+    using Omicron.Catalogos.Services.User;
 
     /// <summary>
     /// Class for DependencyInjector.

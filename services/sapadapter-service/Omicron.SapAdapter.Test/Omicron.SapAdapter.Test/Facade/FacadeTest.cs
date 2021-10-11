@@ -39,6 +39,8 @@ namespace Omicron.SapAdapter.Test.Facade
             this.mapper = mapperConfiguration.CreateMapper();
 
             var mockSapServices = new Mock<ISapService>();
+            var mockComponentes = new Mock<IComponentsService>();
+            var mockSapdxpService = new Mock<ISapDxpService>();
 
             var response = new ResultModel
             {
@@ -50,8 +52,10 @@ namespace Omicron.SapAdapter.Test.Facade
             };
 
             mockSapServices.SetReturnsDefault(Task.FromResult(response));
+            mockComponentes.SetReturnsDefault(Task.FromResult(response));
+            mockSapdxpService.SetReturnsDefault(Task.FromResult(response));
 
-            this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper);
+            this.sapFacade = new SapFacade(mockSapServices.Object, this.mapper, mockComponentes.Object, mockSapdxpService.Object);
         }
 
         /// <summary>
@@ -117,6 +121,27 @@ namespace Omicron.SapAdapter.Test.Facade
 
             // act
             var response = await this.sapFacade.GetProdOrderByOrderItem(listDocs);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetAsesorsByOrderId()
+        {
+            // arrange
+            var salesOrders = new List<int>
+            {
+                12,
+                13,
+            };
+
+            // act
+            var response = await this.sapFacade.GetAsesorsByOrderId(salesOrders);
 
             // assert
             this.AssertResponse(response);
@@ -333,10 +358,75 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task ValidateOrder()
         {
             // arrange
-            var orderId = 10;
+            var orderId = new List<int>();
 
             // act
             var response = await this.sapFacade.ValidateOrder(orderId);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Gets the recipe.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDetails()
+        {
+            // arrange
+            var orderId = new Dictionary<string, string>();
+
+            // act
+            var response = await this.sapFacade.GetDetails(orderId, "ped");
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Gets the recipe.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetMostCommonComponents()
+        {
+            // act
+            var response = await this.sapFacade.GetMostCommonComponents();
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Get packing required for order in assigned status.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        [Test]
+        public async Task GetPackingRequiredForOrderInAssignedStatus()
+        {
+            // Arrange
+            var userId = "abc-123";
+
+            // act
+            var response = await this.sapFacade.GetPackingRequiredForOrderInAssignedStatus(userId);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Get possible orders active to dxp project.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        [Test]
+        public async Task GetOrdersActive()
+        {
+            // Arrange
+            var ordersId = new List<int>();
+
+            // act
+            var response = await this.sapFacade.GetOrdersActive(ordersId);
 
             // assert
             this.AssertResponse(response);

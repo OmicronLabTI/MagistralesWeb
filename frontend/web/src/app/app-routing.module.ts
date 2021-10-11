@@ -24,12 +24,12 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: 'ordenfabricacion/:ordenid',
+    path: 'ordenfabricacion/:ordenid/:detailsOrders/:isFromDetail',
     loadChildren: () => import('./pages/detalle-formula/detalle-formula.module').then(m => m.DetalleFormulaModule),
     canActivate: [GuardService]
   },
   {
-    path: 'lotes/:document/:ordenid/:code/:description/:hasMissingStock',
+    path: 'lotes/:document/:ordenid/:code/:description/:hasMissingStock/:isFromDetail/:detailOrders',
     loadChildren: () => import('./pages/inventorybatches/inventorybatches.module').then(m => m.InventorybatchesModule),
     canActivate: [GuardService]
   },
@@ -40,17 +40,32 @@ const routes: Routes = [
   },
   {
     path: 'productividad',
-    loadChildren: () => import('./pages/productivity/productivity.module').then(m => m.ProductivityModule),
+    loadChildren: () => import('./pages/graphics/productivity/productivity.module').then(m => m.ProductivityModule),
     canActivate: [GuardService]
   },
   {
     path: 'workLoad',
-    loadChildren: () => import('./pages/work-load/work-load.module').then(m => m.WorkLoadModule),
+    loadChildren: () => import('./pages/graphics/work-load/work-load.module').then(m => m.WorkLoadModule),
     canActivate: [GuardService]
   },
   {
     path: `${RouterPaths.materialRequest}/:requests/:isOrder`,
     loadChildren: () => import('./pages/material-request/material-request.module').then(m => m.MaterialRequestModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: `${RouterPaths.incidents}`,
+    loadChildren: () => import('./pages/graphics/incidents/incidents.module').then(m => m.IncidentsModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: `${RouterPaths.incidentsList}`,
+    loadChildren: () => import('./pages/incidents-list/incidents-list.module').then(m => m.IncidentsListModule),
+    canActivate: [GuardService]
+  },
+  {
+    path: `${RouterPaths.warehousePage}`,
+    loadChildren: () => import('./pages/graphics/warehouse/warehouse.module').then(m => m.WarehouseModule),
     canActivate: [GuardService]
   },
   {

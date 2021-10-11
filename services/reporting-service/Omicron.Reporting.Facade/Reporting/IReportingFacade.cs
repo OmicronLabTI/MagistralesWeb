@@ -7,6 +7,7 @@
 // </summary>
 namespace Omicron.Reporting.Facade.Request
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Reporting.Dtos.Model;
 
@@ -29,5 +30,40 @@ namespace Omicron.Reporting.Facade.Request
         /// <param name="request">Requests data.</param>
         /// <returns>Operation result.</returns>
         Task<ResultDto> SubmitRawMaterialRequestPdf(RawMaterialRequestDto request);
+
+        /// <summary>
+        /// Sends the email.
+        /// </summary>
+        /// <param name="request">the request.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> SendEmailForeignPackage(SendPackageDto request);
+
+        /// <summary>
+        /// Sends the email for local packages.
+        /// </summary>
+        /// <param name="sendLocalPackage">the local package.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> SendEmailLocalPackage(SendLocalPackageDto sendLocalPackage);
+
+        /// <summary>
+        /// Send mail for every rejected order.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> SendEmailRejectedOrder(SendRejectedEmailDto request);
+
+        /// <summary>
+        /// Send mail when orders of a delivery are canceled.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryDto> request);
+
+        /// <summary>
+        /// Send mail when orders of a delivery are canceled.
+        /// </summary>
+        /// <param name="request">Requests data.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> SubmitIncidentsExel(List<IncidentDataDto> request);
     }
 }

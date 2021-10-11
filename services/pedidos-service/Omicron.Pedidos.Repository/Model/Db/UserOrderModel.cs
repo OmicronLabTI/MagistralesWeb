@@ -64,6 +64,14 @@ namespace Omicron.Pedidos.Entities.Model
         public string Status { get; set; }
 
         /// <summary>
+        /// Gets or sets status.
+        /// </summary>
+        /// <value>
+        /// String status.
+        [Column("planningdate")]
+        public DateTime? PlanningDate { get; set; }
+
+        /// <summary>
         /// Gets or sets comments.
         /// </summary>
         /// <value>
@@ -77,7 +85,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// String status.
         [Column("finishdate")]
-        public string FinishDate { get; set; }
+        public DateTime? FinishDate { get; set; }
 
         /// <summary>
         /// Gets or sets creation date.
@@ -101,7 +109,7 @@ namespace Omicron.Pedidos.Entities.Model
         /// <value>
         /// String close date.
         [Column("closedate")]
-        public string CloseDate { get; set; }
+        public DateTime? CloseDate { get; set; }
 
         /// <summary>
         /// Gets or sets close user id.
@@ -118,6 +126,132 @@ namespace Omicron.Pedidos.Entities.Model
         /// String user id.
         [Column("finishedlabel")]
         public int FinishedLabel { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("qrmgestrcuture")]
+        public string MagistralQr { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("finalizeddate")]
+        public DateTime? FinalizedDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("statusalmacen")]
+        public string StatusAlmacen { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("usercheckin")]
+        public string UserCheckIn { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("datecheckin")]
+        public DateTime? DateTimeCheckIn { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("qrremisionmgestrcuture")]
+        public string RemisionQr { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("deliveryid")]
+        public int DeliveryId { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("statusinvoice")]
+        public string StatusInvoice { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("userinvoice")]
+        public string UserInvoiceStored { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("invoicestored")]
+        public DateTime? InvoiceStoreDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("qrinvoice")]
+        public string InvoiceQr { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("invoiceid")]
+        public int InvoiceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("invoicetype")]
+        public string InvoiceType { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("batchfinalized")]
+        public string BatchFinalized { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type order.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("typeorder")]
+        public string TypeOrder { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether gets.

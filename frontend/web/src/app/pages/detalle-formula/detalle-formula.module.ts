@@ -5,6 +5,7 @@ import {MATERIAL_COMPONENTS} from '../../app.material';
 import {DetalleFormulaComponent} from './detalle-formula.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { FaborderListModule } from '../faborders-list/faborder-list.module';
+import {ComponentsModule} from '../../components/components.module';
 
 @NgModule({
   declarations: [DetalleFormulaComponent],
@@ -14,7 +15,8 @@ import { FaborderListModule } from '../faborders-list/faborder-list.module';
         MATERIAL_COMPONENTS,
         FormsModule,
         ReactiveFormsModule,
-        FaborderListModule
+        FaborderListModule,
+        ComponentsModule
     ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

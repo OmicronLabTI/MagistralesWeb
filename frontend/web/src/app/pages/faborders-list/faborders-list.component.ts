@@ -24,6 +24,7 @@ import {Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-orders.component';
 import {Router} from '@angular/router';
+import {PedidosService} from '../../services/pedidos.service';
 
 @Component({
   selector: 'app-faborders-list',
@@ -34,12 +35,12 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   allComplete = false;
   displayedColumns: string[] = [
     'seleccion',
-    'cons',
     'pedido',
     'orden',
     'codigoproducto',
     'descripcion',
     'cantidadplanificada',
+    'lote',
     'fechaorden',
     'fechatermino',
     'qfbasignado',
@@ -70,20 +71,22 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private titleService: Title,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private pedidosService: PedidosService
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
-    this.filterDataOrders.isFromOrders = false;
-    this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
-    this.filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
-    this.queryString = `?fini=${this.filterDataOrders.dateFull}`;  // init search
   }
 
   ngOnInit() {
     if (this.dataService.getOrderIsolated()) {
       this.filterDataOrders.docNum = this.dataService.getOrderIsolated();
-      this.queryString = `?docNum=${this.dataService.getOrderIsolated()}`; // init search if there fabOrderId
+      this.queryString = `?docNum=${this.dataService.getOrderIsolated()}`;
       this.dataService.removeOrderIsolated();
+    }
+    if (this.dataService.getFiltersActivesAsModelOrders()) {
+      this.onSuccessSearchOrdersModal(this.dataService.getFiltersActivesAsModelOrders());
+    } else {
+      this.createInitRageOrders();
     }
     this.titleService.setTitle('OmicronLab - Órdenes de fabricación');
     this.dataSource.paginator = this.paginator;
@@ -97,10 +100,20 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             this.getOrdersAction();
           }
         }));
+    this.dataService.removeFiltersActiveOrders();
+  }
+  createInitRageOrders() {
+    this.pedidosService.getInitRangeDate().subscribe(({response}) => this.getInitRange(response.filter(
+        catalog => catalog.field === 'MagistralesDaysToLook')[0].value), error => this.errorService.httpError(error));
+  }
+  getInitRange(daysInitRange: string) {
+    this.filterDataOrders.isFromOrders = false;
+    this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
+    this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(daysInitRange));
+    this.queryString = `?fini=${this.filterDataOrders.dateFull}`;  // init search
     this.getFullQueryString();
     this.getOrdersAction();
   }
-
   updateAllComplete() {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.getButtonsOrdersIsolatedToUnLooked();
@@ -154,7 +167,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
               element.class = 'cancelado';
               break;
             case ConstStatus.entregado:
-              element.class = 'entregado';
+            case ConstStatus.almacenado:
+              element.class = ConstStatus.almacenado.toLowerCase();
               break;
           }
           element.description = element.description.toUpperCase();
@@ -196,6 +210,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   createOrderIsolated() {
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.dataService.setSearchComponentModal({modalType: ComponentSearch.createOrderIsolated});
   }
 
@@ -205,6 +220,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   onSuccessSearchOrdersModal(resultSearchOrdersModal: ParamsPedidos) {
+    this.filterDataOrders = new ParamsPedidos();
     this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[0];
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[1];
     this.isSearchOrderWithFilter = this.dataService.getIsWithFilter(resultSearchOrdersModal);
@@ -218,7 +234,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   cancelOrder() {
     this.dataService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.status !== ConstStatus.finalizado && t.status !== ConstStatus.entregado)).map(order => {
+      (t => (t.isChecked && t.status !== ConstStatus.finalizado && t.status !== ConstStatus.almacenado)).map(order => {
         const cancelOrder = new CancelOrderReq();
         cancelOrder.orderId = Number(order.fabOrderId);
         return cancelOrder;
@@ -258,9 +274,17 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     }).afterClosed().subscribe(() => this.getOrdersAction());
   }
 
-    materialRequestIsolatedOrder() {
-     this.router.navigate([RouterPaths.materialRequest,
-                      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString()
-                      , CONST_NUMBER.zero.toString()]);
-    }
+  materialRequestIsolatedOrder() {
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
+    this.router.navigate([RouterPaths.materialRequest,
+      this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString() || CONST_NUMBER.zero
+      , CONST_NUMBER.zero]);
+  }
+
+  goToFormulaDetail(fabOrderId: string) {
+    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
+    this.dataService.changeRouterForFormula(fabOrderId,
+        this.dataSource.data.map(order => order.fabOrderId).toString(),
+        CONST_NUMBER.zero);
+  }
 }

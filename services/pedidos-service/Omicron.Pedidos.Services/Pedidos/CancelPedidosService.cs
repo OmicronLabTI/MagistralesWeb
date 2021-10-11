@@ -15,6 +15,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -37,6 +38,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IUsersService userService;
 
+        private readonly IKafkaConnector kafkaConnector;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CancelPedidosService"/> class.
         /// </summary>
@@ -45,13 +48,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="sapFileService">The sap file.</param>
         /// <param name="usersService">The user service.</param>
-        public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapFileService sapFileService, IUsersService usersService)
+        /// <param name="kafkaConnector">The kafka conector.</param>
+        public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapFileService sapFileService, IUsersService usersService, IKafkaConnector kafkaConnector)
         {
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
             this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
             this.sapFileService = sapFileService ?? throw new ArgumentException(nameof(sapFileService));
             this.userService = usersService ?? throw new ArgumentException(nameof(usersService));
+            this.kafkaConnector = kafkaConnector ?? throw new ArgumentNullException(nameof(kafkaConnector));
         }
 
         /// <summary>
@@ -112,6 +117,198 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, results.DistinctResults(), null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> CancelDelivery(string type, CancelDeliveryPedidoCompleteModel deliveryIds)
+        {
+            var listToUpdate = new List<UserOrderModel>();
+            var listSaleOrder = new List<UserOrderModel>();
+            var deliverties = deliveryIds.CancelDelivery.Where(y => y.NeedsCancel).Select(x => x.DeliveryId).ToList();
+            var modelByDelivery = (await this.pedidosDao.GetUserOrderByDeliveryId(deliverties)).ToList();
+
+            foreach (var order in modelByDelivery)
+            {
+                if (order.IsSalesOrder)
+                {
+                    continue;
+                }
+
+                listSaleOrder.Add(new UserOrderModel { Salesorderid = order.Salesorderid, DeliveryId = order.DeliveryId });
+                order.StatusAlmacen = null;
+                order.UserCheckIn = null;
+                order.DateTimeCheckIn = null;
+                order.RemisionQr = null;
+                order.DeliveryId = 0;
+                order.Status = type == ServiceConstants.Total ? ServiceConstants.Cancelled : ServiceConstants.Finalizado;
+                listToUpdate.Add(order);
+            }
+
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
+
+            var missingIds = deliveryIds.CancelDelivery.Where(x => x.NeedsCancel && !listSaleOrder.Any(y => y.Salesorderid == x.SaleOrderId.ToString())).Select(z => z.SaleOrderId.ToString()).ToList();
+            var listSales = modelByDelivery.Select(x => x.Salesorderid).Distinct().ToList();
+            listSales.AddRange(missingIds);
+            var userOrdersGroups = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).GroupBy(x => x.Salesorderid).ToList();
+            listToUpdate = new List<UserOrderModel>();
+            userOrdersGroups.ForEach(x =>
+            {
+                var orderByKey = deliveryIds.CancelDelivery.Where(y => y.SaleOrderId.ToString() == x.Key).ToList();
+                var lineByKey = deliveryIds.DetallePedido.Where(y => y.PedidoId.Value.ToString() == x.Key).ToList();
+                var status = this.CalculateStatusCancel(x.ToList(), orderByKey, type, lineByKey);
+
+                foreach (var y in x)
+                {
+                    if (y.IsProductionOrder)
+                    {
+                        continue;
+                    }
+
+                    y.DeliveryId = 0;
+                    y.Status = status.Item1;
+                    y.StatusAlmacen = status.Item2;
+                    listToUpdate.Add(y);
+                }
+            });
+
+            await this.pedidosDao.UpdateUserOrders(listToUpdate);
+            listSaleOrder = listSaleOrder.DistinctBy(x => x.DeliveryId).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(listSaleOrder), null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CleanInvoices(List<int> invoices)
+        {
+            var userOrders = (await this.pedidosDao.GetUserOrdersByInvoiceId(invoices)).ToList();
+            userOrders.AddRange(await this.pedidosDao.GetUserOrderBySaleOrder(userOrders.Select(x => x.Salesorderid).ToList()));
+
+            foreach (var order in userOrders)
+            {
+                if (order.IsProductionOrder && !invoices.Contains(order.InvoiceId))
+                {
+                    continue;
+                }
+
+                order.InvoiceId = 0;
+                order.InvoiceQr = null;
+                order.InvoiceStoreDate = null;
+                order.InvoiceType = null;
+                order.StatusInvoice = null;
+                order.UserInvoiceStored = null;
+                order.StatusAlmacen = ServiceConstants.Almacenado;
+            }
+
+            await this.pedidosDao.UpdateUserOrders(userOrders);
+            return ServiceUtils.CreateResult(true, 200, null, null, null);
+        }
+
+        private Tuple<string, string> CalculateStatusCancel(List<UserOrderModel> userOrders, List<CancelDeliveryPedidoModel> cancelDeliveries, string type, List<DetallePedidoModel> detalles)
+        {
+            if (type == ServiceConstants.Total)
+            {
+                return this.GetstatusForTotal(userOrders, detalles, cancelDeliveries);
+            }
+
+            return this.GetstatusForPartial(userOrders, cancelDeliveries);
+        }
+
+        /// <summary>
+        /// Calculate status.
+        /// </summary>
+        /// <param name="userOrders">the usr orders.</param>
+        /// <param name="details">The details.</param>
+        /// <returns>the data.</returns>
+        private Tuple<string, string> GetstatusForTotal(List<UserOrderModel> userOrders, List<DetallePedidoModel> details, List<CancelDeliveryPedidoModel> cancelDeliveries)
+        {
+            var areAnyPending = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
+            var areAllCancelled = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Cancelled);
+            var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
+            var areActiveLine = details.Any(x => x.LineStatus == ServiceConstants.Recibir || x.LineStatus == ServiceConstants.Almacenado);
+
+            var statusAlmacen = string.Empty;
+            var status = string.Empty;
+
+            if (areAllCancelled && !areAnyDeliveyAlive)
+            {
+                statusAlmacen = null;
+                status = areActiveLine ? ServiceConstants.Finalizado : ServiceConstants.Cancelled;
+            }
+
+            if (areAllCancelled && areAnyDeliveyAlive)
+            {
+                statusAlmacen = ServiceConstants.Almacenado;
+                status = ServiceConstants.Almacenado;
+            }
+
+            if (!areAllCancelled && areAnyDeliveyAlive)
+            {
+                var totalOpenDeliveries = cancelDeliveries.Count(z => z.Status == "O" && !z.NeedsCancel);
+                var totalLocalAlmacenadas = userOrders.Count(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado) + details.Count(z => z.LineStatus == ServiceConstants.Almacenado);
+                if (totalOpenDeliveries == totalLocalAlmacenadas)
+                {
+                    statusAlmacen = ServiceConstants.Almacenado;
+                    status = ServiceConstants.Almacenado;
+                }
+                else
+                {
+                    statusAlmacen = ServiceConstants.BackOrder;
+                    status = areAnyPending ? ServiceConstants.Liberado : ServiceConstants.Finalizado;
+                }
+            }
+
+            if (!areAllCancelled && !areAnyDeliveyAlive)
+            {
+                statusAlmacen = null;
+                status = areAnyPending ? ServiceConstants.Liberado : ServiceConstants.Finalizado;
+            }
+
+            return new Tuple<string, string>(status, statusAlmacen);
+        }
+
+        /// <summary>
+        /// Calculate status.
+        /// </summary>
+        /// <param name="userOrders">the usr orders.</param>
+        /// <param name="cancelDeliveries">the cancelDeliveries.</param>
+        /// <returns>the data.</returns>
+        private Tuple<string, string> GetstatusForPartial(List<UserOrderModel> userOrders, List<CancelDeliveryPedidoModel> cancelDeliveries)
+        {
+            var areAnyAlmacenado = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado);
+            var areAnyPending = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
+            var areAllFinalized = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Finalizado);
+            var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
+
+            if (areAnyPending && areAnyDeliveyAlive)
+            {
+                return new Tuple<string, string>(ServiceConstants.Liberado, ServiceConstants.BackOrder);
+            }
+
+            if (!areAnyDeliveyAlive && areAnyPending)
+            {
+                return new Tuple<string, string>(ServiceConstants.Liberado, null);
+            }
+
+            if (areAllFinalized && areAnyDeliveyAlive)
+            {
+                return new Tuple<string, string>(ServiceConstants.Finalizado, ServiceConstants.BackOrder);
+            }
+
+            if (!areAnyDeliveyAlive && areAllFinalized)
+            {
+                return new Tuple<string, string>(ServiceConstants.Finalizado, null);
+            }
+
+            if (!areAnyDeliveyAlive && !areAllFinalized && areAnyAlmacenado)
+            {
+                return new Tuple<string, string>(ServiceConstants.Finalizado, null);
+            }
+
+            if (areAnyAlmacenado && areAnyDeliveyAlive)
+            {
+                return new Tuple<string, string>(ServiceConstants.Finalizado, ServiceConstants.BackOrder);
+            }
+
+            return new Tuple<string, string>(ServiceConstants.Finalizado, null);
+        }
+
         /// <summary>
         /// Cancel existing PO in the local data base.
         /// </summary>
@@ -122,6 +319,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task<(List<UserOrderModel>, SuccessFailResults<OrderIdModel>)> CancelExistingProductionOrders(List<OrderIdModel> requestInfo, List<UserOrderModel> ordersToCancel, SuccessFailResults<OrderIdModel> results)
         {
             var logs = new List<OrderLogModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
 
             foreach (var order in ordersToCancel)
             {
@@ -147,6 +345,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                     order.Status = ServiceConstants.Cancelled;
                     results.AddSuccesResult(newOrderInfo);
                     logs.Add(this.BuildCancellationLog(newOrderInfo.UserId, order.Productionorderid, ServiceConstants.OrdenFab));
+                    /* logs */
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(newOrderInfo.UserId, new List<UserOrderModel> { order }));
+
                     continue;
                 }
 
@@ -156,6 +357,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             // Update in local data base
             await this.pedidosDao.UpdateUserOrders(ordersToCancel);
             await this.pedidosDao.InsertOrderLog(logs);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return (ordersToCancel, results);
         }
 
@@ -168,6 +370,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task CancelSalesOrderWithAllProductionOrderCancelled(string userId, List<UserOrderModel> cancelledProductionOrders, ISapAdapter sapAdapter)
         {
             var logs = new List<OrderLogModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
             var salesOrdersToUpdate = new List<UserOrderModel>();
             var salesOrderIds = cancelledProductionOrders.Where(x => x.IsProductionOrder && !x.IsIsolatedProductionOrder).Select(x => x.Salesorderid);
             var saleOrdersFinalized = new List<int>();
@@ -179,6 +382,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var sapMissingOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, sapAdapter);
                 var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).ToList();
 
+                var previousStatus = salesOrder.Status;
                 salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders, productionOrders);
 
                 if (salesOrder.Status.Equals(ServiceConstants.Finalizado))
@@ -192,10 +396,17 @@ namespace Omicron.Pedidos.Services.Pedidos
                 {
                     logs.Add(this.BuildCancellationLog(userId, salesOrderId, ServiceConstants.OrdenVenta));
                 }
+
+                if (previousStatus != salesOrder.Status)
+                {
+                    /* logs */
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { salesOrder }));
+                }
             }
 
             await this.pedidosDao.UpdateUserOrders(salesOrdersToUpdate);
             await this.pedidosDao.InsertOrderLog(logs);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             if (saleOrdersFinalized.Any())
             {
@@ -234,7 +445,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var sapOrder = await this.GetSalesOrdersFromSap(missingOrder.OrderId);
             var logs = new List<OrderLogModel>();
-
             if (sapOrder != null)
             {
                 var validationResults = this.IsValidCancelSapSalesOrder(missingOrder, sapOrder, results);
@@ -246,7 +456,13 @@ namespace Omicron.Pedidos.Services.Pedidos
                 sapOrder.Detalle.ForEach(async (x) => await this.CancelProductionOrderInSap(x.OrdenFabricacionId.ToString()));
 
                 var newUserOrders = sapOrder.ToUserOrderModels();
-                newUserOrders.ForEach(x => x.Status = ServiceConstants.Cancelled);
+                var listOrderLogToInsert = new List<SalesLogs>();
+
+                foreach (var userOrders in newUserOrders)
+                {
+                    userOrders.Status = ServiceConstants.Cancelled;
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(missingOrder.UserId, new List<UserOrderModel> { userOrders }));
+                }
 
                 newUserOrders.ForEach(x => logs.Add(this.BuildCancellationLog(missingOrder.UserId, x.Productionorderid, ServiceConstants.OrdenFab)));
                 logs.Add(this.BuildCancellationLog(missingOrder.UserId, missingOrder.OrderId, ServiceConstants.OrdenVenta));
@@ -254,6 +470,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 results.AddSuccesResult(missingOrder);
                 await this.pedidosDao.InsertUserOrder(newUserOrders);
                 await this.pedidosDao.InsertOrderLog(logs);
+                this.kafkaConnector.PushMessage(listOrderLogToInsert);
             }
 
             return results;
@@ -273,6 +490,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var newUserOrders = new List<UserOrderModel>();
             var logs = new List<OrderLogModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
 
             var validationResults = await this.IsValidCancelSapProductionOrder(missingOrder, sapProductionOrder, results);
             if (!validationResults.Item1)
@@ -288,11 +506,14 @@ namespace Omicron.Pedidos.Services.Pedidos
                 newUserOrder.Salesorderid = sapProductionOrder.PedidoId == null ? string.Empty : sapProductionOrder.PedidoId.ToString();
 
                 newUserOrders.Add(newUserOrder);
+                /* logs */
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(missingOrder.UserId, new List<UserOrderModel> { newUserOrder }));
                 logs.Add(this.BuildCancellationLog(missingOrder.UserId, missingOrder.OrderId, ServiceConstants.OrdenFab));
 
                 results.AddSuccesResult(missingOrder);
                 await this.pedidosDao.InsertUserOrder(newUserOrders);
                 await this.pedidosDao.InsertOrderLog(logs);
+                this.kafkaConnector.PushMessage(listOrderLogToInsert);
                 return results;
             }
 
@@ -352,7 +573,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var logs = new List<OrderLogModel>();
             var updatedOrders = new List<UserOrderModel>();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             foreach (var order in relatedUserOrders)
             {
                 var cancelledOnSap = true;
@@ -372,6 +593,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                     results.AddSuccesResult(orderToCancel);
                     updatedOrders.Add(order);
                     logs.Add(this.BuildCancellationLog(orderToCancel.UserId, orderId, docType));
+                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToCancel.UserId, new List<UserOrderModel> { order }));
+
                     continue;
                 }
 
@@ -380,6 +603,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.UpdateUserOrders(updatedOrders);
             await this.pedidosDao.InsertOrderLog(logs);
+            this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return (updatedOrders, results);
         }
@@ -486,7 +710,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Sales order.</returns>
         private async Task<FabricacionOrderModel> GetFabricationOrderFromSap(int productionOrderId)
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string> { { "docNum", productionOrderId.ToString() } };
+            Dictionary<string, string> parameters = new Dictionary<string, string> { { "docNum", $"{productionOrderId.ToString()}-{productionOrderId.ToString()}" } };
             var payload = new GetOrderFabModel { Filters = parameters, OrdersId = new List<int>() };
 
             var orders = await this.sapAdapter.PostSapAdapter(payload, ServiceConstants.GetFabOrdersByFilter);

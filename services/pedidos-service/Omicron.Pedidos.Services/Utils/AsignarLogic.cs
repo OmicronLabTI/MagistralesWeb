@@ -8,12 +8,15 @@
 
 namespace Omicron.Pedidos.Services.Utils
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -30,8 +33,9 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="pedidosDao">the pedidos dao.</param>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="sapDiApi">The sap di api.</param>
+        /// <param name="kafkaConnector">The kafka conector.</param>
         /// <returns>the result.</returns>
-        public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi)
+        public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi, IKafkaConnector kafkaConnector)
         {
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
 
@@ -43,13 +47,14 @@ namespace Omicron.Pedidos.Services.Utils
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
-
             var userOrders = (await pedidosDao.GetUserOrderBySaleOrder(listSalesOrders)).ToList();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             userOrders.ForEach(x =>
             {
                 x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Asignado;
                 x.Userid = assignModel.UserId;
+                /** add logs**/
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
             });
 
             var listOrderToInsert = new List<OrderLogModel>();
@@ -58,6 +63,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             await pedidosDao.UpdateUserOrders(userOrders);
             await pedidosDao.InsertOrderLog(listOrderToInsert);
+            kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
@@ -69,8 +75,9 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="pedidosDao">the pedido dao.</param>
         /// <param name="sapDiApi">the di api.</param>
         /// <param name="sapAdapter">Sap adapter.</param>
+        /// <param name="kafkaConnector">The kafka conector.</param>
         /// <returns>the data.</returns>
-        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapAdapter sapAdapter)
+        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapAdapter sapAdapter, IKafkaConnector kafkaConnector)
         {
             var listToUpdate = new List<UpdateFabOrderModel>();
             var listProdOrders = new List<string>();
@@ -90,7 +97,6 @@ namespace Omicron.Pedidos.Services.Utils
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
-
             var userOrdersByProd = (await pedidosDao.GetUserOrderByProducionOrder(listProdOrders)).ToList();
             var listSales = userOrdersByProd.Select(x => x.Salesorderid).Distinct().ToList();
             var userOrderBySales = (await pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
@@ -98,7 +104,9 @@ namespace Omicron.Pedidos.Services.Utils
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
             var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
 
-            userOrdersByProd = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado);
+            var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic);
+            userOrdersByProd = getUpdateUserOrderModel.Item1;
+            var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
             var listOrderToInsert = new List<OrderLogModel>();
             listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.AsignarVenta, assignModel.UserId), ServiceConstants.OrdenVenta));
@@ -106,6 +114,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             await pedidosDao.UpdateUserOrders(userOrdersByProd);
             await pedidosDao.InsertOrderLog(listOrderToInsert);
+            kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
@@ -154,21 +163,29 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="orderDetail">the order with details.</param>
         /// <param name="userOrders">The user orders.</param>
         /// <returns>the data to return.</returns>
-        public static Dictionary<int, string> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders)
+        public static Tuple<Dictionary<int, string>, List<int>> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders)
         {
             var dictUserPedido = new Dictionary<int, string>();
+            var listOrdersWithNoUser = new List<int>();
 
             foreach (var p in orderDetail)
             {
-                users = users.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList();
-
-                if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
+                if (p.Order.OrderType != ServiceConstants.Mix && !users.Any(x => x.User.Classification == p.Order.OrderType))
                 {
-                    dictUserPedido.Add(p.Order.DocNum, users.FirstOrDefault().User.Id);
+                    listOrdersWithNoUser.Add(p.Order.DocNum);
                     continue;
                 }
 
-                dictUserPedido = GetEntryUserValue(dictUserPedido, p.Detalle, users, p.Order.DocNum, users.FirstOrDefault().User.Id, userOrders);
+                var localUsers = p.Order.OrderType == ServiceConstants.Mix ? users : users.Where(x => x.User.Classification == p.Order.OrderType).ToList();
+                localUsers = localUsers.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList();
+
+                if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
+                {
+                    dictUserPedido.Add(p.Order.DocNum, localUsers.FirstOrDefault().User.Id);
+                    continue;
+                }
+
+                dictUserPedido = GetEntryUserValue(dictUserPedido, p.Detalle, localUsers, p.Order.DocNum, localUsers.FirstOrDefault().User.Id, userOrders);
 
                 users.ForEach(x =>
                 {
@@ -176,7 +193,7 @@ namespace Omicron.Pedidos.Services.Utils
                 });
             }
 
-            return dictUserPedido;
+            return new Tuple<Dictionary<int, string>, List<int>>(dictUserPedido, listOrdersWithNoUser);
         }
 
         /// <summary>
@@ -187,11 +204,12 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="sapOrders">The sapOrders.</param>
         /// <param name="user">the user to update.</param>
         /// <param name="statusOrder">Status for the order fab.</param>
+        /// <param name="userLogistic">user modificate.</param>
         /// <returns>the data.</returns>
-        public static List<UserOrderModel> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, List<OrderWithDetailModel> sapOrders, string user, string statusOrder)
+        public static Tuple<List<UserOrderModel>, List<SalesLogs>> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, List<OrderWithDetailModel> sapOrders, string user, string statusOrder, string userLogistic)
         {
             var listToUpdate = new List<UserOrderModel>();
-
+            var listOrderLogToInsert = new List<SalesLogs>();
             listFromSales
                 .GroupBy(x => x.Salesorderid)
                 .ToList()
@@ -207,6 +225,8 @@ namespace Omicron.Pedidos.Services.Utils
                         o.Userid = user;
                         o.Status = statusOrder;
                         listToUpdate.Add(o);
+                        /** add logs**/
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { o }));
                     });
 
                     if (!string.IsNullOrEmpty(y.Key))
@@ -215,10 +235,14 @@ namespace Omicron.Pedidos.Services.Utils
                         pedido.Status = missing ? pedido.Status : ServiceConstants.Liberado;
                         pedido.Userid = user;
                         listToUpdate.Add(pedido);
+                        if (!missing)
+                        {
+                            /** add logs**/
+                            listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { pedido }));
+                        }
                     }
                 });
-
-            return listToUpdate;
+            return new Tuple<List<UserOrderModel>, List<SalesLogs>>(listToUpdate, listOrderLogToInsert);
         }
 
         /// <summary>

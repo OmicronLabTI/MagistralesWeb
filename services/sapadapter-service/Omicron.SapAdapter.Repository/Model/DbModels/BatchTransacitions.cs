@@ -45,5 +45,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("DocQty")]
         public decimal DocQuantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("BaseEntry")]
+        public int BaseEntry { get; set; }
     }
 }

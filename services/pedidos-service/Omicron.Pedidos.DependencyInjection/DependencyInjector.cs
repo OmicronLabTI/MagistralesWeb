@@ -15,8 +15,12 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Facade.Pedidos;
+    using Omicron.Pedidos.Services.AlmacenService;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.Redis;
+    using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
@@ -49,7 +53,19 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IPedidosDao, PedidosDao>();
             Services.AddTransient<ISapDiApi, SapDiApi>();
             Services.AddTransient<ISapAdapter, SapAdapter>();
+            Services.AddTransient<IQrFacade, QrFacade>();
+            Services.AddTransient<IQrService, QrService>();
+            Services.AddTransient<IAlmacenService, AlmacenService>();
+            Services.AddTransient<IPedidosAlmacenFacade, PedidosAlmacenFacade>();
+            Services.AddTransient<IPedidosAlmacenService, PedidosAlmacenService>();
+            Services.AddTransient<IReportingService, ReportingService>();
+            Services.AddTransient<IBusquedaPedidoFacade, BusquedaPedidoFacade>();
+            Services.AddTransient<IBusquedaPedidoService, BusquedaPedidoService>();
+            Services.AddTransient<IRedisService, RedisService>();
+            Services.AddTransient<IKafkaConnector, KafkaConnector>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
+            Services.AddTransient<IPedidosDxpFacade, PedidosDxpFacade>();
+            Services.AddTransient<IPedidosDxpService, PedidosDxpService>();
             return Services;
         }
 

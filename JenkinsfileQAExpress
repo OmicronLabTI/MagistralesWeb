@@ -1,0 +1,205 @@
+pipeline {
+    agent {
+        label 'OmicronQA'
+    }
+    tools {
+        maven 'M3'
+        nodejs 'NodeJs12'
+    }
+    environment
+	{
+		//Functions
+		DEPLOY_PATTERN = NewPatterName()
+		
+		// Projtect configurations
+        COMPANY = "Omicron"
+        COMPANY_LOWERCASE = "omicron"
+		PROJECT_NAME = "AppiOSFormulas"
+        SLACK_CHANNEL = "#omicron_notifications"
+        ENVIRONMENT = "QA"
+
+		// General configurations		
+		SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_QA";
+		SONAR_SERVER = "https://devtools.axity.com/sonarlts";
+		SONAR_TOKEN = "d54f4f0b0ecc98ca94c88640833783fe52216269";
+        COMMITER_EMAIL = sh (
+            script: 'git --no-pager show -s --format=\'%an - %ae\'',
+            returnStdout: true
+        ).trim()
+	}
+    stages {
+		stage('Kubernetes Down') {
+            steps {
+                echo 'Running Kubernetes down'
+				sh 'kubectl config use-context kubernetes-admin@kubernetes'
+                sh 'kubectl delete -f deploy_qa.yaml --grace-period=0 --force --ignore-not-found'
+            }
+        }
+        stage('Build Front Web') {
+            steps {
+                echo 'Building Frontend'
+                dir ('frontend/web/'){
+                    sh 'npm install'
+					sh 'npm run build-staging'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-web-repository ."    
+                    }
+                }
+            }
+        }
+        stage('Build Federated Services') {
+            steps {
+                echo 'Building Fedetared Services'
+                dir ('services/apimanager/'){
+                    sh 'mvn clean package'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-apimanager-repository ."
+                    }
+                }
+                dir ('services/oauthserver/'){
+                    sh 'mvn clean package'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-oauthserver-repository ."
+                    }
+                }
+            }
+        }
+        stage('Build Micro Services') {
+            
+            steps {
+                echo 'Building ms1'
+                dir ('services/catalogos-service/'){
+                    sh 'dotnet publish Omicron.Catalogos.Api/Omicron.Catalogos.Api.csproj -c Release -o app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-catalogos-repository ."
+                    }
+                }
+				echo 'Building Usuarios'
+                dir ('services/usuarios-service/'){
+                    sh 'dotnet publish Omicron.Usuarios.Api/Omicron.Usuarios.Api.csproj -c Release -o app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-usuarios-repository ."
+                    }
+                }
+                echo 'Building Pedidos'
+                dir ('services/pedidos-service/'){
+                    sh 'dotnet publish Omicron.Pedidos.Api/Omicron.Pedidos.Api.csproj -c Release -o app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-pedidos-repository ."
+                    }
+                }
+				echo 'Building SapAdapter'
+                dir ('services/sapadapter-service/'){
+                    sh 'dotnet publish Omicron.SapAdapter.Api/Omicron.SapAdapter.Api.csproj -c Release -o app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-sapadapter-repository ."
+                    }
+                }
+                echo 'Building warehouses'
+                dir ('services/warehouses-service/'){
+                    sh 'dotnet publish Omicron.Warehouses.Api/Omicron.Warehouses.Api.csproj -c Release -o app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-warehouses-repository ."
+                    }
+                }
+                echo 'Building reporting'
+                dir ('services/reporting-service/'){
+                    sh 'dotnet publish Omicron.Reporting.Api/Omicron.Reporting.Api.csproj -c Release -o app/'
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-reporting-repository ."
+                    }
+                }
+				echo 'Building KafkaConsumer'
+				dir ('services/kafkaconsumer-service/'){
+					sh 'dotnet publish Omicron.KafkaConsumer.Consoles/Omicron.KafkaConsumer.Consoles/Omicron.KafkaConsumer.Consoles.csproj -c Release -o app/'
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+						sh 'docker login -u $USERNAME -p $PASSWORD'
+						sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-kafkaconsumer-repository ."
+					}
+				}
+            }
+        }
+        stage('Kubernetes Up') {
+            steps {
+                echo 'Running Kubernetes'
+                sh 'kubectl apply -f deploy_qa.yaml'
+            }
+        }
+        stage('Database') {
+            steps {
+                dir ('database/'){
+                    sh '/opt/liquibase/liquibase --version'
+                    sh 'sed -i "s/192.168.0.101:5432/192.168.0.83:5432/g" liquibase.properties'
+					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
+                    echo 'Applying Db changes'
+                }
+            }
+        }
+        stage('Testing Estress') {
+            steps {
+                dir ('testing/stress/'){
+                    echo 'Running Stress Testing'
+                }
+            }
+        }
+        stage('Testing UI') {
+            steps {
+                dir ('testing/ui/'){
+                    echo 'Running UI Testing'
+                }
+            }
+        }
+    }
+    post { 
+        always { 
+            deleteDir()
+            echo 'Slack'
+            SlackMsg(currentBuild.currentResult) 
+        }
+        success {
+            echo 'I succeeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+        }
+        changed {
+            echo 'Things were different before...'
+        }
+    }
+}
+
+def NewPatterName()
+{
+	return "_" + new Date().format( 'ddMMyyyy' ) + "_" + "${env.BUILD_NUMBER}";
+}
+
+def SlackMsg(String buildResult) 
+{
+	String message = "Compilation result ${env.BUILD_DISPLAY_NAME} for job  \"${env.JOB_NAME}\"  is " + buildResult +  " launched by ${env.COMMITER_EMAIL}. For more details got to ${env.JOB_URL}"
+    echo "${env.BUILD_DISPLAY_NAME}"
+	
+	if(buildResult == "SUCCESS")
+	{
+		slackSend channel: "${SLACK_CHANNEL}", color: "good", message: message
+	}
+	else if(buildResult == "UNSTABLE")
+	{ 
+		slackSend channel: "${SLACK_CHANNEL}", color: "warning", message: message
+	}
+	else
+	{
+		slackSend channel: "${SLACK_CHANNEL}", color: "danger", message: message
+	}
+}

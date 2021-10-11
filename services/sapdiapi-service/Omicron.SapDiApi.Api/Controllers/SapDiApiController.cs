@@ -11,6 +11,7 @@ namespace Omicron.SapDiApi.Api.Controllers
     using System.Web.Http;
     using AutoMapper;
     using Omicron.SapDiApi.Dtos.Models;
+    using Omicron.SapDiApi.Dtos.Models.Experience;
     using Omicron.SapDiApi.Facade.Sap;
     
     /// <summary>
@@ -25,12 +26,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         private readonly ISapFacade sapFacade;
 
         /// <summary>
+        /// Gets or sets the sa.
+        /// </summary>
+        private readonly ISapDxpFacade sapDxpFacade;
+
+        /// <summary>
         /// /// Initializes a new instance of the <see cref="SapDiApiController"/> class.
         /// </summary>
         /// <param name="sapFacade">the facade.</param>
-        public SapDiApiController(ISapFacade sapFacade)
+        /// <param name="sapDxpFacade">The sap dacade.</param>
+        public SapDiApiController(ISapFacade sapFacade, ISapDxpFacade sapDxpFacade)
         {
             this.sapFacade = sapFacade;
+            this.sapDxpFacade = sapDxpFacade;
         }
 
         /// <summary>
@@ -121,6 +129,163 @@ namespace Omicron.SapDiApi.Api.Controllers
         public async Task<IHttpActionResult> CreateIsolatedProductionOrder([FromBody] CreateIsolatedFabOrderDto isolatedFabOrder)
         {
             var result = await this.sapFacade.CreateIsolatedProductionOrder(isolatedFabOrder);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="createDelivery">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("delivery")]
+        public async Task<IHttpActionResult> CreateDelivery([FromBody] List<CreateDeliveryDto> createDelivery)
+        {
+            var result = await this.sapFacade.CreateDelivery(createDelivery);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="createDelivery">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("delivery/partial")]
+        public async Task<IHttpActionResult> CreateDeliveryPartial([FromBody] List<CreateDeliveryDto> createDelivery)
+        {
+            var result = await this.sapFacade.CreateDeliveryPartial(createDelivery);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="createDelivery">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("delivery/batch")]
+        public async Task<IHttpActionResult> CreateDeliveryBatch([FromBody] List<CreateDeliveryDto> createDelivery)
+        {
+            var result = await this.sapFacade.CreateDeliveryBatch(createDelivery);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="updateTracking">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("invoice/tracking")]
+        public async Task<IHttpActionResult> UpdateTracking([FromBody] SendPackageDto updateTracking)
+        {
+            var result = await this.sapFacade.UpdateTracking(updateTracking);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// /// <param name="type">the type.</param>
+        /// <param name="deliveries">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("cancel/{type}/delivery")]
+        public async Task<IHttpActionResult> CancelDelivery(string type, [FromBody] List<CancelDeliveryDto> deliveries)
+        {
+            var result = await this.sapFacade.CancelDelivery(type, deliveries);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="orderId">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("close/sample")]
+        public async Task<IHttpActionResult> CloseMuestra([FromBody] List<CloseSampleOrderDto> orderId)
+        {
+            var result = await this.sapFacade.CloseMuestra(orderId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="addresses">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("doctor/delivery/address")]
+        public async Task<IHttpActionResult> UpdateDoctorAddress([FromBody] List<DoctorDeliveryAddressDto> addresses)
+        {
+            var result = await this.sapFacade.UpdateDoctorAddress(addresses);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="addresses">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("doctor/invoice/address")]
+        public async Task<IHttpActionResult> UpdateDoctorAddress([FromBody] List<DoctorInvoiceAddressDto> addresses)
+        {
+            var result = await this.sapFacade.UpdateDoctorAddress(addresses);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="address">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("doctor/default/address")]
+        public async Task<IHttpActionResult> UpdateDoctorDefaultAddress([FromBody] DoctorDefaultAddressDto address)
+        {
+            var result = await this.sapFacade.UpdateDoctorDefaultAddress(address);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Update the profile the doctor profile info.
+        /// </summary>
+        /// <param name="profileDto">Doctor profile info.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("doctor/profileinfo")]
+        public async Task<IHttpActionResult> UpdateDoctorProfileInfo([FromBody] DoctorProfileDto profileDto)
+        {
+            var result = await this.sapFacade.UpdateDoctorProfileInfo(profileDto);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Update the profile the doctor profile info.
+        /// </summary>
+        /// <param name="saleOrderDto">Doctor profile info.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("create/saleorder")]
+        public async Task<IHttpActionResult> CreateSaleOrder([FromBody] CreateSaleOrderDto saleOrderDto)
+        {
+            var result = await this.sapDxpFacade.CreateSaleOrder(saleOrderDto);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// Update the profile the advisor profile info.
+        /// </summary>
+        /// <param name="profileDto">Advisor profile info.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("advisor/profileinfo")]
+        public async Task<IHttpActionResult> UpdateAdvisorProfileInfo([FromBody] AdvisorProfileDto profileDto)
+        {
+            var result = await this.sapFacade.UpdateAdvisorProfileInfo(profileDto);
             return this.Ok(result);
         }
 

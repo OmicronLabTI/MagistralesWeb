@@ -61,6 +61,16 @@ class UtilsManager {
            }
            return nil
     }
+    func formattedDateFromString(dateString: String, inputFormat: String, outputFormat: String) -> String? {
+           let inputFormatter = DateFormatter()
+           inputFormatter.dateFormat = inputFormat
+           if let date = inputFormatter.date(from: dateString) {
+               let outputFormatter = DateFormatter()
+             outputFormatter.dateFormat = outputFormat
+               return outputFormatter.string(from: date)
+           }
+           return nil
+    }
     func formattedDateToString(date: Date, withFormat format: String = "dd/MM/yyyy") -> String {
         let inputFormatter = DateFormatter()
         inputFormatter.dateFormat = format
@@ -71,6 +81,21 @@ class UtilsManager {
         formatter.minimumFractionDigits = 6
         formatter.numberStyle = .decimal
         return formatter
+    }
+    func messageErrorWhenNoBatches(error: ValidateOrder) -> String {
+        var messageConcat = String()
+        messageConcat += "No es posible Terminar, faltan lotes para: "
+        messageConcat += "\n"
+        messageConcat += error.listItems?.joined(separator: "\n") ?? ""
+        messageConcat += "\n\n"
+        return messageConcat
+    }
+    func messageErrorWhenOutOfStock(error: ValidateOrder) -> String {
+        var messageConcat = String()
+        messageConcat += "No es posible Terminar, falta existencia para: "
+        messageConcat += "\n"
+        messageConcat += error.listItems?.joined(separator: "\n") ?? CommonStrings.empty
+        return messageConcat
     }
 }
 open class DecimalTransform: TransformType {

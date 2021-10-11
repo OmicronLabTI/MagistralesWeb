@@ -45,30 +45,96 @@ namespace Omicron.Pedidos.Test
         /// <returns>the user.</returns>
         public List<UserOrderModel> GetUserOrderModel()
         {
+            var magistralQr = new MagistralQrModel
+            {
+                NeedsCooling = "Y",
+                ProductionOrder = 100,
+                Quantity = 1,
+                SaleOrder = 100,
+            };
+
+            var remisionQr = new RemisionQrModel
+            {
+                RemisionId = 100,
+                NeedsCooling = true,
+                PedidoId = 300,
+                TotalPieces = 5,
+            };
+
+            var invoiceQr = new InvoiceQrModel
+            {
+                InvoiceId = 100,
+                NeedsCooling = false,
+            };
+
             return new List<UserOrderModel>
             {
-                new UserOrderModel { Id = 1, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 2, Productionorderid = "101", Salesorderid = "100", Status = "Proceso", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 3, Productionorderid = "102", Salesorderid = "100", Status = "Terminado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 4, Productionorderid = "103", Salesorderid = "100", Status = "Reasignado", Userid = "abc", Comments = null, FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 5, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 6, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 18, Productionorderid = "200", Salesorderid = "200", Status = "Reasignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 19, Productionorderid = "301", Salesorderid = "300", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
-                new UserOrderModel { Id = 20, Productionorderid = null, Salesorderid = "300", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020", CloseDate = "28/08/2020", CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 1, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 2, Productionorderid = "101", Salesorderid = "100", Status = "Proceso", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 3, Productionorderid = "102", Salesorderid = "100", Status = "Terminado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 4, Productionorderid = "103", Salesorderid = "100", Status = "Reasignado", Userid = "abc", Comments = null, FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 5, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 6, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 18, Productionorderid = "200", Salesorderid = "200", Status = "Reasignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 19, Productionorderid = "301", Salesorderid = "300", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 20, Productionorderid = null, Salesorderid = "300", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc" },
+
+                // not complet sales log
+                new UserOrderModel { Id = 1000, Productionorderid = "501", Salesorderid = "800", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "21/03/2021", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 1002, Productionorderid = "502", Salesorderid = "800", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "21/03/2021", CreatorUserId = "abc" },
+                new UserOrderModel { Id = 1003, Productionorderid = null, Salesorderid = "800", Status = "Finalizado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "21/03/2021", CreatorUserId = "abc" },
 
                 // Cancelled orders.
-                new UserOrderModel { Id = 7, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abcd", Comments = "Hello", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 8, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abcd", Comments = "Hello", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 9, Productionorderid = null, Salesorderid = "101", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 10, Productionorderid = "104", Salesorderid = "103", Status = "Proceso", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 11, Productionorderid = "105", Salesorderid = "103", Status = "Cancelado", Userid = "abc", Comments = "Hello", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 12, Productionorderid = null, Salesorderid = "103", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 13, Productionorderid = "106", Salesorderid = "103", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 14, Productionorderid = null, Salesorderid = "104", Status = "Terminado", Userid = "abc", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 15, Productionorderid = "107", Salesorderid = "104", Status = "Terminado", Userid = "abc", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 16, Productionorderid = "108", Salesorderid = "104", Status = "Cancelado", Userid = "abc", FinishDate = "29/08/2020" },
-                new UserOrderModel { Id = 17, Productionorderid = "109", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = "29/08/2020" },
+                new UserOrderModel { Id = 7, Productionorderid = null, Salesorderid = "100", Status = "Terminado", Userid = "abcd", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 8, Productionorderid = null, Salesorderid = "100", Status = "Reasignado", Userid = "abcd", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 9, Productionorderid = null, Salesorderid = "101", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 10, Productionorderid = "104", Salesorderid = "103", Status = "Proceso", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 11, Productionorderid = "105", Salesorderid = "103", Status = "Cancelado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 12, Productionorderid = null, Salesorderid = "103", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 13, Productionorderid = "106", Salesorderid = "103", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 14, Productionorderid = null, Salesorderid = "104", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 15, Productionorderid = "107", Salesorderid = "104", Status = "Terminado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 16, Productionorderid = "108", Salesorderid = "104", Status = "Cancelado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+                new UserOrderModel { Id = 17, Productionorderid = "109", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29) },
+
+                // orders for almacen
+                new UserOrderModel { Id = 98, Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), FinishedLabel = 1, FinalizedDate = DateTime.Now, MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new UserOrderModel { Id = 99, Productionorderid = "301", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+
+                // Orders for Qr.
+                new UserOrderModel { Id = 100, Productionorderid = "300", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new UserOrderModel { Id = 101, Productionorderid = "301", Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new UserOrderModel { Id = 102, Productionorderid = "302", Salesorderid = "105", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new UserOrderModel { Id = 103, Productionorderid = "303", Salesorderid = "105", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 105 },
+
+                // orders for invoice
+                new UserOrderModel { Id = 104, Productionorderid = null, Salesorderid = "106", Status = "Almacenado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+                new UserOrderModel { Id = 105, Productionorderid = "2", Salesorderid = "106", Status = "Almacenado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr) },
+
+                // order for invoice qr
+                new UserOrderModel { Id = 106, Productionorderid = null, Salesorderid = "107", Status = "Almacenado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), InvoiceId = 100, InvoiceQr = JsonConvert.SerializeObject(invoiceQr) },
+
+                // orders for packages
+                new UserOrderModel { Id = 107, Productionorderid = null, Salesorderid = "107", Status = "Almacenado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), InvoiceId = 100, InvoiceQr = JsonConvert.SerializeObject(invoiceQr), StatusInvoice = "Empaquetado", InvoiceType = "local" },
+                new UserOrderModel { Id = 108, Productionorderid = null, Salesorderid = "107", Status = "Almacenado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), InvoiceId = 101, InvoiceQr = JsonConvert.SerializeObject(invoiceQr), StatusInvoice = "Empaquetado", InvoiceType = "local" },
+
+                // order pending for graph
+                new UserOrderModel { Id = 109, Productionorderid = null, Salesorderid = "700", Status = "Liberado", FinalizedDate = DateTime.Now },
+                new UserOrderModel { Id = 110, Productionorderid = "300", Salesorderid = "700", Status = "Finalizado", FinalizedDate = DateTime.Now, FinishedLabel = 1 },
+                new UserOrderModel { Id = 111, Productionorderid = "301", Salesorderid = "700", Status = "Pendiente", FinalizedDate = DateTime.Now, },
+                new UserOrderModel { Id = 112, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 1, InvoiceType = "local", StatusInvoice = "Empaquetado" },
+                new UserOrderModel { Id = 113, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 2, InvoiceType = "local", StatusInvoice = "Asignado" },
+                new UserOrderModel { Id = 114, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 3, InvoiceType = "local", StatusInvoice = "En Camino" },
+                new UserOrderModel { Id = 115, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 4, InvoiceType = "local", StatusInvoice = "Entregado" },
+                new UserOrderModel { Id = 116, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 5, InvoiceType = "local", StatusInvoice = "No Entregado" },
+                new UserOrderModel { Id = 117, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 6, InvoiceType = "foraneo", StatusInvoice = "Empaquetado" },
+                new UserOrderModel { Id = 118, Productionorderid = "301", Salesorderid = "201", Status = "Pendiente", FinalizedDate = DateTime.Now, InvoiceId = 7, InvoiceType = "foraneo", StatusInvoice = "Enviado" },
+                new UserOrderModel { Id = 119, Productionorderid = null, Salesorderid = "202", Status = "Recibir", StatusAlmacen = "Back Order", FinalizedDate = DateTime.Now },
+                new UserOrderModel { Id = 120, Productionorderid = null, Salesorderid = "203", Status = "Almacenado", FinalizedDate = DateTime.Now },
+
+                // orders DXP
+                new UserOrderModel { Id = 121, Productionorderid = null, Salesorderid = "204", StatusInvoice = "Enviado" },
+                new UserOrderModel { Id = 122, Productionorderid = null, Salesorderid = "205", StatusInvoice = "Entregado" },
             };
         }
 
@@ -187,12 +253,17 @@ namespace Omicron.Pedidos.Test
                 new OrderWithDetailModel
                 {
                     Detalle = new List<CompleteDetailOrderModel>(listDetalles),
-                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 1, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L" },
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 1, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L", OrderType = "MN" },
                 },
                 new OrderWithDetailModel
                 {
                     Detalle = new List<CompleteDetailOrderModel>(listDetalles),
-                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L" },
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L", OrderType = "MG" },
+                },
+                new OrderWithDetailModel
+                {
+                    Detalle = new List<CompleteDetailOrderModel>(listDetalles),
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 101, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L", OrderType = "MX" },
                 },
             };
 
@@ -451,8 +522,8 @@ namespace Omicron.Pedidos.Test
         {
             var users = new List<UserModel>
             {
-                new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1 },
-                new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1 },
+                new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MN" },
+                new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "BE" },
             };
 
             return new ResultModel
@@ -460,6 +531,23 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = users,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Generates a result model.
+        /// </summary>
+        /// <param name="dataToSend">the data.</param>
+        /// <returns>the dta.</returns>
+        public ResultModel GenerateResultModel(object dataToSend)
+        {
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(dataToSend),
                 Success = true,
                 UserError = string.Empty,
             };

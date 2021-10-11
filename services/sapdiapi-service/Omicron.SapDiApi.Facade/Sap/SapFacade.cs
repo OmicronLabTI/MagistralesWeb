@@ -12,8 +12,10 @@ namespace Omicron.SapDiApi.Facade.Sap
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.SapDiApi.Dtos.Models;
+    using Omicron.SapDiApi.Dtos.Models.Experience;
     using Omicron.SapDiApi.Entities.Context;
     using Omicron.SapDiApi.Entities.Models;
+    using Omicron.SapDiApi.Entities.Models.Experience;
     using Omicron.SapDiApi.Services.SapDiApi;
     using SAPbobsCOM;
     public class SapFacade : ISapFacade
@@ -22,14 +24,34 @@ namespace Omicron.SapDiApi.Facade.Sap
 
         private readonly ISapDiApiService sapDiApiService;
 
+        private readonly ICancelService cancelService;
+
+        private readonly ICreateDeliveryService createDeliveryService;
+
+        private readonly IDoctorAddress doctorAddress;
+
+        private readonly IDoctorProfileService doctorProfileService;
+
+        private readonly IAdvisorProfileService advisorProfileService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>        
         /// <param name="mapper"></param>
-        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService)
+        /// <param name="sapDiApiService">the sap di api.</param>
+        /// <param name="cancelService">cancel service.</param>
+        /// <param name="createDeliveryService">the create delivery service.</param>
+        /// <param name="doctorAddress">The doctor addresses.</param>
+        /// <param name="advisorProfileService">Advisor profile service.</param>
+        public SapFacade(IMapper mapper, ISapDiApiService sapDiApiService, ICancelService cancelService, ICreateDeliveryService createDeliveryService, IDoctorAddress doctorAddress, IDoctorProfileService doctorProfileService, IAdvisorProfileService advisorProfileService)
         {
             this.mapper = mapper;
             this.sapDiApiService = sapDiApiService;
+            this.cancelService = cancelService;
+            this.createDeliveryService = createDeliveryService;
+            this.doctorAddress = doctorAddress;
+            this.doctorProfileService = doctorProfileService;
+            this.advisorProfileService = advisorProfileService;
         }
 
         /// <summary>
@@ -109,6 +131,74 @@ namespace Omicron.SapDiApi.Facade.Sap
         public async Task<ResultDto> UpdateBatches(List<AssginBatchDto> assginBatches)
         {
             return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateBatches(this.mapper.Map<List<AssignBatchModel>>(assginBatches)));
+        }
+
+        /// <summary>
+        /// Creates the delivery.
+        /// </summary>
+        /// <param name="createDelivery">the deliveries.</param>
+        /// <returns>the status.</returns>
+        public async Task<ResultDto> CreateDelivery(List<CreateDeliveryDto> createDelivery)
+        {
+            return this.mapper.Map<ResultDto>(await this.createDeliveryService.CreateDelivery(this.mapper.Map<List<CreateDeliveryModel>>(createDelivery)));
+        }
+
+        public async Task<ResultDto> CreateDeliveryPartial(List<CreateDeliveryDto> createDeliveries)
+        {
+            return this.mapper.Map<ResultDto>(await this.createDeliveryService.CreateDeliveryPartial(this.mapper.Map<List<CreateDeliveryModel>>(createDeliveries)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateTracking(SendPackageDto sendPackage)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDiApiService.UpdateTracking(this.mapper.Map<SendPackageModel>(sendPackage)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CancelDelivery(string type, List<CancelDeliveryDto> deliveries)
+        {
+            return this.mapper.Map<ResultDto>(await this.cancelService.CancelDelivery(type, this.mapper.Map<List< CancelDeliveryModel>>(deliveries)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CreateDeliveryBatch(List<CreateDeliveryDto> createDeliveries)
+        {
+            return this.mapper.Map<ResultDto>(await this.createDeliveryService.CreateDeliveryBatch(this.mapper.Map<List<CreateDeliveryModel>>(createDeliveries)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CloseMuestra(List<CloseSampleOrderDto> orderIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.createDeliveryService.CloseMuestra(this.mapper.Map<List< CloseSampleOrderModel>>(orderIds)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateDoctorAddress(List<DoctorDeliveryAddressDto> address)
+        {
+            return this.mapper.Map<ResultDto>(await this.doctorAddress.UpdateDoctorDeliveryAddress(this.mapper.Map<List<DoctorDeliveryAddressModel>>(address)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateDoctorAddress(List<DoctorInvoiceAddressDto> address)
+        {
+            return this.mapper.Map<ResultDto>(await this.doctorAddress.UpdateDoctorDeliveryAddress(this.mapper.Map<List<DoctorInvoiceAddressModel>>(address)));
+        }
+
+        public async Task<ResultDto> UpdateDoctorDefaultAddress(DoctorDefaultAddressDto address)
+        {
+            return this.mapper.Map<ResultDto>(await this.doctorAddress.UpdateDoctorDefaultAddress(this.mapper.Map<DoctorDefaultAddressModel>(address)));
+        }
+
+        /// <inheritdoc />
+        public async Task<ResultDto> UpdateDoctorProfileInfo(DoctorProfileDto profileDto)
+        {
+            return this.mapper.Map<ResultDto>(await this.doctorProfileService.UpdateDoctorProfileInfo(this.mapper.Map<DoctorProfileModel>(profileDto)));
+        }
+
+        /// <inheritdoc />
+        public async Task<ResultDto> UpdateAdvisorProfileInfo(AdvisorProfileDto profileDto)
+        {
+            return this.mapper.Map<ResultDto>(await this.advisorProfileService.UpdateAdvisorProfileInfo(this.mapper.Map<AdvisorProfileModel>(profileDto)));
         }
     }
 }

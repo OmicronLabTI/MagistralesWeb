@@ -32,7 +32,7 @@ pipeline {
             steps {
                 echo 'Running Kubernetes down'
 				sh 'sudo kubectl config use-context kubernetes-admin@kubernetes'
-                sh 'sudo kubectl delete all --all --grace-period=0 --force'
+                sh 'sudo kubectl delete -f deploy_qa.yaml --grace-period=0 --force --ignore-not-found'
 				sh 'sudo docker system prune -f'
             }
         }
@@ -119,9 +119,17 @@ pipeline {
                         sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-reporting-repository ."
                     }
                 }
+				echo 'Building KafkaConsumer'
+				dir ('services/kafkaconsumer-service/'){
+					sh 'dotnet publish Omicron.KafkaConsumer.Consoles/Omicron.KafkaConsumer.Consoles/Omicron.KafkaConsumer.Consoles.csproj -c Release -o app/'
+					withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+						sh 'docker login -u $USERNAME -p $PASSWORD'
+						sh "docker build -f 'Dockerfile' -t ${COMPANY_LOWERCASE}-kafkaconsumer-repository ."
+					}
+				}
             }
         }
-        stage('Sonar Frontend Web') {
+		stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
                     sh 'npm run test-ci'

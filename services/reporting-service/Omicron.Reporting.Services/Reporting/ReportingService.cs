@@ -8,7 +8,10 @@
 namespace Omicron.Reporting.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services.Clients;
@@ -55,7 +58,284 @@ namespace Omicron.Reporting.Services
         {
             var file = this.BuildPdfFile(request, false);
             var mailStatus = await this.SendRawMaterialRequestMail(file.FileStream, file.FileName);
+
             return new ResultModel { Success = true, Code = 200, Response = mailStatus, Comments = file.FileName };
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> SendEmailForeignPackage(SendPackageModel request)
+        {
+            var emailParty = $"{request.TransportMode.ToLower().Replace(" ", string.Empty)}{ServiceConstants.DelPartyEmail}";
+            var listToLook = new List<string> { emailParty };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
+            var config = await this.catalogsService.GetParams(listToLook);
+
+            var smtpConfig = this.GetSmtpConfig(config);
+            var deliveryEmailModel = config.FirstOrDefault(x => x.Field.Contains(emailParty));
+            var email = deliveryEmailModel == null ? string.Empty : deliveryEmailModel.Value;
+
+            var sendEmailOrTel = email.Contains("http") ? ServiceConstants.PaqueteEmail : ServiceConstants.TelefonoEmail;
+            var sendEmailLink = email.Contains("http") ? string.Format(ServiceConstants.PlaceLink, email) : email;
+
+            var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
+            var payment = string.Format(ServiceConstants.FooterPayment, request.PackageId);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+
+            var mailStatus = await this.omicronMailClient.SendMail(
+                smtpConfig,
+                request.DestinyEmail,
+                string.Format(ServiceConstants.ForeignEmailSubject, request.SalesOrders),
+                body,
+                smtpConfig.EmailCCDelivery);
+
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus };
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> SendEmailLocalPackage(SendLocalPackageModel sendLocalPackage)
+        {
+            var smtpConfig = await this.catalogsService.GetSmtpConfig();
+            var destinityEmailList = sendLocalPackage.DestinyEmail.Split(";").Where(x => !string.IsNullOrEmpty(x)).ToList();
+            var destinityEmail = destinityEmailList.FirstOrDefault();
+            var copyEmails = string.Empty;
+            destinityEmailList.Where(x => x != destinityEmail).Select(x => $"{x};").ToList().ForEach(x => copyEmails += x.Trim());
+            copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
+
+            var text = this.GetBodyForLocal(sendLocalPackage);
+            var mailStatus = await this.omicronMailClient.SendMail(
+                smtpConfig,
+                string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
+                text.Item1,
+                text.Item2,
+                copyEmails);
+
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus };
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> SendEmailRejectedOrder(SendRejectedEmailModel request)
+        {
+            var customerServiceEmail = ServiceConstants.CustomerServiceEmail;
+            var listToLook = new List<string> { customerServiceEmail };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+            var config = await this.catalogsService.GetParams(listToLook);
+            var smtpConfig = this.GetSmtpConfig(config);
+            var configCustomerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(customerServiceEmail)).Value;
+            List<ResultModel> resultados = new List<ResultModel> { };
+            var rejectedOrderList = this.GetGroupsOfList(request.RejectedOrder, 3);
+
+            foreach (var orderList in rejectedOrderList)
+            {
+                await Task.WhenAll(orderList.Select(async x =>
+                {
+                    var destinyEmail = x.DestinyEmail != string.Empty ? x.DestinyEmail : configCustomerServiceEmail;
+                    var text = this.GetBodyForRejectedEmail(x);
+                    var mailStatus = await this.omicronMailClient.SendMail(
+                    smtpConfig,
+                    destinyEmail,
+                    text.Item1,
+                    text.Item2,
+                    configCustomerServiceEmail);
+                    resultados.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
+                }));
+
+                await Task.Delay(1000);
+            }
+
+            return new ResultModel { Success = true, Response = resultados };
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryModel> request)
+        {
+            var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.LogisticEmailCc2Field, ServiceConstants.LogisticEmailCc3Field, ServiceConstants.EmailBioEqual, ServiceConstants.EmailBioElite };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
+            var config = await this.catalogsService.GetParams(listToLook);
+            var smtpConfig = this.GetSmtpConfig(config);
+            var customerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.CustomerServiceEmail)).Value;
+            var logisticEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.LogisticEmailCc2Field)).Value;
+            var logisticEmail2 = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.LogisticEmailCc3Field)).Value;
+
+            List<ResultModel> results = new List<ResultModel> { };
+            var deliveryLists = this.GetGroupsOfList(request, 3);
+
+            foreach (var deliverySubList in deliveryLists)
+            {
+                await Task.WhenAll(deliverySubList.Select(async delivery =>
+                {
+                    var text = this.GetBodyForCancelDeliveryEmail(delivery);
+                    var mailStatus = await this.omicronMailClient.SendMail(
+                        smtpConfig,
+                        logisticEmail,
+                        text.Item1,
+                        text.Item2,
+                        $"{customerServiceEmail};{logisticEmail2}{this.CalculateExtraCcCancelation(delivery, config)}");
+                    results.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
+                }));
+
+                await Task.Delay(1000);
+            }
+
+            return new ResultModel { Success = true, Code = 200, Response = results };
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> SubmitIncidentsExel(List<IncidentDataModel> request)
+        {
+            var eb = new ExcelBuilder();
+            var ms = eb.CreateIncidentExcel(request);
+
+            var listToLook = new List<string> { ServiceConstants.EmailIncidentReport };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
+            var config = await this.catalogsService.GetParams(listToLook);
+            var smtpConfig = this.GetSmtpConfig(config);
+            var incidentEmail = config.FirstOrDefault(x => x.Field.Contains(ServiceConstants.EmailIncidentReport));
+
+            var dictFile = new Dictionary<string, MemoryStream>
+            {
+                { ms.Item2, ms.Item1 },
+            };
+
+            var text = this.GetBodyForIncidentEmail(request);
+            var mailStatus = await this.omicronMailClient.SendMail(
+                smtpConfig,
+                incidentEmail.Value,
+                text.Item1,
+                text.Item2,
+                string.Empty,
+                dictFile);
+
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus };
+        }
+
+        /// <summary>
+        /// Gets the smtp config.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        private SmtpConfigModel GetSmtpConfig(List<ParametersModel> parameters)
+        {
+            return new SmtpConfigModel
+            {
+                SmtpServer = parameters.FirstOrDefault(x => x.Field.Equals("SmtpServer")).Value,
+                SmtpPort = int.Parse(parameters.FirstOrDefault(x => x.Field.Equals("SmtpPort")).Value),
+                SmtpDefaultPassword = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewarePassword")).Value,
+                SmtpDefaultUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddleware")).Value,
+                EmailCCDelivery = parameters.FirstOrDefault(x => x.Field.Equals("EmailCCDelivery")).Value,
+            };
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="package">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package)
+        {
+            var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
+            package.SalesOrders = string.IsNullOrEmpty(package.SalesOrders) ? string.Empty : package.SalesOrders;
+            var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ');
+
+            if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
+            {
+                var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackage, orders);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+                return new Tuple<string, string>(subject, body);
+            }
+
+            if (package.Status == ServiceConstants.Entregado)
+            {
+                var subject = string.Format(ServiceConstants.DeliveryEmailSubject, orders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, orders);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+                return new Tuple<string, string>(subject, body);
+            }
+
+            var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, orders);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greetingError, payment, ServiceConstants.RefundPolicy);
+
+            return new Tuple<string, string>(subjectError, bodyError);
+        }
+
+        /// <summary>
+        /// Gets a list divided in sublists.
+        /// </summary>
+        /// <typeparam name="Tsource">the original list.</typeparam>
+        /// <param name="listToSplit">the original list to split.</param>
+        /// <param name="maxCount">the max count per group.</param>
+        /// <returns>the list of list.</returns>
+        private List<List<Tsource>> GetGroupsOfList<Tsource>(List<Tsource> listToSplit, int maxCount)
+        {
+            var listToReturn = new List<List<Tsource>>();
+            var offset = 0;
+            while (offset < listToSplit.Count)
+            {
+                var sublist = new List<Tsource>();
+                sublist.AddRange(listToSplit.Skip(offset).Take(maxCount).ToList());
+                listToReturn.Add(sublist);
+                offset += maxCount;
+            }
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="order">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForRejectedEmail(RejectedOrdersModel order)
+        {
+            var subject = string.Format(ServiceConstants.InRejectedEmailSubject, order.SalesOrders, order.CustomerName);
+            var greeting = string.Format(ServiceConstants.SentRejectedOrder, order.SalesOrders, order.CustomerName);
+            var commment = order.Comments != string.Empty ? string.Format(ServiceConstants.SentComentRejectedOrder, order.Comments) : string.Empty;
+            var body = string.Format(ServiceConstants.SendEmailHtmlBase, greeting, commment, ServiceConstants.EmailFarewall, ServiceConstants.EmailRejectedOrderClosing);
+            return new Tuple<string, string>(subject, body);
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="delivery">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForCancelDeliveryEmail(SendCancelDeliveryModel delivery)
+        {
+            var salesOrder = new StringBuilder();
+            delivery.SalesOrders.ForEach(x => salesOrder.Append($" {x},"));
+            salesOrder.Remove(salesOrder.Length - 1, 1);
+            var subject = string.Format(ServiceConstants.InCancelDeliveryEmailSubject, delivery.DeliveryId);
+            var greeting = string.Format(ServiceConstants.SentCancelDelivery, delivery.DeliveryId, salesOrder.ToString());
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, ServiceConstants.EmailFarewallCancelDelivery, ServiceConstants.EmailCancelDeliveryClosing);
+            return new Tuple<string, string>(subject, body);
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForIncidentEmail(List<IncidentDataModel> request)
+        {
+            var endDate = DateTime.Today;
+            var startDate = endDate.AddDays(-4);
+
+            var reportIncident = "<ul>";
+            request.GroupBy(x => x.Incident).ToList().ForEach(x =>
+            {
+                var wordIncident = x.Count() <= 1 ? "incidencia" : "incidencias";
+                reportIncident += $" <li> {x.FirstOrDefault().Incident} : {x.Count()} {wordIncident} </li>";
+            });
+            reportIncident += "</ul>";
+
+            var subject = string.Format(ServiceConstants.SubjectIncidentReport, endDate.ToString("dd/MM/yyyy"));
+            var greeting = string.Format(ServiceConstants.BodyIncidentReport, startDate.ToString("dd/MM/yyyy"), endDate.ToString("dd/MM/yyyy"));
+            var report = string.Format(ServiceConstants.ReportIncidentClosing, reportIncident);
+            var body = string.Format(ServiceConstants.SendEmailIncidentHtmlBase, greeting, report);
+            return new Tuple<string, string>(subject, body);
         }
 
         /// <summary>
@@ -90,7 +370,33 @@ namespace Omicron.Reporting.Services
                 ServiceConstants.RawMaterialRequestEmailSubject,
                 ServiceConstants.RawMaterialRequestEmailBody,
                 mailConfig.CopyTo,
-                new System.Collections.Generic.Dictionary<string, MemoryStream> { { fileName, fileStream } });
+                new Dictionary<string, MemoryStream> { { fileName, fileStream } });
+        }
+
+        /// <summary>
+        /// Gets the extra CC.
+        /// </summary>
+        /// <param name="delivery">the delivery.</param>
+        /// <param name="parametersModels">the parameters.</param>
+        /// <returns>the extra cc.</returns>
+        private string CalculateExtraCcCancelation(SendCancelDeliveryModel delivery, List<ParametersModel> parametersModels)
+        {
+            var bioEliteEmail = parametersModels.FirstOrDefault(x => x.Field.Equals(ServiceConstants.EmailBioElite)).Value;
+            var bioEqualEmail = parametersModels.FirstOrDefault(x => x.Field.Equals(ServiceConstants.EmailBioEqual)).Value;
+            switch (delivery.DeliveryType)
+            {
+                case ServiceConstants.BioElite:
+                    return $";{bioEliteEmail}";
+
+                case ServiceConstants.BioEqual:
+                    return $";{bioEqualEmail}";
+
+                case ServiceConstants.Mixture:
+                    return $";{bioEliteEmail};{bioEqualEmail}";
+
+                default:
+                    return string.Empty;
+            }
         }
     }
 }

@@ -9,6 +9,7 @@
 namespace Omicron.Reporting.Facade.Request
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.Reporting.Dtos.Model;
@@ -54,6 +55,36 @@ namespace Omicron.Reporting.Facade.Request
         public async Task<ResultDto> SubmitRawMaterialRequestPdf(RawMaterialRequestDto request)
         {
             return this.mapper.Map<ResultDto>(await this.reportingService.SubmitRawMaterialRequestPdf(this.mapper.Map<RawMaterialRequestModel>(request)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SendEmailForeignPackage(SendPackageDto request)
+        {
+            return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailForeignPackage(this.mapper.Map<SendPackageModel>(request)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SendEmailLocalPackage(SendLocalPackageDto sendLocalPackage)
+        {
+            return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailLocalPackage(this.mapper.Map<SendLocalPackageModel>(sendLocalPackage)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SendEmailRejectedOrder(SendRejectedEmailDto request)
+        {
+           return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailRejectedOrder(this.mapper.Map<SendRejectedEmailModel>(request)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryDto> request)
+        {
+            return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailCancelDeliveryOrders(this.mapper.Map<List<SendCancelDeliveryModel>>(request)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SubmitIncidentsExel(List<IncidentDataDto> request)
+        {
+            return this.mapper.Map<ResultDto>(await this.reportingService.SubmitIncidentsExel(this.mapper.Map<List<IncidentDataModel>>(request)));
         }
     }
 }

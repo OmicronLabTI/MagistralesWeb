@@ -71,7 +71,8 @@ export const PedidosListMock = {
             qfb: 'Armando Hoyos',
             isChecked: false,
             labelType: 'G',
-            finishedLabel: 0
+            finishedLabel: 0,
+            orderType: 'MN',
         },
         {
             docNum: 60022,
@@ -85,7 +86,8 @@ export const PedidosListMock = {
             qfb: 'Armando Hoyos',
             isChecked: false,
             labelType: 'P',
-            finishedLabel: 0
+            finishedLabel: 0,
+            orderType: 'MN',
         },
         {
             docNum: 60023,
@@ -99,7 +101,8 @@ export const PedidosListMock = {
             qfb: 'Armando Hoyos',
             isChecked: false,
             labelType: 'M',
-            finishedLabel: 0
+            finishedLabel: 0,
+            orderType: 'MG',
         },
         {
             docNum: 60024,
@@ -113,7 +116,8 @@ export const PedidosListMock = {
             qfb: 'Armando Hoyos',
             isChecked: false,
             labelType: 'G',
-            finishedLabel: 1
+            finishedLabel: 1,
+            orderType: 'BE',
         },
         {
             docNum: 60025,
@@ -127,7 +131,8 @@ export const PedidosListMock = {
             qfb: 'Armando Hoyos',
             isChecked: false,
             labelType: 'P',
-            finishedLabel: 1
+            finishedLabel: 1,
+            orderType: 'MX',
         }
     ]
 };

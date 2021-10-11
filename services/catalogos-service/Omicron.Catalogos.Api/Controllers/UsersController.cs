@@ -10,10 +10,10 @@ namespace Omicron.Catalogos.Api.Controllers
 {
     using System;
     using System.Threading.Tasks;
-    using Omicron.Catalogos.Dtos.User;
-    using Omicron.Catalogos.Facade.Catalogs.Users;
     using Microsoft.AspNetCore.Mvc;
     using Newtonsoft.Json;
+    using Omicron.Catalogos.Dtos.User;
+    using Omicron.Catalogos.Facade.Catalogs.Users;
     using StackExchange.Redis;
 
     /// <summary>

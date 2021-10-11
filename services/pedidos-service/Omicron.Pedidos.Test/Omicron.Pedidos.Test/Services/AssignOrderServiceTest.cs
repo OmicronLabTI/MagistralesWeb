@@ -13,9 +13,11 @@ namespace Omicron.Pedidos.Test.Services
     using Microsoft.EntityFrameworkCore;
     using Moq;
     using NUnit.Framework;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -34,6 +36,8 @@ namespace Omicron.Pedidos.Test.Services
         private Mock<ISapAdapter> sapAdapter;
 
         private Mock<IUsersService> usersService;
+
+        private Mock<IKafkaConnector> kafkaConnector;
 
         private DatabaseContext context;
 
@@ -77,8 +81,13 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
+            this.kafkaConnector = new Mock<IKafkaConnector>();
+            this.kafkaConnector
+                .Setup(m => m.PushMessage(It.IsAny<object>()))
+                .Returns(Task.FromResult(true));
+
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
+            this.pedidosService = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, this.kafkaConnector.Object);
         }
 
         /// <summary>
@@ -106,7 +115,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetListCompleteDetailOrderModel()));
 
-            var pedidosServiceLocal = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
+            var pedidosServiceLocal = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, this.kafkaConnector.Object);
 
             // act
             var response = await pedidosServiceLocal.AssignOrder(assign);
@@ -141,7 +150,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
-            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
+            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, this.kafkaConnector.Object);
 
             // act
             var response = await pedidosServiceLocal.AssignOrder(assign);
@@ -153,13 +162,12 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the automatic assign test.
         /// </summary>
-        /// <returns>return nothing.</returns>
         [Test]
-        public async Task AutomaticAssign()
+        public void AutomaticAssign()
         {
             var assign = new AutomaticAssingModel
             {
-                DocEntry = new List<int> { 100 },
+                DocEntry = new List<int> { 100, 101 },
                 UserLogistic = "abc",
             };
 
@@ -178,13 +186,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
-            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object);
+            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
 
             // act
-            var response = await pedidoServiceLocal.AutomaticAssign(assign);
-
-            // assert
-            Assert.IsNotNull(response);
+            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.AutomaticAssign(assign));
         }
 
         /// <summary>
@@ -238,7 +243,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
                 .Returns(Task.FromResult(new ResultModel()));
 
-            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object);
+            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, this.kafkaConnector.Object);
 
             // act
             var result = await pedidosServiceLocal.ReassignOrder(reassign);

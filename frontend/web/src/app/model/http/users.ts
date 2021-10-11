@@ -29,6 +29,8 @@ export class IUserReq {
     asignable?: number;
     userTypeR?: string;
     isChecked?: boolean = false;
+    classification?: string;
+    fullClasification?: string;
 }
 export class UserRes {
     activo: number;
@@ -65,7 +67,13 @@ export  class QfbWithNumber {
     isFromOrderIsolated?: boolean;
     isFromReassign?: boolean;
     asignable?: number;
+    clasification?: string;
 }
+export const QfbClassification = {
+    mg: 'mg',
+    mn: 'mn',
+    be: 'be'
+};
 
 export class SearchUsersData {
     userNameSe: string;
@@ -74,4 +82,5 @@ export class SearchUsersData {
     userTypeRSe: string;
     activoSe: string;
     asignableSe: string;
+    classificationQFBSe: string;
 }

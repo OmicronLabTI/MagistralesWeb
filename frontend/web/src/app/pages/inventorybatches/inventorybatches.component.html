@@ -3,7 +3,8 @@
     <div class="header-page">
       <div class="title-list-container">
         <span>Lotes</span>
-        <div class="breadcrumb"><a *ngIf="document !== 0" class="breadcrumblink" (click)="goToOrders(['pedidos'])" >Pedidos / </a> <a *ngIf="document !== 0" class="breadcrumblink" (click)="goToDetailOrder(['/pdetalle', document])">Detalle / </a> <a class="breadcrumblink" *ngIf="document === 0" (click)="goToOrders(['ordenes'])">Órdenes de fabricación /</a> <a class="breadcrumblink" (click)="goToOrdenFab(['/ordenfabricacion', ordenFabricacionId])">Fórmula</a> / Lotes </div>
+          <div class="breadcrumb" *ngIf ="isFromDetail"><a *ngIf="document !== 0" class="breadcrumblink" (click)="goToOrders(['pedidos'])" >Pedidos / </a> <a *ngIf="document !== 0" class="breadcrumblink" (click)="goToDetailOrder(['/pdetalle', document])">Detalle / </a> <a class="breadcrumblink" (click)="goToOrdenFab(['/ordenfabricacion', ordenFabricacionId, detailOrders, isFromDetail ? '1' : '0'])">Fórmula</a> / Lotes </div>
+          <div class="breadcrumb" *ngIf ="!isFromDetail"><a class="breadcrumblink"  (click)="goToOrders(['ordenes'])">Órdenes de fabricación /</a> <a class="breadcrumblink" (click)="goToOrdenFab(['/ordenfabricacion', ordenFabricacionId, detailOrders, isFromDetail ? '1' : '0'])">Fórmula</a> / Lotes </div>
       </div>
       <div class="filter-select">
         <div class="docbase"><span *ngIf="document !== 0"> Número de pedido: </span> <span class="spandoc" *ngIf="document !== 0">{{document}}</span></div>

@@ -34,7 +34,7 @@
                 </div>
                 <div class="row-form-user">
                     <div class="form-field">
-                        <mat-form-field class="custom-field magin-top-field">
+                        <mat-form-field class="custom-field">
                             <input matInput placeholder="Apellido(s)" formControlName="lastName" maxlength="50" class="height-input">
                             <mat-error *ngIf="addUserForm?.controls.lastName?.errors?.required">
                                 Apellido es <strong>requerido</strong>
@@ -45,7 +45,7 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field">
-                        <mat-form-field appearance="outline" class="custom-field margin-top-user-custom">
+                        <mat-form-field appearance="outline" class="custom-field magin-top-field">
                             <mat-label>Selecciona rol</mat-label>
                             <mat-select formControlName="userTypeR">
                                 <mat-option value="{{user.id}}"   *ngFor="let user of userRoles">{{user.description}}</mat-option>
@@ -58,25 +58,25 @@
                 </div>
                 <div class="row-form-user">
                     <div class="form-field">
-                        <mat-form-field class="custom-field magin-top-field">
+                        <mat-form-field class="custom-field">
                             <input matInput placeholder="Contraseña" formControlName="password" class="height-input">
                             <mat-error *ngIf="addUserForm?.controls.password?.errors?.pattern || addUserForm?.controls.password?.errors?.required">
                                 La contraseña debe contener lo siguiente:
                                 8 caracteres como mínimo,
                                 máximo 50 caracteres,
-                                ,una letra mayúscula
+                                una letra mayúscula
                                 y un número
                             </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="form-field">
-                        <mat-form-field class="custom-field magin-top-field">
+                        <mat-form-field class="custom-field">
                             <input matInput
                                    formControlName="piezas"
                                    placeholder="Piezas máximas"
                                    class="height-input"
                                    type="text" pattern="[0-9]*" maxlength="5"
-                                   (keypress)="numericOnly($event)"
+                                   (keypress)="dataService.inputNumbersOnly($event)"
                                    />
 
                             <mat-error *ngIf="addUserForm?.controls.piezas?.errors?.required">
@@ -90,7 +90,20 @@
                 </div>
                 <div class="row-form-user">
                     <div class="form-field">
-                        <mat-form-field appearance="outline" class="custom-field margin-top-user">
+                        <mat-form-field appearance="outline" class="custom-field magin-top-field">
+                            <mat-label>Selecciona clasificación</mat-label>
+                            <mat-select formControlName="classificationQFB">
+                                <mat-option value="MN">Bioelite (MN)</mat-option>
+                                <mat-option value="BE">Bioequal (BE)</mat-option>
+                                <mat-option value="MG">Magistral (MG)</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="addUserForm.controls.classificationQFB.hasError('required')">
+                                Clasificación <strong>requerida</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field">
+                        <mat-form-field appearance="outline" class="custom-field magin-top-field">
                             <mat-label>Selecciona asignación</mat-label>
                             <mat-select formControlName="asignable">
                                 <mat-option value="1">Encendido</mat-option>
@@ -101,8 +114,10 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
+                </div>
+                <div class="row-form-user-status" *ngIf="isForEditModal">
                     <div class="form-field">
-                        <mat-form-field appearance="outline" class="custom-field margin-top-user" *ngIf="isForEditModal">
+                        <mat-form-field appearance="outline" class="custom-field magin-top-field">
                             <mat-label>Selecciona estatus</mat-label>
                             <mat-select formControlName="activo">
                                 <mat-option value="0">Inactivo</mat-option>
@@ -113,7 +128,6 @@
                             Estatus es <strong>requerido</strong>
                         </mat-error>
                     </div>
-
                 </div>
             </form>
 

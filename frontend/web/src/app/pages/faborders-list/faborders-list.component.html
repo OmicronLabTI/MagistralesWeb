@@ -17,24 +17,24 @@
         </div>
         <div class="filter-select" *ngIf="filterDataOrders.docNum && filterDataOrders.docNum !== 0">
             <span class="dateType">
-                Número de orden de fabricación buscado:
+                Rango de ordenes buscado:
             </span>
             <span class="date-selected">
-             {{ filterDataOrders.docNum}}
+                {{ filterDataOrders.docNum}}-{{filterDataOrders.docNumUntil ? filterDataOrders.docNumUntil : filterDataOrders.docNum}}
             </span>
         </div>
     </div>
 
     <div class="table-toolbar">
         <div class="refresh-icon-on-toolbar " (click)="getOrdersAction()">
-            <span class="material-icons color-omicron cursor-pointer">
-             refresh
-            </span>
+            <app-button-refresh></app-button-refresh>
         </div>
         <div class="table-toolbar-buttons">
             <button mat-raised-button class="button-blue"
                     (click)="createOrderIsolated()" >Crear orden</button>
-            <button [disabled]="!isAssignOrderIsolated" mat-raised-button [ngClass]="isAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="materialRequestIsolatedOrder()" >
+            <button mat-raised-button
+                    class="button-blue"
+                    (click)="materialRequestIsolatedOrder()">
                 Solicitud de insumos
             </button>
             <button [disabled]="!isAssignOrderIsolated" mat-raised-button [ngClass]="isAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="assignOrderIsolated()" >
@@ -67,15 +67,10 @@
                     </td>
                     <td mat-footer-cell *matFooterCellDef></td>
                 </ng-container>
-                <ng-container matColumnDef="cons">
-                    <th mat-header-cell *matHeaderCellDef class="centered">#</th>
-                    <td mat-cell *matCellDef="let element; let i = index;" class="color-text-intables tdcell tdcell-center consecutivo"> {{(i + 1) + (pageIndex * limit)}} </td>
-                    <td mat-footer-cell *matFooterCellDef></td>
-                </ng-container>
 
                 <ng-container matColumnDef="pedido">
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide"> PEDIDO </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigocliente"> {{ element.docNum !== 0 ? element.docNum :  '' }} </td>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide pedido"> {{ element.docNum !== 0 ? element.docNum :  '' }} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="orden">
@@ -99,6 +94,10 @@
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  CANTIDAD PLANIFICADA </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide cantplan tdcell-center"> {{element.quantity}} </td>
                 </ng-container>
+                <ng-container matColumnDef="lote">
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  LOTE </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide batch-order tdcell-center"> {{element.batch || ''}} </td>
+                </ng-container>
 
                 <ng-container matColumnDef="fechaorden">
                     <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA ORDEN DE FABRICACIÓN </th>
@@ -119,7 +118,10 @@
                     <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  ESTATUS DE LA ORDEN </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide status style-button-status">
                         <div class="center-status">
-                            <button mat-stroked-button [ngClass]="element.class" class="cursor-none">{{element.status}}</button>
+                            <button mat-stroked-button
+                                    [ngClass]="element.status.toLowerCase() === 'c' ? 'close-sap' : element.class"
+                                    class="cursor-none">
+                                {{element.status.toLowerCase() === 'c' ? 'Cerrado' : element.status }}</button>
                         </div>
                     </td>
                 </ng-container>
@@ -127,7 +129,7 @@
                 <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
                     <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions"> 
-                        <button mat-icon-button matTooltip="Ver fórmula" class="ico-col-pri" *ngIf="element.ordenFabricacionId !== 0" [routerLink]="['/ordenfabricacion', element.fabOrderId]">
+                        <button mat-icon-button matTooltip="Ver fórmula" class="ico-col-pri" *ngIf="element.ordenFabricacionId !== 0" (click)="goToFormulaDetail(element.fabOrderId)">
                           <mat-icon >
                               <svg *ngIf="!element.hasMissingStock" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="2em" height="2em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path d="M27.231 23.618L20 13.675V4h2V2H10v2h2v9.675l-7.231 9.943A4.018 4.018 0 0 0 8.019 30H23.98a4.018 4.018 0 0 0 3.25-6.382zM14 14.325V4h4v10.325L20.673 18h-9.346zM23.981 28H8.02a2.02 2.02 0 0 1-1.633-3.206L9.873 20h12.254l3.487 4.794A2.02 2.02 0 0 1 23.981 28z" fill="#626262"></path></svg>
                               <svg *ngIf="element.hasMissingStock" xmlns="http://www.w3.org/2000/svg" width="23.283" height="19.536" viewBox="0 0 23.283 19.536"><defs><style>.a{opacity:0.406;}.b{fill:#ff0041;}.b,.d{stroke:#ff0041;}.c,.d{fill:none;stroke-width:2px;}.c{stroke:#fff;}.d{stroke-linecap:round;opacity:0.996;}</style></defs><g class="a" transform="translate(-798.24 -173.937)"><g transform="translate(255.387 -355.563)"><g transform="translate(547.256 530)"><path class="b" d="M17.425,14.493,13.246,8.747V3.156H14.4V2H7.467V3.156H8.623V8.747L4.444,14.493a2.322,2.322,0,0,0,1.878,3.688h9.224a2.322,2.322,0,0,0,1.878-3.688ZM9.779,9.123V3.156h2.312V9.123l1.545,2.124h-5.4Zm5.768,7.9H6.323a1.167,1.167,0,0,1-.944-1.853L7.394,12.4h7.082l2.015,2.77a1.167,1.167,0,0,1-.944,1.853Z" transform="translate(-4 -2)"/></g><line class="c" x1="19.071" y2="16.181" transform="translate(543.5 531.445)"/></g><line class="d" x1="19.071" y2="16.181" transform="translate(801.043 175.882)"/></g></svg>

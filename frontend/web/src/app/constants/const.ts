@@ -13,16 +13,22 @@ export const CONST_NUMBER = {
     seven: 7,
     fifty: 50,
     oneHundred: 100,
-    oneThousand: 1000
+    threeHundred: 299,
+    oneThousand: 999
 };
 export const CONST_STRING = {
-    empty: ''
+    empty: '',
+    zero: '0',
 };
-
+export const CONST_CONTAINER = {
+    en: 'EN',
+    em: 'EM'
+};
 export const CONST_USER_DIALOG = {
     defaultQfb: 'QFB',
     defaultNumberOfPieces: '200',
-    patternPassWord: /^(?=(?:.*\d){1})(?=(?:.*[A-Z]){1})(?=(?:.*[a-z]){1})(?=(?:.*[@$?¡\-_.+*;!¿"%#&/]){0})\S{8,50}$/
+    patternPassWord: /^(?=(?:.*\d){1})(?=(?:.*[A-Z]){1})(?=(?:.*[a-z]){1})(?=(?:.*[@$?¡\-_.+*;!¿"%#&/]){0})\S{8,50}$/,
+    patternOnlyNumbers: /^[0-9]$/
 };
 
 export const MODAL_NAMES =  {
@@ -37,6 +43,7 @@ export const MODAL_FIND_ORDERS = {
     thirtyDays: (24 * 60 * 60 * 1000) * 30,
     perDay: 1000 * 3600 * 24,
     ninetyDays: (24 * 60 * 60 * 1000) * 91,
+    operationDay: (24 * 60 * 60 * 1000),
     ninetyDaysDifference: 90,
     keyEnter: 'Enter'
 };
@@ -52,7 +59,8 @@ export enum HttpServiceTOCall {
     USERS,
     DETAIL_FORMULA,
     ORDERS_ISOLATED,
-    PRODUCTIVITY
+    PRODUCTIVITY,
+    INCIDENTS_LIST,
 }
 export const ConstLogin = {
     defaultRedirectUri: 'asdad',
@@ -69,7 +77,8 @@ export enum MessageType {
     finalizeOrder,
     saveBatches,
     materialRequest,
-    default
+    default,
+    ordersWithoutQr
 }
 export const ClassNames = {
     popupCustom: 'popup-custom'
@@ -86,10 +95,15 @@ export const ConstStatus = {
     terminado: 'Terminado',
     reasingado: 'Reasignado',
     entregado: 'Entregado',
+    almacenado: 'Almacenado',
+    rechazado: 'Rechazado',
+    initial: 'C',
+    canceled: 'Y'
 };
 export const HttpStatus = {
     ok: 200,
     created: 201,
+    redirection: 300,
     badRequest: 400,
     unauthorized: 401,
     forbidden: 403,
@@ -107,6 +121,9 @@ export const ConstToken = {
     userName: 'userName',
     userRole: 'role',
     isolatedOrder: 'istOrder',
+    filtersActive: 'filters-active',
+    filtersActiveOrders: 'filters-active-orders',
+    detailOrderCurrent: 'detail-current'
 };
 export const BOOLEANS = {
     verdadero: true,
@@ -115,6 +132,7 @@ export const BOOLEANS = {
 export const ConstOrders = {
     modalOrders: 'orders',
     modalOrdersIsolated: 'ordersIsolated',
+    modalIncidents: 'incidents',
     defaultDateInit: '0',
     dateFinishType: '1'
 };
@@ -135,7 +153,8 @@ export enum FromToFilter {
     fromOrdersIsolatedCancel,
     fromOrderIsolatedReassign,
     fromOrderIsolatedReassignItems,
-    fromDefault
+    fromDefault,
+    fromDetailOrderQr
 }
 
 export const MaterialRequestPage = {
@@ -143,24 +162,30 @@ export const MaterialRequestPage = {
 };
 
 export const Colors = [
-    'rgba(70, 61, 242, 95)',
-    'rgba(5, 112, 255, 100)',
-    'rgba(69, 216, 230, 90)',
-    'rgba(63, 252, 171, 99)',
-    'rgba(61, 242, 70, 95)',
-    'rgba(242, 141, 206, 95)',
-    'rgba(160, 230, 146, 90)',
-    'rgba(146, 200, 252, 99)',
-    'rgba(242, 141, 225, 95)',
-    'rgba(242, 99, 85, 95)',
-    'rgba(255, 223, 107, 100)',
-    'rgba(92, 230, 106, 90)',
-    'rgba(122, 179, 255, 100)',
-    'rgba(242, 85, 236, 95)',
-    'rgba(82, 233, 242, 95)',
-    'rgba(82, 100, 242, 95)',
-    'rgba(230, 176, 90, 90)',
-    'rgba(71, 255, 78, 100)'
+    'rgb(70,61,242)',
+    'rgb(23,119,246)',
+    'rgb(74,185,196)',
+    'rgb(82,189,144)',
+    'rgb(3,172,12)',
+    'rgb(248,126,204)',
+    'rgb(136,6,146)',
+    'rgb(246,114,62)',
+    'rgb(232,236,112)',
+    'rgb(123,83,132)',
+    'rgb(11,77,158)',
+    'rgb(230,92,175)',
+    'rgb(69,58,55)',
+    'rgb(127,112,208)',
+    'rgb(52,4,149)',
+    'rgb(224,168,125)',
+    'rgb(224,25,64)',
+    'rgb(62,90,63)'
+];
+export const ColorsBarGraph = [
+    'rgb(224,168,125)',
+    'rgb(224,25,64)',
+    'rgb(62,90,63)',
+    'rgb(52,4,149)',
 ];
 
 export const pathRoles = {
@@ -184,6 +209,16 @@ export const pathRoles = {
     design: [
         'pedidos',
         'pdetalle',
+        'login',
+        '**'
+    ],
+    incidents: [
+        'incidents',
+        'incidentsList',
+        'login',
+        'warehouse',
+        'productividad',
+        'workLoad',
         '**'
     ]
 };
@@ -192,7 +227,13 @@ export const CONST_PRODUCTIVITY = {
 };
 
 export const RouterPaths = {
-  materialRequest: 'materialRequest'
+    materialRequest: 'materialRequest',
+    incidents: 'incidents',
+    incidentsList: 'incidentsList',
+    warehousePage: 'warehouse',
+    orderDetail: 'pdetalle',
+    detailFormula: 'ordenfabricacion',
+    pedido: 'pedidos'
 };
 export enum TypeProperty {
     code,
@@ -201,15 +242,78 @@ export enum TypeProperty {
     requestQuantity
 }
 
+export enum TypeInitialRange {
+    onlyDefault,
+    monthCalendar,
+    mont
+}
+
 export enum TypeToSeeTap {
     order,
     receipt,
     system
 }
-
+export enum CarouselOption {
+    backDetail,
+    nextDetail
+}
+export const CarouselOptionString = {
+    backDetail: 'b',
+    nextDetail: 'f'
+};
 export const RolesType = {
     logistic: '3',
     admin: '1',
     design: '4',
-    warehouse: '5'
+    warehouse: '5',
+    incidents: '7'
+};
+export const GraphType = {
+    statusGraph: 'status',
+    incidentGraph: 'IncidentReason',
+    reception: 'Almacen',
+    packageLocal: 'PackageLocal',
+    foreignPackage: 'PackageForeign',
+    deliveredItemLocal: 'Entregado',
+    sentItemForeign: 'Enviado'
+};
+export const ColorsReception = {
+    byReceive: '#007AFF',
+    backOrder: '#D87F01',
+    pending: '#B33D66',
+    warehoused: '#B51CAA'
+};
+export const TypeReception = {
+    byReceive: 'por recibir',
+    warehoused: 'almacenado',
+    backOrder: 'back order',
+    pending: 'pendiente'
+};
+
+export const TypeStatusIncidents = {
+    open: 'Abierta',
+    close: 'Cerrada',
+    attending: 'Atendiendo',
+};
+export const ClassButton = {
+    openIncident: 'open-incident',
+    closeIncident: 'close-incident',
+    attendingIncident: 'attending-incident'
+};
+export const ValidDigits = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Backspace'];
+export const OrderType = {
+    bioElite: 'MN',
+    bioEqual: 'BE',
+    magistral: 'MG',
+    mixto: 'MX',
+    maquila: 'MQ',
+    muestra: 'MU'
+};
+export const ClassCssOrderType = {
+    mn: 'clasification-mn',
+    be: 'clasification-be',
+    mg: 'clasification-mg',
+    mx: 'clasification-mx',
+    mq: 'clasification-mq',
+    mu: 'clasification-mu',
 };

@@ -80,6 +80,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     if(inserted != 0)
                     {
                         company.GetLastError(out int errorCode, out string errMsg);
+                        errMsg = errMsg.Replace("-", string.Empty);
                         dictResult.Add(string.Format("{0}-{1}-{2}", pedido.Order.PedidoId, orf.CodigoProducto, count), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorCreateFabOrd, errorCode.ToString(), errMsg));
                         _loggerProxy.Info($"The next order was tried to be created: {errorCode} - {errMsg} - {pedido.Order.PedidoId}");
                     }
@@ -513,6 +514,66 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 result = new KeyValuePair<string, string>(string.Empty, string.Format(ServiceConstants.FailReasonProductCodeNotExists, isolatedFabOrder.ProductCode));
             }
             return ServiceUtils.CreateResult(true, 200, null, result, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> UpdateTracking(SendPackageModel sendPackage)
+        {
+            var dictionaryResult = new Dictionary<string, string>();
+
+            try
+            {
+                var invoice = (Documents)company.GetBusinessObject(BoObjectTypes.oInvoices);
+                var invoiceFound = invoice.GetByKey(sendPackage.InvoiceId);
+
+                if (!invoiceFound)
+                {
+                    dictionaryResult.Add($"{sendPackage.InvoiceId}-Error", ServiceConstants.OrderNotFound);
+                    return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+                }
+
+                var components = this.ExecuteQuery(ServiceConstants.FindShipCodes);
+
+                if (components.RecordCount != 0)
+                {
+                    for (var i = 0; i < components.RecordCount; i++)
+                    {
+                        var name = (string)components.Fields.Item("TrnspName").Value;
+                        var code = components.Fields.Item("TrnspCode").Value;                        
+
+                        if (name.ToLower().Equals(sendPackage.TransportMode.ToLower()))
+                        {
+                            invoice.TrackingNumber = sendPackage.TrackingNumber;
+                            invoice.TransportationCode = code;
+                            break;
+                        }
+
+                        components.MoveNext();
+                    }
+                }
+
+                var update = invoice.Update();
+                company.GetLastError(out int errCode, out string errMsg);
+
+                if (update != 0)
+                {
+                    _loggerProxy.Info($"The invoice {sendPackage.InvoiceId} was tried to be updated {errCode} - {errMsg} - {JsonConvert.SerializeObject(sendPackage)}");
+                    dictionaryResult.Add($"{sendPackage.InvoiceId}-Error", $"Error- {errMsg}");
+                }
+                else
+                {
+                    _loggerProxy.Info($"The invoice {sendPackage.InvoiceId} was updated {errCode} - {errMsg}");
+                    dictionaryResult.Add($"{sendPackage.InvoiceId}-Ok", "Ok");
+                }
+
+            }
+            catch(Exception ex)
+            {
+                _loggerProxy.Info($"Error while updating tracking invoice {sendPackage.InvoiceId} {JsonConvert.SerializeObject(sendPackage)} - ex: {ex.Message} - stackTrace: {ex.StackTrace}");
+                dictionaryResult.Add($"{sendPackage.InvoiceId}-ErrorHandled", $"{ex.Message}");
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
         }
 
         /// <summary>

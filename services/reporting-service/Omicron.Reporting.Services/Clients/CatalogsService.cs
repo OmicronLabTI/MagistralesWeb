@@ -56,6 +56,7 @@ namespace Omicron.Reporting.Services.Clients
                 "EmailMiddlewarePassword",
                 "SmtpServer",
                 "SmtpPort",
+                "EmailCCDelivery",
             };
 
             var parameters = await this.GetParams(parameterNames);
@@ -66,6 +67,7 @@ namespace Omicron.Reporting.Services.Clients
                 SmtpPort = int.Parse(parameters.FirstOrDefault(x => x.Field.Equals("SmtpPort")).Value),
                 SmtpDefaultPassword = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewarePassword")).Value,
                 SmtpDefaultUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddleware")).Value,
+                EmailCCDelivery = parameters.FirstOrDefault(x => x.Field.Equals("EmailCCDelivery")).Value,
             };
         }
 

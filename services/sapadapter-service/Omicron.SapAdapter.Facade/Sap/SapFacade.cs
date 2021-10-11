@@ -25,15 +25,23 @@ namespace Omicron.SapAdapter.Facade.Sap
 
         private readonly ISapService sapService;
 
+        private readonly IComponentsService componentsService;
+
+        private readonly ISapDxpService sapDxpService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>
         /// <param name="sapService">the sap service.</param>
         /// <param name="mapper">the mapper.</param>
-        public SapFacade(ISapService sapService, IMapper mapper)
+        /// <param name="sapDxpService">the sap dxp service.</param>
+        /// <param name="componentsService">The component Service.</param>
+        public SapFacade(ISapService sapService, IMapper mapper, IComponentsService componentsService, ISapDxpService sapDxpService)
         {
             this.mapper = mapper;
             this.sapService = sapService ?? throw new ArgumentNullException(nameof(sapService));
+            this.componentsService = componentsService ?? throw new ArgumentNullException(nameof(componentsService));
+            this.sapDxpService = sapDxpService ?? throw new ArgumentException(nameof(sapDxpService));
         }
 
         /// <summary>
@@ -87,6 +95,16 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetOrderFormula(List<int> orderId, bool returnFirst, bool returnDetails)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetOrderFormula(orderId, returnFirst, returnDetails));
+        }
+
+        /// <summary>
+        /// Obtiene los nombres, email de asesores dada una lista de pedidos.
+        /// </summary>
+        /// <param name="salesOrder">the orderId list.</param>
+        /// <returns>the object.</returns>
+        public async Task<ResultDto> GetAsesorsByOrderId(List<int> salesOrder)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetAsesorsByOrderId(salesOrder));
         }
 
         /// <summary>
@@ -208,9 +226,37 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// </summary>
         /// <param name="orderId">the order.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultDto> ValidateOrder(int orderId)
+        public async Task<ResultDto> ValidateOrder(List<int> orderId)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.ValidateOrder(orderId));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetDetails(Dictionary<string, string> parameters, string kind)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetDetails(parameters, kind));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetMostCommonComponents()
+        {
+            return this.mapper.Map<ResultDto>(await this.componentsService.GetMostCommonComponents());
+        }
+
+        /// <summary>
+        /// Method to get required packing.
+        /// </summary>
+        /// <param name="userId">The parameters.</param>
+        /// <returns>List.</returns>
+        public async Task<ResultDto> GetPackingRequiredForOrderInAssignedStatus(string userId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetPackingRequiredForOrderInAssignedStatus(userId));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersActive(List<int> ordersid)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapDxpService.GetOrdersActive(ordersid));
         }
     }
 }

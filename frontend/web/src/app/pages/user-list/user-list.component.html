@@ -3,7 +3,6 @@
         <div class="title-list-container">
             <span>Usuarios</span>
         </div>
-
         <div class="add-user-container">
             <div class="icon-add" (click)="openDialog('addModal','')">
                 <svg data-toggle="modal" data-target="#agregar" xmlns="http://www.w3.org/2000/svg" width="30"
@@ -15,13 +14,15 @@
                     <line x1="23" y1="11" x2="17" y2="11"></line>
                 </svg>
             </div>
+
             <button mat-raised-button class="button-blue-user-list" (click)="openSearchUsers()">
                 <mat-icon *ngIf="searchUsersData.activoSe && searchUsersData.activoSe !== '' ||
                                  searchUsersData.asignableSe && searchUsersData.asignableSe !== '' ||
                                  searchUsersData.firstNameSe && searchUsersData.firstNameSe !== '' ||
                                  searchUsersData.lastNameSe && searchUsersData.lastNameSe !== '' ||
                                  searchUsersData.userNameSe && searchUsersData.userNameSe !== '' ||
-                                 searchUsersData.userTypeRSe && searchUsersData.userTypeRSe !== ''">search
+                                 searchUsersData.userTypeRSe && searchUsersData.userTypeRSe !== '' || 
+                                 searchUsersData.classificationQFBSe && searchUsersData.classificationQFBSe !== '' ">search
                 </mat-icon>
                 Buscar
             </button>
@@ -30,8 +31,6 @@
     <div class="list-users-container">
         <div class="table-container">
             <table  mat-table [dataSource]="dataSource"  [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''">
-
-                <!-- Position Column -->
                 <ng-container matColumnDef="delete">
                     <th mat-header-cell *matHeaderCellDef>
                         <mat-checkbox
@@ -59,13 +58,11 @@
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell"> {{element.firstName | uppercase}} </td>
                 </ng-container>
 
-                <!-- Name Column -->
                 <ng-container matColumnDef="lastName">
                     <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef  > APELLIDO(S) </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide tdcell-center"> {{element.lastName | uppercase}} </td>
                 </ng-container>
 
-                <!-- Weight Column -->
                 <ng-container matColumnDef="role">
                     <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > ROL</th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
@@ -74,23 +71,34 @@
                         <span *ngIf="element.role === 3">LOGÍSTICA</span>
                         <span *ngIf="element.role === 4">DISEÑO</span>
                         <span *ngIf="element.role === 5">ALMACÉN</span>
+                        <span *ngIf="element.role === 6">REPARTIDOR</span>
+                        <span *ngIf="element.role === 7">INCIDENCIAS</span>
                     </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="clasfqf">
+                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > CLASIFICACIÓN</th>
+                        <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
+                            {{element.role === 2 ? element.fullClasification : 'NO APLICA'}}
+                        </td>
                 </ng-container>
 
                 <ng-container matColumnDef="pieces">
+
                     <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > PIEZAS MÁXIMAS</th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
-                        {{element.role !== 1 && element.role !== 3 && element.role !== 4 && element.role !== 5 ? element.piezas : 'NO APLICA'}}
+                        {{element.role === 2 ? element.piezas : 'NO APLICA'}}
                     </td>
                 </ng-container>
-
                 <ng-container matColumnDef="asignable">
+
                     <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > ASIGNACIONES</th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
-                        {{element.role !== 1 && element.role !== 3 && element.role !== 4 && element.role !== 5 ? element.asignable === 1 ? 'ENCENDIDO' : 'APAGADO' : 'NO APLICA'}}
+                        {{element.role === 2 ? element.asignable === 1  ? 'ENCENDIDO' : 'APAGADO' : 'NO APLICA'}}
                     </td>
+
                 </ng-container>
-                <!-- Symbol Column -->
                 <ng-container matColumnDef="status">
                     <th mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef > ESTATUS </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide" > {{element.activo == 1 ? "ACTIVO" : "INACTIVO"}} </td>
@@ -111,6 +119,7 @@
                             </mat-icon>
                         </button>
                     </th>
+
                     <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions">
                         <button mat-icon-button class="ico-col-pri" (click)="openDialog('editModal',element.id)" >
                             <mat-icon class="icon-many-delete">
@@ -121,7 +130,6 @@
                                 </svg>
                             </mat-icon>
                         </button>
-
                         <button mat-icon-button class="ico-col-pri" (click)="deleteUsers(element.id)">
                             <mat-icon class="icon-many-delete">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -138,6 +146,7 @@
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
             </table>
             <div class="no-users-registered mat-elevation-z8" *ngIf="dataSource.data.length === 0">
                 <span *ngIf="!isOnInit">No hay usuarios registrados</span>
@@ -152,6 +161,7 @@
                     [pageIndex]="pageIndex"
                     (page)="pageEvent = changeDataEvent($event)"
             ></mat-paginator>
+
         </div>
     </div>
 </div>

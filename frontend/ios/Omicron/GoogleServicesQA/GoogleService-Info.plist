@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>438961866496-0grt639vh1tdc0d2ea9p789u6qchk19b.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.438961866496-0grt639vh1tdc0d2ea9p789u6qchk19b</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCQV26UB0f8qdehr00aKPCU_DNE9P58emM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>438961866496</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.axity.Omicron-QA</string>
+	<key>PROJECT_ID</key>
+	<string>omicronlab-43713</string>
+	<key>STORAGE_BUCKET</key>
+	<string>omicronlab-43713.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:438961866496:ios:8e0352b454106cf43095e5</string>
+</dict>
+</plist>

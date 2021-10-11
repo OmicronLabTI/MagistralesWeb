@@ -8,6 +8,7 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,10 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.Redis;
+    using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
@@ -38,6 +42,12 @@ namespace Omicron.Pedidos.Test.Services
         private Mock<IUsersService> usersService;
 
         private DatabaseContext context;
+
+        private Mock<IReportingService> reportingService;
+
+        private Mock<IRedisService> redisService;
+
+        private Mock<IKafkaConnector> kafkaConnector;
 
         /// <summary>
         /// The set up.
@@ -81,9 +91,16 @@ namespace Omicron.Pedidos.Test.Services
 
             var sapfileMock = new Mock<ISapFileService>();
             var configMock = new Mock<IConfiguration>();
+            this.reportingService = new Mock<IReportingService>();
+            this.redisService = new Mock<IRedisService>();
+
+            this.kafkaConnector = new Mock<IKafkaConnector>();
+            this.kafkaConnector
+                .Setup(m => m.PushMessage(It.IsAny<object>()))
+                .Returns(Task.FromResult(true));
 
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, sapfileMock.Object, configMock.Object);
+            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, sapfileMock.Object, configMock.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
         }
 
         /// <summary>
@@ -115,7 +132,12 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
                 .Returns(Task.FromResult(new ResultModel()));
 
-            var pedidosServiceLocal = new ProcessOrdersService(localSapAdapter.Object, mockSaDiApi.Object, this.pedidosDao);
+            var mockRedis = new Mock<IRedisService>();
+            mockRedis.Setup(x => x.GetRedisKey(It.IsAny<string>())).Returns(Task.FromResult(string.Empty));
+            mockRedis.Setup(x => x.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+            mockRedis.Setup(x => x.DeleteKey(It.IsAny<string>()));
+
+            var pedidosServiceLocal = new ProcessOrdersService(localSapAdapter.Object, mockSaDiApi.Object, this.pedidosDao, this.kafkaConnector.Object, mockRedis.Object);
 
             // act
             var response = await pedidosServiceLocal.ProcessOrders(process);
@@ -154,7 +176,12 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
                 .Returns(Task.FromResult(new ResultModel()));
 
-            var pedidosServiceLocal = new ProcessOrdersService(localSapAdapter.Object, mockSaDiApi.Object, this.pedidosDao);
+            var mockRedis = new Mock<IRedisService>();
+            mockRedis.Setup(x => x.GetRedisKey(It.IsAny<string>())).Returns(Task.FromResult(string.Empty));
+            mockRedis.Setup(x => x.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+            mockRedis.Setup(x => x.DeleteKey(It.IsAny<string>()));
+
+            var pedidosServiceLocal = new ProcessOrdersService(localSapAdapter.Object, mockSaDiApi.Object, this.pedidosDao, this.kafkaConnector.Object, mockRedis.Object);
 
             // act
             var response = await pedidosServiceLocal.ProcessByOrder(process);

@@ -40,7 +40,9 @@ namespace Omicron.Pedidos.Test.Api
             var mockPedidoFacade = new Mock<IPedidoFacade>();
             mockPedidoFacade.SetReturnsDefault(Task.FromResult(resultDto));
 
-            this.controller = new PedidosController(mockPedidoFacade.Object);
+            var mockBusqueda = new Mock<IBusquedaPedidoFacade>();
+
+            this.controller = new PedidosController(mockPedidoFacade.Object, mockBusqueda.Object);
         }
 
         /// <summary>

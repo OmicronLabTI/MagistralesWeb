@@ -56,11 +56,16 @@ namespace Omicron.Pedidos.Resources.Enums
         /// <summary>
         /// Represents a logisticts signature.
         /// </summary>
-        Cancelado = 8,
+        Almacenado = 7,
 
         /// <summary>
         /// Represents a logisticts signature.
         /// </summary>
         Entregado = 7,
+
+        /// <summary>
+        /// Represents a logisticts signature.
+        /// </summary>
+        Cancelado = 8,
     }
 }

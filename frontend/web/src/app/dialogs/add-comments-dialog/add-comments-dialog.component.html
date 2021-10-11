@@ -1,26 +1,49 @@
-<div class="add-comments-container">
+<div class="add-comments-container" [ngClass]="commentsConfig.isReadOnly || commentsConfig.isForRefuseOrders ? 'custom-comments-container' : ''">
     <mat-card class="add-user-card">
-        <mat-card-header class="card-header-container border-none">
+        <mat-card-header class="card-header-container border-none card-header-container-custom">
             <mat-card-title ><span>Agregar comentarios</span>
             </mat-card-title>
+
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
 
         </mat-card-header>
-        <mat-card-content class="content-card-container">
+        <mat-card-content class="content-card-container"
+                          [ngClass]="commentsConfig.isReadOnly || commentsConfig.isForRefuseOrders ? 'custom-card-container' : ''">
                 <div class="comment-content-container">
-                    <textarea class="text-area-add-comments" cols="55" rows="20"
-                              maxlength="1000"
-                              [(ngModel)]="comments"
+                    <div class="before-comments-container scroll-visible color-omicron font-style-omicron"
+                         [ngClass]="commentsConfig.isReadOnly ? 'custom-before-container' : ''" *ngIf="!commentsConfig.isForRefuseOrders">
+                        <div class="no-users-registered " *ngIf="arrayComments.length === 0">
+                            <span>No hay comentarios</span>
+                        </div>
+                       <div class="comments-by-user" *ngFor="let comment of arrayComments">
+                           {{comment}}
+                       </div>
+                        <div #finishComments></div>
+                    </div>
+                    <textarea *ngIf="!commentsConfig.isReadOnly" class="text-area-add-comments"  [ngClass]="commentsConfig.isForRefuseOrders ? 'only-add-comments' : ''" cols="55" rows="6"
+                              [maxlength]="maxLengthComments"
+                              [(ngModel)]="newComments"
+                              (ngModelChange)="checkData()"
+                              placeholder="Total máximo de caracteres: {{ maxLengthComments}}"
                             >
+
                         </textarea>
                 </div>
 
 
         </mat-card-content>
-        <mat-card-actions class="options-footer">
-            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
-            <button mat-button class="btn-add-modal btn--modal" mat-dialog-close [disabled]="!(comments.trim().length > 0)" (click)="saveComments()">
+        <mat-card-actions class="options-footer"
+                          [ngClass]="commentsConfig.isReadOnly ? 'custom-options-footer' : ''">
+            <mat-error class="error-message-custom" *ngIf="!isCorrectData">Máximo 1000 caracteres</mat-error>
+            <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal" *ngIf="!commentsConfig.isReadOnly">Cancelar</button>
+            <button mat-button *ngIf="!commentsConfig.isReadOnly && !commentsConfig.isForClose && !commentsConfig.isForRefuseOrders" [ngClass]="!(newComments.trim().length > 4 && isCorrectData) ? 'disable-button-custom' : 'btn-add-modal btn--modal'" mat-dialog-close [disabled]="!(newComments.trim().length > 4 && isCorrectData)" (click)="saveComments()">
                 Guardar
+            </button>
+            <button mat-button *ngIf="commentsConfig.isReadOnly || commentsConfig.isForClose" class="btn-add-modal btn--modal" mat-dialog-close (click)="saveComments()">
+                {{ commentsConfig.isReadOnly ? 'Aceptar' : 'Guardar' }}
+            </button>
+            <button mat-button *ngIf="commentsConfig.isForRefuseOrders" class="btn-add-modal btn--modal" mat-dialog-close (click)="saveComments()">
+                Aceptar
             </button>
         </mat-card-actions>
     </mat-card>

@@ -9,21 +9,24 @@
 namespace Omicron.SapAdapter.Api
 {
     using System;
+    using HealthChecks.UI.Client;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.OpenApi.Models;
     using Omicron.SapAdapter.Api.Filters;
     using Omicron.SapAdapter.DependencyInjection;
+    using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.User;
     using Prometheus;
     using Serilog;
-    using Serilog.Events;
     using StackExchange.Redis;
     using Steeltoe.Common.Http.Discovery;
     using Steeltoe.Discovery.Client;
@@ -34,10 +37,12 @@ namespace Omicron.SapAdapter.Api
     public class Startup
     {
         private const string AXITYURL = "https://www.axity.com/";
-
         private const string PedidoService = "http://pedidosservice/";
-
         private const string UserService = "http://usuariosservice/";
+
+        private const string AlmacenService = "http://almacenservice/";
+
+        private const string CatalogService = "http://catalogosservice/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
@@ -75,6 +80,14 @@ namespace Omicron.SapAdapter.Api
             DependencyInjector.RegisterServices(services);
             DependencyInjector.AddAutoMapper();
             DependencyInjector.AddDbContext(this.Configuration);
+
+            var healthBuilder = services.AddHealthChecks();
+
+            healthBuilder.AddCheck(
+                "HealthDbChecks",
+                new SqlConnectionHealthCheck(this.Configuration.GetConnectionString("DatabaseContext")),
+                HealthStatus.Unhealthy,
+                new string[] { "healthdb" });
 
             Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
                 .WriteTo.Seq(this.Configuration["SeqUrl"])
@@ -119,7 +132,22 @@ namespace Omicron.SapAdapter.Api
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IUsersService, UsersService>();
 
+            services.AddHttpClient("almacen", c =>
+            {
+                c.BaseAddress = new Uri(AlmacenService);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IAlmacenService, AlmacenService>();
+
+            services.AddHttpClient("catalogos", c =>
+            {
+                c.BaseAddress = new Uri(CatalogService);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<ICatalogsService, CatalogsService>();
+
             this.AddRedis(services, Log.Logger);
+            this.AddCorsSvc(services);
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
             services.AddResponseCompression();
@@ -160,10 +188,36 @@ namespace Omicron.SapAdapter.Api
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
 
+            //// URL For healthcheks http://localhost:5102/healthchecks-ui#/healthchecks.
+            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+            });
+
             app.UseRouting();
+            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        /// <summary>
+        /// Adds the cors SVC.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        private void AddCorsSvc(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(host => true)
+                    .AllowCredentials());
             });
         }
 

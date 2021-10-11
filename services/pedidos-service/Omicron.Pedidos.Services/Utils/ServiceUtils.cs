@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.Utils
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
@@ -75,6 +76,33 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Creates the order logs mode.
+        /// </summary>
+        /// <param name="user">the user.</param>
+        /// <param name="saleslogs">add sales logs.</param>
+        /// <returns> the list to insert.</returns>
+        public static List<SalesLogs> AddSalesLog(string user, List<UserOrderModel> saleslogs)
+        {
+            var listToReturn = new List<SalesLogs>();
+
+            saleslogs.ForEach(x =>
+            {
+                listToReturn.Add(new SalesLogs
+                {
+                    SalesOrderId = int.TryParse(x.Salesorderid, out int saleOrderInt) ? saleOrderInt : 0,
+                    ProductionOrderId = int.TryParse(x.Productionorderid, out int productOrderInt) ? productOrderInt : 0,
+                    StatusSalesOrder = string.IsNullOrEmpty(x.Productionorderid) ? x.Status : string.Empty,
+                    StatusProductionOrder = !string.IsNullOrEmpty(x.Productionorderid) ? x.Status : string.Empty,
+                    DataCheckin = DateTime.Now,
+                    UserId = user,
+                    IsProductionOrder = !string.IsNullOrEmpty(x.Productionorderid),
+                });
+            });
+
+            return listToReturn;
+        }
+
+        /// <summary>
         /// Gets the list of keys by a value.
         /// </summary>
         /// <param name="dictResult">the dict.</param>
@@ -88,6 +116,26 @@ namespace Omicron.Pedidos.Services.Utils
                 if (dictResult[k].Equals(correctValue))
                 {
                     listToReturn.Add(k);
+                }
+            }
+
+            return listToReturn;
+        }
+
+        /// <summary>
+        /// Gets the list of keys by a value.
+        /// </summary>
+        /// <param name="dictResult">the dict.</param>
+        /// <param name="correctValue">the correct value.</param>
+        /// <returns>the list.</returns>
+        public static List<string> GetValuesByContainsKeyValue(Dictionary<string, string> dictResult, string correctValue)
+        {
+            var listToReturn = new List<string>();
+            foreach (var k in dictResult.Keys)
+            {
+                if (k.Contains(correctValue))
+                {
+                    listToReturn.Add(dictResult[k]);
                 }
             }
 
@@ -349,6 +397,11 @@ namespace Omicron.Pedidos.Services.Utils
                 return GetDictDates(filter[ServiceConstants.FechaFin]);
             }
 
+            if (filter.ContainsKey(ServiceConstants.FechaInicio))
+            {
+                return GetDictDates(filter[ServiceConstants.FechaInicio]);
+            }
+
             return new Dictionary<string, DateTime>();
         }
 
@@ -377,18 +430,37 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// Get sales order from SAP.
+        /// check if the folder exist and created is if not.
         /// </summary>
         /// <param name="salesOrderId">Sales order id.</param>
+        /// <param name="sapAdapter">The sap adapter.</param>
         /// <returns>Sales order.</returns>
-        private static async Task<(OrderWithDetailModel SapOrder, List<CompleteDetailOrderModel> ProductionOrders, List<CompleteDetailOrderModel> PreProductionOrders)> GetSalesOrdersFromSap(int salesOrderId, ISapAdapter sapAdapter)
+        public static async Task<List<Tuple<OrderWithDetailModel, List<CompleteDetailOrderModel>, List<CompleteDetailOrderModel>>>> GetSalesOrdersFromSap(List<int> salesOrderId, ISapAdapter sapAdapter)
         {
-            var orders = await sapAdapter.PostSapAdapter(new List<int> { salesOrderId }, ServiceConstants.GetOrderWithDetail);
+            var orders = await sapAdapter.PostSapAdapter(salesOrderId, ServiceConstants.GetOrderWithDetail);
             var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
-            var sapOrder = sapOrders.FirstOrDefault();
-            var preProductionOrders = sapOrder.Detalle.Where(x => string.IsNullOrEmpty(x.Status));
-            var productionOrders = sapOrder.Detalle.Where(x => !string.IsNullOrEmpty(x.Status));
-            return (sapOrder, productionOrders.ToList(), preProductionOrders.ToList());
+            var tupleToREturn = new List<Tuple<OrderWithDetailModel, List<CompleteDetailOrderModel>, List<CompleteDetailOrderModel>>>();
+
+            sapOrders.ForEach(x =>
+            {
+                var preProductionOrders = x.Detalle.Where(x => string.IsNullOrEmpty(x.Status)).ToList();
+                var productionOrders = x.Detalle.Where(x => !string.IsNullOrEmpty(x.Status)).ToList();
+                tupleToREturn.Add(new Tuple<OrderWithDetailModel, List<CompleteDetailOrderModel>, List<CompleteDetailOrderModel>>(x, preProductionOrders, productionOrders));
+            });
+
+            return tupleToREturn;
+        }
+
+        /// <summary>
+        /// check if the folder exist and created is if not.
+        /// </summary>
+        /// <param name="route">the route.</param>
+        public static void VerifyIfFolderExist(string route)
+        {
+            if (!Directory.Exists(route))
+            {
+                Directory.CreateDirectory(route);
+            }
         }
 
         /// <summary>
@@ -396,7 +468,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="dateRange">the date range.</param>
         /// <returns>the data.</returns>
-        private static Dictionary<string, DateTime> GetDictDates(string dateRange)
+        public static Dictionary<string, DateTime> GetDictDates(string dateRange)
         {
             var dictToReturn = new Dictionary<string, DateTime>();
             var dates = dateRange.Split("-");
@@ -409,6 +481,21 @@ namespace Omicron.Pedidos.Services.Utils
             dictToReturn.Add(ServiceConstants.FechaInicio, dateInicio);
             dictToReturn.Add(ServiceConstants.FechaFin, dateFin);
             return dictToReturn;
+        }
+
+        /// <summary>
+        /// Get sales order from SAP.
+        /// </summary>
+        /// <param name="salesOrderId">Sales order id.</param>
+        /// <returns>Sales order.</returns>
+        private static async Task<(OrderWithDetailModel SapOrder, List<CompleteDetailOrderModel> ProductionOrders, List<CompleteDetailOrderModel> PreProductionOrders)> GetSalesOrdersFromSap(int salesOrderId, ISapAdapter sapAdapter)
+        {
+            var orders = await sapAdapter.PostSapAdapter(new List<int> { salesOrderId }, ServiceConstants.GetOrderWithDetail);
+            var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var sapOrder = sapOrders.FirstOrDefault();
+            var preProductionOrders = sapOrder.Detalle.Where(x => string.IsNullOrEmpty(x.Status));
+            var productionOrders = sapOrder.Detalle.Where(x => !string.IsNullOrEmpty(x.Status));
+            return (sapOrder, productionOrders.ToList(), preProductionOrders.ToList());
         }
 
         /// <summary>

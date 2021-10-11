@@ -20,7 +20,7 @@ import {SearchUsersDialogComponent} from '../../dialogs/search-users-dialog/sear
 })
 export class UserListComponent implements OnInit, OnDestroy {
     isAllComplete = false;
-    displayedColumns: string[] = ['delete', 'username', 'names', 'lastName', 'role', 'pieces', 'asignable', 'status', 'actions'];
+    displayedColumns: string[] = ['delete', 'username', 'names', 'lastName', 'role', 'clasfqf', 'pieces', 'asignable', 'status', 'actions'];
     dataSource = new MatTableDataSource<IUserReq>();
     pageSize = CONST_NUMBER.ten;
     pageEvent: PageEvent;
@@ -52,7 +52,6 @@ export class UserListComponent implements OnInit, OnDestroy {
     }
 
     getUsers() {
-
         this.usersService.getUsers(`?${this.fullQueryString}&offset=${this.offset}&limit=${this.limit}`).subscribe(userRes => {
 
                 this.lengthPaginator = userRes.comments;
@@ -60,6 +59,19 @@ export class UserListComponent implements OnInit, OnDestroy {
                 this.dataSource.data.forEach( user => {
                     user.isChecked = false;
                     user.piezas = this.dataService.getFormattedNumber(user.piezas);
+                    if (user.classification) {
+                        switch (user.classification) {
+                            case 'MN':
+                                user.fullClasification = 'Bioelite (MN)';
+                                break;
+                            case 'BE':
+                                user.fullClasification = 'Bioequal (BE)';
+                                break;
+                            case 'MG':
+                                user.fullClasification = 'Magistral (MG)';
+                                break;
+                        }
+                    }
                 });
                 this.isAllComplete = false;
                 this.isOnInit = false;
@@ -162,6 +174,9 @@ export class UserListComponent implements OnInit, OnDestroy {
         }
         if (this.searchUsersData.userTypeRSe && this.searchUsersData.userTypeRSe !== CONST_STRING.empty) {
             this.fullQueryString = `${this.fullQueryString}role=${this.searchUsersData.userTypeRSe}&`;
+        }
+        if (this.searchUsersData.classificationQFBSe && this.searchUsersData.classificationQFBSe !== CONST_STRING.empty) {
+            this.fullQueryString = `${this.fullQueryString}typeQfb=${this.searchUsersData.classificationQFBSe}&`;
         }
         this.fullQueryString = this.fullQueryString.slice(CONST_NUMBER.zero, CONST_NUMBER.lessOne);
         this.offset = CONST_NUMBER.zero;

@@ -9,6 +9,9 @@
 import UIKit
 import Resolver
 import Moya
+#if QA || RELEASE
+import  Firebase
+#endif
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         self.setupRegistrationsDI()
+        #if QA || RELEASE
+        FirebaseApp.configure()
+        #endif
         return true
     }
 
@@ -47,5 +53,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { LottieManager() }.scope(Resolver.shared)
         Resolver.register { ComponentsViewModel() }.scope(Resolver.shared)
         Resolver.register { ChartViewModel() }.scope(Resolver.shared)
+        Resolver.register { ContainerViewModel() }.scope(Resolver.unique)
     }
 }
