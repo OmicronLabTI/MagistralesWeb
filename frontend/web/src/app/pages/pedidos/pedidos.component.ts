@@ -282,9 +282,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   private onSuccessSearchOrderModal(resultSearchOrderModal: ParamsPedidos) {
     this.isDateInit = resultSearchOrderModal.dateType === ConstOrders.defaultDateInit;
-    this.pageIndex = 0;
-    this.offset = 0;
-    this.limit = 10;
+    this.pageIndex = resultSearchOrderModal.pageIndex;
+    this.offset = resultSearchOrderModal.offset || 0;
+    this.limit =  resultSearchOrderModal.limit || 10;
     this.filterDataOrders = new ParamsPedidos();
     this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrderModal)[0];
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
@@ -318,11 +318,14 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   requestMaterial() {
-        this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
-        this.router.navigate([RouterPaths.materialRequest,
-            this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString() || CONST_NUMBER.zero,
-            CONST_NUMBER.one]);
-    }
+    this.filterDataOrders.offset = this.offset;
+    this.filterDataOrders.limit = this.limit;
+    this.filterDataOrders.pageIndex = this.pageIndex;
+    this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
+    this.router.navigate([RouterPaths.materialRequest,
+    this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString() || CONST_NUMBER.zero,
+    CONST_NUMBER.one]);
+  }
 
   printOrderAsPdfFile() {
     if (this.isCheckedOrders) {
@@ -364,6 +367,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   openNewTabByOrder(order: number) {
+      this.filterDataOrders.offset = this.offset;
+      this.filterDataOrders.limit = this.limit;
+      this.filterDataOrders.pageIndex = this.pageIndex;
       this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
       this.router.navigate([RouterPaths.orderDetail, order]);
   }

@@ -224,9 +224,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[0];
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[1];
     this.isSearchOrderWithFilter = this.dataService.getIsWithFilter(resultSearchOrdersModal);
-    this.pageIndex = 0;
-    this.offset = 0;
-    this.limit = 10;
+    this.pageIndex = resultSearchOrdersModal.pageIndex || 0;
+    this.offset = resultSearchOrdersModal.offset || 0;
+    this.limit = resultSearchOrdersModal.limit || 10;
     this.getFullQueryString();
     this.getOrdersAction();
     this.isDateInit = resultSearchOrdersModal.dateType === ConstOrders.defaultDateInit;
@@ -275,6 +275,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   materialRequestIsolatedOrder() {
+    this.filterDataOrders.offset = this.offset;
+    this.filterDataOrders.limit = this.limit;
+    this.filterDataOrders.pageIndex = this.pageIndex;
     this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.router.navigate([RouterPaths.materialRequest,
       this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString() || CONST_NUMBER.zero
@@ -282,6 +285,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   goToFormulaDetail(fabOrderId: string) {
+    this.filterDataOrders.offset = this.offset;
+    this.filterDataOrders.limit = this.limit;
+    this.filterDataOrders.pageIndex = this.pageIndex;
     this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.dataService.changeRouterForFormula(fabOrderId,
         this.dataSource.data.map(order => order.fabOrderId).toString(),
