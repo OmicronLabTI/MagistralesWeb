@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -21,6 +22,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Redis;
@@ -325,9 +327,16 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.sapService.GetOrderFormula(listIds, true, true);
+            var formulaDeatil = result.Response as CompleteFormulaWithDetalle;
 
             // assert
             Assert.IsNotNull(result);
+            Assert.IsTrue(result.Code == 200);
+            Assert.IsTrue(formulaDeatil.Details.Any());
+            Assert.IsInstanceOf<CompleteFormulaWithDetalle>(result.Response);
+            Assert.IsNotNull(result.Response);
+            Assert.IsNull(result.ExceptionMessage);
+            Assert.IsNull(result.Comments);
         }
 
         /// <summary>
