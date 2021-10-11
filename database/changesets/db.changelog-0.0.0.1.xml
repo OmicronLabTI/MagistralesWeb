@@ -702,4 +702,9 @@
 		  INSERT INTO public."user" (id,username,firstname,lastname,"role","password",activo,pieces,asignable,deleted,classification) VALUES ('00197298-0e73-4299-b004-092de34c5aab','admin','admin','admin',1,'QXhpdHkyMDIw',1,200,1,false,'');
       </sql>
   </changeSet>
+  <changeSet author="esanchez" id="changelog-1.80">
+      <sql endDelimiter=";">
+          ALTER TABLE customcomponentlistscomponents ALTER COLUMN basequantity TYPE NUMERIC(19,8);
+      </sql>
+  </changeSet>
 </databaseChangeLog> 
