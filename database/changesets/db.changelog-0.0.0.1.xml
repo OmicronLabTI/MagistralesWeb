@@ -707,4 +707,15 @@
           ALTER TABLE customcomponentlistscomponents ALTER COLUMN basequantity TYPE NUMERIC(19,8);
       </sql>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.81">
+      <sql endDelimiter=";">
+          UPDATE parameters SET value='500' WHERE "Id"=28;
+		  UPDATE parameters SET value='500' WHERE "Id"=29;
+		  UPDATE parameters SET value='15'  WHERE "Id"=30;
+		  UPDATE parameters SET value='110' WHERE "Id"=31;
+		  UPDATE parameters SET value='390' WHERE "Id"=32;
+		  UPDATE parameters SET value='300' WHERE "Id"=33;
+		  UPDATE parameters SET value='100' WHERE "Id"=34;
+      </sql>
+  </changeSet>
 </databaseChangeLog> 

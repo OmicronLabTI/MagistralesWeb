@@ -452,18 +452,6 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// check if the folder exist and created is if not.
-        /// </summary>
-        /// <param name="route">the route.</param>
-        public static void VerifyIfFolderExist(string route)
-        {
-            if (!Directory.Exists(route))
-            {
-                Directory.CreateDirectory(route);
-            }
-        }
-
-        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>

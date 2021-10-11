@@ -661,6 +661,36 @@ namespace Omicron.Pedidos.Services.Constants
         public const bool IsProductionOrder = true;
 
         /// <summary>
+        /// azure account.
+        /// </summary>
+        public const string AzureAccountName = "AzureAccountName";
+
+        /// <summary>
+        /// azure account.
+        /// </summary>
+        public const string AzureAccountKey = "AzureAccountKey";
+
+        /// <summary>
+        /// azure account.
+        /// </summary>
+        public const string BlobUrlTemplate = "https://{0}.blob.core.windows.net/{1}/{2}";
+
+        /// <summary>
+        /// the order containe.
+        /// </summary>
+        public const string OrderQrContainer = "OrderQrContainer";
+
+        /// <summary>
+        /// the order containe.
+        /// </summary>
+        public const string DeliveryQrContainer = "DeliveryQrContainer";
+
+        /// <summary>
+        /// the order containe.
+        /// </summary>
+        public const string InvoiceQrContainer = "InvoiceQrContainer";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
