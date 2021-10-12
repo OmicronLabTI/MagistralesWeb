@@ -212,7 +212,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
             this.dataService.setIsLoading(false);
           },
           error => {
-            this.errorService.httpError(error);
+            if(error.status === HttpStatus.badRequest) {
+              this.dataService.presentToastCustom(error.error, 'error',
+              Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
+            } else{
+              this.errorService.httpError(error);
+            }
           }
         );
       }
