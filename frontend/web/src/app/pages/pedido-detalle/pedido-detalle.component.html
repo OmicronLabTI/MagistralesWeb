@@ -1,266 +1,378 @@
-
 <div class="container-list-page">
     <div class="header-page">
-      <div class="title-list-container custom-title-list-container">
-        <div>
-            <span>Detalle del pedido</span>
-            <div class="breadcrumb"><a class="breadcrumblink" (click)="goToOrders(['pedidos'])">Pedidos</a> / Detalle del pedido</div>
-        </div>
-          <div class="icon-next-container">
-          </div>
-          </div>
-        <div class="filter-select custom-title-list-container">
-            <div class="icon-next-container">
+        <div class="title-list-container custom-title-list-container detail-order-container">
+            <div>
+                <span>Detalle del pedido</span>
+                <div class="breadcrumb"><a class="breadcrumblink" (click)="goToOrders(['pedidos'])">Pedidos</a> /
+                    Detalle del pedido</div>
             </div>
+            <div class="icon-next-container no-padding" 
+            *ngIf="dataService.getUserRole() === '4' && patientName !== ''">
+                <p class="no-margin patient-name">Nombre del paciente</p>
+                <p class="no-margin patient-name-bold">{{ patientName }}</p>
+            </div>
+        </div>
+        <div class="filter-select custom-title-list-container status-container">
             <div>
                 <img src="assets/icons/comments.png" class="img-comments" matTooltip="Agregar comentarios"
-                     *ngIf="dataSource.data[0].comments && dataSource.data[0].comments !== ''" (click)="addCommentsDialog()" alt="comments"
-                     [ngClass]="isCorrectToAddComments ? 'cursor-none' : ' cursor-pointer'" />
-                <img src="assets/icons/no-comments.png" class="img-comments cursor-pointer" matTooltip="Agregar comentarios"
-                     *ngIf="dataSource.data[0].comments === null || dataSource.data[0].comments === ''" (click)="addCommentsDialog()" alt="no-comments"
-                     [ngClass]="isCorrectToAddComments ? 'cursor-none' : ' cursor-pointer'" />
+                    *ngIf="dataSource.data[0].comments && dataSource.data[0].comments !== ''"
+                    (click)="addCommentsDialog()" alt="comments"
+                    [ngClass]="isCorrectToAddComments ? 'cursor-none' : ' cursor-pointer'" />
+                <img src="assets/icons/no-comments.png" class="img-comments cursor-pointer"
+                    matTooltip="Agregar comentarios"
+                    *ngIf="dataSource.data[0].comments === null || dataSource.data[0].comments === ''"
+                    (click)="addCommentsDialog()" alt="no-comments"
+                    [ngClass]="isCorrectToAddComments ? 'cursor-none' : ' cursor-pointer'" />
                 <div class="docbase">Número de pedido: <span class="spandoc">{{paramsDetailOrder.current}}</span></div>
                 <div class="docbase-status">Estatus del pedido: <span class="spnstatus">{{docStatus}}</span> </div>
             </div>
         </div>
-      </div>
+    </div>
 
-  
+
     <div class="table-toolbar">
         <div class="refresh-icon-on-toolbar with-buttons-custom">
             <app-button-refresh (click)="getDetallePedido()"></app-button-refresh>
-            <app-button-back class="margin-top-buttons margin-left-options-buttons" matTooltip="Anterior detalle" (click)="carouselDetail(0)"></app-button-back>
-            <app-button-next class="margin-top-buttons margin-left-options2" matTooltip="Siguiente detalle" (click)="carouselDetail(1)"></app-button-next>
+            <app-button-back class="margin-top-buttons margin-left-options-buttons" matTooltip="Anterior detalle"
+                (click)="carouselDetail(0)"></app-button-back>
+            <app-button-next class="margin-top-buttons margin-left-options2" matTooltip="Siguiente detalle"
+                (click)="carouselDetail(1)"></app-button-next>
         </div>
-      <div class="table-toolbar-buttons with-table-toolbar-custom">
-          <button mat-icon-button matTooltip="Ver pedido" class="ico-col-pri generic"
-                  (click)="viewOrdersWithPdf()">
-           <svg xmlns="http://www.w3.org/2000/svg" width="2.9em" height="3.2em" viewBox="0 0 348 359">
-                  <defs>
-                      <clipPath id="clip-PDF">
-                          <rect width="348" height="359"/>
-                      </clipPath>
-                  </defs>
-                  <g id="PDF" clip-path="url(#clip-PDF)">
-                      <path id="Path_6016" data-name="Path 6016" d="M14,3V66.463A15.866,15.866,0,0,0,29.866,82.329H93.328" transform="translate(191.694 33.273)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
-                      <path id="Path_6017" data-name="Path 6017" d="M195.388,288.584H36.731A31.731,31.731,0,0,1,5,256.852V34.732A31.731,31.731,0,0,1,36.731,3h111.06l79.328,79.329V256.852A31.731,31.731,0,0,1,195.388,288.584Z" transform="translate(57.902 33.273)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
-                      <line id="Line_148" data-name="Line 148" y2="91" transform="translate(175 191)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
-                      <path id="Path_6018" data-name="Path 6018" d="M9,14,54.46,59.46,99.92,14" transform="translate(119.365 222.935)" fill="none" stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15"/>
-                      <text id="PDF-2" data-name="PDF" transform="translate(82 104)" fill="#5480a6" font-size="51" font-family="Helvetica-Bold, Helvetica" font-weight="700"><tspan x="0" y="0">PDF</tspan></text>
-                  </g>
-              </svg>
-          </button>
-          <button [disabled]="!isThereOrdersDetailToDelivered"
-                  mat-raised-button [ngClass]="isThereOrdersDetailToDelivered ? 'button-blue' : 'disable-button'"
-                  (click)="ordersToDelivered()" *ngIf="dataService.getUserRole() === '5'">
-              Entregado
-          </button>
-          <button  [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
-                   [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'"
-                   *ngIf="dataService.getUserRole() === '4'"
-                  (click)="ordersToDownloadQr()" >
-              Descargar código QR&nbsp;
-          </button>
-          <button [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
-                  [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'"
-                  (click)="finishOrdersLabels()" *ngIf="dataService.getUserRole() === '4'">
-              Terminar etiquetas &nbsp;
-          </button>
-          <button mat-raised-button
-                  class="button-blue"
-                  (click)="materialRequestDetail()" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
-              Solicitud de insumos
-          </button>
-        <button [disabled]="!isThereOrdersDetailToPlan" mat-raised-button
-                [ngClass]="isThereOrdersDetailToPlan ? 'button-blue' : 'disable-button'"
-                (click)="processOrdersDetail()" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
-          &nbsp; Planificar &nbsp;
-        </button>
+        <div class="table-toolbar-buttons with-table-toolbar-custom">
+            <button mat-icon-button matTooltip="Ver pedido" class="ico-col-pri generic" (click)="viewOrdersWithPdf()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="2.9em" height="3.2em" viewBox="0 0 348 359">
+                    <defs>
+                        <clipPath id="clip-PDF">
+                            <rect width="348" height="359" />
+                        </clipPath>
+                    </defs>
+                    <g id="PDF" clip-path="url(#clip-PDF)">
+                        <path id="Path_6016" data-name="Path 6016"
+                            d="M14,3V66.463A15.866,15.866,0,0,0,29.866,82.329H93.328"
+                            transform="translate(191.694 33.273)" fill="none" stroke="#5480a6" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="15" />
+                        <path id="Path_6017" data-name="Path 6017"
+                            d="M195.388,288.584H36.731A31.731,31.731,0,0,1,5,256.852V34.732A31.731,31.731,0,0,1,36.731,3h111.06l79.328,79.329V256.852A31.731,31.731,0,0,1,195.388,288.584Z"
+                            transform="translate(57.902 33.273)" fill="none" stroke="#5480a6" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="15" />
+                        <line id="Line_148" data-name="Line 148" y2="91" transform="translate(175 191)" fill="none"
+                            stroke="#5480a6" stroke-linecap="round" stroke-linejoin="round" stroke-width="15" />
+                        <path id="Path_6018" data-name="Path 6018" d="M9,14,54.46,59.46,99.92,14"
+                            transform="translate(119.365 222.935)" fill="none" stroke="#5480a6" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="15" />
+                        <text id="PDF-2" data-name="PDF" transform="translate(82 104)" fill="#5480a6" font-size="51"
+                            font-family="Helvetica-Bold, Helvetica" font-weight="700">
+                            <tspan x="0" y="0">PDF</tspan>
+                        </text>
+                    </g>
+                </svg>
+            </button>
+            <button [disabled]="!isThereOrdersDetailToDelivered" mat-raised-button
+                [ngClass]="isThereOrdersDetailToDelivered ? 'button-blue' : 'disable-button'"
+                (click)="ordersToDelivered()" *ngIf="dataService.getUserRole() === '5'">
+                Entregado
+            </button>
+            <button [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
+                [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'"
+                *ngIf="dataService.getUserRole() === '4'" (click)="ordersToDownloadQr()">
+                Descargar código QR&nbsp;
+            </button>
+            <button [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
+                [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'" (click)="finishOrdersLabels()"
+                *ngIf="dataService.getUserRole() === '4'">
+                Terminar etiquetas &nbsp;
+            </button>
+            <button mat-raised-button class="button-blue" (click)="materialRequestDetail()"
+                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                Solicitud de insumos
+            </button>
+            <button [disabled]="!isThereOrdersDetailToPlan" mat-raised-button
+                [ngClass]="isThereOrdersDetailToPlan ? 'button-blue' : 'disable-button'" (click)="processOrdersDetail()"
+                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                &nbsp; Planificar &nbsp;
+            </button>
 
-        <button [disabled]="!isThereOrdersDetailToPlace" mat-raised-button
+            <button [disabled]="!isThereOrdersDetailToPlace" mat-raised-button
                 [ngClass]="isThereOrdersDetailToPlace ? 'button-blue' : 'disable-button'"
-                (click)="openPlaceOrderDialog()" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
-          &nbsp; Asignar &nbsp; 
-        </button>
+                (click)="openPlaceOrderDialog()"
+                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                &nbsp; Asignar &nbsp;
+            </button>
 
-        <button [disabled]="!isThereOrdersDetailToReassign" mat-raised-button
+            <button [disabled]="!isThereOrdersDetailToReassign" mat-raised-button
                 [ngClass]="isThereOrdersDetailToReassign ? 'button-blue' : 'disable-button'"
-                (click)="reassignOrderDetail()" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
-          &nbsp; Reasignar &nbsp; 
-        </button>
+                (click)="reassignOrderDetail()"
+                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                &nbsp; Reasignar &nbsp;
+            </button>
 
-        <button [disabled]="!isThereOrdersDetailToFinalize" mat-raised-button
+            <button [disabled]="!isThereOrdersDetailToFinalize" mat-raised-button
                 [ngClass]="isThereOrdersDetailToFinalize ? 'button-blue' : 'disable-button'"
-                (click)="finalizeOrdersDetail()" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
-          &nbsp; Finalizar &nbsp; 
-        </button>
+                (click)="finalizeOrdersDetail()"
+                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                &nbsp; Finalizar &nbsp;
+            </button>
 
-        <button mat-raised-button [disabled]="!isThereOrdersDetailToCancel"
-                [ngClass]="isThereOrdersDetailToCancel ? 'button-blue' : 'disable-button'"
-                (click)="cancelOrders()" *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
-          Cancelar
-        </button>
-      </div>
+            <button mat-raised-button [disabled]="!isThereOrdersDetailToCancel"
+                [ngClass]="isThereOrdersDetailToCancel ? 'button-blue' : 'disable-button'" (click)="cancelOrders()"
+                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                Cancelar
+            </button>
+        </div>
     </div>
-  
+
     <div class="list-users-container">
-      <table mat-table [dataSource]="dataSource" [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''">
+        <table mat-table [dataSource]="dataSource" [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''">
             <ng-container matColumnDef="seleccion">&nbsp;
-              <th mat-header-cell *matHeaderCellDef>
-                <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()" (change)="setAll($event.checked)"></mat-checkbox>
-              </th>
-              <td mat-cell *matCellDef="let element" class="seleccion">
-                <mat-checkbox [(ngModel)]="element.isChecked" (ngModelChange)="updateAllComplete()"></mat-checkbox>
-              </td>
+                <th mat-header-cell *matHeaderCellDef>
+                    <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()"
+                        (change)="setAll($event.checked)"></mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let element" class="seleccion">
+                    <mat-checkbox [(ngModel)]="element.isChecked" (ngModelChange)="updateAllComplete()"></mat-checkbox>
+                </td>
             </ng-container>
-          
+
             <ng-container matColumnDef="ordenFabricacionId">
                 <th mat-header-cell *matHeaderCellDef class=""> N° DE ORDEN DE FABRICACIÓN</th>
-                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell of"> <span *ngIf="element.ordenFabricacionId !== 0">{{element.ordenFabricacionId}}</span> </td>
-              </ng-container>
+                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell of"> <span
+                        *ngIf="element.ordenFabricacionId !== 0">{{element.ordenFabricacionId}}</span> </td>
+            </ng-container>
 
             <ng-container matColumnDef="codigoProducto">
-              <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO DEL PRODUCTO </th>
-              <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigoproducto"> {{element.codigoProducto}} </td>
-            </ng-container>
-          
-            <ng-container matColumnDef="descripcionProducto">
-              <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO </th>
-              <td mat-cell matTooltip="{{element.descripcionProducto}}"
-              matTooltipPosition="right"
-              aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell mobile-hide descripcionproducto"> {{ (element.descripcionProducto.length > 42) ? (element.descripcionProducto | slice:0:42) + '...' : element.descripcionProducto }} </td>
-            </ng-container>
-    
-            <ng-container matColumnDef="qtyPlanned">
-              <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  CANTIDAD PLANIFICADA </th>
-              <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide cantplan"> {{element.qtyPlanned}} </td>| number:'1.2-2'
-            </ng-container>
-  
-            <ng-container matColumnDef="fechaOF">
-              <th mat-header-cell *matHeaderCellDef class="mobile-hide centered">  FECHA DE ORDEN DE FABRICACIÓN </th>
-              <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechaorden"> {{element.fechaOf}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="fechaOFFin">
-              <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  FECHA DE TÉRMINO (QFB) </th>
-              <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide fechatermino"> {{element.fechaOfFin}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="qfb">
-              <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  QFB ASIGNADO </th>
-              <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide qfb"> {{element.qfb}} </td>
+                <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO DEL PRODUCTO </th>
+                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigoproducto">
+                    {{element.codigoProducto}} </td>
             </ng-container>
 
-          <ng-container matColumnDef="label">
-              <th mat-header-cell *matHeaderCellDef class="centered mobile-hide">  TIPO DE ETIQUETA </th>
-              <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide qfb"> {{element.label.toUpperCase()}} </td>
-          </ng-container>
+            <ng-container matColumnDef="descripcionProducto">
+                <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO </th>
+                <td mat-cell matTooltip="{{element.descripcionProducto}}" matTooltipPosition="right"
+                    aria-label="Button that displays a tooltip in various positions" *matCellDef="let element"
+                    class="color-text-intables tdcell mobile-hide descripcionproducto"> {{
+                    (element.descripcionProducto.length > 42) ? (element.descripcionProducto | slice:0:42) + '...' :
+                    element.descripcionProducto }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="qtyPlanned">
+                <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> CANTIDAD PLANIFICADA </th>
+                <td mat-cell *matCellDef="let element"
+                    class="color-text-intables tdcell tdcell-center mobile-hide cantplan"> {{element.qtyPlanned}} </td>|
+                number:'1.2-2'
+            </ng-container>
+
+            <ng-container matColumnDef="fechaOF">
+                <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> FECHA DE ORDEN DE FABRICACIÓN </th>
+                <td mat-cell *matCellDef="let element"
+                    class="color-text-intables tdcell tdcell-center mobile-hide fechaorden"> {{element.fechaOf}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fechaOFFin">
+                <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> FECHA DE TÉRMINO (QFB) </th>
+                <td mat-cell *matCellDef="let element"
+                    class="color-text-intables tdcell tdcell-center mobile-hide fechatermino"> {{element.fechaOfFin}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="qfb">
+                <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> QFB ASIGNADO </th>
+                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide qfb">
+                    {{element.qfb}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="label">
+                <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> TIPO DE ETIQUETA </th>
+                <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide qfb">
+                    {{element.label.toUpperCase()}} </td>
+            </ng-container>
 
             <ng-container matColumnDef="statusOF">
-              <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> ESTATUS DE LA ORDEN </th>
-              <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center text-center mobile-hide status style-button-status">
-                  <div class="center-status">
-                     <button mat-stroked-button [ngClass]="element.class" class="cursor-none">{{element.status | titlecase}}</button>
-                  </div>
-              </td>
+                <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> ESTATUS DE LA ORDEN </th>
+                <td mat-cell *matCellDef="let element"
+                    class="color-text-intables tdcell tdcell-center text-center mobile-hide status style-button-status">
+                    <div class="center-status">
+                        <button mat-stroked-button [ngClass]="element.class" class="cursor-none">{{element.status |
+                            titlecase}}</button>
+                    </div>
+                </td>
             </ng-container>
-    
+
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef  class="centered">  ACCIONES </th>
-              <td mat-cell *matCellDef="let element; let i = index;" class="tdcell tdcell-center tdactions-centeres-elements">
-                  <div class="icons-actions-container">
-                      <button mat-icon-button matTooltip="Ver fórmula" class="ico-col-pri" *ngIf="element.ordenFabricacionId !== 0 && dataService.getUserRole() !== '5' && dataService.getUserRole() !== '4'"
-                              (click)="goToDetailFormula(element.ordenFabricacionId)">
-                          <mat-icon >
-                              <svg *ngIf="!element.hasMissingStock" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="2em" height="2em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path d="M27.231 23.618L20 13.675V4h2V2H10v2h2v9.675l-7.231 9.943A4.018 4.018 0 0 0 8.019 30H23.98a4.018 4.018 0 0 0 3.25-6.382zM14 14.325V4h4v10.325L20.673 18h-9.346zM23.981 28H8.02a2.02 2.02 0 0 1-1.633-3.206L9.873 20h12.254l3.487 4.794A2.02 2.02 0 0 1 23.981 28z" fill="#626262"></path></svg>
-                              <svg *ngIf="element.hasMissingStock" xmlns="http://www.w3.org/2000/svg" width="23.283" height="19.536" viewBox="0 0 23.283 19.536"><defs><style>.a{opacity:0.406;}.b{fill:#ff0041;}.b,.d{stroke:#ff0041;}.c,.d{fill:none;stroke-width:2px;}.c{stroke:#fff;}.d{stroke-linecap:round;opacity:0.996;}</style></defs><g class="a" transform="translate(-798.24 -173.937)"><g transform="translate(255.387 -355.563)"><g transform="translate(547.256 530)"><path class="b" d="M17.425,14.493,13.246,8.747V3.156H14.4V2H7.467V3.156H8.623V8.747L4.444,14.493a2.322,2.322,0,0,0,1.878,3.688h9.224a2.322,2.322,0,0,0,1.878-3.688ZM9.779,9.123V3.156h2.312V9.123l1.545,2.124h-5.4Zm5.768,7.9H6.323a1.167,1.167,0,0,1-.944-1.853L7.394,12.4h7.082l2.015,2.77a1.167,1.167,0,0,1-.944,1.853Z" transform="translate(-4 -2)"/></g><line class="c" x1="19.071" y2="16.181" transform="translate(543.5 531.445)"/></g><line class="d" x1="19.071" y2="16.181" transform="translate(801.043 175.882)"/></g></svg>
-                          </mat-icon>
-                      </button>
-                      <button mat-icon-button matTooltip="Etiqueta genérica" [disabled]="dataService.getUserRole() !== '4'" class="ico-col-pri generic" *ngIf="element.label === 'Genérica'">
-                          <mat-icon >
-                              <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 337 342">
-                                  <defs>
-                                      <clipPath id="clip-_3">
-                                          <rect width="337" height="342"/>
-                                      </clipPath>
-                                  </defs>
-                                  <g id="_3" data-name="3" clip-path="url(#clip-_3)">
-                                      <g id="Group_9825" data-name="Group 9825" transform="translate(0 5)">
-                                          <g id="pricetags" transform="translate(4.001 6.197)">
-                                              <path id="Path_6008" data-name="Path 6008" d="M303.625,129.724V46.362A30.268,30.268,0,0,0,273.324,16H190.01a20.752,20.752,0,0,0-14.578,6.025L8.872,188.538a30.4,30.4,0,0,0,0,42.928l79.3,79.294a30.39,30.39,0,0,0,42.921,0L297.6,144.3a20.739,20.739,0,0,0,6.025-14.578ZM238.563,102.75A21.688,21.688,0,1,1,260.25,81.062a21.688,21.688,0,0,1-21.687,21.688Z" transform="translate(-0.002 -16)" fill="#fff" stroke="#212121" stroke-width="8"/>
-                                          </g>
-                                      </g>
-                                  </g>
-                              </svg>
-                              <svg *ngIf="element.finishedLabel === 1" (click)="removeSignature(i)" xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em" viewBox="0 0 337 342">
-                                  <defs>
-                                      <clipPath id="clip-path">
-                                          <rect id="Rectangle_1569" data-name="Rectangle 1569" width="337" height="337" fill="#212121"/>
-                                      </clipPath>
-                                      <clipPath id="clip-_2">
-                                          <rect width="337" height="342"/>
-                                      </clipPath>
-                                  </defs>
-                                  <g id="_2" data-name="2" clip-path="url(#clip-_2)">
-                                      <g id="_1_2" data-name="1 – 2" transform="translate(0 5)" clip-path="url(#clip-path)">
-                                          <g id="pricetags" transform="translate(4 -4)">
-                                              <path id="Path_6008" data-name="Path 6008" d="M326.383,138.248V48.638A32.536,32.536,0,0,0,293.81,16H204.252a22.308,22.308,0,0,0-15.671,6.477L9.537,201.47a32.682,32.682,0,0,0,0,46.145l85.238,85.238a32.667,32.667,0,0,0,46.138,0L319.906,153.918a22.293,22.293,0,0,0,6.477-15.671Zm-69.939-29a23.313,23.313,0,1,1,23.313-23.313,23.313,23.313,0,0,1-23.313,23.313Z" transform="translate(-0.001 -5.803)" fill="#212121"/>
-                                          </g>
-                                      </g>
-                                  </g>
-                              </svg>
-                          </mat-icon>
-                      </button>
-                      <button mat-icon-button matTooltip="Etiqueta personalizada" [disabled]="dataService.getUserRole() !== '4'"  class="ico-col-pri person" *ngIf="element.label === 'Personalizada'" >
-                          <mat-icon>
-                              <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em" viewBox="0 0 337 342">
-                                  <defs>
-                                      <clipPath id="clip-_1">
-                                          <rect width="337" height="342"/>
-                                      </clipPath>
-                                  </defs>
-                                  <g id="_1" data-name="1" clip-path="url(#clip-_1)">
-                                      <g id="Group_9825" data-name="Group 9825" transform="translate(13 5)">
-                                          <g id="pricetags" transform="translate(4.001 6.197)">
-                                              <path id="Path_6008" data-name="Path 6008" d="M303.625,129.724V46.362A30.268,30.268,0,0,0,273.324,16H190.01a20.752,20.752,0,0,0-14.578,6.025L8.872,188.538a30.4,30.4,0,0,0,0,42.928l79.3,79.294a30.39,30.39,0,0,0,42.921,0L297.6,144.3a20.739,20.739,0,0,0,6.025-14.578ZM238.563,102.75A21.688,21.688,0,1,1,260.25,81.062a21.688,21.688,0,0,1-21.687,21.688Z" transform="translate(-0.002 -16)" fill="#fff" stroke="#212121" stroke-width="8"/>
-                                          </g>
-                                      </g>
-                                      <g id="user" transform="translate(59 99.463)">
-                                          <path id="Path_6010" data-name="Path 6010" d="M75.6,86.312V78.618C85.881,72.827,94.255,58.4,94.255,43.965,94.255,20.791,94.255,2,66.278,2S38.3,20.791,38.3,43.965c0,14.436,8.374,28.862,18.651,34.654v7.694C25.321,88.895,1,104.441,1,123.231H131.557C131.557,104.441,107.236,88.895,75.6,86.312Z" transform="translate(8.325 16.726)" fill="#212121"/>
-                                      </g>
-                                  </g>
-                              </svg>
+                <th mat-header-cell *matHeaderCellDef class="centered"> ACCIONES </th>
+                <td mat-cell *matCellDef="let element; let i = index;"
+                    class="tdcell tdcell-center tdactions-centeres-elements">
+                    <div class="icons-actions-container">
+                        <button mat-icon-button matTooltip="Ver fórmula" class="ico-col-pri"
+                            *ngIf="element.ordenFabricacionId !== 0 && dataService.getUserRole() !== '5' && dataService.getUserRole() !== '4'"
+                            (click)="goToDetailFormula(element.ordenFabricacionId)">
+                            <mat-icon>
+                                <svg *ngIf="!element.hasMissingStock" xmlns="http://www.w3.org/2000/svg"
+                                    aria-hidden="true" focusable="false" width="2em" height="2em"
+                                    style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);"
+                                    preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
+                                    <path
+                                        d="M27.231 23.618L20 13.675V4h2V2H10v2h2v9.675l-7.231 9.943A4.018 4.018 0 0 0 8.019 30H23.98a4.018 4.018 0 0 0 3.25-6.382zM14 14.325V4h4v10.325L20.673 18h-9.346zM23.981 28H8.02a2.02 2.02 0 0 1-1.633-3.206L9.873 20h12.254l3.487 4.794A2.02 2.02 0 0 1 23.981 28z"
+                                        fill="#626262"></path>
+                                </svg>
+                                <svg *ngIf="element.hasMissingStock" xmlns="http://www.w3.org/2000/svg" width="23.283"
+                                    height="19.536" viewBox="0 0 23.283 19.536">
+                                    <defs>
+                                        <style>
+                                            .a {
+                                                opacity: 0.406;
+                                            }
 
-                              <svg *ngIf="element.finishedLabel === 1" (click)="removeSignature(i)" xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em" viewBox="0 0 337 342">
-                                  <defs>
-                                      <clipPath id="clip-_6">
-                                          <rect width="337" height="342"/>
-                                      </clipPath>
-                                  </defs>
-                                  <g id="_6" data-name="6" clip-path="url(#clip-_6)">
-                                      <g id="Group_9827" data-name="Group 9827" transform="translate(0 5)">
-                                          <g id="pricetags" transform="translate(4 -4)">
-                                              <path id="Path_6008" data-name="Path 6008" d="M326.383,138.248V48.638A32.536,32.536,0,0,0,293.81,16H204.252a22.308,22.308,0,0,0-15.671,6.477L9.537,201.47a32.682,32.682,0,0,0,0,46.145l85.238,85.238a32.667,32.667,0,0,0,46.138,0L319.906,153.918a22.293,22.293,0,0,0,6.477-15.671Zm-69.939-29a23.313,23.313,0,1,1,23.313-23.313,23.313,23.313,0,0,1-23.313,23.313Z" transform="translate(-0.001 -5.803)" fill="#212121"/>
-                                          </g>
-                                          <g id="user" transform="translate(59 100.463)">
-                                              <path id="Path_6010" data-name="Path 6010" d="M75.6,86.312V78.618C85.881,72.827,94.255,58.4,94.255,43.965,94.255,20.791,94.255,2,66.278,2S38.3,20.791,38.3,43.965c0,14.436,8.374,28.862,18.651,34.654v7.694C25.321,88.895,1,104.441,1,123.231H131.557C131.557,104.441,107.236,88.895,75.6,86.312Z" transform="translate(8.325 16.726)" fill="#fff"/>
-                                          </g>
-                                      </g>
-                                  </g>
-                              </svg>
-                          </mat-icon>
-                      </button>
-                  </div>
+                                            .b {
+                                                fill: #ff0041;
+                                            }
 
-              </td>
+                                            .b,
+                                            .d {
+                                                stroke: #ff0041;
+                                            }
+
+                                            .c,
+                                            .d {
+                                                fill: none;
+                                                stroke-width: 2px;
+                                            }
+
+                                            .c {
+                                                stroke: #fff;
+                                            }
+
+                                            .d {
+                                                stroke-linecap: round;
+                                                opacity: 0.996;
+                                            }
+                                        </style>
+                                    </defs>
+                                    <g class="a" transform="translate(-798.24 -173.937)">
+                                        <g transform="translate(255.387 -355.563)">
+                                            <g transform="translate(547.256 530)">
+                                                <path class="b"
+                                                    d="M17.425,14.493,13.246,8.747V3.156H14.4V2H7.467V3.156H8.623V8.747L4.444,14.493a2.322,2.322,0,0,0,1.878,3.688h9.224a2.322,2.322,0,0,0,1.878-3.688ZM9.779,9.123V3.156h2.312V9.123l1.545,2.124h-5.4Zm5.768,7.9H6.323a1.167,1.167,0,0,1-.944-1.853L7.394,12.4h7.082l2.015,2.77a1.167,1.167,0,0,1-.944,1.853Z"
+                                                    transform="translate(-4 -2)" />
+                                            </g>
+                                            <line class="c" x1="19.071" y2="16.181"
+                                                transform="translate(543.5 531.445)" />
+                                        </g>
+                                        <line class="d" x1="19.071" y2="16.181"
+                                            transform="translate(801.043 175.882)" />
+                                    </g>
+                                </svg>
+                            </mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Etiqueta genérica"
+                            [disabled]="dataService.getUserRole() !== '4'" class="ico-col-pri generic"
+                            *ngIf="element.label === 'Genérica'">
+                            <mat-icon>
+                                <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg"
+                                    width="2.2em" height="2.5em" viewBox="0 0 337 342">
+                                    <defs>
+                                        <clipPath id="clip-_3">
+                                            <rect width="337" height="342" />
+                                        </clipPath>
+                                    </defs>
+                                    <g id="_3" data-name="3" clip-path="url(#clip-_3)">
+                                        <g id="Group_9825" data-name="Group 9825" transform="translate(0 5)">
+                                            <g id="pricetags" transform="translate(4.001 6.197)">
+                                                <path id="Path_6008" data-name="Path 6008"
+                                                    d="M303.625,129.724V46.362A30.268,30.268,0,0,0,273.324,16H190.01a20.752,20.752,0,0,0-14.578,6.025L8.872,188.538a30.4,30.4,0,0,0,0,42.928l79.3,79.294a30.39,30.39,0,0,0,42.921,0L297.6,144.3a20.739,20.739,0,0,0,6.025-14.578ZM238.563,102.75A21.688,21.688,0,1,1,260.25,81.062a21.688,21.688,0,0,1-21.687,21.688Z"
+                                                    transform="translate(-0.002 -16)" fill="#fff" stroke="#212121"
+                                                    stroke-width="8" />
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg>
+                                <svg *ngIf="element.finishedLabel === 1" (click)="removeSignature(i)"
+                                    xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em"
+                                    viewBox="0 0 337 342">
+                                    <defs>
+                                        <clipPath id="clip-path">
+                                            <rect id="Rectangle_1569" data-name="Rectangle 1569" width="337"
+                                                height="337" fill="#212121" />
+                                        </clipPath>
+                                        <clipPath id="clip-_2">
+                                            <rect width="337" height="342" />
+                                        </clipPath>
+                                    </defs>
+                                    <g id="_2" data-name="2" clip-path="url(#clip-_2)">
+                                        <g id="_1_2" data-name="1 – 2" transform="translate(0 5)"
+                                            clip-path="url(#clip-path)">
+                                            <g id="pricetags" transform="translate(4 -4)">
+                                                <path id="Path_6008" data-name="Path 6008"
+                                                    d="M326.383,138.248V48.638A32.536,32.536,0,0,0,293.81,16H204.252a22.308,22.308,0,0,0-15.671,6.477L9.537,201.47a32.682,32.682,0,0,0,0,46.145l85.238,85.238a32.667,32.667,0,0,0,46.138,0L319.906,153.918a22.293,22.293,0,0,0,6.477-15.671Zm-69.939-29a23.313,23.313,0,1,1,23.313-23.313,23.313,23.313,0,0,1-23.313,23.313Z"
+                                                    transform="translate(-0.001 -5.803)" fill="#212121" />
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Etiqueta personalizada"
+                            [disabled]="dataService.getUserRole() !== '4'" class="ico-col-pri person"
+                            *ngIf="element.label === 'Personalizada'">
+                            <mat-icon>
+                                <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg"
+                                    width="2.3em" height="2.7em" viewBox="0 0 337 342">
+                                    <defs>
+                                        <clipPath id="clip-_1">
+                                            <rect width="337" height="342" />
+                                        </clipPath>
+                                    </defs>
+                                    <g id="_1" data-name="1" clip-path="url(#clip-_1)">
+                                        <g id="Group_9825" data-name="Group 9825" transform="translate(13 5)">
+                                            <g id="pricetags" transform="translate(4.001 6.197)">
+                                                <path id="Path_6008" data-name="Path 6008"
+                                                    d="M303.625,129.724V46.362A30.268,30.268,0,0,0,273.324,16H190.01a20.752,20.752,0,0,0-14.578,6.025L8.872,188.538a30.4,30.4,0,0,0,0,42.928l79.3,79.294a30.39,30.39,0,0,0,42.921,0L297.6,144.3a20.739,20.739,0,0,0,6.025-14.578ZM238.563,102.75A21.688,21.688,0,1,1,260.25,81.062a21.688,21.688,0,0,1-21.687,21.688Z"
+                                                    transform="translate(-0.002 -16)" fill="#fff" stroke="#212121"
+                                                    stroke-width="8" />
+                                            </g>
+                                        </g>
+                                        <g id="user" transform="translate(59 99.463)">
+                                            <path id="Path_6010" data-name="Path 6010"
+                                                d="M75.6,86.312V78.618C85.881,72.827,94.255,58.4,94.255,43.965,94.255,20.791,94.255,2,66.278,2S38.3,20.791,38.3,43.965c0,14.436,8.374,28.862,18.651,34.654v7.694C25.321,88.895,1,104.441,1,123.231H131.557C131.557,104.441,107.236,88.895,75.6,86.312Z"
+                                                transform="translate(8.325 16.726)" fill="#212121" />
+                                        </g>
+                                    </g>
+                                </svg>
+
+                                <svg *ngIf="element.finishedLabel === 1" (click)="removeSignature(i)"
+                                    xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em"
+                                    viewBox="0 0 337 342">
+                                    <defs>
+                                        <clipPath id="clip-_6">
+                                            <rect width="337" height="342" />
+                                        </clipPath>
+                                    </defs>
+                                    <g id="_6" data-name="6" clip-path="url(#clip-_6)">
+                                        <g id="Group_9827" data-name="Group 9827" transform="translate(0 5)">
+                                            <g id="pricetags" transform="translate(4 -4)">
+                                                <path id="Path_6008" data-name="Path 6008"
+                                                    d="M326.383,138.248V48.638A32.536,32.536,0,0,0,293.81,16H204.252a22.308,22.308,0,0,0-15.671,6.477L9.537,201.47a32.682,32.682,0,0,0,0,46.145l85.238,85.238a32.667,32.667,0,0,0,46.138,0L319.906,153.918a22.293,22.293,0,0,0,6.477-15.671Zm-69.939-29a23.313,23.313,0,1,1,23.313-23.313,23.313,23.313,0,0,1-23.313,23.313Z"
+                                                    transform="translate(-0.001 -5.803)" fill="#212121" />
+                                            </g>
+                                            <g id="user" transform="translate(59 100.463)">
+                                                <path id="Path_6010" data-name="Path 6010"
+                                                    d="M75.6,86.312V78.618C85.881,72.827,94.255,58.4,94.255,43.965,94.255,20.791,94.255,2,66.278,2S38.3,20.791,38.3,43.965c0,14.436,8.374,28.862,18.651,34.654v7.694C25.321,88.895,1,104.441,1,123.231H131.557C131.557,104.441,107.236,88.895,75.6,86.312Z"
+                                                    transform="translate(8.325 16.726)" fill="#fff" />
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </mat-icon>
+                        </button>
+                    </div>
+
+                </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns" class="color-text-intables"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
+        </table>
         <div class="no-users-registered mat-elevation-z8" *ngIf="dataSource.data.length === 0">
             <span *ngIf="!isOnInit">No hay órdenes registradas</span>
             <span *ngIf="isOnInit"> Cargando detalle del pedido ...</span>
         </div>
     </div>
-  </div>
-
+</div>
