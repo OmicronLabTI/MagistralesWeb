@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Facade.Pedidos;
     using Omicron.Pedidos.Services.AlmacenService;
+    using Omicron.Pedidos.Services.Azure;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Mapping;
     using Omicron.Pedidos.Services.Pedidos;
@@ -66,6 +67,7 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             Services.AddTransient<IPedidosDxpFacade, PedidosDxpFacade>();
             Services.AddTransient<IPedidosDxpService, PedidosDxpService>();
+            Services.AddTransient<IAzureService, AzureServices>();
             return Services;
         }
 
