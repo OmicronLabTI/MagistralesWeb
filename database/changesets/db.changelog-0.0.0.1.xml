@@ -718,4 +718,13 @@
 		  UPDATE parameters SET value='100' WHERE "Id"=34;
       </sql>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.82">
+    <addColumn tableName ="usersorders">
+      <column 
+        name="arebatchescomplete"
+        type="int"
+		defaultValue = "0">
+      </column>
+    </addColumn>  
+  </changeSet>
 </databaseChangeLog> 
