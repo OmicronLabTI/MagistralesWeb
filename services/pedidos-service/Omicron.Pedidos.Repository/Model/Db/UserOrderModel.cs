@@ -254,6 +254,14 @@ namespace Omicron.Pedidos.Entities.Model
         public string TypeOrder { get; set; }
 
         /// <summary>
+        /// Gets or sets the quantity order.
+        /// </summary>
+        /// <value>
+        /// Quantity.
+        [Column("quantity")]
+        public decimal Quantity { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>
