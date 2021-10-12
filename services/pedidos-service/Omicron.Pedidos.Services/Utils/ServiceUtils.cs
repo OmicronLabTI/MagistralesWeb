@@ -245,7 +245,7 @@ namespace Omicron.Pedidos.Services.Utils
                         }
                     });
 
-                orders.Orders = ordersDetail;
+                orders.Orders = ordersDetail.OrderByDescending(x => x.AreBatchesComplete).ThenBy(y => y.ProductionOrderId).ToList();
                 result.Status.Add(orders);
             }
 
