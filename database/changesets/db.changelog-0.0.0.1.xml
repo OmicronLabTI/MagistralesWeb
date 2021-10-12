@@ -727,4 +727,11 @@
       </column>
     </addColumn>  
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.83">
+	<insert tableName="parameters"> 
+		<column name="value" value="aescobar@o-lab.mx"/>
+		<column name="type" value="string"/>
+		<column name="field" value="EmailCCRejected"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 
