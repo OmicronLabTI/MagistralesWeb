@@ -254,6 +254,14 @@ namespace Omicron.Pedidos.Entities.Model
         public string TypeOrder { get; set; }
 
         /// <summary>
+        /// Gets or sets the type order.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("arebatchescomplete")]
+        public int AreBatchesComplete { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

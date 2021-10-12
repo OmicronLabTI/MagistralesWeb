@@ -238,6 +238,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 HasMissingStock = sapOrder.HasMissingStock,
                                 Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                                 FinishedLabel = o.FinishedLabel,
+                                AreBatchesComplete = o.AreBatchesComplete == 1,
                             };
 
                             ordersDetail.Add(order);
