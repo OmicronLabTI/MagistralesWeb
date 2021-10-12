@@ -148,6 +148,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailMiddleware", Value = string.Empty },
                 new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
                 new ParametersModel { Field = "EmailAtencionAClientes", Value = string.Empty },
+                new ParametersModel { Field = "EmailCCRejected", Value = string.Empty },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();

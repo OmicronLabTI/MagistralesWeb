@@ -74,7 +74,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     prodObj.ItemNo = orf.CodigoProducto;
                     prodObj.ProductDescription = orf.DescripcionProducto;
                     prodObj.PlannedQuantity = plannedQtyNumber;
-                    prodObj.ProductionOrderOriginEntry = pedido.Order.PedidoId;                    
+                    prodObj.ProductionOrderOriginEntry = pedido.Order.PedidoId;
 
                     var inserted =  prodObj.Add();
 
