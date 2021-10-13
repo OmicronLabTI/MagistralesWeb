@@ -11,6 +11,6 @@ export class ProductivityService {
   constructor(private consumeServie: ConsumeService) { }
 
   getProductivity(queryString: string) {
-    return this.consumeServie.httpGet<IProductivityRes>(`${Endpoints.productivity.getProductivity}${queryString}`)
+    return this.consumeServie.httpGet<IProductivityRes>(`${Endpoints.productivity.getProductivity}${queryString}`);
   }
 }

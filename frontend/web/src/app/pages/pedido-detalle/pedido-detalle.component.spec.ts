@@ -13,8 +13,8 @@ import {of, throwError} from 'rxjs';
 import {DetailOrderMock} from '../../../mocks/detailOrder.Mock';
 import {DownloadImagesService} from '../../services/download-images.service';
 import {UrlsOfQrEachOrderMock} from '../../../mocks/urlsOfQrEachOrderMock';
-import {ErrorService} from "../../services/error.service";
-import {error} from "util";
+import {ErrorService} from '../../services/error.service';
+import {error} from 'util';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('PedidoDetalleComponent', () => {
