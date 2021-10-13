@@ -427,6 +427,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
         }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByPlanningDate(DateTime fechaInicio, DateTime fechaFin)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => x.PlanningDate != null && x.PlanningDate >= fechaInicio && x.PlanningDate <= fechaFin).ToListAsync();
+        }
     }
 }
 

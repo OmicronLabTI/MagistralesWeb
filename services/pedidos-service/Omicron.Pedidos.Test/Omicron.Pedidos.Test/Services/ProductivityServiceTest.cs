@@ -17,7 +17,6 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
-    using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -29,8 +28,6 @@ namespace Omicron.Pedidos.Test.Services
         private IProductivityService pedidosService;
 
         private IPedidosDao pedidosDao;
-
-        private Mock<ISapAdapter> sapAdapter;
 
         private Mock<IUsersService> usersService;
 
@@ -52,15 +49,6 @@ namespace Omicron.Pedidos.Test.Services
             this.context.UserOrderSignatureModel.AddRange(this.GetSignature());
             this.context.SaveChanges();
 
-            this.sapAdapter = new Mock<ISapAdapter>();
-            this.sapAdapter
-                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModelGetFabricacionModel()));
-
-            this.sapAdapter
-                .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetFormulaDetalle()));
-
             this.usersService = new Mock<IUsersService>();
 
             this.usersService
@@ -72,7 +60,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(this.GetResultUserModel()));
 
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new ProductivityService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object);
+            this.pedidosService = new ProductivityService(this.pedidosDao, this.usersService.Object);
         }
 
         /// <summary>
@@ -88,7 +76,7 @@ namespace Omicron.Pedidos.Test.Services
                 { ServiceConstants.FechaFin, "01/07/2020-30/08/2020" },
             };
 
-            var pedidosServiceLocal = new ProductivityService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object);
+            var pedidosServiceLocal = new ProductivityService(this.pedidosDao, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.GetProductivityData(assign);
@@ -110,7 +98,7 @@ namespace Omicron.Pedidos.Test.Services
                 { ServiceConstants.FechaFin, "01/07/2020-30/08/2020" },
             };
 
-            var pedidosServiceLocal = new ProductivityService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object);
+            var pedidosServiceLocal = new ProductivityService(this.pedidosDao, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.GetWorkLoad(assign);
@@ -133,7 +121,7 @@ namespace Omicron.Pedidos.Test.Services
                 { ServiceConstants.Qfb, "abc" },
             };
 
-            var pedidosServiceLocal = new ProductivityService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object);
+            var pedidosServiceLocal = new ProductivityService(this.pedidosDao, this.usersService.Object);
 
             // act
             var response = await pedidosServiceLocal.GetWorkLoad(assign);
