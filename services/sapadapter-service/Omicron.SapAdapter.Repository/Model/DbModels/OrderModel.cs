@@ -130,5 +130,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("U_Comentarios_Ecommerce")]
         public string Patient { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_Pedido_DXP")]
+        public string DocNumDxp { get; set; }
     }
 }

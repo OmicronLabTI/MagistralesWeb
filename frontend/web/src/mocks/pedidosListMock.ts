@@ -61,6 +61,7 @@ export const PedidosListMock = {
     response: [
         {
             docNum: 60021,
+            docNumDxp: 'OM120I',
             cliente: 'VENTA AL PUBLICO',
             codigo: 'C00100',
             medico: 'VENTA AL PUBLICO',
@@ -76,6 +77,7 @@ export const PedidosListMock = {
         },
         {
             docNum: 60022,
+            docNumDxp: 'OM120I',
             cliente: 'ABELARDO LEAL DUMONT',
             codigo: 'C00826',
             medico: 'ABELARDO LEAL DUMONT',
@@ -91,6 +93,7 @@ export const PedidosListMock = {
         },
         {
             docNum: 60023,
+            docNumDxp: 'OM120I',
             cliente: 'ABELARDO LEAL DUMONT',
             codigo: 'C00826',
             medico: 'ABELARDO LEAL DUMONT',
@@ -106,6 +109,7 @@ export const PedidosListMock = {
         },
         {
             docNum: 60024,
+            docNumDxp: 'OM120I',
             cliente: 'ABELARDO LEAL DUMONT',
             codigo: 'C00826',
             medico: 'ABELARDO LEAL DUMONT',
@@ -121,6 +125,7 @@ export const PedidosListMock = {
         },
         {
             docNum: 60025,
+            docNumDxp: 'OM120I',
             cliente: 'ABELARDO LEAL DUMONT',
             codigo: 'C00826',
             medico: 'ABELARDO LEAL DUMONT',

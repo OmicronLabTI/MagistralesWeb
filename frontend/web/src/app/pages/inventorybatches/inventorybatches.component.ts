@@ -311,6 +311,7 @@ export class InventorybatchesComponent implements OnInit {
     let objectToSave = this.objectToSave;
     objectToSave = [];
     const ordenFabricacionId = this.ordenFabricacionId;
+    const areBatchesCompleteSubmit = this.dataSourceDetails.data.map(data => data.totalNecesario).every(quantity => quantity === 0);
     // tslint:disable-next-line: no-shadowed-variable
     this.dataSourceDetails.data.forEach(element => {
       if (element.lotesSeleccionados != null) {
@@ -323,7 +324,8 @@ export class InventorybatchesComponent implements OnInit {
                 itemCode: element.codigoProducto,
                 assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(6)),
                 action: lote.action,
-                batchNumber: lote.numeroLote
+                batchNumber: lote.numeroLote,
+                areBatchesComplete: areBatchesCompleteSubmit ? 1 : 0,
               };
               objectToSave.push(objectSAP);
             }

@@ -63,7 +63,7 @@ describe('PedidosComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
     expect(component.displayedColumns)
-        .toEqual(['seleccion', 'codigo',
+        .toEqual(['seleccion', 'codigoDxp', 'codigo',
           'cliente', 'medico', 'asesor', 'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions']);
     expect(component.limit).toEqual(10);
     expect(component.offset).toEqual(0);

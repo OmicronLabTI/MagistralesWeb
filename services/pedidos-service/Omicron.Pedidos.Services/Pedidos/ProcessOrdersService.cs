@@ -315,6 +315,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     MagistralQr = JsonConvert.SerializeObject(this.ReturnQrStructure(x, saleOrder)),
                     TypeOrder = saleOrder.Order.OrderType,
                     PlanningDate = DateTime.Now,
+                    Quantity = x.Quantity,
                 };
                 listToReturn.Add(userOrder);
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));

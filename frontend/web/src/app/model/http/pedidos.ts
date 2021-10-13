@@ -40,6 +40,7 @@ export class RecipesRes {
 export class ParamsPedidos {
     dateType?: string;
     docNum?: any;
+    docNumDxp?: string;
     fini?: Date;
     ffin?: Date;
     status?: string;
@@ -78,6 +79,7 @@ export class IPlaceOrdersAutomaticReq {
 export class IPedidoReq {
     isChecked: boolean;
     docNum: number;
+    docNumDxp: string;
     codigo: string;
     cliente: string;
     medico: string;
