@@ -2,48 +2,76 @@
   display: flex;
   flex-direction: row;
 }
-.seleccion{
-    width: 2% !important;
+.seleccion {
+  width: 2% !important;
+}
+.detail-order-container {
+  display: flex;
+  flex-direction: column !important;
+}
+.header-page{
+  display: flex;
+  justify-content: space-between;
+}
+.status-container{
+  display: flex;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  align-items: flex-end !important;
+}
+.no-margin {
+  margin: 0 !important;
+}
+.no-padding {
+  padding: 0 !important;
+}
+.consecutivo {
+  width: 2% !important;
+}
+.patient-name,
+.patient-name-bold {
+  font-size: 20px;
+}
+.patient-name{
+  padding-top: 10px;
+}
+.patient-name-bold {
+  font-weight: bold;
+}
+.of {
+  width: 11% !important;
 }
 
-.consecutivo{
-    width: 2% !important;
+.codigoproducto {
+  width: 10% !important;
 }
 
-.of{
-    width: 11% !important;
+.descripcionproducto {
+  width: 14%;
 }
 
-.codigoproducto{
-    width: 10% !important;    
+.cantplan {
+  width: 9% !important;
 }
 
-.descripcionproducto{
-    width: 14%;
+.fechaorden {
+  width: 11% !important;
 }
 
-.cantplan{
-    width: 9% !important;
+.fechatermino {
+  width: 11% !important;
 }
 
-.fechaorden{
-    width: 11% !important;
+.qfb {
+  width: 11% !important;
 }
 
-.fechatermino{
-    width: 11% !important;
+.status {
+  width: 10% !important;
 }
 
-.qfb{
-    width: 11% !important;
-}
-
-.status{
-    width: 10% !important;
-}
-
-.tdactions{
-    width: 9% !important;
+.tdactions {
+  width: 9% !important;
 }
 
 // ::ng-deep .mat-focused .mat-form-field-label {
@@ -59,16 +87,17 @@
 //     background-color: #638db6 !important;
 //   }
 
-  .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
-    background: #6C90B3 !important; 
-  }
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
+.mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background: #6c90b3 !important;
+}
 
-  button.btnToolTip{
-    font-size: 10px !important;
-    text-align: left !important;
-    padding: 0 !important;
-    cursor: text !important;
-  }
+button.btnToolTip {
+  font-size: 10px !important;
+  text-align: left !important;
+  padding: 0 !important;
+  cursor: text !important;
+}
 .img-comments {
   width: 30px;
   height: 30px;
@@ -77,12 +106,8 @@
   width: 40px;
 }
 .tdactions-centeres-elements {
-
   border-bottom-width: 0;
 }
 .icons-actions-container {
   width: 95px;
 }
-
-
-

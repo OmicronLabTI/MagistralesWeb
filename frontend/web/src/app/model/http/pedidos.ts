@@ -59,6 +59,7 @@ export class ParamsPedidos {
     advance?: string;
     clasification?: string;
     docNumUntil?: any;
+    pageIndex?: any;
 }
 
 export class ProcessOrders {
@@ -77,6 +78,7 @@ export class IPlaceOrdersAutomaticReq {
 export class IPedidoReq {
     isChecked: boolean;
     docNum: number;
+    docNumDxp: string;
     codigo: string;
     cliente: string;
     medico: string;

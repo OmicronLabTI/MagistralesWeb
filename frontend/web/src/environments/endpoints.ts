@@ -72,8 +72,8 @@ export const Endpoints = {
     changeStatus: `${environment.baseUrl}/api/almacen/incidents`
   }
 };
-
 export const TokenExcludedEndpoints = [
   '/api/oauth/oauthrs',
-  '/api/pedidos/resources/' // to excluded url to download images
+  '/api/pedidos/resources/', // to excluded url to download images,
+  '/orderqr/'
 ];

@@ -116,12 +116,13 @@ namespace Omicron.Reporting.Services
         /// <inheritdoc/>
         public async Task<ResultModel> SendEmailRejectedOrder(SendRejectedEmailModel request)
         {
-            var customerServiceEmail = ServiceConstants.CustomerServiceEmail;
-            var listToLook = new List<string> { customerServiceEmail };
+            var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.EmailCCRejected };
             listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
             var config = await this.catalogsService.GetParams(listToLook);
             var smtpConfig = this.GetSmtpConfig(config);
-            var configCustomerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(customerServiceEmail)).Value;
+            var configCustomerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.CustomerServiceEmail)).Value;
+            var rejectedCc = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.EmailCCRejected)).Value;
             List<ResultModel> resultados = new List<ResultModel> { };
             var rejectedOrderList = this.GetGroupsOfList(request.RejectedOrder, 3);
 
@@ -136,7 +137,7 @@ namespace Omicron.Reporting.Services
                     destinyEmail,
                     text.Item1,
                     text.Item2,
-                    configCustomerServiceEmail);
+                    $"{configCustomerServiceEmail};{rejectedCc}");
                     resultados.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
                 }));
 

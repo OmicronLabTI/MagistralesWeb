@@ -42,5 +42,11 @@ namespace Omicron.Pedidos.Dtos.Models
         /// </summary>
         /// <value>The user that is assigning.</value>
         public string Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
+        public int AreBatchesComplete { get; set; }
     }
 }

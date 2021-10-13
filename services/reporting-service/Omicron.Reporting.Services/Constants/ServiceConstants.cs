@@ -88,6 +88,11 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Body of email.
         /// </summary>
+        public const string EmailCCRejected = "EmailCCRejected";
+
+        /// <summary>
+        /// Body of email.
+        /// </summary>
         public const string LogisticEmailCc2Field = "EmailLogisticaCc2";
 
         /// <summary>

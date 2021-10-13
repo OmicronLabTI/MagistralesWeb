@@ -544,6 +544,11 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
+
+            var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(assignBatches.Select(x => x.OrderId.ToString()).ToList())).ToList();
+            orders.ForEach(x => x.AreBatchesComplete = assignBatches.FirstOrDefault().AreBatchesComplete);
+            await this.pedidosDao.UpdateUserOrders(orders);
+
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 

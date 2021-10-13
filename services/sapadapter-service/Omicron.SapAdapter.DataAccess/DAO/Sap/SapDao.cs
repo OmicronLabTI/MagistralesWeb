@@ -190,6 +190,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          into DetallePedido
                          from dp in DetallePedido.DefaultIfEmpty()
                          join p in this.databaseContext.ProductoModel on d.ProductoId equals p.ProductoId
+                         join ped in this.databaseContext.OrderModel on d.PedidoId equals ped.PedidoId
                          where d.PedidoId == pedidoId && p.IsMagistral == "Y"
                          select new CompleteDetailOrderModel
                          {
@@ -207,6 +208,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Label = d.Label,
                              NeedsCooling = p.NeedsCooling,
                              Container = d.Container,
+                             PatientName = ped.Patient ?? string.Empty,
                          });
 
             return await this.RetryQuery<CompleteDetailOrderModel>(query);

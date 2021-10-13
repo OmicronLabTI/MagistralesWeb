@@ -59,7 +59,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             var dictResult = new Dictionary<string, string>();
             foreach(var pedido in orderWithDetail)
             {
-                _loggerProxy.Info($"The next order will be tried to be created: {pedido.Order.PedidoId} - {pedido.Detalle}");
+                _loggerProxy.Info($"The next order will be tried to be created: {pedido.Order.PedidoId} - {JsonConvert.SerializeObject(pedido.Detalle)}");
                 var count = 0;
 
                 foreach (var orf in pedido.Detalle)
@@ -74,7 +74,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     prodObj.ItemNo = orf.CodigoProducto;
                     prodObj.ProductDescription = orf.DescripcionProducto;
                     prodObj.PlannedQuantity = plannedQtyNumber;
-                    prodObj.ProductionOrderOriginEntry = pedido.Order.PedidoId;                    
+                    prodObj.ProductionOrderOriginEntry = pedido.Order.PedidoId;
 
                     var inserted =  prodObj.Add();
 
