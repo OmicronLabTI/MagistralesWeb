@@ -20,7 +20,7 @@ describe('RequestSignatureDialogComponent', () => {
         MatTableModule,
         MatDialogModule,
         MatCheckboxModule,
-        MatFormFieldModule, 
+        MatFormFieldModule,
         MatInputModule,
         BrowserAnimationsModule],
       declarations: [ RequestSignatureDialogComponent, SignaturePad ],

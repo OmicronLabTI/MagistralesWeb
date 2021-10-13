@@ -157,12 +157,12 @@ export class ComponentSearchComponent implements OnInit {
   }
 
   onKeyDown(event: KeyboardEvent): void {
-    if (event.key.toLowerCase() == 'backspace' && this.chipsInput.nativeElement.value == '') {
+    if (event.key.toLowerCase() === 'backspace' && this.chipsInput.nativeElement.value === '') {
       event.preventDefault();
-      let numberOfChilds = this.chipsInput.nativeElement.parentNode.children.length;
+      const numberOfChilds = this.chipsInput.nativeElement.parentNode.children.length;
       if (numberOfChilds > 1) {
-        let node = this.chipsInput.nativeElement.parentNode.children[numberOfChilds - 2];
-        if (node.tagName.toLowerCase() == 'mat-chip') {
+        const node = this.chipsInput.nativeElement.parentNode.children[numberOfChilds - 2];
+        if (node.tagName.toLowerCase() === 'mat-chip') {
           node.click();
           node.focus();
         }
