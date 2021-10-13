@@ -172,7 +172,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="pedidoId">Pedido id.</param>
         /// <returns>the details.</returns>
-        public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(int pedidoId)
+        public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> pedidoId)
         {
             var query = (from d in this.databaseContext.DetallePedido
                          join o in this.databaseContext.OrdenFabricacionModel on
@@ -191,7 +191,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          from dp in DetallePedido.DefaultIfEmpty()
                          join p in this.databaseContext.ProductoModel on d.ProductoId equals p.ProductoId
                          join ped in this.databaseContext.OrderModel on d.PedidoId equals ped.PedidoId
-                         where d.PedidoId == pedidoId && p.IsMagistral == "Y"
+                         where pedidoId.Contains(d.PedidoId) && p.IsMagistral == "Y"
                          select new CompleteDetailOrderModel
                          {
                              OrdenFabricacionId = dp.OrdenId,
@@ -209,6 +209,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              NeedsCooling = p.NeedsCooling,
                              Container = d.Container,
                              PatientName = ped.Patient ?? string.Empty,
+                             PedidoId = d.PedidoId ?? 0,
                          });
 
             return await this.RetryQuery<CompleteDetailOrderModel>(query);

@@ -50,7 +50,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="pedidoId">PedidoID</param>
         /// <returns>the details.</returns>
-        Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(int pedidoId);
+        Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> pedidoId);
 
         /// <summary>
         /// Get the orders.

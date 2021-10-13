@@ -126,7 +126,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public async Task<ResultModel> GetOrderDetails(int docId)
         {
-            var details = await this.sapDao.GetAllDetails(docId);
+            var details = await this.sapDao.GetAllDetails(new List<int?> { docId });
 
             var usersOrderModel = await this.pedidosService.GetUserPedidos(new List<int> { docId }, ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(usersOrderModel.Response.ToString());
@@ -168,20 +168,14 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetPedidoWithDetail(List<int> pedidosIds)
         {
             var listData = new List<OrderWithDetailModel>();
+            var orders = (await this.sapDao.GetOrdersById(pedidosIds)).ToList();
+            var orderDetails = (await this.sapDao.GetAllDetails(pedidosIds.Cast<int?>().ToList())).ToList();
 
-            foreach (var x in pedidosIds)
+            listData = pedidosIds.Select(mj => new OrderWithDetailModel
             {
-                var data = new OrderWithDetailModel();
-                var order = (await this.sapDao.GetOrdersById(x)).FirstOrDefault();
-                var detail = await this.sapDao.GetAllDetails(x);
-
-                var listToProcess = detail.Where(y => y.OrdenFabricacionId == 0).ToList();
-                listToProcess.AddRange(detail.Where(y => y.OrdenFabricacionId != 0).DistinctBy(y => y.OrdenFabricacionId));
-
-                data.Order = order;
-                data.Detalle = listToProcess;
-                listData.Add(data);
-            }
+                Order = orders.Where(ts => ts.PedidoId == mj).FirstOrDefault(),
+                Detalle = orderDetails.Where(ts => ts.PedidoId == mj).OrderByDescending(ts => ts.OrdenFabricacionId).ToList(),
+            }).ToList();
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listData, null, null);
         }
