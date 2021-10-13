@@ -111,6 +111,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Abierto = "Abierto";
 
         /// <summary>
+        /// the abierto status.
+        /// </summary>
+        public const string AbiertoSap = "O";
+
+        /// <summary>
         /// value for chips.
         /// </summary>
         public const string Chips = "chips";
@@ -244,6 +249,21 @@ namespace Omicron.SapAdapter.Services.Constants
         /// Get users by id.
         /// </summary>
         public const string Personalizado = "Personalizada";
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        public const string PersonalizadoAbr = "P";
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        public const string GenericoAbr = "G";
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        public const string MixtoAbr = "M";
 
         /// <summary>
         /// Get users by id.

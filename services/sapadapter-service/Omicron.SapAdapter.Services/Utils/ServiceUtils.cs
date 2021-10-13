@@ -96,13 +96,14 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the data.</returns>
         public static List<CompleteOrderModel> FilterList(List<CompleteOrderModel> orderModels, Dictionary<string, string> parameters, List<UserOrderModel> userOrder, List<UserModel> users)
         {
+            var listToFilter = new List<CompleteOrderModel>();
             orderModels.GroupBy(x => x.DocNum).ToList().ForEach(p =>
             {
                 var allPersonalized = p.All(d => d.Detalles != null && !string.IsNullOrEmpty(d.Detalles.Label) && d.Detalles.Label.ToLower() == ServiceConstants.Personalizado.ToLower());
                 var allGeneric = p.All(d => d.Detalles != null && !string.IsNullOrEmpty(d.Detalles.Label) && d.Detalles.Label.ToLower() != ServiceConstants.Personalizado.ToLower());
 
-                var typeLabel = allPersonalized ? "P" : "M";
-                typeLabel = allGeneric ? "G" : typeLabel;
+                var typeLabel = allPersonalized ? ServiceConstants.PersonalizadoAbr : ServiceConstants.MixtoAbr;
+                typeLabel = allGeneric ? ServiceConstants.GenericoAbr : typeLabel;
 
                 var hasRecipe = p.FirstOrDefault() != null && p.FirstOrDefault().AtcEntry != null;
                 var needRecipe = p.Any(d => !string.IsNullOrEmpty(d.Detalles.HasRecipe) && d.Detalles.HasRecipe.ToLower() == ServiceConstants.HasRecipe);
@@ -110,31 +111,30 @@ namespace Omicron.SapAdapter.Services.Utils
                 var recipe = hasRecipe ? ServiceConstants.HasNeedsRecipe : ServiceConstants.DoesntHaveNeedRecipe;
                 recipe = needRecipe ? recipe : ServiceConstants.NoNeedRecipe;
 
-                p.ToList().ForEach(a =>
+                var elementToSave = p.FirstOrDefault();
+                elementToSave.LabelType = typeLabel;
+                elementToSave.HasRecipte = recipe;
+
+                var order = userOrder.FirstOrDefault(u => u.Salesorderid == elementToSave.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
+                elementToSave.Qfb = order == null ? string.Empty : order.Userid;
+
+                if (elementToSave.PedidoStatus == ServiceConstants.AbiertoSap)
                 {
-                    a.LabelType = typeLabel;
-                    a.HasRecipte = recipe;
-                });
-            });
-
-            orderModels = orderModels.DistinctBy(x => x.DocNum).ToList();
-
-            orderModels.ForEach(x =>
-            {
-                var order = userOrder.FirstOrDefault(u => u.Salesorderid == x.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
-                x.Qfb = order == null ? string.Empty : order.Userid;
-
-                if (x.PedidoStatus == "O")
-                {
-                    x.PedidoStatus = ServiceConstants.Abierto;
+                    elementToSave.PedidoStatus = ServiceConstants.Abierto;
                 }
 
-                x.PedidoStatus = order == null ? x.PedidoStatus : order.Status;
-                x.FinishedLabel = order == null ? 0 : order.FinishedLabel;
-                x.Detalles = null;
-                x.FechaFin = order != null && order.CloseDate.HasValue ? order.CloseDate.Value.ToString("dd/MM/yyyy") : string.Empty;
-                x.OrderType = !string.IsNullOrEmpty(x.PedidoMuestra) && x.PedidoMuestra == ServiceConstants.IsSampleOrder ? ServiceConstants.OrderTypeMU : x.OrderType;
+                elementToSave.PedidoStatus = order == null ? elementToSave.PedidoStatus : order.Status;
+                elementToSave.FinishedLabel = order == null ? 0 : order.FinishedLabel;
+                elementToSave.Detalles = null;
+                elementToSave.FechaFin = order != null && order.CloseDate.HasValue ? order.CloseDate.Value.ToString("dd/MM/yyyy") : string.Empty;
+                elementToSave.OrderType = !string.IsNullOrEmpty(elementToSave.PedidoMuestra) && elementToSave.PedidoMuestra == ServiceConstants.IsSampleOrder ? ServiceConstants.OrderTypeMU : elementToSave.OrderType;
+
+                var user = users.FirstOrDefault(y => y.Id.Equals(elementToSave.Qfb));
+                elementToSave.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+                listToFilter.Add(elementToSave);
             });
+
+            orderModels = listToFilter;
 
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
@@ -148,12 +148,6 @@ namespace Omicron.SapAdapter.Services.Utils
                 {
                     return new List<CompleteOrderModel>();
                 }
-
-                ordersById.ForEach(x =>
-                {
-                    var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));
-                    x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
-                });
 
                 return ordersById;
             }
@@ -176,7 +170,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.Label))
             {
-                orderModels = orderModels.Where(x => x.LabelType == "M" || x.LabelType == parameters[ServiceConstants.Label]).ToList();
+                orderModels = orderModels.Where(x => x.LabelType == ServiceConstants.MixtoAbr || x.LabelType == parameters[ServiceConstants.Label]).ToList();
             }
 
             if (parameters.ContainsKey(ServiceConstants.FinishedLabel))
@@ -188,12 +182,6 @@ namespace Omicron.SapAdapter.Services.Utils
             {
                 orderModels = orderModels.Where(x => x.OrderType == parameters[ServiceConstants.OrderType]).ToList();
             }
-
-            orderModels.ForEach(x =>
-            {
-                var user = users.FirstOrDefault(y => y.Id.Equals(x.Qfb));
-                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
-            });
 
             return orderModels;
         }
