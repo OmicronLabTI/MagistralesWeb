@@ -297,6 +297,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="components">Components of custom list to insert.</param>
         /// <returns>Operation result.</returns>
         Task<bool> DeleteComponentsOfCustomList(List<ComponentCustomComponentListModel> components);
-        
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="fechaInicio">The init date.</param>
+        /// <param name="fechaFin">the end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByPlanningDate(DateTime fechaInicio, DateTime fechaFin);
     }
 }

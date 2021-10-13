@@ -980,5 +980,24 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
+        public async Task GetOrdersDocNumDxp()
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNumDxp, "A1" },
+            };
+
+            // act
+            var result = await this.sapService.GetOrders(dicParams);
+
+            Assert.IsNotNull(result);
+        }
     }
 }
