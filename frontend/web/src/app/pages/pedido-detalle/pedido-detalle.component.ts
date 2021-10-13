@@ -101,7 +101,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
     this.dataSource.data = response;
     this.dataSource.data.forEach(element => {
-      const patientName = element.patientName !== CONST_STRING.empty && element.patientName !== undefined  ? 
+      const patientName = element.patientName !== CONST_STRING.empty && element.patientName !== undefined ?
         element.patientName.split(':')[1]
         : CONST_STRING.empty;
       this.patientName = patientName;

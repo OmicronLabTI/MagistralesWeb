@@ -28,9 +28,12 @@ export class IUserReq {
     piezas?: any;
     asignable?: number;
     userTypeR?: string;
-    isChecked?: boolean = false;
+    isChecked?: boolean;
     classification?: string;
     fullClasification?: string;
+    constructor() {
+        this.isChecked = false;
+    }
 }
 export class UserRes {
     activo: number;
