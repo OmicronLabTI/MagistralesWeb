@@ -1,5 +1,5 @@
-import { ChangeDetectorRef } from '@angular/core';
-import { Component, Inject, OnInit, ViewChild  } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 
@@ -8,9 +8,9 @@ import { SignaturePad } from 'angular2-signaturepad/signature-pad';
   templateUrl: './request-signature-dialog.component.html',
   styleUrls: ['./request-signature-dialog.component.scss']
 })
-export class RequestSignatureDialogComponent implements OnInit {
+export class RequestSignatureDialogComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(SignaturePad, {static: false}) signaturePad: SignaturePad;
+  @ViewChild(SignaturePad, { static: false }) signaturePad: SignaturePad;
   public isValidSignature: boolean;
   public signaturePadOptions = {
     minWidth: 2,
@@ -22,13 +22,13 @@ export class RequestSignatureDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) private data: string,
     private dialogRef: MatDialogRef<RequestSignatureDialogComponent>,
     private changeDetector: ChangeDetectorRef
-  ) { 
+  ) {
   }
 
   ngOnInit() {
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.reset();
     if (this.data !== null && this.data !== undefined && this.data !== '') {
       this.signaturePad.fromDataURL(`data:image/png;base64,${this.data}`);
