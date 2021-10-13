@@ -9,8 +9,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {DatePipe} from '@angular/common';
 
 describe('WorkLoadComponent', () => {
-  const component: WorkLoadComponent;
-  const fixture: ComponentFixture<WorkLoadComponent>;
+  let component: WorkLoadComponent;
+  let fixture: ComponentFixture<WorkLoadComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
