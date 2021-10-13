@@ -78,6 +78,7 @@ export class IPlaceOrdersAutomaticReq {
 export class IPedidoReq {
     isChecked: boolean;
     docNum: number;
+    docNumDxp: string;
     codigo: string;
     cliente: string;
     medico: string;

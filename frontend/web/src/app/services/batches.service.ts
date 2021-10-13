@@ -10,7 +10,7 @@ export class BatchesService {
 
   constructor(private consumeService: ConsumeService) { }
 
-  getInventoryBatches(ordenFabId: string){
+  getInventoryBatches(ordenFabId: string) {
     return this.consumeService.httpGet<ILotesFormulaRes>(Endpoints.inventoryBatches.getInventoryBatches + ordenFabId);
   }
 
