@@ -69,6 +69,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        OrderType = order.OrderType,
                                        Canceled = order.Canceled,
                                        PedidoMuestra = order.PedidoMuestra,
+                                       DocNumDxp = order.DocNumDxp,
                                    });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -100,6 +101,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    OrderType = order.OrderType,
                                    Canceled = order.Canceled,
                                    PedidoMuestra = order.PedidoMuestra,
+                                   DocNumDxp = order.DocNumDxp,
                                });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -132,9 +134,40 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                   OrderType = order.OrderType,
                                   Canceled = order.Canceled,
                                   PedidoMuestra = order.PedidoMuestra,
+                                  DocNumDxp = order.DocNumDxp,
                               });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<CompleteOrderModel>> GetAllOrdersByDocNumDxp(string docNumDxp)
+        {
+            var query = (from order in this.databaseContext.OrderModel
+                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                         join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
+                         join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                         where order.DocNumDxp == docNumDxp && producto.IsMagistral == "Y"
+                         select new CompleteOrderModel
+                         {
+                             DocNum = order.DocNum,
+                             Cliente = order.Cliente,
+                             Codigo = order.Codigo,
+                             Medico = order.Medico,
+                             AsesorName = asesor.AsesorName,
+                             FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
+                             FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
+                             PedidoStatus = order.PedidoStatus,
+                             AtcEntry = order.AtcEntry,
+                             IsChecked = false,
+                             Detalles = detalle,
+                             OrderType = order.OrderType,
+                             Canceled = order.Canceled,
+                             PedidoMuestra = order.PedidoMuestra,
+                             DocNumDxp = order.DocNumDxp,
+                         });
+
+            return (await this.RetryQuery<CompleteOrderModel>(query)).ToList();
         }
 
         /// <summary>

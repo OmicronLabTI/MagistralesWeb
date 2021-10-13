@@ -23,6 +23,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// the filter for orders.
         /// </summary>
+        public const string DocNumDxp = "docNumDxp";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
         public const string FechaInicio = "fini";
 
         /// <summary>
