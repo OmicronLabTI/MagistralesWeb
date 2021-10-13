@@ -40,6 +40,7 @@ export class RecipesRes {
 export class ParamsPedidos {
     dateType?: string;
     docNum?: any;
+    docNumDxp?: string;
     fini?: Date;
     ffin?: Date;
     status?: string;

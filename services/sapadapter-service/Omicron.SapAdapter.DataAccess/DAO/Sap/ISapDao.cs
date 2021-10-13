@@ -59,6 +59,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int init, int end);
 
         /// <summary>
+        /// REturns the order by docnum dxp.
+        /// </summary>
+        /// <param name="docNumDxp">the docnum.</param>
+        /// <returns>the data.</returns>
+        Task<List<CompleteOrderModel>> GetAllOrdersByDocNumDxp(string docNumDxp);
+
+        /// <summary>
         /// gets the orders by product and item.
         /// </summary>
         /// <param name="pedidoId">the product id.</param>

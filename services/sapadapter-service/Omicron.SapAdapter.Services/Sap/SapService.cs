@@ -728,8 +728,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 int.TryParse(valueSplit[1], out int docNumEnd);
                 return (await this.sapDao.GetAllOrdersById(docNumInit, docNumEnd)).ToList();
             }
-
-            if (parameters.ContainsKey(ServiceConstants.FechaInicio))
+            else if (parameters.ContainsKey(ServiceConstants.DocNumDxp))
+            {
+                return await this.sapDao.GetAllOrdersByDocNumDxp(parameters[ServiceConstants.DocNumDxp]);
+            }
+            else if (parameters.ContainsKey(ServiceConstants.FechaInicio))
             {
                 return (await this.sapDao.GetAllOrdersByFechaIni(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList();
             }
