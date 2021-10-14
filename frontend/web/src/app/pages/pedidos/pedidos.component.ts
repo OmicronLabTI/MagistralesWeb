@@ -125,6 +125,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.dataSource.data.forEach(element => {
           element.pedidoStatus = element.canceled === ConstStatus.canceled ?
             ConstStatus.cancelado : element.pedidoStatus;
+          element.docNumDxp = element.docNumDxp ? element.docNumDxp : '';
           switch (element.pedidoStatus) {
             case ConstStatus.abierto:
               element.class = 'abierto';
