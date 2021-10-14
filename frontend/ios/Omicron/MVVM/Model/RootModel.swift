@@ -126,6 +126,7 @@ extension Order: Mappable {
         destiny <- map["destiny"]
         hasMissingStock <- map["hasMissingStock"]
         finishedLabel <- map["finishedLabel"]
+        areBatchesComplete <- map["areBatchesComplete"]
     }
 }
 struct SectionOrder {

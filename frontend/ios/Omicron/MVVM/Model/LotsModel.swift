@@ -121,9 +121,9 @@ class BatchSelected: Codable {
     var action: String?
     var sysNumber: Int?
     var expiredBatch: Bool = false
-    var areBatchesComplete: Int?
+    var areBatchesComplete: Int
     init(orderId: Int?, assignedQty: Decimal?, batchNumber: String?,
-         itemCode: String?, action: String?, sysNumber: Int?, expiredBatch: Bool, areBatchesComplete: Int?) {
+         itemCode: String?, action: String?, sysNumber: Int?, expiredBatch: Bool, areBatchesComplete: Int) {
         self.orderId = orderId
         self.assignedQty = assignedQty
         self.batchNumber = batchNumber

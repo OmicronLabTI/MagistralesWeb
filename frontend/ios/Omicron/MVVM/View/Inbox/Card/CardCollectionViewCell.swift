@@ -53,10 +53,13 @@ class CardCollectionViewCell: UICollectionViewCell {
                 borderColor: OmicronColors.assignedStatus,
                 iconName: ImageButtonNames.assigned, orderTextColor: .black)
         case 2:
-            let textColor: UIColor = self.order?.areBatchesComplete ?? false ? .green : .black
+            let borderColor: UIColor = self.order?.areBatchesComplete ?? false ?
+                UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : OmicronColors.processStatus
+            let textColor =  self.order?.areBatchesComplete ?? false ?
+                UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : .black
             self.propertyCard(
                 cell: self,
-                borderColor: OmicronColors.processStatus,
+                borderColor: borderColor,
                 iconName: ImageButtonNames.inProcess, orderTextColor: textColor)
         case 3:
             self.propertyCard(
@@ -81,7 +84,6 @@ class CardCollectionViewCell: UICollectionViewCell {
         cell.assignedStyleCard(color: borderColor.cgColor)
         missingStockImage.layer.borderColor = borderColor.cgColor
         missingStockImage.tintColor = borderColor
-        cell.manufacturingOrder.textColor = orderTextColor
         cell.numberDescriptionLabel.textColor = orderTextColor
     }
 
