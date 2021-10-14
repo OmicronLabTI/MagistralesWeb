@@ -32,7 +32,7 @@ class InboxTest: XCTestCase {
         rootViewModel = RootViewModel()
         disposeBag = DisposeBag()
         order1 = Order(
-            productionOrderId: 89284, baseDocument: 60067, container: "",
+            areBatchesComplete: true, productionOrderId: 89284, baseDocument: 60067, container: "",
             tag: "Selecciona una...", plannedQuantity: 1, startDate: "27/08/2020",
             finishDate: "06/09/2020",
             descriptionProduct: "Aceite de Arbol de Te 0.3%, Alantoina 0.3%, Citrico 0.2%, " +
@@ -41,24 +41,24 @@ class InboxTest: XCTestCase {
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
             hasMissingStock: false, finishedLabel: false)
         order2 = Order(
-            productionOrderId: 89995, baseDocument: 60284, container: "PRINCESS/ATOMIZADOR",
+            areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284, container: "PRINCESS/ATOMIZADOR",
             tag: "NA", plannedQuantity: 1, startDate: "22/09/2020", finishDate: "30/09/2020",
             descriptionProduct: "Lactico 30% Solución", statusId: 1, itemCode: "1027S   30 ML",
             productCode: "1027S", destiny: "Local", hasMissingStock: false, finishedLabel: false)
         orderItemCodeEmpty = Order(
-            productionOrderId: 89995, baseDocument: 60284, container: "PRINCESS/ATOMIZADOR", tag: "NA",
+            areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284, container: "PRINCESS/ATOMIZADOR", tag: "NA",
             plannedQuantity: 1, startDate: "22/09/2020",
             finishDate: "30/09/2020", descriptionProduct: "Lactico 30% Solución",
             statusId: 1, itemCode: "", productCode: "1027S", destiny: "Local",
             hasMissingStock: false, finishedLabel: false)
         orderTest1 = Order(
-            productionOrderId: 90006, baseDocument: 60288, container: "Selecciona una...",
+            areBatchesComplete: true, productionOrderId: 90006, baseDocument: 60288, container: "Selecciona una...",
             tag: "Selecciona una...", plannedQuantity: 2, startDate: "24/09/2020", finishDate: "25/09/2020",
             descriptionProduct: "Agua de rosas 48%  agua de hamamelis 48%   propilenglicol 4%",
             statusId: 1, itemCode: "1132   120 ML", productCode: nil, destiny: "Local",
             hasMissingStock: true, finishedLabel: false)
         orderTest2 = Order(
-            productionOrderId: 89997, baseDocument: 60284, container: "PRINCESS/DISCTOP",
+            areBatchesComplete: true, productionOrderId: 89997, baseDocument: 60284, container: "PRINCESS/DISCTOP",
             tag: "PERSONALIZADA", plannedQuantity: 1, startDate: "22/09/2020", finishDate: "30/09/2020",
             descriptionProduct: "Aceite de Lima 20%, Vaselina", statusId: 1, itemCode: "2573   30 ML",
             productCode: nil, destiny: "Local", hasMissingStock: false, finishedLabel: false)
@@ -104,7 +104,7 @@ class InboxTest: XCTestCase {
     func testGroupedWithSimilarityOrWithoutSimilarityShouldBeGroupedWithoutSimilarity() {
         // Given
         var data: [String?:[Order]] = [:]
-        let order = Order(productionOrderId: 89852, baseDocument: 0, container: "", tag: "",
+        let order = Order(areBatchesComplete: true, productionOrderId: 89852, baseDocument: 0, container: "", tag: "",
                           plannedQuantity: 1, startDate: "14/09/2020", finishDate: "14/09/2020",
                           descriptionProduct: "CREMA BASE PARA RETINOICO", statusId: 1, itemCode: "BA-01",
                           productCode: "BA-01", destiny: "Local", hasMissingStock: false, finishedLabel: false)
