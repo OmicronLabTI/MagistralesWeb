@@ -359,7 +359,7 @@ class LotsViewModel {
         if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
             self.loading.onNext(true)
             let finishOrder = FinishOrder(
-                userId: Persistence.shared.getUserData()!.id!, fabricationOrderId: [self.orderId],
+                userId: Persistence.shared.getUserData()?.id ?? String(), fabricationOrderId: [self.orderId],
                 qfbSignature: self.sqfbSignature, technicalSignature: technicalSignature)
             self.networkManager.finishOrder(
                 order: finishOrder, needsError: needsError, statusCode: statusCode, testData: testData)
@@ -394,7 +394,7 @@ class LotsViewModel {
     func changeOrderToPendingStatus(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
         self.loading.onNext(true)
         let orderToChageStatus = ChangeStatusRequest(
-            userId: Persistence.shared.getUserData()!.id!,
+            userId: Persistence.shared.getUserData()?.id ?? String(),
             orderId: self.orderId, status: CommonStrings.pending)
         self.networkManager.changeStatusOrder(
             changeStatusRequest: [orderToChageStatus], needsError: needsError,

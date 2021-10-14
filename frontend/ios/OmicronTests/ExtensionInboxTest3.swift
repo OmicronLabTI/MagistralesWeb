@@ -21,7 +21,7 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel = InboxViewModel()
         disposeBag = DisposeBag()
         order1 = Order(
-            productionOrderId: 89284, baseDocument: 60067, container: "",
+            areBatchesComplete: true, productionOrderId: 89284, baseDocument: 60067, container: "",
             tag: "Selecciona una...", plannedQuantity: 1, startDate: "27/08/2020",
             finishDate: "06/09/2020",
             descriptionProduct: "Aceite de Arbol de Te 0.3%, Alantoina 0.3%, Citrico 0.2%, " +
