@@ -12,8 +12,6 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
