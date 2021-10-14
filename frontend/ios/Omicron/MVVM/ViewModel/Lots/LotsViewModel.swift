@@ -275,9 +275,10 @@ class LotsViewModel {
             self.showMessage.onNext(CommonStrings.noChanges)
             return
         }
+        let areBatchesComplete = self.documentLines.filter({$0.totalNecesario == 0})
+            .count == self.documentLines.count ? 1 : 0
         batchesToSend.forEach { (item) in
-            let batchFound = self.documentLines.first(where: {$0.codigoProducto == item.itemCode })
-            item.areBatchesComplete = batchFound?.totalNecesario == 0 ? 1 : 0
+            item.areBatchesComplete = areBatchesComplete
         }
         self.sendToServerAssignedLots(lotsToSend: batchesToSend)
     }
