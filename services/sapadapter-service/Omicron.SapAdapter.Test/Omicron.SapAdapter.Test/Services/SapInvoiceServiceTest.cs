@@ -46,6 +46,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.context = new DatabaseContext(options);
             this.context.DetallePedido.AddRange(this.GetDetallePedido());
+            this.context.OrderModel.AddRange(this.GetOrderModel());
             this.context.ProductoModel.AddRange(this.GetProductoModel());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
             this.context.Batches.AddRange(this.GetBatches());
