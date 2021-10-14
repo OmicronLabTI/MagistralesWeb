@@ -205,7 +205,7 @@ namespace Omicron.Usuarios.Services.User
             var userIdList = users.Select(x => x.Id);
             var pedidosResponse = await this.pedidoService.PostPedidos(userIdList, ServiceConstants.QfbOrders);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
-            var userWithCount = await this.GroupUserWithOrderCount(users, userOrders);
+            var userWithCount = this.GroupUserWithOrderCount(users, userOrders);
 
             return ServiceUtils.CreateResult(true, 200, null, userWithCount, null, null);
         }
@@ -216,7 +216,7 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="users">the users.</param>
         /// <param name="orders">the orders.</param>
         /// <returns>the relationship.</returns>
-        private async Task<List<UserWithOrderCountModel>> GroupUserWithOrderCount(List<UserModel> users, List<UserOrderModel> orders)
+        private List<UserWithOrderCountModel> GroupUserWithOrderCount(List<UserModel> users, List<UserOrderModel> orders)
         {
             var listToReturn = new List<UserWithOrderCountModel>();
 

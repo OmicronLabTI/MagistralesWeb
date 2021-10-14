@@ -107,8 +107,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetUserOrdersByUserId(List<string> listIds)
         {
-            var userOrder = await this.pedidosDao.GetUserOrderByUserId(listIds);
-            userOrder = userOrder.Where(y => ServiceConstants.ListStatusOrdenesForQfbCount.Contains(y.Status)).ToList();
+            var userOrder = await this.pedidosDao.GetUserOrderByUserIdAndStatus(listIds, ServiceConstants.ListStatusOrdenesForQfbCount);
             return ServiceUtils.CreateResult(true, 200, null, userOrder, null);
         }
 

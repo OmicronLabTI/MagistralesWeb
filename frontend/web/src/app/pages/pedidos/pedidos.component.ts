@@ -45,7 +45,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   allComplete = false;
   ordersToProcess = new ProcessOrders();
   // tslint:disable-next-line:max-line-length
-  displayedColumns: string[] = ['seleccion', 'codigoDxp', 'codigo', 'cliente', 'medico', 'asesor', 'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions'];
+  displayedColumns: string[] = ['seleccion', 'codigo', 'codigoDxp', 'cliente', 'medico', 'asesor', 'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions'];
   dataSource = new MatTableDataSource<IPedidoReq>();
   pageEvent: PageEvent;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;

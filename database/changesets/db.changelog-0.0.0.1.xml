@@ -743,4 +743,15 @@
 		<column name="field" value="EmailCCRejected"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.84">
+      <sql endDelimiter=";">
+          UPDATE parameters SET value='500' WHERE field = 'QrMagistralHeight';
+		  UPDATE parameters SET value='500' WHERE field = 'QrMagistralWidth';
+		  UPDATE parameters SET value='15'  WHERE field = 'QrMagistralMargin';
+		  UPDATE parameters SET value='110' WHERE field = 'QrMagistralRectx';
+		  UPDATE parameters SET value='390' WHERE field = 'QrMagistralRecty';
+		  UPDATE parameters SET value='300' WHERE field = 'QrMagistralRectWidth';
+		  UPDATE parameters SET value='100' WHERE field = 'QrMagistralRectHeight';
+      </sql>
+  </changeSet>
 </databaseChangeLog> 
