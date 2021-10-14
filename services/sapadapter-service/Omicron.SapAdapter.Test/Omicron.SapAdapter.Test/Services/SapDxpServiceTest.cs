@@ -16,7 +16,6 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Services.Sap;
-    using Omicron.SapAdapter.Services.Utils;
     using Serilog;
 
     /// <summary>
@@ -55,7 +54,6 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.Information(It.IsAny<string>()));
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
             this.sapDxpService = new SapDxpService(this.sapDao);
         }
 
