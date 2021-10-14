@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -201,8 +201,10 @@
                 <outlet property="destiny" destination="Ha2-fp-u4o" id="Wo8-8U-oWv"/>
                 <outlet property="finishDateDescriptionLabel" destination="71u-dI-nkq" id="0Na-MU-NfV"/>
                 <outlet property="itemCode" destination="L0g-X3-GyH" id="GXg-yM-ze0"/>
+                <outlet property="manufacturingOrder" destination="UWM-2P-h2N" id="3Fk-so-JHs"/>
                 <outlet property="missingStockImage" destination="1lY-Pu-5LY" id="wPD-F7-Jr0"/>
                 <outlet property="numberDescriptionLabel" destination="KP2-PL-EKx" id="sYm-gD-hEZ"/>
+                <outlet property="orderText" destination="Tq0-m6-ZyW" id="9bz-Fz-tZI"/>
                 <outlet property="plannedQuantityDescriptionLabel" destination="D0m-qX-4KH" id="elS-Cj-4q9"/>
                 <outlet property="productDescriptionLabel" destination="bDd-OS-jWR" id="y5K-At-0k1"/>
                 <outlet property="startDateDescriptionLabel" destination="apl-w1-wNf" id="bsh-nH-qKi"/>

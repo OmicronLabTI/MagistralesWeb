@@ -27,7 +27,9 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var missingStockImage: UIImageView!
     @IBOutlet weak var itemCode: UILabel!
     @IBOutlet weak var destiny: UILabel!
-
+    @IBOutlet weak var orderText: UILabel!
+    
+    @IBOutlet weak var manufacturingOrder: UILabel!
     weak var delegate: CardCellDelegate?
     var row: Int = -1
 
@@ -50,36 +52,38 @@ class CardCollectionViewCell: UICollectionViewCell {
             self.propertyCard(
                 cell: self,
                 borderColor: OmicronColors.assignedStatus,
-                iconName: ImageButtonNames.assigned)
+                iconName: ImageButtonNames.assigned, orderTextColor: .black)
         case 2:
+            let textColor: UIColor = self.order?.areBatchesComplete ?? false ? .green : .black
             self.propertyCard(
                 cell: self,
                 borderColor: OmicronColors.processStatus,
-                iconName: ImageButtonNames.inProcess)
+                iconName: ImageButtonNames.inProcess, orderTextColor: textColor)
         case 3:
             self.propertyCard(
                 cell: self,
                 borderColor: OmicronColors.pendingStatus,
-                iconName: ImageButtonNames.pendding)
+                iconName: ImageButtonNames.pendding, orderTextColor: .black)
         case 4:
             self.propertyCard(
                 cell: self,
                 borderColor: OmicronColors.finishedStatus,
-                iconName: ImageButtonNames.finished)
+                iconName: ImageButtonNames.finished, orderTextColor: .black)
         case 5:
             self.propertyCard(
                 cell: self,
                 borderColor: OmicronColors.reassignedStatus,
-                iconName: ImageButtonNames.reasigned)
+                iconName: ImageButtonNames.reasigned, orderTextColor: .black)
         default: break
         }
     }
 
-    func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String) {
+    func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String, orderTextColor: UIColor) {
         cell.assignedStyleCard(color: borderColor.cgColor)
-//        UtilsManager.shared.changeIconButton(button: cell.showDetail, iconName: iconName)
         missingStockImage.layer.borderColor = borderColor.cgColor
         missingStockImage.tintColor = borderColor
+        cell.manufacturingOrder.textColor = orderTextColor
+        cell.numberDescriptionLabel.textColor = orderTextColor
     }
 
     func assignedStyleCard(color: CGColor) {

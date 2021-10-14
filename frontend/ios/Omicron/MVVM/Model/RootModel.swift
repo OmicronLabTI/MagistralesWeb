@@ -75,6 +75,7 @@ extension StatusDetail: Mappable {
     }
 }
 class Order {
+    var areBatchesComplete: Bool?
     var productionOrderId: Int?
     var baseDocument: Int?
     var container: String?
@@ -90,9 +91,10 @@ class Order {
     var hasMissingStock = false
     var finishedLabel = false
 
-    init(productionOrderId: Int?, baseDocument: Int?, container: String?, tag: String?, plannedQuantity: Decimal?,
+    init(areBatchesComplete: Bool?, productionOrderId: Int?, baseDocument: Int?, container: String?, tag: String?, plannedQuantity: Decimal?,
          startDate: String?, finishDate: String?, descriptionProduct: String?, statusId: Int?, itemCode: String?,
          productCode: String?, destiny: String?, hasMissingStock: Bool, finishedLabel: Bool) {
+        self.areBatchesComplete = areBatchesComplete
         self.productionOrderId = productionOrderId
         self.baseDocument = baseDocument
         self.container = container
