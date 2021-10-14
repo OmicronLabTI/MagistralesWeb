@@ -7,7 +7,7 @@ import { DatePipe } from '@angular/common';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {ConstOrders} from '../../constants/const';
+import {ConstOrders, MODAL_FIND_ORDERS} from '../../constants/const';
 import {UsersService} from '../../services/users.service';
 import {PedidosService} from '../../services/pedidos.service';
 import {of, throwError} from 'rxjs';
@@ -16,6 +16,7 @@ import {RolesMock} from '../../../mocks/rolesMock';
 import {QfbWithNumberMock} from '../../../mocks/qfbWithNumberMock';
 import {RouterTestingModule} from '@angular/router/testing';
 import {ErrorService} from '../../services/error.service';
+import { ParamsPedidos } from 'src/app/model/http/pedidos';
 
 describe('FindOrdersDialogComponent', () => {
   let component: FindOrdersDialogComponent;
@@ -29,6 +30,9 @@ describe('FindOrdersDialogComponent', () => {
     dateFull: '01/01/2020-02/02/2020',
     docNum: 11248
     }
+  };
+  const MockDialogRef = {
+    close: jasmine.createSpy('close')
   };
   const QfbSelectSpy = [
     {
@@ -80,7 +84,7 @@ describe('FindOrdersDialogComponent', () => {
       declarations: [ FindOrdersDialogComponent ],
       providers: [
         DatePipe,
-        { provide: MatDialogRef, useValue: {} },
+        { provide: MatDialogRef, useValue: MockDialogRef },
         { provide: MAT_DIALOG_DATA, useValue: filterData},
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: PedidosService, useValue: ordersServiceSpy },
@@ -163,5 +167,113 @@ describe('FindOrdersDialogComponent', () => {
     component.trimFilterValues();
     expect(component.findOrdersForm.get('clientName').value).toEqual('Cliente Nombre');
     expect(component.findOrdersForm.get('productCode').value).toEqual('');
+  });
+  it('should call ngOnInit() with filter Data in docNumDxp', () => {
+    component.filterData.filterOrdersData = {
+      docNumDxp: '000001X'
+    };
+    component.ngOnInit();
+    expect(component.findOrdersForm.get('docNum').value).toEqual('');
+    expect(component.findOrdersForm.get('docNumUntil').value).toEqual('');
+  });
+  it('should call ngOnInit() with filter Data in status and qfb and clasification', () => {
+    component.filterData.filterOrdersData = {
+      qfb: 'QFBinactivo' + ' ' + 'QFBinactivo',
+      status: 'Abierto',
+      clasification: 'BE'
+    };
+    component.findOrdersForm.get('docNum').setValue('');
+    component.findOrdersForm.get('docNumUntil').setValue('');
+    component.findOrdersForm.get('docNumDxp').setValue('');
+    component.ngOnInit();
+    expect(component.findOrdersForm.get('docNum').value).toEqual('');
+    expect(component.findOrdersForm.get('docNumUntil').value).toEqual('');
+    expect(component.findOrdersForm.get('docNumDxp').value).toEqual('');
+  });
+  it('should call ngOnInit() with filter Data in null', () => {
+    component.filterData.filterOrdersData = new ParamsPedidos();
+    component.findOrdersForm.get('docNum').setValue('');
+    component.findOrdersForm.get('docNumUntil').setValue('');
+    component.findOrdersForm.get('docNumDxp').setValue('');
+    component.ngOnInit();
+    expect(component.findOrdersForm.get('docNum').value).toEqual('');
+    expect(component.findOrdersForm.get('docNumUntil').value).toEqual('');
+    expect(component.findOrdersForm.get('docNumDxp').value).toEqual('');
+    expect(component.findOrdersForm.get('status').value).toEqual('');
+    expect(component.findOrdersForm.get('qfb').value).toEqual('');
+    expect(component.findOrdersForm.get('productCode').value).toEqual('');
+    expect(component.findOrdersForm.get('clientName').value).toEqual('');
+    expect(component.findOrdersForm.get('label').value).toEqual('');
+    expect(component.findOrdersForm.get('finlabel').value).toEqual('');
+    expect(component.findOrdersForm.get('orderIncidents').value).toEqual('');
+    expect(component.findOrdersForm.get('clasification').value).toEqual('');
+    expect(component.findOrdersForm.get('docNumUntil').value).toEqual('');
+  });
+  it('should call keyDownFunction with filter Data in docNumDxp', () => {
+    component.findOrdersForm.get('docNumDxp').setValue('XXXPOK');
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: MODAL_FIND_ORDERS.keyEnter});
+    component.keyDownFunction(keyEvent);
+    expect(MockDialogRef.close).toHaveBeenCalled();
+  });
+  it('should call keyDownFunction with filter Data in docNum and docNumUntil', () => {
+    component.findOrdersForm.get('docNum').setValue('10');
+    component.findOrdersForm.get('docNumUntil').setValue('11');
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: MODAL_FIND_ORDERS.keyEnter});
+    component.keyDownFunction(keyEvent);
+    expect(MockDialogRef.close).toHaveBeenCalled();
+  });
+  it('should call keyDownFunction with filter Data in docNum and isLessDocNumUntil = true', () => {
+    component.isLessDocNumUntil = true;
+    component.findOrdersForm.get('docNum').setValue('10');
+    component.findOrdersForm.get('docNumUntil').setValue('');
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: MODAL_FIND_ORDERS.keyEnter});
+    component.keyDownFunction(keyEvent);
+    expect(MockDialogRef.close).toHaveBeenCalled();
+  });
+  it('should call keyDownFunction with filter Data in docNum and isLessDocNumUntil = false', () => {
+    component.isLessDocNumUntil = false;
+    component.findOrdersForm.get('docNum').setValue('10');
+    component.findOrdersForm.get('docNumUntil').setValue('');
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: MODAL_FIND_ORDERS.keyEnter});
+    component.keyDownFunction(keyEvent);
+    expect(MockDialogRef.close).toHaveBeenCalled();
+  });
+  it('should call keyDownFunction with filter Data in docNum and docNumUntil and KeyboardEvent in false', () => {
+    component.findOrdersForm.get('docNum').setValue('10');
+    component.findOrdersForm.get('docNumUntil').setValue('11');
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: ''});
+    component.keyDownFunction(keyEvent);
+  });
+
+  it('should call changeDocNumber with KeyboardEvent in true isDocNUmUntil = true', () => {
+    component.findOrdersForm.get('docNum').setValue('10');
+    component.findOrdersForm.get('docNumUntil').setValue('');
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: '-'});
+    const spy = spyOn(keyEvent, 'preventDefault');
+    component.changeDocNumber(keyEvent, true);
+    expect(spy).toHaveBeenCalled();
+  });
+  it('should call changeDocNumber with KeyboardEvent in true isDocNUmUntil = false', () => {
+    component.findOrdersForm.get('docNum').setValue('');
+    component.findOrdersForm.get('docNumUntil').setValue('');
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: '0'});
+    const spy = spyOn(keyEvent, 'preventDefault');
+    component.changeDocNumber(keyEvent, false);
+    expect(spy).toHaveBeenCalled();
+  });
+  it('should call changeDocNumber with KeyboardEvent in true isDocNUmUntil = false', () => {
+    component.findOrdersForm.get('docNum').setValue('');
+    component.findOrdersForm.get('docNumUntil').setValue('');
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: '0'});
+    const spy = spyOn(keyEvent, 'preventDefault');
+    component.changeDocNumber(keyEvent, false);
+    expect(spy).toHaveBeenCalled();
+  });
+  it('should call changeDocNumber with KeyboardEvent in false isDocNUmUntil = false', () => {
+    component.findOrdersForm.get('docNum').setValue('1001');
+    component.findOrdersForm.get('docNumUntil').setValue('111');
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: '-----'});
+    const spy = spyOn(keyEvent, 'preventDefault');
+    component.changeDocNumber(keyEvent, false);
   });
 });

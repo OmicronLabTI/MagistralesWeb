@@ -1,21 +1,21 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PedidosComponent } from './pedidos.component';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {DatePipe} from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {PedidosService} from '../../services/pedidos.service';
-import {of, throwError} from 'rxjs';
-import {PedidosListMock} from '../../../mocks/pedidosListMock';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ConstStatus} from '../../constants/const';
-import {PageEvent} from '@angular/material/paginator';
-import {DataService} from '../../services/data.service';
+import { PedidosService } from '../../services/pedidos.service';
+import { of, throwError } from 'rxjs';
+import { PedidosListMock } from '../../../mocks/pedidosListMock';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ConstStatus } from '../../constants/const';
+import { PageEvent } from '@angular/material/paginator';
+import { DataService } from '../../services/data.service';
 import Swal from 'sweetalert2';
-import {IProcessOrdersRes} from '../../model/http/pedidos';
-import {PipesModule} from '../../pipes/pipes.module';
-import {RangeDateMOck} from '../../../mocks/rangeDateMock';
+import { IProcessOrdersRes } from '../../model/http/pedidos';
+import { PipesModule } from '../../pipes/pipes.module';
+import { RangeDateMOck } from '../../../mocks/rangeDateMock';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
@@ -26,13 +26,13 @@ describe('PedidosComponent', () => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setQbfToPlace',
       'transformDate', 'setRefreshToken', 'setFiltersActives', 'getFiltersActives', 'removeFiltersActive',
-        'getFiltersActivesAsModel'
+      'getFiltersActivesAsModel'
     ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos', 'processOrders', 'getInitRangeDate'
     ]);
     pedidosServiceSpy.processOrders.and.callFake(() => {
-      return of({success: true, response: ['id']} as IProcessOrdersRes);
+      return of({ success: true, response: ['id'] } as IProcessOrdersRes);
     });
     pedidosServiceSpy.getInitRangeDate.and.callFake(() => {
       return of(RangeDateMOck);
@@ -41,7 +41,7 @@ describe('PedidosComponent', () => {
       return of(PedidosListMock);
     });
     TestBed.configureTestingModule({
-      declarations: [ PedidosComponent ],
+      declarations: [PedidosComponent],
       imports: [RouterTestingModule, MATERIAL_COMPONENTS,
         HttpClientTestingModule, BrowserAnimationsModule, PipesModule],
       providers: [
@@ -51,7 +51,7 @@ describe('PedidosComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-        .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -63,8 +63,8 @@ describe('PedidosComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
     expect(component.displayedColumns)
-        .toEqual(['seleccion', 'codigoDxp', 'codigo',
-          'cliente', 'medico', 'asesor', 'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions']);
+      .toEqual(['seleccion', 'codigo', 'codigoDxp', 'cliente', 'medico', 'asesor',
+        'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions']);
     expect(component.limit).toEqual(10);
     expect(component.offset).toEqual(0);
   });
@@ -79,15 +79,15 @@ describe('PedidosComponent', () => {
     expect(component.lengthPaginator).toEqual(PedidosListMock.comments);
     expect(component.dataSource.data).toEqual(PedidosListMock.response);
     component.dataSource.data.filter(pedido => pedido.pedidoStatus === ConstStatus.abierto)
-        .forEach(pedido => expect(pedido.class).toEqual('abierto'));
+      .forEach(pedido => expect(pedido.class).toEqual('abierto'));
     component.dataSource.data.filter(pedido => pedido.pedidoStatus === ConstStatus.planificado)
-        .forEach(pedido => expect(pedido.class).toEqual('planificado'));
+      .forEach(pedido => expect(pedido.class).toEqual('planificado'));
     component.dataSource.data.filter(pedido => pedido.pedidoStatus === ConstStatus.liberado)
-        .forEach(pedido => expect(pedido.class).toEqual('liberado'));
+      .forEach(pedido => expect(pedido.class).toEqual('liberado'));
     component.dataSource.data.filter(pedido => pedido.pedidoStatus === ConstStatus.cancelado)
-        .forEach(pedido => expect(pedido.class).toEqual('cancelado'));
+      .forEach(pedido => expect(pedido.class).toEqual('cancelado'));
     component.dataSource.data.filter(pedido => pedido.pedidoStatus === ConstStatus.enProceso)
-        .forEach(pedido => expect(pedido.class).toEqual('proceso'));
+      .forEach(pedido => expect(pedido.class).toEqual('proceso'));
     expect(component.isThereOrdersToPlan).toBeFalsy();
     expect(component.isThereOrdersToPlace).toBeFalsy();
     expect(component.isThereOrdersToCancel).toBeFalsy();
@@ -103,10 +103,10 @@ describe('PedidosComponent', () => {
   // only Locally
   it('should updateAllComplete', () => {
     component.dataSource.data = PedidosListMock.response;
-    component.dataSource.data.forEach( user => user.isChecked = false);
+    component.dataSource.data.forEach(user => user.isChecked = false);
     component.updateAllComplete();
     expect(component.allComplete).toBeFalsy();
-    component.dataSource.data.forEach( user => user.isChecked = true);
+    component.dataSource.data.forEach(user => user.isChecked = true);
     component.updateAllComplete();
     expect(component.allComplete).toBeTruthy();
 
@@ -114,10 +114,10 @@ describe('PedidosComponent', () => {
   it('should someComplete', () => {
     component.dataSource.data = [];
     component.dataSource.data = PedidosListMock.response;
-    component.dataSource.data.forEach( user => user.isChecked = false);
+    component.dataSource.data.forEach(user => user.isChecked = false);
     component.allComplete = false;
     expect(component.someComplete()).toBeFalsy();
-    component.dataSource.data.forEach( user => user.isChecked = true);
+    component.dataSource.data.forEach(user => user.isChecked = true);
     expect(component.someComplete()).toBeTruthy();
   });
   it('should setAll', () => {
@@ -133,8 +133,8 @@ describe('PedidosComponent', () => {
     expect(component.dataSource.data.every(user => user.isChecked)).toBeFalsy();
   });
   it('should changeDataEvent', () => {
-    expect(component.changeDataEvent({pageIndex: 0, pageSize: 5} as PageEvent)).toEqual({pageIndex: 0, pageSize: 5} as PageEvent);
-    expect(component.pageIndex ).toEqual(0);
+    expect(component.changeDataEvent({ pageIndex: 0, pageSize: 5 } as PageEvent)).toEqual({ pageIndex: 0, pageSize: 5 } as PageEvent);
+    expect(component.pageIndex).toEqual(0);
     expect(component.offset).toEqual(0);
     expect(component.limit).toEqual(5);
   });
@@ -142,22 +142,22 @@ describe('PedidosComponent', () => {
     component.dataSource.data = [];
     component.openPlaceOrdersDialog();
     component.dataSource.data = PedidosListMock.response;
-    component.dataSource.data.filter( order => order.pedidoStatus === ConstStatus.planificado)
-        .forEach(order => order.isChecked = true);
+    component.dataSource.data.filter(order => order.pedidoStatus === ConstStatus.planificado)
+      .forEach(order => order.isChecked = true);
   });
   it('should cancelOrders', () => {
     component.dataSource.data = [];
     component.cancelOrders();
     component.dataSource.data = PedidosListMock.response;
-    component.dataSource.data.filter( order => order.pedidoStatus !== ConstStatus.finalizado)
-        .forEach(order => order.isChecked = true);
+    component.dataSource.data.filter(order => order.pedidoStatus !== ConstStatus.finalizado)
+      .forEach(order => order.isChecked = true);
   });
   it('should finalizeOrders', () => {
     component.dataSource.data = [];
     component.finalizeOrders();
     component.dataSource.data = PedidosListMock.response;
-    component.dataSource.data.filter( order => order.pedidoStatus === ConstStatus.terminado)
-        .forEach(order => order.isChecked = true);
+    component.dataSource.data.filter(order => order.pedidoStatus === ConstStatus.terminado)
+      .forEach(order => order.isChecked = true);
   });
   it('should processOrders', (done) => {
     component.dataSource.data = [];

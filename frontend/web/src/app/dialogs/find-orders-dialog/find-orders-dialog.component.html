@@ -1,4 +1,6 @@
-<div class="find-orders-container" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'find-orders-container-custom' : ''">
+<div class="find-orders-container" 
+    [ngClass]="[filterData.filterOrdersData.isFromIncidents ? 'find-orders-container-custom' : '',
+                !isFromSearchOrders ? 'find-order-build-content': '']">
     <mat-card class="orders-card">
         <mat-card-header class="card-header-container">
             <mat-card-title>
@@ -9,11 +11,12 @@
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
         </mat-card-header>
         <mat-card-content class="content-card-container" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'content-card-container-custom': ''">
-            <form [formGroup]="findOrdersForm"  class="form-orders" autocomplete="off" (keydown)="keyDownFunction($event)">
-                <div class="row-form-order row-form-order-custom border-bottom-custom" *ngIf="!filterData.filterOrdersData.isFromIncidents">
+            <form [ngClass]="isFromSearchOrders ? 'orderContainer': 'orderBuildContainer' " [formGroup]="findOrdersForm"  class="form-orders" autocomplete="off" (keydown)="keyDownFunction($event)">
+                <div class="row-form-order row-form-order-custom" *ngIf="!filterData.filterOrdersData.isFromIncidents"
+                    [ngClass]="!isFromSearchOrders ? 'border-bottom-custom' : '' ">
                     <div class="form-field-left form-field-left-custom ">
                         <mat-form-field class="custom-field-full">
-                            <input matInput [placeholder]="isFromSearchOrders ? 'Pedido (desde)' : 'Orden (desde)'"
+                            <input matInput [placeholder]="isFromSearchOrders ? 'Pedido SAP (desde)' : 'Orden (desde)'"
                                    type="number"
                                    maxlength="20"
                                    class="height-input"
@@ -27,7 +30,7 @@
                     <div class="form-field-left form-field-left-custom "
                          [ngClass]="!isLessDocNumUntil ? 'error-on-range-order' : ''">
                         <mat-form-field class="custom-field-full">
-                            <input matInput [placeholder]="isFromSearchOrders ? 'Pedido (hasta)' : 'Orden (hasta)'"
+                            <input matInput [placeholder]="isFromSearchOrders ? 'Pedido SAP (hasta)' : 'Orden (hasta)'"
                                    type="number"
                                    maxlength="20"
                                    class="height-input"
@@ -43,6 +46,18 @@
                           'La orden (hasta) debe ser mayor a orden (desde)'}}">
                        help_outline
                     </span>
+                </div>
+                <div class="row-form-order row-form-order-custom border-bottom-custom" *ngIf="!filterData.filterOrdersData.isFromIncidents && isFromSearchOrders ">
+                    <div class="form-field-left form-field-left-custom ">
+                        <mat-form-field class="custom-field-full field-not-margin">
+                            <input matInput placeholder="Pedido DXP"
+                                   type="text"
+                                   maxlength="8"
+                                   class="height-input"
+                                   formControlName="docNumDxp"
+                            >
+                        </mat-form-field>
+                    </div>
                 </div>
                 <div class="row-form-order">
                     <div class="form-field-left">
