@@ -46,9 +46,9 @@ namespace Omicron.SapAdapter.Services.Utils
         /// gets the orders from sap.
         /// </summary>
         /// <param name="parameters">the filter from front.</param>
-        /// <param name="dateFilter">the date filter.</param>
+        /// <param name="orders">The orders.</param>
         /// <returns>teh orders.</returns>
-        public async Task<List<OrdenFabricacionModel>> GetSapDbProdOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter)
+        public async Task<List<OrdenFabricacionModel>> GetSapLocalProdOrders(Dictionary<string, string> parameters, List<OrdenFabricacionModel> orders)
         {
             if (parameters.ContainsKey(ServiceConstants.DocNum))
             {
@@ -60,60 +60,13 @@ namespace Omicron.SapAdapter.Services.Utils
                 return (await this.sapDao.GetFabOrderById(listIds)).ToList();
             }
 
-            var filterDate = parameters.ContainsKey(ServiceConstants.FechaInicio);
-            var listToReturn = new List<OrdenFabricacionModel>();
-
-            if (filterDate)
-            {
-                this.logger.Information("Busqueda por fecha.");
-                listToReturn.AddRange((await this.sapDao.GetFabOrderByCreateDate(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList());
-            }
-
             if (parameters.ContainsKey(ServiceConstants.ItemCode))
             {
                 var code = parameters[ServiceConstants.ItemCode].ToLower();
-                listToReturn = filterDate ? listToReturn.Where(x => x.ProductoId.ToLower().Contains(code)).ToList() : (await this.sapDao.GetFabOrderByItemCode(code)).ToList();
+                orders = orders.Where(x => x.ProductoId.ToLower().Contains(code)).ToList();
             }
 
-            return listToReturn.DistinctBy(x => x.OrdenId).ToList();
-        }
-
-        /// <summary>
-        /// gets the orders from sap.
-        /// </summary>
-        /// <param name="parameters">the filter from front.</param>
-        /// <param name="dateFilter">the date filter.</param>
-        /// <param name="orders">The orders.</param>
-        /// <returns>teh orders.</returns>
-        public List<OrdenFabricacionModel> GetSapLocalProdOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter, List<OrdenFabricacionModel> orders)
-        {
-            if (parameters.ContainsKey(ServiceConstants.DocNum))
-            {
-                int.TryParse(parameters[ServiceConstants.DocNum], out int docNum);
-                return orders.Where(x => x.OrdenId == docNum).ToList();
-            }
-
-            var filterDate = parameters.ContainsKey(ServiceConstants.FechaInicio);
-
-            if (!filterDate && !parameters.ContainsKey(ServiceConstants.ItemCode))
-            {
-                return orders;
-            }
-
-            var listToReturn = new List<OrdenFabricacionModel>();
-
-            if (filterDate)
-            {
-                listToReturn.AddRange(orders.Where(x => x.CreatedDate >= dateFilter[ServiceConstants.FechaInicio] && x.CreatedDate <= dateFilter[ServiceConstants.FechaFin]));
-            }
-
-            if (parameters.ContainsKey(ServiceConstants.ItemCode))
-            {
-                var code = parameters[ServiceConstants.ItemCode].ToLower();
-                listToReturn = filterDate ? listToReturn.Where(x => x.ProductoId.ToLower().Contains(code)).ToList() : orders.Where(x => x.ProductoId.ToLower().Contains(code)).ToList();
-            }
-
-            return listToReturn.DistinctBy(x => x.OrdenId).ToList();
+            return orders.DistinctBy(x => x.OrdenId).ToList();
         }
 
         /// <summary>
