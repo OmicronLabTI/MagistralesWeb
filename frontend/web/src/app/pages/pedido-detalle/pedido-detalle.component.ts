@@ -365,7 +365,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.checkIfThereOrdersWithoutQr();
   }
   addToOrderReceived(urlOfQr: string) {
-    this.ordersReceivedFromRequest.push(Number(urlOfQr.split('/').slice(-1)[0].split('.')[0]));
+    this.ordersReceivedFromRequest.push(Number(urlOfQr.split('/').slice(-1)[0].split('.')[0].slice(0, -2)));
   }
   checkIfThereOrdersWithoutQr() {
     const ordersWithoutQr: string[] = [];
