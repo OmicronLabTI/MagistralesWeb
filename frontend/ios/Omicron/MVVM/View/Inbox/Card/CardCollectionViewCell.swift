@@ -28,7 +28,6 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var itemCode: UILabel!
     @IBOutlet weak var destiny: UILabel!
     @IBOutlet weak var orderText: UILabel!
-    
     @IBOutlet weak var manufacturingOrder: UILabel!
     weak var delegate: CardCellDelegate?
     var row: Int = -1

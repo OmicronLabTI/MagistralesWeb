@@ -93,7 +93,7 @@ class LotsViewModel {
                     self?.selectedBatches.append(BatchSelected(orderId: existing.orderId,
                         assignedQty: (existing.assignedQty ?? 0) + (available.cantidadSeleccionada ?? 0),
                         batchNumber: existing.batchNumber, itemCode: existing.itemCode, action: Actions.insert.rawValue,
-                        sysNumber: existing.sysNumber, expiredBatch: existing.expiredBatch))
+                        sysNumber: existing.sysNumber, expiredBatch: existing.expiredBatch, areBatchesComplete: 0))
                     self?.dataLotsSelected.onNext(self?.getFilteredSelected(itemCode: product.codigoProducto) ?? [])
                 } else {
                     existing.assignedQty = (existing.assignedQty ?? 0) + (available.cantidadSeleccionada ?? 0)
@@ -108,7 +108,7 @@ class LotsViewModel {
                 self?.selectedBatches.append(BatchSelected(
                     orderId: self?.orderId, assignedQty: quantity, batchNumber: available.numeroLote,
                     itemCode: product.codigoProducto, action: Actions.insert.rawValue, sysNumber: available.sysNumber,
-                    expiredBatch: available.expiredBatch))
+                                                expiredBatch: available.expiredBatch, areBatchesComplete: 0))
                 self?.dataLotsSelected.onNext(self?.getFilteredSelected(itemCode: product.codigoProducto) ?? [])
             }
             doc.totalNecesario = (doc.totalNecesario ?? 0) - quantity
@@ -185,7 +185,7 @@ class LotsViewModel {
                             return BatchSelected(
                                 orderId: self?.orderId, assignedQty: sel.cantidadSeleccionada,
                                 batchNumber: sel.numeroLote, itemCode: batch.codigoProducto,
-                                action: nil, sysNumber: sel.sysNumber, expiredBatch: sel.expiredBatch)
+                                action: nil, sysNumber: sel.sysNumber, expiredBatch: sel.expiredBatch, areBatchesComplete: 0)
                         }) : []
                         return selected
                     }).reduce([], +)
@@ -241,7 +241,7 @@ class LotsViewModel {
                         orderId: orderId, assignedQty: firstAvailable.cantidadSeleccionada,
                         batchNumber: firstAvailable.numeroLote, itemCode: lot.codigoProducto,
                         action: Actions.insert.rawValue, sysNumber: firstAvailable.sysNumber,
-                        expiredBatch: firstAvailable.expiredBatch)
+                        expiredBatch: firstAvailable.expiredBatch, areBatchesComplete: 0)
                     if let totalNecesario = lot.totalNecesario,
                        let cantidadSeleccionada = firstAvailable.cantidadSeleccionada {
                         let result = totalNecesario - cantidadSeleccionada
@@ -274,6 +274,10 @@ class LotsViewModel {
         if batchesToSend.count == 0 {
             self.showMessage.onNext(CommonStrings.noChanges)
             return
+        }
+        batchesToSend.forEach { (item) in
+            let batchFound = self.documentLines.first(where: {$0.codigoProducto == item.itemCode })
+            item.areBatchesComplete = batchFound?.totalNecesario == 0 ? 1 : 0
         }
         self.sendToServerAssignedLots(lotsToSend: batchesToSend)
     }
