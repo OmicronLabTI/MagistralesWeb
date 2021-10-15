@@ -226,7 +226,7 @@
                                     [(ngModel)]="element.baseQuantity"
                                     (ngModelChange)="onBaseQuantityChange($event, i)"
                                     appDigitDecimalNumber
-                                    decimalPlaces="8">
+                                    decimalPlaces="6">
                        </mat-form-field>
 
                         <mat-form-field appearance="outline" *ngIf="element.isContainer">
@@ -254,7 +254,7 @@
                                        [(ngModel)]="element.requiredQuantity"
                                        (ngModelChange)="onRequiredQuantityChange($event, i)"
                                        appDigitDecimalNumber
-                                       decimalPlaces="8">
+                                       decimalPlaces="6">
                             </mat-form-field>
 
                             <mat-form-field appearance="outline" *ngIf="element.isContainer">
