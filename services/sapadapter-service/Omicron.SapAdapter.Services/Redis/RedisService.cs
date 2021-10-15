@@ -10,7 +10,6 @@ namespace Omicron.SapAdapter.Services.Redis
 {
     using System;
     using System.Threading.Tasks;
-    using Serilog;
     using StackExchange.Redis;
 
     /// <summary>
@@ -18,8 +17,6 @@ namespace Omicron.SapAdapter.Services.Redis
     /// </summary>
     public class RedisService : IRedisService
     {
-        private readonly ILogger logger;
-
         private readonly IConnectionMultiplexer redis;
 
         private readonly IDatabase database;
@@ -29,9 +26,8 @@ namespace Omicron.SapAdapter.Services.Redis
         /// </summary>
         /// <param name="logger">Catalogos Facade.</param>
         /// <param name="redis">Redis Cache.</param>
-        public RedisService(ILogger logger, IConnectionMultiplexer redis)
+        public RedisService(IConnectionMultiplexer redis)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.redis = redis ?? throw new ArgumentNullException(nameof(redis));
             this.database = redis.GetDatabase();
         }

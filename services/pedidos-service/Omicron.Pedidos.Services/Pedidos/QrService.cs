@@ -15,7 +15,6 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Drawing.Imaging;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
@@ -25,7 +24,6 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.AlmacenService;
     using Omicron.Pedidos.Services.Azure;
     using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.Utils;
     using ZXing;
 

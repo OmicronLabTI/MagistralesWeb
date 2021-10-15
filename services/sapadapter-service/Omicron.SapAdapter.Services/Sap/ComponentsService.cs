@@ -20,7 +20,6 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
-    using Serilog;
 
     /// <summary>
     /// class for components.
@@ -29,23 +28,16 @@ namespace Omicron.SapAdapter.Services.Sap
     {
         private readonly ISapDao sapDao;
 
-        /// <summary>
-        /// The logger.
-        /// </summary>
-        private readonly ILogger logger;
-
         private readonly IRedisService redisService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ComponentsService"/> class.
         /// </summary>
         /// <param name="sapDao">sap dao.</param>
-        /// <param name="logger">the logger.</param>
         /// <param name="redisService">The reddis service.</param>
-        public ComponentsService(ISapDao sapDao, ILogger logger, IRedisService redisService)
+        public ComponentsService(ISapDao sapDao, IRedisService redisService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.logger = logger;
             this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 

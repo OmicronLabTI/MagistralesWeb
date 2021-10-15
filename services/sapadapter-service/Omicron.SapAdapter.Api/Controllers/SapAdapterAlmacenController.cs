@@ -12,11 +12,8 @@ namespace Omicron.SapAdapter.Api.Controllers
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Facade.Sap;
-    using Omicron.SapAdapter.Resources.Extensions;
-    using Serilog;
 
     /// <summary>
     /// Class SapAdapterController Controller.
@@ -25,26 +22,15 @@ namespace Omicron.SapAdapter.Api.Controllers
     [ApiController]
     public class SapAdapterAlmacenController : ControllerBase
     {
-        private readonly ISapFacade sapFacade;
-
         private readonly ISapAlmacenFacade sapAlmacenFacade;
-
-        /// <summary>
-        /// The logger.
-        /// </summary>
-        private readonly ILogger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAdapterAlmacenController"/> class.
         /// </summary>
-        /// <param name="sapFacade">the sap facade.</param>
-        /// <param name="logger">the logger factory.</param>
         /// <param name="sapAlmacenFacade">the sap almacen.</param>
-        public SapAdapterAlmacenController(ISapFacade sapFacade, ILogger logger, ISapAlmacenFacade sapAlmacenFacade)
+        public SapAdapterAlmacenController(ISapAlmacenFacade sapAlmacenFacade)
         {
-            this.sapFacade = sapFacade ?? throw new ArgumentNullException(nameof(sapFacade));
             this.sapAlmacenFacade = sapAlmacenFacade ?? throw new ArgumentNullException(nameof(sapAlmacenFacade));
-            this.logger = logger;
         }
 
         /// <summary>
