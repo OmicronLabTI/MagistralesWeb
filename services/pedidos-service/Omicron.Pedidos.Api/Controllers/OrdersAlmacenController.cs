@@ -14,7 +14,6 @@ namespace Omicron.Pedidos.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Facade.Pedidos;
-    using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
     /// the class for pedidos.
@@ -23,8 +22,6 @@ namespace Omicron.Pedidos.Api.Controllers
     [ApiController]
     public class OrdersAlmacenController : ControllerBase
     {
-        private readonly IPedidoFacade pedidoFacade;
-
         private readonly IQrFacade qrsFacade;
 
         private readonly IPedidosAlmacenFacade pedidosAlmacenFacade;
@@ -32,12 +29,10 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="OrdersAlmacenController"/> class.
         /// </summary>
-        /// <param name="pedidoFacade">the pedido facade.</param>
         /// <param name="qrsFacade">The qr Facade.</param>
         /// <param name="pedidosAlmacen">The pedidos almacen facade.</param>
-        public OrdersAlmacenController(IPedidoFacade pedidoFacade, IQrFacade qrsFacade, IPedidosAlmacenFacade pedidosAlmacen)
+        public OrdersAlmacenController(IQrFacade qrsFacade, IPedidosAlmacenFacade pedidosAlmacen)
         {
-            this.pedidoFacade = pedidoFacade ?? throw new ArgumentNullException(nameof(pedidoFacade));
             this.qrsFacade = qrsFacade ?? throw new ArgumentException(nameof(qrsFacade));
             this.pedidosAlmacenFacade = pedidosAlmacen ?? throw new ArgumentNullException(nameof(pedidosAlmacen));
         }

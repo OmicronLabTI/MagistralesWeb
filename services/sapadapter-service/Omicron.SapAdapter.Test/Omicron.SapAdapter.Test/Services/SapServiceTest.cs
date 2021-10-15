@@ -512,9 +512,12 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Get last isolated production order id.
         /// </summary>
+        /// <param name="needLargeDescription">need large descr.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task GetFabOrdersOnlyLocals()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task GetFabOrdersOnlyLocals(bool needLargeDescription)
         {
             // arrange
             var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
@@ -530,6 +533,11 @@ namespace Omicron.SapAdapter.Test.Services
                     { ServiceConstants.Qfb, "abc" },
                 },
             };
+
+            if (needLargeDescription)
+            {
+                parameters.Filters.Add(ServiceConstants.NeedsLargeDsc, "true");
+            }
 
             // act
             var result = await this.sapService.GetFabOrders(parameters);

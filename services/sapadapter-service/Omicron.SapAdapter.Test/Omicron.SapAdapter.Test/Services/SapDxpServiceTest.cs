@@ -8,25 +8,14 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
     using Moq;
-    using Newtonsoft.Json;
     using NUnit.Framework;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Services.Constants;
-    using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
-    using Omicron.SapAdapter.Services.User;
-    using Omicron.SapAdapter.Services.Utils;
     using Serilog;
 
     /// <summary>
@@ -65,8 +54,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.Information(It.IsAny<string>()));
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
-            this.sapDxpService = new SapDxpService(this.sapDao, mockLog.Object);
+            this.sapDxpService = new SapDxpService(this.sapDao);
         }
 
         /// <summary>
