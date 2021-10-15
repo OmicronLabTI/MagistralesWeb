@@ -227,12 +227,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 bitmap.Save(memoryStrem, ImageFormat.Png);
                 memoryStrem.Position = 0;
 
-                var result = await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
-
-                if (!result)
-                {
-                    throw new CustomServiceException("Error subiir azure", System.Net.HttpStatusCode.BadRequest);
-                }
+                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
 
                 var modelToSave = new ProductionOrderQr
                 {
