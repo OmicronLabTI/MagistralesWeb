@@ -19,6 +19,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
@@ -226,7 +227,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 bitmap.Save(memoryStrem, ImageFormat.Png);
                 memoryStrem.Position = 0;
 
-                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
+                var result = await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
+
+                if (!result)
+                {
+                    throw new CustomServiceException("Error subiir azure", System.Net.HttpStatusCode.BadRequest);
+                }
 
                 var modelToSave = new ProductionOrderQr
                 {
