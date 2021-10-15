@@ -31,5 +31,40 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("E_Mail")]
         public string Email { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor Name.
+        /// </summary>
+        /// <value>Doctor Name.</value>
+        [Column("CardName")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the professional license.
+        /// </summary>
+        /// <value>Professional License.</value>
+        [Column("Notes")]
+        public string ProfessionalLicense { get; set; }
+
+        /// <summary>
+        /// Gets or sets the group code.
+        /// </summary>
+        /// <value>Group code.</value>
+        [Column("GroupCode")]
+        public int GroupCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the group code.
+        /// </summary>
+        /// <value>Group code.</value>
+        [Column("AliasName")]
+        public string AliasName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the slp for advisor.
+        /// </summary>
+        /// <value>Slpcode.</value>
+        [Column("SlpCode")]
+        public int SlpCode { get; set; }
     }
 }

@@ -112,13 +112,13 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 84434, Cliente = "Cliente A", DocNum = 84434, FechaInicio = new DateTime(2021, 03, 23), Medico = "Medico B", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125 },
-                new OrderModel { PedidoId = 85000, Cliente = "cliente", DocNum = 85000, FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico B", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", AsesorId = 125 },
+                new OrderModel { PedidoId = 84434,  DocNum = 84434, FechaInicio = new DateTime(2021, 03, 23), Medico = "Medico B", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125 },
+                new OrderModel { PedidoId = 85000, DocNum = 85000, FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico B", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", AsesorId = 125 },
 
-                new OrderModel { PedidoId = 84458, Cliente = "Cliente A", DocNum = 84458, FechaInicio = new DateTime(2021, 04, 01), Medico = "Medico A", PedidoStatus = "O", Address = "Guadalajara", OrderType = "BE", AsesorId = 125 },
+                new OrderModel { PedidoId = 84458, DocNum = 84458, FechaInicio = new DateTime(2021, 04, 01), Medico = "Medico A", PedidoStatus = "O", Address = "Guadalajara", OrderType = "BE", AsesorId = 125 },
 
-                new OrderModel { PedidoId = 84473, Cliente = "Cliente A", DocNum = 84473, FechaInicio = new DateTime(2021, 03, 06), Medico = "Medico A", PedidoStatus = "C", Address = "Puebla", OrderType = "BE", AsesorId = 125 },
-                new OrderModel { PedidoId = 84508, Cliente = "Cliente A", DocNum = 84508, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125 },
+                new OrderModel { PedidoId = 84473, DocNum = 84473, FechaInicio = new DateTime(2021, 03, 06), Medico = "Medico A", PedidoStatus = "C", Address = "Puebla", OrderType = "BE", AsesorId = 125 },
+                new OrderModel { PedidoId = 84508, DocNum = 84508, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125 },
             };
         }
 
