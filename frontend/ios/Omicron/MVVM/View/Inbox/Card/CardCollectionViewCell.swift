@@ -46,8 +46,6 @@ class CardCollectionViewCell: UICollectionViewCell {
     }
 
     func setColor() {
-        let borderColor: UIColor = self.order?.areBatchesComplete ?? false ?
-            UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : OmicronColors.processStatus
         let textColor =  self.order?.areBatchesComplete ?? false ?
             UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : .black
         switch self.order?.statusId {
@@ -57,6 +55,8 @@ class CardCollectionViewCell: UICollectionViewCell {
                 borderColor: OmicronColors.assignedStatus,
                 iconName: ImageButtonNames.assigned)
         case 2:
+            let borderColor: UIColor = self.order?.areBatchesComplete ?? false ?
+                UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : OmicronColors.processStatus
             self.propertyCard(
                 cell: self,
                 borderColor: borderColor,
@@ -72,10 +72,13 @@ class CardCollectionViewCell: UICollectionViewCell {
                 borderColor: OmicronColors.finishedStatus,
                 iconName: ImageButtonNames.finished)
         case 5:
+            let borderColor: UIColor = self.order?.areBatchesComplete ?? false ?
+                UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : OmicronColors.reassignedStatus
             self.propertyCard(
                 cell: self,
-                borderColor: OmicronColors.reassignedStatus,
-                iconName: ImageButtonNames.reasigned)
+                borderColor: borderColor,
+                iconName: ImageButtonNames.reasigned,
+                orderTextColor: textColor)
         default: break
         }
     }
