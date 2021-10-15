@@ -56,7 +56,7 @@ namespace Omicron.Pedidos.Test.Services
             return new List<ComponentCustomComponentListModel>
             {
                 new ComponentCustomComponentListModel { Id = 1, CustomListId = 1, ProductId = "003", Description = "COMP 003", BaseQuantity = 10 },
-                new ComponentCustomComponentListModel { Id = 2, CustomListId = 1, ProductId = "004", Description = "COMP 004", BaseQuantity = 11.12345678M },
+                new ComponentCustomComponentListModel { Id = 2, CustomListId = 1, ProductId = "004", Description = "COMP 004", BaseQuantity = 11.123456M },
                 new ComponentCustomComponentListModel { Id = 3, CustomListId = 2, ProductId = "005", Description = "COMP 005", BaseQuantity = 11 },
                 new ComponentCustomComponentListModel { Id = 4, CustomListId = 3, ProductId = "006", Description = "COMP 006", BaseQuantity = 11 },
             };
@@ -202,7 +202,7 @@ namespace Omicron.Pedidos.Test.Services
                     {
                         ProductId = "003",
                         Description = "COMP 003",
-                        BaseQuantity = 10.12345678M,
+                        BaseQuantity = 10.123456M,
                     },
                     new ComponentCustomComponentListModel
                     {
