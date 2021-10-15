@@ -55,10 +55,5 @@ class ChartTest: XCTestCase {
                 XCTAssert(workloadResponse.code == 200)
             }).disposed(by: disposeBag!)
     }
-    func testGetWorkLoadNotNil() {
-        chartViewModel!.workloadData.subscribe(onNext: { response in
-            XCTAssertNotNil(response)
-        }).disposed(by: self.disposeBag!)
-        self.chartViewModel!.getWorkload()
-    }
+
 }

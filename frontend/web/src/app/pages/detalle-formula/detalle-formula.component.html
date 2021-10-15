@@ -226,7 +226,7 @@
                                     [(ngModel)]="element.baseQuantity"
                                     (ngModelChange)="onBaseQuantityChange($event, i)"
                                     appDigitDecimalNumber
-                                    decimalPlaces="8">
+                                    decimalPlaces="6">
                        </mat-form-field>
 
                         <mat-form-field appearance="outline" *ngIf="element.isContainer">
@@ -254,7 +254,7 @@
                                        [(ngModel)]="element.requiredQuantity"
                                        (ngModelChange)="onRequiredQuantityChange($event, i)"
                                        appDigitDecimalNumber
-                                       decimalPlaces="8">
+                                       decimalPlaces="6">
                             </mat-form-field>
 
                             <mat-form-field appearance="outline" *ngIf="element.isContainer">
@@ -289,7 +289,7 @@
                     <th mat-header-cell *matHeaderCellDef class="mobile-hide"> ALMACÉN </th>
                     <td mat-cell *matCellDef="let element;let i = index;" class="color-text-intables tdcell mobile-hide almacen">
                         <mat-form-field appearance="outline">
-                        <mat-select [(ngModel)]="element.warehouse" (ngModelChange)="onSelectWareHouseChange($event, i)" [disabled]="true">
+                        <mat-select [(ngModel)]="element.warehouse" (ngModelChange)="onSelectWareHouseChange($event, i)" [disabled]="false">
                               <mat-option value="AMP" >
                                   AMP
                               </mat-option>

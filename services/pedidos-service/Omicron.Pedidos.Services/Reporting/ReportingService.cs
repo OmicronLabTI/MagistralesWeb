@@ -58,7 +58,7 @@ namespace Omicron.Pedidos.Services.Reporting
 
                 if ((int)response.StatusCode >= 300)
                 {
-                    this.logger.Information($"Error peticion sapadapter {jsonString}");
+                    this.logger.Information($"Error peticion reporting service {jsonString}");
                     throw new CustomServiceException(jsonString);
                 }
 
@@ -85,7 +85,7 @@ namespace Omicron.Pedidos.Services.Reporting
 
                 if ((int)response.StatusCode >= 300)
                 {
-                    this.logger.Information($"Error peticion sapadapter {jsonString}");
+                    this.logger.Information($"Error peticion reporting service {jsonString}");
                     throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
                 }
 
