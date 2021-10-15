@@ -754,4 +754,14 @@
 		  UPDATE parameters SET value='100' WHERE field = 'QrMagistralRectHeight';
       </sql>
   </changeSet>
+  <changeSet author="esanchez" id="changelog-1.85">
+      <sql endDelimiter=";">
+          ALTER TABLE customcomponentlistscomponents ALTER COLUMN basequantity TYPE NUMERIC(19,6);
+      </sql>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.86">
+      <sql endDelimiter=";">
+          UPDATE parameters SET value='130' WHERE field = 'QrMagistralRectx';
+      </sql>
+  </changeSet>
 </databaseChangeLog> 

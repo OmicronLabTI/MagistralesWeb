@@ -27,8 +27,6 @@ namespace Omicron.SapAdapter.Api.Controllers
     {
         private readonly ISapFacade sapFacade;
 
-        private readonly ISapAlmacenFacade sapAlmacenFacade;
-
         /// <summary>
         /// The logger.
         /// </summary>
@@ -39,11 +37,9 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// </summary>
         /// <param name="sapFacade">the sap facade.</param>
         /// <param name="logger">the logger factory.</param>
-        /// <param name="sapAlmacenFacade">the sap almacen.</param>
-        public SapController(ISapFacade sapFacade, ILogger logger, ISapAlmacenFacade sapAlmacenFacade)
+        public SapController(ISapFacade sapFacade, ILogger logger)
         {
             this.sapFacade = sapFacade ?? throw new ArgumentNullException(nameof(sapFacade));
-            this.sapAlmacenFacade = sapAlmacenFacade ?? throw new ArgumentNullException(nameof(sapAlmacenFacade));
             this.logger = logger;
         }
 

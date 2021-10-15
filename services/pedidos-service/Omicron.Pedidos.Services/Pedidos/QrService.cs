@@ -15,7 +15,6 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Drawing.Imaging;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
@@ -26,7 +25,6 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.AlmacenService;
     using Omicron.Pedidos.Services.Azure;
     using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.Utils;
     using ZXing;
 
@@ -217,7 +215,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<MagistralQrModel>(so.MagistralQr);
-                var bitmap = this.CreateQr(parameters, so.MagistralQr);
+                modelQr.Quantity = Math.Round(modelQr.Quantity, 1);
+                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
 
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
                 bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters);

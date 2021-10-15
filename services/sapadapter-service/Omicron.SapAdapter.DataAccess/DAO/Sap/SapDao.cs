@@ -52,11 +52,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    from dp in DetalleOrden.DefaultIfEmpty()
                                    join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
                                    join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                                   join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                                    where order.FechaInicio >= initDate && order.FechaInicio <= endDate && producto.IsMagistral == "Y"
                                    select new CompleteOrderModel
                                    {
                                        DocNum = order.DocNum,
-                                       Cliente = order.Cliente,
+                                       Cliente = doctor.AliasName,
                                        Codigo = order.Codigo,
                                        Medico = order.Medico,
                                        AsesorName = asesor.AsesorName,
@@ -84,11 +85,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                from dp in DetalleOrden.DefaultIfEmpty()
                                join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
                                join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                               join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                                where producto.IsMagistral == "Y"
                                select new CompleteOrderModel
                                {
                                    DocNum = order.DocNum,
-                                   Cliente = order.Cliente,
+                                   Cliente = doctor.AliasName,
                                    Codigo = order.Codigo,
                                    Medico = order.Medico,
                                    AsesorName = asesor.AsesorName,
@@ -117,11 +119,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                               join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                               join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
                               join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                              join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                               where order.PedidoId >= init && order.PedidoId <= end && producto.IsMagistral == "Y"
                               select new CompleteOrderModel
                               {
                                   DocNum = order.DocNum,
-                                  Cliente = order.Cliente,
+                                  Cliente = doctor.AliasName,
                                   Codigo = order.Codigo,
                                   Medico = order.Medico,
                                   AsesorName = asesor.AsesorName,
@@ -147,11 +150,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                          join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
                          join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                          where order.DocNumDxp == docNumDxp && producto.IsMagistral == "Y"
                          select new CompleteOrderModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = order.Cliente,
+                             Cliente = doctor.AliasName,
                              Codigo = order.Codigo,
                              Medico = order.Medico,
                              AsesorName = asesor.AsesorName,
@@ -183,7 +187,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                           {                              
                               Email = string.IsNullOrEmpty(salesPerson.Email) ? string.Empty : salesPerson.Email, 
                               OrderId = order.PedidoId,
-                              Cliente = order.Cliente
+                              Cliente = order.Medico
                           });
 
             return await this.RetryQuery<SalesAsesorModel>(query);
@@ -594,7 +598,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = order.Cliente,
+                             Cliente = order.Medico,
                              Medico = order.Medico,                             
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
@@ -619,7 +623,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             {
                 var model = new CompleteAlmacenOrderModel
                 {
-                    Cliente = order.Cliente,
+                    Cliente = order.Medico,
                     DocNum = order.DocNum,
                     Detalles = x,
                     FechaInicio = order.FechaInicio,
@@ -644,7 +648,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = order.Cliente,
+                             Cliente = order.Medico,
                              Medico = order.Medico,
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
@@ -792,7 +796,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          select new CompleteOrderModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = order.Cliente,
+                             Cliente = order.Medico,
                              Codigo = order.Codigo,
                              Medico = order.Medico,
                              FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),

@@ -325,7 +325,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     Email = string.Empty,
                     OrderId = x.PedidoId,
-                    Cliente = x.Cliente,
+                    Cliente = x.Medico,
                 }));
 
             return ServiceUtils.CreateResult(true, 200, null, asesorsCompleted, null, asesorsCompleted.Count);

@@ -54,13 +54,16 @@ namespace Omicron.Pedidos.Test.Services
         public async Task GetOrdersActive()
         {
             // arrange
-            var listIds = new List<int> { 1, 2, 3 };
+            var listIds = new List<int> { 100, 101, 102 };
 
             // act
             var response = await this.pedidosDxpService.GetOrdersActive(listIds);
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNull(response.UserError);
         }
 
         /// <summary>
