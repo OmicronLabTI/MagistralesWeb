@@ -716,15 +716,9 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-<<<<<<< HEAD
                 new OrderModel { PedidoId = 84503, AsesorId = 1, Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ" },
                 new OrderModel { PedidoId = 84517, AsesorId = 1, Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = new DateTime(2021, 04, 12), Medico = "Medico B", PedidoStatus = "O" },
                 new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = new DateTime(2021, 04, 12), Medico = "Medico B", PedidoStatus = "O" },
-=======
-                new OrderModel { PedidoId = 84503, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ" },
-                new OrderModel { PedidoId = 84517, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-14), Medico = "Medico B", PedidoStatus = "O" },
-                new OrderModel { PedidoId = 84515, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-14), Medico = "Medico B", PedidoStatus = "O" },
->>>>>>> develop
             };
         }
 
