@@ -90,9 +90,8 @@ namespace Omicron.SapAdapter.Test
         [Test]
         public void OrdenModel()
         {
-            var asesor = new OrderModel { PedidoId = 100, AsesorId = 1, Cliente = "cliente", Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C" };
+            var asesor = new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C" };
             Assert.IsNotNull(asesor.AsesorId);
-            Assert.IsNotNull(asesor.Cliente);
             Assert.IsNotNull(asesor.Codigo);
             Assert.IsNotNull(asesor.DocNum);
             Assert.IsNotNull(asesor.FechaFin);
