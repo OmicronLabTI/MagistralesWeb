@@ -10,6 +10,7 @@
                 "statusName": "Asignado",
                 "orders": [
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89009,
                         "baseDocument": 59997,
                         "container": "",
@@ -20,6 +21,7 @@
                         "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
                     },
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89010,
                         "baseDocument": 59996,
                         "container": "",
@@ -30,6 +32,7 @@
                         "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
                     },
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89009,
                         "baseDocument": 59997,
                         "container": "",
@@ -40,6 +43,7 @@
                         "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
                     },
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89010,
                         "baseDocument": 59996,
                         "container": "",
@@ -50,6 +54,7 @@
                         "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
                     },
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89009,
                         "baseDocument": 59997,
                         "container": "",
@@ -60,6 +65,7 @@
                         "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
                     },
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89010,
                         "baseDocument": 59996,
                         "container": "",
@@ -70,6 +76,7 @@
                         "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
                     },
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89009,
                         "baseDocument": 59997,
                         "container": "",
@@ -80,6 +87,7 @@
                         "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulasIvermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
                     },
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89010,
                         "baseDocument": 59996,
                         "container": "",
@@ -96,6 +104,7 @@
                 "statusName": "En Proceso",
                 "orders": [
                     {
+                        "areBatchesComplete": true,
                         "productionOrderId": 89012,
                         "baseDocument": 59993,
                         "container": "",
@@ -106,6 +115,7 @@
                         "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
                     },
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89007,
                         "baseDocument": 59998,
                         "container": "",
@@ -122,6 +132,7 @@
                 "statusName": "Pendiente",
                 "orders": [
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89013,
                         "baseDocument": 59992,
                         "container": "",
@@ -132,6 +143,7 @@
                         "descriptionProduct": "Ivermectina 6 mg, Excipiente csp 1 cápsula. Frasco con 4 cápsulas"
                     },
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89004,
                         "baseDocument": 59998,
                         "container": "",
@@ -148,6 +160,7 @@
                 "statusName": "Terminado",
                 "orders": [
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89005,
                         "baseDocument": 59998,
                         "container": "",
@@ -158,6 +171,7 @@
                         "descriptionProduct": "LOCION CAPILARIUM GREEN 100ML"
                     },
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89014,
                         "baseDocument": 59991,
                         "container": "",
@@ -174,6 +188,7 @@
                 "statusName": "Reasignado",
                 "orders": [
                     {
+                        "areBatchesComplete": false,
                         "productionOrderId": 89006,
                         "baseDocument": 59998,
                         "container": "",
