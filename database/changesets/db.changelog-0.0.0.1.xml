@@ -764,4 +764,11 @@
           UPDATE parameters SET value='130' WHERE field = 'QrMagistralRectx';
       </sql>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.87">
+	<insert tableName="parameters"> 
+		<column name="value" value="24"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralBottomTextSize"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 
