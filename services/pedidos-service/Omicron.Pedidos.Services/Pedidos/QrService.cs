@@ -374,11 +374,13 @@ namespace Omicron.Pedidos.Services.Pedidos
             var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectWidth));
             var rectyField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRecty));
             var rectxField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectx));
+            var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralBottomTextSize));
 
             var rectx = rectxField != null ? int.Parse(rectxField.Value) : DefaultHeightWidth / 2;
             var recty = rectyField != null ? int.Parse(rectyField.Value) : DefaultHeightWidth - 25;
             var heigth = heigthField != null ? int.Parse(heigthField.Value) : 250;
             var width = widthField != null ? int.Parse(widthField.Value) : 100;
+            var sizeText = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24;
 
             RectangleF rectf = new RectangleF(rectx, recty, width, heigth);
 
@@ -389,7 +391,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             graphic.SmoothingMode = SmoothingMode.AntiAlias;
             graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            graphic.DrawString(bottomText, new Font("Tahoma", 16), Brushes.Black, rectf);
+            graphic.DrawString(bottomText, new Font("Tahoma", sizeText), Brushes.Black, rectf);
             graphic.Flush();
             return qrsBitmap;
         }
