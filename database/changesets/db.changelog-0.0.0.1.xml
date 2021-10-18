@@ -771,4 +771,9 @@
 		<column name="field" value="QrMagistralBottomTextSize"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.88">
+      <sql endDelimiter=";">
+          UPDATE parameters SET value='400' WHERE field = 'QrMagistralRectWidth';
+      </sql>
+  </changeSet>
 </databaseChangeLog> 
