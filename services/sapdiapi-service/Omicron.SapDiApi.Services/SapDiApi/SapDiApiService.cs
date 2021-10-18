@@ -685,7 +685,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on create oInventoryGenExit { errorCode } - { errorMessage }.");
-                throw new ValidationException(string.Format(ServiceConstants.FailReasonNotGetExitCreated, productionOrderId));
+                throw new ValidationException($"{string.Format(ServiceConstants.FailReasonNotGetExitCreated, productionOrderId)} - {errorMessage}");
             }
         }
 
@@ -737,7 +737,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on save receipt production { errorCode } - {errorMessage}.");
-                throw new ValidationException(string.Format(ServiceConstants.FailReasonNotReceipProductionCreated, productionOrderId));
+                throw new ValidationException($"{string.Format(ServiceConstants.FailReasonNotReceipProductionCreated, productionOrderId)} - {errorMessage}");
             }
         }
 
@@ -756,7 +756,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on update production order status { errorCode } - {errorMessage}.");
-                throw new ValidationException(string.Format(ServiceConstants.FailReasonNotProductionStatusClosed, productionOrder.DocumentNumber));
+                throw new ValidationException($"{string.Format(ServiceConstants.FailReasonNotProductionStatusClosed, productionOrder.DocumentNumber)} - {errorMessage}");
             }
         }
 

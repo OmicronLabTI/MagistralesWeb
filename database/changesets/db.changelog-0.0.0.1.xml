@@ -759,4 +759,9 @@
           ALTER TABLE customcomponentlistscomponents ALTER COLUMN basequantity TYPE NUMERIC(19,6);
       </sql>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.86">
+      <sql endDelimiter=";">
+          UPDATE parameters SET value='130' WHERE field = 'QrMagistralRectx';
+      </sql>
+  </changeSet>
 </databaseChangeLog> 

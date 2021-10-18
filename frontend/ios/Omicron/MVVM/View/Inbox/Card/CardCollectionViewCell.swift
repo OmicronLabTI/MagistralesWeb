@@ -46,17 +46,17 @@ class CardCollectionViewCell: UICollectionViewCell {
     }
 
     func setColor() {
-        switch self.order?.statusId ?? 0 {
+        let textColor =  self.order?.areBatchesComplete ?? false ?
+            UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : .black
+        switch self.order?.statusId {
         case 1:
             self.propertyCard(
                 cell: self,
                 borderColor: OmicronColors.assignedStatus,
-                iconName: ImageButtonNames.assigned, orderTextColor: .black)
+                iconName: ImageButtonNames.assigned)
         case 2:
             let borderColor: UIColor = self.order?.areBatchesComplete ?? false ?
                 UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : OmicronColors.processStatus
-            let textColor =  self.order?.areBatchesComplete ?? false ?
-                UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : .black
             self.propertyCard(
                 cell: self,
                 borderColor: borderColor,
@@ -65,22 +65,25 @@ class CardCollectionViewCell: UICollectionViewCell {
             self.propertyCard(
                 cell: self,
                 borderColor: OmicronColors.pendingStatus,
-                iconName: ImageButtonNames.pendding, orderTextColor: .black)
+                iconName: ImageButtonNames.pendding)
         case 4:
             self.propertyCard(
                 cell: self,
                 borderColor: OmicronColors.finishedStatus,
-                iconName: ImageButtonNames.finished, orderTextColor: .black)
+                iconName: ImageButtonNames.finished)
         case 5:
+            let borderColor: UIColor = self.order?.areBatchesComplete ?? false ?
+                UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : OmicronColors.reassignedStatus
             self.propertyCard(
                 cell: self,
-                borderColor: OmicronColors.reassignedStatus,
-                iconName: ImageButtonNames.reasigned, orderTextColor: .black)
+                borderColor: borderColor,
+                iconName: ImageButtonNames.reasigned,
+                orderTextColor: textColor)
         default: break
         }
     }
 
-    func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String, orderTextColor: UIColor) {
+    func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String, orderTextColor: UIColor = .black) {
         cell.assignedStyleCard(color: borderColor.cgColor)
         missingStockImage.layer.borderColor = borderColor.cgColor
         missingStockImage.tintColor = borderColor

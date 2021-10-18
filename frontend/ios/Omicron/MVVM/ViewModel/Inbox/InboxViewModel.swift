@@ -245,7 +245,8 @@ class InboxViewModel {
     }
     func setSelection(section: SectionOrder, removeSelecteds: Bool = false) {
         var ordering: [Order] = []
-        if section.statusName == StatusNameConstants.inProcessStatus {
+        if section.statusName == StatusNameConstants.inProcessStatus ||
+            section.statusName == StatusNameConstants.reassignedStatus {
             let ordersReadyToFinish =
                 sortByBaseBocumentAscending(orders: section.orders.filter({ $0.areBatchesComplete == true }))
             let ordersNotReadyToFinish =
