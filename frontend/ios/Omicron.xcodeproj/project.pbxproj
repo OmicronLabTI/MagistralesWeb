@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0BB57A4257C6A72E4D3CF5A4 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		0F59B04B53EB51E994A6AFF7 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		1E07D8CE251A5C5400DF2979 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8CD251A5C5400DF2979 /* Extensions.swift */; };
 		1E07D8D2251AA0C900DF2979 /* KPITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */; };
 		1E1C019E250EA43800CA6263 /* HeaderCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C019D250EA43800CA6263 /* HeaderCollectionViewCell.xib */; };
@@ -415,6 +413,8 @@
 		987BDFE4250986A700D9C6E4 /* ComponentsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987BDFE3250986A700D9C6E4 /* ComponentsModel.swift */; };
 		987BDFE6250A863500D9C6E4 /* getComponents.json in Resources */ = {isa = PBXBuildFile; fileRef = 987BDFE5250A863500D9C6E4 /* getComponents.json */; };
 		989391D9250AE174004750D8 /* ComponentFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989391D8250AE174004750D8 /* ComponentFormViewController.swift */; };
+		98A0E611271E142A00950AD2 /* Omicron-QA.plist in Resources */ = {isa = PBXBuildFile; fileRef = 98A0E60F271E142A00950AD2 /* Omicron-QA.plist */; };
+		98A0E612271E142A00950AD2 /* Omicron-DEV.plist in Resources */ = {isa = PBXBuildFile; fileRef = 98A0E610271E142A00950AD2 /* Omicron-DEV.plist */; };
 		98B7845A24DA228A005A38FC /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B7845924DA228A005A38FC /* Persistence.swift */; };
 		98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C8C03024AFBD4100018A88 /* LoginViewModel.swift */; };
 		98C8C03324AFBD4C00018A88 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C8C03224AFBD4C00018A88 /* LoginViewController.swift */; };
@@ -427,7 +427,6 @@
 		AD48885678C7E912F0C60374 /* Pods_OmicronTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FB342D1D6AD96AF4C8DAA0E /* Pods_OmicronTests.framework */; };
 		CB36FA1C0F7EAD1C1A4D23D2 /* Pods_Omicron_OmicronDEV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7620B07E4C5CE91DF059DF6D /* Pods_Omicron_OmicronDEV.framework */; };
 		D354FDFD2F56BB55F8FCFA6D /* Pods_Omicron_OmicronUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66CFE978F9DF2A39DD96FC13 /* Pods_Omicron_OmicronUITests.framework */; };
-		DB855E47DDA8B9154019CF0D /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		E25AF4C3DE5641E8D1CB5EDF /* Pods_Omicron.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AA41FEAFCAD33B72DBDC082 /* Pods_Omicron.framework */; };
 /* End PBXBuildFile section */
 
@@ -482,7 +481,6 @@
 		381B3BF125E034B80077F764 /* ContainerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerTableViewCell.swift; sourceTree = "<group>"; };
 		382707BF25F6EB4D001F4057 /* SnapCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCollectionView.swift; sourceTree = "<group>"; };
 		383DD58825F697B8002E2C2B /* ChartCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartCollectionViewCell.swift; sourceTree = "<group>"; };
-		38554C8225DF2BAC006F476B /* Info-QA.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-QA.plist"; sourceTree = "<group>"; };
 		388172A825D1A5940089B8C8 /* SF-Pro-Display-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Light.ttf"; sourceTree = "<group>"; };
 		388172A925D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SF-Pro-Display-Semibold.ttf"; sourceTree = "<group>"; };
 		38A4296825EEA1B800309B8F /* ContainerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerTest.swift; sourceTree = "<group>"; };
@@ -584,6 +582,8 @@
 		987BDFE3250986A700D9C6E4 /* ComponentsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentsModel.swift; sourceTree = "<group>"; };
 		987BDFE5250A863500D9C6E4 /* getComponents.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getComponents.json; sourceTree = "<group>"; };
 		989391D8250AE174004750D8 /* ComponentFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentFormViewController.swift; sourceTree = "<group>"; };
+		98A0E60F271E142A00950AD2 /* Omicron-QA.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Omicron-QA.plist"; sourceTree = "<group>"; };
+		98A0E610271E142A00950AD2 /* Omicron-DEV.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Omicron-DEV.plist"; sourceTree = "<group>"; };
 		98B7845924DA228A005A38FC /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		98C8C03024AFBD4100018A88 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		98C8C03224AFBD4C00018A88 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -630,7 +630,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB855E47DDA8B9154019CF0D /* (null) in Frameworks */,
 				5359718D8F92150C7EC3DA9F /* Pods_Omicron_OmicronQA.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -639,8 +638,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0BB57A4257C6A72E4D3CF5A4 /* (null) in Frameworks */,
-				0F59B04B53EB51E994A6AFF7 /* (null) in Frameworks */,
 				E25AF4C3DE5641E8D1CB5EDF /* Pods_Omicron.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1020,7 +1017,8 @@
 				98015CB524AFBC6C00E7772F /* Main.storyboard */,
 				98015CBA24AFBC6D00E7772F /* LaunchScreen.storyboard */,
 				98015CBD24AFBC6D00E7772F /* Info.plist */,
-				38554C8225DF2BAC006F476B /* Info-QA.plist */,
+				98A0E610271E142A00950AD2 /* Omicron-DEV.plist */,
+				98A0E60F271E142A00950AD2 /* Omicron-QA.plist */,
 				49E4D86825F1549500E196F9 /* GoogleServicesQA */,
 				49E4D86925F154AF00E196F9 /* GoogleServicesProd */,
 			);
@@ -1484,6 +1482,8 @@
 				987BDFE6250A863500D9C6E4 /* getComponents.json in Resources */,
 				7C55E5C324D4A4A2008F7AED /* SF-Pro-Display-Medium.otf in Resources */,
 				388172AB25D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf in Resources */,
+				98A0E611271E142A00950AD2 /* Omicron-QA.plist in Resources */,
+				98A0E612271E142A00950AD2 /* Omicron-DEV.plist in Resources */,
 				7C5DFB0C251C1B580041B2AC /* finishedOrderResponse.json in Resources */,
 				1EC2920B254B4C9F002FD4E3 /* connect.json in Resources */,
 				98015CBC24AFBC6D00E7772F /* LaunchScreen.storyboard in Resources */,
@@ -2313,8 +2313,8 @@
 			baseConfigurationReference = ED296F3371E49FD5E72A6016 /* Pods-Omicron.uat.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 65;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
@@ -2326,7 +2326,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
 				PRODUCT_NAME = OmicronLab;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2338,20 +2338,20 @@
 			baseConfigurationReference = 27C0474ED665704BB04F5934 /* Pods-Omicron-OmicronDEV.uat.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 0;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
-				INFOPLIST_FILE = "Omicron copy2-Info.plist";
+				INFOPLIST_FILE = "Omicron/Omicron-DEV.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-Dev";
+				PRODUCT_BUNDLE_IDENTIFIER = com.axity.starter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2363,13 +2363,13 @@
 			baseConfigurationReference = F0CBBFD1976BF4AA67598A8F /* Pods-Omicron-OmicronQA.uat.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 20;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
-				INFOPLIST_FILE = "Omicron copy3-Info.plist";
+				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2377,7 +2377,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-QA";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = QA;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2390,7 +2390,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = OmicronTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
@@ -2401,6 +2402,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.OmicronTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
@@ -2412,7 +2414,8 @@
 			baseConfigurationReference = 5231F81C01A00E243252303F /* Pods-Omicron-OmicronUITests.uat.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = OmicronUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2422,6 +2425,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.OmicronUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Omicron;
@@ -2433,8 +2437,8 @@
 			baseConfigurationReference = 942B27E76651174E700E02BA /* Pods-Omicron-OmicronUAT.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
@@ -2446,7 +2450,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-UAT";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2458,8 +2462,8 @@
 			baseConfigurationReference = A163AFA7A65684155FDC5BFF /* Pods-Omicron-OmicronUAT.qa.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
@@ -2471,7 +2475,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-UAT";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2483,8 +2487,8 @@
 			baseConfigurationReference = DE6DD60D3275257CB09B5C61 /* Pods-Omicron-OmicronUAT.uat.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
@@ -2496,7 +2500,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-UAT";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = UAT;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2508,8 +2512,8 @@
 			baseConfigurationReference = 33660CB284D11CB0290DE75E /* Pods-Omicron-OmicronUAT.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -2520,7 +2524,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-UAT";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2532,20 +2536,20 @@
 			baseConfigurationReference = DF8EA7CB8389ADB98C43EDAE /* Pods-Omicron-OmicronDEV.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 0;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
-				INFOPLIST_FILE = "Omicron copy2-Info.plist";
+				INFOPLIST_FILE = "Omicron/Omicron-DEV.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-Dev";
+				PRODUCT_BUNDLE_IDENTIFIER = com.axity.starter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -2556,19 +2560,19 @@
 			baseConfigurationReference = ACDF7C434BDFF2414C0BA2EB /* Pods-Omicron-OmicronDEV.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 0;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
-				INFOPLIST_FILE = "Omicron copy2-Info.plist";
+				INFOPLIST_FILE = "Omicron/Omicron-DEV.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-Dev";
+				PRODUCT_BUNDLE_IDENTIFIER = com.axity.starter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2580,13 +2584,13 @@
 			baseConfigurationReference = 40962A9C153A578EBACDD1EF /* Pods-Omicron-OmicronQA.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 20;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
-				INFOPLIST_FILE = "Omicron copy3-Info.plist";
+				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2594,7 +2598,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-QA";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2606,12 +2610,12 @@
 			baseConfigurationReference = 4E05D52FF19EF00D53064827 /* Pods-Omicron-OmicronQA.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
-				INFOPLIST_FILE = "Omicron copy3-Info.plist";
+				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2619,7 +2623,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-QA";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2691,8 +2695,8 @@
 			baseConfigurationReference = 0A4BE9F3CB565F9C5BB8E3F8 /* Pods-Omicron.qa.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 65;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
@@ -2704,7 +2708,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
 				PRODUCT_NAME = OmicronLab;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2717,7 +2721,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = OmicronTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
@@ -2728,6 +2733,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.OmicronTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
@@ -2739,7 +2745,8 @@
 			baseConfigurationReference = 369F76A3B599FEC020ABA267 /* Pods-Omicron-OmicronUITests.qa.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = OmicronUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2749,6 +2756,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.OmicronUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Omicron;
@@ -2760,20 +2768,20 @@
 			baseConfigurationReference = F0742CD0C1BEE13E4751ABED /* Pods-Omicron-OmicronDEV.qa.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 0;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
-				INFOPLIST_FILE = "Omicron copy2-Info.plist";
+				INFOPLIST_FILE = "Omicron/Omicron-DEV.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-Dev";
+				PRODUCT_BUNDLE_IDENTIFIER = com.axity.starter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2785,13 +2793,13 @@
 			baseConfigurationReference = CB46C069F4D013023AC91635 /* Pods-Omicron-OmicronQA.qa.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 20;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
-				INFOPLIST_FILE = "Omicron copy3-Info.plist";
+				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2799,7 +2807,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-QA";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = QA;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2925,8 +2933,8 @@
 			baseConfigurationReference = 4DCEFD1333E1F7354626C710 /* Pods-Omicron.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 65;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
@@ -2938,7 +2946,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
 				PRODUCT_NAME = OmicronLab;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2950,8 +2958,8 @@
 			baseConfigurationReference = A315F48FFB2D2AF9DE34457B /* Pods-Omicron.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 65;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -2962,7 +2970,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
 				PRODUCT_NAME = OmicronLab;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2975,7 +2983,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = OmicronTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
@@ -2986,6 +2995,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.OmicronTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
@@ -2998,7 +3008,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = OmicronTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
@@ -3009,6 +3020,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.OmicronTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
@@ -3020,7 +3032,8 @@
 			baseConfigurationReference = 35E12FEA2097927FED334FB3 /* Pods-Omicron-OmicronUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = OmicronUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3030,6 +3043,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.OmicronUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Omicron;
@@ -3041,7 +3055,8 @@
 			baseConfigurationReference = 53B53CFD0BD61DA9AE76207F /* Pods-Omicron-OmicronUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = OmicronUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3051,6 +3066,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.OmicronUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Omicron;

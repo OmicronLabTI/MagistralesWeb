@@ -1,0 +1,126 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Code coverage and sonar"
+  lane :metrics do
+
+    scan(scheme: "RELEASE",
+      code_coverage: true,
+      derived_data_path: "./DerivedData",
+      output_directory: "./sonar-reports",
+      devices: "iPad Pro (9.7-inch)")
+    
+    slather(cobertura_xml: true,
+      build_directory: "./DerivedData",
+      scheme: "RELEASE",
+      workspace: "./Omicron.xcworkspace",
+      proj: "./Omicron.xcodeproj",
+      output_directory: "./sonar-reports",
+      ignore: ["Pods/*", "**/Common/Constants.swift"]
+    )
+
+     swiftlint(output_file: "./sonar-reports/swiftlint.txt",
+      ignore_exit_status: true)
+
+     sonar
+  end
+  desc "Archive iOS App DEV"
+  lane :archive_dev do
+    cocoapods()
+    update_app_identifier(
+      xcodeproj: "Omicron.xcodeproj",
+      plist_path: "Omicron/Omicron-DEV.plist",
+      app_identifier: "com.axity.starter"
+    )
+    update_code_signing_settings(
+      path: "Omicron.xcodeproj",
+      team_id: "NFYY63TQQ2",
+      code_sign_identity: "iPhone Developer",
+	    profile_name: "Axity Wildcard Dev"
+    )
+    gym(
+      scheme: "DEBUG",
+      workspace: "Omicron.xcworkspace",
+      clean: true,
+      output_directory: "./output",
+      build_path: "./build",
+      derived_data_path: "./build",
+      archive_path: "./archive",
+      output_name: "Omicron-DEV.ipa",
+      include_bitcode: false,
+      export_method: "development",
+      export_team_id: "NFYY63TQQ2"
+    )
+  end
+  desc "Archive iOS App QA"
+  lane :archive_qa do
+    cocoapods()
+    update_app_identifier(
+      xcodeproj: "Omicron.xcodeproj",
+      plist_path: "Omicron/Omicron-QA.plist",
+      app_identifier: "com.axity.starter"
+    )
+    update_code_signing_settings(
+      path: "Omicron.xcodeproj",
+      team_id: "NFYY63TQQ2",
+      code_sign_identity: "iPhone Developer",
+	    profile_name: "Axity Wildcard Dev"
+    )
+    gym(
+      scheme: "QA",
+      workspace: "Omicron.xcworkspace",
+      clean: true,
+      output_directory: "./output",
+      build_path: "./build",
+      derived_data_path: "./build",
+      archive_path: "./archive",
+      output_name: "Omicron-QA.ipa",
+      include_bitcode: true,
+      export_method: "development",
+      export_team_id: "NFYY63TQQ2"
+    )
+  end
+  desc "Archive iOS App UAT"
+  lane :archive_uat do
+    cocoapods()
+    update_app_identifier(
+      xcodeproj: "Omicron.xcodeproj",
+      plist_path: "Omicron/Omicron-UAT.plist",
+      app_identifier: "com.axity.starter"
+    )
+    update_code_signing_settings(
+      path: "Omicron.xcodeproj",
+      team_id: "NFYY63TQQ2",
+      code_sign_identity: "iPhone Developer",
+	    profile_name: "Axity Wildcard Dev"
+    )
+    gym(
+      scheme: "UAT",
+      workspace: "Omicron.xcworkspace",
+      clean: true,
+      output_directory: "./output",
+      build_path: "./build",
+      derived_data_path: "./build",
+      archive_path: "./archive",
+      output_name: "Omicron-UAT.ipa",
+      include_bitcode: true,
+      export_method: "development",
+      export_team_id: "NFYY63TQQ2"
+    )
+  end
+end
