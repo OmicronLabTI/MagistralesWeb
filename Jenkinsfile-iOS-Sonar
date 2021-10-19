@@ -1,0 +1,72 @@
+pipeline {
+  agent {
+    label 'macOS'
+  }
+  // tools {
+  // }
+  environment {
+    //Functions
+    DEPLOY_PATTERN = NewPatterName()
+
+    // Projtect configurations
+    COMPANY = "Omicron"
+    COMPANY_LOWERCASE = "omicron"
+    PROJECT_NAME = "AppiOSFormulas"
+    PROJECT_NAME_LOWERCASE = "appiosformulas"
+    SLACK_CHANNEL = "#omicron_notifications"
+    ENVIRONMENT = "Dev"
+
+    // General configurations
+    COMMITER_EMAIL = sh(
+      script: 'git --no-pager show -s --format=\'%an - %ae\'',
+      returnStdout: true
+    ).trim()
+  }
+  stages {
+    stage('Sonar Front iOS') {
+      steps {
+        echo 'Sonar Frontend iOS'
+        dir('frontend/ios/') {
+          sh 'fastlane metrics'
+          archiveArtifacts 'output/*.*'
+        }
+      }
+    }
+  }
+  post {
+    always {
+      deleteDir()
+      echo 'Slack'
+      SlackMsg(currentBuild.currentResult)
+    }
+    success {
+      echo 'I succeeeded!'
+    }
+    unstable {
+      echo 'I am unstable :/'
+    }
+    failure {
+      echo 'I failed :('
+    }
+    changed {
+      echo 'Things were different before...'
+    }
+  }
+}
+
+def NewPatterName() {
+  return "_" + new Date().format('ddMMyyyy') + "_" + "${env.BUILD_NUMBER}";
+}
+
+def SlackMsg(String buildResult) {
+  String message = "Compilation result ${env.BUILD_DISPLAY_NAME} for job  \"${env.JOB_NAME}\"  is " + buildResult + " launched by ${env.COMMITER_EMAIL}. For more details got to ${env.JOB_URL}"
+  echo "${env.BUILD_DISPLAY_NAME}"
+
+  if (buildResult == "SUCCESS") {
+    slackSend channel: "${SLACK_CHANNEL}", color: "good", message: message
+  } else if (buildResult == "UNSTABLE") {
+    slackSend channel: "${SLACK_CHANNEL}", color: "warning", message: message
+  } else {
+    slackSend channel: "${SLACK_CHANNEL}", color: "danger", message: message
+  }
+}
