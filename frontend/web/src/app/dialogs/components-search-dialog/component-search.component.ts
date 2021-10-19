@@ -49,7 +49,7 @@ export class ComponentSearchComponent implements OnInit {
     this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent
                 || this.data.modalType === ComponentSearch.addComponent;
     this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
-    this.catalogGroupName = this.data.catalogGroupName;
+    this.getCatalogGroupName();
   }
 
   ngOnInit() {
@@ -59,9 +59,12 @@ export class ComponentSearchComponent implements OnInit {
       this.getComponentsAction();
     }
     this.changeDetector.detectChanges();
-    this.catalogGroupName = this.data.catalogGroupName;
+    this.getCatalogGroupName();
   }
 
+  getCatalogGroupName(): void {
+    this.catalogGroupName = this.data.catalogGroupName === '' ? 'MN' : this.data.catalogGroupName;
+  }
   getComponentsAction() {
     this.isDisableSearch = true;
     this.ordersService.getComponents(this.queryStringComponents, this.isFromSearchComponent).subscribe(resComponents => {
