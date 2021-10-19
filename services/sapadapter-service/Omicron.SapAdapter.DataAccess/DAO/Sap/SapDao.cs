@@ -800,7 +800,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<ProductoModel>> GetProductByIds(List<string> itemCode)
         {
-            var query = (from p in this.databaseContext.ProductoModel
+            var query = (from p in this.databaseContext.ProductoModel.Where(x => itemCode.Contains(x.ProductoId))
                          join g in this.databaseContext.CatalogProductModel on p.ProductGroupId equals g.ProductGroupId
                          select new ProductoModel
                          {

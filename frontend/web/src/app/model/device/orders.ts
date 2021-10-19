@@ -18,5 +18,6 @@ export class SearchComponentModal {
     chips?: string[];
     filterOrdersData?: ParamsPedidos;
     data?: any[];
+    catalogGroupName?: string;
 }
 
