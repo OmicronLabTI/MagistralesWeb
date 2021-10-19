@@ -458,21 +458,17 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value)
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value, string warehouse)
         {
             var products = await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => x.ProductoId.ToLower().Contains(value)));
-            return await this.GetComponentes(products.ToList());
+            return await this.GetComponentes(products.ToList(), warehouse);
         }
 
-        /// <summary>
-        /// Gets the value for the item code by filters. 
-        /// </summary>
-        /// <param name="value">the value to look.</param>
-        /// <returns>the value.</returns>
-        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(List<string> value)
+        /// <inheritdoc/>
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(List<string> value, string warehouse)
         {
             var products = await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => value.Contains(x.ProductoId.ToLower())));
-            return await this.GetComponentes(products.ToList());
+            return await this.GetComponentes(products.ToList(), warehouse);
         }
 
         /// <summary>
@@ -480,10 +476,10 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="value">the value to look.</param>
         /// <returns>the value.</returns>
-        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value)
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value, string warehouse)
         {
             var products = await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => x.ProductoName.ToLower().Contains(value)));
-            return await this.GetComponentes(products.ToList());
+            return await this.GetComponentes(products.ToList(), warehouse);
         }
 
         /// <inheritdoc/>
@@ -804,7 +800,25 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<ProductoModel>> GetProductByIds(List<string> itemCode)
         {
-            return await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => itemCode.Contains(x.ProductoId)));
+            var query = (from p in this.databaseContext.ProductoModel
+                         join g in this.databaseContext.CatalogProductModel on p.ProductGroupId equals g.ProductGroupId
+                         select new ProductoModel
+                         {
+                             BarCode = p.BarCode,
+                             IsLine = p.IsLine,
+                             IsMagistral = p.IsMagistral,
+                             LargeDescription = p.LargeDescription,
+                             ManagedBatches = p.ManagedBatches,
+                             NeedsCooling = p.NeedsCooling,
+                             OnHand = p.OnHand,
+                             ProductGroupId = p.ProductGroupId,
+                             ProductoId = p.ProductoId,
+                             ProductoName = p.ProductoName,
+                             Unit = p.Unit,
+                             Groupname = g.CatalogName,
+                         });
+
+            return await this.RetryQuery<ProductoModel>(query);
         }
 
         /// <inheritdoc/>
@@ -895,12 +909,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             }
         }
 
-        /// <summary>
-        /// Gets the componenents from the product.
-        /// </summary>
-        /// <param name="products">the products.</param>
-        /// <returns>the data.</returns>
-        private async Task<List<CompleteDetalleFormulaModel>> GetComponentes(List<ProductoModel> products)
+        private async Task<List<CompleteDetalleFormulaModel>> GetComponentes(List<ProductoModel> products, string warehouse)
         {
             var listToReturn = new List<CompleteDetalleFormulaModel>();
 
@@ -910,7 +919,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             }
 
             var listIds = products.Select(x => x.ProductoId).ToList();
-            var almacen = await this.databaseContext.ItemWarehouseModel.Where(x => listIds.Contains(x.ItemCode) && x.WhsCode == "MN").ToListAsync();
+            var almacen = await this.databaseContext.ItemWarehouseModel.Where(x => listIds.Contains(x.ItemCode) && x.WhsCode == warehouse).ToListAsync();
 
             products.ForEach(p =>
             {
@@ -923,7 +932,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     Consumed = 0,
                     Available = datoToAssign.OnHand - datoToAssign.IsCommited + datoToAssign.OnOrder,
                     Unit = p.Unit,
-                    Warehouse = "MN",
+                    Warehouse = warehouse,
                     Stock = p.OnHand,
                     WarehouseQuantity = datoToAssign.OnHand,
                 });

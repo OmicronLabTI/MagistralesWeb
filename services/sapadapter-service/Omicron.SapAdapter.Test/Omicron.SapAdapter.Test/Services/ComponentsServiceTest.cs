@@ -46,6 +46,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.context = new DatabaseContext(options);
             this.context.ProductoModel.AddRange(this.GetProductoModel());
+            this.context.CatalogProductModel.AddRange(this.GetCatalogProductModel());
             this.context.SaveChanges();
 
             var mockRedis = new Mock<IRedisService>();
@@ -78,7 +79,7 @@ namespace Omicron.SapAdapter.Test.Services
             var service = new ComponentsService(this.sapDao, redis.Object);
 
             // act
-            var result = await service.GetMostCommonComponents();
+            var result = await service.GetMostCommonComponents(new Dictionary<string, string>());
 
             Assert.IsNotNull(result);
         }
@@ -105,7 +106,7 @@ namespace Omicron.SapAdapter.Test.Services
             var service = new ComponentsService(this.sapDao, redis.Object);
 
             // act
-            var result = await service.GetMostCommonComponents();
+            var result = await service.GetMostCommonComponents(new Dictionary<string, string>());
 
             Assert.IsNotNull(result);
         }

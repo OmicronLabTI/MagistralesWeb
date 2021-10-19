@@ -291,12 +291,13 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Makes the ping.
         /// </summary>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>return the pong.</returns>
         [Route("/common/components")]
         [HttpGet]
-        public async Task<IActionResult> GetMostCommonComponents()
+        public async Task<IActionResult> GetMostCommonComponents([FromQuery] Dictionary<string, string> parameters)
         {
-            var result = await this.sapFacade.GetMostCommonComponents();
+            var result = await this.sapFacade.GetMostCommonComponents(parameters);
             return this.Ok(result);
         }
 

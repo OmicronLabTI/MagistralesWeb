@@ -160,8 +160,9 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <summary>
         /// Gets the most common components.
         /// </summary>
+        /// <param name="parameters">The paremeteres.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetMostCommonComponents();
+        Task<ResultDto> GetMostCommonComponents(Dictionary<string, string> parameters);
 
         /// <summary>
         /// Method to get required packing.
