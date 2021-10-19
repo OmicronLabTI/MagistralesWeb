@@ -18,7 +18,7 @@ default_platform(:ios)
 platform :ios do
   desc "Code coverage and sonar"
   lane :metrics do
-
+    cocoapods()
     scan(scheme: "RELEASE",
       code_coverage: true,
       derived_data_path: "./DerivedData",
