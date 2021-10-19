@@ -24,6 +24,7 @@ describe('ComponentSearchComponent', () => {
   let fixture: ComponentFixture<ComponentSearchComponent>;
   let ordersServiceSpy;
   let errorServiceSpy;
+  const catalogGroup = 'MG';
   beforeEach(async(() => {
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
@@ -46,7 +47,8 @@ describe('ComponentSearchComponent', () => {
           useValue: {close: () => {}}
         },
         { provide: MAT_DIALOG_DATA, useValue: {modalType: 'searchComponent',
-                                                chips: ['crema']} },
+                                                chips: ['crema'],
+                                                catalogGroupName: catalogGroup } },
         { provide: PedidosService, useValue: ordersServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy }]
     })
@@ -105,11 +107,11 @@ describe('ComponentSearchComponent', () => {
     component.limit = 20;
     component.keywords = [];
     component.getQueryString();
-    expect(component.queryStringComponents).toEqual(`?offset=${10}&limit=${20}&chips=$$`);
+    expect(component.queryStringComponents).toEqual(`?offset=${10}&limit=${20}&chips=$$&catalogGroup=${catalogGroup}`);
 
     component.keywords = ['crema'];
     component.getQueryString();
-    expect(component.queryStringComponents).toEqual(`?offset=${10}&limit=${20}&chips=crema`);
+    expect(component.queryStringComponents).toEqual(`?offset=${10}&limit=${20}&chips=crema&catalogGroup=${catalogGroup}`);
   });
   it('should call checkIsPrevious()', () => {
      component.rowPrevious = {};
