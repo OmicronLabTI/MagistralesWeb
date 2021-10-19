@@ -53,13 +53,27 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                    join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
                                    join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
                                    join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                                   join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                                    new
+                                    {
+                                        DoctorId = order.Codigo,
+                                        Address = order.ShippingAddressName
+                                    }
+                                    equals
+                                    new
+                                    {
+                                        DoctorId = doctordet.CardCode,
+                                        Address = doctordet.NickName
+                                    }
+                                    into detalleDireccion
+                                   from dop in detalleDireccion.DefaultIfEmpty()
                                    where order.FechaInicio >= initDate && order.FechaInicio <= endDate && producto.IsMagistral == "Y"
                                    select new CompleteOrderModel
                                    {
                                        DocNum = order.DocNum,
                                        Cliente = doctor.AliasName,
                                        Codigo = order.Codigo,
-                                       Medico = order.Medico,
+                                       Medico = dop.Address2 ?? doctor.AliasName,
                                        AsesorName = asesor.AsesorName,
                                        FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
                                        FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
@@ -86,13 +100,27 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
                                join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
                                join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                               join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                               new
+                               {
+                                   DoctorId = order.Codigo,
+                                   Address = order.ShippingAddressName
+                               }
+                               equals
+                               new
+                               {
+                                   DoctorId = doctordet.CardCode,
+                                   Address = doctordet.NickName
+                               }
+                               into detalleDireccion
+                               from dop in detalleDireccion.DefaultIfEmpty()
                                where producto.IsMagistral == "Y"
                                select new CompleteOrderModel
                                {
                                    DocNum = order.DocNum,
                                    Cliente = doctor.AliasName,
                                    Codigo = order.Codigo,
-                                   Medico = order.Medico,
+                                   Medico = dop.Address2 ?? doctor.AliasName,
                                    AsesorName = asesor.AsesorName,
                                    FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
                                    FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
@@ -120,13 +148,27 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                               join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
                               join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
                               join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                              join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                              new
+                              {
+                                  DoctorId = order.Codigo,
+                                  Address = order.ShippingAddressName
+                              }
+                              equals
+                              new
+                              {
+                                  DoctorId = doctordet.CardCode,
+                                  Address = doctordet.NickName
+                              }
+                              into detalleDireccion
+                              from dp in detalleDireccion.DefaultIfEmpty()
                               where order.PedidoId >= init && order.PedidoId <= end && producto.IsMagistral == "Y"
                               select new CompleteOrderModel
                               {
                                   DocNum = order.DocNum,
                                   Cliente = doctor.AliasName,
                                   Codigo = order.Codigo,
-                                  Medico = order.Medico,
+                                  Medico = dp.Address2 ?? doctor.AliasName,
                                   AsesorName = asesor.AsesorName,
                                   FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
                                   FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
@@ -151,13 +193,27 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
                          join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
                          join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                              new
+                              {
+                                  DoctorId = order.Codigo,
+                                  Address = order.ShippingAddressName
+                              }
+                              equals
+                              new
+                              {
+                                  DoctorId = doctordet.CardCode,
+                                  Address = doctordet.NickName
+                              }
+                              into detalleDireccion
+                         from dp in detalleDireccion.DefaultIfEmpty()
                          where order.DocNumDxp == docNumDxp && producto.IsMagistral == "Y"
                          select new CompleteOrderModel
                          {
                              DocNum = order.DocNum,
                              Cliente = doctor.AliasName,
                              Codigo = order.Codigo,
-                             Medico = order.Medico,
+                             Medico = dp.Address2 ?? doctor.AliasName,
                              AsesorName = asesor.AsesorName,
                              FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
                              FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
