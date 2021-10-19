@@ -118,7 +118,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="medico">
-                    <th mat-header-cell *matHeaderCellDef class="mobile-hide">  NOMBRE DEL MEDICO </th>
+                    <th mat-header-cell *matHeaderCellDef class="mobile-hide"> MEDICO RESPONSABLE </th>
                     <td mat-cell matTooltip="{{element.medico}}"
                     matTooltipPosition="right"
                     aria-label="Button that displays a tooltip in various positions" *matCellDef="let element" class="color-text-intables tdcell mobile-hide medico"> {{(element.medico.length > 25) ? (element.medico | slice: 0:25) + '...' : element.medico}} </td>
