@@ -38,5 +38,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>Street.</value>
         [Column("Address2")]
         public string Address2 { get; set; }
+
+        /// <summary>
+        /// Gets or sets the street.
+        /// </summary>
+        /// <value>Street.</value>
+        [Column("AdresType")]
+        public string AdressType { get; set; }
     }
 }
