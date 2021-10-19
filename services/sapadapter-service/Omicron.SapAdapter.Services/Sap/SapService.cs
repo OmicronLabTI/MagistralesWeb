@@ -167,13 +167,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         public async Task<ResultModel> GetPedidoWithDetail(List<int> pedidosIds)
         {
-            var listData = new List<OrderWithDetailModel>();
             var orders = (await this.sapDao.GetOrdersById(pedidosIds)).ToList();
             var orderDetails = (await this.sapDao.GetAllDetails(pedidosIds.Cast<int?>().ToList())).ToList();
 
-            listData = pedidosIds.Select(mj => new OrderWithDetailModel
+            var listData = pedidosIds.Select(mj => new OrderWithDetailModel
             {
-                Order = orders.Where(ts => ts.PedidoId == mj).FirstOrDefault(),
+                Order = orders.FirstOrDefault(ts => ts.PedidoId == mj),
                 Detalle = orderDetails.Where(ts => ts.PedidoId == mj).OrderByDescending(ts => ts.OrdenFabricacionId).ToList(),
             }).ToList();
 

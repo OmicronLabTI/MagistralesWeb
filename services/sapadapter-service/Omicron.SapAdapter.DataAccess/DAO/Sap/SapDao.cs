@@ -211,7 +211,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the details.</returns>
         public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> pedidoId)
         {
-            var query = (from d in this.databaseContext.DetallePedido
+            var query = (from d in this.databaseContext.DetallePedido.Where(x => pedidoId.Contains(x.PedidoId))
                          join o in this.databaseContext.OrdenFabricacionModel on
                          new
                          {
@@ -228,7 +228,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          from dp in DetallePedido.DefaultIfEmpty()
                          join p in this.databaseContext.ProductoModel on d.ProductoId equals p.ProductoId
                          join ped in this.databaseContext.OrderModel on d.PedidoId equals ped.PedidoId
-                         where pedidoId.Contains(d.PedidoId) && p.IsMagistral == "Y"
+                         where p.IsMagistral == "Y"
                          select new CompleteDetailOrderModel
                          {
                              OrdenFabricacionId = dp.OrdenId,
