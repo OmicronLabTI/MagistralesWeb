@@ -286,6 +286,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Comments = comments,
                     HasBatches = details.Any(x => x.HasBatches),
                     HasMissingStock = returnDetails ? details.Any(y => y.Stock == 0) : itemsByFormula.Any(y => y.OnHand == 0),
+                    CatalogGroupName = ServiceConstants.DictCatalogGroup.ContainsKey(item.Groupname) ? ServiceConstants.DictCatalogGroup[item.Groupname] : "MG",
                     Details = returnDetails ? details : new List<CompleteDetalleFormulaModel>(),
                 };
 
@@ -373,9 +374,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
             chipValues = ServiceUtils.UndecodeSpecialCaracters(chipValues);
 
+            var warehouse = parameters.ContainsKey(ServiceConstants.CatalogGroup) ? parameters[ServiceConstants.CatalogGroup] : ServiceConstants.MagistralWareHouse;
+
             var firstChip = chipValues.FirstOrDefault().ToLower();
-            listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip)).ToList());
-            listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(firstChip)).ToList());
+            listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip, warehouse)).ToList());
+            listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(firstChip, warehouse)).ToList());
             listValues = listValues.DistinctBy(p => p.ProductId).ToList();
 
             foreach (var v in chipValues)

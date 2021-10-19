@@ -148,22 +148,25 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Gets the value for the item code by filters. 
         /// </summary>
         /// <param name="value">the value to look.</param>
+        /// <param name="warehouse">the warehouse.</param>
         /// <returns>the value.</returns>
-        Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value);
+        Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value, string warehouse);
 
         /// <summary>
         /// Gets the value for the item code by filters. 
         /// </summary>
         /// <param name="value">the value to look.</param>
+        /// <param name="warehouse">The warehouse</param>
         /// <returns>the value.</returns>
-        Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(List<string> value);
+        Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(List<string> value, string warehouse);
 
         /// <summary>
         /// Gets the value for the item code by filters. 
         /// </summary>
         /// <param name="value">the value to look.</param>
+        /// <param name="warehouse">The warehouse.</param>
         /// <returns>the value.</returns>
-        Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value);
+        Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value, string warehouse);
 
         /// <summary>
         /// Gets the pedidos from the Detalle pedido.

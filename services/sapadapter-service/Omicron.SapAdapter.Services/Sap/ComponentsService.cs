@@ -42,7 +42,7 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetMostCommonComponents()
+        public async Task<ResultModel> GetMostCommonComponents(Dictionary<string, string> parameters)
         {
             var listToReturn = new List<CompleteDetalleFormulaModel>();
             var redisValue = await this.redisService.GetRedisKey(ServiceConstants.RedisComponents);
@@ -55,7 +55,9 @@ namespace Omicron.SapAdapter.Services.Sap
 
             redisComponents = redisComponents.OrderByDescending(x => x.Total).ToList();
             var ids = redisComponents.Skip(0).Take(10).Select(x => x.ItemCode.ToLower()).ToList();
-            var listComponents = await this.sapDao.GetItemsByContainsItemCode(ids);
+
+            var warehouse = parameters.ContainsKey(ServiceConstants.CatalogGroup) ? parameters[ServiceConstants.CatalogGroup] : ServiceConstants.MagistralWareHouse;
+            var listComponents = await this.sapDao.GetItemsByContainsItemCode(ids, warehouse);
 
             ids.ForEach(x =>
             {

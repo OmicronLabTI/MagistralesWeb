@@ -21,7 +21,7 @@ struct Config {
     #if DEBUG
     static let baseUrl = URLRoot.DEBUG
     #elseif QA
-    static let baseUrl = URLRoot.QA
+    static let baseUrl = URLRoot.QAURL
     #elseif RELEASE
     static let baseUrl = URLRoot.RELEASE
     #elseif UAT
