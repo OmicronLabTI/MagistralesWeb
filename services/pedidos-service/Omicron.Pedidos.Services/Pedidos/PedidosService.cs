@@ -222,7 +222,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> CloseSalesOrders(List<OrderIdModel> finishOrders)
         {
-            var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
             var failed = new List<object>();
             var listToGenPdf = new List<int>();
