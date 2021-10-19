@@ -13,10 +13,12 @@ class ComponentRequest: Codable {
     var offset: Int?
     var limit: Int?
     var chips: [String]?
-    init(offset: Int?, limit: Int?, chips: [String]?) {
+    var catalogGroup: String
+    init(offset: Int?, limit: Int?, chips: [String]?, catalogGroup: String) {
         self.offset = offset
         self.limit = limit
         self.chips = chips
+        self.catalogGroup = catalogGroup
     }
     func toDictionary() -> [String: Any] {
         var dict = [String: Any]()
@@ -81,5 +83,26 @@ class ComponentFormValues {
         self.baseQuantity = baseQuantity
         self.requiredQuantity = requiredQuantity
         self.warehouse = warehouse
+    }
+}
+
+class CommonComponentRequest {
+    var catalogGroup: String
+    init(catalogGroup: String) {
+        self.catalogGroup = catalogGroup
+    }
+    func toDictionary() -> [String: Any] {
+        var dict = [String: Any]()
+        let otherSelf = Mirror(reflecting: self)
+        for child in otherSelf.children {
+            if let key = child.label {
+                if let arr = child.value as? [String] {
+                    dict[key] = arr.joined(separator: ",")
+                } else {
+                    dict[key] = child.value
+                }
+            }
+        }
+        return dict
     }
 }

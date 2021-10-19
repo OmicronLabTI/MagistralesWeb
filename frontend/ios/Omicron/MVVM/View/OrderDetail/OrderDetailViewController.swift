@@ -172,7 +172,8 @@ class OrderDetailViewController: UIViewController {
         self.finishedButton.rx.tap.bind(to: orderDetailViewModel.finishedButtonDidTap).disposed(by: self.disposeBag)
         self.penddingButton.rx.tap.bind(to: orderDetailViewModel.pendingButtonDidTap).disposed(by: self.disposeBag)
         self.addComponentButton.rx.tap.subscribe(onNext: { [weak self] _ in
-            self?.goToComponentsViewController()
+            guard let self = self else { return }
+            self.goToComponentsViewController()
         }).disposed(by: disposeBag)
     }
     func viewModelBinding2() {
