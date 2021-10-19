@@ -96,6 +96,12 @@ namespace Omicron.SapAdapter.Entities.Context
         /// <inheritdoc/>
         public virtual DbSet<Repartidores> Repartidores { get; set; }
 
+        /// <inheritdoc/>
+        public virtual DbSet<DoctorInfoModel> DoctorInfoModel { get; set; }
+
+        /// <inheritdoc/>
+        public virtual DbSet<CatalogProductModel> CatalogProductModel { get; set; }
+
         /// <summary>
         /// model creating.
         /// </summary>

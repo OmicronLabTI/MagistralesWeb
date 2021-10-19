@@ -23,7 +23,7 @@ class ChartViewModel {
     var workloadData = ReplaySubject<[Workload?]>.create(bufferSize: 1)
     var start = PublishSubject<Bool>()
     var disposeBag = DisposeBag()
-    var capacity: [String] = ["", "", ""]
+    var capacity: [String] = [String(), String(), String()]
     var daysRange: [String] = []
     var firstTime = true
 
@@ -34,7 +34,6 @@ class ChartViewModel {
     func getWorkloads() {
 
         guard let userData = Persistence.shared.getUserData(), let userId = userData.id else { return }
-        var workloads: [Workload?] = []
         let initToday = UtilsManager.shared.formattedDateToString(date: Date().todayInZero)
             + "-"
             + UtilsManager.shared.formattedDateToString(date: Date().todayInZero)
@@ -44,33 +43,42 @@ class ChartViewModel {
             UtilsManager.shared.formattedDateToString(date: Date().startOfMonth)
                 + "-"
                 + UtilsManager.shared.formattedDateToString(date: Date().endOfMonth)
-        let daysRange = [UtilsManager.shared.formattedDateToString(date: Date().todayInZero), week ?? "", finiMonth]
+        let daysRange = [UtilsManager.shared.formattedDateToString(date: Date().todayInZero),
+                         week ?? String(), finiMonth]
         self.daysRange = daysRange.map({ $0.replacingOccurrences(of: "-", with: " al ") })
 
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
+        processWorkloadData(initToday: initToday, userId: userId,
+                            numberFormatter: numberFormatter, week: week, finiMonth: finiMonth)
+    }
 
+    func processWorkloadData(initToday: String, userId: String,
+                             numberFormatter: NumberFormatter, week: String?, finiMonth: String) {
+        var workloads: [Workload?] = []
         self.networkManager.getWordLoad(data: WorkloadRequest(fini: initToday, qfb: userId))
             .subscribe(onNext: { [weak self] workloadResponse in
                 guard let self = self else { return }
                 workloads.append(workloadResponse.response?.first)
                 self.capacity[0] = numberFormatter
                     .string(
-                        from: NSNumber(value: workloadResponse.response?.first?.totalPossibleAssign ?? 0)) ?? ""
-                self.networkManager.getWordLoad(data: WorkloadRequest(fini: week ?? "", qfb: userId))
+                        from: NSNumber(value: workloadResponse.response?.first?.totalPossibleAssign ?? 0)) ?? String()
+                self.networkManager.getWordLoad(data: WorkloadRequest(fini: week ?? String(), qfb: userId))
                     .subscribe(onNext: { [weak self] workloadResponse in
                         guard let self = self else { return }
                         workloads.append(workloadResponse.response?.first)
                         self.capacity[1] = numberFormatter
                             .string(
-                                from: NSNumber(value: workloadResponse.response?.first?.totalPossibleAssign ?? 0)) ?? ""
+                                from: NSNumber(value: workloadResponse.response?
+                                                .first?.totalPossibleAssign ?? 0)) ?? String()
                         self.networkManager.getWordLoad(data: WorkloadRequest(fini: finiMonth, qfb: userId))
                             .subscribe(onNext: { [weak self] workloadResponse in
                                 guard let self = self else { return }
                                 workloads.append(workloadResponse.response?.first)
                                 self.capacity[2] = numberFormatter
                                     .string(
-                                        from: NSNumber(value: workloadResponse.response?.first?.totalPossibleAssign ?? 0)) ?? ""
+                                        from: NSNumber(value: workloadResponse
+                                                        .response?.first?.totalPossibleAssign ?? 0)) ?? String()
                                 self.workloadData.onNext(workloads)
                                 if self.firstTime {
                                     self.firstTime = false
@@ -89,7 +97,6 @@ class ChartViewModel {
                 }, onError: { error in
                     print(error)
             }).disposed(by: disposeBag)
-
     }
 
 }

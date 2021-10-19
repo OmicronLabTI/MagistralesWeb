@@ -106,6 +106,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Doctor = "doctor";
 
         /// <summary>
+        /// the doctor filter.
+        /// </summary>
+        public const string CatalogGroup = "catalogGroup";
+
+        /// <summary>
         /// the abierto status.
         /// </summary>
         public const string Abierto = "Abierto";
@@ -516,6 +521,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string IsRefactura = "Si";
 
         /// <summary>
+        /// value for refactua.
+        /// </summary>
+        public const string MagistralWareHouse = "MG";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -550,6 +560,21 @@ namespace Omicron.SapAdapter.Services.Constants
             { "L", "Cerrado" },
             { "C", "Cancelado" },
             { "R", "Liberado" },
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictCatalogGroup { get; } = new Dictionary<string, string>
+        {
+            { "Magistral Dermocos", MagistralWareHouse },
+            { "Magistral Medicament", MagistralWareHouse },
+            { "Dermazone", MagistralWareHouse },
+            { "Bioequal", "BE" },
+            { "Bioelite", "MN" },
         };
 
         /// <summary>
