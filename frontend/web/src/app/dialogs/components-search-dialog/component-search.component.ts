@@ -39,6 +39,7 @@ export class ComponentSearchComponent implements OnInit {
   rowPrevious = {};
   count = 0;
   isFromSearchComponent = true;
+  catalogGroupName = '';
   constructor(private ordersService: PedidosService,
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
               private errorService: ErrorService,
@@ -48,6 +49,7 @@ export class ComponentSearchComponent implements OnInit {
     this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent
                 || this.data.modalType === ComponentSearch.addComponent;
     this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
+    this.catalogGroupName = this.data.catalogGroupName;
   }
 
   ngOnInit() {
@@ -57,6 +59,7 @@ export class ComponentSearchComponent implements OnInit {
       this.getComponentsAction();
     }
     this.changeDetector.detectChanges();
+    this.catalogGroupName = this.data.catalogGroupName;
   }
 
   getComponentsAction() {
@@ -115,7 +118,8 @@ export class ComponentSearchComponent implements OnInit {
   }
   getQueryString() {
     this.queryStringComponents =
-        `?offset=${this.offset}&limit=${this.limit}&chips=${this.keywords.toString() !== '' ? this.keywords.toString() : '$$' }`;
+        // tslint:disable-next-line:max-line-length
+        `?offset=${this.offset}&limit=${this.limit}&chips=${this.keywords.toString() !== '' ? this.keywords.toString() : '$$' }&catalogGroup=${this.catalogGroupName}`;
   }
 
   selectComponent(row: any) {

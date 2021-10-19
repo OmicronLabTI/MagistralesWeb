@@ -44,6 +44,7 @@ export class IFormulaReq {
     details: IFormulaDetalleReq[];
     isInDb?: boolean;
     hasMissingStock: boolean;
+    catalogGroupName: string;
 }
 
 export class IFormulaDetalleReq {
