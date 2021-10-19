@@ -300,7 +300,8 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             data: {
                 modalType: resultSearchComponentModal.modalType,
                 chips: resultSearchComponentModal.chips,
-                data: resultSearchComponentModal.data
+                data: resultSearchComponentModal.data,
+                catalogGroupName: resultSearchComponentModal.catalogGroupName || ''
             }
         });
 
