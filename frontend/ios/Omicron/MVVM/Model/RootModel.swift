@@ -91,9 +91,12 @@ class Order {
     var hasMissingStock = false
     var finishedLabel = false
 
-    init(areBatchesComplete: Bool?, productionOrderId: Int?, baseDocument: Int?, container: String?, tag: String?, plannedQuantity: Decimal?,
-         startDate: String?, finishDate: String?, descriptionProduct: String?, statusId: Int?, itemCode: String?,
-         productCode: String?, destiny: String?, hasMissingStock: Bool, finishedLabel: Bool) {
+    init(areBatchesComplete: Bool?, productionOrderId: Int?, baseDocument: Int?,
+         container: String?, tag: String?, plannedQuantity: Decimal?,
+         startDate: String?, finishDate: String?, descriptionProduct: String?,
+         statusId: Int?, itemCode: String?,
+         productCode: String?, destiny: String?,
+         hasMissingStock: Bool, finishedLabel: Bool) {
         self.areBatchesComplete = areBatchesComplete
         self.productionOrderId = productionOrderId
         self.baseDocument = baseDocument

@@ -83,7 +83,8 @@ class CardCollectionViewCell: UICollectionViewCell {
         }
     }
 
-    func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String, orderTextColor: UIColor = .black) {
+    func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String,
+                      orderTextColor: UIColor = .black) {
         cell.assignedStyleCard(color: borderColor.cgColor)
         missingStockImage.layer.borderColor = borderColor.cgColor
         missingStockImage.tintColor = borderColor

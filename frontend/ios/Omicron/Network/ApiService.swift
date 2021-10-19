@@ -45,7 +45,7 @@ extension ApiService: AuthorizedTargetType {
         default: return URL(string: Config.baseUrl)!
         }
 
-//        return URL(string: "http://201.163.179.29:8000")!
+//        return URL(string: "http://201.163.179.28:8000")!
     }
     var path: String {
         switch self {
