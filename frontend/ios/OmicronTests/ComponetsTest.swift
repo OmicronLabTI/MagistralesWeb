@@ -43,7 +43,7 @@ class ComponetsTest: XCTestCase {
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips,
-                catalogGroupName: "MG")
+                catalogGroup: "MG")
             self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
             }).disposed(by: (self?.disposeBag)!)
