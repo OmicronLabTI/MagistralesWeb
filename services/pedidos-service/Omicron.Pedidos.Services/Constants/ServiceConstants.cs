@@ -421,6 +421,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ReasonProductionOrderNonCompleted = "La orden de fabricación {0} no se encuentra terminada.";
 
         /// <summary>
+        /// Reason non complete production orders.
+        /// </summary>
+        public const string ReasonProductionOrdersNonCompleted = "La órdenes de fabricación: {0} no se encuentran terminadas.";
+
+        /// <summary>
         /// Reason not found.
         /// </summary>
         public const string ReasonProductionOrderNotExists = "La orden de fabricación {0} no existe.";
