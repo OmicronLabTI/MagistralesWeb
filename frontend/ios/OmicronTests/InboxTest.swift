@@ -46,7 +46,8 @@ class InboxTest: XCTestCase {
             descriptionProduct: "Lactico 30% Solución", statusId: 1, itemCode: "1027S   30 ML",
             productCode: "1027S", destiny: "Local", hasMissingStock: false, finishedLabel: false)
         orderItemCodeEmpty = Order(
-            areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284, container: "PRINCESS/ATOMIZADOR", tag: "NA",
+            areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284,
+            container: "PRINCESS/ATOMIZADOR", tag: "NA",
             plannedQuantity: 1, startDate: "22/09/2020",
             finishDate: "30/09/2020", descriptionProduct: "Lactico 30% Solución",
             statusId: 1, itemCode: "", productCode: "1027S", destiny: "Local",

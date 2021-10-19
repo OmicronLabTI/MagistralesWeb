@@ -7,7 +7,7 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "YES"
+            buildForTesting = "NO"
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
@@ -27,6 +27,15 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
+      <CodeCoverageTargets>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "49CF65B525F2D4AB002CD598"
+            BuildableName = "OmicronDEV.app"
+            BlueprintName = "OmicronDEV"
+            ReferencedContainer = "container:Omicron.xcodeproj">
+         </BuildableReference>
+      </CodeCoverageTargets>
       <Testables>
       </Testables>
    </TestAction>

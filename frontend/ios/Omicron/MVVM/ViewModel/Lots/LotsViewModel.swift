@@ -185,7 +185,8 @@ class LotsViewModel {
                             return BatchSelected(
                                 orderId: self?.orderId, assignedQty: sel.cantidadSeleccionada,
                                 batchNumber: sel.numeroLote, itemCode: batch.codigoProducto,
-                                action: nil, sysNumber: sel.sysNumber, expiredBatch: sel.expiredBatch, areBatchesComplete: 0)
+                                action: nil, sysNumber: sel.sysNumber,
+                                expiredBatch: sel.expiredBatch, areBatchesComplete: 0)
                         }) : []
                         return selected
                     }).reduce([], +)

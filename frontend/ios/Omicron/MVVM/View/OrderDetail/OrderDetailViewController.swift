@@ -446,7 +446,7 @@ extension OrderDetailViewController: UITableViewDelegate {
                 self.statusType == StatusNameConstants.reassignedStatus) &&
                 (orderDetail.count > 0 && !(orderDetail[0].details?[indexPath.row].hasBatches ?? true)) {
 //                Descomentar siguiente linea cuando se deba permitir la edición de un elemento
-                
+
                 // Lógica para editar un item de la tabla
 //                let editItem = UIContextualAction(
 //                style: .normal, title: CommonStrings.edit) { [weak self] ( _, _, _) in
