@@ -45,6 +45,7 @@ namespace Omicron.Pedidos.Services.Utils
             var listOrders = new List<UserOrderModel>();
             var filterQfb = parameters.ContainsKey(ServiceConstants.Qfb);
             var filterFechaFin = parameters.ContainsKey(ServiceConstants.FechaFin);
+            var filterFechaIni = parameters.ContainsKey(ServiceConstants.FechaInicio);
             var filterStatus = parameters.ContainsKey(ServiceConstants.Status);
 
             if (filterQfb)
@@ -58,7 +59,7 @@ namespace Omicron.Pedidos.Services.Utils
                 listOrders = filterQfb ? listOrders.Where(x => x.Status.Equals(status)).ToList() : (await pedidosDao.GetUserOrderByStatus(new List<string> { status })).ToList();
             }
 
-            if (filterFechaFin)
+            if (filterFechaFin || filterFechaIni)
             {
                 listOrders = await GetOrdersFilteredByDate(parameters, filterQfb || filterStatus, listOrders, pedidosDao);
             }
@@ -119,13 +120,19 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var dateFilter = ServiceUtils.GetDateFilter(parameters);
 
+            var endDate = dateFilter[ServiceConstants.FechaFin].AddHours(23).AddMinutes(59);
+
             if (dataFiltered)
             {
-                return listOrders.Where(y => y.FinishDate != null && y.FinishDate >= dateFilter[ServiceConstants.FechaInicio] && y.FinishDate <= dateFilter[ServiceConstants.FechaFin]).ToList();
+                return parameters.ContainsKey(ServiceConstants.FechaFin) ?
+                    listOrders.Where(y => y.FinishDate != null && y.FinishDate >= dateFilter[ServiceConstants.FechaInicio] && y.FinishDate <= endDate).ToList()
+                    : listOrders.Where(y => y.PlanningDate != null && y.PlanningDate >= dateFilter[ServiceConstants.FechaInicio] && y.PlanningDate <= endDate).ToList();
             }
             else
             {
-                return (await pedidosDao.GetUserOrderByFechaFin(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList();
+                return parameters.ContainsKey(ServiceConstants.FechaFin) ?
+                (await pedidosDao.GetUserOrderByFechaFin(dateFilter[ServiceConstants.FechaInicio], endDate)).ToList()
+                : (await pedidosDao.GetUserOrderByPlanningDate(dateFilter[ServiceConstants.FechaInicio], endDate)).ToList();
             }
         }
     }

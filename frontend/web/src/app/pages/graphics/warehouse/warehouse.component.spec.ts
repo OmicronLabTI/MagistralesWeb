@@ -25,7 +25,8 @@ describe('WarehouseComponent', () => {
       declarations: [ WarehouseComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [DatePipe,
-        { provide: IncidentsService, useValue: incidentsServiceSpy },]
+        { provide: IncidentsService, useValue: incidentsServiceSpy },
+      ]
     })
     .compileComponents();
   }));

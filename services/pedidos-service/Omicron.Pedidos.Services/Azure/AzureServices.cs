@@ -15,6 +15,7 @@ namespace Omicron.Pedidos.Services.Azure
     using global::Azure.Storage;
     using global::Azure.Storage.Blobs;
     using global::Azure.Storage.Blobs.Models;
+    using Omicron.LeadToCash.Resources.Exceptions;
 
     /// <summary>
     /// Class for azure.
@@ -47,7 +48,7 @@ namespace Omicron.Pedidos.Services.Azure
             }
             catch (Exception ex)
             {
-                return false;
+                throw new CustomServiceException(ex.Message, System.Net.HttpStatusCode.BadRequest);
             }
         }
 

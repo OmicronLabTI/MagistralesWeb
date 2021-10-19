@@ -8,8 +8,8 @@
             </div>
             <div class="icon-next-container no-padding" 
             *ngIf="dataService.getUserRole() === '4' && patientName !== ''">
-                <p class="no-margin patient-name">Nombre del paciente</p>
-                <p class="no-margin patient-name-bold">{{ patientName }}</p>
+                <span class="no-margin patient-name docbase">Nombre del paciente:</span>
+                <span class="no-margin patient-name-bold spandoc">{{ patientName }}</span>
             </div>
         </div>
         <div class="filter-select custom-title-list-container status-container">

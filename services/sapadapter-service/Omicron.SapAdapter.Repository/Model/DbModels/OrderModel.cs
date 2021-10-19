@@ -37,13 +37,6 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("CardName")]
-        public string Cliente { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
         [Column("CardCode")]
         public string Codigo { get; set; }
 
@@ -51,7 +44,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("ShipToCode")]
+        [Column("CardName")]
         public string Medico { get; set; }
 
         /// <summary>

@@ -581,6 +581,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrMagistralRectHeight = "QrMagistralRectHeight";
 
         /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrMagistralBottomTextSize = "QrMagistralBottomTextSize";
+
+        /// <summary>
         /// Field for the max day to look.
         /// </summary>
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
@@ -593,17 +598,17 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// const for the bottom temxt.
         /// </summary>
-        public const string QrBottomTextOrden = "Orden: {0} {1}";
+        public const string QrBottomTextOrden = "OR: {0} {1}";
 
         /// <summary>
         /// const for the bottom temxt.
         /// </summary>
-        public const string QrBottomTextRemision = "Remisión: {0} {1}";
+        public const string QrBottomTextRemision = "R: {0} {1}";
 
         /// <summary>
         /// const for the bottom temxt.
         /// </summary>
-        public const string QrBottomTextFactura = "Factura: {0} {1}";
+        public const string QrBottomTextFactura = "F: {0} {1}";
 
         /// <summary>
         /// const for the cooling.

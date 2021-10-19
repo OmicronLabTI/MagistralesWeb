@@ -54,7 +54,7 @@ class BatchesTest: XCTestCase {
         let batch = BatchSelected(
             orderId: 89956, assignedQty: 0.257895, batchNumber: "337-19",
             itemCode: "MP-109", action: "insert", sysNumber: 54,
-            expiredBatch: false)
+            expiredBatch: false, areBatchesComplete: 1)
         batchesToSend.append(batch)
         lotsViewModel?.sendToServerAssignedLots(lotsToSend: batchesToSend)
     }
@@ -64,7 +64,7 @@ class BatchesTest: XCTestCase {
         let batch = BatchSelected(
             orderId: 89956, assignedQty: 0.257895, batchNumber: "337-19",
             itemCode: "MP-109", action: "insert", sysNumber: 54,
-            expiredBatch: false)
+            expiredBatch: false, areBatchesComplete: 0)
         batchesToSend.append(batch)
         guard let url = Bundle.main.url(forResource: "SendBatchToServerNoEmptyResponse", withExtension: "json"),
             let data = try? Data(contentsOf: url) else {
@@ -277,7 +277,7 @@ class BatchesTest: XCTestCase {
     func testGetFilteredSelectedSuccess() {
         let batchSelected = BatchSelected(
             orderId: 1234, assignedQty: Decimal(20), batchNumber: "OMK-01",
-            itemCode: "OMK", action: Actions.insert.rawValue, sysNumber: 2, expiredBatch: true)
+            itemCode: "OMK", action: Actions.insert.rawValue, sysNumber: 2, expiredBatch: true, areBatchesComplete: 1)
         lotsViewModel?.selectedBatches = [batchSelected]
         let result = lotsViewModel?.getFilteredSelected(itemCode: "OMK", batchNumber: "OMK-01")
         XCTAssertEqual(result?.count, 1)
@@ -289,7 +289,7 @@ class BatchesTest: XCTestCase {
     func testAssignLots() {
         let batchSelected = BatchSelected(
             orderId: 1234, assignedQty: Decimal(20), batchNumber: "OMK-01",
-            itemCode: "OMK", action: Actions.insert.rawValue, sysNumber: 2, expiredBatch: true)
+            itemCode: "OMK", action: Actions.insert.rawValue, sysNumber: 2, expiredBatch: true, areBatchesComplete: 1)
         lotsViewModel?.selectedBatches = [batchSelected]
         lotsViewModel?.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.processSuccess)
@@ -326,7 +326,7 @@ class BatchesTest: XCTestCase {
         let lot = Lots(codigoProducto: "BQ 02", descripcionProducto: "SULFATO DE COBRE", almacen: "MP", totalNecesario: Decimal(5), totalSeleccionado: Decimal(5), lotesSelecionados: [selected], lotesDisponibles: [])
         let batchSelected = BatchSelected(
             orderId: 1234, assignedQty: Decimal(20), batchNumber: "OMK-01",
-            itemCode: "OMK-01", action: Actions.insert.rawValue, sysNumber: 2, expiredBatch: true)
+            itemCode: "OMK-01", action: Actions.insert.rawValue, sysNumber: 2, expiredBatch: true, areBatchesComplete: 0)
         lotsViewModel?.dataLotsSelected.subscribe(onNext: { res in
             XCTAssertEqual(res.count, 0)
         }).disposed(by: disposeBag!)

@@ -319,7 +319,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     Email = string.Empty,
                     OrderId = x.PedidoId,
-                    Cliente = x.Cliente,
+                    Cliente = x.Medico,
                 }));
 
             return ServiceUtils.CreateResult(true, 200, null, asesorsCompleted, null, asesorsCompleted.Count);
@@ -518,36 +518,18 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         public async Task<ResultModel> GetFabOrders(GetOrderFabModel orderFabModel)
         {
-            var dateFilter = ServiceUtils.GetDateFilter(orderFabModel.Filters);
-
             var key = ServiceUtils.PrepareKeyForRedisFromDic(orderFabModel.Filters, ServiceConstants.Orden);
 
-            if (orderFabModel.Filters.ContainsKey(ServiceConstants.Qfb) ||
-                orderFabModel.Filters.ContainsKey(ServiceConstants.Status) ||
-                orderFabModel.Filters.ContainsKey(ServiceConstants.FechaFin))
-            {
-                var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
-                orders = this.getProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, dateFilter, orders).OrderBy(x => x.OrdenId).ToList();
-                var orderCount = orders.Count;
+            var orders = (await this.sapDao.GetFabOrderById(orderFabModel.OrdersId)).ToList();
+            orders = (await this.getProductionOrderUtils.GetSapLocalProdOrders(orderFabModel.Filters, orders)).OrderBy(x => x.OrdenId).ToList();
+            var orderCount = orders.Count;
 
-                var idsForRedis = JsonConvert.SerializeObject(orders.Select(x => x.OrdenId).OrderBy(x => x).ToList());
-                await this.redisService.WriteToRedis(key, idsForRedis, new TimeSpan(8, 0, 0));
+            var idsForRedis = JsonConvert.SerializeObject(orders.Select(x => x.OrdenId).OrderBy(x => x).ToList());
+            await this.redisService.WriteToRedis(key, idsForRedis, new TimeSpan(8, 0, 0));
 
-                orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
-                orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(orders) : orders;
-                return ServiceUtils.CreateResult(true, 200, null, orders, null, orderCount);
-            }
-
-            this.logger.Information("Busqueda por filtros");
-            var dataBaseOrders = (await this.getProductionOrderUtils.GetSapDbProdOrders(orderFabModel.Filters, dateFilter)).OrderBy(x => x.OrdenId).ToList();
-            var total = dataBaseOrders.Count;
-
-            var ids = JsonConvert.SerializeObject(dataBaseOrders.Select(x => x.OrdenId).OrderBy(x => x).ToList());
-            await this.redisService.WriteToRedis(key, ids, new TimeSpan(8, 0, 0));
-
-            var ordersToReturn = this.ApplyOffsetLimit(dataBaseOrders, orderFabModel.Filters);
-            ordersToReturn = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(ordersToReturn) : ordersToReturn;
-            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, total);
+            orders = this.ApplyOffsetLimit(orders, orderFabModel.Filters);
+            orders = orderFabModel.Filters.ContainsKey(ServiceConstants.NeedsLargeDsc) ? await this.getProductionOrderUtils.CompleteOrder(orders) : orders;
+            return ServiceUtils.CreateResult(true, 200, null, orders, null, orderCount);
         }
 
         /// <summary>

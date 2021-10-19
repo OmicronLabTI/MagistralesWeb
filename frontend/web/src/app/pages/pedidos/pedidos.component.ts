@@ -1,40 +1,40 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatTableDataSource} from '@angular/material';
-import {PedidosService} from '../../services/pedidos.service';
-import {DataService} from '../../services/data.service';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material';
+import { PedidosService } from '../../services/pedidos.service';
+import { DataService } from '../../services/data.service';
 import {
-    ClassCssOrderType,
-    ClassNames,
-    CONST_NUMBER,
-    CONST_STRING,
-    ConstOrders,
-    ConstStatus,
-    FromToFilter,
-    HttpServiceTOCall,
-    HttpStatus,
-    MessageType,
-    MODAL_NAMES, OrderType,
-    RouterPaths,
-    TypeToSeeTap,
+  ClassCssOrderType,
+  ClassNames,
+  CONST_NUMBER,
+  CONST_STRING,
+  ConstOrders,
+  ConstStatus,
+  FromToFilter,
+  HttpServiceTOCall,
+  HttpStatus,
+  MessageType,
+  MODAL_NAMES, OrderType,
+  RouterPaths,
+  TypeToSeeTap,
 } from '../../constants/const';
-import {Messages} from '../../constants/messages';
-import {ErrorService} from '../../services/error.service';
+import { Messages } from '../../constants/messages';
+import { ErrorService } from '../../services/error.service';
 import {
-    CancelOrderReq,
-    ICreatePdfOrdersRes,
-    IPedidoReq,
-    IRecipesRes,
-    ParamsPedidos,
-    ProcessOrders
+  CancelOrderReq,
+  ICreatePdfOrdersRes,
+  IPedidoReq,
+  IRecipesRes,
+  ParamsPedidos,
+  ProcessOrders
 } from '../../model/http/pedidos';
-import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {MatDialog} from '@angular/material/dialog';
-import {Subscription} from 'rxjs';
-import {Title} from '@angular/platform-browser';
-import {ErrorHttpInterface} from '../../model/http/commons';
-import {Router} from '@angular/router';
-import {IOrdersRefuseReq, ReasonRefuse} from '../../model/http/detallepedidos.model';
-import {CommentsConfig} from '../../model/device/incidents.model';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
+import { Title } from '@angular/platform-browser';
+import { ErrorHttpInterface } from '../../model/http/commons';
+import { Router } from '@angular/router';
+import { IOrdersRefuseReq, ReasonRefuse } from '../../model/http/detallepedidos.model';
+import { CommentsConfig } from '../../model/device/incidents.model';
 
 @Component({
   selector: 'app-pedidos',
@@ -45,16 +45,16 @@ export class PedidosComponent implements OnInit, OnDestroy {
   allComplete = false;
   ordersToProcess = new ProcessOrders();
   // tslint:disable-next-line:max-line-length
-  displayedColumns: string[] = ['seleccion', 'codigoDxp', 'codigo', 'cliente', 'medico', 'asesor', 'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions'];
+  displayedColumns: string[] = ['seleccion', 'codigo', 'codigoDxp', 'cliente', 'medico', 'asesor', 'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions'];
   dataSource = new MatTableDataSource<IPedidoReq>();
   pageEvent: PageEvent;
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   lengthPaginator = CONST_NUMBER.zero;
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
   queryString = CONST_STRING.empty;
   fullQueryString = CONST_STRING.empty;
-  isDateInit =  true;
+  isDateInit = true;
   isSearchWithFilter = false;
   filterDataOrders = new ParamsPedidos();
   isThereOrdersToPlan = false;
@@ -84,9 +84,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
     if (this.dataService.getFiltersActives()) {
-          this.onSuccessSearchOrderModal(this.dataService.getFiltersActivesAsModel());
+      this.onSuccessSearchOrderModal(this.dataService.getFiltersActivesAsModel());
     } else {
-          this.createInitRage();
+      this.createInitRage();
     }
     this.subscriptionCallHttp.add(this.dataService.getCallHttpService().subscribe(callHttpService => {
       if (callHttpService === HttpServiceTOCall.ORDERS) {
@@ -99,23 +99,23 @@ export class PedidosComponent implements OnInit, OnDestroy {
       }
     }));
     this.subscriptionCallHttp.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
-        this.successNewComments(newCommentsResult)));
+      this.successNewComments(newCommentsResult)));
     this.dataService.removeFiltersActive();
   }
   createInitRage() {
 
-    this.pedidosService.getInitRangeDate().subscribe(({response}) =>
-            this.getInitRange(response.filter(catalog => catalog.field === 'MagistralesDaysToLook')[0].value),
-            error => this.errorService.httpError(error));
+    this.pedidosService.getInitRangeDate().subscribe(({ response }) =>
+      this.getInitRange(response.filter(catalog => catalog.field === 'MagistralesDaysToLook')[0].value),
+      error => this.errorService.httpError(error));
   }
-  getInitRange(rangeDateResult: string ) {
-      this.filterDataOrders = new ParamsPedidos();
-      this.filterDataOrders.isFromOrders = true;
-      this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
-      this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(rangeDateResult));
-      this.queryString = `?fini=${this.filterDataOrders.dateFull}`;
-      this.getFullQueryString();
-      this.getPedidos();
+  getInitRange(rangeDateResult: string) {
+    this.filterDataOrders = new ParamsPedidos();
+    this.filterDataOrders.isFromOrders = true;
+    this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
+    this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(rangeDateResult));
+    this.queryString = `?fini=${this.filterDataOrders.dateFull}`;
+    this.getFullQueryString();
+    this.getPedidos();
   }
   getPedidos() {
     this.pedidosService.getPedidos(this.fullQueryString).subscribe(
@@ -123,40 +123,41 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.lengthPaginator = pedidoRes.comments;
         this.dataSource.data = pedidoRes.response;
         this.dataSource.data.forEach(element => {
-            element.pedidoStatus = element.canceled === ConstStatus.canceled ?
-                  ConstStatus.cancelado : element.pedidoStatus;
-            switch (element.pedidoStatus) {
-                  case ConstStatus.abierto:
-                      element.class = 'abierto';
-                      break;
-                  case ConstStatus.planificado:
-                      element.class = 'planificado';
-                      break;
-                  case ConstStatus.liberado:
-                      element.class = 'liberado';
-                      break;
-                  case ConstStatus.cancelado:
-                      element.class = 'cancelado';
-                      break;
-                  case ConstStatus.enProceso:
-                      element.class = 'proceso';
-                      break;
-                  case ConstStatus.finalizado:
-                      element.class = 'finalizado';
-                      break;
-                  case ConstStatus.terminado:
-                      element.class = 'terminado';
-                      break;
-                  case ConstStatus.rechazado:
-                      element.class = 'rechazado';
-                      break;
-                  case ConstStatus.entregado:
-                  case ConstStatus.almacenado:
-                      element.class = ConstStatus.almacenado.toLowerCase();
-                      break;
-              }
-            element.classClasification = this.getClassClasification(element.orderType);
-          });
+          element.pedidoStatus = element.canceled === ConstStatus.canceled ?
+            ConstStatus.cancelado : element.pedidoStatus;
+          element.docNumDxp = element.docNumDxp ? element.docNumDxp : '';
+          switch (element.pedidoStatus) {
+            case ConstStatus.abierto:
+              element.class = 'abierto';
+              break;
+            case ConstStatus.planificado:
+              element.class = 'planificado';
+              break;
+            case ConstStatus.liberado:
+              element.class = 'liberado';
+              break;
+            case ConstStatus.cancelado:
+              element.class = 'cancelado';
+              break;
+            case ConstStatus.enProceso:
+              element.class = 'proceso';
+              break;
+            case ConstStatus.finalizado:
+              element.class = 'finalizado';
+              break;
+            case ConstStatus.terminado:
+              element.class = 'terminado';
+              break;
+            case ConstStatus.rechazado:
+              element.class = 'rechazado';
+              break;
+            case ConstStatus.entregado:
+            case ConstStatus.almacenado:
+              element.class = ConstStatus.almacenado.toLowerCase();
+              break;
+          }
+          element.classClasification = this.getClassClasification(element.orderType);
+        });
         this.isTherePedidosToViewPdf = false;
         this.isCheckedOrders = false;
         this.isThereOrdersToPlan = false;
@@ -168,9 +169,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.allComplete = false;
         this.isOnInit = false;
       },
-        (error: ErrorHttpInterface) => {
-          this.errorService.httpError(error);
-          this.dataSource.data = [];
+      (error: ErrorHttpInterface) => {
+        this.errorService.httpError(error);
+        this.dataSource.data = [];
       }
     );
   }
@@ -195,37 +196,37 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   processOrdersService() {
     this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
-    .then((result: any) => {
-      if (result.isConfirmed) {
-        this.ordersToProcess.listIds = this.getOrdersOnlyOpen();
-        this.ordersToProcess.user = this.dataService.getUserId();
-        this.pedidosService.processOrders(this.ordersToProcess).subscribe(
-          resProcessOrder => {
-            if (resProcessOrder.success && resProcessOrder.response.length > 0) {
-              const titleProcessWithError = this.dataService.getMessageTitle(resProcessOrder.response, MessageType.processOrder);
-              this.getPedidos();
-              this.dataService.presentToastCustom(titleProcessWithError, 'error',
+      .then((result: any) => {
+        if (result.isConfirmed) {
+          this.ordersToProcess.listIds = this.getOrdersOnlyOpen();
+          this.ordersToProcess.user = this.dataService.getUserId();
+          this.pedidosService.processOrders(this.ordersToProcess).subscribe(
+            resProcessOrder => {
+              if (resProcessOrder.success && resProcessOrder.response.length > 0) {
+                const titleProcessWithError = this.dataService.getMessageTitle(resProcessOrder.response, MessageType.processOrder);
+                this.getPedidos();
+                this.dataService.presentToastCustom(titleProcessWithError, 'error',
                   Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
-            } else {
-              this.showMessagesAndRefresh();
+              } else {
+                this.showMessagesAndRefresh();
+              }
+              this.dataService.setIsLoading(false);
+            },
+            error => {
+              if (error.status === HttpStatus.badRequest) {
+                this.dataService.presentToastCustom(error.error, 'error',
+                  Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
+              } else {
+                this.errorService.httpError(error);
+              }
             }
-            this.dataService.setIsLoading(false);
-          },
-          error => {
-            if(error.status === HttpStatus.badRequest) {
-              this.dataService.presentToastCustom(error.error, 'error',
-              Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
-            } else{
-              this.errorService.httpError(error);
-            }
-          }
-        );
-      }
-    });
+          );
+        }
+      });
   }
   showMessagesAndRefresh() {
-      this.getPedidos();
-      this.dataService.setMessageGeneralCallHttp({title: Messages.success , icon: 'success', isButtonAccept: false});
+    this.getPedidos();
+    this.dataService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
   }
   changeDataEvent(event: PageEvent) {
     this.pageIndex = event.pageIndex;
@@ -236,26 +237,26 @@ export class PedidosComponent implements OnInit, OnDestroy {
     return event;
   }
   openFindOrdersDialog() {
-    this.dataService.setSearchOrdersModal({modalType: ConstOrders.modalOrders, filterOrdersData: this.filterDataOrders });
- }
+    this.dataService.setSearchOrdersModal({ modalType: ConstOrders.modalOrders, filterOrdersData: this.filterDataOrders });
+  }
 
   openPlaceOrdersDialog() {
     this.dataService.setQbfToPlace(
-        {
-          modalType: MODAL_NAMES.placeOrders,
-          list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders)
-        });
+      {
+        modalType: MODAL_NAMES.placeOrders,
+        list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders)
+      });
   }
   getButtonsToUnLooked() {
-    this.isCheckedOrders = this.dataSource.data.filter( order => order.isChecked).length > CONST_NUMBER.zero;
+    this.isCheckedOrders = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
     this.isThereOrdersToCancel = this.dataService.getIsThereOnData(this.dataSource.data,
-        ConstStatus.finalizado, FromToFilter.fromOrdersCancel);
+      ConstStatus.finalizado, FromToFilter.fromOrdersCancel);
     this.isThereOrdersToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromOrders);
     this.isThereOrdersToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
     this.isThereOrdersToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado, FromToFilter.fromOrders);
     this.isThereOrdersToReassign =
-        this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
-    this.isTherePedidosToViewPdf = this.dataSource.data.filter( order => order.isChecked).length > CONST_NUMBER.zero;
+      this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
+    this.isTherePedidosToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
   }
   getFullQueryString() {
@@ -267,29 +268,33 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   cancelOrders() {
-    this.dataService.setCancelOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.pedidoStatus !== ConstStatus.finalizado && t.pedidoStatus !== ConstStatus.almacenado)).map(order => {
-        const cancelOrder = new CancelOrderReq();
-        cancelOrder.orderId = order.docNum;
-        return cancelOrder;
-      }),
-        cancelType: MODAL_NAMES.placeOrders});
+    this.dataService.setCancelOrders({
+      list: this.dataSource.data.filter
+        (t => (t.isChecked && t.pedidoStatus !== ConstStatus.finalizado && t.pedidoStatus !== ConstStatus.almacenado)).map(order => {
+          const cancelOrder = new CancelOrderReq();
+          cancelOrder.orderId = order.docNum;
+          return cancelOrder;
+        }),
+      cancelType: MODAL_NAMES.placeOrders
+    });
   }
 
   finalizeOrders() {
-    this.dataService.setFinalizeOrders({list: this.dataSource.data.filter
-      (t => (t.isChecked && t.pedidoStatus === ConstStatus.terminado)).map(order => {
-        const finalizeOrder = new CancelOrderReq();
-        finalizeOrder.orderId = order.docNum;
-        return finalizeOrder;
-      }), cancelType: MODAL_NAMES.placeOrders});
+    this.dataService.setFinalizeOrders({
+      list: this.dataSource.data.filter
+        (t => (t.isChecked && t.pedidoStatus === ConstStatus.terminado)).map(order => {
+          const finalizeOrder = new CancelOrderReq();
+          finalizeOrder.orderId = order.docNum;
+          return finalizeOrder;
+        }), cancelType: MODAL_NAMES.placeOrders
+    });
   }
 
   private onSuccessSearchOrderModal(resultSearchOrderModal: ParamsPedidos) {
     this.isDateInit = resultSearchOrderModal.dateType === ConstOrders.defaultDateInit;
     this.pageIndex = resultSearchOrderModal.pageIndex;
     this.offset = resultSearchOrderModal.offset || 0;
-    this.limit =  resultSearchOrderModal.limit || 10;
+    this.limit = resultSearchOrderModal.limit || 10;
     this.filterDataOrders = new ParamsPedidos();
     this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrderModal)[0];
     this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
@@ -299,24 +304,26 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   reassignOrders() {
-    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrders,
+    this.dataService.setQbfToPlace({
+      modalType: MODAL_NAMES.placeOrders,
       list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
-          FromToFilter.fromOrdersReassign, ConstStatus.liberado).map(order => order.docNum)
-      , isFromReassign: true});
+        FromToFilter.fromOrdersReassign, ConstStatus.liberado).map(order => order.docNum)
+      , isFromReassign: true
+    });
   }
 
   toSeeRecipes(docNum: number) {
     this.pedidosService.getRecipesByOrder(docNum).subscribe(recipeByOrderRes => {
-          this.onSuccessHttpGetRecipes(recipeByOrderRes);
-          this.dataService.setIsLoading(false);
-        }
-    , error => this.errorService.httpError(error));
+      this.onSuccessHttpGetRecipes(recipeByOrderRes);
+      this.dataService.setIsLoading(false);
+    }
+      , error => this.errorService.httpError(error));
 
   }
 
   onSuccessHttpGetRecipes(resultGetRecipes: IRecipesRes) {
     if (resultGetRecipes.response.length === CONST_NUMBER.zero) {
-      this.dataService.setMessageGeneralCallHttp({title: Messages.noHasRecipes, icon: 'info', isButtonAccept: true});
+      this.dataService.setMessageGeneralCallHttp({ title: Messages.noHasRecipes, icon: 'info', isButtonAccept: true });
     } else {
       resultGetRecipes.response.forEach(urlPdf => this.dataService.openNewTapByUrl(urlPdf.recipe, TypeToSeeTap.receipt, urlPdf.order));
     }
@@ -335,114 +342,114 @@ export class PedidosComponent implements OnInit, OnDestroy {
   printOrderAsPdfFile() {
     if (this.isCheckedOrders) {
       this.dataService.presentToastCustom(Messages.confirmCreateOrderPdf, 'question', '', true, true)
-      .then( (res: any) => {
-        if (res.isConfirmed) {
-          this.printOrderAsPdfFileConfirmedAction();
-        }
-      });
+        .then((res: any) => {
+          if (res.isConfirmed) {
+            this.printOrderAsPdfFileConfirmedAction();
+          }
+        });
     }
   }
 
   printOrderAsPdfFileConfirmedAction() {
-    let documentNumbers = this.dataSource.data.filter(t => (t.isChecked && t.pedidoStatus !== ConstStatus.cancelado)).map(i => { return i.docNum });
+    const documentNumbers = this.dataSource.data.filter(t =>
+      (t.isChecked && t.pedidoStatus !== ConstStatus.cancelado)).map(i => i.docNum);
     this.pedidosService.createPdfOrders(documentNumbers)
-    .subscribe((response : ICreatePdfOrdersRes) => {
-      if (response.userError) {
-        let errorNumbers = response.response.filter(x => !isNaN(x as any));
-        let formatedNumbers = errorNumbers.join(', ');
-        let message = '';
-        if (response.response.length > 1) {
-          message = `${Messages.errorMessageCreateOrdersPdf}${formatedNumbers}`;
+      .subscribe((response: ICreatePdfOrdersRes) => {
+        if (response.userError) {
+          const errorNumbers = response.response.filter(x => !isNaN(x as any));
+          const formatedNumbers = errorNumbers.join(', ');
+          let message = '';
+          if (response.response.length > 1) {
+            message = `${Messages.errorMessageCreateOrdersPdf}${formatedNumbers}`;
+          } else {
+            message = `${Messages.errorMessageCreateOrderPdf}${formatedNumbers}`;
+          }
+          this.dataService.presentToastCustom(Messages.errorTitleCreateOrderPdf, 'error', message, true, false, ClassNames.popupCustom);
+        } else {
+          this.dataService.presentToastCustom(Messages.successTitleCreateOrderPdf, 'success', null, true, false);
         }
-        else {
-          message = `${Messages.errorMessageCreateOrderPdf}${formatedNumbers}`;
-        }
-        this.dataService.presentToastCustom(Messages.errorTitleCreateOrderPdf, 'error', message, true, false, ClassNames.popupCustom);
-      } else {
-        this.dataService.presentToastCustom(Messages.successTitleCreateOrderPdf, 'success', null, true, false);
-      }
-      this.getPedidos();
-    },
-    (error: ErrorHttpInterface) => {
-      if (error.status !== HttpStatus.notFound) {
-        this.errorService.httpError(error);
-      }
-      this.getPedidos();
-    });
+        this.getPedidos();
+      },
+        (error: ErrorHttpInterface) => {
+          if (error.status !== HttpStatus.notFound) {
+            this.errorService.httpError(error);
+          }
+          this.getPedidos();
+        });
   }
 
   openNewTabByOrder(order: number) {
-      this.filterDataOrders.offset = this.offset;
-      this.filterDataOrders.limit = this.limit;
-      this.filterDataOrders.pageIndex = this.pageIndex;
-      this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
-      this.router.navigate([RouterPaths.orderDetail, order]);
+    this.filterDataOrders.offset = this.offset;
+    this.filterDataOrders.limit = this.limit;
+    this.filterDataOrders.pageIndex = this.pageIndex;
+    this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
+    this.router.navigate([RouterPaths.orderDetail, order]);
   }
-    viewPedidosWithPdf() {
-        this.pedidosService.getOrdersPdfViews(this.dataSource.data.filter(order => order.isChecked).map( order => order.docNum))
-            .subscribe( viewPdfResult => {
-                viewPdfResult.response.forEach( pdfUrl => {
-                    this.dataService.openNewTapByUrl(
-                        pdfUrl, TypeToSeeTap.order,
-                        Number(pdfUrl.split('/').slice(-1)[0].split('.')[0].slice(5, 10) // to get number Order from link
-                        ));
-                });
-                }
-                , error => this.errorService.httpError(error));
-    }
-    getOrdersOnlyOpen() {
-        return this.dataSource.data.filter(t =>
-            (t.isChecked && t.pedidoStatus === ConstStatus.abierto)).map(t => t.docNum);
-    }
+  viewPedidosWithPdf() {
+    this.pedidosService.getOrdersPdfViews(this.dataSource.data.filter(order => order.isChecked).map(order => order.docNum))
+      .subscribe(viewPdfResult => {
+        viewPdfResult.response.forEach(pdfUrl => {
+          this.dataService.openNewTapByUrl(
+            pdfUrl, TypeToSeeTap.order,
+            Number(pdfUrl.split('/').slice(-1)[0].split('.')[0].slice(5, 10) // to get number Order from link
+            ));
+        });
+      }
+        , error => this.errorService.httpError(error));
+  }
+  getOrdersOnlyOpen() {
+    return this.dataSource.data.filter(t =>
+      (t.isChecked && t.pedidoStatus === ConstStatus.abierto)).map(t => t.docNum);
+  }
 
-    ordersToRefuse() {
+  ordersToRefuse() {
 
-        this.dataService.presentToastCustom(Messages.refuseOrders, 'warning', CONST_STRING.empty, true, true)
-            .then((result: any) => {
-                if (result.isConfirmed) {
-                     this.showCommentsToRefuse();
-                }
-            });
-    }
-
-    showCommentsToRefuse() {
-        this.dataService.setOpenCommentsDialog({comments: CONST_STRING.empty, isForRefuseOrders: true});
-    }
-    successNewComments(newCommentsResult: CommentsConfig) {
-        const ordersToRefuseReq = new IOrdersRefuseReq();
-        ordersToRefuseReq.comments = newCommentsResult.comments;
-        ordersToRefuseReq.userId = this.dataService.getUserId();
-        ordersToRefuseReq.ordersId  = this.getOrdersOnlyOpen();
-        this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({response}) =>
-            this.successRefuseResult(response.failed), error => this.errorService.httpError(error));
-    }
-    successRefuseResult(failed: ReasonRefuse[]) {
-        if (failed.length === CONST_NUMBER.zero) {
-            this.showMessagesAndRefresh();
-            return;
+    this.dataService.presentToastCustom(Messages.refuseOrders, 'warning', CONST_STRING.empty, true, true)
+      .then((result: any) => {
+        if (result.isConfirmed) {
+          this.showCommentsToRefuse();
         }
-        this.dataService.presentToastCustom(this.dataService.getMessageTitle(failed, MessageType.default, true)
-                , 'info', CONST_STRING.empty, true, false, ClassNames.popupCustom);
-        this.getPedidos();
+      });
+  }
+
+  showCommentsToRefuse() {
+    this.dataService.setOpenCommentsDialog({ comments: CONST_STRING.empty, isForRefuseOrders: true });
+  }
+  successNewComments(newCommentsResult: CommentsConfig) {
+    const ordersToRefuseReq = new IOrdersRefuseReq();
+    ordersToRefuseReq.comments = newCommentsResult.comments;
+    ordersToRefuseReq.userId = this.dataService.getUserId();
+    ordersToRefuseReq.ordersId = this.getOrdersOnlyOpen();
+    this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({ response }) =>
+      this.successRefuseResult(response.failed), error => this.errorService.httpError(error));
+  }
+  successRefuseResult(failed: ReasonRefuse[]) {
+    if (failed.length === CONST_NUMBER.zero) {
+      this.showMessagesAndRefresh();
+      return;
     }
+    this.dataService.presentToastCustom(this.dataService.getMessageTitle(failed, MessageType.default, true)
+      , 'info', CONST_STRING.empty, true, false, ClassNames.popupCustom);
+    this.getPedidos();
+  }
 
 
-    getClassClasification(orderType: string) {
-        switch (orderType) {
-            case OrderType.bioElite:
-                return ClassCssOrderType.mn;
-            case OrderType.bioEqual:
-                return  ClassCssOrderType.be;
-            case OrderType.magistral:
-                return ClassCssOrderType.mg;
-            case OrderType.mixto:
-                return ClassCssOrderType.mx;
-            case OrderType.maquila:
-                return ClassCssOrderType.mq;
-            case OrderType.muestra:
-                return ClassCssOrderType.mu;
-        }
+  getClassClasification(orderType: string) {
+    switch (orderType) {
+      case OrderType.bioElite:
+        return ClassCssOrderType.mn;
+      case OrderType.bioEqual:
+        return ClassCssOrderType.be;
+      case OrderType.magistral:
+        return ClassCssOrderType.mg;
+      case OrderType.mixto:
+        return ClassCssOrderType.mx;
+      case OrderType.maquila:
+        return ClassCssOrderType.mq;
+      case OrderType.muestra:
+        return ClassCssOrderType.mu;
     }
+  }
 
 
 }

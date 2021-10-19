@@ -44,6 +44,8 @@ extension ApiService: AuthorizedTargetType {
         case .getConnect: return URL(string: Config.serverOmicron)!
         default: return URL(string: Config.baseUrl)!
         }
+
+//        return URL(string: "http://201.163.179.29:8000")!
     }
     var path: String {
         switch self {

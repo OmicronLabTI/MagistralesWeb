@@ -55,6 +55,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.context = new DatabaseContext(options);
             this.context.AsesorModel.Add(this.GetAsesorModel());
+            this.context.ClientCatalogModel.AddRange(this.GetDoctors());
             this.context.DetallePedido.AddRange(this.GetDetallePedido());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
             this.context.OrderModel.AddRange(this.GetOrderModel());
@@ -512,9 +513,12 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Get last isolated production order id.
         /// </summary>
+        /// <param name="needLargeDescription">need large descr.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task GetFabOrdersOnlyLocals()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task GetFabOrdersOnlyLocals(bool needLargeDescription)
         {
             // arrange
             var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
@@ -530,6 +534,11 @@ namespace Omicron.SapAdapter.Test.Services
                     { ServiceConstants.Qfb, "abc" },
                 },
             };
+
+            if (needLargeDescription)
+            {
+                parameters.Filters.Add(ServiceConstants.NeedsLargeDsc, "true");
+            }
 
             // act
             var result = await this.sapService.GetFabOrders(parameters);
@@ -636,7 +645,7 @@ namespace Omicron.SapAdapter.Test.Services
                 OrdersId = new List<int> { 120 },
                 Filters = new Dictionary<string, string>
                 {
-                    { ServiceConstants.DocNum, "100" },
+                    { ServiceConstants.DocNum, "100-100" },
                     { ServiceConstants.Qfb, "abc" },
                 },
             };

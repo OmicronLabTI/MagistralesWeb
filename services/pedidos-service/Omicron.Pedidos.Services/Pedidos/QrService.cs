@@ -15,17 +15,16 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Drawing.Imaging;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Services.AlmacenService;
     using Omicron.Pedidos.Services.Azure;
     using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.Utils;
     using ZXing;
 
@@ -216,7 +215,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<MagistralQrModel>(so.MagistralQr);
-                var bitmap = this.CreateQr(parameters, so.MagistralQr);
+                modelQr.Quantity = Math.Round(modelQr.Quantity, 1);
+                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
 
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
                 bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters);
@@ -374,11 +374,13 @@ namespace Omicron.Pedidos.Services.Pedidos
             var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectWidth));
             var rectyField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRecty));
             var rectxField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectx));
+            var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralBottomTextSize));
 
             var rectx = rectxField != null ? int.Parse(rectxField.Value) : DefaultHeightWidth / 2;
             var recty = rectyField != null ? int.Parse(rectyField.Value) : DefaultHeightWidth - 25;
             var heigth = heigthField != null ? int.Parse(heigthField.Value) : 250;
             var width = widthField != null ? int.Parse(widthField.Value) : 100;
+            var sizeText = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24;
 
             RectangleF rectf = new RectangleF(rectx, recty, width, heigth);
 
@@ -389,7 +391,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             graphic.SmoothingMode = SmoothingMode.AntiAlias;
             graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            graphic.DrawString(bottomText, new Font("Tahoma", 16), Brushes.Black, rectf);
+            graphic.DrawString(bottomText, new Font("Tahoma", sizeText), Brushes.Black, rectf);
             graphic.Flush();
             return qrsBitmap;
         }

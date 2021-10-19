@@ -71,6 +71,10 @@ namespace Omicron.Pedidos.Test.Entities
             new ProductionRemisionQrModel(),
             new ProductionFacturaQrModel(),
             new AlmacenGraphicsCount(),
+            new AsesorModel(),
+            new DetallePedidoModel(),
+            new SalesLogs(),
+            new ProductionOrderQr(),
         };
 
         /// <summary>

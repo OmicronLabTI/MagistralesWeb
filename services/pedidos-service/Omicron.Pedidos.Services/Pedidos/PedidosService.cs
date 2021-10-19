@@ -107,8 +107,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetUserOrdersByUserId(List<string> listIds)
         {
-            var userOrder = await this.pedidosDao.GetUserOrderByUserId(listIds);
-            userOrder = userOrder.Where(y => ServiceConstants.ListStatusOrdenesForQfbCount.Contains(y.Status)).ToList();
+            var userOrder = await this.pedidosDao.GetUserOrderByUserIdAndStatus(listIds, ServiceConstants.ListStatusOrdenesForQfbCount);
             return ServiceUtils.CreateResult(true, 200, null, userOrder, null);
         }
 
@@ -727,6 +726,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 newProductionOrder.CreatorUserId = isolatedFabOrder.UserId;
                 newProductionOrder.CreationDate = DateTime.Now.FormatedLargeDate();
                 newProductionOrder.Status = ServiceConstants.Planificado;
+                newProductionOrder.PlanningDate = DateTime.Now;
 
                 logs.AddRange(ServiceUtils.CreateOrderLog(isolatedFabOrder.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.IsolatedProductionOrderCreated, productionOrderId), ServiceConstants.OrdenFab));
                 /** add logs**/
