@@ -244,18 +244,7 @@ class InboxViewModel {
         return sectionModels
     }
     func setSelection(section: SectionOrder, removeSelecteds: Bool = false) {
-        var ordering: [Order] = []
-        if section.statusName == StatusNameConstants.inProcessStatus ||
-            section.statusName == StatusNameConstants.reassignedStatus {
-            let ordersReadyToFinish =
-                sortByBaseBocumentAscending(orders: section.orders.filter({ $0.areBatchesComplete == true }))
-            let ordersNotReadyToFinish =
-                sortByBaseBocumentAscending(orders: section.orders.filter({ $0.areBatchesComplete == false }))
-            ordering.append(contentsOf: ordersReadyToFinish)
-            ordering.append(contentsOf: ordersNotReadyToFinish)
-        } else {
-            ordering = sortByBaseBocumentAscending(orders: section.orders)
-        }
+        let ordering = orderingOrders(section: section)
         ordersTemp = ordering
         if removeSelecteds {
             resetData.onNext(())
@@ -301,6 +290,23 @@ class InboxViewModel {
         showKPIView.onNext(false)
         reloadData.onNext(())
     }
+
+    func orderingOrders(section: SectionOrder) -> [Order] {
+        var ordering: [Order] = []
+        if section.statusName == StatusNameConstants.inProcessStatus ||
+            section.statusName == StatusNameConstants.reassignedStatus {
+            let ordersReadyToFinish =
+                sortByBaseBocumentAscending(orders: section.orders.filter({ $0.areBatchesComplete == true }))
+            let ordersNotReadyToFinish =
+                sortByBaseBocumentAscending(orders: section.orders.filter({ $0.areBatchesComplete == false }))
+            ordering.append(contentsOf: ordersReadyToFinish)
+            ordering.append(contentsOf: ordersNotReadyToFinish)
+        } else {
+            ordering = sortByBaseBocumentAscending(orders: section.orders)
+        }
+        return ordering
+    }
+
     func setFilter(orders: [Order]) {
         let ordering = self.sortByBaseBocumentAscending(orders: orders)
         self.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
