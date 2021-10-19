@@ -28,7 +28,6 @@ pipeline {
         echo 'Sonar Frontend iOS'
         dir('frontend/ios/') {
           sh 'fastlane metrics'
-          archiveArtifacts 'output/*.*'
         }
       }
     }
