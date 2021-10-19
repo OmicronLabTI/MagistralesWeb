@@ -731,6 +731,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 newProductionOrder.CreatorUserId = isolatedFabOrder.UserId;
                 newProductionOrder.CreationDate = DateTime.Now.FormatedLargeDate();
                 newProductionOrder.Status = ServiceConstants.Planificado;
+                newProductionOrder.PlanningDate = DateTime.Now;
 
                 logs.AddRange(ServiceUtils.CreateOrderLog(isolatedFabOrder.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.IsolatedProductionOrderCreated, productionOrderId), ServiceConstants.OrdenFab));
                 /** add logs**/
