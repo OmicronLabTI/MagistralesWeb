@@ -178,9 +178,9 @@ class NetworkManager: SessionProtocol {
         return res
     }
     // Obtiene el listado de componentes más comunes
-    func getMostCommonComponents(needsError: Bool = false, statusCode: Int = 500,
+    func getMostCommonComponents(data: CommonComponentRequest, needsError: Bool = false, statusCode: Int = 500,
                                  testData: Data = Data()) -> Observable<ComponentResponse> {
-        let req: ApiService = ApiService.getMostCommonComponents
+        let req: ApiService = ApiService.getMostCommonComponents(data: data)
         let res: Observable<ComponentResponse> = makeRequest(
             request: req, needsErrorResponse: needsError,
             statusCode: statusCode, testData: testData)

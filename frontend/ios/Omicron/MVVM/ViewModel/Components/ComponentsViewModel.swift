@@ -90,10 +90,12 @@ class ComponentsViewModel {
         }).disposed(by: disposeBag)
     }
     func getComponents(chips: [String], needsError: Bool = false) {
+        let catalogGroup = orderDetailViewModel.getCatalogGroup()
         let request = ComponentRequest(
             offset: Constants.Components.offset.rawValue,
             limit: Constants.Components.limit.rawValue,
-            chips: chips)
+            chips: chips,
+            catalogGroup: catalogGroup)
         loading.onNext(true)
         self.networkManager.getComponents(data: request, needsError: needsError).subscribe(onNext: { [weak self] res in
             self?.dataResults.onNext(res.response ?? [])
@@ -106,7 +108,10 @@ class ComponentsViewModel {
 
     func getMostCommonComponentsService(needsError: Bool = false) {
         loading.onNext(true)
-        networkManager.getMostCommonComponents(needsError: needsError).subscribe(onNext: { [weak self] res in
+        let catalogGroup = orderDetailViewModel.getCatalogGroup()
+        let reqParams = CommonComponentRequest(catalogGroup: catalogGroup)
+        networkManager.getMostCommonComponents(
+            data: reqParams, needsError: needsError).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)
             if let components = res.response {

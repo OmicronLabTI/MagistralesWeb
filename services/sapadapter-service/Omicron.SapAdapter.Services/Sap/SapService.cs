@@ -379,7 +379,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var firstChip = chipValues.FirstOrDefault().ToLower();
             listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip, warehouse)).ToList());
             listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(firstChip, warehouse)).ToList());
-            listValues = listValues.DistinctBy(p => p.ProductId).ToList();
+            listValues = listValues.Where(x => !string.IsNullOrEmpty(x.Description)).DistinctBy(p => p.ProductId).ToList();
 
             foreach (var v in chipValues)
             {
