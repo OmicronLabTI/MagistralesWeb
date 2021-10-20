@@ -375,8 +375,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var previousStatus = saleOrder.Status;
                 var order = listOrders.FirstOrDefault(x => x.Order.DocNum == p);
-                var codes = order.Detalle.Select(x => x.CodigoProducto);
-                var haveErrors = errors.Any(x => codes.Contains(x));
+                var codes = order.Detalle.Select(x => x.CodigoProducto).ToList();
+                var haveErrors = errors.Any(x => codes.Any(y => x.Contains(y)));
 
                 saleOrder.Status = haveErrors ? ServiceConstants.Abierto : ServiceConstants.Planificado;
                 saleOrder.TypeOrder = order.Order.OrderType;
