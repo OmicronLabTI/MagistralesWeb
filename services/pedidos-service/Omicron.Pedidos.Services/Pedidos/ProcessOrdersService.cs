@@ -82,13 +82,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var listToUpdate = new List<UserOrderModel>(dataToInsertUpdate.Item2);
                 listOrderLogToInsert.AddRange(dataToInsertUpdate.Item3);
 
-                var listOrderToInsert = new List<OrderLogModel>();
-                listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, pedidosId.ListIds, ServiceConstants.OrdenVentaPlan, ServiceConstants.OrdenVenta));
-                listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(pedidosId.User, listOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.OrdenFabricacionPlan, ServiceConstants.OrdenFab));
-
                 await this.pedidosDao.InsertUserOrder(listToInsert);
                 await this.pedidosDao.UpdateUserOrders(listToUpdate);
-                await this.pedidosDao.InsertOrderLog(listOrderToInsert);
                 this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
                 var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
@@ -167,12 +162,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(processByOrder.UserId, new List<UserOrderModel> { saleOrder }));
                 }
 
-                var listOrderToInsert = new List<OrderLogModel>();
-                listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(processByOrder.UserId, new List<int> { processByOrder.PedidoId }, ServiceConstants.OrdenVentaPlan, ServiceConstants.OrdenVenta));
-                listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(processByOrder.UserId, listOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.OrdenFabricacionPlan, ServiceConstants.OrdenFab));
-
                 await this.pedidosDao.InsertUserOrder(dataToInsert);
-                await this.pedidosDao.InsertOrderLog(listOrderToInsert);
                 this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
                 var userError = dictResult[ServiceConstants.ErrorCreateFabOrd].Any() ? ServiceConstants.ErrorAlInsertar : null;
@@ -375,8 +365,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var previousStatus = saleOrder.Status;
                 var order = listOrders.FirstOrDefault(x => x.Order.DocNum == p);
-                var codes = order.Detalle.Select(x => x.CodigoProducto);
-                var haveErrors = errors.Any(x => codes.Contains(x));
+                var codes = order.Detalle.Select(x => x.CodigoProducto).ToList();
+                var haveErrors = errors.Any(x => codes.Any(y => x.Contains(y)));
 
                 saleOrder.Status = haveErrors ? ServiceConstants.Abierto : ServiceConstants.Planificado;
                 saleOrder.TypeOrder = order.Order.OrderType;

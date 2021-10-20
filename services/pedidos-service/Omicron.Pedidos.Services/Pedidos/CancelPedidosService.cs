@@ -318,7 +318,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Operation result.</returns>
         private async Task<(List<UserOrderModel>, SuccessFailResults<OrderIdModel>)> CancelExistingProductionOrders(List<OrderIdModel> requestInfo, List<UserOrderModel> ordersToCancel, SuccessFailResults<OrderIdModel> results)
         {
-            var logs = new List<OrderLogModel>();
             var listOrderLogToInsert = new List<SalesLogs>();
 
             foreach (var order in ordersToCancel)
@@ -344,7 +343,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                 {
                     order.Status = ServiceConstants.Cancelled;
                     results.AddSuccesResult(newOrderInfo);
-                    logs.Add(this.BuildCancellationLog(newOrderInfo.UserId, order.Productionorderid, ServiceConstants.OrdenFab));
                     /* logs */
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(newOrderInfo.UserId, new List<UserOrderModel> { order }));
 
@@ -356,7 +354,6 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             // Update in local data base
             await this.pedidosDao.UpdateUserOrders(ordersToCancel);
-            await this.pedidosDao.InsertOrderLog(logs);
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return (ordersToCancel, results);
         }
@@ -369,7 +366,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Nothing.</returns>
         private async Task CancelSalesOrderWithAllProductionOrderCancelled(string userId, List<UserOrderModel> cancelledProductionOrders, ISapAdapter sapAdapter)
         {
-            var logs = new List<OrderLogModel>();
             var listOrderLogToInsert = new List<SalesLogs>();
             var salesOrdersToUpdate = new List<UserOrderModel>();
             var salesOrderIds = cancelledProductionOrders.Where(x => x.IsProductionOrder && !x.IsIsolatedProductionOrder).Select(x => x.Salesorderid);
@@ -392,11 +388,6 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 salesOrdersToUpdate.Add(salesOrder);
 
-                if (salesOrder.Equals(ServiceConstants.Cancelled))
-                {
-                    logs.Add(this.BuildCancellationLog(userId, salesOrderId, ServiceConstants.OrdenVenta));
-                }
-
                 if (previousStatus != salesOrder.Status)
                 {
                     /* logs */
@@ -405,7 +396,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.UpdateUserOrders(salesOrdersToUpdate);
-            await this.pedidosDao.InsertOrderLog(logs);
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             if (saleOrdersFinalized.Any())
@@ -444,7 +434,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             SuccessFailResults<OrderIdModel> results)
         {
             var sapOrder = await this.GetSalesOrdersFromSap(missingOrder.OrderId);
-            var logs = new List<OrderLogModel>();
             if (sapOrder != null)
             {
                 var validationResults = this.IsValidCancelSapSalesOrder(missingOrder, sapOrder, results);
@@ -464,12 +453,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(missingOrder.UserId, new List<UserOrderModel> { userOrders }));
                 }
 
-                newUserOrders.ForEach(x => logs.Add(this.BuildCancellationLog(missingOrder.UserId, x.Productionorderid, ServiceConstants.OrdenFab)));
-                logs.Add(this.BuildCancellationLog(missingOrder.UserId, missingOrder.OrderId, ServiceConstants.OrdenVenta));
-
                 results.AddSuccesResult(missingOrder);
                 await this.pedidosDao.InsertUserOrder(newUserOrders);
-                await this.pedidosDao.InsertOrderLog(logs);
                 this.kafkaConnector.PushMessage(listOrderLogToInsert);
             }
 
@@ -489,7 +474,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             SuccessFailResults<OrderIdModel> results)
         {
             var newUserOrders = new List<UserOrderModel>();
-            var logs = new List<OrderLogModel>();
             var listOrderLogToInsert = new List<SalesLogs>();
 
             var validationResults = await this.IsValidCancelSapProductionOrder(missingOrder, sapProductionOrder, results);
@@ -508,11 +492,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 newUserOrders.Add(newUserOrder);
                 /* logs */
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(missingOrder.UserId, new List<UserOrderModel> { newUserOrder }));
-                logs.Add(this.BuildCancellationLog(missingOrder.UserId, missingOrder.OrderId, ServiceConstants.OrdenFab));
 
                 results.AddSuccesResult(missingOrder);
                 await this.pedidosDao.InsertUserOrder(newUserOrders);
-                await this.pedidosDao.InsertOrderLog(logs);
                 this.kafkaConnector.PushMessage(listOrderLogToInsert);
                 return results;
             }
@@ -571,7 +553,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             List<UserOrderModel> relatedUserOrders,
             SuccessFailResults<OrderIdModel> results)
         {
-            var logs = new List<OrderLogModel>();
             var updatedOrders = new List<UserOrderModel>();
             var listOrderLogToInsert = new List<SalesLogs>();
             foreach (var order in relatedUserOrders)
@@ -592,7 +573,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                     order.Status = ServiceConstants.Cancelled;
                     results.AddSuccesResult(orderToCancel);
                     updatedOrders.Add(order);
-                    logs.Add(this.BuildCancellationLog(orderToCancel.UserId, orderId, docType));
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToCancel.UserId, new List<UserOrderModel> { order }));
 
                     continue;
@@ -602,7 +582,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.UpdateUserOrders(updatedOrders);
-            await this.pedidosDao.InsertOrderLog(logs);
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return (updatedOrders, results);
@@ -717,20 +696,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             var sapOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(JsonConvert.SerializeObject(orders.Response));
 
             return sapOrders.FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Build cancellation log.
-        /// </summary>
-        /// <param name="userId">User id.</param>
-        /// <param name="orderId">Order id.</param>
-        /// <param name="orderType">Order type.</param>
-        /// <returns>New order log.</returns>
-        private OrderLogModel BuildCancellationLog(string userId, object orderId, string orderType)
-        {
-            var orderIdAsInt = int.Parse(orderId.ToString() ?? throw new InvalidOperationException());
-            var newLogs = ServiceUtils.CreateOrderLog(userId, new List<int> { orderIdAsInt }, string.Format(ServiceConstants.OrderCancelled, orderIdAsInt), orderType);
-            return newLogs.FirstOrDefault();
         }
     }
 }
