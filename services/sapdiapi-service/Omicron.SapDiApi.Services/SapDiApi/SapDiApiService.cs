@@ -504,7 +504,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     this.company.GetLastError(out int errorCode, out string errorMessage);
                     _loggerProxy.Debug($"An error has ocurred to create isolated production order { errorCode } - {errorMessage}.");
-                    result = new KeyValuePair<string, string>(string.Empty, string.Format(ServiceConstants.FailReasonUnexpectedErrorToCreateIsolatedProductionOrder, isolatedFabOrder.ProductCode));
+                    result = new KeyValuePair<string, string>(string.Empty, string.Format(ServiceConstants.FailReasonUnexpectedErrorToCreateIsolatedProductionOrder, isolatedFabOrder.ProductCode, errorMessage));
                 }
                 else
                 {
