@@ -184,7 +184,7 @@ class OrderDetailFormViewController: FormViewController {
                 let warehouse =
                     self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].warehouse ?? CommonStrings.empty
                 $0.value = warehouse
-                let enableWarehouseOpt = warehouse == "MP"
+                let enableWarehouseOpt = warehouse != "MP"
                 $0.disabled = Condition(booleanLiteral: enableWarehouseOpt)
             }
             .cellUpdate { cell, _ in

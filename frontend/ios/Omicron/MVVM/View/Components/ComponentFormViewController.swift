@@ -180,7 +180,7 @@ class ComponentFormViewController: FormViewController {
                 $0.options = CommonStrings.options
                 guard let warehouse = component.warehouse else { return }
                 $0.value = warehouse
-                let enableWarehouseOpt = warehouse == "MP"
+                let enableWarehouseOpt = warehouse != "MP"
                 $0.disabled = Condition(booleanLiteral: enableWarehouseOpt)
             }
             .cellUpdate { cell, _ in
