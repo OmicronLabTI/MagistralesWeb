@@ -426,7 +426,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>Preproduction orders.</returns>
         public static async Task<List<CompleteDetailOrderModel>> GetPreProductionOrdersFromSap(UserOrderModel salesOrder, ISapAdapter sapAdapter)
         {
-            var sapResults = await GetSalesOrdersFromSap(int.Parse(salesOrder.Salesorderid), sapAdapter);
+            var sapResults = await GetSalesOrdersFromSapBySaleId(new List<int> { int.Parse(salesOrder.Salesorderid) }, sapAdapter);
             return sapResults.PreProductionOrders;
         }
 
@@ -436,20 +436,10 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="salesOrderId">Sales order id.</param>
         /// <param name="sapAdapter">The sap adapter.</param>
         /// <returns>Sales order.</returns>
-        public static async Task<List<Tuple<OrderWithDetailModel, List<CompleteDetailOrderModel>, List<CompleteDetailOrderModel>>>> GetSalesOrdersFromSap(List<int> salesOrderId, ISapAdapter sapAdapter)
+        public static async Task<List<OrderWithDetailModel>> GetSalesOrdersFromSap(List<int> salesOrderId, ISapAdapter sapAdapter)
         {
             var orders = await sapAdapter.PostSapAdapter(salesOrderId, ServiceConstants.GetOrderWithDetail);
-            var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
-            var tupleToREturn = new List<Tuple<OrderWithDetailModel, List<CompleteDetailOrderModel>, List<CompleteDetailOrderModel>>>();
-
-            sapOrders.ForEach(x =>
-            {
-                var preProductionOrders = x.Detalle.Where(x => string.IsNullOrEmpty(x.Status)).ToList();
-                var productionOrders = x.Detalle.Where(x => !string.IsNullOrEmpty(x.Status)).ToList();
-                tupleToREturn.Add(new Tuple<OrderWithDetailModel, List<CompleteDetailOrderModel>, List<CompleteDetailOrderModel>>(x, preProductionOrders, productionOrders));
-            });
-
-            return tupleToREturn;
+            return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
         }
 
         /// <summary>
@@ -476,15 +466,22 @@ namespace Omicron.Pedidos.Services.Utils
         /// Get sales order from SAP.
         /// </summary>
         /// <param name="salesOrderId">Sales order id.</param>
+        /// <param name="sapAdapter">The sap adapter.</param>
         /// <returns>Sales order.</returns>
-        private static async Task<(OrderWithDetailModel SapOrder, List<CompleteDetailOrderModel> ProductionOrders, List<CompleteDetailOrderModel> PreProductionOrders)> GetSalesOrdersFromSap(int salesOrderId, ISapAdapter sapAdapter)
+        public static async Task<(List<OrderWithDetailModel> SapOrder, List<CompleteDetailOrderModel> ProductionOrders, List<CompleteDetailOrderModel> PreProductionOrders)> GetSalesOrdersFromSapBySaleId(List<int> salesOrderId, ISapAdapter sapAdapter)
         {
-            var orders = await sapAdapter.PostSapAdapter(new List<int> { salesOrderId }, ServiceConstants.GetOrderWithDetail);
+            var orders = await sapAdapter.PostSapAdapter(salesOrderId, ServiceConstants.GetOrderWithDetail);
             var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
-            var sapOrder = sapOrders.FirstOrDefault();
-            var preProductionOrders = sapOrder.Detalle.Where(x => string.IsNullOrEmpty(x.Status));
-            var productionOrders = sapOrder.Detalle.Where(x => !string.IsNullOrEmpty(x.Status));
-            return (sapOrder, productionOrders.ToList(), preProductionOrders.ToList());
+            var preProductionOrders = new List<CompleteDetailOrderModel>();
+            var productionOrders = new List<CompleteDetailOrderModel>();
+
+            sapOrders.ForEach(x =>
+            {
+                preProductionOrders.AddRange(x.Detalle.Where(y => string.IsNullOrEmpty(y.Status)));
+                productionOrders.AddRange(x.Detalle.Where(y => !string.IsNullOrEmpty(y.Status)));
+            });
+
+            return (sapOrders, productionOrders.ToList(), preProductionOrders.ToList());
         }
 
         /// <summary>

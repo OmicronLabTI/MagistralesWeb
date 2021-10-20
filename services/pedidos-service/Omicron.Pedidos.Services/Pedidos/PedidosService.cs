@@ -222,46 +222,21 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> CloseSalesOrders(List<OrderIdModel> finishOrders)
         {
-            var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
             var failed = new List<object>();
             var listToGenPdf = new List<int>();
             var listOrderLogToInsert = new List<SalesLogs>();
+            var listSaleOrdersToFinish = finishOrders.Select(x => x.OrderId).ToList();
+
+            var (saleOrders, productionOrders) = await this.GetRelatedOrdersToSalesOrder(listSaleOrdersToFinish, ServiceConstants.Cancelled, ServiceConstants.Finalizado);
 
             foreach (var orderToFinish in finishOrders)
             {
-                var (salesOrder, productionOrders) = await this.GetRelatedOrdersToSalesOrder(orderToFinish.OrderId, ServiceConstants.Cancelled, ServiceConstants.Finalizado);
-
-                if (!salesOrder.Status.Equals(ServiceConstants.Completed))
-                {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, ServiceConstants.ReasonOrderNonCompleted));
-                    continue;
-                }
-
-                var salesOrderId = int.Parse(salesOrder.Salesorderid);
-
-                // Validate completed production orders
-                var nonCompleted = productionOrders.Where(x => !x.Status.Equals(ServiceConstants.Completed)).ToList();
-                if (nonCompleted.Any())
-                {
-                    foreach (var completeOrder in nonCompleted)
-                    {
-                        var message = string.Format(ServiceConstants.ReasonProductionOrderNonCompleted, completeOrder.Productionorderid);
-                        failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, message));
-                    }
-
-                    continue;
-                }
-
-                // Validate with SAP pre-production orders.
-                if ((await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter)).Any())
-                {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, ServiceConstants.ReasonPreProductionOrdersInSap));
-                    continue;
-                }
+                var localSalesOrder = saleOrders.FirstOrDefault(x => x.Salesorderid == orderToFinish.OrderId.ToString());
+                var localProductionOrders = productionOrders.Where(x => x.Salesorderid == orderToFinish.OrderId.ToString());
 
                 // Update in SAP
-                var payload = productionOrders.Select(x => new { OrderId = x.Productionorderid });
+                var payload = localProductionOrders.Select(x => new { OrderId = x.Productionorderid });
                 var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.FinishFabOrder);
 
                 if (!result.Success)
@@ -279,7 +254,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
 
                 // Update production order status
-                foreach (var userOrder in productionOrders)
+                foreach (var userOrder in localProductionOrders)
                 {
                     int prodOrderId = int.Parse(userOrder.Productionorderid);
                     if (!resultMessages.Keys.Any(x => x.Equals(prodOrderId)))
@@ -288,7 +263,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                         userOrder.CloseDate = DateTime.Now;
                         userOrder.Status = ServiceConstants.Finalizado;
                         userOrder.FinalizedDate = DateTime.Now;
-                        logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { prodOrderId }, string.Format(ServiceConstants.OrderFinished, prodOrderId), ServiceConstants.OrdenFab));
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { userOrder }));
                     }
                 }
@@ -298,26 +272,24 @@ namespace Omicron.Pedidos.Services.Pedidos
                 // Update sales order status
                 if (resultMessages.Keys.Any(x => x.Equals(0)))
                 {
-                    var previousStatusSalesOrder = salesOrder.Status;
-                    salesOrder.CloseUserId = orderToFinish.UserId;
-                    salesOrder.CloseDate = DateTime.Now;
-                    salesOrder.Status = ServiceConstants.Finalizado;
-                    salesOrder.FinalizedDate = DateTime.Now;
+                    var previousStatusSalesOrder = localSalesOrder.Status;
+                    localSalesOrder.CloseUserId = orderToFinish.UserId;
+                    localSalesOrder.CloseDate = DateTime.Now;
+                    localSalesOrder.Status = ServiceConstants.Finalizado;
+                    localSalesOrder.FinalizedDate = DateTime.Now;
 
-                    logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { salesOrderId }, string.Format(ServiceConstants.OrderFinished, salesOrderId), ServiceConstants.OrdenVenta));
-                    if (previousStatusSalesOrder != salesOrder.Status)
+                    if (previousStatusSalesOrder != localSalesOrder.Status)
                     {
-                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { salesOrder }));
+                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { localSalesOrder }));
                     }
 
-                    await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
+                    await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { localSalesOrder });
                     successfuly.Add(orderToFinish);
                 }
 
-                listToGenPdf.Add(int.Parse(salesOrder.Salesorderid));
+                listToGenPdf.Add(int.Parse(localSalesOrder.Salesorderid));
             }
 
-            await this.pedidosDao.InsertOrderLog(logs);
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var results = new
@@ -624,8 +596,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> FinishOrder(FinishOrderModel updateOrderSignature)
         {
-            var listProductionOrders = new List<string>();
-            updateOrderSignature.FabricationOrderId.ForEach(x => listProductionOrders.Add(x.ToString()));
+            var listProductionOrders = updateOrderSignature.FabricationOrderId.Select(ts => ts.ToString()).ToList();
             var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(listProductionOrders)).ToList();
 
             var userModelIds = orders.Select(x => x.Id).Distinct().ToList();
@@ -636,20 +607,19 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listSignatureToInsert = new List<UserOrderSignatureModel>();
             var listToUpdate = new List<UserOrderSignatureModel>();
-            userModelIds.ForEach(id =>
+            var listOrderLogToInsert = new List<SalesLogs>();
+            orders.ForEach(o =>
             {
-                var signature = orderSignatures.FirstOrDefault(x => x.UserOrderId == id);
+                var signature = orderSignatures.FirstOrDefault(x => x.UserOrderId == o.Id);
 
                 if (signature == null)
                 {
-                    var newSignature = new UserOrderSignatureModel
+                    listSignatureToInsert.Add(new UserOrderSignatureModel
                     {
                         TechnicalSignature = newTechSignatureAsByte,
                         QfbSignature = newQfbSignatureAsByte,
-                        UserOrderId = id,
-                    };
-
-                    listSignatureToInsert.Add(newSignature);
+                        UserOrderId = o.Id,
+                    });
                 }
                 else
                 {
@@ -657,18 +627,14 @@ namespace Omicron.Pedidos.Services.Pedidos
                     signature.QfbSignature = newQfbSignatureAsByte;
                     listToUpdate.Add(signature);
                 }
-            });
 
-            await this.pedidosDao.InsertOrderSignatures(listSignatureToInsert);
-            await this.pedidosDao.SaveOrderSignatures(listToUpdate);
-            var listOrderLogToInsert = new List<SalesLogs>();
-            orders.ForEach(o =>
-            {
                 o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
             });
 
+            await this.pedidosDao.InsertOrderSignatures(listSignatureToInsert);
+            await this.pedidosDao.SaveOrderSignatures(listToUpdate);
             var listorderToUpdate = new List<UserOrderModel>(orders);
 
             if (orders.Any(x => !string.IsNullOrEmpty(x.Salesorderid)))
@@ -684,9 +650,10 @@ namespace Omicron.Pedidos.Services.Pedidos
                 {
                     var orderBySale = allOrders.Where(x => x.Salesorderid == sale.Salesorderid).ToList();
                     var areInvalidOrders = orderBySale.Any(x => x.IsProductionOrder && !listProductionOrders.Contains(x.Productionorderid) && !ServiceConstants.ValidStatusTerminar.Contains(x.Status));
-                    var tupleValues = preProdOrderSap.FirstOrDefault(x => x.Item1.Order.DocNum == int.Parse(sale.Salesorderid));
+                    var tupleValues = preProdOrderSap.FirstOrDefault(x => x.Order.DocNum == int.Parse(sale.Salesorderid));
+                    tupleValues ??= new OrderWithDetailModel { Detalle = new List<CompleteDetailOrderModel>() };
                     var previousStatus = sale.Status;
-                    sale.Status = areInvalidOrders || tupleValues.Item2.Any() ? sale.Status : ServiceConstants.Terminado;
+                    sale.Status = areInvalidOrders || tupleValues.Detalle.Any(x => string.IsNullOrEmpty(x.Status)) ? sale.Status : ServiceConstants.Terminado;
                     /** add logs**/
                     if (previousStatus != sale.Status)
                     {
@@ -966,6 +933,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).Where(x => !ignoredProductionOrderStatus.Contains(x.Status));
 
             return (relatedOrders.FirstOrDefault(x => x.IsSalesOrder), productionOrders.ToList());
+        }
+
+        private async Task<(List<UserOrderModel> salesOrder, List<UserOrderModel> productionOrders)> GetRelatedOrdersToSalesOrder(List<int> salesOrderId, params string[] ignoredProductionOrderStatus)
+        {
+            var relatedOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(salesOrderId.Select(x => x.ToString()).ToList())).ToList();
+            var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).Where(x => !ignoredProductionOrderStatus.Contains(x.Status));
+
+            return (relatedOrders.Where(x => x.IsSalesOrder).ToList(), productionOrders.ToList());
         }
     }
 }

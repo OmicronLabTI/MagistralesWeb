@@ -72,7 +72,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var details = await this.sapDao.GetPedidoById(saleorderid);
             var productItems = await this.sapDao.GetProductByIds(details.Select(x => x.ProductoId).ToList());
-            var saleDetails = (await this.sapDao.GetAllDetails(saleorderid)).ToList();
+            var saleDetails = (await this.sapDao.GetAllDetails(new List<int?> { saleorderid })).ToList();
             var listDetails = new List<AlmacenDetailsOrder>();
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { saleorderid });
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
@@ -380,7 +380,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var so in salesIds)
             {
-                var saleDetail = (await this.sapDao.GetAllDetails(so)).ToList();
+                var saleDetail = (await this.sapDao.GetAllDetails(new List<int?> { so })).ToList();
                 var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
 
                 var productsList = this.GetProductListModel(userOrders, orders, saleDetail, lineProducts, productItems);
