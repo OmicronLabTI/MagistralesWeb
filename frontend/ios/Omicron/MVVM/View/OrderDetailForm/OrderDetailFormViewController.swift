@@ -182,9 +182,11 @@ class OrderDetailFormViewController: FormViewController {
                 $0.tag = CommonStrings.werehouseProperty
                 $0.options = CommonStrings.options
                 $0.value = self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].warehouse ?? CommonStrings.empty
+                $0.disabled = true
             }
             .cellUpdate { cell, _ in
                 cell.detailTextLabel?.textColor = .black
+                cell.textLabel?.textColor = .black
             }
             +++ Section()
             <<< ButtonRow { [weak self] in
