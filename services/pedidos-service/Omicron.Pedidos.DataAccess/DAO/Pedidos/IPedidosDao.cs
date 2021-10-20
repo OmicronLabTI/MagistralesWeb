@@ -24,13 +24,6 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<bool> InsertUserOrder(List<UserOrderModel> userorder);
 
         /// <summary>
-        /// Method for add registry to DB.
-        /// </summary>
-        /// <param name="orderLog">UserOrder Dto.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<bool> InsertOrderLog(List<OrderLogModel> orderLog);
-
-        /// <summary>
         /// Returns the user orders by SalesOrder (Pedido)
         /// </summary>
         /// <param name="listIDs">the list ids.</param>

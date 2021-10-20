@@ -172,7 +172,8 @@ class OrderDetailViewController: UIViewController {
         self.finishedButton.rx.tap.bind(to: orderDetailViewModel.finishedButtonDidTap).disposed(by: self.disposeBag)
         self.penddingButton.rx.tap.bind(to: orderDetailViewModel.pendingButtonDidTap).disposed(by: self.disposeBag)
         self.addComponentButton.rx.tap.subscribe(onNext: { [weak self] _ in
-            self?.goToComponentsViewController()
+            guard let self = self else { return }
+            self.goToComponentsViewController()
         }).disposed(by: disposeBag)
     }
     func viewModelBinding2() {
@@ -445,15 +446,14 @@ extension OrderDetailViewController: UITableViewDelegate {
             if (self.statusType == StatusNameConstants.inProcessStatus ||
                 self.statusType == StatusNameConstants.reassignedStatus) &&
                 (orderDetail.count > 0 && !(orderDetail[0].details?[indexPath.row].hasBatches ?? true)) {
-//                Descomentar siguiente linea cuando se deba permitir la edición de un elemento
 
                 // Lógica para editar un item de la tabla
-//                let editItem = UIContextualAction(
-//                style: .normal, title: CommonStrings.edit) { [weak self] ( _, _, _) in
-//                    self?.indexOfTableToEditItem = indexPath.row
-//                    self?.performSegue(
-//                        withIdentifier: ViewControllerIdentifiers.orderDetailFormViewController, sender: nil)
-//                }
+                let editItem = UIContextualAction(
+                style: .normal, title: CommonStrings.edit) { [weak self] ( _, _, _) in
+                    self?.indexOfTableToEditItem = indexPath.row
+                    self?.performSegue(
+                        withIdentifier: ViewControllerIdentifiers.orderDetailFormViewController, sender: nil)
+                }
                 // Logica para borrar un elemento de la tabla
                 let deleteItem = UIContextualAction(
                 style: .destructive, title: CommonStrings.delete) { [weak self] (_, _, _) in
@@ -468,9 +468,7 @@ extension OrderDetailViewController: UITableViewDelegate {
                     alert.addAction(okAction)
                     self?.present(alert, animated: true)
                 }
-//                Descomentar siguiente linea cuando se deba permitir la edición de un elemento
-//                let swipeActions = UISwipeActionsConfiguration(actions: [editItem, deleteItem])
-                let swipeActions = UISwipeActionsConfiguration(actions: [deleteItem])
+                let swipeActions = UISwipeActionsConfiguration(actions: [editItem, deleteItem])
                 return swipeActions
             }
             return nil

@@ -138,7 +138,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var saleOrder = int.Parse(dataArray[0]);
             var orderId = int.Parse(dataArray[1]);
 
-            var details = (await this.sapDao.GetAllDetails(saleOrder)).ToList();
+            var details = (await this.sapDao.GetAllDetails(new List<int?> { saleOrder })).ToList();
             var order = details.FirstOrDefault(x => x.OrdenFabricacionId == orderId);
             order = order == null ? new CompleteDetailOrderModel() : order;
 

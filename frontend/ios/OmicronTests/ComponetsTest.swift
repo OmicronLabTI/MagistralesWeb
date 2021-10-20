@@ -42,7 +42,8 @@ class ComponetsTest: XCTestCase {
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
-                chips: chips)
+                chips: chips,
+                catalogGroup: "MG")
             self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
             }).disposed(by: (self?.disposeBag)!)
@@ -60,7 +61,8 @@ class ComponetsTest: XCTestCase {
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
-                chips: chips)
+                chips: chips,
+                catalogGroup: "MG")
             self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.code)
             }).disposed(by: (self?.disposeBag)!)
@@ -72,7 +74,8 @@ class ComponetsTest: XCTestCase {
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
-                chips: chips)
+                chips: chips,
+                catalogGroup: "MG")
             self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssert(res.code == 200)
             }).disposed(by: (self?.disposeBag)!)
@@ -85,7 +88,8 @@ class ComponetsTest: XCTestCase {
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
-                chips: chips)
+                chips: chips,
+                catalogGroup: "MG")
             self?.networkManager.getComponents(data: request).subscribe(onNext: { [weak self] res in
                 orderDetailRequest = self?.returnOrderDetailRequest(componentO: res.response)
                 self?.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: orderDetailRequest!)

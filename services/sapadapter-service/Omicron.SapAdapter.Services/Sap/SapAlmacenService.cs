@@ -74,7 +74,7 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(codeArray[0], out var pedidoId);
             int.TryParse(codeArray[1], out var orderId);
 
-            var details = (await this.sapDao.GetAllDetails(pedidoId)).ToList();
+            var details = (await this.sapDao.GetAllDetails(new List<int?> { pedidoId })).ToList();
             var order = details.FirstOrDefault(x => x.OrdenFabricacionId == orderId);
             order = order == null ? new CompleteDetailOrderModel() : order;
 
@@ -375,7 +375,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var so in salesIds)
             {
-                var saleDetail = (await this.sapDao.GetAllDetails(so)).ToList();
+                var saleDetail = (await this.sapDao.GetAllDetails(new List<int?> { so })).ToList();
                 var orders = sapOrdersToProcess.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 

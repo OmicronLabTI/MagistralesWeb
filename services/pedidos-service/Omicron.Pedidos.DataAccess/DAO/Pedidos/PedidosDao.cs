@@ -43,18 +43,6 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
-        /// Method for add registry to DB.
-        /// </summary>
-        /// <param name="orderLog">UserOrder Dto.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<bool> InsertOrderLog(List<OrderLogModel> orderLog)
-        {
-            this.databaseContext.OrderLogModel.AddRange(orderLog);
-            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
-            return true;
-        }
-
-        /// <summary>
         /// the list ids.
         /// </summary>
         /// <param name="listIDs">the list ids.</param>
