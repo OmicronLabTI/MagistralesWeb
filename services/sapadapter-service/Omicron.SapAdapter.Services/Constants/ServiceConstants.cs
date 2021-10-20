@@ -575,6 +575,7 @@ namespace Omicron.SapAdapter.Services.Constants
             { "Dermazone", MagistralWareHouse },
             { "Bioequal", "BE" },
             { "Bioelite", "MN" },
+            { "MAQUILA", "MP" },
         };
 
         /// <summary>
