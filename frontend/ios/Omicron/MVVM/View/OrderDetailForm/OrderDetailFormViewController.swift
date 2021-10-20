@@ -181,8 +181,11 @@ class OrderDetailFormViewController: FormViewController {
                 $0.title = CommonStrings.werehouseTitle
                 $0.tag = CommonStrings.werehouseProperty
                 $0.options = CommonStrings.options
-                $0.value = self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].warehouse ?? CommonStrings.empty
-                $0.disabled = true
+                let warehouse =
+                    self?.dataOfTable?.details?[self?.indexOfItemSelected ?? 0].warehouse ?? CommonStrings.empty
+                $0.value = warehouse
+                let enableWarehouseOpt = warehouse == "MP"
+                $0.disabled = Condition(booleanLiteral: enableWarehouseOpt)
             }
             .cellUpdate { cell, _ in
                 cell.detailTextLabel?.textColor = .black
