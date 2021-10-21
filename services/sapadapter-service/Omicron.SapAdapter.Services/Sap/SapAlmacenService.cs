@@ -155,7 +155,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetDeliveryBySaleOrderId(List<int> ordersId)
         {
-            var data = (await this.sapDao.GetDeliveryBySaleOrder(ordersId)).ToList();
+            var data = (await this.sapDao.GetDeliveryDetailBySaleOrder(ordersId)).ToList();
             return ServiceUtils.CreateResult(true, 200, null, data, null, null);
         }
 
@@ -194,8 +194,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetDeliveries(List<int> deliveryIds)
         {
-            var deliveries = await this.sapDao.GetDeliveryByDocEntry(deliveryIds);
-            var allDeliveries = await this.sapDao.GetDeliveryBySaleOrder(deliveries.Select(x => x.BaseEntry).ToList());
+            var deliveries = await this.sapDao.GetDeliveryDetailByDocEntry(deliveryIds);
+            var allDeliveries = await this.sapDao.GetDeliveryDetailBySaleOrder(deliveries.Select(x => x.BaseEntry).ToList());
             var detailsSale = (await this.sapDao.GetDetailByDocNum(deliveries.Select(x => x.BaseEntry).ToList())).ToList();
             var lineItems = await this.sapDao.GetAllLineProducts();
 

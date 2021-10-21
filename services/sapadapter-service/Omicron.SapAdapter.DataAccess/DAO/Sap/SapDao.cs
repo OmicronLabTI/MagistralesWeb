@@ -715,7 +715,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryBySaleOrder(List<int> ordersId)
+        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailBySaleOrder(List<int> ordersId)
         {            
             return (await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.BaseEntry))));
         }
@@ -837,7 +837,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByDocEntry(List<int> ordersId)
+        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailByDocEntry(List<int> ordersId)
         {
             return await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.DeliveryId)));
         }
@@ -946,12 +946,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var query = (from order in this.databaseContext.OrderModel.Where(x => ids.Contains(x.DocNum))
                          join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                          into DetalleOrden from dp in DetalleOrden.DefaultIfEmpty()
+                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                          select new CompleteOrderModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = order.Medico,
+                             Cliente = doctor.AliasName,
                              Codigo = order.Codigo,
-                             Medico = order.Medico,
+                             Medico = doctor.AliasName,
                              FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
                              FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
                              PedidoStatus = order.PedidoStatus,
