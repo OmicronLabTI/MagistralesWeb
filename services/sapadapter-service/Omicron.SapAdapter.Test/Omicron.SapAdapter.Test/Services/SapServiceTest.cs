@@ -55,7 +55,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.context = new DatabaseContext(options);
             this.context.AsesorModel.Add(this.GetAsesorModel());
-            this.context.ClientCatalogModel.AddRange(this.GetDoctors());
+            this.context.ClientCatalogModel.AddRange(this.GetClients());
             this.context.DetallePedido.AddRange(this.GetDetallePedido());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
             this.context.OrderModel.AddRange(this.GetOrderModel());

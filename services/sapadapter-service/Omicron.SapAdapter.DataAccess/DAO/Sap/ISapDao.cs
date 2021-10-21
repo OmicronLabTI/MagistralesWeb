@@ -313,6 +313,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<DeliverModel>> GetDeliveryModelByDocNum(List<int> docuNums);
 
         /// <summary>
+        /// Get the delivery orders headers join with doctor.
+        /// </summary>
+        /// <param name="docuNums">the doc nums.</param>
+        /// <returns>the data.</returns>
+        Task<List<DeliverModel>> GetDeliveryModelByDocNumJoinDoctor(List<int> docuNums);
+
+        /// <summary>
         /// Get the delivery orders headers.
         /// </summary>
         /// <param name="docuNums">the doc nums.</param>
@@ -327,6 +334,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderByInvoiceId(List<int> docNums);
 
         /// <summary>
+        /// Gets the invoiceHeader by doc num.
+        /// </summary>
+        /// <param name="docNums">the doc nums.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderByInvoiceIdJoinDoctor(List<int> docNums);
+
+        /// <summary>
         /// Gets the invoice detail by docEntry.
         /// </summary>
         /// <param name="docEntry">the doc entries.</param>
@@ -339,6 +353,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="docNum">the docnum</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNum(List<int> docNum);
+
+        /// <summary>
+        /// Gets the invoice header by docnum.
+        /// </summary>
+        /// <param name="docNum">the docnum</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNumJoinDoctor(List<int> docNum);
 
         /// <summary>
         /// Gets the deliveries by the sale order.

@@ -647,12 +647,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                          into DetalleOrden
                          from dp in DetalleOrden.DefaultIfEmpty()
+                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                          where order.FechaInicio >= initDate && order.PedidoStatus == "O"
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = order.Medico,
-                             Medico = order.Medico,                             
+                             Cliente = doctor.AliasName,
+                             Medico = doctor.AliasName,                             
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
                              Address = order.Address,
@@ -697,12 +698,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                          into DetalleOrden
                          from dp in DetalleOrden.DefaultIfEmpty()
+                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                          where order.OrderType == typeOrder && order.PedidoStatus == "O"
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = order.Medico,
-                             Medico = order.Medico,
+                             Cliente = doctor.AliasName,
+                             Medico = doctor.AliasName,
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
                              Address = order.Address,
@@ -731,6 +733,28 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<List<DeliverModel>> GetDeliveryModelByDocNumJoinDoctor(List<int> docuNums)
+        {
+            var query = (from delivery in this.databaseContext.DeliverModel.Where(x => docuNums.Contains(x.DocNum))
+                         join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
+                         select new DeliverModel
+                         {
+                             Address = delivery.Address,
+                             Canceled = delivery.Canceled,
+                             CardCode = delivery.CardCode,
+                             Cliente = doctor.AliasName,
+                             DeliveryStatus = delivery.DeliveryStatus,
+                             DocNum = delivery.DocNum,
+                             FechaInicio = delivery.FechaInicio,
+                             Medico = doctor.AliasName,
+                             PedidoId = delivery.PedidoId,
+                             TypeOrder = delivery.TypeOrder,
+                         });
+
+            return (await this.RetryQuery<DeliverModel>(query)).ToList();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums)
         {
             return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => docuNums.Contains(x.PedidoId.Value)));
@@ -743,6 +767,35 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderByInvoiceIdJoinDoctor(List<int> docNums)
+        {
+            var query = (from invoice in this.databaseContext.InvoiceHeaderModel.Where(x => docNums.Contains(x.InvoiceId))
+                         join doctor in this.databaseContext.ClientCatalogModel on invoice.CardCode equals doctor.ClientId
+                         select new InvoiceHeaderModel
+                         {
+                             Address = invoice.Address,
+                             Canceled = invoice.Canceled,
+                             CardCode = invoice.CardCode,
+                             Cliente = doctor.AliasName,
+                             Comments = invoice.Comments,
+                             CommentsInvoice = invoice.CommentsInvoice,
+                             DocNum = invoice.DocNum,
+                             FechaInicio = invoice.FechaInicio,
+                             InvoiceId = invoice.InvoiceId,
+                             InvoiceStatus = invoice.InvoiceStatus,
+                             Medico = doctor.AliasName,
+                             Refactura = invoice.Refactura,
+                             TrackingNumber = invoice.TrackingNumber,
+                             TransportCode = invoice.TransportCode,
+                             SalesPrsonId = invoice.SalesPrsonId,
+                             TypeOrder = invoice.TypeOrder,
+                             UpdateDate = invoice.UpdateDate,
+                         });
+
+            return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByDocEntry(List<int> docEntry)
         {
             return await this.RetryQuery<InvoiceDetailModel>(this.databaseContext.InvoiceDetailModel.Where(x => docEntry.Contains(x.InvoiceId)));
@@ -752,6 +805,35 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNum(List<int> docNum)
         {
             return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => docNum.Contains(x.DocNum)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNumJoinDoctor(List<int> docNum)
+        {
+            var query = (from invoice in this.databaseContext.InvoiceHeaderModel.Where(x => docNum.Contains(x.DocNum))
+                         join doctor in this.databaseContext.ClientCatalogModel on invoice.CardCode equals doctor.ClientId
+                         select new InvoiceHeaderModel
+                         {
+                             Address = invoice.Address,
+                             Canceled = invoice.Canceled,
+                             CardCode = invoice.CardCode,
+                             Cliente = doctor.AliasName,
+                             Comments = invoice.Comments,
+                             CommentsInvoice = invoice.CommentsInvoice,
+                             DocNum = invoice.DocNum,
+                             FechaInicio = invoice.FechaInicio,
+                             InvoiceId = invoice.InvoiceId,
+                             InvoiceStatus = invoice.InvoiceStatus,
+                             Medico = doctor.AliasName,
+                             Refactura = invoice.Refactura,
+                             TrackingNumber = invoice.TrackingNumber,
+                             TransportCode = invoice.TransportCode,
+                             SalesPrsonId = invoice.SalesPrsonId,
+                             TypeOrder = invoice.TypeOrder,
+                             UpdateDate = invoice.UpdateDate,
+                         });
+
+            return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
         }
 
         /// <inheritdoc/>

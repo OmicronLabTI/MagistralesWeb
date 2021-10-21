@@ -63,7 +63,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(listIds)).ToList();
             var invoicesId = deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
-            var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).Where(x => x.InvoiceStatus != "C").ToList();
+            var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(invoicesId)).Where(x => x.InvoiceStatus != "C").ToList();
             invoiceHeaders = invoiceHeaders.Where(x => string.IsNullOrEmpty(x.Refactura) || x.Refactura != ServiceConstants.IsRefactura).ToList();
             var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
             invoiceHeaders = this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
@@ -201,7 +201,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetInvoiceHeader(InvoicePackageSapLookModel dataToLook)
         {
-            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(dataToLook.InvoiceDocNums)).ToList();
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(dataToLook.InvoiceDocNums)).ToList();
             invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon) || dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon) && !dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList();
 
             var dictParams = new Dictionary<string, string>();

@@ -44,6 +44,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        [Column("CardCode")]
+        public string CardCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         [Column("ShipToCode")]
         public string Medico { get; set; }
 

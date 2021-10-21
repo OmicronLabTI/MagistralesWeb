@@ -159,11 +159,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysLine.Contains(x.DeliveryId)));
             }
 
-            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryToReturn.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
+            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(deliveryToReturn.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
 
             if (types.Contains(ServiceConstants.Maquila.ToLower()))
             {
-                var deliveryHeadersMaquila = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetailDb.Select(x => x.DeliveryId).ToList())).ToList();
+                var deliveryHeadersMaquila = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(deliveryDetailDb.Select(x => x.DeliveryId).ToList())).ToList();
                 var listMaquila = deliveryHeadersMaquila.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
                 deliveryHeaders.AddRange(listMaquila);
                 deliveryHeaders = deliveryHeaders.DistinctBy(x => x.DocNum).ToList();
