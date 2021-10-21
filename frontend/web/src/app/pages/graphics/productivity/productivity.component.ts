@@ -120,6 +120,9 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
         type: 'bar',
         data: barChartData,
         options: {
+          plugins: {
+            labels: [],
+          },
           scales: {
             yAxes: [{
               scaleLabel: {
