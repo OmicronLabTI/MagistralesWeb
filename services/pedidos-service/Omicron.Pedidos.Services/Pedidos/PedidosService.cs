@@ -134,7 +134,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
             var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
-            var listOrderLogs = new List<OrderLogModel>();
 
             ordersList.ForEach(x =>
             {
@@ -143,11 +142,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.Status = order.Status ?? x.Status;
                 x.Userid = order.UserId ?? x.Userid;
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, new List<UserOrderModel> { x }));
-                listOrderLogs.AddRange(ServiceUtils.CreateOrderLog(x.Userid, new List<int> { order.OrderId }, string.Format(ServiceConstants.OrdenProceso, x.Productionorderid), ServiceConstants.OrdenFab));
             });
 
             await this.pedidosDao.UpdateUserOrders(ordersList);
-            await this.pedidosDao.InsertOrderLog(listOrderLogs);
             if (updateStatusOrder.Any(x => x.Status == ServiceConstants.Entregado))
             {
                 var saleOrderId = ordersList.FirstOrDefault().Salesorderid;
@@ -387,7 +384,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Orders with updated info.</returns>urns>
         public async Task<ResultModel> CloseFabOrders(List<CloseProductionOrderModel> finishOrders)
         {
-            var logs = new List<OrderLogModel>();
             var successfuly = new List<object>();
             var failed = new List<object>();
             var affectedSalesOrderIds = new List<KeyValuePair<string, string>>();
@@ -460,7 +456,6 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     /* logs */
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { productionOrder }));
-                    logs.AddRange(ServiceUtils.CreateOrderLog(orderToFinish.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.OrderFinished, productionOrderId), ServiceConstants.OrdenFab));
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { productionOrder });
                     successfuly.Add(orderIdModel);
 
@@ -489,14 +484,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                     salesOrder.FinalizedDate = DateTime.Now;
                     /* logs */
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { salesOrder }));
-                    logs.AddRange(ServiceUtils.CreateOrderLog(userId, new List<int> { salesOrderIdAsInt }, string.Format(ServiceConstants.OrderFinished, salesOrderIdAsInt), ServiceConstants.OrdenVenta));
                     await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
                 }
             }
 
             await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
-
-            await this.pedidosDao.InsertOrderLog(logs);
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var results = new
@@ -672,7 +664,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderModel isolatedFabOrder)
         {
-            var logs = new List<OrderLogModel>();
             var listOrderLogToInsert = new List<SalesLogs>();
             var payload = new { isolatedFabOrder.ProductCode };
             var diapiResult = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CreateIsolatedFabOrder);
@@ -700,11 +691,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 newProductionOrder.Status = ServiceConstants.Planificado;
                 newProductionOrder.PlanningDate = DateTime.Now;
 
-                logs.AddRange(ServiceUtils.CreateOrderLog(isolatedFabOrder.UserId, new List<int> { productionOrderId }, string.Format(ServiceConstants.IsolatedProductionOrderCreated, productionOrderId), ServiceConstants.OrdenFab));
                 /** add logs**/
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(isolatedFabOrder.UserId, new List<UserOrderModel> { newProductionOrder }));
                 await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
-                await this.pedidosDao.InsertOrderLog(logs);
                 this.kafkaConnector.PushMessage(listOrderLogToInsert);
             }
 

@@ -158,7 +158,7 @@ namespace Omicron.SapDiApi.Services.Constants
         /// <summary>
         /// Fail reason.
         /// </summary>
-        public const string FailReasonUnexpectedErrorToCreateIsolatedProductionOrder = "Ocurrió un problema inesperado al crear la orden de fabricación para el producto {0}.";
+        public const string FailReasonUnexpectedErrorToCreateIsolatedProductionOrder = "Ocurrió un problema inesperado al crear la orden de fabricación para el producto {0} - {1}.";
 
         /// <summary>
         /// Fail reason.
