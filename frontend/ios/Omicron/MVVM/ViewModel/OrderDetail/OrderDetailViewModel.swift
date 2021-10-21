@@ -249,7 +249,7 @@ class OrderDetailViewModel {
 
             }).disposed(by: disposeBag)
     }
-    
+
     func getCatalogGroup() -> String {
         return catalogGroup
     }
