@@ -75,5 +75,6 @@ export const Endpoints = {
 export const TokenExcludedEndpoints = [
   '/api/oauth/oauthrs',
   '/api/pedidos/resources/', // to excluded url to download images,
-  '/orderqr/'
+  '/orderqr/',
+  '/omicron-resources/'
 ];
