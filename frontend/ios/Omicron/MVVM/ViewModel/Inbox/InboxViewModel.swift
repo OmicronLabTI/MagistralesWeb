@@ -56,6 +56,8 @@ class InboxViewModel {
     var ordersTemp: [Order] = []
     var sectionOrders: [SectionModel<String, Order>] = []
     var indexPathOfOrdersSelected: [IndexPath]?
+    var currentSection: SectionOrder = SectionOrder(
+        statusId: 0, statusName: String(), numberTask: 0, imageIndicatorStatus: String(), orders: [])
 
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
@@ -68,7 +70,7 @@ class InboxViewModel {
         // Funcionalidad para el botón de Terminado
         finishedDidTapBinding()
         // Funcionalidad para agrupar los cards por similitud
-        self.similarityViewButtonAction()
+        similarityViewButtonAction()
         // Funcionalidad para mostrar la vista normal en los cards
         normalViewButtonDidTapBinding()
         // Funcionalidad para mostra la vista ordenada número de orden
@@ -78,36 +80,73 @@ class InboxViewModel {
 
     func normalViewButtonDidTapBinding() {
         normalViewButtonDidTap.subscribe(onNext: { [weak self] _ in
-            self?.processButtonIsEnable.onNext(false)
-            self?.pendingButtonIsEnable.onNext(false)
-            let ordering = self?.sortByBaseBocumentAscending(orders: self?.ordersTemp ?? [])
-            self?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering ?? [])]
-            self?.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering ?? [])])
-            self?.similarityViewButtonIsEnable.onNext(true)
-            self?.normalViewButtonIsEnable.onNext(false)
-            self?.groupedByOrderNumberIsEnable.onNext(true)
-            self?.changeStatusSort(normal: true, similarity: false, grouped: false)
-            self?.resetData.onNext(())
+            guard let self = self else { return }
+            self.processButtonIsEnable.onNext(false)
+            self.pendingButtonIsEnable.onNext(false)
+            let ordering = self.sortOrderWithOrderBatchesCompleteByNormalView()
+            self.sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
+            self.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
+            self.similarityViewButtonIsEnable.onNext(true)
+            self.normalViewButtonIsEnable.onNext(false)
+            self.groupedByOrderNumberIsEnable.onNext(true)
+            self.changeStatusSort(normal: true, similarity: false, grouped: false)
+            self.resetData.onNext(())
         }).disposed(by: self.disposeBag)
+    }
+//  Separa las ordenes con lotes completos y las ordena por documento base de forma ascendente para la vista normal
+    func sortOrderWithOrderBatchesCompleteByNormalView() -> [Order] {
+        var ordering: [Order] = []
+        if self.currentSection.statusName == StatusNameConstants.inProcessStatus ||
+            self.currentSection.statusName == StatusNameConstants.reassignedStatus {
+            let orderReadyToFinished =
+                self.sortByBaseBocumentAscending(orders: self.ordersTemp.filter({$0.areBatchesComplete == true}))
+            let ordersNotReadyToFinished =
+                self.sortByBaseBocumentAscending(orders: self.ordersTemp.filter({$0.areBatchesComplete == false}))
+            ordering.append(contentsOf: orderReadyToFinished)
+            ordering.append(contentsOf: ordersNotReadyToFinished)
+        } else {
+            ordering.append(contentsOf: self.sortByBaseBocumentAscending(orders: self.ordersTemp))
+        }
+        return ordering
     }
 
     func groupByOrderNumberButtonDidTapBinding() {
         groupByOrderNumberButtonDidTap.subscribe(onNext: { [weak self] _ in
-            self?.processButtonIsEnable.onNext(false)
-            self?.pendingButtonIsEnable.onNext(false)
-            if self?.ordersTemp != nil {
-                let dataGroupedByBaseDocument = Dictionary(grouping: self?.ordersTemp ?? [],
-                                                           by: { "\($0.baseDocument ?? 0)" })
-                let ordersGroupedAndSorted = self?.groupedByOrderNumber(data: dataGroupedByBaseDocument)
-                self?.sectionOrders = ordersGroupedAndSorted ?? []
-                self?.statusDataGrouped.onNext(ordersGroupedAndSorted ?? [])
-            }
-            self?.normalViewButtonIsEnable.onNext(true)
-            self?.similarityViewButtonIsEnable.onNext(true)
-            self?.groupedByOrderNumberIsEnable.onNext(false)
-            self?.changeStatusSort(normal: false, similarity: false, grouped: true)
-            self?.resetData.onNext(())
+            guard let self = self else { return }
+            self.processButtonIsEnable.onNext(false)
+            self.pendingButtonIsEnable.onNext(false)
+            let ordersGroupedAndSorted = self.sortOrderWithBatchesByOrderNumberView()
+            self.sectionOrders = ordersGroupedAndSorted
+            self.statusDataGrouped.onNext(ordersGroupedAndSorted)
+            self.normalViewButtonIsEnable.onNext(true)
+            self.similarityViewButtonIsEnable.onNext(true)
+            self.groupedByOrderNumberIsEnable.onNext(false)
+            self.changeStatusSort(normal: false, similarity: false, grouped: true)
+            self.resetData.onNext(())
         }).disposed(by: self.disposeBag)
+    }
+//  Separa las ordenes tengan lotes completos y las ordena por documento base para la vista de agrupamiento 
+    func sortOrderWithBatchesByOrderNumberView() -> [SectionModel<String, Order>] {
+        var ordersGroupedAndSorted: [SectionModel<String, Order>] = []
+        var dataGroupedByBaseDocument: [String: [Order]] = [:]
+        if self.currentSection.statusName == StatusNameConstants.inProcessStatus ||
+            self.currentSection.statusName == StatusNameConstants.reassignedStatus {
+            let ordersReadyToFinish =
+                Dictionary(grouping:
+                            self.ordersTemp
+                            .filter({ $0.areBatchesComplete == true}), by: { "\($0.baseDocument ?? 0)" })
+            let ordersNotReadyToFinish =
+                Dictionary(
+                    grouping: self.ordersTemp
+                        .filter({ $0.areBatchesComplete == false}), by: { "\($0.baseDocument ?? 0)" })
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByOrderNumber(data: ordersReadyToFinish))
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByOrderNumber(data: ordersNotReadyToFinish))
+        } else {
+            dataGroupedByBaseDocument = Dictionary(grouping: self.ordersTemp,
+                                                   by: { "\($0.baseDocument ?? 0)" })
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByOrderNumber(data: dataGroupedByBaseDocument))
+        }
+        return ordersGroupedAndSorted
     }
 
     func finishedDidTapBinding() {
@@ -166,30 +205,29 @@ class InboxViewModel {
 
     func similarityViewButtonAction() {
         similarityViewButtonDidTap.subscribe(onNext: { [weak self] _ in
-            self?.processButtonIsEnable.onNext(false)
-            self?.pendingButtonIsEnable.onNext(false)
-            self?.resetData.onNext(())
-            if self?.ordersTemp != nil {
-                for order in self?.ordersTemp ?? [] {
-                    let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
-                    if let codeProduct = itemCodeInArray?.first {
-                        order.productCode = codeProduct
-                    } else {
-                        order.productCode = CommonStrings.empty
-                    }
+            guard let self = self else { return }
+            self.processButtonIsEnable.onNext(false)
+            self.pendingButtonIsEnable.onNext(false)
+            self.resetData.onNext(())
+            for order in self.ordersTemp {
+                let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
+                if let codeProduct = itemCodeInArray?.first {
+                    order.productCode = codeProduct
+                } else {
+                    order.productCode = CommonStrings.empty
                 }
-                // Se agrupa las ordenes por código de producto
-                let dataGroupedByProductCode = Dictionary(grouping: self?.ordersTemp ?? [], by: {$0.productCode})
-                let sectionModels = self?.groupedWithSimilarityOrWithoutSimilarity(
-                    data: dataGroupedByProductCode, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity,
-                    titleForOrdersWithSimilarity: CommonStrings.product)
-                self?.sectionOrders = sectionModels ?? []
-                self?.statusDataGrouped.onNext(sectionModels ?? [])
             }
-            self?.similarityViewButtonIsEnable.onNext(false)
-            self?.normalViewButtonIsEnable.onNext(true)
-            self?.groupedByOrderNumberIsEnable.onNext(true)
-            self?.changeStatusSort(normal: false, similarity: true, grouped: false)
+            // Se agrupa las ordenes por código de producto
+            let dataGroupedByProductCode = Dictionary(grouping: self.ordersTemp, by: {$0.productCode})
+            let sectionModels = self.groupedWithSimilarityOrWithoutSimilarity(
+                data: dataGroupedByProductCode, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity,
+                titleForOrdersWithSimilarity: CommonStrings.product)
+            self.sectionOrders = sectionModels
+            self.statusDataGrouped.onNext(sectionModels)
+            self.similarityViewButtonIsEnable.onNext(false)
+            self.normalViewButtonIsEnable.onNext(true)
+            self.groupedByOrderNumberIsEnable.onNext(true)
+            self.changeStatusSort(normal: false, similarity: true, grouped: false)
         }).disposed(by: self.disposeBag)
     }
     // Se agrupan ordenes por similitud o sin similitud
@@ -244,12 +282,14 @@ class InboxViewModel {
         return sectionModels
     }
     func setSelection(section: SectionOrder, removeSelecteds: Bool = false) {
-        let ordering = orderingOrders(section: section)
+        currentSection = section
+        var ordering = orderingOrders(section: section)
         ordersTemp = ordering
         if removeSelecteds {
             resetData.onNext(())
         }
         if normalSort {
+            ordering = self.sortOrderWithOrderBatchesCompleteByNormalView()
             statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
             sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
             similarityViewButtonIsEnable.onNext(true)
@@ -278,8 +318,7 @@ class InboxViewModel {
             groupedByOrderNumberIsEnable.onNext(true)
         } else {
             processButtonIsEnable.onNext(false)
-            let dataGroupedByBaseDocument = Dictionary(grouping: ordersTemp, by: { "\($0.baseDocument ?? 0)" })
-            let ordersGroupedAndSorted = groupedByOrderNumber(data: dataGroupedByBaseDocument)
+            let ordersGroupedAndSorted = sortOrderWithBatchesByOrderNumberView()
             sectionOrders = ordersGroupedAndSorted
             statusDataGrouped.onNext(ordersGroupedAndSorted)
             normalViewButtonIsEnable.onNext(true)
