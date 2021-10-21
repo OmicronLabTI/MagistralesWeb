@@ -93,7 +93,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("Address")]
+        [Column("Address2")]
         public string Address { get; set; }
 
         /// <summary>
