@@ -227,8 +227,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeaderOrdered.Select(x => x.InvoiceId).ToList())).ToList();
 
-            var invoicesNull = new List<int?>();
-            invoicesDetails.Select(x => x.InvoiceId).ToList().ForEach(y => invoicesNull.Add(y));
+            var invoicesNull = invoicesDetails.Select(x => x.InvoiceId).Cast<int?>().ToList();
             var deliveries = (await this.sapDao.GetDeliveryByInvoiceId(invoicesNull)).ToList();
 
             var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeaderOrdered.Select(x => x.TransportCode).ToList())).ToList();
@@ -251,7 +250,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.ClientEmail = client.Email;
                 x.TransportName = company.TrnspName;
-                x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.BaseEntry).Distinct().ToList());
+                x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoDxpId).Distinct().ToList());
                 x.SalesPrsonEmail = string.IsNullOrEmpty(salePerson.Email) ? string.Empty : salePerson.Email;
                 x.SalesPrsonName = string.IsNullOrEmpty(salePerson.FirstName) ? string.Empty : salePerson.FirstName + ' ' + salePerson.LastName;
             });

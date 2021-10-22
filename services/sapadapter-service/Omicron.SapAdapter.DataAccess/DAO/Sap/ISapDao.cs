@@ -387,7 +387,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="invoices">the invoices.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByInvoiceId(List<int?> invoices);
+        Task<IEnumerable<DeliveyJoinOrderModel>> GetDeliveryByInvoiceId(List<int?> invoices);
 
         /// <summary>
         /// Gets all line products.

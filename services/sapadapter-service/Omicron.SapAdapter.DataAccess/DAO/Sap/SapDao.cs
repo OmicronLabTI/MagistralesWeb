@@ -863,9 +863,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryByInvoiceId(List<int?> invoices)
+        public async Task<IEnumerable<DeliveyJoinOrderModel>> GetDeliveryByInvoiceId(List<int?> invoices)
         {
-            return await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => invoices.Contains(x.InvoiceId)));
+            var query = from deliveryDetail in this.databaseContext.DeliveryDetailModel.Where(x => invoices.Contains(x.InvoiceId))
+                        join order in this.databaseContext.OrderModel on deliveryDetail.BaseEntry equals order.PedidoId
+                        select new DeliveyJoinOrderModel
+                        {
+                            DeliveryId = deliveryDetail.DeliveryId,
+                            PedidoDxpId = order.DocNumDxp,
+                            InvoiceId = deliveryDetail.InvoiceId,
+                            PedidoId = order.PedidoId,
+                        };
+
+            return (await this.RetryQuery<DeliveyJoinOrderModel>(query)).ToList();
         }
 
         /// <inheritdoc/>
