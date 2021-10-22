@@ -210,8 +210,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionOrderQr>();
-            var memoryStrem = new MemoryStream();
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.MagistralQr)).ToList();
+
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<MagistralQrModel>(so.MagistralQr);
@@ -222,7 +222,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters);
 
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");
-                memoryStrem.Flush();
+                var memoryStrem = new MemoryStream();
                 bitmap.Save(memoryStrem, ImageFormat.Png);
                 memoryStrem.Position = 0;
 
