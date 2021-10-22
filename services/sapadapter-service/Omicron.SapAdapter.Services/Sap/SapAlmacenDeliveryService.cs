@@ -76,7 +76,7 @@ namespace Omicron.SapAdapter.Services.Sap
             userOrders = userOrders.Where(x => x.Salesorderid == orderSaleId.ToString()).ToList();
             lineProducts = lineProducts.Where(x => x.SaleOrderId == orderSaleId).ToList();
 
-            var deliveryDetails = (await this.sapDao.GetDeliveryBySaleOrder(new List<int> { orderSaleId })).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryDetailBySaleOrder(new List<int> { orderSaleId })).ToList();
             deliveryDetails = deliveryDetails.Where(x => x.DeliveryId == deliveryId).ToList();
 
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { orderSaleId });
@@ -123,7 +123,7 @@ namespace Omicron.SapAdapter.Services.Sap
             listDeliveryIds.AddRange(userOrders.Select(x => x.DeliveryId).ToList());
             listDeliveryIds = listDeliveryIds.OrderBy(x => x).Distinct().ToList();
 
-            var deliveryDetailDb = (await this.sapDao.GetDeliveryByDocEntry(listDeliveryIds)).ToList();
+            var deliveryDetailDb = (await this.sapDao.GetDeliveryDetailByDocEntry(listDeliveryIds)).ToList();
             var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(deliveryDetailDb.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList())).ToList();
             var invoiceRefactura = invoices.Where(x => !string.IsNullOrEmpty(x.Refactura) && x.Refactura == ServiceConstants.IsRefactura).Select(y => y.InvoiceId).ToList();
             invoices = invoices.Where(x => string.IsNullOrEmpty(x.Refactura) || x.Refactura != ServiceConstants.IsRefactura).ToList();
@@ -159,11 +159,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysLine.Contains(x.DeliveryId)));
             }
 
-            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryToReturn.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
+            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(deliveryToReturn.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
 
             if (types.Contains(ServiceConstants.Maquila.ToLower()))
             {
-                var deliveryHeadersMaquila = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetailDb.Select(x => x.DeliveryId).ToList())).ToList();
+                var deliveryHeadersMaquila = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(deliveryDetailDb.Select(x => x.DeliveryId).ToList())).ToList();
                 var listMaquila = deliveryHeadersMaquila.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
                 deliveryHeaders.AddRange(listMaquila);
                 deliveryHeaders = deliveryHeaders.DistinctBy(x => x.DocNum).ToList();

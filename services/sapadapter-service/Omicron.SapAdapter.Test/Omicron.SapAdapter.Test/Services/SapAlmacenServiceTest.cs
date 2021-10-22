@@ -54,6 +54,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
             this.context.Batches.AddRange(this.GetBatches());
             this.context.BatchesQuantity.AddRange(this.GetBatchesQuantity());
+            this.context.ClientCatalogModel.AddRange(this.GetClients());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();
@@ -61,7 +62,6 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacenService = new Mock<IAlmacenService>();
-            var mockCatalogos = new Mock<ICatalogsService>();
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
             this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object);
