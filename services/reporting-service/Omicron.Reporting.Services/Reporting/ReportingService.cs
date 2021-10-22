@@ -95,14 +95,20 @@ namespace Omicron.Reporting.Services
         /// <inheritdoc/>
         public async Task<ResultModel> SendEmailLocalPackage(SendLocalPackageModel sendLocalPackage)
         {
-            var smtpConfig = await this.catalogsService.GetSmtpConfig();
+            var listToLook = new List<string> { ServiceConstants.EmailLogoUrl };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
+            var config = await this.catalogsService.GetParams(listToLook);
+            var smtpConfig = this.GetSmtpConfig(config);
+
+            var logoUrl = config.FirstOrDefault(x => x.Field == ServiceConstants.EmailLogoUrl).Value;
             var destinityEmailList = sendLocalPackage.DestinyEmail.Split(";").Where(x => !string.IsNullOrEmpty(x)).ToList();
             var destinityEmail = destinityEmailList.FirstOrDefault();
             var copyEmails = string.Empty;
             destinityEmailList.Where(x => x != destinityEmail).Select(x => $"{x};").ToList().ForEach(x => copyEmails += x.Trim());
             copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
 
-            var text = this.GetBodyForLocal(sendLocalPackage);
+            var text = this.GetBodyForLocal(sendLocalPackage, logoUrl);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
                 string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
@@ -234,18 +240,20 @@ namespace Omicron.Reporting.Services
         /// </summary>
         /// <param name="package">the data.</param>
         /// <returns>the text.</returns>
-        private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package)
+        private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package, string logo)
         {
             var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
             package.SalesOrders = string.IsNullOrEmpty(package.SalesOrders) ? string.Empty : package.SalesOrders;
             var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
             var button = string.Format(ServiceConstants.ButtonEmail, package.DxpRoute);
 
+            logo = string.Format(ServiceConstants.LogoMailHeader, logo);
+
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
                 var greeting = string.Format(ServiceConstants.SentLocalPackage, orders, button);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
@@ -253,13 +261,13 @@ namespace Omicron.Reporting.Services
             {
                 var subject = string.Format(ServiceConstants.DeliveryEmailSubject, orders);
                 var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, orders, button);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
             var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
             var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, orders, button);
-            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greetingError, payment, ServiceConstants.RefundPolicy);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, payment, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);
         }

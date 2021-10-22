@@ -73,12 +73,17 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string SendEmailHtmlBaseAlmacen = @"<html><body>{0}{1}{2}</body></html>";
+        public const string SendEmailHtmlBaseAlmacen = @"<html><header>{0}</header><body>{1}{2}{3}</body></html>";
 
         /// <summary>
         /// Body of email.
         /// </summary>
         public const string PlaceLink = "<a href=\"{0}\">{0}</a>";
+
+        /// <summary>
+        /// Spei notification footer.
+        /// </summary>
+        public const string LogoMailHeader = "<div align=\"center\"><img data-imagetype=\"External\" src = \"{0}\" alt=\"OmicronLab\" style=\"width:auto; height:auto\" ></div>";
 
         /// <summary>
         /// Body of email.
@@ -99,6 +104,11 @@ namespace Omicron.Reporting.Services.Constants
         /// Body of email.
         /// </summary>
         public const string LogisticEmailCc3Field = "EmailLogisticaCc3";
+
+        /// <summary>
+        /// Get the email logo url.
+        /// </summary>
+        public const string EmailLogoUrl = "EmailLogoUrl";
 
         /// <summary>
         /// The local.
