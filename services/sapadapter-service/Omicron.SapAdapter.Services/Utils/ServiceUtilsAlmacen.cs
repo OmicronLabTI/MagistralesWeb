@@ -12,7 +12,10 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Threading.Tasks;
+    using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
 
@@ -99,6 +102,39 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             return listToReturn;
+        }
+
+        /// <summary>
+        /// Get the orders for recepcion pedidos.
+        /// </summary>
+        /// <param name="sapDao">dao.</param>
+        /// <param name="userOrdersTuple">user order tuuple.</param>
+        /// <param name="lineProductTuple">line produc tuple.</param>
+        /// <returns>the orders.</returns>
+        public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(ISapDao sapDao, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
+        {
+            var idsToIgnore = userOrdersTuple.Item2;
+            idsToIgnore.AddRange(lineProductTuple.Item2);
+
+            var sapOrders = (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
+            sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
+            sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
+
+            var orderToAppear = userOrdersTuple.Item1.Select(x => x.Salesorderid).ToList();
+            var ordersSapMaquila = (await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ)).ToList();
+            ordersSapMaquila = ordersSapMaquila.Where(x => x.Detalles != null).ToList();
+            ordersSapMaquila = ordersSapMaquila.Where(x => orderToAppear.Contains(x.DocNum.ToString())).ToList();
+
+            foreach (var order in ordersSapMaquila)
+            {
+                var orderSapExists = sapOrders.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
+                if (orderSapExists == null)
+                {
+                    sapOrders.Add(order);
+                }
+            }
+
+            return sapOrders;
         }
     }
 }

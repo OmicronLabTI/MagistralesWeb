@@ -46,6 +46,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             var connected = this.company.Connected;
             _loggerProxy.Info($"SAP connection is: {connected}");
+            company.GetLastError(out int errorCode, out string errMsg);
+            _loggerProxy.Info($"{errorCode} - {errMsg}");
             return ServiceUtils.CreateResult(true, 200, null, connected, null);
         }
 
