@@ -668,27 +668,20 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenById(int saleOrderId)
         {
-            var order = await this.databaseContext.OrderModel.FirstOrDefaultAsync(x => x.DocNum == saleOrderId);
-            var pedido = await this.databaseContext.DetallePedido.Where(x => x.PedidoId == saleOrderId).ToListAsync();
-
-            var listToReturn = new List<CompleteAlmacenOrderModel>();
-
-            pedido.ForEach(x =>
-            {
-                var model = new CompleteAlmacenOrderModel
-                {
-                    Cliente = order.Medico,
-                    DocNum = order.DocNum,
-                    Detalles = x,
-                    FechaInicio = order.FechaInicio,
-                    Medico = order.Medico,
-                    Address = order.Address,
-                };
-
-                listToReturn.Add(model);
-            });
-
-            return listToReturn;
+            var query = from order in this.databaseContext.OrderModel.Where(x => x.DocNum == saleOrderId)
+                        join detail in this.databaseContext.DetallePedido on order.DocNum equals detail.PedidoId
+                        join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                        select new CompleteAlmacenOrderModel
+                        {
+                            Cliente = doctor.AliasName,
+                            DocNum = order.DocNum,
+                            Detalles = detail,
+                            FechaInicio = order.FechaInicio,
+                            Medico = doctor.AliasName,
+                            Address = order.Address,
+                            DocNumDxp = order.DocNumDxp,
+                        };
+            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
         }
 
         /// <inheritdoc/>
