@@ -65,6 +65,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.PayToCode = saleOrderModel.BillingAddress;
                 order.UserFields.Fields.Item("U_Pedido_DXP").Value = saleOrderModel.TransactionId;
                 order.UserFields.Fields.Item("U_Comentarios_Ecommerce").Value = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}" : string.Empty;
+                order.UserFields.Fields.Item("").Value = saleOrderModel.ShippingCost;
 
                 if (!string.IsNullOrEmpty(attachment))
                 {
