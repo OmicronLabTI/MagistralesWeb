@@ -16,10 +16,8 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
-    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Utils;
@@ -74,7 +72,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var details = await this.sapDao.GetPedidoById(saleorderid);
             var productItems = await this.sapDao.GetProductByIds(details.Select(x => x.ProductoId).ToList());
-            var saleDetails = (await this.sapDao.GetAllDetails(saleorderid)).ToList();
+            var saleDetails = (await this.sapDao.GetAllDetails(new List<int?> { saleorderid })).ToList();
             var listDetails = new List<AlmacenDetailsOrder>();
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { saleorderid });
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
@@ -150,29 +148,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<Tuple<List<CompleteAlmacenOrderModel>, int>> GetSapOrders(Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, List<string> types)
         {
-            var idsToIgnore = userOrdersTuple.Item2;
-            idsToIgnore.AddRange(lineProductTuple.Item2);
-
             var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
 
-            var sapOrders = (await this.sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
-            sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
-            sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
-
-            var orderToAppear = userOrdersTuple.Item1.Select(x => x.Salesorderid).ToList();
-            var ordersSapMaquila = (await this.sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ)).ToList();
-            ordersSapMaquila = ordersSapMaquila.Where(x => x.Detalles != null).ToList();
-            ordersSapMaquila = ordersSapMaquila.Where(x => orderToAppear.Contains(x.DocNum.ToString())).ToList();
-
-            ordersSapMaquila.ForEach(order =>
-            {
-                var orderSapExists = sapOrders.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
-                if (orderSapExists == null)
-                {
-                    sapOrders.Add(order);
-                }
-            });
-
+            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple);
             var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(sapOrders.Select(x => x.DocNum).ToList())).ToList();
 
             var possibleIdsToIgnore = sapOrders.Where(x => !orderHeaders.Any(y => y.PedidoId.Value == x.DocNum)).ToList();
@@ -382,7 +360,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var so in salesIds)
             {
-                var saleDetail = (await this.sapDao.GetAllDetails(so)).ToList();
+                var saleDetail = (await this.sapDao.GetAllDetails(new List<int?> { so })).ToList();
                 var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
 
                 var productsList = this.GetProductListModel(userOrders, orders, saleDetail, lineProducts, productItems);

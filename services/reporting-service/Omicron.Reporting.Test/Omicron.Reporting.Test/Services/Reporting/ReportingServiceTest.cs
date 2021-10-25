@@ -50,6 +50,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailMiddleware", Value = string.Empty },
                 new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
                 new ParametersModel { Field = $"{party}Email", Value = "email@email.com" },
+                new ParametersModel { Field = "EmailLogoUrl", Value = "string" },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
@@ -91,10 +92,20 @@ namespace Omicron.Reporting.Test.Services.Request
                 SalesOrders = "100",
             };
 
+            var listParams = new List<ParametersModel>
+            {
+                new ParametersModel { Field = "SmtpServer", Value = string.Empty },
+                new ParametersModel { Field = "SmtpPort", Value = "0" },
+                new ParametersModel { Field = "EmailMiddlewarePassword", Value = string.Empty },
+                new ParametersModel { Field = "EmailMiddleware", Value = string.Empty },
+                new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
+                new ParametersModel { Field = "EmailLogoUrl", Value = "string" },
+            };
+
             var mockCatalog = new Mock<ICatalogsService>();
             mockCatalog
-                .Setup(m => m.GetSmtpConfig())
-                .Returns(Task.FromResult(this.GetSMTPConfig()));
+                .Setup(m => m.GetParams(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(listParams));
 
             var mockEmail = new Mock<IOmicronMailClient>();
             mockEmail
@@ -148,6 +159,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailMiddleware", Value = string.Empty },
                 new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
                 new ParametersModel { Field = "EmailAtencionAClientes", Value = string.Empty },
+                new ParametersModel { Field = "EmailCCRejected", Value = string.Empty },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
@@ -215,6 +227,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailLogisticaCc3", Value = string.Empty },
                 new ParametersModel { Field = "EmailBioEqual", Value = string.Empty },
                 new ParametersModel { Field = "EmailBioElite", Value = string.Empty },
+                new ParametersModel { Field = "EmailLogoUrl", Value = "string" },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();

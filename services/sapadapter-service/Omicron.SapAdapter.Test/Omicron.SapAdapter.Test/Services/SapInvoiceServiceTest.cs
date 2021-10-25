@@ -8,7 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -47,7 +46,9 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.context = new DatabaseContext(options);
             this.context.DetallePedido.AddRange(this.GetDetallePedido());
+            this.context.OrderModel.AddRange(this.GetOrderModel());
             this.context.ProductoModel.AddRange(this.GetProductoModel());
+            this.context.CatalogProductModel.AddRange(this.GetCatalogProductModel());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
             this.context.Batches.AddRange(this.GetBatches());
             this.context.BatchesQuantity.AddRange(this.GetBatchesQuantity());

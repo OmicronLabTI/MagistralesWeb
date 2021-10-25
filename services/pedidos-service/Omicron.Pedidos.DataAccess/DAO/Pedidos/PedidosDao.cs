@@ -43,18 +43,6 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
-        /// Method for add registry to DB.
-        /// </summary>
-        /// <param name="orderLog">UserOrder Dto.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<bool> InsertOrderLog(List<OrderLogModel> orderLog)
-        {
-            this.databaseContext.OrderLogModel.AddRange(orderLog);
-            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
-            return true;
-        }
-
-        /// <summary>
         /// the list ids.
         /// </summary>
         /// <param name="listIDs">the list ids.</param>
@@ -82,6 +70,11 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByUserId(List<string> listIds)
         {
             return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.Userid)).ToListAsync();
+        }
+
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByUserIdAndStatus(List<string> listIds, List<string> status)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.Userid) && status.Contains(x.Status)).ToListAsync();
         }
 
         /// <summary>
@@ -426,6 +419,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             this.databaseContext.CustomComponentLists.Remove(customComponentList);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByPlanningDate(DateTime fechaInicio, DateTime fechaFin)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => x.PlanningDate != null && x.PlanningDate >= fechaInicio && x.PlanningDate <= fechaFin).ToListAsync();
         }
     }
 }

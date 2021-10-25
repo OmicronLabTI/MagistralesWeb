@@ -65,6 +65,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   queryString = CONST_STRING.empty;
   currentOrdenFabricacionId = CONST_STRING.empty;
   filterDataOrdersForOrderIsolated = new ParamsPedidos();
+  catalogGroupName = CONST_STRING.empty;
   constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
               private errorService: ErrorService, private dialog: MatDialog,
               public dataService: DataService,
@@ -125,6 +126,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.isReadyToSave = false;
     this.componentsToDelete = [];
     this.dataService.setIsToSaveAnything(false);
+    this.catalogGroupName = response.catalogGroupName || '';
   }
   validateIsContainer(productId: string) {
     const productIdType = productId.split('-')[0];
@@ -152,7 +154,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent, data: this.dataSource.data});
+    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.searchComponent, data: this.dataSource.data,
+    catalogGroupName: this.catalogGroupName });
   }
 
 

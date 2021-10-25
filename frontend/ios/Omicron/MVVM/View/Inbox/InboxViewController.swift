@@ -249,6 +249,7 @@ class InboxViewController: UIViewController {
         self.modelBindingExtention1()
         self.modelBindingExtension2()
         self.modelBindingExtension3()
+        self.modelBindingExtension4()
         self.showSignatureVC()
         isUserInteractionEnabledBinding()
     }
@@ -381,6 +382,9 @@ class InboxViewController: UIViewController {
                 }
                 self.updateCellWithIndexPath(indexPath)
         }).disposed(by: self.disposeBag)
+    }
+
+    func modelBindingExtension4() {
         collectionView.rx.itemDeselected.subscribe(onNext: { [weak self] indexPath in
             guard let self = self else { return }
             guard self.indexPathsSelected.count > 0 else {
@@ -403,7 +407,6 @@ class InboxViewController: UIViewController {
                 self.collectionView.scrollRectToVisible(lastRect, animated: true)
             })
             .disposed(by: self.disposeBag)
-
     }
     func initComponents() {
         self.processButton.isEnabled = false

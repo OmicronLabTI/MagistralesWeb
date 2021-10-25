@@ -50,5 +50,12 @@ namespace Omicron.Usuarios.Entities.Model
         /// <value>
         /// String status.
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets status.
+        /// </summary>
+        /// <value>
+        /// String status.
+        public decimal Quantity { get; set; }
     }
 }

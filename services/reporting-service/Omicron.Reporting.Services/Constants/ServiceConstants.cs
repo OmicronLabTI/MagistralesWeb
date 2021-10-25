@@ -73,7 +73,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string SendEmailHtmlBaseAlmacen = @"<html><body>{0}{1}{2}</body></html>";
+        public const string SendEmailHtmlBaseAlmacen = @"<html><header>{0}</header><body>{1}{2}{3}</body></html>";
 
         /// <summary>
         /// Body of email.
@@ -81,9 +81,19 @@ namespace Omicron.Reporting.Services.Constants
         public const string PlaceLink = "<a href=\"{0}\">{0}</a>";
 
         /// <summary>
+        /// Spei notification footer.
+        /// </summary>
+        public const string LogoMailHeader = "<div align=\"center\"><img data-imagetype=\"External\" src = \"{0}\" alt=\"OmicronLab\" style=\"width:auto; height:auto\" ></div>";
+
+        /// <summary>
         /// Body of email.
         /// </summary>
         public const string CustomerServiceEmail = "EmailAtencionAClientes";
+
+        /// <summary>
+        /// Body of email.
+        /// </summary>
+        public const string EmailCCRejected = "EmailCCRejected";
 
         /// <summary>
         /// Body of email.
@@ -94,6 +104,11 @@ namespace Omicron.Reporting.Services.Constants
         /// Body of email.
         /// </summary>
         public const string LogisticEmailCc3Field = "EmailLogisticaCc3";
+
+        /// <summary>
+        /// Get the email logo url.
+        /// </summary>
+        public const string EmailLogoUrl = "EmailLogoUrl";
 
         /// <summary>
         /// The local.
@@ -123,22 +138,22 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> se encuentra en ruta para ser entregado en la dirección registrada a su nombre.</p>";
+        public const string SentLocalPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> se encuentra en ruta para ser entregado en la dirección registrada a su nombre. Si desea consultar su pedido puede hacerlo aquí:</p>{1}<br/>";
 
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackageDelivery = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> fue entregado con éxito.</p>";
+        public const string SentLocalPackageDelivery = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> fue entregado con éxito.</p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{1}<br/>";
 
         /// <summary>
         /// not delivered body.
         /// </summary>
-        public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega del pedido <b>{0}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p>";
+        public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega del pedido <b>{0}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{1}<br/>";
 
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string FooterPayment = "<p>Para realizar el pago de este pedido le compartimos los datos para la transferencia:</p><p>OMICRONLAB S.A. DE C.V.<br/>Número de cuenta: 0515319189<br/>Banco: Banorte<br/>Clave Interbancaria: 072580005153191898<br/>Referencia: <b>{0}</b><br/>En caso de haber realizado el pago, haga caso omiso a esta información.</p>";
+        public const string FooterPayment = "<p>Para realizar el pago de este pedido le compartimos los datos para la transferencia:</p><p>OMICRONLAB S.A. DE C.V.<br/>Banco: Banorte<br/>Número de cuenta: 0515319189<br/>Clave Interbancaria: 072580005153191898<br/>Referencia: <b>{0}</b><br/><br/>Banco: Bancomer<br/>Número de cuenta: 0116534406<br/>Clave Interbancaria: 012580001165344066<br/>Referencia: <b>{0}</b><br/>En caso de haber realizado el pago, haga caso omiso a esta información.</p>";
 
         /// <summary>
         /// refund policy.
@@ -175,6 +190,11 @@ namespace Omicron.Reporting.Services.Constants
         /// Body of email.
         /// </summary>
         public const string SendEmailHtmlBase = @"<html><body>{0}{1}{2}{3}</body></html>";
+
+        /// <summary>
+        /// Paynet hiper link paynet recipe.
+        /// </summary>
+        public const string ButtonEmail = "<table align=\"left\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" role=\"presentation\"><tbody><tr><td class=\"x_fallback-font x_o_btn x_o_bg-primary x_o_br x_o_heading x_o_text\" align=\"center\" style=\"font-family: &quot;Open Sans&quot;, Arial, Helvetica, sans-serif; font-weight: bold; margin-top: 0px; margin-bottom: 0px; font-size: 16px; line-height: 24px; background-color: rgb(51, 128, 255) !important; color: rgb(51, 128, 255); border-radius: 4px;\" data-ogsb=\"rgb(51, 128, 255)\"><a href =\"{0} \" target=\"_blank\" rel=\"noopener noreferrer\" data-auth=\"NotApplicable\" class=\"x_o_text-white\" style=\"text-decoration:none; outline:none; color:#f8f8f8; display:block; padding:12px 24px\" data-linkindex=\"2\">Entrar</a></td></tr></tbody></table></br>";
 
         /// <summary>
         /// The enviado status.

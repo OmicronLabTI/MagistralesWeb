@@ -36,7 +36,8 @@ describe('BatchesService', () => {
         orderId: 1234,
         assignedQty: 222,
         itemCode: 'MP   009',
-        action: 'insert'
+        action: 'insert',
+        areBatchesComplete: 0
       }
     ];
     const service: BatchesService = TestBed.get(BatchesService);

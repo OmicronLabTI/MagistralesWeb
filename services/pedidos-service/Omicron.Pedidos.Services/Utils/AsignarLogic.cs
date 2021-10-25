@@ -57,12 +57,7 @@ namespace Omicron.Pedidos.Services.Utils
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
             });
 
-            var listOrderToInsert = new List<OrderLogModel>();
-            listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.AsignarVenta, assignModel.UserId), ServiceConstants.OrdenVenta));
-            listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, listToUpdate.Select(x => x.OrderFabId).ToList(), string.Format(ServiceConstants.AsignarOrden, assignModel.UserId), ServiceConstants.OrdenFab));
-
             await pedidosDao.UpdateUserOrders(userOrders);
-            await pedidosDao.InsertOrderLog(listOrderToInsert);
             kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
@@ -108,12 +103,7 @@ namespace Omicron.Pedidos.Services.Utils
             userOrdersByProd = getUpdateUserOrderModel.Item1;
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
-            var listOrderToInsert = new List<OrderLogModel>();
-            listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, assignModel.DocEntry, string.Format(ServiceConstants.AsignarVenta, assignModel.UserId), ServiceConstants.OrdenVenta));
-            listOrderToInsert.AddRange(ServiceUtils.CreateOrderLog(assignModel.UserLogistic, listToUpdate.Select(x => x.OrderFabId).ToList(), string.Format(ServiceConstants.AsignarOrden, assignModel.UserId), ServiceConstants.OrdenFab));
-
             await pedidosDao.UpdateUserOrders(userOrdersByProd);
-            await pedidosDao.InsertOrderLog(listOrderToInsert);
             kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);

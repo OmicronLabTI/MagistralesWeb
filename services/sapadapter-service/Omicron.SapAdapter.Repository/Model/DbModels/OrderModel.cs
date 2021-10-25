@@ -37,13 +37,6 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("CardName")]
-        public string Cliente { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
         [Column("CardCode")]
         public string Codigo { get; set; }
 
@@ -51,7 +44,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("ShipToCode")]
+        [Column("CardName")]
         public string Medico { get; set; }
 
         /// <summary>
@@ -100,7 +93,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("Address")]
+        [Column("Address2")]
         public string Address { get; set; }
 
         /// <summary>
@@ -123,5 +116,26 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("Comments")]
         public string Comments { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_Comentarios_Ecommerce")]
+        public string Patient { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_Pedido_DXP")]
+        public string DocNumDxp { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("ShipToCode")]
+        public string ShippingAddressName { get; set; }
     }
 }

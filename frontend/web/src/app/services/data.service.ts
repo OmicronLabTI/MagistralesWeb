@@ -419,6 +419,10 @@ export class DataService {
       filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
       filterDataOrders.docNumUntil = resultSearchOrderModal.docNumUntil;
       queryString =  this.getRangeOrders(resultSearchOrderModal.docNum, resultSearchOrderModal.docNumUntil);
+    } else if (resultSearchOrderModal.docNumDxp) {
+      filterDataOrders.docNumDxp = resultSearchOrderModal.docNumDxp;
+      filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
+      queryString = `?docNumDxp=${resultSearchOrderModal.docNumDxp}`;
     } else {
       if (resultSearchOrderModal.dateType) {
         filterDataOrders.dateType = resultSearchOrderModal.dateType;

@@ -570,7 +570,6 @@ namespace Omicron.Pedidos.Test.Services
             mockSapAdapter
                 .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
-                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
                 .Returns(Task.FromResult(this.GetRecipes()));
 
             var mockSapFile = new Mock<ISapFileService>();
@@ -686,7 +685,6 @@ namespace Omicron.Pedidos.Test.Services
 
             mockSapAdapter
                 .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(result))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
                 .Returns(Task.FromResult(this.GetRecipes()));
 

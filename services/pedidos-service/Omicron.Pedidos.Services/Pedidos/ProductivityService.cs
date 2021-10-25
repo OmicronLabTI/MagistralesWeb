@@ -12,13 +12,11 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
 
@@ -27,8 +25,6 @@ namespace Omicron.Pedidos.Services.Pedidos
     /// </summary>
     public class ProductivityService : IProductivityService
     {
-        private readonly ISapAdapter sapAdapter;
-
         private readonly IPedidosDao pedidosDao;
 
         private readonly IUsersService userService;
@@ -36,12 +32,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductivityService"/> class.
         /// </summary>
-        /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="pedidosDao">pedidos dao.</param>
         /// <param name="userService">The user service.</param>
-        public ProductivityService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, IUsersService userService)
+        public ProductivityService(IPedidosDao pedidosDao, IUsersService userService)
         {
-            this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
             this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
@@ -59,7 +53,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var userOrdersByDate = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).Where(x => !x.IsIsolatedProductionOrder).ToList();
 
-            var tupleRespond = await this.GetMatrix(dates, users, userOrdersByDate);
+            var tupleRespond = this.GetMatrix(dates, users, userOrdersByDate);
             var matrix = this.OrderMatrix(tupleRespond.Item1, tupleRespond.Item2);
 
             var productivite = new ProductivityModel
@@ -88,19 +82,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             var dates = ServiceUtils.GetDateFilter(parameters);
             var finalizedOrders = (await this.pedidosDao.GetUserOrderByFechaClose(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
             finalizedOrders = finalizedOrders.Where(x => x.IsProductionOrder && !x.IsIsolatedProductionOrder).ToList();
-            var ordersIds = finalizedOrders.Select(x => int.Parse(x.Productionorderid)).ToList();
 
-            var sapResponse = await this.sapAdapter.PostSapAdapter(ordersIds, ServiceConstants.GetUsersByOrdersById);
-            var sapOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
-            sapOrders.AddRange(await this.GetSapFabOrders(parameters));
-
-            var ordersId = sapOrders.Select(x => x.OrdenId.ToString()).ToList();
-            var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(ordersId)).ToList();
+            // Método que buscar por planning date para obtener las ordenes por fecha de creación y reemplazar el SAP
+            var userOrders = (await this.pedidosDao.GetUserOrderByPlanningDate(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).ToList();
             userOrders = userOrders.Where(x => !ServiceConstants.StatusIgnoreWorkLoad.Contains(x.Status)).ToList();
             userOrders.AddRange(finalizedOrders);
             userOrders = userOrders.Where(y => !y.IsIsolatedProductionOrder).DistinctBy(x => x.Id).ToList();
 
-            var workLoad = this.GetWorkLoadByUser(users, userOrders, sapOrders, specificUser);
+            var workLoad = this.GetWorkLoadByUser(users, userOrders, specificUser);
             return ServiceUtils.CreateResult(true, 200, null, workLoad, null);
         }
 
@@ -122,7 +111,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="users">all the users.</param>
         /// <param name="orders">the user orders from the active users..</param>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<List<string>>, List<ProductiityTotalsModel>>> GetMatrix(Dictionary<string, DateTime> dates, List<UserModel> users, List<UserOrderModel> orders)
+        private Tuple<List<List<string>>, List<ProductiityTotalsModel>> GetMatrix(Dictionary<string, DateTime> dates, List<UserModel> users, List<UserOrderModel> orders)
         {
             var matrixToReturn = new List<List<string>>();
             var listProductivty = new List<ProductiityTotalsModel>();
@@ -131,17 +120,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             matrixToReturn.Add(valuesMonths.Item1);
             foreach (var u in users)
             {
-                var ordersSap = new List<FabricacionOrderModel>();
                 var orderByUser = orders.Where(o => !string.IsNullOrEmpty(o.Userid) && o.Userid.Equals(u.Id) && !o.IsIsolatedProductionOrder).ToList();
-                var ordersId = orderByUser.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
-
-                if (ordersId.Any())
-                {
-                    var sapResponse = await this.sapAdapter.PostSapAdapter(ordersId, ServiceConstants.GetUsersByOrdersById);
-                    ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
-                }
-
-                var tupleResponse = this.GetDataByUser(u, orderByUser, ordersSap, valuesMonths.Item2);
+                var tupleResponse = this.GetDataByUser(u, orderByUser, valuesMonths.Item2);
                 matrixToReturn.Add(tupleResponse.Item1);
                 listProductivty.Add(tupleResponse.Item2);
             }
@@ -187,10 +167,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="user">the user.</param>
         /// <param name="userOrder">the users userOrder.</param>
-        /// <param name="fabOrder">the orders from sap.</param>
         /// <param name="months">The list of months.</param>
         /// <returns>the data.</returns>
-        private Tuple<List<string>, ProductiityTotalsModel> GetDataByUser(UserModel user, List<UserOrderModel> userOrder, List<FabricacionOrderModel> fabOrder, List<int> months)
+        private Tuple<List<string>, ProductiityTotalsModel> GetDataByUser(UserModel user, List<UserOrderModel> userOrder, List<int> months)
         {
             var listToReturn = new List<string>();
             listToReturn.Add($"{user.FirstName} {user.LastName}");
@@ -208,9 +187,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     continue;
                 }
 
-                var userOrderIds = userOrderByMonth.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
-                var orderFromSap = fabOrder.Where(x => userOrderIds.Contains(x.OrdenId)).ToList();
-                total += orderFromSap.Sum(x => x.Quantity);
+                total += userOrderByMonth.Sum(ts => ts.Quantity);
                 totalPieces += (int)total;
                 listToReturn.Add(((int)total).ToString());
             }
@@ -247,17 +224,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="users">the user.</param>
         /// <param name="userOrders">the user orders.</param>
-        /// <param name="sapOrders">the sap order.</param>
         /// <param name="specificUser">the specific user to return.</param>
         /// <returns>the data.</returns>
-        private List<WorkLoadModel> GetWorkLoadByUser(List<UserModel> users, List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders, string specificUser)
+        private List<WorkLoadModel> GetWorkLoadByUser(List<UserModel> users, List<UserOrderModel> userOrders, string specificUser)
         {
             if (!string.IsNullOrEmpty(specificUser))
             {
-                return this.GetWorkloadSpecificUser(users, userOrders, sapOrders, specificUser);
+                return this.GetWorkloadSpecificUser(users, userOrders, specificUser);
             }
 
-            return this.GetWorloadAllUsers(users, userOrders, sapOrders);
+            return this.GetWorloadAllUsers(users, userOrders);
         }
 
         /// <summary>
@@ -265,15 +241,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="users">the list of users.</param>
         /// <param name="userOrders">the user orders.</param>
-        /// <param name="sapOrders">the sap orders.</param>
         /// <param name="specificUser">the specific user.</param>
         /// <returns>the data.</returns>
-        private List<WorkLoadModel> GetWorkloadSpecificUser(List<UserModel> users, List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders, string specificUser)
+        private List<WorkLoadModel> GetWorkloadSpecificUser(List<UserModel> users, List<UserOrderModel> userOrders, string specificUser)
         {
             var user = users.FirstOrDefault(x => x.Id.Equals(specificUser));
             user = user == null ? new UserModel { Id = specificUser } : user;
             var ordersByUser = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid) && x.Userid.Equals(user.Id)).ToList();
-            var workLoad = this.GetTotalsByUser(ordersByUser, sapOrders, user);
+            var workLoad = this.GetTotalsByUser(ordersByUser, user);
             return new List<WorkLoadModel> { workLoad };
         }
 
@@ -282,21 +257,20 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="users">the list of users.</param>
         /// <param name="userOrders">the user orders.</param>
-        /// <param name="sapOrders">the sap orders.</param>
         /// <returns>the data.</returns>
-        private List<WorkLoadModel> GetWorloadAllUsers(List<UserModel> users, List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders)
+        private List<WorkLoadModel> GetWorloadAllUsers(List<UserModel> users, List<UserOrderModel> userOrders)
         {
             var listToReturn = new List<WorkLoadModel>();
             users.Where(x => x.Activo == 1).ToList().ForEach(user =>
             {
                 var ordersByUser = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid) && x.Userid.Equals(user.Id)).ToList();
-                var workLoadByUser = this.GetTotalsByUser(ordersByUser, sapOrders, user);
+                var workLoadByUser = this.GetTotalsByUser(ordersByUser, user);
                 listToReturn.Add(workLoadByUser);
             });
 
             listToReturn = listToReturn.OrderByDescending(x => x.TotalPieces).ThenBy(x => x.User).ToList();
 
-            listToReturn.Add(this.GetTotalAll(userOrders, sapOrders));
+            listToReturn.Add(this.GetTotalAll(userOrders));
             return listToReturn;
         }
 
@@ -304,16 +278,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// Gets the total by user.
         /// </summary>
         /// <param name="usersOrders">the user orders.</param>
-        /// <param name="sapOrders">the sap orders.</param>
         /// <param name="user">the current user.</param>
         /// <returns>the data.</returns>
-        private WorkLoadModel GetTotalsByUser(List<UserOrderModel> usersOrders, List<FabricacionOrderModel> sapOrders, UserModel user)
+        private WorkLoadModel GetTotalsByUser(List<UserOrderModel> usersOrders, UserModel user)
         {
             var workLoadModel = new WorkLoadModel();
             workLoadModel.User = $"{user.FirstName} {user.LastName}";
             workLoadModel.TotalPossibleAssign = user.Piezas;
 
-            workLoadModel = this.GetTotals(usersOrders, sapOrders, workLoadModel);
+            workLoadModel = this.GetTotals(usersOrders, workLoadModel);
             return workLoadModel;
         }
 
@@ -321,28 +294,24 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// Get the total based on the user orders.
         /// </summary>
         /// <param name="userOrders">the user orders.</param>
-        /// <param name="sapOrders">the sap orders.</param>
         /// <param name="workLoadModel">the workmodel.</param>
         /// <returns>the data.</returns>
-        private WorkLoadModel GetTotals(List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders, WorkLoadModel workLoadModel)
+        private WorkLoadModel GetTotals(List<UserOrderModel> userOrders, WorkLoadModel workLoadModel)
         {
             var productionOrders = userOrders.Where(x => x.IsProductionOrder && ServiceConstants.AllStatusWorkload.Contains(x.Status)).DistinctBy(x => x.Productionorderid).ToList();
             var productionOrderIds = productionOrders.Select(y => int.Parse(y.Productionorderid)).ToList();
             var salesOrderIds = productionOrders.Where(x => !string.IsNullOrEmpty(x.Salesorderid)).DistinctBy(x => x.Salesorderid).Select(y => int.Parse(y.Salesorderid)).ToList();
-
+            int total = 0;
             ServiceConstants.StatusWorkload.ForEach(status =>
             {
-                var productionOrderIdsByStatus = new List<int>();
                 if (status == ServiceConstants.Finalizado)
                 {
-                    productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status) || x.Status.Equals(ServiceConstants.Almacenado) || x.Status.Equals(ServiceConstants.Entregado)).Select(y => int.Parse(y.Productionorderid)).ToList();
+                    total = (int)productionOrders.Where(x => x.Status.Equals(status) || x.Status.Equals(ServiceConstants.Almacenado) || x.Status.Equals(ServiceConstants.Entregado)).Sum(ts => ts.Quantity);
                 }
                 else
                 {
-                    productionOrderIdsByStatus = productionOrders.Where(x => x.Status.Equals(status)).Select(y => int.Parse(y.Productionorderid)).ToList();
+                    total = (int)productionOrders.Where(x => x.Status.Equals(status)).Sum(ts => ts.Quantity);
                 }
-
-                var total = (int)sapOrders.Where(x => productionOrderIdsByStatus.Any(y => y == x.OrdenId)).DistinctBy(x => x.OrdenId).Sum(y => y.Quantity);
 
                 switch (status)
                 {
@@ -374,7 +343,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             workLoadModel.TotalFabOrders = productionOrderIds.Count;
             workLoadModel.TotalOrders = salesOrderIds.Count;
-            workLoadModel.TotalPieces = (int)sapOrders.Where(x => productionOrderIds.Any(y => y == x.OrdenId)).DistinctBy(x => x.OrdenId).Sum(y => y.Quantity);
+            workLoadModel.TotalPieces = (int)productionOrders.DistinctBy(x => x.Productionorderid).Sum(y => y.Quantity);
             return workLoadModel;
         }
 
@@ -382,9 +351,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// Gets the total for all.
         /// </summary>
         /// <param name="userOrders">all the user orders.</param>
-        /// <param name="sapOrders">all the sap orders.</param>
         /// <returns>the data.</returns>
-        private WorkLoadModel GetTotalAll(List<UserOrderModel> userOrders, List<FabricacionOrderModel> sapOrders)
+        private WorkLoadModel GetTotalAll(List<UserOrderModel> userOrders)
         {
             var workLoadModel = new WorkLoadModel
             {
@@ -392,35 +360,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 TotalPossibleAssign = 0,
             };
 
-            workLoadModel = this.GetTotals(userOrders, sapOrders, workLoadModel);
+            workLoadModel = this.GetTotals(userOrders, workLoadModel);
             return workLoadModel;
-        }
-
-        /// <summary>
-        /// Gets the sap fab orders.
-        /// </summary>
-        /// <param name="parameters">the dict.</param>
-        /// <returns>the data.</returns>
-        private async Task<List<FabricacionOrderModel>> GetSapFabOrders(Dictionary<string, string> parameters)
-        {
-            var listToReturn = new List<FabricacionOrderModel>();
-            parameters.Add(ServiceConstants.Offset, "0");
-            parameters.Add(ServiceConstants.Limit, "8000");
-            var offset = 0;
-            int total;
-
-            do
-            {
-                parameters[ServiceConstants.Offset] = offset.ToString();
-                var sapResponse = await this.sapAdapter.PostSapAdapter(new GetOrderFabModel { Filters = parameters, OrdersId = new List<int>() }, ServiceConstants.GetFabOrdersByFilter);
-                listToReturn.AddRange(JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString()));
-
-                total = sapResponse.Comments != null ? int.Parse(sapResponse.Comments.ToString() ?? throw new InvalidOperationException()) : 0;
-                offset += 8000;
-            }
-            while (total > 0 && offset < total);
-
-            return listToReturn;
         }
     }
 }

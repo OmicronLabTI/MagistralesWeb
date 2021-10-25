@@ -8,6 +8,7 @@
 
 namespace Omicron.SapAdapter.Services.Sap
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Entities.Model;
 
@@ -19,7 +20,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Get most common components.
         /// </summary>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>the dta.</returns>
-        Task<ResultModel> GetMostCommonComponents();
+        Task<ResultModel> GetMostCommonComponents(Dictionary<string, string> parameters);
     }
 }

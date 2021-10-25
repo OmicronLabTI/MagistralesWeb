@@ -46,6 +46,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             var connected = this.company.Connected;
             _loggerProxy.Info($"SAP connection is: {connected}");
+            company.GetLastError(out int errorCode, out string errMsg);
+            _loggerProxy.Info($"{errorCode} - {errMsg}");
             return ServiceUtils.CreateResult(true, 200, null, connected, null);
         }
 
@@ -59,6 +61,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             var dictResult = new Dictionary<string, string>();
             foreach(var pedido in orderWithDetail)
             {
+                _loggerProxy.Info($"The next order will be tried to be created: {pedido.Order.PedidoId} - {JsonConvert.SerializeObject(pedido.Detalle)}");
                 var count = 0;
 
                 foreach (var orf in pedido.Detalle)
@@ -73,7 +76,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     prodObj.ItemNo = orf.CodigoProducto;
                     prodObj.ProductDescription = orf.DescripcionProducto;
                     prodObj.PlannedQuantity = plannedQtyNumber;
-                    prodObj.ProductionOrderOriginEntry = pedido.Order.PedidoId;                    
+                    prodObj.ProductionOrderOriginEntry = pedido.Order.PedidoId;
 
                     var inserted =  prodObj.Add();
 
@@ -86,7 +89,9 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
                     else
                     {
-                        dictResult.Add(string.Format("{0}-{1}-{2}", pedido.Order.PedidoId, orf.CodigoProducto, count), "Ok");
+                        company.GetNewObjectCode(out var fabOrderId);
+                        _loggerProxy.Info($"The order was created: {pedido.Order.PedidoId} - {fabOrderId} - {orf.CodigoProducto}");
+                        dictResult.Add(string.Format("{0}-{1}-{2}-{3}", pedido.Order.PedidoId, orf.CodigoProducto, count, fabOrderId), "Ok");
                     }
 
                     count++;
@@ -501,7 +506,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     this.company.GetLastError(out int errorCode, out string errorMessage);
                     _loggerProxy.Debug($"An error has ocurred to create isolated production order { errorCode } - {errorMessage}.");
-                    result = new KeyValuePair<string, string>(string.Empty, string.Format(ServiceConstants.FailReasonUnexpectedErrorToCreateIsolatedProductionOrder, isolatedFabOrder.ProductCode));
+                    result = new KeyValuePair<string, string>(string.Empty, string.Format(ServiceConstants.FailReasonUnexpectedErrorToCreateIsolatedProductionOrder, isolatedFabOrder.ProductCode, errorMessage));
                 }
                 else
                 {
@@ -682,7 +687,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on create oInventoryGenExit { errorCode } - { errorMessage }.");
-                throw new ValidationException(string.Format(ServiceConstants.FailReasonNotGetExitCreated, productionOrderId));
+                throw new ValidationException($"{string.Format(ServiceConstants.FailReasonNotGetExitCreated, productionOrderId)} - {errorMessage}");
             }
         }
 
@@ -734,7 +739,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on save receipt production { errorCode } - {errorMessage}.");
-                throw new ValidationException(string.Format(ServiceConstants.FailReasonNotReceipProductionCreated, productionOrderId));
+                throw new ValidationException($"{string.Format(ServiceConstants.FailReasonNotReceipProductionCreated, productionOrderId)} - {errorMessage}");
             }
         }
 
@@ -753,7 +758,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 this.company.GetLastError(out int errorCode, out string errorMessage);
                 _loggerProxy.Debug($"An error has ocurred on update production order status { errorCode } - {errorMessage}.");
-                throw new ValidationException(string.Format(ServiceConstants.FailReasonNotProductionStatusClosed, productionOrder.DocumentNumber));
+                throw new ValidationException($"{string.Format(ServiceConstants.FailReasonNotProductionStatusClosed, productionOrder.DocumentNumber)} - {errorMessage}");
             }
         }
 
