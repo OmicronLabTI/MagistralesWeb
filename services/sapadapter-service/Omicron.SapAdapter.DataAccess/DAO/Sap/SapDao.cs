@@ -648,7 +648,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          into DetalleOrden
                          from dp in DetalleOrden.DefaultIfEmpty()
                          join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                         where order.FechaInicio >= initDate && order.PedidoStatus == "O"
+                         join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
+                         where order.FechaInicio >= initDate && order.PedidoStatus == "O" && product.IsWorkableProduct == "Y"
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
@@ -692,7 +693,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          into DetalleOrden
                          from dp in DetalleOrden.DefaultIfEmpty()
                          join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                         where order.OrderType == typeOrder && order.PedidoStatus == "O"
+                         join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
+                         where order.OrderType == typeOrder && order.PedidoStatus == "O" && product.IsWorkableProduct == "Y"
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
@@ -795,6 +797,26 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByDocEntryJoinProduct(List<int> docEntry)
+        {
+            var query = from invoiceDetail in this.databaseContext.InvoiceDetailModel.Where(x => docEntry.Contains(x.InvoiceId))
+                        join product in this.databaseContext.ProductoModel on invoiceDetail.ProductoId equals product.ProductoId
+                        where product.IsWorkableProduct == "Y"
+                        select new InvoiceDetailModel
+                        {
+                            BaseEntry = invoiceDetail.BaseEntry,
+                            Container = invoiceDetail.Container,
+                            Description = invoiceDetail.Description,
+                            DocDate = invoiceDetail.DocDate,
+                            InvoiceId = invoiceDetail.InvoiceId,
+                            LineNum = invoiceDetail.LineNum,
+                            ProductoId = invoiceDetail.ProductoId,
+                            Quantity = invoiceDetail.Quantity,
+                        };
+            return await this.RetryQuery<InvoiceDetailModel>(query);
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNum(List<int> docNum)
         {
             return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => docNum.Contains(x.DocNum)));
@@ -833,6 +855,28 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailByDocEntry(List<int> ordersId)
         {
             return await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.DeliveryId)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailByDocEntryJoinProduct(List<int> ordersId)
+        {
+            var query = from deliveryDet in this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.DeliveryId))
+                        join product in this.databaseContext.ProductoModel on deliveryDet.ProductoId equals product.ProductoId
+                        where product.IsWorkableProduct == "Y"
+                        select new DeliveryDetailModel
+                        {
+                            BaseEntry = deliveryDet.BaseEntry,
+                            Container = deliveryDet.Container,
+                            DeliveryId = deliveryDet.DeliveryId,
+                            Description = deliveryDet.Description,
+                            DocDate = deliveryDet.DocDate,
+                            InvoiceId = deliveryDet.InvoiceId,
+                            LineNum = deliveryDet.LineNum,
+                            LineStatus = deliveryDet.LineStatus,
+                            ProductoId = deliveryDet.ProductoId,
+                            Quantity = deliveryDet.Quantity,
+                        };
+            return await this.RetryQuery<DeliveryDetailModel>(query);
         }
 
         /// <inheritdoc/>
