@@ -48,22 +48,10 @@ namespace Omicron.SapAdapter.Test
                 new OrderModel { PedidoId = 102, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2, OrderType = "MN" },
 
                 // For Almacen
-                new OrderModel { PedidoId = 75000, DocNum = 75000, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ" },
-                new OrderModel { PedidoId = 75001, DocNum = 75001, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo León" },
-                new OrderModel { PedidoId = 75002, DocNum = 75002, FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null },
-                new OrderModel { PedidoId = 85000, DocNum = 85000, FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ" },
-            };
-        }
-
-        /// <summary>
-        /// Return the asesor.
-        /// </summary>
-        /// <returns>the asesor.</returns>
-        public List<ClientCatalogModel> GetDoctors()
-        {
-            return new List<ClientCatalogModel>
-            {
-                new ClientCatalogModel { ClientId = "Codigo", AliasName = "Alieas" },
+                new OrderModel { PedidoId = 75000, DocNum = 75000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ" },
+                new OrderModel { PedidoId = 75001, DocNum = 75001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo León" },
+                new OrderModel { PedidoId = 75002, DocNum = 75002, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null },
+                new OrderModel { PedidoId = 85000, DocNum = 85000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ" },
             };
         }
 
@@ -193,10 +181,10 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<DeliverModel>
             {
-                new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000, Address = null },
-                new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001, Address = "direccion Nuevo León" },
-                new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46038, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75002, Address = "direccion CD MX" },
-                new DeliverModel { Cliente = "cliente", DeliveryStatus = "C", DocNum = 46039, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75003, Address = "direccion Oax", TypeOrder = "MQ" },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000, Address = null },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001, Address = "direccion Nuevo León" },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46038, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75002, Address = "direccion CD MX" },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46039, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75003, Address = "direccion Oax", TypeOrder = "MQ" },
             };
         }
 
@@ -211,6 +199,7 @@ namespace Omicron.SapAdapter.Test
                 new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 46036, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1, InvoiceId = 1 },
                 new DeliveryDetailModel { BaseEntry = 75001, DeliveryId = 46037, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
                 new DeliveryDetailModel { BaseEntry = 100, DeliveryId = 46038, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
+                new DeliveryDetailModel { BaseEntry = 100, DeliveryId = 46039, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 2 },
             };
         }
 
@@ -354,7 +343,9 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<ClientCatalogModel>
             {
-                new ClientCatalogModel { ClientId = "C1", Email = "email" },
+                new ClientCatalogModel { ClientId = "C1", Email = "email", AliasName = "alias" },
+                new ClientCatalogModel { ClientId = "C8", Email = "email", AliasName = "alias" },
+                new ClientCatalogModel { ClientId = "Codigo", Email = "email", AliasName = "alias" },
             };
         }
 

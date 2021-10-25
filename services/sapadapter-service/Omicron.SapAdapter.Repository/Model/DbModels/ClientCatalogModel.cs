@@ -40,20 +40,6 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the professional license.
-        /// </summary>
-        /// <value>Professional License.</value>
-        [Column("Notes")]
-        public string ProfessionalLicense { get; set; }
-
-        /// <summary>
-        /// Gets or sets the group code.
-        /// </summary>
-        /// <value>Group code.</value>
-        [Column("GroupCode")]
-        public int GroupCode { get; set; }
-
-        /// <summary>
         /// Gets or sets the group code.
         /// </summary>
         /// <value>Group code.</value>

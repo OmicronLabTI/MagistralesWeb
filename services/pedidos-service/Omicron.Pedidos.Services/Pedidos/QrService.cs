@@ -210,8 +210,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionOrderQr>();
-            var memoryStrem = new MemoryStream();
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.MagistralQr)).ToList();
+
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<MagistralQrModel>(so.MagistralQr);
@@ -222,7 +222,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters);
 
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");
-                memoryStrem.Flush();
+                var memoryStrem = new MemoryStream();
                 bitmap.Save(memoryStrem, ImageFormat.Png);
                 memoryStrem.Position = 0;
 
@@ -252,38 +252,37 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listUrls = new List<string>();
             var listToSave = new List<ProductionRemisionQrModel>();
             var memoryStrem = new MemoryStream();
-            saleOrders
-                .Where(x => !string.IsNullOrEmpty(x.RemisionQr))
-                .ToList()
-                .ForEach(async so =>
+            saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).ToList();
+
+            foreach (var so in saleOrders)
+            {
+                var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
+                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
+
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
+                var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
+
+                memoryStrem.Flush();
+                bitmap.Save(memoryStrem, ImageFormat.Png);
+                memoryStrem.Position = 0;
+
+                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
+
+                var modelToSave = new ProductionRemisionQrModel
                 {
-                    var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
-                    var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
+                    Id = Guid.NewGuid().ToString("D"),
+                    PedidoId = int.Parse(so.Salesorderid),
+                    RemisionId = modelQr.RemisionId,
+                    RemisionQrRoute = pathTosave,
+                };
 
-                    bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
-                    var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
+                if (!existingUrls.Contains(modelToSave.RemisionQrRoute))
+                {
+                    listToSave.Add(modelToSave);
+                }
 
-                    memoryStrem.Flush();
-                    bitmap.Save(memoryStrem, ImageFormat.Png);
-                    memoryStrem.Position = 0;
-
-                    await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
-
-                    var modelToSave = new ProductionRemisionQrModel
-                    {
-                        Id = Guid.NewGuid().ToString("D"),
-                        PedidoId = int.Parse(so.Salesorderid),
-                        RemisionId = modelQr.RemisionId,
-                        RemisionQrRoute = pathTosave,
-                    };
-
-                    if (!existingUrls.Contains(modelToSave.RemisionQrRoute))
-                    {
-                        listToSave.Add(modelToSave);
-                    }
-
-                    listUrls.Add(pathTosave);
-                });
+                listUrls.Add(pathTosave);
+            }
 
             await this.pedidosDao.InsertQrRouteRemision(listToSave);
             return listUrls;
@@ -294,36 +293,35 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listUrls = new List<string>();
             var listToSave = new List<ProductionFacturaQrModel>();
             var memoryStrem = new MemoryStream();
-            saleOrders
-                .Where(x => !string.IsNullOrEmpty(x.InvoiceQr))
-                .ToList()
-                .ForEach(async so =>
+            saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.InvoiceQr)).ToList();
+
+            foreach (var so in saleOrders)
+            {
+                var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
+                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters);
+                var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
+
+                memoryStrem.Flush();
+                bitmap.Save(memoryStrem, ImageFormat.Png);
+                memoryStrem.Position = 0;
+
+                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
+
+                var modelToSave = new ProductionFacturaQrModel
                 {
-                    var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
-                    var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
-                    bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters);
-                    var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
+                    Id = Guid.NewGuid().ToString("D"),
+                    FacturaId = modelQr.InvoiceId,
+                    FacturaQrRoute = pathTosave,
+                };
 
-                    memoryStrem.Flush();
-                    bitmap.Save(memoryStrem, ImageFormat.Png);
-                    memoryStrem.Position = 0;
+                if (!existingUrls.Contains(modelToSave.FacturaQrRoute))
+                {
+                    listToSave.Add(modelToSave);
+                }
 
-                    await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
-
-                    var modelToSave = new ProductionFacturaQrModel
-                    {
-                        Id = Guid.NewGuid().ToString("D"),
-                        FacturaId = modelQr.InvoiceId,
-                        FacturaQrRoute = pathTosave,
-                    };
-
-                    if (!existingUrls.Contains(modelToSave.FacturaQrRoute))
-                    {
-                        listToSave.Add(modelToSave);
-                    }
-
-                    listUrls.Add(pathTosave);
-                });
+                listUrls.Add(pathTosave);
+            }
 
             await this.pedidosDao.InsertQrRouteFactura(listToSave);
             return listUrls;

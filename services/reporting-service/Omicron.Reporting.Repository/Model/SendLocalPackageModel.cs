@@ -82,5 +82,13 @@ namespace Omicron.Reporting.Entities.Model
         /// String FirstName.
         /// </value>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets Sales Person Name.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string DxpRoute { get; set; }
     }
 }
