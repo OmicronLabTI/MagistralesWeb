@@ -137,5 +137,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("ShipToCode")]
         public string ShippingAddressName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("")]
+        public decimal ShippingCost { get; set; }
     }
 }

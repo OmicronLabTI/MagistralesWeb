@@ -681,6 +681,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             Medico = doctor.AliasName,
                             Address = order.Address,
                             DocNumDxp = order.DocNumDxp,
+                            ShippingCost = order.ShippingCost,
                         };
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
         }
