@@ -672,6 +672,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var query = from order in this.databaseContext.OrderModel.Where(x => x.DocNum == saleOrderId)
                         join detail in this.databaseContext.DetallePedido on order.DocNum equals detail.PedidoId
                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                        join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
+                        where product.IsWorkableProduct == "Y"
                         select new CompleteAlmacenOrderModel
                         {
                             Cliente = doctor.AliasName,
