@@ -78,6 +78,6 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public decimal ShippingCost { get; set; }
+        public string ShippingCost { get; set; }
     }
 }

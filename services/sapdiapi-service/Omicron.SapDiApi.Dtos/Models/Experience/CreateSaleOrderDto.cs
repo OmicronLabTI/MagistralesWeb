@@ -67,6 +67,6 @@ namespace Omicron.SapDiApi.Dtos.Models.Experience
         /// Gets or sets the bool value id name is printed.
         /// </summary>
         /// <value>The code.</value>
-        public decimal ShippingCost { get; set; }
+        public string ShippingCost { get; set; }
     }
 }
