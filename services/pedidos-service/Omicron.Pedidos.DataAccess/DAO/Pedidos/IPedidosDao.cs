@@ -24,13 +24,6 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<bool> InsertUserOrder(List<UserOrderModel> userorder);
 
         /// <summary>
-        /// Method for add registry to DB.
-        /// </summary>
-        /// <param name="orderLog">UserOrder Dto.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<bool> InsertOrderLog(List<OrderLogModel> orderLog);
-
-        /// <summary>
         /// Returns the user orders by SalesOrder (Pedido)
         /// </summary>
         /// <param name="listIDs">the list ids.</param>
@@ -50,6 +43,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="listIds">the list of users.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByUserId(List<string> listIds);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="listIds">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByUserIdAndStatus(List<string> listIds, List<string> status);
 
         /// <summary>
         /// Returns the user order by user id.
@@ -297,6 +297,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="components">Components of custom list to insert.</param>
         /// <returns>Operation result.</returns>
         Task<bool> DeleteComponentsOfCustomList(List<ComponentCustomComponentListModel> components);
-        
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="fechaInicio">The init date.</param>
+        /// <param name="fechaFin">the end date.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByPlanningDate(DateTime fechaInicio, DateTime fechaFin);
     }
 }

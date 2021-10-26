@@ -39,6 +39,7 @@ export class ComponentSearchComponent implements OnInit {
   rowPrevious = {};
   count = 0;
   isFromSearchComponent = true;
+  catalogGroupName = '';
   constructor(private ordersService: PedidosService,
               private dialogRef: MatDialogRef<ComponentSearchComponent>,
               private errorService: ErrorService,
@@ -48,6 +49,7 @@ export class ComponentSearchComponent implements OnInit {
     this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent
                 || this.data.modalType === ComponentSearch.addComponent;
     this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
+    this.getCatalogGroupName();
   }
 
   ngOnInit() {
@@ -57,8 +59,12 @@ export class ComponentSearchComponent implements OnInit {
       this.getComponentsAction();
     }
     this.changeDetector.detectChanges();
+    this.getCatalogGroupName();
   }
 
+  getCatalogGroupName(): void {
+    this.catalogGroupName = this.data.catalogGroupName === '' ? 'MN' : this.data.catalogGroupName;
+  }
   getComponentsAction() {
     this.isDisableSearch = true;
     this.ordersService.getComponents(this.queryStringComponents, this.isFromSearchComponent).subscribe(resComponents => {
@@ -115,7 +121,8 @@ export class ComponentSearchComponent implements OnInit {
   }
   getQueryString() {
     this.queryStringComponents =
-        `?offset=${this.offset}&limit=${this.limit}&chips=${this.keywords.toString() !== '' ? this.keywords.toString() : '$$' }`;
+        // tslint:disable-next-line:max-line-length
+        `?offset=${this.offset}&limit=${this.limit}&chips=${this.keywords.toString() !== '' ? this.keywords.toString() : '$$' }&catalogGroup=${this.catalogGroupName}`;
   }
 
   selectComponent(row: any) {
@@ -157,12 +164,12 @@ export class ComponentSearchComponent implements OnInit {
   }
 
   onKeyDown(event: KeyboardEvent): void {
-    if (event.key.toLowerCase() == 'backspace' && this.chipsInput.nativeElement.value == '') {
+    if (event.key.toLowerCase() === 'backspace' && this.chipsInput.nativeElement.value === '') {
       event.preventDefault();
-      let numberOfChilds = this.chipsInput.nativeElement.parentNode.children.length;
+      const numberOfChilds = this.chipsInput.nativeElement.parentNode.children.length;
       if (numberOfChilds > 1) {
-        let node = this.chipsInput.nativeElement.parentNode.children[numberOfChilds - 2];
-        if (node.tagName.toLowerCase() == 'mat-chip') {
+        const node = this.chipsInput.nativeElement.parentNode.children[numberOfChilds - 2];
+        if (node.tagName.toLowerCase() === 'mat-chip') {
           node.click();
           node.focus();
         }

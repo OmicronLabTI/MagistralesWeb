@@ -8,30 +8,17 @@ import { FileTypeContentEnum } from '../enums/FileTypeContentEnum';
 })
 export class FileDownloaderService {
   constructor() { }
-  /**
-    * Download file from request result
-    * @param {Observable<HttpResponse<Blob>>} requestResult - Observable for request.
-    * @param {FileTypeContentEnum} fileType - File type content
-    * @param {string} fileName - File name
- */
   public downloadFile(requestResult: Observable<HttpResponse<Blob>>, fileType: FileTypeContentEnum, fileName: string): void {
     requestResult
-    .subscribe(response => {
-      try {
-        this.downloadFileResult(response.body, fileType, fileName);
-      }
-      catch(err) {
-      }
-    }, errorResponse => {
-    })
+      .subscribe(response => {
+        try {
+          this.downloadFileResult(response.body, fileType, fileName);
+        } catch (err) {
+          return;
+        }
+      }, errorResponse => {
+      });
   }
-
-  /**
-    * Download file from blob
-    * @param {Blob} content - Blob content.
-    * @param {FileTypeContentEnum} fileType - File type content
-    * @param {string} fileName - File name
- */
   public downloadFileResult(content: Blob, fileType, fileName: string): void {
     const blob = new Blob([content], { type: fileType });
     const dwlLink = document.createElement('a');

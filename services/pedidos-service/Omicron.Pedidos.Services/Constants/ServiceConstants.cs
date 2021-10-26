@@ -421,6 +421,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ReasonProductionOrderNonCompleted = "La orden de fabricación {0} no se encuentra terminada.";
 
         /// <summary>
+        /// Reason non complete production orders.
+        /// </summary>
+        public const string ReasonProductionOrdersNonCompleted = "La órdenes de fabricación: {0} no se encuentran terminadas.";
+
+        /// <summary>
         /// Reason not found.
         /// </summary>
         public const string ReasonProductionOrderNotExists = "La orden de fabricación {0} no existe.";
@@ -581,6 +586,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrMagistralRectHeight = "QrMagistralRectHeight";
 
         /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrMagistralBottomTextSize = "QrMagistralBottomTextSize";
+
+        /// <summary>
         /// Field for the max day to look.
         /// </summary>
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
@@ -593,17 +603,17 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// const for the bottom temxt.
         /// </summary>
-        public const string QrBottomTextOrden = "Orden: {0} {1}";
+        public const string QrBottomTextOrden = "OR: {0} {1}";
 
         /// <summary>
         /// const for the bottom temxt.
         /// </summary>
-        public const string QrBottomTextRemision = "Remisión: {0} {1}";
+        public const string QrBottomTextRemision = "R: {0} {1}";
 
         /// <summary>
         /// const for the bottom temxt.
         /// </summary>
-        public const string QrBottomTextFactura = "Factura: {0} {1}";
+        public const string QrBottomTextFactura = "F: {0} {1}";
 
         /// <summary>
         /// const for the cooling.
@@ -648,12 +658,47 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// for total cancelation.
         /// </summary>
+        public const string ErrorWhenPlnanningIntro = "Error al planificar, ";
+
+        /// <summary>
+        /// for total cancelation.
+        /// </summary>
         public const string ErrorWhenPlanning = "El pedido {0} se encuentra en proceso de planificación, favor de intentar más tarde";
 
         /// <summary>
         /// for total cancelation.
         /// </summary>
         public const bool IsProductionOrder = true;
+
+        /// <summary>
+        /// azure account.
+        /// </summary>
+        public const string AzureAccountName = "AzureAccountName";
+
+        /// <summary>
+        /// azure account.
+        /// </summary>
+        public const string AzureAccountKey = "AzureAccountKey";
+
+        /// <summary>
+        /// azure account.
+        /// </summary>
+        public const string BlobUrlTemplate = "https://{0}.blob.core.windows.net/{1}/{2}";
+
+        /// <summary>
+        /// the order containe.
+        /// </summary>
+        public const string OrderQrContainer = "OrderQrContainer";
+
+        /// <summary>
+        /// the order containe.
+        /// </summary>
+        public const string DeliveryQrContainer = "DeliveryQrContainer";
+
+        /// <summary>
+        /// the order containe.
+        /// </summary>
+        public const string InvoiceQrContainer = "InvoiceQrContainer";
 
         /// <summary>
         /// Gets the status of the order.

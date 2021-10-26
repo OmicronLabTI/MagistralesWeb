@@ -392,7 +392,7 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetMostCommonComponents()
         {
             // act
-            var response = await this.sapFacade.GetMostCommonComponents();
+            var response = await this.sapFacade.GetMostCommonComponents(new Dictionary<string, string>());
 
             // assert
             this.AssertResponse(response);

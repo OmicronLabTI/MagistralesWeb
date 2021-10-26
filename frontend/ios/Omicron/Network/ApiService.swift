@@ -26,7 +26,7 @@ enum ApiService {
     case validateOrders(orderId: [Int])
     case postOrdersPDF(orders: [Int])
     case getConnect
-    case getMostCommonComponents
+    case getMostCommonComponents(data: CommonComponentRequest)
     case getContainer(userId: String)
 }
 
@@ -44,6 +44,8 @@ extension ApiService: AuthorizedTargetType {
         case .getConnect: return URL(string: Config.serverOmicron)!
         default: return URL(string: Config.baseUrl)!
         }
+
+//        return URL(string: "http://201.163.179.28:8000")!
     }
     var path: String {
         switch self {
@@ -120,7 +122,6 @@ extension ApiService: AuthorizedTargetType {
              .getOrdenDetail,
              .askIfOrderCanBeFinalized,
              .getConnect,
-             .getMostCommonComponents,
              .getContainer:
             return .requestPlain
         case .renew(let data):
@@ -141,6 +142,8 @@ extension ApiService: AuthorizedTargetType {
             return .requestJSONEncodable(data)
         case .validateOrders(let data):
             return .requestJSONEncodable(data)
+        case .getMostCommonComponents(let data):
+            return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
         }
     }
     var sampleData: Data {

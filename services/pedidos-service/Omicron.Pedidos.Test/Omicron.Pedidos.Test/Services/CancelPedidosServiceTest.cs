@@ -198,7 +198,6 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 1, 0, 1));
-            Assert.AreEqual(orderId.ToString(), this.context.OrderLogModel.FirstOrDefault().Noid);
             this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
 
@@ -726,8 +725,7 @@ namespace Omicron.Pedidos.Test.Services
 
             return result.Success.Equals(success) &&
                     numberOfFails.Equals(content.Failed.Count) &&
-                    numberOfSucceess.Equals(content.Success.Count) &&
-                    this.context.OrderLogModel.Count().Equals(numberOfLogs);
+                    numberOfSucceess.Equals(content.Success.Count);
         }
     }
 }

@@ -238,9 +238,9 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> GetMostCommonComponents()
+        public async Task<ResultDto> GetMostCommonComponents(Dictionary<string, string> parameters)
         {
-            return this.mapper.Map<ResultDto>(await this.componentsService.GetMostCommonComponents());
+            return this.mapper.Map<ResultDto>(await this.componentsService.GetMostCommonComponents(parameters));
         }
 
         /// <summary>

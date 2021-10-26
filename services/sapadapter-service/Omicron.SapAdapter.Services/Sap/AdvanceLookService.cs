@@ -177,15 +177,15 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData, List<Tuple<int, string>> tupleIds)
         {
             var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIds(tupleIds.Where(x => x.Item2 == ServiceConstants.SaleOrder || x.Item2 == ServiceConstants.DontExistsTable).Select(y => y.Item1).ToList())).ToList();
-            var sapDeliveryDetails = (await this.sapDao.GetDeliveryByDocEntry(tupleIds.Where(x => x.Item2 == ServiceConstants.Delivery).Select(y => y.Item1).ToList())).ToList();
-            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryBySaleOrder(sapSaleOrder.Select(x => x.DocNum).ToList()));
-            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryByDocEntry(sapDeliveryDetails.Select(x => x.DeliveryId).ToList()));
-            var sapDelivery = (await this.sapDao.GetDeliveryModelByDocNum(sapDeliveryDetails.Select(y => y.DeliveryId).ToList())).ToList();
+            var sapDeliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntry(tupleIds.Where(x => x.Item2 == ServiceConstants.Delivery).Select(y => y.Item1).ToList())).ToList();
+            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailBySaleOrder(sapSaleOrder.Select(x => x.DocNum).ToList()));
+            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailByDocEntry(sapDeliveryDetails.Select(x => x.DeliveryId).ToList()));
+            var sapDelivery = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(sapDeliveryDetails.Select(y => y.DeliveryId).ToList())).ToList();
 
-            var sapInvoicesHeaders = (await this.sapDao.GetInvoiceHeadersByDocNum(tupleIds.Where(x => x.Item2 == ServiceConstants.Invoice || x.Item2 == ServiceConstants.DontExistsTable).Select(y => y.Item1).ToList())).ToList();
+            var sapInvoicesHeaders = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(tupleIds.Where(x => x.Item2 == ServiceConstants.Invoice || x.Item2 == ServiceConstants.DontExistsTable).Select(y => y.Item1).ToList())).ToList();
             var sapInvoicesDeatils = (await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList())).ToList();
             sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByBaseEntry(sapDelivery.Select(x => x.DocNum).ToList()));
-            sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceId(sapInvoicesDeatils.Select(x => x.InvoiceId).ToList()));
+            sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(sapInvoicesDeatils.Select(x => x.InvoiceId).ToList()));
 
             var lineProducts = (await this.sapDao.GetAllLineProducts()).ToList();
             var cardToReturns = new CardsAdvancedLook
@@ -199,7 +199,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var temporalsapDeliveryDetails = new List<DeliveryDetailModel>();
             var temporalsapInvoicesDeatils = new List<InvoiceDetailModel>();
             var listInvoicedId = sapDeliveryDetails.Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).ToList();
-            sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceId(listInvoicedId));
+            sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(listInvoicedId));
             sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList()));
 
             sapInvoicesDeatils.GroupBy(x => new { x.BaseEntry, x.InvoiceId }).ToList().ForEach(x =>
@@ -207,7 +207,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 temporalsapInvoicesDeatils.AddRange(x.DistinctBy(d => d.ProductoId));
             });
             sapInvoicesDeatils = temporalsapInvoicesDeatils;
-            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryByDocEntry(sapInvoicesDeatils.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList()));
+            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailByDocEntry(sapInvoicesDeatils.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList()));
             sapDeliveryDetails.GroupBy(x => new { x.DeliveryId, x.BaseEntry }).ToList().ForEach(x =>
             {
                 temporalsapDeliveryDetails.AddRange(x.DistinctBy(d => d.ProductoId));

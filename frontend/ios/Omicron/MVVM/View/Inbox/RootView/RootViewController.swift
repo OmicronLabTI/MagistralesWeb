@@ -72,8 +72,7 @@ class RootViewController: UIViewController {
     }
     func viewModelBinding() {
         self.rootViewModelBinding()
-        logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: disposeBag)
-        kpiButton.rx.tap.bind(to: inboxViewModel.viewKPIDidPressed).disposed(by: disposeBag)
+        self.rootViewModelBinding2()
         // Detecta el evento cuando se selecciona un status de la tabla
         viewTable.rx.modelSelected(SectionOrder.self).subscribe(onNext: { [weak self] data in
             guard let self = self else { return }
@@ -144,6 +143,10 @@ class RootViewController: UIViewController {
         rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] error in
             AlertManager.shared.showAlert(message: error, view: self)
         }).disposed(by: self.disposeBag)
+    }
+    func rootViewModelBinding2() {
+        logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: disposeBag)
+        kpiButton.rx.tap.bind(to: inboxViewModel.viewKPIDidPressed).disposed(by: disposeBag)
         //Selecciona el primer elemento de estatus cuando termina la carga de datos
         self.rootViewModel.refreshSelection.withLatestFrom(self.rootViewModel.selectedRow)
             .subscribe(onNext: { [weak self] row in

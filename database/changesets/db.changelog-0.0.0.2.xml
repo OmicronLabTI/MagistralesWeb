@@ -291,5 +291,12 @@
 			<constraints nullable="true" />
 		</column>
 	</addColumn>  
+  </changeSet>  
+  <changeSet author="esanchez" id="changelog-2.37">
+    <insert tableName="parameters"> 
+      <column name="value" value="https://omicronsaprod.blob.core.windows.net/omicron-resources/omicronLogo.png"/>
+      <column name="type" value="string"/>
+      <column name="field" value="EmailLogoUrl"/>
+    </insert>
   </changeSet>
 </databaseChangeLog> 

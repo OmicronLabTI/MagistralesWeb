@@ -26,6 +26,7 @@ class ComponentsViewController: UIViewController {
         super.viewDidLoad()
         initComponents()
         viewModelBinding()
+        viewModelBinding2()
         hideMostCommonComponents()
         bindingDataToMostComoonTable()
         itemSelectedOfMostCommonComponentsTable()
@@ -70,6 +71,8 @@ class ComponentsViewController: UIViewController {
             }
             LottieManager.shared.hideLoading()
         }).disposed(by: disposeBag)
+    }
+    func viewModelBinding2() {
         self.componentsViewModel.dataResults.map({ data -> Bool in
             return data.count > 0
         }).asDriver(onErrorJustReturn: true).drive(labelNoResults.rx.isHidden).disposed(by: disposeBag)

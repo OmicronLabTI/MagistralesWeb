@@ -12,21 +12,14 @@ namespace Omicron.SapAdapter.Test.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
     using Moq;
     using Newtonsoft.Json;
     using NUnit.Framework;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Services.Constants;
-    using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
-    using Omicron.SapAdapter.Services.User;
-    using Omicron.SapAdapter.Services.Utils;
     using Serilog;
 
     /// <summary>
@@ -53,6 +46,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.context = new DatabaseContext(options);
             this.context.ProductoModel.AddRange(this.GetProductoModel());
+            this.context.CatalogProductModel.AddRange(this.GetCatalogProductModel());
             this.context.SaveChanges();
 
             var mockRedis = new Mock<IRedisService>();
@@ -65,7 +59,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.componentService = new ComponentsService(this.sapDao, mockLog.Object, mockRedis.Object);
+            this.componentService = new ComponentsService(this.sapDao, mockRedis.Object);
         }
 
         /// <summary>
@@ -82,10 +76,10 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetRedisKey(It.IsAny<string>()))
                 .Returns(Task.FromResult(string.Empty));
 
-            var service = new ComponentsService(this.sapDao, mockLog.Object, redis.Object);
+            var service = new ComponentsService(this.sapDao, redis.Object);
 
             // act
-            var result = await service.GetMostCommonComponents();
+            var result = await service.GetMostCommonComponents(new Dictionary<string, string>());
 
             Assert.IsNotNull(result);
         }
@@ -109,10 +103,10 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetRedisKey(It.IsAny<string>()))
                 .Returns(Task.FromResult(JsonConvert.SerializeObject(components)));
 
-            var service = new ComponentsService(this.sapDao, mockLog.Object, redis.Object);
+            var service = new ComponentsService(this.sapDao, redis.Object);
 
             // act
-            var result = await service.GetMostCommonComponents();
+            var result = await service.GetMostCommonComponents(new Dictionary<string, string>());
 
             Assert.IsNotNull(result);
         }

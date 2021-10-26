@@ -121,8 +121,9 @@ class BatchSelected: Codable {
     var action: String?
     var sysNumber: Int?
     var expiredBatch: Bool = false
+    var areBatchesComplete: Int
     init(orderId: Int?, assignedQty: Decimal?, batchNumber: String?,
-         itemCode: String?, action: String?, sysNumber: Int?, expiredBatch: Bool) {
+         itemCode: String?, action: String?, sysNumber: Int?, expiredBatch: Bool, areBatchesComplete: Int) {
         self.orderId = orderId
         self.assignedQty = assignedQty
         self.batchNumber = batchNumber
@@ -130,6 +131,7 @@ class BatchSelected: Codable {
         self.action = action
         self.sysNumber = sysNumber
         self.expiredBatch = expiredBatch
+        self.areBatchesComplete = areBatchesComplete
     }
     func toLotsSelected() -> LotsSelected {
         return LotsSelected(numeroLote: self.batchNumber!, cantidadSeleccionada: self.assignedQty!,

@@ -33,13 +33,14 @@ class OrderDetail {
     var realEndDate, productLabel, container, comments: String?
     var isChecked: Bool?
     var details: [Detail]?
+    var catalogGroupName: String?
     init() { }
     init(productionOrderID: Int, code: String, productDescription: String, type: String,
          status: String, plannedQuantity: Decimal, unit: String, warehouse: String,
          number: Int, fabDate: String, dueDate: String, startDate: String, endDate: String,
          user: String, origin: String, baseDocument: Int, client: String, completeQuantity: Int,
          realEndDate: String, productLabel: String, container: String, comments: String,
-         isChecked: Bool, details: [Detail]) {
+         isChecked: Bool, details: [Detail], catalogGroupName: String) {
         self.productionOrderID = productionOrderID
         self.code = code
         self.productDescription = productDescription
@@ -64,6 +65,7 @@ class OrderDetail {
         self.comments = comments
         self.isChecked = isChecked
         self.details = details
+        self.catalogGroupName = catalogGroupName
     }
     required init?(map: Map) {}
 }
@@ -93,6 +95,7 @@ extension OrderDetail: Mappable {
         self.isChecked <- map["isChecked"]
         self.details <- map["details"]
         self.comments <- map["comments"]
+        self.catalogGroupName <- map["catalogGroupName"]
     }
 }
 class Detail {

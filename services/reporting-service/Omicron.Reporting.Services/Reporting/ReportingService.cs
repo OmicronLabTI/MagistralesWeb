@@ -66,7 +66,7 @@ namespace Omicron.Reporting.Services
         public async Task<ResultModel> SendEmailForeignPackage(SendPackageModel request)
         {
             var emailParty = $"{request.TransportMode.ToLower().Replace(" ", string.Empty)}{ServiceConstants.DelPartyEmail}";
-            var listToLook = new List<string> { emailParty };
+            var listToLook = new List<string> { emailParty, ServiceConstants.EmailLogoUrl };
             listToLook.AddRange(ServiceConstants.ValuesForEmail);
 
             var config = await this.catalogsService.GetParams(listToLook);
@@ -74,13 +74,14 @@ namespace Omicron.Reporting.Services
             var smtpConfig = this.GetSmtpConfig(config);
             var deliveryEmailModel = config.FirstOrDefault(x => x.Field.Contains(emailParty));
             var email = deliveryEmailModel == null ? string.Empty : deliveryEmailModel.Value;
+            var logoUrl = string.Format(ServiceConstants.LogoMailHeader, config.FirstOrDefault(x => x.Field == ServiceConstants.EmailLogoUrl).Value);
 
             var sendEmailOrTel = email.Contains("http") ? ServiceConstants.PaqueteEmail : ServiceConstants.TelefonoEmail;
             var sendEmailLink = email.Contains("http") ? string.Format(ServiceConstants.PlaceLink, email) : email;
 
             var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             var payment = string.Format(ServiceConstants.FooterPayment, request.PackageId);
-            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, payment, ServiceConstants.RefundPolicy);
 
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
@@ -95,14 +96,20 @@ namespace Omicron.Reporting.Services
         /// <inheritdoc/>
         public async Task<ResultModel> SendEmailLocalPackage(SendLocalPackageModel sendLocalPackage)
         {
-            var smtpConfig = await this.catalogsService.GetSmtpConfig();
+            var listToLook = new List<string> { ServiceConstants.EmailLogoUrl };
+            listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
+            var config = await this.catalogsService.GetParams(listToLook);
+            var smtpConfig = this.GetSmtpConfig(config);
+
+            var logoUrl = string.Format(ServiceConstants.LogoMailHeader, config.FirstOrDefault(x => x.Field == ServiceConstants.EmailLogoUrl).Value);
             var destinityEmailList = sendLocalPackage.DestinyEmail.Split(";").Where(x => !string.IsNullOrEmpty(x)).ToList();
             var destinityEmail = destinityEmailList.FirstOrDefault();
             var copyEmails = string.Empty;
             destinityEmailList.Where(x => x != destinityEmail).Select(x => $"{x};").ToList().ForEach(x => copyEmails += x.Trim());
             copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
 
-            var text = this.GetBodyForLocal(sendLocalPackage);
+            var text = this.GetBodyForLocal(sendLocalPackage, logoUrl);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
                 string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
@@ -116,12 +123,13 @@ namespace Omicron.Reporting.Services
         /// <inheritdoc/>
         public async Task<ResultModel> SendEmailRejectedOrder(SendRejectedEmailModel request)
         {
-            var customerServiceEmail = ServiceConstants.CustomerServiceEmail;
-            var listToLook = new List<string> { customerServiceEmail };
+            var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.EmailCCRejected };
             listToLook.AddRange(ServiceConstants.ValuesForEmail);
+
             var config = await this.catalogsService.GetParams(listToLook);
             var smtpConfig = this.GetSmtpConfig(config);
-            var configCustomerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(customerServiceEmail)).Value;
+            var configCustomerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.CustomerServiceEmail)).Value;
+            var rejectedCc = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.EmailCCRejected)).Value;
             List<ResultModel> resultados = new List<ResultModel> { };
             var rejectedOrderList = this.GetGroupsOfList(request.RejectedOrder, 3);
 
@@ -136,7 +144,7 @@ namespace Omicron.Reporting.Services
                     destinyEmail,
                     text.Item1,
                     text.Item2,
-                    configCustomerServiceEmail);
+                    $"{configCustomerServiceEmail};{rejectedCc}");
                     resultados.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
                 }));
 
@@ -149,11 +157,13 @@ namespace Omicron.Reporting.Services
         /// <inheritdoc/>
         public async Task<ResultModel> SendEmailCancelDeliveryOrders(List<SendCancelDeliveryModel> request)
         {
-            var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.LogisticEmailCc2Field, ServiceConstants.LogisticEmailCc3Field, ServiceConstants.EmailBioEqual, ServiceConstants.EmailBioElite };
+            var listToLook = new List<string> { ServiceConstants.CustomerServiceEmail, ServiceConstants.LogisticEmailCc2Field, ServiceConstants.LogisticEmailCc3Field, ServiceConstants.EmailBioEqual, ServiceConstants.EmailBioElite, ServiceConstants.EmailLogoUrl };
             listToLook.AddRange(ServiceConstants.ValuesForEmail);
 
             var config = await this.catalogsService.GetParams(listToLook);
             var smtpConfig = this.GetSmtpConfig(config);
+
+            var logoUrl = string.Format(ServiceConstants.LogoMailHeader, config.FirstOrDefault(x => x.Field == ServiceConstants.EmailLogoUrl).Value);
             var customerServiceEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.CustomerServiceEmail)).Value;
             var logisticEmail = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.LogisticEmailCc2Field)).Value;
             var logisticEmail2 = config.FirstOrDefault(x => x.Field.Equals(ServiceConstants.LogisticEmailCc3Field)).Value;
@@ -165,7 +175,7 @@ namespace Omicron.Reporting.Services
             {
                 await Task.WhenAll(deliverySubList.Select(async delivery =>
                 {
-                    var text = this.GetBodyForCancelDeliveryEmail(delivery);
+                    var text = this.GetBodyForCancelDeliveryEmail(delivery, logoUrl);
                     var mailStatus = await this.omicronMailClient.SendMail(
                         smtpConfig,
                         logisticEmail,
@@ -233,31 +243,32 @@ namespace Omicron.Reporting.Services
         /// </summary>
         /// <param name="package">the data.</param>
         /// <returns>the text.</returns>
-        private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package)
+        private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package, string logo)
         {
             var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
             package.SalesOrders = string.IsNullOrEmpty(package.SalesOrders) ? string.Empty : package.SalesOrders;
-            var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ');
+            var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
+            var button = string.Format(ServiceConstants.ButtonEmail, package.DxpRoute);
 
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackage, orders);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+                var greeting = string.Format(ServiceConstants.SentLocalPackage, orders, button);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
             if (package.Status == ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.DeliveryEmailSubject, orders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, orders);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, payment, ServiceConstants.RefundPolicy);
+                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, orders, button);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
             var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
-            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, orders);
-            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greetingError, payment, ServiceConstants.RefundPolicy);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, orders, button);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, payment, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);
         }
@@ -303,14 +314,14 @@ namespace Omicron.Reporting.Services
         /// </summary>
         /// <param name="delivery">the data.</param>
         /// <returns>the text.</returns>
-        private Tuple<string, string> GetBodyForCancelDeliveryEmail(SendCancelDeliveryModel delivery)
+        private Tuple<string, string> GetBodyForCancelDeliveryEmail(SendCancelDeliveryModel delivery, string logo)
         {
             var salesOrder = new StringBuilder();
             delivery.SalesOrders.ForEach(x => salesOrder.Append($" {x},"));
             salesOrder.Remove(salesOrder.Length - 1, 1);
             var subject = string.Format(ServiceConstants.InCancelDeliveryEmailSubject, delivery.DeliveryId);
             var greeting = string.Format(ServiceConstants.SentCancelDelivery, delivery.DeliveryId, salesOrder.ToString());
-            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, greeting, ServiceConstants.EmailFarewallCancelDelivery, ServiceConstants.EmailCancelDeliveryClosing);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, ServiceConstants.EmailFarewallCancelDelivery, ServiceConstants.EmailCancelDeliveryClosing);
             return new Tuple<string, string>(subject, body);
         }
 

@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -21,6 +22,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Redis;
@@ -53,10 +55,12 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.context = new DatabaseContext(options);
             this.context.AsesorModel.Add(this.GetAsesorModel());
+            this.context.ClientCatalogModel.AddRange(this.GetClients());
             this.context.DetallePedido.AddRange(this.GetDetallePedido());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModel());
             this.context.OrderModel.AddRange(this.GetOrderModel());
             this.context.ProductoModel.AddRange(this.GetProductoModel());
+            this.context.CatalogProductModel.AddRange(this.GetCatalogProductModel());
             this.context.Users.AddRange(this.GetSapUsers());
             this.context.DetalleFormulaModel.AddRange(this.GetDetalleFormula());
             this.context.ItemWarehouseModel.AddRange(this.GetItemWareHouse());
@@ -325,9 +329,16 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var result = await this.sapService.GetOrderFormula(listIds, true, true);
+            var formulaDeatil = result.Response as CompleteFormulaWithDetalle;
 
             // assert
             Assert.IsNotNull(result);
+            Assert.IsTrue(result.Code == 200);
+            Assert.IsTrue(formulaDeatil.Details.Any());
+            Assert.IsInstanceOf<CompleteFormulaWithDetalle>(result.Response);
+            Assert.IsNotNull(result.Response);
+            Assert.IsNull(result.ExceptionMessage);
+            Assert.IsNull(result.Comments);
         }
 
         /// <summary>
@@ -503,9 +514,12 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Get last isolated production order id.
         /// </summary>
+        /// <param name="needLargeDescription">need large descr.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task GetFabOrdersOnlyLocals()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task GetFabOrdersOnlyLocals(bool needLargeDescription)
         {
             // arrange
             var dates = new DateTime(2020, 08, 29).ToString("dd/MM/yyyy");
@@ -521,6 +535,11 @@ namespace Omicron.SapAdapter.Test.Services
                     { ServiceConstants.Qfb, "abc" },
                 },
             };
+
+            if (needLargeDescription)
+            {
+                parameters.Filters.Add(ServiceConstants.NeedsLargeDsc, "true");
+            }
 
             // act
             var result = await this.sapService.GetFabOrders(parameters);
@@ -627,7 +646,7 @@ namespace Omicron.SapAdapter.Test.Services
                 OrdersId = new List<int> { 120 },
                 Filters = new Dictionary<string, string>
                 {
-                    { ServiceConstants.DocNum, "100" },
+                    { ServiceConstants.DocNum, "100-100" },
                     { ServiceConstants.Qfb, "abc" },
                 },
             };
@@ -969,6 +988,25 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetPackingRequiredForOrderInAssignedStatus(userId);
 
             // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
+        public async Task GetOrdersDocNumDxp()
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNumDxp, "A1" },
+            };
+
+            // act
+            var result = await this.sapService.GetOrders(dicParams);
+
             Assert.IsNotNull(result);
         }
     }

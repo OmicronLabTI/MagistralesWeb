@@ -21,7 +21,7 @@ class ComponetsTest: XCTestCase {
         disposeBag = DisposeBag()
         componentsViewModel = ComponentsViewModel()
         order1 = Order(
-            productionOrderId: 89284, baseDocument: 60067, container: "",
+            areBatchesComplete: true, productionOrderId: 89284, baseDocument: 60067, container: "",
             tag: "Selecciona una...", plannedQuantity: 1, startDate: "27/08/2020",
             finishDate: "06/09/2020",
             descriptionProduct: "Aceite de Arbol de Te 0.3%, Alantoina 0.3%, Citrico 0.2%, " +
@@ -42,7 +42,8 @@ class ComponetsTest: XCTestCase {
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
-                chips: chips)
+                chips: chips,
+                catalogGroup: "MG")
             self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
             }).disposed(by: (self?.disposeBag)!)
@@ -60,7 +61,8 @@ class ComponetsTest: XCTestCase {
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
-                chips: chips)
+                chips: chips,
+                catalogGroup: "MG")
             self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.code)
             }).disposed(by: (self?.disposeBag)!)
@@ -72,7 +74,8 @@ class ComponetsTest: XCTestCase {
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
-                chips: chips)
+                chips: chips,
+                catalogGroup: "MG")
             self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
                 XCTAssert(res.code == 200)
             }).disposed(by: (self?.disposeBag)!)
@@ -85,7 +88,8 @@ class ComponetsTest: XCTestCase {
             let request = ComponentRequest(
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
-                chips: chips)
+                chips: chips,
+                catalogGroup: "MG")
             self?.networkManager.getComponents(data: request).subscribe(onNext: { [weak self] res in
                 orderDetailRequest = self?.returnOrderDetailRequest(componentO: res.response)
                 self?.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: orderDetailRequest!)

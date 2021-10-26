@@ -40,6 +40,7 @@ export class RecipesRes {
 export class ParamsPedidos {
     dateType?: string;
     docNum?: any;
+    docNumDxp?: string;
     fini?: Date;
     ffin?: Date;
     status?: string;
@@ -59,6 +60,7 @@ export class ParamsPedidos {
     advance?: string;
     clasification?: string;
     docNumUntil?: any;
+    pageIndex?: any;
 }
 
 export class ProcessOrders {
@@ -77,6 +79,7 @@ export class IPlaceOrdersAutomaticReq {
 export class IPedidoReq {
     isChecked: boolean;
     docNum: number;
+    docNumDxp: string;
     codigo: string;
     cliente: string;
     medico: string;

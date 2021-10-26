@@ -38,6 +38,7 @@ class OrderDetailViewModel {
     var endRefreshing = PublishSubject<Void>()
     var needsRefresh = true
     var changeColorLabelsHt = PublishSubject<Void>()
+    var catalogGroup = String()
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
     // MARK: - Init
@@ -94,6 +95,7 @@ class OrderDetailViewModel {
                     self.endRefreshing.onNext(())
                 }
                 self.changeColorLabelsHt.onNext(())
+                self.catalogGroup = res.response?.catalogGroupName ?? String()
             }
         }, onError: { [weak self] error in
             guard let self = self else { return }
@@ -246,5 +248,9 @@ class OrderDetailViewModel {
                 self.showAlert.onNext(Constants.Errors.errorData.rawValue)
 
             }).disposed(by: disposeBag)
+    }
+
+    func getCatalogGroup() -> String {
+        return catalogGroup
     }
 }
