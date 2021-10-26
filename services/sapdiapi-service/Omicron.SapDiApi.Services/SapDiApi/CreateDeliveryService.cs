@@ -153,6 +153,22 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     deliveryNote.Lines.Add();
                 }
 
+                if (createDelivery.Any(x => x.ItemCode == ServiceConstants.ShippingCostItemCode))
+                {
+                    _loggerProxy.Info($"Here Starts the fl 1 when its apart.");
+                    var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
+                    double.TryParse(shippingCost.OrderType, out var price);
+                    _loggerProxy.Info($"The price is {price}");
+
+                    deliveryNote.Lines.ItemCode = shippingCost.ItemCode;
+                    deliveryNote.Lines.Quantity = 1;
+                    deliveryNote.Lines.BaseType = 17;
+                    deliveryNote.Lines.BaseEntry = saleOrderId;
+                    deliveryNote.Lines.UnitPrice = price;
+                    deliveryNote.Lines.Add();
+                    _loggerProxy.Info($"Here ends the fl 1 when its apart.");
+                }
+
                 var update = deliveryNote.Add();
                 company.GetLastError(out int errCode, out string errMsg);
 
