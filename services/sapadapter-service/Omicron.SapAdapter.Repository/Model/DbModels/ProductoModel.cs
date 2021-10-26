@@ -99,7 +99,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("QryGroup27")] // TODO put the correct field.
+        [Column("U_Trabajable")]
         public string IsWorkableProduct { get; set; }
 
         /// <summary>
