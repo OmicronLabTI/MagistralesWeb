@@ -61,6 +61,11 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string Ok = "Ok";
 
         /// <summary>
+        /// shippingcost item code.
+        /// </summary>
+        public const string ShippingCostItemCode = "FL 1";
+
+        /// <summary>
         /// selects the ships code.
         /// </summary>
         public const string FindShipCodes = "SELECT TrnspCode ,TrnspName FROM OSHP";
