@@ -283,51 +283,63 @@ class InboxViewModel {
     }
     func setSelection(section: SectionOrder, removeSelecteds: Bool = false) {
         currentSection = section
-        var ordering = orderingOrders(section: section)
+        let ordering = orderingOrders(section: section)
         ordersTemp = ordering
         if removeSelecteds {
             resetData.onNext(())
         }
         if normalSort {
-            ordering = self.sortOrderWithOrderBatchesCompleteByNormalView()
-            statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
-            sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
-            similarityViewButtonIsEnable.onNext(true)
-            groupedByOrderNumberIsEnable.onNext(true)
-            normalViewButtonIsEnable.onNext(false)
-            processButtonIsEnable.onNext(false)
-            pendingButtonIsEnable.onNext(false)
+            processNormalSort()
         } else if similaritySort {
-            for order in ordersTemp {
-                let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
-                if let codeProduct = itemCodeInArray?.first {
-                    order.productCode = codeProduct
-                } else {
-                    order.productCode = CommonStrings.empty
-                }
-            }
-            // Se agrupa las ordenes por código de producto
-            let dataGroupedByProductCode = Dictionary(grouping: ordersTemp, by: {$0.productCode})
-            let sectionModels = groupedWithSimilarityOrWithoutSimilarity(
-                data: dataGroupedByProductCode, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity,
-                titleForOrdersWithSimilarity: CommonStrings.product)
-            sectionOrders = sectionModels
-            statusDataGrouped.onNext(sectionModels)
-            similarityViewButtonIsEnable.onNext(false)
-            normalViewButtonIsEnable.onNext(true)
-            groupedByOrderNumberIsEnable.onNext(true)
+            processSimilaritySort()
         } else {
-            processButtonIsEnable.onNext(false)
-            let ordersGroupedAndSorted = sortOrderWithBatchesByOrderNumberView()
-            sectionOrders = ordersGroupedAndSorted
-            statusDataGrouped.onNext(ordersGroupedAndSorted)
-            normalViewButtonIsEnable.onNext(true)
-            similarityViewButtonIsEnable.onNext(true)
-            groupedByOrderNumberIsEnable.onNext(false)
+            proccessGroupShort()
         }
         title.onNext(section.statusName)
         showKPIView.onNext(false)
         reloadData.onNext(())
+    }
+
+    func processNormalSort() {
+        let ordering = self.sortOrderWithOrderBatchesCompleteByNormalView()
+        statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
+        sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
+        similarityViewButtonIsEnable.onNext(true)
+        groupedByOrderNumberIsEnable.onNext(true)
+        normalViewButtonIsEnable.onNext(false)
+        processButtonIsEnable.onNext(false)
+        pendingButtonIsEnable.onNext(false)
+    }
+
+    func processSimilaritySort() {
+        for order in ordersTemp {
+            let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
+            if let codeProduct = itemCodeInArray?.first {
+                order.productCode = codeProduct
+            } else {
+                order.productCode = CommonStrings.empty
+            }
+        }
+        // Se agrupa las ordenes por código de producto
+        let dataGroupedByProductCode = Dictionary(grouping: ordersTemp, by: {$0.productCode})
+        let sectionModels = groupedWithSimilarityOrWithoutSimilarity(
+            data: dataGroupedByProductCode, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity,
+            titleForOrdersWithSimilarity: CommonStrings.product)
+        sectionOrders = sectionModels
+        statusDataGrouped.onNext(sectionModels)
+        similarityViewButtonIsEnable.onNext(false)
+        normalViewButtonIsEnable.onNext(true)
+        groupedByOrderNumberIsEnable.onNext(true)
+    }
+    
+    func proccessGroupShort() {
+        processButtonIsEnable.onNext(false)
+        let ordersGroupedAndSorted = sortOrderWithBatchesByOrderNumberView()
+        sectionOrders = ordersGroupedAndSorted
+        statusDataGrouped.onNext(ordersGroupedAndSorted)
+        normalViewButtonIsEnable.onNext(true)
+        similarityViewButtonIsEnable.onNext(true)
+        groupedByOrderNumberIsEnable.onNext(false)
     }
 
     func orderingOrders(section: SectionOrder) -> [Order] {
