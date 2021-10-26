@@ -99,7 +99,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     company.GetNewObjectCode(out var deliveryId);
                     _loggerProxy.Info($"The saleORder {saleOrderId} was delivered with delivery = {deliveryId} - {errCode} - {errMsg}");
-                    dictionaryResult.Add($"{saleOrderId}-{deliveryId}-Ok", "Ok");
+                    dictionaryResult.Add($"{saleOrderId}-Ok", $"Ok-{deliveryId}");
                 }
             }
             catch(Exception ex)
@@ -181,7 +181,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     company.GetNewObjectCode(out var deliveryId);
                     _loggerProxy.Info($"The saleORder {saleOrderId} was delivered with delivery {deliveryId} {errCode} - {errMsg}");
-                    dictionaryResult.Add($"{saleOrderId}-{deliveryId}-Ok", "Ok");
+                    dictionaryResult.Add($"{saleOrderId}-Ok", $"Ok-{deliveryId}");
                 }
             }
             catch (Exception ex)
@@ -242,6 +242,22 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         deliveryNote = this.UpdateDelivery(deliveryNote, saleOrder, sale.FirstOrDefault().SaleOrderId, i, createDelivery, itemCode);
                         deliveryNote.Lines.Add();
                     }
+
+                    if (createDelivery.Any(x => x.ItemCode == ServiceConstants.ShippingCostItemCode && x.SaleOrderId == sale.Key))
+                    {
+                        _loggerProxy.Info($"Here Starts the fl 1 when its apart.");
+                        var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode && x.SaleOrderId == sale.Key);
+                        double.TryParse(shippingCost.OrderType, out var price);
+                        _loggerProxy.Info($"The price is {price}");
+
+                        deliveryNote.Lines.ItemCode = shippingCost.ItemCode;
+                        deliveryNote.Lines.Quantity = 1;
+                        deliveryNote.Lines.BaseType = 17;
+                        deliveryNote.Lines.BaseEntry = saleOrderId;
+                        deliveryNote.Lines.UnitPrice = price;
+                        deliveryNote.Lines.Add();
+                        _loggerProxy.Info($"Here ends the fl 1 when its apart.");
+                    }
                 }
 
                 var areAllSame = listOrderType.All(o => o == listOrderType.FirstOrDefault());
@@ -258,7 +274,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     company.GetNewObjectCode(out var deliveryId);
                     _loggerProxy.Info($"The saleORder {saleOrderId} was delivered with delivery {deliveryId} {errCode} - {errMsg}");
-                    dictionaryResult.Add($"{saleOrderId}-{deliveryId}-Ok", "Ok");
+                    dictionaryResult.Add($"{saleOrderId}-Ok", $"Ok-{deliveryId}");
                 }
             }
             catch (Exception ex)
