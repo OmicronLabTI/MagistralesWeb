@@ -62,5 +62,11 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// </summary>
         /// <value>The code.</value>
         public int IsNamePrinted { get; set; }
+
+        /// <summary>
+        /// Gets or sets the bool value id name is printed.
+        /// </summary>
+        /// <value>The code.</value>
+        public string ShippingCost { get; set; }
     }
 }

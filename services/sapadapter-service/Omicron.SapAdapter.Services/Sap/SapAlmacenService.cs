@@ -153,6 +153,13 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersByIds(List<int> ordersId)
+        {
+            var data = (await this.sapDao.GetOrdersById(ordersId)).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, data, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> GetDeliveryBySaleOrderId(List<int> ordersId)
         {
             var data = (await this.sapDao.GetDeliveryDetailBySaleOrder(ordersId)).ToList();

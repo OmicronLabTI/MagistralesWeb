@@ -194,7 +194,7 @@ namespace Omicron.SapAdapter.Test.Services
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
 
             // act
-            var response = await service.GetDeliveryScannedData("75001");
+            var response = await service.GetDeliveryScannedData("46037");
 
             // assert
             Assert.IsNotNull(response);

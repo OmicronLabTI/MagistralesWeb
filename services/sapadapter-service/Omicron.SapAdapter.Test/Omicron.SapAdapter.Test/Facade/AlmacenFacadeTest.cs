@@ -115,6 +115,20 @@ namespace Omicron.SapAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Test the get orders models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersById()
+        {
+            var response = await this.almacenFacade.GetOrdersByIds(new List<int>());
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.UserError);
+        }
+
+        /// <summary>
         /// Test the get orders.
         /// </summary>
         /// <returns>the data.</returns>
