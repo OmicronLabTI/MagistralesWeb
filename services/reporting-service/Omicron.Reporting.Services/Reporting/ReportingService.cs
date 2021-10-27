@@ -248,7 +248,10 @@ namespace Omicron.Reporting.Services
             var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
             package.SalesOrders = string.IsNullOrEmpty(package.SalesOrders) ? string.Empty : package.SalesOrders;
             var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
-            var button = string.Format(ServiceConstants.ButtonEmail, package.DxpRoute);
+
+            //// ToDo descomentar el boton cuando pase dxp a prod
+            //// var button = string.Format(ServiceConstants.ButtonEmail, package.DxpRoute);
+            var button = string.Empty;
 
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
