@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://omicron.postgres.database.azure.com:5432/omicronprod?user=omicronadmin@omicron&password=e0F6gH4CfrBeZdiO.2020&sslmode=require
+    url: ${POSTGRESS_JDBC_CONNECTION_STRING}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximumPoolSize: 200
+      maximumPoolSize: 1000
       minimumIdle: 3
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
