@@ -47,26 +47,6 @@ pipeline {
                 }
             }
         }
-        stage('Sonar Federated Services') {
-            steps { 
-                dir ('services/apimanager/'){
-                    sh "mvn sonar:sonar \
-                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_apimanager_${ENVIRONMENT} \
-                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_apimanager_${ENVIRONMENT} \
-                        -Dsonar.sources=src/main \
-                        -Dsonar.host.url=${SONAR_SERVER} \
-                        -Dsonar.login=${SONAR_TOKEN}"
-                }
-                dir ('services/oauthserver/'){
-                    sh "mvn sonar:sonar \
-                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_oauthserver_${ENVIRONMENT} \
-                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_oauthserver_${ENVIRONMENT} \
-                        -Dsonar.sources=src/main \
-                        -Dsonar.host.url=${SONAR_SERVER} \
-                        -Dsonar.login=${SONAR_TOKEN}"
-                }
-            }
-        }*/
         stage('Sonar Micro Services') {
             steps { 
                 dir ('services/catalogos-service/'){
@@ -110,6 +90,26 @@ pipeline {
 					sh 'dotnet test Omicron.Reporting.Test/Omicron.Reporting.Test/Omicron.Reporting.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
                     sh 'dotnet build-server shutdown'
                     sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
+                }
+            }
+        }
+		stage('Sonar Federated Services') {
+            steps { 
+                dir ('services/apimanager/'){
+                    sh "mvn sonar:sonar \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_apimanager_${ENVIRONMENT} \
+                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_apimanager_${ENVIRONMENT} \
+                        -Dsonar.sources=src/main \
+                        -Dsonar.host.url=${SONAR_SERVER} \
+                        -Dsonar.login=${SONAR_TOKEN}"
+                }
+                dir ('services/oauthserver/'){
+                    sh "mvn sonar:sonar \
+                        -Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_oauthserver_${ENVIRONMENT} \
+                        -Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_oauthserver_${ENVIRONMENT} \
+                        -Dsonar.sources=src/main \
+                        -Dsonar.host.url=${SONAR_SERVER} \
+                        -Dsonar.login=${SONAR_TOKEN}"
                 }
             }
         }
