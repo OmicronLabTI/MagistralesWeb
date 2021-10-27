@@ -484,9 +484,26 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<DetallePedidoModel>> GetPedidoById(int pedidoId)
+        public async Task<IEnumerable<DetallePedidoModel>> GetPedidoByIdJoinProduct(int pedidoId)
         {
-            return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId));
+            var query = from saleDetail in this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId)
+                        join product in this.databaseContext.ProductoModel on saleDetail.ProductoId equals product.ProductoId
+                        where product.IsWorkableProduct == "Y"
+                        select new DetallePedidoModel
+                        {
+                            Container = saleDetail.Container,
+                            Description = saleDetail.Description,
+                            DestinyAddress = saleDetail.DestinyAddress,
+                            DetalleId = saleDetail.DetalleId,
+                            DocDate = saleDetail.DocDate,
+                            HasRecipe = saleDetail.HasRecipe,
+                            Label = saleDetail.Label,
+                            LineStatus = saleDetail.LineStatus,
+                            PedidoId = saleDetail.PedidoId,
+                            ProductoId = saleDetail.ProductoId,
+                            Quantity = saleDetail.Quantity,
+                        };
+            return await this.RetryQuery<DetallePedidoModel>(query);
         }
 
         /// <inheritdoc/>
@@ -716,6 +733,28 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailBySaleOrder(List<int> ordersId)
         {            
             return (await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.BaseEntry))));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailBySaleOrderJoinProduct(List<int> ordersId)
+        {
+            var query = from deliveryDet in this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.BaseEntry))
+                        join product in this.databaseContext.ProductoModel on deliveryDet.ProductoId equals product.ProductoId
+                        where product.IsWorkableProduct == "Y"
+                        select new DeliveryDetailModel
+                        {
+                            BaseEntry = deliveryDet.BaseEntry,
+                            Container = deliveryDet.Container,
+                            DeliveryId = deliveryDet.DeliveryId,
+                            Description = deliveryDet.Description,
+                            DocDate = deliveryDet.DocDate,
+                            InvoiceId = deliveryDet.InvoiceId,
+                            LineNum = deliveryDet.LineNum,
+                            LineStatus = deliveryDet.LineStatus,
+                            ProductoId = deliveryDet.ProductoId,
+                            Quantity = deliveryDet.Quantity,
+                        };
+            return (await this.RetryQuery<DeliveryDetailModel>(query));
         }
 
         /// <inheritdoc/>
