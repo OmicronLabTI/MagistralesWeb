@@ -112,7 +112,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             var dictionaryResult = new Dictionary<string, string>();
             var saleOrderId = createDelivery.First().SaleOrderId;
-            var productsIds = createDelivery.Select(x => x.ItemCode).ToList();
+            var productsIds = createDelivery.Where(x => x.ItemCode != ServiceConstants.ShippingCostItemCode).Select(x => x.ItemCode).ToList();
             try
             {
                 var saleOrder = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
