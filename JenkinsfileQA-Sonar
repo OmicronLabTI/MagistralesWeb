@@ -28,7 +28,7 @@ pipeline {
         ).trim()
 	}
     stages {
-		stage('Sonar Frontend Web') {
+		/*stage('Sonar Frontend Web') {
             steps {
                 dir ('frontend/web/'){
 					sh 'npm install'
@@ -66,7 +66,7 @@ pipeline {
                         -Dsonar.login=${SONAR_TOKEN}"
                 }
             }
-        }
+        }*/
         stage('Sonar Micro Services') {
             steps { 
                 dir ('services/catalogos-service/'){
