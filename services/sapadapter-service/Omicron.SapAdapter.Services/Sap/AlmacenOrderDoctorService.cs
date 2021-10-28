@@ -70,7 +70,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrderdetail(int saleorderid)
         {
-            var details = await this.sapDao.GetPedidoById(saleorderid);
+            var details = await this.sapDao.GetPedidoByIdJoinProduct(saleorderid);
             var productItems = await this.sapDao.GetProductByIds(details.Select(x => x.ProductoId).ToList());
             var saleDetails = (await this.sapDao.GetAllDetails(new List<int?> { saleorderid })).ToList();
             var listDetails = new List<AlmacenDetailsOrder>();
