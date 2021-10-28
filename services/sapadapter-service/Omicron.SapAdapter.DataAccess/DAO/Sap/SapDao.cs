@@ -896,7 +896,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailByDocEntry(List<int> ordersId)
         {
-            return await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.DeliveryId)));
+            return await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.DeliveryId)).Select(x => new DeliveryDetailModel
+            {
+                BaseEntry = x.BaseEntry != null ? x.BaseEntry : 0,
+                Container = x.Container,
+                DeliveryId = x.DeliveryId,
+                Description = x.Description,
+                DocDate = x.DocDate,
+                InvoiceId = x.InvoiceId,
+                LineNum = x.LineNum,
+                LineStatus = x.LineStatus,
+                ProductoId = x.ProductoId,
+                Quantity = x.Quantity,
+            }));
         }
 
         /// <inheritdoc/>
