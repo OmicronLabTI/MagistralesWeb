@@ -1,30 +1,33 @@
-import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs';
-import Swal, {SweetAlertIcon} from 'sweetalert2';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
 import {
-  Colors, ColorsBarGraph,
+  Colors,
+  ColorsBarGraph,
   CONST_NUMBER,
-  CONST_STRING, CONST_USER_DIALOG,
+  CONST_STRING,
+  CONST_USER_DIALOG,
   ConstOrders,
   ConstStatus,
   ConstToken,
   FromToFilter,
   HttpServiceTOCall,
   MessageType,
-  MODAL_FIND_ORDERS, RouterPaths,
-  TypeToSeeTap
+  MODAL_FIND_ORDERS,
+  RouterPaths,
+  TypeToSeeTap,
 } from '../constants/const';
-import {DatePipe} from '@angular/common';
-import {QfbWithNumber} from '../model/http/users';
-import {GeneralMessage} from '../model/device/general';
-import {CancelOrders, SearchComponentModal} from '../model/device/orders';
-import {CancelOrderReq, ParamsPedidos} from '../model/http/pedidos';
-import {IncidentsGraphicsMatrix} from '../model/http/incidents.model';
-import {CommentsConfig} from '../model/device/incidents.model';
-import {Router} from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { QfbWithNumber } from '../model/http/users';
+import { GeneralMessage } from '../model/device/general';
+import { CancelOrders, SearchComponentModal } from '../model/device/orders';
+import { CancelOrderReq, ParamsPedidos } from '../model/http/pedidos';
+import { IncidentsGraphicsMatrix } from '../model/http/incidents.model';
+import { CommentsConfig } from '../model/device/incidents.model';
+import { Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DataService {
   private isLoading = new Subject<boolean>();
@@ -48,8 +51,7 @@ export class DataService {
   private newDataSignature = new Subject<any>();
   private openCommentsDialog = new Subject<CommentsConfig>();
   private newCommentsResult = new Subject<CommentsConfig>();
-  constructor(private datePipe: DatePipe, private router: Router
-  ) { }
+  constructor(private datePipe: DatePipe, private router: Router) {}
 
   setNewCommentsResult(newCommentsConfig: CommentsConfig) {
     this.newCommentsResult.next(newCommentsConfig);
@@ -149,12 +151,12 @@ export class DataService {
   getIsToSaveAnything() {
     return this.isToSaVeAnything;
   }
-   setUrlActive(url: HttpServiceTOCall) {
+  setUrlActive(url: HttpServiceTOCall) {
     this.urlActive.next(url);
-   }
-   getUrlActive() {
+  }
+  getUrlActive() {
     return this.urlActive;
-   }
+  }
   setMessageGeneralCallHttp(messageGeneral: GeneralMessage) {
     this.messageGenericCallHttp.next(messageGeneral);
   }
@@ -226,13 +228,18 @@ export class DataService {
     return localStorage.getItem(ConstToken.userName);
   }
 
-
   userIsAuthenticated(): boolean {
     return !!localStorage.getItem(ConstToken.accessToken);
   }
-  presentToastCustom(title: string, icon: SweetAlertIcon, html: string = CONST_STRING.empty,
-                     showConfirmButton: boolean = false, showCancelButton: boolean = false, popupCustom = CONST_STRING.empty) {
-    return new Promise (resolve => {
+  presentToastCustom(
+    title: string,
+    icon: SweetAlertIcon,
+    html: string = CONST_STRING.empty,
+    showConfirmButton: boolean = false,
+    showCancelButton: boolean = false,
+    popupCustom = CONST_STRING.empty
+  ) {
+    return new Promise((resolve) => {
       Swal.fire({
         title,
         html,
@@ -250,14 +257,25 @@ export class DataService {
           popup: popupCustom,
           confirmButton: 'confirm-button-class',
           cancelButton: 'cancel-button-class',
-          title: popupCustom !== CONST_STRING.empty ? 'swal2-title2' : CONST_STRING.empty,
-          content: popupCustom !== CONST_STRING.empty ? 'swal2-title2' : CONST_STRING.empty,
-        }
+          title:
+            popupCustom !== CONST_STRING.empty
+              ? 'swal2-title2'
+              : CONST_STRING.empty,
+          content:
+            popupCustom !== CONST_STRING.empty
+              ? 'swal2-title2'
+              : CONST_STRING.empty,
+        },
       }).then((result) => resolve(result));
     });
   }
-  getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean,
-                   isProductivity: boolean = false, numberCustomRange: number = CONST_NUMBER.lessOne) {
+  getDateFormatted(
+    initDate: Date,
+    finishDate: Date,
+    isBeginDate: boolean,
+    isProductivity: boolean = false,
+    numberCustomRange: number = CONST_NUMBER.lessOne
+  ) {
     if (isBeginDate) {
       if (isProductivity) {
         initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.ninetyDays);
@@ -265,8 +283,13 @@ export class DataService {
         initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
       }
     }
-    if (numberCustomRange !== CONST_NUMBER.lessOne && numberCustomRange > CONST_NUMBER.zero) {
-      initDate = new Date(initDate.getTime() - (MODAL_FIND_ORDERS.operationDay * numberCustomRange));
+    if (
+      numberCustomRange !== CONST_NUMBER.lessOne &&
+      numberCustomRange > CONST_NUMBER.zero
+    ) {
+      initDate = new Date(
+        initDate.getTime() - MODAL_FIND_ORDERS.operationDay * numberCustomRange
+      );
     }
     return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
   }
@@ -279,10 +302,14 @@ export class DataService {
   }
 
   getDateArray(startDate: Date) {
-     return this.transformDate(startDate).split('/');
+    return this.transformDate(startDate).split('/');
   }
 
-  getMessageTitle(itemsWithError: any[], messageType: MessageType, isFromCancel = false): string {
+  getMessageTitle(
+    itemsWithError: any[],
+    messageType: MessageType,
+    isFromCancel = false
+  ): string {
     let errorOrders = '';
     let firstMessage = '';
     let finishMessaje = '';
@@ -323,73 +350,166 @@ export class DataService {
     }
     return errorOrders;
   }
-  getIsThereOnData(dataToSearch: any[], status: string, fromToFilter: FromToFilter) {
+  getIsThereOnData(
+    dataToSearch: any[],
+    status: string,
+    fromToFilter: FromToFilter
+  ) {
     switch (fromToFilter) {
       case FromToFilter.fromOrders:
-        return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === status)).length > 0;
+        return (
+          dataToSearch.filter((t) => t.isChecked && t.pedidoStatus === status)
+            .length > 0
+        );
       case FromToFilter.fromOrdersReassign:
-        return dataToSearch.filter(t => (t.isChecked && (t.pedidoStatus === status
-            || t.pedidoStatus === ConstStatus.terminado))).length > 0;
+        return (
+          dataToSearch.filter(
+            (t) =>
+              t.isChecked &&
+              (t.pedidoStatus === status ||
+                t.pedidoStatus === ConstStatus.terminado)
+          ).length > 0
+        );
       case FromToFilter.fromOrdersCancel:
-        return dataToSearch.filter(t => (t.isChecked &&
-            (t.pedidoStatus !== status && t.pedidoStatus !== ConstStatus.cancelado
-                && t.pedidoStatus !== ConstStatus.almacenado && t.pedidoStatus !== ConstStatus.rechazado))).length > 0;
+        return (
+          dataToSearch.filter(
+            (t) =>
+              t.isChecked &&
+              t.pedidoStatus !== status &&
+              t.pedidoStatus !== ConstStatus.cancelado &&
+              t.pedidoStatus !== ConstStatus.almacenado &&
+              t.pedidoStatus !== ConstStatus.rechazado
+          ).length > 0
+        );
       case FromToFilter.fromDetailOrder:
-        return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado
-            && t.status !== ConstStatus.abierto && t.status !== ConstStatus.almacenado)).length > 0;
+        return (
+          dataToSearch.filter(
+            (t) =>
+              t.isChecked &&
+              t.status !== status &&
+              t.status !== ConstStatus.cancelado &&
+              t.status !== ConstStatus.abierto &&
+              t.status !== ConstStatus.almacenado
+          ).length > 0
+        );
       case FromToFilter.fromOrderIsolatedReassign:
-        return dataToSearch.filter(t => t.isChecked && (t.status === status || t.status === ConstStatus.asignado
-            || t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() || t.status === ConstStatus.pendiente
-            || t.status === ConstStatus.terminado)).length > 0;
+        return (
+          dataToSearch.filter(
+            (t) =>
+              t.isChecked &&
+              (t.status === status ||
+                t.status === ConstStatus.asignado ||
+                t.status.toLowerCase() ===
+                  ConstStatus.enProceso.toLowerCase() ||
+                t.status === ConstStatus.pendiente ||
+                t.status === ConstStatus.terminado)
+          ).length > 0
+        );
       case FromToFilter.fromOrdersIsolatedCancel:
-        return dataToSearch.filter(t => (t.isChecked &&
-            (t.status !== status && t.status !== ConstStatus.cancelado && t.status !== ConstStatus.almacenado))).length > 0;
+        return (
+          dataToSearch.filter(
+            (t) =>
+              t.isChecked &&
+              t.status !== status &&
+              t.status !== ConstStatus.cancelado &&
+              t.status !== ConstStatus.almacenado
+          ).length > 0
+        );
       case FromToFilter.fromOrderDetailLabel:
-        return dataToSearch.filter(t => t.isChecked && (t.status !== status && t.status !== ConstStatus.cancelado)).length > 0;
+        return (
+          dataToSearch.filter(
+            (t) =>
+              t.isChecked &&
+              t.status !== status &&
+              t.status !== ConstStatus.cancelado
+          ).length > 0
+        );
       default:
-        return dataToSearch.filter(t => (t.isChecked && t.status === status)).length > 0;
+        return (
+          dataToSearch.filter((t) => t.isChecked && t.status === status)
+            .length > 0
+        );
     }
   }
-  getItemOnDateWithFilter(dataToSearch: any[], fromToFilter: FromToFilter, status?: string) {
+  getItemOnDateWithFilter(
+    dataToSearch: any[],
+    fromToFilter: FromToFilter,
+    status?: string
+  ) {
     switch (fromToFilter) {
       case FromToFilter.fromOrderIsolatedReassignItems:
-        return dataToSearch.filter(t => (t.isChecked && (t.status === ConstStatus.reasingado || t.status === ConstStatus.asignado
-            || t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() || t.status === ConstStatus.pendiente
-            || t.status === ConstStatus.terminado)));
+        return dataToSearch.filter(
+          (t) =>
+            t.isChecked &&
+            (t.status === ConstStatus.reasingado ||
+              t.status === ConstStatus.asignado ||
+              t.status.toLowerCase() === ConstStatus.enProceso.toLowerCase() ||
+              t.status === ConstStatus.pendiente ||
+              t.status === ConstStatus.terminado)
+        );
       case FromToFilter.fromOrdersReassign:
-        return dataToSearch.filter(t => (t.isChecked && (t.pedidoStatus === status || t.pedidoStatus === ConstStatus.terminado)));
+        return dataToSearch.filter(
+          (t) =>
+            t.isChecked &&
+            (t.pedidoStatus === status ||
+              t.pedidoStatus === ConstStatus.terminado)
+        );
       default:
-        return dataToSearch.filter(t => (t.isChecked && t.status === status));
+        return dataToSearch.filter((t) => t.isChecked && t.status === status);
     }
   }
   getIsWithFilter(resultSearchOrderModal: ParamsPedidos) {
     let isSearchWithFilter = false;
-    if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
-            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
-            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === ''
-            || !resultSearchOrderModal.orderIncidents)) {
+    if (
+      resultSearchOrderModal &&
+      resultSearchOrderModal.dateType === ConstOrders.defaultDateInit &&
+      ((resultSearchOrderModal && resultSearchOrderModal.status === '') ||
+        resultSearchOrderModal.qfb === '' ||
+        resultSearchOrderModal.productCode === '' ||
+        resultSearchOrderModal.clientName === '' ||
+        resultSearchOrderModal.label === '' ||
+        resultSearchOrderModal.finlabel === '' ||
+        !resultSearchOrderModal.orderIncidents)
+    ) {
       isSearchWithFilter = false;
     }
-    if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
-            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
-            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== ''
-            || resultSearchOrderModal.orderIncidents)) {
+    if (
+      resultSearchOrderModal &&
+      resultSearchOrderModal.dateType === ConstOrders.defaultDateInit &&
+      ((resultSearchOrderModal && resultSearchOrderModal.status !== '') ||
+        resultSearchOrderModal.qfb !== '' ||
+        resultSearchOrderModal.productCode !== '' ||
+        resultSearchOrderModal.clientName !== '' ||
+        resultSearchOrderModal.label !== '' ||
+        resultSearchOrderModal.finlabel !== '' ||
+        resultSearchOrderModal.orderIncidents)
+    ) {
       isSearchWithFilter = true;
     }
-    if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status !== '' || resultSearchOrderModal.qfb !== ''
-            || resultSearchOrderModal.productCode !== '' || resultSearchOrderModal.clientName !== ''
-            || resultSearchOrderModal.label !== '' || resultSearchOrderModal.finlabel !== ''
-            || resultSearchOrderModal.orderIncidents)) {
+    if (
+      resultSearchOrderModal &&
+      resultSearchOrderModal.dateType === ConstOrders.dateFinishType &&
+      ((resultSearchOrderModal && resultSearchOrderModal.status !== '') ||
+        resultSearchOrderModal.qfb !== '' ||
+        resultSearchOrderModal.productCode !== '' ||
+        resultSearchOrderModal.clientName !== '' ||
+        resultSearchOrderModal.label !== '' ||
+        resultSearchOrderModal.finlabel !== '' ||
+        resultSearchOrderModal.orderIncidents)
+    ) {
       isSearchWithFilter = true;
     }
-    if ((resultSearchOrderModal && resultSearchOrderModal.dateType === ConstOrders.dateFinishType) &&
-        (resultSearchOrderModal && resultSearchOrderModal.status === '' || resultSearchOrderModal.qfb === ''
-            || resultSearchOrderModal.productCode === '' || resultSearchOrderModal.clientName === ''
-            || resultSearchOrderModal.label === '' || resultSearchOrderModal.finlabel === ''
-            || !resultSearchOrderModal.orderIncidents)) {
+    if (
+      resultSearchOrderModal &&
+      resultSearchOrderModal.dateType === ConstOrders.dateFinishType &&
+      ((resultSearchOrderModal && resultSearchOrderModal.status === '') ||
+        resultSearchOrderModal.qfb === '' ||
+        resultSearchOrderModal.productCode === '' ||
+        resultSearchOrderModal.clientName === '' ||
+        resultSearchOrderModal.label === '' ||
+        resultSearchOrderModal.finlabel === '' ||
+        !resultSearchOrderModal.orderIncidents)
+    ) {
       isSearchWithFilter = true;
     }
     if (resultSearchOrderModal && resultSearchOrderModal.docNum !== '') {
@@ -399,43 +519,66 @@ export class DataService {
     return isSearchWithFilter;
   }
 
-  getfiniOrffin(resultSearchOrderModal: ParamsPedidos, date: string,  ) {
-    if ( resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
+  getfiniOrffin(resultSearchOrderModal: ParamsPedidos, date: string) {
+    if (resultSearchOrderModal.dateType === ConstOrders.defaultDateInit) {
       return `?fini=${date}`;
     } else {
       return `?ffin=${date}`;
     }
   }
-  getNewDataToFilter(resultSearchOrderModal: ParamsPedidos): [ParamsPedidos, string] {
+  getNewDataToFilter(
+    resultSearchOrderModal: ParamsPedidos
+  ): [ParamsPedidos, string] {
     let queryString = CONST_STRING.empty;
     let rangeDate = CONST_STRING.empty;
 
-    const filterDataOrders = new  ParamsPedidos();
+    const filterDataOrders = new ParamsPedidos();
     filterDataOrders.isFromOrders = resultSearchOrderModal.isFromOrders;
     filterDataOrders.isFromIncidents = resultSearchOrderModal.isFromIncidents;
 
     if (resultSearchOrderModal.docNum) {
       filterDataOrders.docNum = resultSearchOrderModal.docNum;
-      filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
+      filterDataOrders.dateFull = this.getDateFormatted(
+        new Date(),
+        new Date(),
+        true
+      );
       filterDataOrders.docNumUntil = resultSearchOrderModal.docNumUntil;
-      queryString =  this.getRangeOrders(resultSearchOrderModal.docNum, resultSearchOrderModal.docNumUntil);
+      queryString = this.getRangeOrders(
+        resultSearchOrderModal.docNum,
+        resultSearchOrderModal.docNumUntil
+      );
     } else if (resultSearchOrderModal.docNumDxp) {
       filterDataOrders.docNumDxp = resultSearchOrderModal.docNumDxp;
-      filterDataOrders.dateFull = this.getDateFormatted(new Date(), new Date(), true);
+      filterDataOrders.dateFull = this.getDateFormatted(
+        new Date(),
+        new Date(),
+        true
+      );
       queryString = `?docNumDxp=${resultSearchOrderModal.docNumDxp}`;
     } else {
       if (resultSearchOrderModal.dateType) {
         filterDataOrders.dateType = resultSearchOrderModal.dateType;
         if (resultSearchOrderModal.fini || resultSearchOrderModal.ffin) {
-          rangeDate = this.getDateFormatted(resultSearchOrderModal.fini, resultSearchOrderModal.ffin, false);
+          rangeDate = this.getDateFormatted(
+            resultSearchOrderModal.fini,
+            resultSearchOrderModal.ffin,
+            false
+          );
           queryString = this.getfiniOrffin(resultSearchOrderModal, rangeDate);
           filterDataOrders.dateFull = rangeDate;
         } else {
-          queryString = this.getfiniOrffin(resultSearchOrderModal, resultSearchOrderModal.dateFull);
+          queryString = this.getfiniOrffin(
+            resultSearchOrderModal,
+            resultSearchOrderModal.dateFull
+          );
           filterDataOrders.dateFull = resultSearchOrderModal.dateFull;
         }
       }
-      if (resultSearchOrderModal.status !== '' && resultSearchOrderModal.status) {
+      if (
+        resultSearchOrderModal.status !== '' &&
+        resultSearchOrderModal.status
+      ) {
         queryString = `${queryString}&status=${resultSearchOrderModal.status}`;
         filterDataOrders.status = resultSearchOrderModal.status;
       }
@@ -443,27 +586,45 @@ export class DataService {
         queryString = `${queryString}&qfb=${resultSearchOrderModal.qfb}`;
         filterDataOrders.qfb = resultSearchOrderModal.qfb;
       }
-      if (resultSearchOrderModal.productCode !== '' && resultSearchOrderModal.productCode) {
+      if (
+        resultSearchOrderModal.productCode !== '' &&
+        resultSearchOrderModal.productCode
+      ) {
         queryString = `${queryString}&code=${resultSearchOrderModal.productCode}`;
         filterDataOrders.productCode = resultSearchOrderModal.productCode;
       }
-      if (resultSearchOrderModal.clientName !== '' && resultSearchOrderModal.clientName) {
-        queryString = `${queryString}&cliente=${resultSearchOrderModal.clientName.replace(/\s+/g, ',')}`;
+      if (
+        resultSearchOrderModal.clientName !== '' &&
+        resultSearchOrderModal.clientName
+      ) {
+        queryString = `${queryString}&cliente=${resultSearchOrderModal.clientName.replace(
+          /\s+/g,
+          ','
+        )}`;
         filterDataOrders.clientName = resultSearchOrderModal.clientName;
       }
       if (resultSearchOrderModal.label !== '' && resultSearchOrderModal.label) {
         queryString = `${queryString}&label=${resultSearchOrderModal.label}`;
         filterDataOrders.label = resultSearchOrderModal.label;
       }
-      if (resultSearchOrderModal.finlabel !== '' && resultSearchOrderModal.finlabel) {
+      if (
+        resultSearchOrderModal.finlabel !== '' &&
+        resultSearchOrderModal.finlabel
+      ) {
         queryString = `${queryString}&finlabel=${resultSearchOrderModal.finlabel}`;
         filterDataOrders.finlabel = resultSearchOrderModal.finlabel;
       }
-      if (resultSearchOrderModal.orderIncidents !== CONST_NUMBER.zero && resultSearchOrderModal.orderIncidents) {
+      if (
+        resultSearchOrderModal.orderIncidents !== CONST_NUMBER.zero &&
+        resultSearchOrderModal.orderIncidents
+      ) {
         queryString = `${queryString}&docnum=${resultSearchOrderModal.orderIncidents}`;
         filterDataOrders.orderIncidents = resultSearchOrderModal.orderIncidents;
       }
-      if (resultSearchOrderModal.clasification !== '' && resultSearchOrderModal.clasification) {
+      if (
+        resultSearchOrderModal.clasification !== '' &&
+        resultSearchOrderModal.clasification
+      ) {
         queryString = `${queryString}&ordtype=${resultSearchOrderModal.clasification}`;
         filterDataOrders.clasification = resultSearchOrderModal.clasification;
       }
@@ -475,11 +636,12 @@ export class DataService {
     return new Intl.NumberFormat().format(Number(numberToFormatted));
   }
 
-  getMaxMinDate(date: Date, moths: number , isAdd: boolean) {
+  getMaxMinDate(date: Date, moths: number, isAdd: boolean) {
     return new Date(
-        date.getFullYear(),
-         isAdd ? date.getMonth() + moths : date.getMonth() - moths ,
-        date.getDate());
+      date.getFullYear(),
+      isAdd ? date.getMonth() + moths : date.getMonth() - moths,
+      date.getDate()
+    );
   }
 
   setUserRole(role: number) {
@@ -495,8 +657,8 @@ export class DataService {
   }
 
   removeOrderIsolated() {
-     localStorage.removeItem(ConstToken.isolatedOrder);
-   }
+    localStorage.removeItem(ConstToken.isolatedOrder);
+  }
 
   openNewTapByUrl(url: string, typeToSeeTap: TypeToSeeTap, orderId?: number) {
     let tapTitle = CONST_STRING.empty;
@@ -508,86 +670,127 @@ export class DataService {
         tapTitle = `Receta pedido ${orderId}`;
         break;
     }
-    const prntWin = window.open();
-    prntWin.document.write('<html><head><title>' + tapTitle + '</title></head><body style="background-color: rgb(60, 61, 62)">'
-        + '<embed width="100%" height="100%" name="plugin" src="' + url + '" '
-        + 'type="application/pdf" internalinstanceid="21" /></body></html>');
-    prntWin.document.close();
+    // const prntWin = window.open();
+    // prntWin.document.write('<html><head><title>' + tapTitle + '</title></head><body style="background-color: rgb(60, 61, 62)">'
+    //     + '<embed width="100%" height="100%" name="plugin" src="' + url + '" '
+    //     + 'type="application/pdf" internalinstanceid="21" /></body></html>');
+    // prntWin.document.close();
+    const link = document.createElement('a');
+    link.target = '_blank';
+    link.href = url;
+    link.click();
+    link.remove();
   }
 
   getItemOnDataOnlyIds(dataToSearch: any[], type: FromToFilter) {
     switch (type) {
       case FromToFilter.fromOrders:
-        return dataToSearch.filter(t => (t.isChecked && t.pedidoStatus === ConstStatus.planificado)).map(t => t.docNum);
+        return dataToSearch
+          .filter(
+            (t) => t.isChecked && t.pedidoStatus === ConstStatus.planificado
+          )
+          .map((t) => t.docNum);
       case FromToFilter.fromDetailOrder:
-        return dataToSearch.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => order.ordenFabricacionId);
+        return dataToSearch
+          .filter((t) => t.isChecked && t.status === ConstStatus.planificado)
+          .map((order) => order.ordenFabricacionId);
       case FromToFilter.fromDetailOrderQr:
-        return dataToSearch.filter(t => t.isChecked && t.status !== ConstStatus.abierto && t.status !== ConstStatus.cancelado)
-            .map(order => order.ordenFabricacionId);
+        return dataToSearch
+          .filter(
+            (t) =>
+              t.isChecked &&
+              t.status !== ConstStatus.abierto &&
+              t.status !== ConstStatus.cancelado
+          )
+          .map((order) => order.ordenFabricacionId);
       case FromToFilter.fromOrdersIsolated:
-        return dataToSearch.filter(t => t.isChecked && t.status === ConstStatus.planificado).map(order => Number(order.fabOrderId));
+        return dataToSearch
+          .filter((t) => t.isChecked && t.status === ConstStatus.planificado)
+          .map((order) => Number(order.fabOrderId));
     }
   }
   getNormalizeString(valueToNormalize: string) {
     return valueToNormalize.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string ) => (
-      {
-        tooltips: {
-          callbacks: {
-            label: (tooltipItem, data) => {
-              if (Boolean(isPie)) {
-                return `${data.labels[tooltipItem.index]}: ${
-                    this.getPercentageByItem(data.datasets[0].data[tooltipItem.index], data.datasets[0].data)}`;
-              } else {
-                return `${data.datasets[0].data[tooltipItem.index]}`;
-              }
-            }
+  getOptionsGraphToShow = (isPie: boolean, titleForGraph: string) => ({
+    tooltips: {
+      callbacks: {
+        label: (tooltipItem, data) => {
+          if (Boolean(isPie)) {
+            return `${
+              data.labels[tooltipItem.index]
+            }: ${this.getPercentageByItem(
+              data.datasets[0].data[tooltipItem.index],
+              data.datasets[0].data
+            )}`;
+          } else {
+            return `${data.datasets[0].data[tooltipItem.index]}`;
           }
         },
-        legend: { display: false },
-        title: {
-          display: true,
-          text: titleForGraph
-        },
-        plugins: {
-          labels: isPie ? [
+      },
+    },
+    legend: { display: false },
+    title: {
+      display: true,
+      text: titleForGraph,
+    },
+    plugins: {
+      labels: isPie
+        ? [
             {
               render: 'label',
               precision: 2,
-              position: 'outside'
-            }
-          ] : [
+              position: 'outside',
+            },
           ]
-        },
-        scales: {
-          yAxes: !isPie ? [{
-            ticks: {
-              beginAtZero: true
-            }
-          }] : []
-        }
-      }
-  )
-  getPercentageByItem(valueItem: number, valuesArray: number[], isOnlyNumberPercent: boolean = false) {
+        : [],
+    },
+    scales: {
+      yAxes: !isPie
+        ? [
+            {
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ]
+        : [],
+    },
+  });
+  getPercentageByItem(
+    valueItem: number,
+    valuesArray: number[],
+    isOnlyNumberPercent: boolean = false
+  ) {
     if (!isOnlyNumberPercent) {
-      return `${Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100)} %`;
+      return `${Math.round(
+        (valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100
+      )} %`;
     } else {
-      return Math.round((valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100);
+      return Math.round(
+        (valueItem / valuesArray.reduce((a, b) => a + b, 0)) * 100
+      );
     }
-}
-  getDataForGraphic = (itemsArray: IncidentsGraphicsMatrix[], isBarGraph: boolean) => (
-    {
-      labels: itemsArray.map(item => item.fieldKey),
-      datasets: [{
-        backgroundColor: this.getRandomColorsArray(itemsArray.length, isBarGraph),
-        data: itemsArray.map(item => item.totalCount),
+  }
+  getDataForGraphic = (
+    itemsArray: IncidentsGraphicsMatrix[],
+    isBarGraph: boolean
+  ) => ({
+    labels: itemsArray.map((item) => item.fieldKey),
+    datasets: [
+      {
+        backgroundColor: this.getRandomColorsArray(
+          itemsArray.length,
+          isBarGraph
+        ),
+        data: itemsArray.map((item) => item.totalCount),
         borderColor: '#fff',
         borderWidth: 3,
         hoverBorderWidth: 10,
-        hoverBorderColor: '#c0c8ce'
-      }]
-    })
+        hoverBorderColor: '#c0c8ce',
+      },
+    ],
+  });
   getRandomColorsArray(lengthArrayForGraph: number, isBarGraph: boolean) {
     let countIndex = CONST_NUMBER.zero;
     const range = Colors.length;
@@ -604,17 +807,32 @@ export class DataService {
     return colorsString;
   }
 
-
-  changeRouterForFormula(ordenFabricacionId: string, ordersIds: string, isFromOrders: number) {
-    this.router.navigate([RouterPaths.detailFormula,
-      ordenFabricacionId, ordersIds, isFromOrders]);
+  changeRouterForFormula(
+    ordenFabricacionId: string,
+    ordersIds: string,
+    isFromOrders: number
+  ) {
+    this.router.navigate([
+      RouterPaths.detailFormula,
+      ordenFabricacionId,
+      ordersIds,
+      isFromOrders,
+    ]);
   }
-  getFullStringForCarousel(baseQueryString: string, currentOrder: string, optionsCarousel: string) {
+  getFullStringForCarousel(
+    baseQueryString: string,
+    currentOrder: string,
+    optionsCarousel: string
+  ) {
     return `${baseQueryString}&current=${currentOrder}&advance=${optionsCarousel}`;
   }
 
   getRangeOrders(docNum: any, docNumUntil: any) {
-    if (docNum === docNumUntil || docNumUntil === CONST_STRING.empty || !docNumUntil) {
+    if (
+      docNum === docNumUntil ||
+      docNumUntil === CONST_STRING.empty ||
+      !docNumUntil
+    ) {
       return `?docNum=${docNum}-${docNum}`;
     } else {
       return `?docNum=${docNum}-${docNumUntil}`;
@@ -624,25 +842,25 @@ export class DataService {
     localStorage.setItem(ConstToken.filtersActive, filters);
   }
   getFiltersActives() {
-    return  localStorage.getItem(ConstToken.filtersActive);
+    return localStorage.getItem(ConstToken.filtersActive);
   }
   removeFiltersActive() {
     localStorage.removeItem(ConstToken.filtersActive);
   }
   getFiltersActivesAsModel(): ParamsPedidos {
-    return  JSON.parse(this.getFiltersActives());
+    return JSON.parse(this.getFiltersActives());
   }
   setFiltersActivesOrders(filters: string) {
     localStorage.setItem(ConstToken.filtersActiveOrders, filters);
   }
   getFiltersActivesOrders() {
-    return  localStorage.getItem(ConstToken.filtersActiveOrders);
+    return localStorage.getItem(ConstToken.filtersActiveOrders);
   }
   removeFiltersActiveOrders() {
     localStorage.removeItem(ConstToken.filtersActiveOrders);
   }
   getFiltersActivesAsModelOrders(): ParamsPedidos {
-    return  JSON.parse(this.getFiltersActivesOrders());
+    return JSON.parse(this.getFiltersActivesOrders());
   }
   setCurrentDetailOrder(detailOrder: string) {
     localStorage.setItem(ConstToken.detailOrderCurrent, detailOrder);
