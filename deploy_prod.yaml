@@ -190,13 +190,6 @@ spec:
               key: omicron_file_url
         ports:
         - containerPort: 5102
-        resources:
-          limits:
-            cpu: 250m
-            memory: 768Mi
-          requests:
-            cpu: 125m
-            memory: 384Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
