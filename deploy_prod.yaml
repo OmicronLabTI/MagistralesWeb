@@ -24,13 +24,6 @@ spec:
           value: prod
         ports:
         - containerPort: 8000
-        resources:
-          limits:
-            cpu: 200m
-            memory: 768Mi
-          requests:
-            cpu: 100m
-            memory: 384Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -63,13 +56,6 @@ spec:
               key: omicron_jdbc_postgress_db
         ports:
         - containerPort: 8090
-        resources:
-          limits:
-            cpu: 200m
-            memory: 768Mi
-          requests:
-            cpu: 100m
-            memory: 384Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -102,13 +88,6 @@ spec:
               key: omicron_net_postgress_db
         ports:
         - containerPort: 9010
-        resources:
-          limits:
-            cpu: 100m
-            memory: 256Mi
-          requests:
-            cpu: 50m
-            memory: 128Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -141,13 +120,6 @@ spec:
               key: omicron_net_postgress_db
         ports:
         - containerPort: 5101
-        resources:
-          limits:
-            cpu: 200m
-            memory: 768Mi
-          requests:
-            cpu: 100m
-            memory: 384Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -257,13 +229,6 @@ spec:
               key: storage_account_key
         ports:
         - containerPort: 5103
-        resources:
-          limits:
-            cpu: 200m
-            memory: 768Mi
-          requests:
-            cpu: 100m
-            memory: 384Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -296,13 +261,6 @@ spec:
               key: omicron_net_postgress_db
         ports:
         - containerPort: 5104
-        resources:
-          limits:
-            cpu: 100m
-            memory: 256Mi
-          requests:
-            cpu: 50m
-            memory: 128Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -330,10 +288,3 @@ spec:
           value: Prod
         ports:
         - containerPort: 5105
-        resources:
-          limits:
-            cpu: 100m
-            memory: 512Mi
-          requests:
-            cpu: 50m
-            memory: 256Mi
