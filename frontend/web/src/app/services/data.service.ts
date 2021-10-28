@@ -508,7 +508,7 @@ export class DataService {
         tapTitle = `Receta pedido ${orderId}`;
         break;
     }
-    const prntWin = window.open();
+    const prntWin = window.open(url, '_blank');
     prntWin.document.write('<html><head><title>' + tapTitle + '</title></head><body style="background-color: rgb(60, 61, 62)">'
         + '<embed width="100%" height="100%" name="plugin" src="' + url + '" '
         + 'type="application/pdf" internalinstanceid="21" /></body></html>');
