@@ -76,7 +76,7 @@ namespace Omicron.SapAdapter.Services.Sap
             userOrders = userOrders.Where(x => x.Salesorderid == orderSaleId.ToString()).ToList();
             lineProducts = lineProducts.Where(x => x.SaleOrderId == orderSaleId).ToList();
 
-            var deliveryDetails = (await this.sapDao.GetDeliveryDetailBySaleOrder(new List<int> { orderSaleId })).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryDetailBySaleOrderJoinProduct(new List<int> { orderSaleId })).ToList();
             deliveryDetails = deliveryDetails.Where(x => x.DeliveryId == deliveryId).ToList();
 
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { orderSaleId });
