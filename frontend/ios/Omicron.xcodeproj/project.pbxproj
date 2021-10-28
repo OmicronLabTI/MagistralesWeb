@@ -145,6 +145,10 @@
 		4930D96C25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */; };
 		4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
 		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
+		49928125272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
+		49928126272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
+		49928127272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
+		49928128272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
 		49A8A42E25F022C600600829 /* SendBatchToServerNoEmptyResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */; };
 		49C082BE25E5B834000ED4FA /* ExtensionInboxTest3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */; };
 		49C082C425E5C193000ED4FA /* PostOrderPDF.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C082C325E5C193000ED4FA /* PostOrderPDF.json */; };
@@ -493,6 +497,7 @@
 		4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FinishOrdersErrorResponse.json; sourceTree = "<group>"; };
 		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
 		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
+		49928124272A3F21001962D4 /* Omicron-UAT.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Omicron-UAT.plist"; sourceTree = "<group>"; };
 		49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SendBatchToServerNoEmptyResponse.json; sourceTree = "<group>"; };
 		49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest3.swift; sourceTree = "<group>"; };
 		49C082C325E5C193000ED4FA /* PostOrderPDF.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostOrderPDF.json; sourceTree = "<group>"; };
@@ -1018,6 +1023,7 @@
 				98015CBA24AFBC6D00E7772F /* LaunchScreen.storyboard */,
 				98015CBD24AFBC6D00E7772F /* Info.plist */,
 				98A0E610271E142A00950AD2 /* Omicron-DEV.plist */,
+				49928124272A3F21001962D4 /* Omicron-UAT.plist */,
 				98A0E60F271E142A00950AD2 /* Omicron-QA.plist */,
 				49E4D86825F1549500E196F9 /* GoogleServicesQA */,
 				49E4D86925F154AF00E196F9 /* GoogleServicesProd */,
@@ -1377,6 +1383,7 @@
 				490B69C6268E98ED00DBE9F1 /* loading.json in Resources */,
 				490B69C7268E98ED00DBE9F1 /* UserInfo.json in Resources */,
 				490B69C8268E98ED00DBE9F1 /* SF-Pro-Display-Light.ttf in Resources */,
+				49928128272A3F21001962D4 /* Omicron-UAT.plist in Resources */,
 				490B69C9268E98ED00DBE9F1 /* requestChangeStatusProcess.json in Resources */,
 				490B69CA268E98ED00DBE9F1 /* ValidateOrders.json in Resources */,
 				490B69CB268E98ED00DBE9F1 /* SF-Pro-Display-Regular.otf in Resources */,
@@ -1427,6 +1434,7 @@
 				49CF661325F2D4AB002CD598 /* login.json in Resources */,
 				49CF661425F2D4AB002CD598 /* PostOrderPDF.json in Resources */,
 				49CF661525F2D4AB002CD598 /* Main.storyboard in Resources */,
+				49928126272A3F21001962D4 /* Omicron-UAT.plist in Resources */,
 				49CF661625F2D4AB002CD598 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				49CF661725F2D4AB002CD598 /* FinishOrdersErrorResponse.json in Resources */,
 				49CF661825F2D4AB002CD598 /* assingBatchesResponse.json in Resources */,
@@ -1454,6 +1462,7 @@
 				49CF668A25F2D821002CD598 /* loading.json in Resources */,
 				49CF668B25F2D821002CD598 /* UserInfo.json in Resources */,
 				49CF668C25F2D821002CD598 /* SF-Pro-Display-Light.ttf in Resources */,
+				49928127272A3F21001962D4 /* Omicron-UAT.plist in Resources */,
 				49CF668D25F2D821002CD598 /* requestChangeStatusProcess.json in Resources */,
 				49CF668E25F2D821002CD598 /* ValidateOrders.json in Resources */,
 				49CF668F25F2D821002CD598 /* SF-Pro-Display-Regular.otf in Resources */,
@@ -1506,6 +1515,7 @@
 				7CA3058A24DB0ACF00A7D2B5 /* Status.json in Resources */,
 				980F234524DA11AE0073E2C8 /* login.json in Resources */,
 				49C082C425E5C193000ED4FA /* PostOrderPDF.json in Resources */,
+				49928125272A3F21001962D4 /* Omicron-UAT.plist in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
 				1E85E51B25222A7F007636E8 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				4930D96C25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json in Resources */,
@@ -2442,7 +2452,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
-				INFOPLIST_FILE = Omicron/Info.plist;
+				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2467,7 +2477,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
-				INFOPLIST_FILE = Omicron/Info.plist;
+				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2492,7 +2502,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
-				INFOPLIST_FILE = Omicron/Info.plist;
+				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2516,7 +2526,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
-				INFOPLIST_FILE = Omicron/Info.plist;
+				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
