@@ -250,7 +250,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.ClientEmail = client.Email;
                 x.TransportName = company.TrnspName;
-                x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoDxpId).Distinct().ToList());
+                x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoId).Distinct().ToList());
                 x.SalesPrsonEmail = string.IsNullOrEmpty(salePerson.Email) ? string.Empty : salePerson.Email;
                 x.SalesPrsonName = string.IsNullOrEmpty(salePerson.FirstName) ? string.Empty : salePerson.FirstName + ' ' + salePerson.LastName;
             });
