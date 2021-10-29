@@ -1,4 +1,4 @@
-FROM maven:3.5-jdk-8-slim AS build-env
+FROM maven:3.8.1-jdk-8-slim AS build-env
 WORKDIR /app
 COPY . ./
 RUN mvn clean package
