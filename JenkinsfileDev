@@ -197,7 +197,6 @@ pipeline {
       steps {
         echo 'Running Kubernetes down'
         sh 'sudo kubectl delete -f deploy_dev.yaml --grace-period=0 --force --ignore-not-found'
-        sh 'sudo docker system prune -f'
       }
     }
     stage('Kubernetes Up') {
