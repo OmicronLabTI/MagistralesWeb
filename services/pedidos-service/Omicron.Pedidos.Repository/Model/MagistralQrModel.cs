@@ -36,5 +36,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The user that is assigning.</value>
         public string NeedsCooling { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
+        public string ItemCode { get; set; }
     }
 }

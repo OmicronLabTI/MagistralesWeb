@@ -51,6 +51,7 @@ namespace Omicron.Pedidos.Test
                 ProductionOrder = 100,
                 Quantity = 1,
                 SaleOrder = 100,
+                ItemCode = "ITEM CODE 200",
             };
 
             var remisionQr = new RemisionQrModel
