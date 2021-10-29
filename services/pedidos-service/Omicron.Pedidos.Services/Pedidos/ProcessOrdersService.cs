@@ -218,6 +218,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     OrdenId = listResult.LastOrDefault() == null ? 0 : int.Parse(listResult.LastOrDefault().ToString()),
                     PedidoId = saleId,
                     Quantity = fabProcduct.QtyPlannedDetalle.Value,
+                    ProductoId = productId,
                 });
             });
 
@@ -329,6 +330,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 ProductionOrder = model.OrdenId,
                 Quantity = model.Quantity,
                 NeedsCooling = prodOrder != null ? prodOrder.NeedsCooling : "N",
+                ItemCode = model.ProductoId,
             };
 
             return modelQr;

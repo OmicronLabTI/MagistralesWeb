@@ -591,6 +591,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrMagistralBottomTextSize = "QrMagistralBottomTextSize";
 
         /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRectxTop = "QrMagistralRectxTop";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRectyTop = "QrMagistralRectyTop";
+
+        /// <summary>
         /// Field for the max day to look.
         /// </summary>
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
@@ -699,6 +709,16 @@ namespace Omicron.Pedidos.Services.Constants
         /// the order containe.
         /// </summary>
         public const string InvoiceQrContainer = "InvoiceQrContainer";
+
+        /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string QrTopTextOrden = "P: {0}\nSKU : {1}";
+
+        /// <summary>
+        /// Inidicates the font type in the QR text.
+        /// </summary>
+        public const string QrTextFontType = "Tahoma";
 
         /// <summary>
         /// Gets the status of the order.

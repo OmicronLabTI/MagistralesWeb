@@ -219,8 +219,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
 
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
-                bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters);
-
+                var topText = string.Format(ServiceConstants.QrTopTextOrden, modelQr.SaleOrder, modelQr.ItemCode);
+                bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");
                 var memoryStrem = new MemoryStream();
                 bitmap.Save(memoryStrem, ImageFormat.Png);
@@ -365,8 +365,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="botomText">the botom text.</param>
         /// <param name="identifierToPlace">the id to place.</param>
         /// <param name="parameters">the parameters.</param>
+        /// <param name="topText">Top text.</param>
         /// <returns>the bitmap to return.</returns>
-        private Bitmap AddTextToQr(Bitmap qrsBitmap, bool needsCoolingFlag, string botomText, string identifierToPlace, List<ParametersModel> parameters)
+        private Bitmap AddTextToQr(Bitmap qrsBitmap, bool needsCoolingFlag, string botomText, string identifierToPlace, List<ParametersModel> parameters, string topText = null)
         {
             var heigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectHeight));
             var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectWidth));
@@ -380,8 +381,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             var width = widthField != null ? int.Parse(widthField.Value) : 100;
             var sizeText = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24;
 
-            RectangleF rectf = new RectangleF(rectx, recty, width, heigth);
-
             var needsCooling = needsCoolingFlag ? ServiceConstants.NeedsCooling : string.Empty;
             var bottomText = string.Format(botomText, identifierToPlace, needsCooling);
 
@@ -389,9 +388,49 @@ namespace Omicron.Pedidos.Services.Pedidos
             graphic.SmoothingMode = SmoothingMode.AntiAlias;
             graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            graphic.DrawString(bottomText, new Font("Tahoma", sizeText), Brushes.Black, rectf);
+            this.DrawRectangleText(graphic, rectx, recty, width, heigth, bottomText, new Font(ServiceConstants.QrTextFontType, sizeText));
+
+            if (!string.IsNullOrEmpty(topText))
+            {
+                this.CreateQrTopText(graphic, parameters, topText, sizeText, width, heigth);
+            }
+
             graphic.Flush();
             return qrsBitmap;
+        }
+
+        /// <summary>
+        /// Draw an rectangule with text in a graphic.
+        /// </summary>
+        /// <param name="graphic">Graph where the rectangle will be draw.</param>
+        /// <param name="rectx">Position X.</param>
+        /// <param name="recty">Position Y.</param>
+        /// <param name="width">Regtangle Width.</param>
+        /// <param name="heigth">Rectangle heigth.</param>
+        /// <param name="text">Text to draw.</param>
+        /// <param name="font">Font elements.</param>
+        private void DrawRectangleText(Graphics graphic, int rectx, int recty, int width, int heigth, string text, Font font)
+        {
+            RectangleF rectf = new RectangleF(rectx, recty, width, heigth);
+            graphic.DrawString(text, font, Brushes.Black, rectf);
+        }
+
+        /// <summary>
+        /// Draw the top text in QR.
+        /// </summary>
+        /// <param name="graphic">Graph where the rectangle will be draw.</param>
+        /// <param name="parameters">Parameters.</param>
+        /// <param name="topText">Top text to draw.</param>
+        /// <param name="sizeText">Size text.</param>
+        /// <param name="width">Rectangle width.</param>
+        /// <param name="heigth">Rectangle heght.</param>
+        private void CreateQrTopText(Graphics graphic, List<ParametersModel> parameters, string topText, int sizeText, int width, int heigth)
+        {
+            var rectxFieldTop = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectxTop));
+            var rectyFieldTop = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectyTop));
+            var rectxTop = rectxFieldTop != null ? int.Parse(rectxFieldTop.Value) : 130;
+            var rectyTop = rectyFieldTop != null ? int.Parse(rectyFieldTop.Value) : 25;
+            this.DrawRectangleText(graphic, rectxTop, rectyTop, width, heigth, topText, new Font(ServiceConstants.QrTextFontType, sizeText));
         }
     }
 }
