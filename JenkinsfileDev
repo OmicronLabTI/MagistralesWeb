@@ -30,12 +30,13 @@ pipeline {
     ).trim()
   }
   stages {
-    stage('Docker Login') {
+    stage('Docker Pull OracleJRE') {
       steps {
         withCredentials([
           [$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']
         ]) {
           sh 'docker login -u $USERNAME -p $PASSWORD'
+          sh 'docker pull store/oracle/serverjre:1.8.0_241-b07'
         }
       }
     }
