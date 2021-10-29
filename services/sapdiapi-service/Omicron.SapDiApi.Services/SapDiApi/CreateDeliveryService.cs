@@ -328,7 +328,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             deliveryNote.Lines.UserFields.Fields.Item("U_ENVASE").Value = saleOrder.Lines.UserFields.Fields.Item("U_ENVASE").Value;
 
             deliveryNote.Lines.BaseEntry = saleOrderId;
-            deliveryNote.Lines.BaseLine = i;
+            deliveryNote.Lines.BaseLine = saleOrder.Lines.LineNum;
 
             var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId);
             product = product ?? new CreateDeliveryModel { OrderType = ServiceConstants.Magistral };

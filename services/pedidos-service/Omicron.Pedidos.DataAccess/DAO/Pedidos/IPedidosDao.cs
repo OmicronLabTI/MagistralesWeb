@@ -61,6 +61,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <summary>
         /// Returns the user order by user id.
         /// </summary>
+        /// <param name="listStatus">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
         /// <param name="fechaInicio">The init date.</param>
         /// <param name="fechaFin">the end date.</param>
         /// <returns>the data.</returns>
