@@ -40,6 +40,12 @@ pipeline {
       }
     }
     stage('Build Front Web') {
+      when {
+        anyOf {
+          changeset "*frontend/web/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
       steps {
         echo 'Building Frontend'
         dir('frontend/web/') {
@@ -51,6 +57,12 @@ pipeline {
       }
     }
     stage('ApiManager') {
+      when {
+        anyOf {
+          changeset "*apimanager/')/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
       steps {
         dir('services/apimanager/') {
           script {
@@ -61,6 +73,12 @@ pipeline {
 
     }
     stage('Oauth') {
+      when {
+        anyOf {
+          changeset "*oauthserver/')/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
       steps {
         dir('services/oauthserver/') {
           script {
@@ -70,6 +88,12 @@ pipeline {
       }
     }
     stage('Catalogos') {
+      when {
+        anyOf {
+          changeset "*catalogos-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
       steps {
         dir('services/catalogos-service/') {
           script {
@@ -79,6 +103,12 @@ pipeline {
       }
     }
     stage('Usuarios') {
+      when {
+        anyOf {
+          changeset "*usuarios-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
       steps {
         dir('services/usuarios-service/') {
           script {
@@ -88,6 +118,12 @@ pipeline {
       }
     }
     stage('Pedidos') {
+      when {
+        anyOf {
+          changeset "*pedidos-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
       steps {
         dir('services/pedidos-service/') {
           script {
@@ -97,6 +133,12 @@ pipeline {
       }
     }
     stage('SapAdapter') {
+      when {
+        anyOf {
+          changeset "*sapadapter-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
       steps {
         dir('services/sapadapter-service/') {
           script {
@@ -106,6 +148,12 @@ pipeline {
       }
     }
     stage('Warehouse') {
+      when {
+        anyOf {
+          changeset "*warehouses-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
       steps {
         dir('services/warehouses-service/') {
           script {
@@ -115,6 +163,12 @@ pipeline {
       }
     }
     stage('Reporting') {
+      when {
+        anyOf {
+          changeset "*reporting-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
       steps {
         dir('services/reporting-service/') {
           script {
@@ -124,6 +178,12 @@ pipeline {
       }
     }
     stage('KafkaConsumer') {
+      when {
+        anyOf {
+          changeset "*kafkaconsumer-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
       steps {
         dir('services/kafkaconsumer-service/') {
           script {
@@ -166,6 +226,12 @@ pipeline {
         dir('testing/ui/') {
           echo 'Running UI Testing'
         }
+      }
+    }
+    stage('Docker Clean') {
+      steps {
+        echo 'Cleaning Docker'
+        sh "docker system prune -f -a"
       }
     }
   }
