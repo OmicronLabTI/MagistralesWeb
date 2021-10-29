@@ -193,28 +193,28 @@ pipeline {
         }
       }
     }
-    // stage('Kubernetes Down') {
-    //   steps {
-    //     echo 'Running Kubernetes down'
-    //     sh 'sudo kubectl delete -f deploy_dev.yaml --grace-period=0 --force --ignore-not-found'
-    //     sh 'sudo docker system prune -f'
-    //   }
-    // }
-    // stage('Kubernetes Up') {
-    //   steps {
-    //     echo 'Running Kubernetes'
-    //     sh 'sudo kubectl apply -f deploy_dev.yaml'
-    //   }
-    // }
-    // stage('Database') {
-    //   steps {
-    //     dir('database/') {
-    //       sh '/opt/liquibase/liquibase --version'
-    //       sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
-    //       echo 'Applying Db changes'
-    //     }
-    //   }
-    // }
+    stage('Kubernetes Down') {
+      steps {
+        echo 'Running Kubernetes down'
+        sh 'sudo kubectl delete -f deploy_dev.yaml --grace-period=0 --force --ignore-not-found'
+        sh 'sudo docker system prune -f'
+      }
+    }
+    stage('Kubernetes Up') {
+      steps {
+        echo 'Running Kubernetes'
+        sh 'sudo kubectl apply -f deploy_dev.yaml'
+      }
+    }
+    stage('Database') {
+      steps {
+        dir('database/') {
+          sh '/opt/liquibase/liquibase --version'
+          sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
+          echo 'Applying Db changes'
+        }
+      }
+    }
     stage('Testing Estress') {
       steps {
         dir('testing/stress/') {
