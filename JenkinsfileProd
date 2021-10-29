@@ -26,7 +26,6 @@ pipeline {
         ).trim()
 	}
     stages {
-	/*
         stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
@@ -43,7 +42,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
         stage('Build Federated Services') {
             steps {
                 echo 'Building Fedetared Services'
@@ -70,7 +69,7 @@ pipeline {
                     }
                 }
             }
-        }/*
+        }
         stage('Build Micro Services') {
             steps {
                 echo 'Building ms1'
@@ -146,7 +145,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
 		stage('Kubernetes Down') {
             steps {
                 echo 'Running Kubernetes down'
