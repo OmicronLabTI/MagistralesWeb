@@ -44,13 +44,8 @@ pipeline {
     stage('ApiManager') {
       steps {
         dir('services/apimanager/') {
-          withCredentials([
-            [$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']
-          ]) {
-            sh 'docker login -u $USERNAME -p $PASSWORD'
-            script {
-              DockerBuildAndPush("apimanager")
-            }
+          script {
+            DockerBuildAndPush("apimanager")
           }
         }
       }
@@ -59,13 +54,8 @@ pipeline {
     stage('Oauth') {
       steps {
         dir('services/oauthserver/') {
-          withCredentials([
-            [$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']
-          ]) {
-            sh 'docker login -u $USERNAME -p $PASSWORD'
-            script {
-              DockerBuildAndPush("oauthserver")
-            }
+          script {
+            DockerBuildAndPush("oauthserver")
           }
         }
       }
