@@ -14,10 +14,10 @@ pipeline {
     COMPANY = "Omicron"
     COMPANY_LOWERCASE = "omicron"
     PROJECT_NAME = "AppiOSFormulas"
-		PROJECT_NAME_LOWERCASE = "appiosformulas"
+    PROJECT_NAME_LOWERCASE = "appiosformulas"
     SLACK_CHANNEL = "#omicron_notifications"
     ENVIRONMENT = "Dev"
-		NEXUS_REGISTRY = "192.168.0.133:8083"
+    NEXUS_REGISTRY = "192.168.0.133:8083"
     REPOSITORY_NAME = "omicrondev"
 
     // General configurations		
@@ -41,101 +41,97 @@ pipeline {
         }
       }
     }
-    stage('Build Federated Services') {
-      parallel {
-        stage('ApiManager') {
-          steps {
-            dir('services/apimanager/') {
-              withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-              script {
-                  DockerBuildAndPush("apimanager")
-                }
-              }
+    stage('ApiManager') {
+      steps {
+        dir('services/apimanager/') {
+          withCredentials([
+            [$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']
+          ]) {
+            script {
+              DockerBuildAndPush("apimanager")
             }
           }
+        }
+      }
 
-        }
-        stage('Oauth') {
-          steps {
-            dir('services/oauthserver/') {
-              withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-              script {
-                  DockerBuildAndPush("oauthserver")
-                }
-              }
+    }
+    stage('Oauth') {
+      steps {
+        dir('services/oauthserver/') {
+          withCredentials([
+            [$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']
+          ]) {
+            script {
+              DockerBuildAndPush("oauthserver")
             }
           }
         }
       }
     }
-    stage('Build Micro Services') {
-      parallel {
-        stage('Catalogos') {
-          steps {
-            dir('services/catalogos-service/') {
-              script {
-								DockerBuildAndPush("catalogos")
-							}
-            }
-          }
-        }
-        stage('Usuarios') {
-          steps {
-            dir('services/usuarios-service/') {
-              script {
-								DockerBuildAndPush("usuarios")
-							}
-            }
-          }
-        }
-        stage('Pedidos') {
-          steps {
-            dir('services/pedidos-service/') {
-              script {
-								DockerBuildAndPush("pedidos")
-							}
-            }
-          }
-        }
-        stage('SapAdapter') {
-          steps {
-            dir('services/sapadapter-service/') {
-              script {
-								DockerBuildAndPush("sapadapter")
-							}
-            }
-          }
-        }
-        stage('Warehouse') {
-          steps {
-            dir('services/warehouses-service/') {
-              script {
-								DockerBuildAndPush("warehouses")
-							}
-            }
-          }
-        }
-        stage('Reporting') {
-          steps {
-            dir('services/reporting-service/') {
-              script {
-								DockerBuildAndPush("reporting")
-							}
-            }
-          }
-        }
-        stage('KafkaConsumer') {
-          steps {
-            dir('services/kafkaconsumer-service/') {
-              script {
-								DockerBuildAndPush("kafkaconsumer")
-							}
-            }
+    stage('Catalogos') {
+      steps {
+        dir('services/catalogos-service/') {
+          script {
+            DockerBuildAndPush("catalogos")
           }
         }
       }
     }
-		// stage('Kubernetes Down') {
+    stage('Usuarios') {
+      steps {
+        dir('services/usuarios-service/') {
+          script {
+            DockerBuildAndPush("usuarios")
+          }
+        }
+      }
+    }
+    stage('Pedidos') {
+      steps {
+        dir('services/pedidos-service/') {
+          script {
+            DockerBuildAndPush("pedidos")
+          }
+        }
+      }
+    }
+    stage('SapAdapter') {
+      steps {
+        dir('services/sapadapter-service/') {
+          script {
+            DockerBuildAndPush("sapadapter")
+          }
+        }
+      }
+    }
+    stage('Warehouse') {
+      steps {
+        dir('services/warehouses-service/') {
+          script {
+            DockerBuildAndPush("warehouses")
+          }
+        }
+      }
+    }
+    stage('Reporting') {
+      steps {
+        dir('services/reporting-service/') {
+          script {
+            DockerBuildAndPush("reporting")
+          }
+        }
+      }
+    }
+    stage('KafkaConsumer') {
+      steps {
+        dir('services/kafkaconsumer-service/') {
+          script {
+            DockerBuildAndPush("kafkaconsumer")
+          }
+        }
+      }
+    }
+    // stage('Kubernetes Down') {
     //   steps {
     //     echo 'Running Kubernetes down'
     //     sh 'sudo kubectl delete -f deploy_dev.yaml --grace-period=0 --force --ignore-not-found'
@@ -224,14 +220,15 @@ def DockerBuildAndPush(entity) {
 def ImageLatestExists(entity) {
   def repo = "${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository"
   try {
-    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'nexus_omicron', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+    withCredentials([
+      [$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_omicron', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']
+    ]) {
       def res = sh(returnStdout: true, script: "curl -s -H \"Accept: application/json\"  -u ${USERNAME}:${PASSWORD} -X GET http://${NEXUS_REGISTRY}/v2/${repo}/tags/list").trim()
       def json = readJSON text: res
       def tags = json["tags"] as String[]
       return tags.contains("latest")
     }
-  }
-  catch(Exception ex) {
+  } catch (Exception ex) {
     echo "${ex}"
     return false
   }
@@ -239,20 +236,20 @@ def ImageLatestExists(entity) {
 
 def GetPreviousBuild(repo) {
   try {
-    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'nexus_omicron', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+    withCredentials([
+      [$class: 'UsernamePasswordMultiBinding', credentialsId: 'nexus_omicron', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']
+    ]) {
       def res = sh(returnStdout: true, script: "curl -s -H \"Accept: application/json\"  -u ${USERNAME}:${PASSWORD} -X GET http://${NEXUS_REGISTRY}/v2/${repo}/tags/list").trim()
       def json = readJSON text: res
       def tags = json["tags"] as String[]
       if (tags.length > 1) {
         def n = tags[tags.length - 2].replaceAll("0.0.", "") as Integer
         return n;
-      }
-      else {
+      } else {
         return "${env.BUILD_NUMBER}"
       }
     }
-  }
-  catch(Exception ex) {
+  } catch (Exception ex) {
     echo "${ex}"
     return "${env.BUILD_NUMBER}"
   }
