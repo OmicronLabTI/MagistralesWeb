@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: omicron-web-repository
+          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-web-repository:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
@@ -57,7 +57,7 @@ spec:
     spec:
       containers:
         - name: apimanager
-          image: omicron-apimanager-repository
+          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-apimanager-repository:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
@@ -103,7 +103,7 @@ spec:
     spec:
       containers:
         - name: oauthserver
-          image: omicron-oauthserver-repository
+          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-oauthserver-repository:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
@@ -131,7 +131,7 @@ spec:
     spec:
       containers:
         - name: catalogos
-          image: omicron-catalogos-repository
+          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-catalogos-repository:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
@@ -159,7 +159,7 @@ spec:
     spec:
       containers:
         - name: usuarios
-          image: omicron-usuarios-repository
+          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-usuarios-repository:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
@@ -187,7 +187,7 @@ spec:
     spec:
       containers:
         - name: sapadapter
-          image: omicron-sapadapter-repository
+          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-sapadapter-repository:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
@@ -222,7 +222,7 @@ spec:
     spec:
       containers:
         - name: pedidos
-          image: omicron-pedidos-repository
+          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-pedidos-repository:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
@@ -250,7 +250,7 @@ spec:
     spec:
       containers:
         - name: warehouses
-          image: omicron-warehouses-repository
+          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-warehouses-repository:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
@@ -278,7 +278,7 @@ spec:
     spec:
       containers:
         - name: reporting
-          image: omicron-reporting-repository
+          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-reporting-repository:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
@@ -342,7 +342,6 @@ spec:
   selector:
     app: seqlog
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -360,10 +359,10 @@ spec:
         app: redisdata
     spec:
       containers:
-      - name: redisdata
-        image: redis:alpine
-        ports:
-        - containerPort: 6379
+        - name: redisdata
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
 ---
 apiVersion: v1
 kind: Service
@@ -400,7 +399,7 @@ spec:
     spec:
       containers:
         - name: kafkaconsumer
-          image: omicron-kafkaconsumer-repository
+          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-kafkaconsumer-repository:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
