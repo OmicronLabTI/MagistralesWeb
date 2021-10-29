@@ -60,7 +60,7 @@ namespace Omicron.SapAdapter.Services.Sap
             listIds.AddRange(lineProducts.Select(y => y.DeliveryId));
             listIds = listIds.Distinct().ToList();
 
-            var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntry(listIds)).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(listIds)).ToList();
             var invoicesId = deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(invoicesId)).Where(x => x.InvoiceStatus != "C").ToList();
@@ -68,7 +68,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var granTotal = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
             invoiceHeaders = this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
             var totalByFilters = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
-            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeaders.Select(x => x.InvoiceId).ToList())).ToList();
+            var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(invoiceHeaders.Select(x => x.InvoiceId).ToList())).ToList();
 
             var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && y.BaseEntry.Value != 0).Select(x => x.BaseEntry.Value).Distinct().Count();
 
@@ -225,7 +225,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             invoiceHeaderOrdered = invoiceHeaderOrdered.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
 
-            var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntry(invoiceHeaderOrdered.Select(x => x.InvoiceId).ToList())).ToList();
+            var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(invoiceHeaderOrdered.Select(x => x.InvoiceId).ToList())).ToList();
 
             var invoicesNull = invoicesDetails.Select(x => x.InvoiceId).Cast<int?>().ToList();
             var deliveries = (await this.sapDao.GetDeliveryByInvoiceId(invoicesNull)).ToList();
