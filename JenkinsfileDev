@@ -30,6 +30,13 @@ pipeline {
     ).trim()
   }
   stages {
+    stage('Docker Login') {
+      withCredentials([
+        [$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']
+      ]) {
+        sh 'docker login -u $USERNAME -p $PASSWORD'
+      }
+    }
     stage('Build Front Web') {
       steps {
         echo 'Building Frontend'
