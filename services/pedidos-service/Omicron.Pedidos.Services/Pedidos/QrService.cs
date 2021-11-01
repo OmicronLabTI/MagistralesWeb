@@ -220,7 +220,10 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
                 var topText = string.Format(ServiceConstants.QrTopTextOrden, modelQr.SaleOrder, modelQr.ItemCode);
-                bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, topText);
+                var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralBottomTextSize));
+                var sizeText = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24;
+
+                bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, sizeText, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");
                 var memoryStrem = new MemoryStream();
                 bitmap.Save(memoryStrem, ImageFormat.Png);
@@ -258,8 +261,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
                 var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
+                var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralBottomTextSizeDelivery));
+                var sizeText = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24;
 
-                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters, sizeText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
 
                 memoryStrem.Flush();
@@ -299,7 +304,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
                 var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
-                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters);
+                var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralBottomTextSizeDelivery));
+                var sizeText = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24;
+
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters, sizeText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
 
                 memoryStrem.Flush();
@@ -367,19 +375,17 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="parameters">the parameters.</param>
         /// <param name="topText">Top text.</param>
         /// <returns>the bitmap to return.</returns>
-        private Bitmap AddTextToQr(Bitmap qrsBitmap, bool needsCoolingFlag, string botomText, string identifierToPlace, List<ParametersModel> parameters, string topText = null)
+        private Bitmap AddTextToQr(Bitmap qrsBitmap, bool needsCoolingFlag, string botomText, string identifierToPlace, List<ParametersModel> parameters, int textSize, string topText = null)
         {
             var heigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectHeight));
             var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectWidth));
             var rectyField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRecty));
             var rectxField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectx));
-            var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralBottomTextSize));
 
             var rectx = rectxField != null ? int.Parse(rectxField.Value) : DefaultHeightWidth / 2;
             var recty = rectyField != null ? int.Parse(rectyField.Value) : DefaultHeightWidth - 25;
             var heigth = heigthField != null ? int.Parse(heigthField.Value) : 250;
             var width = widthField != null ? int.Parse(widthField.Value) : 100;
-            var sizeText = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24;
 
             var needsCooling = needsCoolingFlag ? ServiceConstants.NeedsCooling : string.Empty;
             var bottomText = string.Format(botomText, identifierToPlace, needsCooling);
@@ -388,11 +394,11 @@ namespace Omicron.Pedidos.Services.Pedidos
             graphic.SmoothingMode = SmoothingMode.AntiAlias;
             graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            this.DrawRectangleText(graphic, rectx, recty, width, heigth, bottomText, new Font(ServiceConstants.QrTextFontType, sizeText));
+            this.DrawRectangleText(graphic, rectx, recty, width, heigth, bottomText, new Font(ServiceConstants.QrTextFontType, textSize));
 
             if (!string.IsNullOrEmpty(topText))
             {
-                this.CreateQrTopText(graphic, parameters, topText, sizeText, width, heigth);
+                this.CreateQrTopText(graphic, parameters, topText, textSize, width, heigth);
             }
 
             graphic.Flush();

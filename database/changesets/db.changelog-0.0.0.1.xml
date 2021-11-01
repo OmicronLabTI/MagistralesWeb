@@ -788,4 +788,11 @@
 		<column name="field" value="QrMagistralRectyTop"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.90">
+	<insert tableName="parameters"> 
+		<column name="value" value="27"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralBottomTextSizeDelivery"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 

@@ -591,6 +591,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrMagistralBottomTextSize = "QrMagistralBottomTextSize";
 
         /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrMagistralBottomTextSizeDelivery = "QrMagistralBottomTextSizeDelivery";
+
+        /// <summary>
         /// Gets the magistrgal qr.
         /// </summary>
         public const string QrMagistralRectxTop = "QrMagistralRectxTop";
