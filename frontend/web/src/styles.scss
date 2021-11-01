@@ -24,11 +24,8 @@ $omicron-theme: mat-light-theme($omicron-primary, $omicron-accent, $omicron-warn
 @mixin mix-omicron-theme($omicron-theme) {
   .mat-form-field-underline {
     caret-color: rgba(108, 144, 179, 1) !important;
-  
-  }
-  .mat-form-field-underline {
-    /*change color of underline*/
     background-color: rgba(108, 144, 179, 1) !important;
+  
   }
   .mat-form-field-ripple {
     /*change color of underline when focused*/

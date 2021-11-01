@@ -122,9 +122,9 @@
     </div>
 
     <div class="list-users-container">
-        <table mat-table [dataSource]="dataSource" [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''">
+        <table mat-table [dataSource]="dataSource" [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''" aria-describedby>
             <ng-container matColumnDef="seleccion">&nbsp;
-                <th mat-header-cell *matHeaderCellDef>
+                <th scope="row" mat-header-cell *matHeaderCellDef>
                     <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()"
                         (change)="setAll($event.checked)"></mat-checkbox>
                 </th>
@@ -134,19 +134,19 @@
             </ng-container>
 
             <ng-container matColumnDef="ordenFabricacionId">
-                <th mat-header-cell *matHeaderCellDef class=""> N° DE ORDEN DE FABRICACIÓN</th>
+                <th scope="row" mat-header-cell *matHeaderCellDef class=""> N° DE ORDEN DE FABRICACIÓN</th>
                 <td mat-cell *matCellDef="let element" class="color-text-intables tdcell of"> <span
                         *ngIf="element.ordenFabricacionId !== 0">{{element.ordenFabricacionId}}</span> </td>
             </ng-container>
 
             <ng-container matColumnDef="codigoProducto">
-                <th mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO DEL PRODUCTO </th>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="mobile-hide"> CÓDIGO DEL PRODUCTO </th>
                 <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide codigoproducto">
                     {{element.codigoProducto}} </td>
             </ng-container>
 
             <ng-container matColumnDef="descripcionProducto">
-                <th mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO </th>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="mobile-hide"> DESCRIPCIÓN DEL PRODUCTO </th>
                 <td mat-cell matTooltip="{{element.descripcionProducto}}" matTooltipPosition="right"
                     aria-label="Button that displays a tooltip in various positions" *matCellDef="let element"
                     class="color-text-intables tdcell mobile-hide descripcionproducto"> {{
@@ -155,39 +155,39 @@
             </ng-container>
 
             <ng-container matColumnDef="qtyPlanned">
-                <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> CANTIDAD PLANIFICADA </th>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="mobile-hide centered"> CANTIDAD PLANIFICADA </th>
                 <td mat-cell *matCellDef="let element"
                     class="color-text-intables tdcell tdcell-center mobile-hide cantplan"> {{element.qtyPlanned}} </td>|
                 number:'1.2-2'
             </ng-container>
 
             <ng-container matColumnDef="fechaOF">
-                <th mat-header-cell *matHeaderCellDef class="mobile-hide centered"> FECHA DE ORDEN DE FABRICACIÓN </th>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="mobile-hide centered"> FECHA DE ORDEN DE FABRICACIÓN </th>
                 <td mat-cell *matCellDef="let element"
                     class="color-text-intables tdcell tdcell-center mobile-hide fechaorden"> {{element.fechaOf}} </td>
             </ng-container>
 
             <ng-container matColumnDef="fechaOFFin">
-                <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> FECHA DE TÉRMINO (QFB) </th>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="centered mobile-hide"> FECHA DE TÉRMINO (QFB) </th>
                 <td mat-cell *matCellDef="let element"
                     class="color-text-intables tdcell tdcell-center mobile-hide fechatermino"> {{element.fechaOfFin}}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="qfb">
-                <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> QFB ASIGNADO </th>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="centered mobile-hide"> QFB ASIGNADO </th>
                 <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide qfb">
                     {{element.qfb}} </td>
             </ng-container>
 
             <ng-container matColumnDef="label">
-                <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> TIPO DE ETIQUETA </th>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="centered mobile-hide"> TIPO DE ETIQUETA </th>
                 <td mat-cell *matCellDef="let element" class="color-text-intables tdcell tdcell-center mobile-hide qfb">
                     {{element.label.toUpperCase()}} </td>
             </ng-container>
 
             <ng-container matColumnDef="statusOF">
-                <th mat-header-cell *matHeaderCellDef class="centered mobile-hide"> ESTATUS DE LA ORDEN </th>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="centered mobile-hide"> ESTATUS DE LA ORDEN </th>
                 <td mat-cell *matCellDef="let element"
                     class="color-text-intables tdcell tdcell-center text-center mobile-hide status style-button-status">
                     <div class="center-status">
@@ -198,7 +198,7 @@
             </ng-container>
 
             <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef class="centered"> ACCIONES </th>
+                <th scope="row" mat-header-cell *matHeaderCellDef class="centered"> ACCIONES </th>
                 <td mat-cell *matCellDef="let element; let i = index;"
                     class="tdcell tdcell-center tdactions-centeres-elements">
                     <div class="icons-actions-container">

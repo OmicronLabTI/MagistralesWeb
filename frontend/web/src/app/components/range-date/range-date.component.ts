@@ -21,12 +21,17 @@ export class RangeDateComponent implements OnInit {
   }
 
   ngOnInit() {
-    switch (Number(this.typeInitialRange)) {
+    /*switch (Number(this.typeInitialRange)) {
       case TypeInitialRange.monthCalendar:
         this.initialDate = this.dataService.getDateArray(this.startDate);
         this.startDate = new Date(`${this.initialDate[1]}/01/${this.initialDate[2]}`);
         this.onDataChange();
         break;
+    }*/
+    if (Number(this.typeInitialRange) === TypeInitialRange.monthCalendar) {
+      this.initialDate = this.dataService.getDateArray(this.startDate);
+      this.startDate = new Date(`${this.initialDate[1]}/01/${this.initialDate[2]}`);
+      this.onDataChange();
     }
   }
 
