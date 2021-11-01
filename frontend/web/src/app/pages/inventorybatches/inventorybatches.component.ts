@@ -371,7 +371,8 @@ export class InventorybatchesComponent implements OnInit {
       const strFechaExp = String(element.fechaExp).split('/');
       // tslint:disable-next-line: radix
       const dtFechaExp = new Date(parseInt(strFechaExp[2]), parseInt(strFechaExp[1]) - 1, parseInt(strFechaExp[0]));
-      element.isValid = !(dtFechaExp < this.today);
+      // element.isValid = !(dtFechaExp < this.today);
+      element.isValid = (dtFechaExp >= this.today);
       return dtFechaExp < this.today;
     }
     element.isValid = true;
