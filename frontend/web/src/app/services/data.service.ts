@@ -315,9 +315,6 @@ export class DataService {
     let finishMessaje = '';
     switch (messageType) {
       case MessageType.processOrder:
-        firstMessage = '';
-        finishMessaje = '\n';
-        break;
       case MessageType.processDetailOrder:
         firstMessage = '';
         finishMessaje = '\n';
@@ -756,7 +753,7 @@ export class DataService {
           ]
         : [],
     },
-  });
+  })
   getPercentageByItem(
     valueItem: number,
     valuesArray: number[],
@@ -790,7 +787,7 @@ export class DataService {
         hoverBorderColor: '#c0c8ce',
       },
     ],
-  });
+  })
   getRandomColorsArray(lengthArrayForGraph: number, isBarGraph: boolean) {
     let countIndex = CONST_NUMBER.zero;
     const range = Colors.length;
