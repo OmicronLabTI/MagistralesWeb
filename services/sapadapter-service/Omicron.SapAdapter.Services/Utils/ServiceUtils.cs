@@ -117,6 +117,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
                 var order = userOrder.FirstOrDefault(u => u.Salesorderid == elementToSave.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
                 elementToSave.Qfb = order == null ? string.Empty : order.Userid;
+                elementToSave.QfbId = elementToSave.Qfb;
 
                 if (elementToSave.PedidoStatus == ServiceConstants.AbiertoSap)
                 {
@@ -159,7 +160,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.Qfb))
             {
-                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.Qfb) && x.Qfb.Equals(parameters[ServiceConstants.Qfb])).ToList();
+                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.QfbId) && x.QfbId.Equals(parameters[ServiceConstants.Qfb])).ToList();
             }
 
             if (parameters.ContainsKey(ServiceConstants.Cliente))
