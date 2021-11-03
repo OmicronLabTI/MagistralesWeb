@@ -1055,15 +1055,54 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<DeliverModel>> GetDeliveryByDocDate(DateTime initDate, DateTime endDate)
+        public async Task<IEnumerable<DeliverModel>> GetDeliveryByDocDateJoinDoctor(DateTime initDate, DateTime endDate)
         {
-            return await this.RetryQuery<DeliverModel>(this.databaseContext.DeliverModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate));
+            var query = (from delivery in this.databaseContext.DeliverModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate)
+                         join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
+                         select new DeliverModel
+                         {
+                             Address = delivery.Address,
+                             Canceled = delivery.Canceled,
+                             CardCode = delivery.CardCode,
+                             Cliente = doctor.AliasName,
+                             DeliveryStatus = delivery.DeliveryStatus,
+                             DocNum = delivery.DocNum,
+                             FechaInicio = delivery.FechaInicio,
+                             Medico = doctor.AliasName,
+                             PedidoId = delivery.PedidoId,
+                             TypeOrder = delivery.TypeOrder,
+                         });
+
+            return (await this.RetryQuery<DeliverModel>(query)).ToList();
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocDate(DateTime initDate, DateTime endDate)
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocDateJoinDoctor(DateTime initDate, DateTime endDate)
         {
-            return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate));
+            var query = (from invoice in this.databaseContext.InvoiceHeaderModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate)
+                         join doctor in this.databaseContext.ClientCatalogModel on invoice.CardCode equals doctor.ClientId
+                         select new InvoiceHeaderModel
+                         {
+                             Address = invoice.Address,
+                             Canceled = invoice.Canceled,
+                             CardCode = invoice.CardCode,
+                             Cliente = doctor.AliasName,
+                             Comments = invoice.Comments,
+                             CommentsInvoice = invoice.CommentsInvoice,
+                             DocNum = invoice.DocNum,
+                             FechaInicio = invoice.FechaInicio,
+                             InvoiceId = invoice.InvoiceId,
+                             InvoiceStatus = invoice.InvoiceStatus,
+                             Medico = doctor.AliasName,
+                             Refactura = invoice.Refactura,
+                             TrackingNumber = invoice.TrackingNumber,
+                             TransportCode = invoice.TransportCode,
+                             SalesPrsonId = invoice.SalesPrsonId,
+                             TypeOrder = invoice.TypeOrder,
+                             UpdateDate = invoice.UpdateDate,
+                         });
+
+            return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
         }
 
         /// <inheritdoc/>
@@ -1101,9 +1140,25 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<OrderModel>> GetOrderModelByDocDate(DateTime initDate, DateTime endDate)
+        public async Task<IEnumerable<OrderModel>> GetOrderModelByDocDateJoinDoctor(DateTime initDate, DateTime endDate)
         {
-            return await this.RetryQuery<OrderModel>(this.databaseContext.OrderModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate));
+            var query = (from order in this.databaseContext.OrderModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate)
+                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                         select new OrderModel
+                         {
+                             Address = order.Address,
+                             Canceled = order.Canceled,
+                             Codigo = order.Codigo,
+                             Comments = order.Comments,
+                             DocNum = order.DocNum,
+                             FechaInicio = order.FechaInicio,
+                             PedidoId = order.PedidoId,
+                             Medico = doctor.AliasName,
+                             OrderType = order.OrderType,
+                             PedidoMuestra = order.PedidoMuestra,
+                         });
+
+            return await this.RetryQuery<OrderModel>(query);
         }
 
         /// <summary>
