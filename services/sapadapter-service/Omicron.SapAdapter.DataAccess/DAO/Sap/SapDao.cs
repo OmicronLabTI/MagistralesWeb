@@ -321,6 +321,36 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<List<OrderModel>> GetOrdersByIdJoinDoctor(List<int> pedidoID)
+        {
+            var query = from order in this.databaseContext.OrderModel.Where(x => pedidoID.Contains(x.PedidoId))
+                        join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                        select new OrderModel
+                        {
+                            Address = order.Address,
+                            AsesorId = order.AsesorId,
+                            AtcEntry = order.AtcEntry,
+                            Canceled = order.Canceled,
+                            Codigo = order.Codigo,
+                            Comments = order.Comments,
+                            DocNum = order.DocNum,
+                            DocNumDxp = order.DocNumDxp,
+                            FechaFin = order.FechaFin,
+                            FechaInicio = order.FechaInicio,
+                            OrderType = order.OrderType,
+                            Patient = order.Patient,
+                            PedidoMuestra= order.PedidoMuestra,
+                            PedidoId = order.PedidoId,
+                            PedidoStatus = order.PedidoStatus,
+                            ShippingAddressName = order.ShippingAddressName,
+                            ShippingCost = order.ShippingCost,
+                            Medico = doctor.AliasName,
+                        };
+
+            return (await this.RetryQuery<OrderModel>(query)).ToList();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<OrdenFabricacionModel>> GetProdOrderByOrderProduct(int pedidoId, string productId)
         {
             return await this.RetryQuery<OrdenFabricacionModel>(this.databaseContext.OrdenFabricacionModel.Where(x => x.PedidoId == pedidoId && x.ProductoId == productId && x.DataSource == "O"));
@@ -701,6 +731,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             Address = order.Address,
                             DocNumDxp = order.DocNumDxp,
                             ShippingCost = order.ShippingCost,
+                            ClientId = doctor.ClientId,
                         };
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
         }
