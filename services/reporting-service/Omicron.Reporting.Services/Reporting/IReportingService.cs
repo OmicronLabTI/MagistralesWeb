@@ -10,6 +10,7 @@ namespace Omicron.Reporting.Services
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.Reporting.Dtos.Model;
     using Omicron.Reporting.Entities.Model;
 
     /// <summary>
@@ -66,5 +67,12 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <returns>Operation result.</returns>
         Task<ResultModel> SubmitIncidentsExel(List<IncidentDataModel> request);
+
+        /// <summary>
+        /// Method To send Emails.
+        /// </summary>
+        /// <param name="emails">the emails to send.</param>
+        /// <returns>Pong.</returns>
+        Task<ResultModel> SendEmails(List<EmailGenericDto> emails);
     }
 }
