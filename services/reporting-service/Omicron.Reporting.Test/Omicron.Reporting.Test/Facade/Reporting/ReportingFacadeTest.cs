@@ -42,6 +42,7 @@ namespace Omicron.Reporting.Test.Facade.Request
 
             var resultModel = AutoFixtureProvider.Create<ResultModel>();
             resultModel.Success = true;
+            resultModel.Code = 200;
 
             var mockReportingService = new Mock<IReportingService>();
             mockReportingService.SetReturnsDefault(fileResultModel);
@@ -64,6 +65,10 @@ namespace Omicron.Reporting.Test.Facade.Request
 
             mockReportingService
                 .Setup(m => m.SubmitIncidentsExel(It.IsAny<List<IncidentDataModel>>()))
+                .Returns(Task.FromResult(resultModel));
+
+            mockReportingService
+                .Setup(m => m.SendEmails(It.IsAny<List<EmailGenericDto>>()))
                 .Returns(Task.FromResult(resultModel));
 
             this.reportingFacade = new ReportingFacade(mockReportingService.Object, mapper);
@@ -196,6 +201,30 @@ namespace Omicron.Reporting.Test.Facade.Request
             // arrange
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test facade map result.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SendEmails()
+        {
+            // arrange
+            var requests = new List<EmailGenericDto>()
+            {
+                new EmailGenericDto { BodyEmail = "body", CopyEmails = "email@email.com", DestinityEmail = "email2@email.com", Subject = "subject" },
+            };
+
+            // act
+            var response = await this.reportingFacade.SendEmails(requests);
+
+            // arrange
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsNotNull(response.ExceptionMessage);
+            Assert.IsNotNull(response.UserError);
         }
     }
 }
