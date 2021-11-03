@@ -776,4 +776,23 @@
           UPDATE parameters SET value='400' WHERE field = 'QrMagistralRectWidth';
       </sql>
   </changeSet>
+  <changeSet author="jarturoep" id="changelog-1.89">
+	<insert tableName="parameters"> 
+		<column name="value" value="130"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralRectxTop"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="25"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralRectyTop"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.90">
+	<insert tableName="parameters"> 
+		<column name="value" value="27"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralBottomTextSizeDelivery"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 

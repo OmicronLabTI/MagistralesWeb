@@ -47,7 +47,7 @@ namespace Omicron.Pedidos.Dtos.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int Consumed { get; set; }
+        public decimal Consumed { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

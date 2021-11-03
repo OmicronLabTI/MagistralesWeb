@@ -250,8 +250,8 @@ namespace Omicron.Reporting.Services
             var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
 
             //// ToDo descomentar el boton cuando pase dxp a prod
-            //// var button = string.Format(ServiceConstants.ButtonEmail, package.DxpRoute);
-            var button = string.Empty;
+            ///  var button = string.Empty;
+            var button = string.Format(ServiceConstants.ButtonEmail, package.DxpRoute);
 
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
