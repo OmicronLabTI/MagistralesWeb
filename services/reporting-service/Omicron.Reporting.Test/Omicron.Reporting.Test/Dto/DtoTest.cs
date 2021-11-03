@@ -31,6 +31,7 @@ namespace Omicron.Reporting.Test.Dto
             new SendRejectedEmailDto(),
             new RejectedOrdersDto(),
             new IncidentDataDto(),
+            new EmailGenericDto(),
         };
 
         /// <summary>

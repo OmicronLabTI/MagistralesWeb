@@ -14,6 +14,7 @@ namespace Omicron.Reporting.Test.Services.Request
     using System.Threading.Tasks;
     using Moq;
     using NUnit.Framework;
+    using Omicron.Reporting.Dtos.Model;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services;
     using Omicron.Reporting.Services.Clients;
@@ -462,6 +463,51 @@ namespace Omicron.Reporting.Test.Services.Request
             var result = await service.SubmitIncidentsExel(request);
 
             Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Method to get and send emails of products abandoned.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task SendEmails()
+        {
+            var listDoctor = new List<EmailGenericDto>()
+            {
+                new EmailGenericDto { BodyEmail = "hello", CopyEmails = "copy@email.com", DestinityEmail = "destinity@email.com", Subject = "Email prueba 1" },
+                new EmailGenericDto { BodyEmail = "hello", CopyEmails = "copy2@email.com", DestinityEmail = "destinity2@email.com", Subject = "Email prueba 2" },
+                new EmailGenericDto { BodyEmail = "hello", CopyEmails = "copy3@email.com", DestinityEmail = "destinity3@email.com", Subject = "Email prueba 3" },
+                new EmailGenericDto { BodyEmail = "hello", CopyEmails = "copy4@email.com", DestinityEmail = "destinity4@email.com", Subject = "Email prueba 4" },
+            };
+
+            var listParams = new List<ParametersModel>
+            {
+                new ParametersModel { Field = "SmtpServer", Value = "192.168.0.1" },
+                new ParametersModel { Field = "SmtpPort", Value = "5434" },
+                new ParametersModel { Field = "EmailMiddlewarePassword", Value = "correo@axity.com" },
+                new ParametersModel { Field = "EmailMiddleware", Value = "correo@axity.com" },
+                new ParametersModel { Field = "EmailCCDelivery", Value = "correo@axity.com" },
+                new ParametersModel { Field = "EmailIncidentReport", Value = "correo@axity.com" },
+            };
+
+            var mockEmail = new Mock<IOmicronMailClient>();
+            mockEmail
+                .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
+                .Returns(Task.FromResult(true));
+
+            var mockCatalog = new Mock<ICatalogsService>();
+            mockCatalog
+                .Setup(m => m.GetParams(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(listParams));
+
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+
+            // act
+            var result = await service.SendEmails(listDoctor);
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Success);
         }
     }
 }

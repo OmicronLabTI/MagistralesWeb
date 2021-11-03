@@ -65,5 +65,12 @@ namespace Omicron.Reporting.Facade.Request
         /// <param name="request">Requests data.</param>
         /// <returns>Operation result.</returns>
         Task<ResultDto> SubmitIncidentsExel(List<IncidentDataDto> request);
+
+        /// <summary>
+        /// Method To send Emails.
+        /// </summary>
+        /// <param name="emails">the emails to send.</param>
+        /// <returns>Pong.</returns>
+        Task<ResultDto> SendEmails(List<EmailGenericDto> emails);
     }
 }
