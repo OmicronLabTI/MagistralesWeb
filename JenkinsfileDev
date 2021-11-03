@@ -276,10 +276,9 @@ def SlackMsg(String buildResult) {
 def DockerBuildAndPush(entity) {
   def previousBuild = GetPreviousBuild("${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository")
   docker.withRegistry("http://${NEXUS_REGISTRY}", "nexus_omicron") {
-    sh "docker pull ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest || true"
-    sh "docker tag ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:0.0.${previousBuild} || true"
-    sh "docker push ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:0.0.${previousBuild} || true"
-    docker.build("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:0.0.${previousBuild} .")
+    docker.build("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest .")
+    sh "docker tag ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:0.0.${env.BUILD_NUMBER}"
+    docker.image("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:0.0.${env.BUILD_NUMBER}").push()
     docker.image("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest").push()
   }
 }
