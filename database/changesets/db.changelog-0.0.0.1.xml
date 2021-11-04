@@ -795,4 +795,56 @@
 		<column name="field" value="QrMagistralBottomTextSizeDelivery"/>
 	</insert>
   </changeSet>
+  <changeSet author="jarturoep" id="changelog-1.91">
+	<insert tableName="parameters"> 
+		<column name="value" value="500"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryHeight"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="500"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryWidth"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="15"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryMargin"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="110"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRectx"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="400"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRecty"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="400"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRectWidth"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="100"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRectHeight"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="110"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRectxTop"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="25"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRectyTop"/>
+	</insert>
+  </changeSet>
+  <changeSet author="jarturoep" id="changelog-1.92">
+      <sql endDelimiter=";">
+          UPDATE parameters SET field = 'QrDeliveryBottomTextSize' WHERE field = 'QrMagistralBottomTextSizeDelivery';
+      </sql>
+  </changeSet>
 </databaseChangeLog> 
