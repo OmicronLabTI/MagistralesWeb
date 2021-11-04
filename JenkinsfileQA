@@ -1,6 +1,6 @@
 pipeline {
   agent {
-    label 'OmicronDev'
+    label 'OmicronQA'
   }
   tools {
     maven 'M3'
@@ -213,30 +213,30 @@ pipeline {
         }
       }
     }
-    // stage('Kubernetes Down') {
-    //   steps {
-    //     echo 'Running Kubernetes down'
-    //     sh 'kubectl config use-context kubernetes-admin@kubernetes'
-    //     sh 'sudo kubectl delete -f deploy_qa.yaml --grace-period=0 --force --ignore-not-found'
-    //   }
-    // }
-    // stage('Kubernetes Up') {
-    //   steps {
-    //     echo 'Running Kubernetes'
-    //     sh 'kubectl config use-context kubernetes-admin@kubernetes'
-    //     sh 'sudo kubectl apply -f deploy_qa.yaml'
-    //   }
-    // }
-    // stage('Database') {
-    //   steps {
-    //     dir('database/') {
-    //       sh '/opt/liquibase/liquibase --version'
-    //       sh 'sed -i "s/192.168.0.101:5432/192.168.0.83:5432/g" liquibase.properties'
-    //       sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
-    //       echo 'Applying Db changes'
-    //     }
-    //   }
-    // }
+    stage('Kubernetes Down') {
+      steps {
+        echo 'Running Kubernetes down'
+        sh 'kubectl config use-context kubernetes-admin@kubernetes'
+        sh 'sudo kubectl delete -f deploy_qa.yaml --grace-period=0 --force --ignore-not-found'
+      }
+    }
+    stage('Kubernetes Up') {
+      steps {
+        echo 'Running Kubernetes'
+        sh 'kubectl config use-context kubernetes-admin@kubernetes'
+        sh 'sudo kubectl apply -f deploy_qa.yaml'
+      }
+    }
+    stage('Database') {
+      steps {
+        dir('database/') {
+          sh '/opt/liquibase/liquibase --version'
+          sh 'sed -i "s/192.168.0.101:5432/192.168.0.83:5432/g" liquibase.properties'
+          sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
+          echo 'Applying Db changes'
+        }
+      }
+    }
     stage('Testing Estress') {
       steps {
         dir('testing/stress/') {
