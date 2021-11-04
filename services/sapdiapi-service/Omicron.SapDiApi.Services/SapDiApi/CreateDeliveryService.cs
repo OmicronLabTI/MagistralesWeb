@@ -93,9 +93,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 }
                 else
                 {
-                    company.GetNewObjectCode(out var deliveryId);
-                    _loggerProxy.Info($"The saleORder {saleOrderId} was delivered with delivery = {deliveryId} - {errCode} - {errMsg}");
-                    dictionaryResult.Add($"{saleOrderId}-Ok", $"Ok-{deliveryId}");
+                    _loggerProxy.Info($"The saleORder {saleOrderId} was delivered - {errCode} - {errMsg}");
+                    dictionaryResult.Add($"{saleOrderId}-Ok", $"Ok");
                 }
             }
             catch(Exception ex)
@@ -172,9 +171,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 }
                 else
                 {
-                    company.GetNewObjectCode(out var deliveryId);
-                    _loggerProxy.Info($"The saleORder {saleOrderId} was delivered with delivery {deliveryId} {errCode} - {errMsg}");
-                    dictionaryResult.Add($"{saleOrderId}-Ok", $"Ok-{deliveryId}");
+                    _loggerProxy.Info($"The saleORder {saleOrderId} was delivered {errCode} - {errMsg}");
+                    dictionaryResult.Add($"{saleOrderId}-Ok", $"Ok");
                 }
             }
             catch (Exception ex)
@@ -264,9 +262,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 }
                 else
                 {
-                    company.GetNewObjectCode(out var deliveryId);
-                    _loggerProxy.Info($"The saleORder {saleOrderId} was delivered with delivery {deliveryId} {errCode} - {errMsg}");
-                    dictionaryResult.Add($"{saleOrderId}-Ok", $"Ok-{deliveryId}");
+                    _loggerProxy.Info($"The saleORder {saleOrderId} was delivered {errCode} - {errMsg}");
+                    dictionaryResult.Add($"{saleOrderId}-Ok", $"Ok");
                 }
             }
             catch (Exception ex)
