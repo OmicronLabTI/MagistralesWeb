@@ -144,5 +144,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [Column("U_DXPNEEDSSHIPCOST")]
         public string ShippingCost { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [NotMapped]
+        public string Cliente { get; set; }
     }
 }
