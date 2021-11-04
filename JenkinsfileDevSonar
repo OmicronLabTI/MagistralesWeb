@@ -19,7 +19,7 @@ pipeline {
     ENVIRONMENT = "Dev"
 
     // General configurations
-    SONAR_KEY = '21_OMICRONLAB_DXP_Dev'
+    SONAR_KEY = '20_OMICRONLAB_App-iOS-Formulas_Dev'
     SONAR_SERVER = 'https://devtools.axity.com/sonarlts'
     SONAR_TOKEN = 'd54f4f0b0ecc98ca94c88640833783fe52216269'
     COMMITER_EMAIL = sh(
