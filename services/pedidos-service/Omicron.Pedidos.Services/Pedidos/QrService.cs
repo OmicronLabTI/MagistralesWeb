@@ -76,7 +76,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             saleOrders.RemoveAll(x => savedQrUserOrders.Contains(x.Id));
 
-            var dimensionsQr = this.GetMagistralParameters(parameters); // TODO: Colocar el método correcto para obtener sus dimensiones.
+            var dimensionsQr = this.GetMagistralParameters(parameters);
             var urls = await this.GetUrlQrMagistral(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureContainer);
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
@@ -125,7 +125,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).DistinctBy(y => y.DeliveryId).ToList();
-            var dimensionsQr = this.GetDeliveryParameters(parameters); // TODO: Colocar el método correcto para obtener sus dimensiones.
+            var dimensionsQr = this.GetDeliveryParameters(parameters);
             var urls = await this.GetUrlQrRemision(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
@@ -171,7 +171,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             saleOrders = saleOrders.DistinctBy(x => x.InvoiceId).ToList();
-            var dimensionsQr = this.GetDeliveryParameters(parameters); // TODO: Colocar el método correcto para obtener sus dimensiones.
+            var dimensionsQr = this.GetDeliveryParameters(parameters);
             var urls = await this.GetUrlQrFactura(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
