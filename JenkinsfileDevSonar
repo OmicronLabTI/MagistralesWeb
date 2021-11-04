@@ -52,7 +52,7 @@ pipeline {
     stage('Sonar ApiManager') {
       steps {
         dir('services/apimanager/') {
-          sh "mvn sonar:sonar \
+          sh "mvn package sonar:sonar \
 								-Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_apimanager_${ENVIRONMENT} \
 								-Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_apimanager_${ENVIRONMENT} \
 								-Dsonar.sources=src/main \
@@ -64,7 +64,7 @@ pipeline {
     stage('Sonar Oauth') {
       steps {
         dir('services/oauthserver/') {
-          sh "mvn sonar:sonar \
+          sh "mvn package sonar:sonar \
 								-Dsonar.projectKey=20_${COMPANY}_${PROJECT_NAME}_oauthserver_${ENVIRONMENT} \
 								-Dsonar.projectName=20_${COMPANY}_${PROJECT_NAME}_oauthserver_${ENVIRONMENT} \
 								-Dsonar.sources=src/main \
