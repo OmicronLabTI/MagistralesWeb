@@ -1,7 +1,7 @@
 FROM maven:3.8.1-jdk-8-slim AS build-env
 WORKDIR /app
 COPY . ./
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 FROM store/oracle/serverjre:1.8.0_241-b07
 WORKDIR /app
