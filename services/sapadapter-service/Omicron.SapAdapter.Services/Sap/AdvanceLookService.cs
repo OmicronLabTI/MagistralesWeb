@@ -383,6 +383,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
                 Comments = comments.ToString(),
                 SapComments = order.Comments,
+                TypeOrder = order.OrderType,
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };
@@ -554,6 +555,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     InvoiceType = invoiceType,
                     DataCheckin = initDate.Value,
                     ListSaleOrder = listSalesOrders.ToString(),
+                    TypeOrder = header.TypeOrder,
                 };
                 saleHeader.Add(saleHeaderItem);
             }
@@ -590,17 +592,17 @@ namespace Omicron.SapAdapter.Services.Sap
             switch (type)
             {
                 case ServiceConstants.SaleOrder:
-                    var orders = (await this.sapDao.GetOrderModelByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
+                    var orders = (await this.sapDao.GetOrderModelByDocDateJoinDoctor(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
                     orders = orders.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return orders.Select(x => x.DocNum).Distinct().ToList();
 
                 case ServiceConstants.Delivery:
-                    var deliveries = (await this.sapDao.GetDeliveryByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
+                    var deliveries = (await this.sapDao.GetDeliveryByDocDateJoinDoctor(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
                     deliveries = deliveries.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return deliveries.Select(x => x.DocNum).Distinct().ToList();
 
                 case ServiceConstants.Invoice:
-                    var invoices = (await this.sapDao.GetInvoiceHeadersByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
+                    var invoices = (await this.sapDao.GetInvoiceHeadersByDocDateJoinDoctor(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
                     invoices = invoices.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return invoices.Select(x => x.DocNum).Distinct().ToList();
             }
@@ -704,6 +706,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 SalesOrder = deliverysToLookSaleOrder.DistinctBy(x => x.BaseEntry).Count(),
                 IsLookUpInvoices = true,
                 IsRefactura = false,
+                TypeOrder = invoiceHeader.TypeOrder,
             };
             invoicesHeaders.Add(invoiceHeaderLookUp);
             return invoicesHeaders;
@@ -760,6 +763,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             DataCheckin = initDate,
                             IsLookUpInvoices = false,
                             IsRefactura = !string.IsNullOrEmpty(invoiceHeader.Refactura) && invoiceHeader.Refactura == ServiceConstants.IsRefactura,
+                            TypeOrder = invoiceHeader.TypeOrder,
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
@@ -805,6 +809,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         SalesOrder = deliverys.DistinctBy(x => x.SaleOrder).Count(),
                         IsLookUpInvoices = true,
                         IsRefactura = !string.IsNullOrEmpty(invoiceHeaders.Refactura) && invoiceHeaders.Refactura == ServiceConstants.IsRefactura,
+                        TypeOrder = invoiceHeaders.TypeOrder,
                     };
                     invoicesHeaders.Add(invoiceHeaderLookUp);
                 }
