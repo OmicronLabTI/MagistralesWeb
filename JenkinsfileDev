@@ -60,7 +60,7 @@ pipeline {
     stage('ApiManager') {
       when {
         anyOf {
-          changeset "*apimanager/')/**"
+          changeset "*apimanager/**"
           expression { currentBuild.previousBuild.result != "SUCCESS" }
         }
       }
@@ -76,7 +76,7 @@ pipeline {
     stage('Oauth') {
       when {
         anyOf {
-          changeset "*oauthserver/')/**"
+          changeset "*oauthserver/**"
           expression { currentBuild.previousBuild.result != "SUCCESS" }
         }
       }
