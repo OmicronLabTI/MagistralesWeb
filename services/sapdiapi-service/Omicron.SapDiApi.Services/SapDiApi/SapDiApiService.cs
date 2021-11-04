@@ -89,9 +89,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
                     else
                     {
-                        company.GetNewObjectCode(out var fabOrderId);
-                        _loggerProxy.Info($"The order was created: {pedido.Order.PedidoId} - {fabOrderId} - {orf.CodigoProducto}");
-                        dictResult.Add(string.Format("{0}-{1}-{2}-{3}", pedido.Order.PedidoId, orf.CodigoProducto, count, fabOrderId), "Ok");
+                        _loggerProxy.Info($"The order was created: {pedido.Order.PedidoId} -  {orf.CodigoProducto}");
+                        dictResult.Add(string.Format("{0}-{1}-{2}", pedido.Order.PedidoId, orf.CodigoProducto, count), "Ok");
                     }
 
                     count++;
