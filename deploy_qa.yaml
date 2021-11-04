@@ -23,6 +23,8 @@ spec:
               value: America/Mexico_City
           ports:
             - containerPort: 80
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: v1
 kind: Service
@@ -66,6 +68,8 @@ spec:
               value: qa
           ports:
             - containerPort: 8000
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: v1
 kind: Service
@@ -109,6 +113,8 @@ spec:
               value: qa
           ports:
             - containerPort: 8090
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -137,6 +143,8 @@ spec:
               value: Staging
           ports:
             - containerPort: 9010
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -165,6 +173,8 @@ spec:
               value: Staging
           ports:
             - containerPort: 5101
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -200,6 +210,8 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 600
             timeoutSeconds: 40
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -228,6 +240,8 @@ spec:
               value: Staging
           ports:
             - containerPort: 5103
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -256,6 +270,8 @@ spec:
               value: Staging
           ports:
             - containerPort: 5104
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -284,6 +300,8 @@ spec:
               value: Staging
           ports:
             - containerPort: 5105
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -403,6 +421,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: v1
 kind: Service
