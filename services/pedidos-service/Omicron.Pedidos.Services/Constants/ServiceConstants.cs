@@ -771,6 +771,31 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrDeliveryRectyTop = "QrDeliveryRectyTop";
 
         /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string QrTopTextRemision = "\n{0}";
+
+        /// <summary>
+        /// Gets the delivery qr.
+        /// </summary>
+        public const string DeliveryQr = "QrDelivery";
+
+        /// <summary>
+        /// Gets the delivery qr.
+        /// </summary>
+        public const string LocalShip = "Local";
+
+        /// <summary>
+        /// Gets the delivery qr.
+        /// </summary>
+        public const string ForeignShip = "Foráneo";
+
+        /// <summary>
+        /// Gets the delivery qr.
+        /// </summary>
+        public const string LocalShipAbr = "L";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

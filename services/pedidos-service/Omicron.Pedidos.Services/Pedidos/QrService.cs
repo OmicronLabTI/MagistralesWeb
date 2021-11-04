@@ -86,7 +86,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         /// <inheritdoc/>
         public async Task<ResultModel> CreateRemisionQr(List<int> ordersId)
-        {
+         {
             var azureAccount = this.configuration[ServiceConstants.AzureAccountName];
             var azureKey = this.configuration[ServiceConstants.AzureAccountKey];
             var azureqrContainer = this.configuration[ServiceConstants.DeliveryQrContainer];
@@ -103,7 +103,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return ServiceUtils.CreateResult(true, 200, null, savedQrRoutes, null, null);
             }
 
-            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.MagistralQr);
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
             var saleOrders = (await this.pedidosDao.GetUserOrderByDeliveryId(ordersId)).ToList();
 
             if (!saleOrders.Any())
@@ -152,7 +152,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return ServiceUtils.CreateResult(true, 200, null, savedQrRoutes, null, null);
             }
 
-            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.MagistralQr);
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
             var saleOrders = await this.pedidosDao.GetUserOrdersByInvoiceId(invoiceIds);
 
             if (!saleOrders.Any())
@@ -261,7 +261,13 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
                 var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
 
-                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
+                if (!string.IsNullOrEmpty(modelQr.Ship))
+                {
+                    modelQr.Ship = modelQr.Ship == ServiceConstants.LocalShipAbr ? ServiceConstants.LocalShip : ServiceConstants.ForeignShip;
+                }
+
+                var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
 
                 memoryStrem.Flush();
