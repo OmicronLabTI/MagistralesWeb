@@ -70,6 +70,12 @@ namespace Omicron.Pedidos.Test.Services
                 new UserOrderModel { Id = 58, Productionorderid = "1057", Salesorderid = "10057", Status = "Proceso", Userid = "abcd" },
                 new UserOrderModel { Id = 59, Productionorderid = "1058", Salesorderid = "10057", Status = "Proceso", Userid = "abcd" },
 
+                new UserOrderModel { Id = 100, Productionorderid = null, Salesorderid = "86961", Status = "Finalizado", Userid = "abcd", DeliveryId = 0 },
+                new UserOrderModel { Id = 101, Productionorderid = "1064", Salesorderid = "86961", Status = "Almacenado", Userid = "abcd", DeliveryId = 0 },
+                new UserOrderModel { Id = 102, Productionorderid = "1065", Salesorderid = "86961", Status = "Proceso", Userid = "abcd", DeliveryId = 0 },
+                new UserOrderModel { Id = 103, Productionorderid = "1066", Salesorderid = "86961", Status = "Almacenado", Userid = "abcd", DeliveryId = 1 },
+                new UserOrderModel { Id = 104, Productionorderid = "1067", Salesorderid = "86961", Status = "Proceso", Userid = "abcd", DeliveryId = 0 },
+
                 new UserOrderModel { Id = 60, Productionorderid = "1060", Salesorderid = string.Empty, Status = "Finalizado", Userid = "abcd" },
 
                 new UserOrderModel { Id = 61, Productionorderid = null, Salesorderid = "10061", Status = "Proceso", Userid = "abcd" },
@@ -184,10 +190,12 @@ namespace Omicron.Pedidos.Test.Services
         [Test]
         [TestCase(1050)]
         [TestCase(1058)]
+        [TestCase(1065)]
         public async Task CancelFabricationOrders_AffectSingleOrder_SuccessResults(int orderId)
         {
             // arrange
-            this.cancelPedidosService = this.BuildService(this.GetOrderWithDetailModel(), "Ok");
+            this.cancelPedidosService = orderId == 1065 ? this.BuildService(new List<OrderWithDetailModel>(), "Ok") : this.BuildService(this.GetOrderWithDetailModel(), "Ok");
+
             var orderToUpdate = new List<OrderIdModel>
             {
                 new OrderIdModel { UserId = this.userId, OrderId = orderId },

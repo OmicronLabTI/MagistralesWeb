@@ -178,6 +178,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.StatusAlmacen,
                     x.InvoiceStoreDate,
                     x.StatusInvoice,
+                    x.UserInvoiceStored,
                 })
                 .ToList();
 
