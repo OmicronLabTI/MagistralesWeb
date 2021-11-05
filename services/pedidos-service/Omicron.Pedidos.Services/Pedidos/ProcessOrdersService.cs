@@ -68,7 +68,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var listToSend = await this.GetListToCreateFromOrders(pedidosId);
                 var dictResult = await this.CreateFabOrders(listToSend);
-                var listOrders = this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok], listToSend);
+                var listOrders = await this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok]);
 
                 var listPedidos = pedidosId.ListIds.Select(x => x.ToString()).ToList();
                 var dataBaseSaleOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(listPedidos)).ToList();
@@ -120,7 +120,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var objectToCreate = this.CreateOrderWithDetail(orders, ordersToCreate);
                 var dictResult = await this.CreateFabOrders(new List<OrderWithDetailModel> { objectToCreate });
 
-                var listOrders = this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok], new List<OrderWithDetailModel> { objectToCreate });
+                var listOrders = await this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok]);
                 var dataBaseOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { processByOrder.PedidoId.ToString() })).ToList();
                 var createUserModelOrders = this.CreateUserModelOrders(listOrders, ordersSap, processByOrder.UserId);
                 var dataToInsert = createUserModelOrders.Item1;
@@ -195,34 +195,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Gets the orders by dict with ok value id-itemCode.
         /// </summary>
-        /// <param name="ordersCreated">the list of values.</param>
+        /// <param name="listToLook">the list of values.</param>
         /// <returns>the data.</returns>
-        private List<FabricacionOrderModel> GetFabOrdersByIdCode(List<string> ordersCreated, List<OrderWithDetailModel> orderToCreate)
+        private async Task<List<FabricacionOrderModel>> GetFabOrdersByIdCode(List<string> listToLook)
         {
-            var listToReturn = new List<FabricacionOrderModel>();
-
-            ordersCreated.ForEach(o =>
-            {
-                var listResult = o.Split("-").ToList();
-                var saleId = listResult.FirstOrDefault() == null ? 0 : int.Parse(listResult.FirstOrDefault().ToString());
-                var productId = listResult[1].ToString();
-
-                var saleObjectFromReq = orderToCreate.FirstOrDefault(x => x.Order.PedidoId == saleId);
-                saleObjectFromReq ??= new OrderWithDetailModel { Detalle = new List<CompleteDetailOrderModel>(), Order = new OrderModel() };
-
-                var fabProcduct = saleObjectFromReq.Detalle.FirstOrDefault(x => x.CodigoProducto == productId);
-                fabProcduct ??= new CompleteDetailOrderModel { QtyPlannedDetalle = 0, QtyPlanned = 0 };
-
-                listToReturn.Add(new FabricacionOrderModel
-                {
-                    OrdenId = listResult.LastOrDefault() == null ? 0 : int.Parse(listResult.LastOrDefault().ToString()),
-                    PedidoId = saleId,
-                    Quantity = fabProcduct.QtyPlannedDetalle.Value,
-                    ProductoId = productId,
-                });
-            });
-
-            return listToReturn;
+            var prodOrders = await this.sapAdapter.PostSapAdapter(listToLook, ServiceConstants.GetProdOrderByOrderItem);
+            var listOrders = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(prodOrders.Response.ToString());
+            return listOrders;
         }
 
         /// <summary>

@@ -46,6 +46,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<List<OrderModel>> GetOrdersById(List<int> pedidoID);
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<List<OrderModel>> GetOrdersByIdJoinDoctor(List<int> pedidoID);
+
+        /// <summary>
         /// gets the details.
         /// </summary>
         /// <param name="pedidoId">PedidoID</param>
@@ -457,7 +463,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="initDate">the init date.</param>
         /// <param name="endDate">the end date.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<DeliverModel>> GetDeliveryByDocDate(DateTime initDate, DateTime endDate);
+        Task<IEnumerable<DeliverModel>> GetDeliveryByDocDateJoinDoctor(DateTime initDate, DateTime endDate);
 
         /// <summary>
         /// Gets the deliveries by date.
@@ -465,7 +471,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="initDate">the init date.</param>
         /// <param name="endDate">the end date.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocDate(DateTime initDate, DateTime endDate);
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocDateJoinDoctor(DateTime initDate, DateTime endDate);
 
         /// <summary>
         /// gets the invoice details by delivery id.
@@ -483,6 +489,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// Gets the order by init date.
         /// </summary>
-        Task<IEnumerable<OrderModel>> GetOrderModelByDocDate(DateTime initDate, DateTime endDate);
+        Task<IEnumerable<OrderModel>> GetOrderModelByDocDateJoinDoctor(DateTime initDate, DateTime endDate);
     }
 }

@@ -1,48 +1,60 @@
 ﻿// <summary>
-// <copyright file="RemisionQrModel.cs" company="Axity">
+// <copyright file="EmailGenericDto.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.Pedidos.Entities.Model
+namespace Omicron.Reporting.Dtos.Model
 {
     using System.Collections.Generic;
 
     /// <summary>
-    /// Model for the remision qr.
+    /// class for the complete order.
     /// </summary>
-    public class RemisionQrModel
+    public class EmailGenericDto
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int PedidoId { get; set; }
+        public string BodyEmail { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int RemisionId { get; set; }
+        public string Subject { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int TotalPieces { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public bool NeedsCooling { get; set; }
+        public string DestinityEmail { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string Ship { get; set; }
+        public string CopyEmails { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<byte[]> Atachments { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string AtachmentFormat { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string AtachmentName { get; set; }
     }
 }
