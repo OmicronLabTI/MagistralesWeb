@@ -237,7 +237,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   cancelOrders() {
     this.dataService.setCancelOrders({
-      list: this.getDataCancelFinalize(ConstStatus.finalizado),
+      list: this.getDataCancel(ConstStatus.finalizado),
       cancelType: MODAL_NAMES.placeOrdersDetail
     });
   }
@@ -267,6 +267,14 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.router.navigate([RouterPaths.materialRequest,
     this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString() || CONST_NUMBER.zero,
     CONST_NUMBER.zero]);
+  }
+  getDataCancel(status: string) {
+    return this.dataSource.data.filter
+      (t => (t.isChecked && (t.status !== status && t.status !== ConstStatus.almacenado))).map(order => {
+        const cancelOrder = new CancelOrderReq();
+        cancelOrder.orderId = order.ordenFabricacionId;
+        return cancelOrder;
+      });
   }
   getDataCancelFinalize(status: string, isFromFinalize: boolean = false) {
     return this.dataSource.data.filter
@@ -319,7 +327,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         .map(order => {
           const labelToFinish = new LabelToFinish();
           labelToFinish.orderId = order.ordenFabricacionId;
-          labelToFinish.checked = !isFromRemoveSignature;
+          labelToFinish.checked = false;
           return labelToFinish;
         });
     } else {
