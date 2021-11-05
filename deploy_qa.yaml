@@ -15,14 +15,16 @@ spec:
         app: web
     spec:
       containers:
-      - name: web
-        image: omicron-web-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        ports:
-        - containerPort: 80
+        - name: web
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-web-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: v1
 kind: Service
@@ -31,9 +33,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 8040
-    targetPort: 80
-    protocol: TCP
+    - port: 8040
+      targetPort: 80
+      protocol: TCP
   externalIPs:
     - 192.168.0.83
   selector:
@@ -56,16 +58,18 @@ spec:
         app: apimanager
     spec:
       containers:
-      - name: apimanager
-        image: omicron-apimanager-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: SPRING_PROFILES_ACTIVE
-          value: qa
-        ports:
-        - containerPort: 8000
+        - name: apimanager
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-apimanager-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: SPRING_PROFILES_ACTIVE
+              value: qa
+          ports:
+            - containerPort: 8000
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: v1
 kind: Service
@@ -74,9 +78,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 8000
-    targetPort: 8000
-    protocol: TCP
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
   externalIPs:
     - 192.168.0.83
   selector:
@@ -99,16 +103,18 @@ spec:
         app: oauthserver
     spec:
       containers:
-      - name: oauthserver
-        image: omicron-oauthserver-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: SPRING_PROFILES_ACTIVE
-          value: qa
-        ports:
-        - containerPort: 8090
+        - name: oauthserver
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-oauthserver-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: SPRING_PROFILES_ACTIVE
+              value: qa
+          ports:
+            - containerPort: 8090
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -127,16 +133,18 @@ spec:
         app: catalogos
     spec:
       containers:
-      - name: catalogos
-        image: omicron-catalogos-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Staging
-        ports:
-        - containerPort: 9010
+        - name: catalogos
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-catalogos-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Staging
+          ports:
+            - containerPort: 9010
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -155,16 +163,18 @@ spec:
         app: usuarios
     spec:
       containers:
-      - name: usuarios
-        image: omicron-usuarios-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Staging
-        ports:
-        - containerPort: 5101
+        - name: usuarios
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-usuarios-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Staging
+          ports:
+            - containerPort: 5101
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -183,23 +193,25 @@ spec:
         app: sapadapter
     spec:
       containers:
-      - name: sapadapter
-        image: omicron-sapadapter-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Staging
-        ports:
-        - containerPort: 5102
-        livenessProbe:
-          httpGet:
-            path: /hc
-            port: 5102
-          initialDelaySeconds: 30
-          periodSeconds: 600
-          timeoutSeconds: 40
+        - name: sapadapter
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-sapadapter-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Staging
+          ports:
+            - containerPort: 5102
+          livenessProbe:
+            httpGet:
+              path: /hc
+              port: 5102
+            initialDelaySeconds: 30
+            periodSeconds: 600
+            timeoutSeconds: 40
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -218,16 +230,18 @@ spec:
         app: pedidos
     spec:
       containers:
-      - name: pedidos
-        image: omicron-pedidos-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Staging
-        ports:
-        - containerPort: 5103
+        - name: pedidos
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-pedidos-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Staging
+          ports:
+            - containerPort: 5103
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -246,16 +260,18 @@ spec:
         app: warehouses
     spec:
       containers:
-      - name: warehouses
-        image: omicron-warehouses-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Staging
-        ports:
-        - containerPort: 5104
+        - name: warehouses
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-warehouses-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Staging
+          ports:
+            - containerPort: 5104
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -274,16 +290,18 @@ spec:
         app: reporting
     spec:
       containers:
-      - name: reporting
-        image: omicron-reporting-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Staging
-        ports:
-        - containerPort: 5105
+        - name: reporting
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-reporting-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Staging
+          ports:
+            - containerPort: 5105
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -302,20 +320,20 @@ spec:
         app: seqlog
     spec:
       containers:
-      - name: seqlog
-        image: datalust/seq:latest
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Staging
-        - name: ACCEPT_EULA
-          value: "Y"
-        ports:
-        - containerPort: 80
-          name: intra
-        - containerPort: 5341
-          name: extra
+        - name: seqlog
+          image: datalust/seq:latest
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Staging
+            - name: ACCEPT_EULA
+              value: "Y"
+          ports:
+            - containerPort: 80
+              name: intra
+            - containerPort: 5341
+              name: extra
 ---
 apiVersion: v1
 kind: Service
@@ -326,14 +344,14 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - name: default
-    port: 81
-    targetPort: 80
-    protocol: TCP
-  - name: alt
-    port: 5341
-    targetPort: 5341
-    protocol: TCP
+    - name: default
+      port: 81
+      targetPort: 80
+      protocol: TCP
+    - name: alt
+      port: 5341
+      targetPort: 5341
+      protocol: TCP
   externalIPs:
     - 192.168.0.83
   selector:
@@ -356,10 +374,10 @@ spec:
         app: redisdata
     spec:
       containers:
-      - name: redisdata
-        image: redis:alpine
-        ports:
-        - containerPort: 6379
+        - name: redisdata
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
 ---
 apiVersion: v1
 kind: Service
@@ -370,9 +388,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 6379
-    targetPort: 6379
-    protocol: TCP
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
   externalIPs:
     - 192.168.0.83
   selector:
@@ -395,14 +413,16 @@ spec:
         app: kafkaconsumer
     spec:
       containers:
-      - name: kafkaconsumer
-        image: omicron-kafkaconsumer-repository
-        imagePullPolicy: IfNotPresent
-        env:
-        - name: TZ
-          value: America/Mexico_City
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Staging
+        - name: kafkaconsumer
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-kafkaconsumer-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Staging
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: v1
 kind: Service
@@ -436,7 +456,7 @@ spec:
       name: kafka-port
       protocol: TCP
   externalIPs:
-    - 192.168.0.83 
+    - 192.168.0.83
   selector:
     app: kafka
     id: "0"
