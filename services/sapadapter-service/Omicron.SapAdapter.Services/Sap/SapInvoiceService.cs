@@ -120,7 +120,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserSalesOrder, listSaleOrder);
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, listSaleOrder);
 
-            var invoiceId = deliveryDetails.FirstOrDefault() == null ? 0 : deliveryDetails.FirstOrDefault().InvoiceId.Value;
+            var invoiceId = deliveryDetails.FirstOrDefault() == null || !deliveryDetails.FirstOrDefault().InvoiceId.HasValue ? 0 : deliveryDetails.FirstOrDefault().InvoiceId.Value;
 
             var invoiceHeader = (await this.sapDao.GetInvoiceHeaderByInvoiceId(new List<int> { invoiceId })).FirstOrDefault();
             invoiceHeader = invoiceHeader == null ? new InvoiceHeaderModel() : invoiceHeader;
