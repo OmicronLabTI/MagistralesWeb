@@ -267,7 +267,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
 
                 var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
-                parameters.IsBoldFont = false;
+                parameters.IsBoldFont = true;
                 bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
 
