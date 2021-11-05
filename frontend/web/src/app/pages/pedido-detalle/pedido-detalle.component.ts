@@ -327,7 +327,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         .map(order => {
           const labelToFinish = new LabelToFinish();
           labelToFinish.orderId = order.ordenFabricacionId;
-          labelToFinish.checked = false;
+          labelToFinish.checked = !isFromRemoveSignature;
           return labelToFinish;
         });
     } else {
