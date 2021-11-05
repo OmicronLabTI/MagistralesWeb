@@ -86,7 +86,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         /// <inheritdoc/>
         public async Task<ResultModel> CreateRemisionQr(List<int> ordersId)
-         {
+        {
             var azureAccount = this.configuration[ServiceConstants.AzureAccountName];
             var azureKey = this.configuration[ServiceConstants.AzureAccountKey];
             var azureqrContainer = this.configuration[ServiceConstants.DeliveryQrContainer];
@@ -221,7 +221,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
                 var topText = string.Format(ServiceConstants.QrTopTextOrden, modelQr.SaleOrder, modelQr.ItemCode);
-
+                parameters.IsBoldFont = false;
                 bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");
                 var memoryStrem = new MemoryStream();
@@ -267,6 +267,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
 
                 var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
+                parameters.IsBoldFont = false;
                 bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
 
@@ -307,7 +308,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
                 var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
-
+                parameters.IsBoldFont = true;
                 bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
 
@@ -377,11 +378,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             graphic.SmoothingMode = SmoothingMode.AntiAlias;
             graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            this.DrawRectangleText(graphic, parameters.QrRectx, parameters.QrRecty, parameters.QrRectWidth, parameters.QrRectHeight, bottomText, new Font(ServiceConstants.QrTextFontType, parameters.QrBottomTextSize));
+            var fontStyle = parameters.IsBoldFont ? new Font(ServiceConstants.QrTextFontType, parameters.QrBottomTextSize, FontStyle.Bold) : new Font(ServiceConstants.QrTextFontType, parameters.QrBottomTextSize);
+            this.DrawRectangleText(graphic, parameters.QrRectx, parameters.QrRecty, parameters.QrRectWidth, parameters.QrRectHeight, bottomText, fontStyle);
 
             if (!string.IsNullOrEmpty(topText))
             {
-                this.CreateQrTopText(graphic, parameters, topText);
+                this.CreateQrTopText(graphic, parameters, topText, fontStyle);
             }
 
             graphic.Flush();
@@ -410,9 +412,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="graphic">Graph where the rectangle will be draw.</param>
         /// <param name="parameters">Parameters.</param>
         /// <param name="topText">Top text to draw.</param>
-        private void CreateQrTopText(Graphics graphic, QrDimensionsModel parameters, string topText)
+        /// <param name="fontStyle">Font Style.</param>
+        private void CreateQrTopText(Graphics graphic, QrDimensionsModel parameters, string topText, Font fontStyle)
         {
-            this.DrawRectangleText(graphic, parameters.QrRectxTop, parameters.QrRectyTop, parameters.QrRectWidth, parameters.QrRectHeight, topText, new Font(ServiceConstants.QrTextFontType, parameters.QrBottomTextSize));
+            this.DrawRectangleText(graphic, parameters.QrRectxTop, parameters.QrRectyTop, parameters.QrRectWidth, parameters.QrRectHeight, topText, fontStyle);
         }
 
         private QrDimensionsModel GetMagistralParameters(List<ParametersModel> parameters)
