@@ -385,6 +385,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var familyOrders = productionOrders.Where(y => !productionordersId.Contains(y.Productionorderid)).ToList();
                 salesOrder.FinishedLabel = familyOrders.Any() && familyOrders.All(x => x.FinishedLabel == 1) ? 1 : 0;
 
+                if (ServiceConstants.ValidStatusToFillFinalizedate.Contains(salesOrder.Status))
+                {
+                    salesOrder.CloseDate = DateTime.Now;
+                    salesOrder.CloseUserId = userId;
+                }
+
                 if (salesOrder.Status.Equals(ServiceConstants.Finalizado))
                 {
                     saleOrdersFinalized.Add(int.Parse(salesOrder.Salesorderid));
