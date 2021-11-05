@@ -377,9 +377,13 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var salesOrder = relatedOrders.First(x => x.IsSalesOrder);
                 var sapMissingOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, sapAdapter);
                 var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).ToList();
+                var productionordersId = cancelledProductionOrders.Select(x => x.Productionorderid).ToList();
 
                 var previousStatus = salesOrder.Status;
-                salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders, productionOrders, cancelledProductionOrders.Select(x => x.Productionorderid).ToList());
+                salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders, productionOrders, productionordersId);
+
+                var familyOrders = productionOrders.Where(y => !productionordersId.Contains(y.Productionorderid)).ToList();
+                salesOrder.FinishedLabel = familyOrders.Any() && familyOrders.All(x => x.FinishedLabel == 1) ? 1 : 0;
 
                 if (salesOrder.Status.Equals(ServiceConstants.Finalizado))
                 {
