@@ -687,6 +687,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listSales = products.Select(x => x.SaleOrderId).Distinct().ToList();
             var listIds = string.Join(", ", listSales);
+            listIds = listSales.Count > 1 ? listIds.Remove(listIds.Length - 2, 2).ToString() : listIds;
 
             var deliveryData = new DeliveryScannedModel
             {
@@ -698,7 +699,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Products = products,
                 TotalItems = products.Count,
                 Status = products.Any() && products.All(x => x.Status.Equals(ServiceConstants.Empaquetado)) ? ServiceConstants.Empaquetado : ServiceConstants.Almacenado,
-                ListSalesOrder = listIds.Length > 0 ? listIds.Remove(listIds.Length - 2, 2).ToString() : string.Empty,
+                ListSalesOrder = !string.IsNullOrEmpty(listIds) ? listIds : string.Empty,
             };
 
             return deliveryData;
