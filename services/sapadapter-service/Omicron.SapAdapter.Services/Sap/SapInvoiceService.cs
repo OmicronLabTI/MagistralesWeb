@@ -558,8 +558,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var item = items.FirstOrDefault(x => x.ProductoId == invoice.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                // localDeliverDetails = deliveryDetails.Where(x => !usedDeliveries.Any(y => y.ProductoId == x.ProductoId && x.BaseEntry == y.BaseEntry)).ToList();
-                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value && x.ProductoId == invoice.ProductoId);
+                var localDeliverDetails = deliveryDetails.Where(x => !usedDeliveries.Any(y => y.ProductoId == x.ProductoId && x.BaseEntry == y.BaseEntry)).ToList();
+                var deliveriesDetail = localDeliverDetails.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value && x.ProductoId == invoice.ProductoId);
                 var saleId = deliveriesDetail == null ? 0 : deliveriesDetail.BaseEntry;
                 var prodId = deliveriesDetail == null ? string.Empty : deliveriesDetail.ProductoId;
 
@@ -686,8 +686,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var products = await this.GetProductModels(invoices, deliveries, userOrders, lineProducts, orders, incidents);
 
             var listSales = products.Select(x => x.SaleOrderId).Distinct().ToList();
-            var listIds = string.Join(", ", listSales);
-            listIds = listSales.Count > 1 ? listIds.Remove(listIds.Length - 2, 2).ToString() : listIds;
 
             var deliveryData = new DeliveryScannedModel
             {
@@ -699,7 +697,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Products = products,
                 TotalItems = products.Count,
                 Status = products.Any() && products.All(x => x.Status.Equals(ServiceConstants.Empaquetado)) ? ServiceConstants.Empaquetado : ServiceConstants.Almacenado,
-                ListSalesOrder = !string.IsNullOrEmpty(listIds) ? listIds : string.Empty,
+                ListSalesOrder = string.Join(", ", listSales),
             };
 
             return deliveryData;
