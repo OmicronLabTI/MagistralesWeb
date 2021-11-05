@@ -180,6 +180,14 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string SaleOrder { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        [NotMapped]
+        public int TotalSaleOrder { get; set; }
+
+        /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
