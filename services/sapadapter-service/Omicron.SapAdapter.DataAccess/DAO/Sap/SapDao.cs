@@ -1223,6 +1223,26 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<InvoiceDetailModel>(this.databaseContext.InvoiceDetailModel.Where(x => x.BaseEntry != null && baseEntry.Contains(x.BaseEntry.Value)));
         }
 
+        public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntryJoinProduct(List<int> baseEntry)
+        {
+            var query = from invoicedet in this.databaseContext.InvoiceDetailModel.Where(x => x.BaseEntry != null && baseEntry.Contains(x.BaseEntry.Value))
+                        join product in this.databaseContext.ProductoModel on invoicedet.ProductoId equals product.ProductoId
+                        where product.IsWorkableProduct == "Y"
+                        select new InvoiceDetailModel
+                        {
+                            BaseEntry = invoicedet.BaseEntry,
+                            Container = invoicedet.Container,
+                            Description = invoicedet.Description,
+                            DocDate = invoicedet.DocDate,
+                            InvoiceId = invoicedet.InvoiceId,
+                            LineNum = invoicedet.LineNum,
+                            ProductoId = invoicedet.ProductoId,
+                            Quantity = invoicedet.Quantity,
+                        };
+
+            return await this.RetryQuery<InvoiceDetailModel>(query);
+        }
+
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByIds(List<int> ids)
         {
