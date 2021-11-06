@@ -481,6 +481,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntry(List<int> baseEntry);
 
         /// <summary>
+        /// gets the invoice details by delivery id.
+        /// </summary>
+        /// <param name="baseEntry">the base entry.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntryJoinProduct(List<int> baseEntry);
+
+        /// <summary>
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
