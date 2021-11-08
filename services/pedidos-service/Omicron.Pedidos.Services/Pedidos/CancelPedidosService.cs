@@ -424,7 +424,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var minValue = userOrders.OrderBy(x => x.StatusOrder).FirstOrDefault();
             var status = ((StatusEnum)minValue.StatusOrder).ToString();
 
-            if (minValue.Status == ServiceConstants.Almacenado)
+            if (minValue.Status == ServiceConstants.Almacenado || status == ServiceConstants.Almacenado)
             {
                 var familyOrders = userOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid) && !ordersToCancel.Contains(y.Productionorderid)).ToList();
                 var areAllDelivered = familyOrders.All(x => x.Status == ServiceConstants.Almacenado && x.DeliveryId != 0);
