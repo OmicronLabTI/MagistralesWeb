@@ -340,7 +340,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 productType = saporders.Any(x => x.Detalles != null && paramentsCards.ProductModel.Any(p => p.ProductoId == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
                 comments.Append($"{userOrder.Comments}&");
-                hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status, order);
+                hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status, order, userOrder);
             }
 
             var hasDeliveries = paramentsCards.DeliveryDetails.Where(x => x.BaseEntry == tuple.Item1).Select(x => x.DeliveryId).ToList();
@@ -389,9 +389,15 @@ namespace Omicron.SapAdapter.Services.Sap
             return new List<AlmacenSalesHeaderModel> { saleHeader };
         }
 
-        private bool CalulateIfSaleOrderIsCandidate(List<UserOrderModel> userOrders, string statusOrder, CompleteOrderModel order)
+        private bool CalulateIfSaleOrderIsCandidate(List<UserOrderModel> userOrders, string statusOrder, CompleteOrderModel order, UserOrderModel saleOrder)
         {
             var hasCandidate = false;
+
+            if (!string.IsNullOrEmpty(saleOrder.StatusAlmacen) && saleOrder.StatusAlmacen == ServiceConstants.BackOrder)
+            {
+                return true;
+            }
+
             if (statusOrder == ServiceConstants.Finalizado)
             {
                 var localOrders = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado).ToList();
