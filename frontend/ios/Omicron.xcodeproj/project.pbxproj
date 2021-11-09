@@ -116,7 +116,6 @@
 		490B69C0268E98ED00DBE9F1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98015CBA24AFBC6D00E7772F /* LaunchScreen.storyboard */; };
 		490B69C1268E98ED00DBE9F1 /* CardCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7CBA553B24CF8E9B00918C38 /* CardCollectionViewCell.xib */; };
 		490B69C2268E98ED00DBE9F1 /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C3074B324D4899F00FF2E0E /* SF-Pro-Display-Bold.otf */; };
-		490B69C3268E98ED00DBE9F1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49E4D85E25F1542700E196F9 /* GoogleService-Info.plist */; };
 		490B69C4268E98ED00DBE9F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98015CB824AFBC6D00E7772F /* Assets.xcassets */; };
 		490B69C5268E98ED00DBE9F1 /* workload.json in Resources */ = {isa = PBXBuildFile; fileRef = 1EF0321D251931B30040DC65 /* workload.json */; };
 		490B69C6268E98ED00DBE9F1 /* loading.json in Resources */ = {isa = PBXBuildFile; fileRef = 98532B2E24B390A80015BBC6 /* loading.json */; };
@@ -143,6 +142,7 @@
 		4930B44B25E06FE300F1F4F8 /* GetMostCommonComponnets.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */; };
 		4930B45225E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */; };
 		4930D96C25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */; };
+		494EA4FA273A67840077BB5B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 494EA4F9273A67840077BB5B /* GoogleService-Info.plist */; };
 		4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
 		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
 		49928125272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
@@ -495,6 +495,7 @@
 		4930B44A25E06FE300F1F4F8 /* GetMostCommonComponnets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = GetMostCommonComponnets.json; sourceTree = "<group>"; };
 		4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostCommonComponentsTableViewCell.swift; sourceTree = "<group>"; };
 		4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FinishOrdersErrorResponse.json; sourceTree = "<group>"; };
+		494EA4F9273A67840077BB5B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
 		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
 		49928124272A3F21001962D4 /* Omicron-UAT.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Omicron-UAT.plist"; sourceTree = "<group>"; };
@@ -684,6 +685,24 @@
 			path = Container;
 			sourceTree = "<group>";
 		};
+		494EA4F1273A66920077BB5B /* GoogleServices */ = {
+			isa = PBXGroup;
+			children = (
+				49E4D86925F154AF00E196F9 /* Prod */,
+				494EA4F2273A66CD0077BB5B /* UAT */,
+				49E4D86825F1549500E196F9 /* QA */,
+			);
+			path = GoogleServices;
+			sourceTree = "<group>";
+		};
+		494EA4F2273A66CD0077BB5B /* UAT */ = {
+			isa = PBXGroup;
+			children = (
+				494EA4F9273A67840077BB5B /* GoogleService-Info.plist */,
+			);
+			path = UAT;
+			sourceTree = "<group>";
+		};
 		4989CC8F25ED900200257CA2 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -828,20 +847,20 @@
 			path = PDF;
 			sourceTree = "<group>";
 		};
-		49E4D86825F1549500E196F9 /* GoogleServicesQA */ = {
+		49E4D86825F1549500E196F9 /* QA */ = {
 			isa = PBXGroup;
 			children = (
 				49E4D85E25F1542700E196F9 /* GoogleService-Info.plist */,
 			);
-			path = GoogleServicesQA;
+			path = QA;
 			sourceTree = "<group>";
 		};
-		49E4D86925F154AF00E196F9 /* GoogleServicesProd */ = {
+		49E4D86925F154AF00E196F9 /* Prod */ = {
 			isa = PBXGroup;
 			children = (
 				49E4D86A25F154BA00E196F9 /* GoogleService-Info.plist */,
 			);
-			path = GoogleServicesProd;
+			path = Prod;
 			sourceTree = "<group>";
 		};
 		71F4FDF4DE06818D4C96C7A4 /* Pods */ = {
@@ -1025,8 +1044,7 @@
 				98A0E610271E142A00950AD2 /* Omicron-DEV.plist */,
 				49928124272A3F21001962D4 /* Omicron-UAT.plist */,
 				98A0E60F271E142A00950AD2 /* Omicron-QA.plist */,
-				49E4D86825F1549500E196F9 /* GoogleServicesQA */,
-				49E4D86925F154AF00E196F9 /* GoogleServicesProd */,
+				494EA4F1273A66920077BB5B /* GoogleServices */,
 			);
 			path = Omicron;
 			sourceTree = "<group>";
@@ -1377,7 +1395,6 @@
 				490B69C0268E98ED00DBE9F1 /* LaunchScreen.storyboard in Resources */,
 				490B69C1268E98ED00DBE9F1 /* CardCollectionViewCell.xib in Resources */,
 				490B69C2268E98ED00DBE9F1 /* SF-Pro-Display-Bold.otf in Resources */,
-				490B69C3268E98ED00DBE9F1 /* GoogleService-Info.plist in Resources */,
 				490B69C4268E98ED00DBE9F1 /* Assets.xcassets in Resources */,
 				490B69C5268E98ED00DBE9F1 /* workload.json in Resources */,
 				490B69C6268E98ED00DBE9F1 /* loading.json in Resources */,
@@ -1398,6 +1415,7 @@
 				490B69D4268E98ED00DBE9F1 /* Main.storyboard in Resources */,
 				490B69D5268E98ED00DBE9F1 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				490B69D6268E98ED00DBE9F1 /* FinishOrdersErrorResponse.json in Resources */,
+				494EA4FA273A67840077BB5B /* GoogleService-Info.plist in Resources */,
 				490B69D7268E98ED00DBE9F1 /* assingBatchesResponse.json in Resources */,
 				490B69D8268E98ED00DBE9F1 /* refresh_token.json in Resources */,
 				490B69D9268E98ED00DBE9F1 /* GetMostCommonComponnets.json in Resources */,
@@ -1685,7 +1703,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
+			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n\"${PODS_ROOT}/FirebaseCrashlytics/upload-symbols\" -gsp \"${PROJECT_DIR}/Omicron/GoogleServices/UAT/GoogleService-Info.plist\" -p ios \"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\"\n";
 		};
 		49CF65B625F2D4AB002CD598 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1819,7 +1837,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
+			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n\"${PODS_ROOT}/FirebaseCrashlytics/upload-symbols\" -gsp \"${PROJECT_DIR}/Omicron/GoogleServices/QA/GoogleService-Info.plist\" -p ios \"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\"\n";
 		};
 		49E4D83425F1482300E196F9 /* Crashlytics */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1839,7 +1857,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
+			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n\"${PODS_ROOT}/FirebaseCrashlytics/upload-symbols\" -gsp \"${PROJECT_DIR}/Omicron/GoogleServices/Prod/GoogleService-Info.plist\" -p ios \"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\"\n";
 		};
 		9857F97825278D180098FC74 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2326,7 +2344,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1.1.5;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2376,7 +2394,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 25;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
@@ -2450,7 +2468,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2475,7 +2493,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2525,6 +2543,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2597,7 +2616,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 25;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
@@ -2623,6 +2642,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 25;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
@@ -2708,7 +2728,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1.1.5;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2946,7 +2966,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1.1.5;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
