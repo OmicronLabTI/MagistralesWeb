@@ -12,8 +12,12 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
 
     /// <summary>
@@ -252,6 +256,17 @@ namespace Omicron.SapAdapter.Services.Utils
             index = index == -1 ? listIds.Count - 1 : index;
             index = index == listIds.Count ? 0 : index;
             return index;
+        }
+
+        /// <summary>
+        /// Gets the local neigbors.
+        /// </summary>
+        /// <param name="catalogService">the catalog service.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<string>> GetLocalNeighbors(ICatalogsService catalogService)
+        {
+            var localNeigBorsResponse = await catalogService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.LocalNeighborhood}={ServiceConstants.LocalNeighborhood}");
+            return JsonConvert.DeserializeObject<List<ParametersModel>>(localNeigBorsResponse.Response.ToString()).Select(x => x.Value).ToList();
         }
 
         /// <summary>

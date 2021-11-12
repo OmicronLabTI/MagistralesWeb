@@ -359,8 +359,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, salesIds);
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
-            var localNeigBorsResponse = await this.catalogsService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.LocalNeighborhood}={ServiceConstants.LocalNeighborhood}");
-            var localNeigbors = JsonConvert.DeserializeObject<List<ParametersModel>>(localNeigBorsResponse.Response.ToString()).Select(x => x.Value).ToList();
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
 
             var productsIds = sapOrders.Where(x => salesIds.Contains(x.DocNum)).Select(y => y.Detalles.ProductoId).Distinct().ToList();
             var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
