@@ -18,6 +18,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Utils;
@@ -33,6 +34,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IAlmacenService almacenService;
 
+        private readonly ICatalogsService catalogsService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AlmacenOrderDoctorService"/> class.
         /// </summary>
@@ -40,11 +43,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="pedidosService">the pedidos service.</param>
         /// <param name="almacenService">The almacen service.</param>
         /// <param name="catalogsService">The catalog service.</param>
-        public AlmacenOrderDoctorService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService)
+        public AlmacenOrderDoctorService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
-            this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
+            this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
+            this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
         }
 
         /// <inheritdoc/>
@@ -214,13 +218,15 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             var productsModel = (await this.sapDao.GetAllLineProducts()).ToList();
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
+
             foreach (var doctor in doctors)
             {
                 var orders = sapOrders.Where(x => x.Medico == doctor).ToList();
                 var totalOrders = orders.DistinctBy(x => x.DocNum).Count();
                 var totalItems = orders.DistinctBy(y => new { y.DocNum, y.Detalles.ProductoId }).Count();
                 var totalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
-                var doctorAddress = sapOrders.Where(x => x.Medico == doctor).FirstOrDefault();
+                var doctorAddress = sapOrders.FirstOrDefault(x => x.Medico == doctor);
                 doctorAddress ??= new CompleteAlmacenOrderModel();
                 var address = string.IsNullOrEmpty(doctorAddress.Address) ? string.Empty : doctorAddress.Address.Replace("\r", " ").Replace("  ", " ").ToUpper();
 
@@ -240,7 +246,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = totalPieces,
                 };
 
-                var listOrders = this.GetTotalOrdersByDoctor(orders, productsModel, userOrders);
+                var listOrders = this.GetTotalOrdersByDoctor(orders, productsModel, userOrders, localNeigbors);
 
                 var saleModel = new SalesByDoctorModel
                 {
@@ -255,7 +261,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
-        private List<OrderListByDoctorModel> GetTotalOrdersByDoctor(List<CompleteAlmacenOrderModel> sapOrders, List<ProductoModel> productsModel, List<UserOrderModel> userOrders)
+        private List<OrderListByDoctorModel> GetTotalOrdersByDoctor(List<CompleteAlmacenOrderModel> sapOrders, List<ProductoModel> productsModel, List<UserOrderModel> userOrders, List<string> localNeighbors)
         {
             var listOrders = new List<OrderListByDoctorModel>();
             var salesIds = sapOrders.Select(x => x.DocNum).Distinct().OrderByDescending(x => x);
@@ -272,7 +278,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 productType = orders.All(x => x.Detalles != null && productsModel.Select(p => p.ProductoId).Contains(x.Detalles.ProductoId)) ? ServiceConstants.Linea : productType;
 
                 order.Address = string.IsNullOrEmpty(order.Address) ? string.Empty : order.Address;
-                var invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
+                var orderType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, order.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo;
 
                 var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid.Equals(so.ToString()) && string.IsNullOrEmpty(x.Productionorderid));
                 var comments = userOrder == null ? string.Empty : userOrder.Comments;
@@ -285,7 +291,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalItems = totalItems,
                     TotalPieces = totalpieces,
                     TypeSaleOrder = $"Pedido {productType}",
-                    InvoiceType = invoiceType,
+                    InvoiceType = orderType,
                     Comments = comments,
                     OrderType = order.TypeOrder,
                 };

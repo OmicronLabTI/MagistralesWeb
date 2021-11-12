@@ -446,6 +446,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string SentMaxDays = "AlmacenMaxDayToLook";
 
         /// <summary>
+        /// the max days.
+        /// </summary>
+        public const string LocalNeighborhood = "LocalNeighborhood";
+
+        /// <summary>
         /// error when batche are missing.
         /// </summary>
         public const string Pedido = "ped";
