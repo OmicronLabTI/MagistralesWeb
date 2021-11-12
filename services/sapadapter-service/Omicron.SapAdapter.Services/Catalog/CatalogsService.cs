@@ -53,7 +53,7 @@ namespace Omicron.SapAdapter.Services.Catalog
 
                 if ((int)response.StatusCode >= 300)
                 {
-                    this.logger.Information($"Error peticion sapadapter {jsonString}");
+                    this.logger.Information($"Error peticion catalogs {jsonString}");
                     throw new CustomServiceException(jsonString);
                 }
 

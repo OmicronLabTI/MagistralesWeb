@@ -64,9 +64,9 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacenService = new Mock<IAlmacenService>();
-
+            var mockCatalogs = new Mock<ICatalogsService>();
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object);
+            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var parameters = new List<ParametersModel>
             {
-                new ParametersModel { Value = "10" },
+                new ParametersModel { Value = "Apodaca" },
             };
 
             var parametersResponse = this.GetResultModel(parameters);
@@ -106,7 +106,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Limit, "10" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -128,7 +128,7 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var parameters = new List<ParametersModel>
             {
-                new ParametersModel { Value = "10" },
+                new ParametersModel { Value = "Apodaca" },
             };
 
             var parametersResponse = this.GetResultModel(parameters);
@@ -156,7 +156,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { "chips", chip },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -203,7 +203,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()}" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
