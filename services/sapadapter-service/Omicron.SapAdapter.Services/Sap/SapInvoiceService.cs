@@ -20,6 +20,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Utils;
@@ -35,17 +36,21 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IAlmacenService almacenService;
 
+        private readonly ICatalogsService catalogsService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapInvoiceService"/> class.
         /// </summary>
         /// <param name="sapDao">the sap dao.</param>
         /// <param name="pedidosService">the pedidos service.</param>
         /// <param name="almacenService">The almacen service.</param>
-        public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService)
+        /// <param name="catalogsService">The catalog service.</param>
+        public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
-            this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
+            this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
+            this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
         }
 
         /// <inheritdoc/>
@@ -77,6 +82,8 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeaders = invoiceHeaders.OrderByDescending(x => x.InvoiceId).ToList();
             invoiceDetails = invoiceDetails.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
 
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
+
             var retrieveMode = new RetrieveInvoiceModel
             {
                 DeliveryDetailModel = deliveryDetails,
@@ -84,6 +91,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 InvoiceHeader = invoiceHeaders,
                 LineProducts = lineProducts,
                 UserOrders = userOrders,
+                LocalNeigbors = localNeigbors,
             };
 
             var dataToReturn = this.GetInvoiceToReturn(retrieveMode);
@@ -202,7 +210,11 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetInvoiceHeader(InvoicePackageSapLookModel dataToLook)
         {
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(dataToLook.InvoiceDocNums)).ToList();
-            invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ? invoiceHeader.Where(x => x.Address.Contains(ServiceConstants.NuevoLeon) || dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList() : invoiceHeader.Where(x => !x.Address.Contains(ServiceConstants.NuevoLeon) && !dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList();
+            var localNeighbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
+
+            invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ?
+                invoiceHeader.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, x.Address) || dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList() :
+                invoiceHeader.Where(x => !ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, x.Address) && !dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList();
 
             var dictParams = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(dataToLook.Chip))
@@ -470,8 +482,6 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeOrder = invoice.TypeOrder,
                 };
 
-                var destiny = invoice.Address.Split(",");
-
                 var invoiceHeader = new InvoiceSaleHeaderModel
                 {
                     Address = invoice.Address.Replace("\r", string.Empty).ToUpper(),
@@ -480,7 +490,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Invoice = invoice.DocNum,
                     DocEntry = invoice.InvoiceId,
                     InvoiceDocDate = invoice.FechaInicio,
-                    ProductType = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                    ProductType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, retrieveModel.LocalNeigbors, invoice.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                     TotalDeliveries = 0,
                     TotalProducts = totalProducts,
                     Comments = invoice.Comments,

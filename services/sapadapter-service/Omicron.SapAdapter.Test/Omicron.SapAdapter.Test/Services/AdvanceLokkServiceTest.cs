@@ -141,7 +141,6 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.AreEqual(cards.CardInvoice.Count, invoices);
             Assert.AreEqual(cards.CardDelivery.Count, deliverys);
             Assert.AreEqual(cards.CardDistribution.Count, distribution);
-            Assert.AreEqual(cards.CardOrder.Count, orders);
         }
 
         /// <summary>

@@ -47,5 +47,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public List<DeliveryDetailModel> DeliveryDetailModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<string> LocalNeigbors { get; set; }
     }
 }
