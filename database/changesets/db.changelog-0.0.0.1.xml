@@ -884,4 +884,16 @@
 		<column name="field" value="LocalNeighborhood"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.94">
+	<insert tableName="parameters"> 
+		<column name="value" value="San Nicolas de los Garza"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="San Pedro Garza Garcia"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 
