@@ -847,4 +847,41 @@
           UPDATE parameters SET field = 'QrDeliveryBottomTextSize' WHERE field = 'QrMagistralBottomTextSizeDelivery';
       </sql>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.93">
+	<insert tableName="parameters"> 
+		<column name="value" value="Apodaca"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="Guadalupe"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="Monterrey"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="San Nicolás de los Garza"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="San Pedro Garza García"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="Santa Catarina"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="General Escobedo"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 
