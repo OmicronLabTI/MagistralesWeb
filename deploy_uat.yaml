@@ -153,10 +153,10 @@ spec:
             - containerPort: 5101
           resources:
             limits:
-              cpu: 16m
+              cpu: 64m
               memory: 64Mi
             requests:
-              cpu: 8m
+              cpu: 32m
               memory: 32Mi
       imagePullSecrets:
         - name: pullsecret
