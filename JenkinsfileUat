@@ -231,8 +231,7 @@ pipeline {
       steps {
         dir('database/') {
           sh '/opt/liquibase/liquibase --version'
-          sh 'sed -i "s/192.168.0.101:5432/192.168.0.83:5432/g" liquibase.properties'
-          sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
+          sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-uat.properties" update'
           echo 'Applying Db changes'
         }
       }
@@ -297,7 +296,7 @@ def SlackMsg(String buildResult) {
 }
 
 def DockerBuildAndPush(entity) {
-  docker.withRegistry("http://${ACR}", "nexus_omicron") {
+  docker.withRegistry("https://${ACR}", "omicronacr") {
     docker.build("${ACR}/${COMPANY_LOWERCASE}-${entity}-repository-${REPOSITORY}:latest:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${ACR}/${COMPANY_LOWERCASE}-${entity}-repository-${REPOSITORY}:latest .")
     sh "docker tag ${ACR}/${COMPANY_LOWERCASE}-${entity}-repository-${REPOSITORY}:latest ${ACR}/${COMPANY_LOWERCASE}-${entity}-repository-${REPOSITORY}:0.0.${env.BUILD_NUMBER}"
     docker.image("${ACR}/${COMPANY_LOWERCASE}-${entity}-repository-${REPOSITORY}:0.0.${env.BUILD_NUMBER}").push()
