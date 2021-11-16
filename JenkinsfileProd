@@ -216,14 +216,14 @@ pipeline {
       steps {
         echo 'Running Kubernetes down'
         sh 'kubectl config use-context omicron-aks'
-        sh 'sudo kubectl delete -f deploy_uat.yaml --grace-period=0 --force --ignore-not-found'
+        sh 'kubectl delete -f deploy_uat.yaml --grace-period=0 --force --ignore-not-found'
       }
     }
     stage('Kubernetes Up') {
       steps {
         echo 'Running Kubernetes'
         sh 'kubectl config use-context omicron-aks'
-        sh 'sudo kubectl apply -f deploy_uat.yaml'
+        sh 'kubectl apply -f deploy_uat.yaml'
       }
     }
     stage('Database') {
@@ -297,8 +297,6 @@ def SlackMsg(String buildResult) {
 def DockerBuildAndPush(entity) {
   docker.withRegistry("https://${ACR}", "omicronacr") {
     docker.build("${ACR}/${COMPANY_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${ACR}/${COMPANY_LOWERCASE}-${entity}-repository:latest .")
-    sh "docker tag ${ACR}/${COMPANY_LOWERCASE}-${entity}-repository:latest ${ACR}/${COMPANY_LOWERCASE}-${entity}-repository:0.0.${env.BUILD_NUMBER}"
-    docker.image("${ACR}/${COMPANY_LOWERCASE}-${entity}-repository:0.0.${env.BUILD_NUMBER}").push()
     docker.image("${ACR}/${COMPANY_LOWERCASE}-${entity}-repository:latest").push()
   }
 }
