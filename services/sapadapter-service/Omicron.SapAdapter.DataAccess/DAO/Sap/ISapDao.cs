@@ -46,6 +46,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<List<OrderModel>> GetOrdersById(List<int> pedidoID);
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<List<OrderModel>> GetOrdersByIdJoinDoctor(List<int> pedidoID);
+
+        /// <summary>
         /// gets the details.
         /// </summary>
         /// <param name="pedidoId">PedidoID</param>
@@ -173,7 +179,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="pedidoId">the pedido id.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<DetallePedidoModel>> GetPedidoById(int pedidoId);
+        Task<IEnumerable<DetallePedidoModel>> GetPedidoByIdJoinProduct(int pedidoId);
 
         /// <summary>
         /// Gets the pedidos from the Detalle pedido.
@@ -306,6 +312,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailBySaleOrder(List<int> ordersId);
 
         /// <summary>
+        /// Gets the deliveries by the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailBySaleOrderJoinProduct(List<int> ordersId);
+
+        /// <summary>
         /// Get the delivery orders headers.
         /// </summary>
         /// <param name="docuNums">the doc nums.</param>
@@ -348,6 +361,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByDocEntry(List<int> docEntry);
 
         /// <summary>
+        /// Gets the invoice detail by docEntry.
+        /// </summary>
+        /// <param name="docEntry">the doc entries.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByDocEntryJoinProduct(List<int> docEntry);
+
+        /// <summary>
         /// Gets the invoice header by docnum.
         /// </summary>
         /// <param name="docNum">the docnum</param>
@@ -367,6 +387,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="ordersId">the orders id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailByDocEntry(List<int> ordersId);
+
+        /// <summary>
+        /// Gets the deliveries by the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailByDocEntryJoinProduct(List<int> ordersId);
 
         /// <summary>
         /// Gets te clients by the id.
@@ -436,7 +463,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="initDate">the init date.</param>
         /// <param name="endDate">the end date.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<DeliverModel>> GetDeliveryByDocDate(DateTime initDate, DateTime endDate);
+        Task<IEnumerable<DeliverModel>> GetDeliveryByDocDateJoinDoctor(DateTime initDate, DateTime endDate);
 
         /// <summary>
         /// Gets the deliveries by date.
@@ -444,7 +471,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="initDate">the init date.</param>
         /// <param name="endDate">the end date.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocDate(DateTime initDate, DateTime endDate);
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocDateJoinDoctor(DateTime initDate, DateTime endDate);
 
         /// <summary>
         /// gets the invoice details by delivery id.
@@ -452,6 +479,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="baseEntry">the base entry.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntry(List<int> baseEntry);
+
+        /// <summary>
+        /// gets the invoice details by delivery id.
+        /// </summary>
+        /// <param name="baseEntry">the base entry.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntryJoinProduct(List<int> baseEntry);
 
         /// <summary>
         /// Get the orders.
@@ -462,6 +496,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// Gets the order by init date.
         /// </summary>
-        Task<IEnumerable<OrderModel>> GetOrderModelByDocDate(DateTime initDate, DateTime endDate);
+        Task<IEnumerable<OrderModel>> GetOrderModelByDocDateJoinDoctor(DateTime initDate, DateTime endDate);
     }
 }

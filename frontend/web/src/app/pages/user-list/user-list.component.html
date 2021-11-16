@@ -30,9 +30,9 @@
     </div>
     <div class="list-users-container">
         <div class="table-container">
-            <table  mat-table [dataSource]="dataSource"  [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''">
+            <table  mat-table [dataSource]="dataSource"  [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''" aria-describedby>
                 <ng-container matColumnDef="delete">
-                    <th mat-header-cell *matHeaderCellDef>
+                    <th scope="row" mat-header-cell *matHeaderCellDef>
                         <mat-checkbox
                                 [checked]="isAllComplete"
                                 [indeterminate]="someComplete()"
@@ -49,22 +49,22 @@
                 </ng-container>
 
                 <ng-container matColumnDef="username">
-                    <th mat-header-cell class="centered" *matHeaderCellDef > USUARIO </th>
+                    <th scope="row" mat-header-cell class="centered" *matHeaderCellDef > USUARIO </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell"> {{element.userName }} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="names">
-                    <th mat-header-cell class="centered" *matHeaderCellDef > NOMBRE(S) </th>
+                    <th scope="row" mat-header-cell class="centered" *matHeaderCellDef > NOMBRE(S) </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell"> {{element.firstName | uppercase}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="lastName">
-                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef  > APELLIDO(S) </th>
+                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef  > APELLIDO(S) </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide tdcell-center"> {{element.lastName | uppercase}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="role">
-                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > ROL</th>
+                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef > ROL</th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
                         <span *ngIf="element.role === 2">QFB</span>
                         <span *ngIf="element.role === 1">ADMINISTRADOR</span>
@@ -78,7 +78,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="clasfqf">
-                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > CLASIFICACIÓN</th>
+                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef > CLASIFICACIÓN</th>
                         <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
                             {{element.role === 2 ? element.fullClasification : 'NO APLICA'}}
                         </td>
@@ -86,26 +86,26 @@
 
                 <ng-container matColumnDef="pieces">
 
-                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > PIEZAS MÁXIMAS</th>
+                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef > PIEZAS MÁXIMAS</th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
                         {{element.role === 2 ? element.piezas : 'NO APLICA'}}
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="asignable">
 
-                    <th mat-header-cell class="centered mobile-hide" *matHeaderCellDef > ASIGNACIONES</th>
+                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef > ASIGNACIONES</th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
                         {{element.role === 2 ? element.asignable === 1  ? 'ENCENDIDO' : 'APAGADO' : 'NO APLICA'}}
                     </td>
 
                 </ng-container>
                 <ng-container matColumnDef="status">
-                    <th mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef > ESTATUS </th>
+                    <th scope="row" mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef > ESTATUS </th>
                     <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide" > {{element.activo == 1 ? "ACTIVO" : "INACTIVO"}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="actions">
-                    <th mat-header-cell class="tdcell tdcell-center delete-many-icon" *matHeaderCellDef >
+                    <th scope="row" mat-header-cell class="tdcell tdcell-center delete-many-icon" *matHeaderCellDef >
                         <button mat-icon-button class="ico-col-pri" (click)="deleteUsers('')">
                             <mat-icon class="icon-many-delete">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"

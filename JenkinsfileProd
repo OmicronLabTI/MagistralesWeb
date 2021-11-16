@@ -26,14 +26,6 @@ pipeline {
         ).trim()
 	}
     stages {
-		stage('Kubernetes Down') {
-            steps {
-                echo 'Running Kubernetes down'
-				sh 'sudo kubectl config use-context omicron-aks'
-                sh 'sudo kubectl delete -f deploy_prod.yaml --grace-period=0 --force --ignore-not-found'
-				sh 'sudo docker system prune -f'
-            }
-        }
         stage('Build Front Web') {
             steps {
                 echo 'Building Frontend'
@@ -154,10 +146,19 @@ pipeline {
                 }
             }
         }
+		stage('Kubernetes Down') {
+            steps {
+                echo 'Running Kubernetes down'
+				sh 'kubectl config use-context omicron-aks'
+                sh 'kubectl delete -f deploy_prod.yaml --grace-period=0 --force --ignore-not-found'
+				sh 'docker system prune -f'
+            }
+        }
         stage('Kubernetes Up') {
             steps {
                 echo 'Running Kubernetes'
-                sh 'sudo kubectl apply -f deploy_prod.yaml'
+				sh 'kubectl config use-context omicron-aks'
+                sh 'kubectl apply -f deploy_prod.yaml'
             }
         }
 		stage('Deploy App Service'){
@@ -173,7 +174,7 @@ pipeline {
             steps {
                 dir ('database/'){
                     sh '/opt/liquibase/liquibase --version'
-					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
+					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-prod.properties" update'
                     echo 'Applying Db changes'
                 }
             }

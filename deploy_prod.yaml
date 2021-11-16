@@ -24,13 +24,6 @@ spec:
           value: prod
         ports:
         - containerPort: 8000
-        resources:
-          limits:
-            cpu: 200m
-            memory: 768Mi
-          requests:
-            cpu: 100m
-            memory: 384Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -56,15 +49,13 @@ spec:
           value: America/Mexico_City
         - name: SPRING_PROFILES_ACTIVE
           value: prod
+        - name: POSTGRESS_JDBC_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: omicron_jdbc_postgress_db
         ports:
         - containerPort: 8090
-        resources:
-          limits:
-            cpu: 200m
-            memory: 768Mi
-          requests:
-            cpu: 100m
-            memory: 384Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -90,15 +81,13 @@ spec:
           value: America/Mexico_City
         - name: ASPNETCORE_ENVIRONMENT
           value: Prod
+        - name: POSTGRESS_NET_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: omicron_net_postgress_db
         ports:
         - containerPort: 9010
-        resources:
-          limits:
-            cpu: 100m
-            memory: 256Mi
-          requests:
-            cpu: 50m
-            memory: 128Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -124,15 +113,13 @@ spec:
           value: America/Mexico_City
         - name: ASPNETCORE_ENVIRONMENT
           value: Prod
+        - name: POSTGRESS_NET_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: omicron_net_postgress_db
         ports:
         - containerPort: 5101
-        resources:
-          limits:
-            cpu: 200m
-            memory: 768Mi
-          requests:
-            cpu: 100m
-            memory: 384Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -158,15 +145,23 @@ spec:
           value: America/Mexico_City
         - name: ASPNETCORE_ENVIRONMENT
           value: Prod
+        - name: REDIS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: redis
+        - name: SAP_CONNECTION_STRING_SQL_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: sap_connection_string_sql_server
+        - name: OMICRON_FILE_URL
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: omicron_file_url
         ports:
         - containerPort: 5102
-        resources:
-          limits:
-            cpu: 250m
-            memory: 768Mi
-          requests:
-            cpu: 125m
-            memory: 384Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -192,15 +187,48 @@ spec:
           value: America/Mexico_City
         - name: ASPNETCORE_ENVIRONMENT
           value: Prod
+        - name: REDIS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: redis
+        - name: POSTGRESS_NET_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: omicron_net_postgress_db
+        - name: EVENHUB_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: eventhub_net_connection
+        - name: SAP_DI_API_URL
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: sap_di_api_url
+        - name: SAP_FILE_URL
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: sap_file_url
+        - name: OMICRON_FILE_URL
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: omicron_file_url
+        - name: STORAGE_ACCOUNT
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: storage_account
+        - name: STORAGE_ACCOUNT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: storage_account_key
         ports:
         - containerPort: 5103
-        resources:
-          limits:
-            cpu: 200m
-            memory: 768Mi
-          requests:
-            cpu: 100m
-            memory: 384Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -226,15 +254,13 @@ spec:
           value: America/Mexico_City
         - name: ASPNETCORE_ENVIRONMENT
           value: Prod
+        - name: POSTGRESS_NET_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: omicron-prod
+              key: omicron_net_postgress_db
         ports:
         - containerPort: 5104
-        resources:
-          limits:
-            cpu: 100m
-            memory: 256Mi
-          requests:
-            cpu: 50m
-            memory: 128Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -262,10 +288,3 @@ spec:
           value: Prod
         ports:
         - containerPort: 5105
-        resources:
-          limits:
-            cpu: 100m
-            memory: 512Mi
-          requests:
-            cpu: 50m
-            memory: 256Mi

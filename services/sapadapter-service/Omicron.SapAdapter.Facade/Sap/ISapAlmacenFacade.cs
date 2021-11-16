@@ -40,6 +40,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetCompleteDetail(int orderId);
 
         /// <summary>
+        /// Gets all the orders.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersByIds(List<int> ordersId);
+
+        /// <summary>
         /// Gets the orders from delivery.
         /// </summary>
         /// <param name="ordersId">the orders.</param>

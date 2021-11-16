@@ -591,6 +591,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrMagistralBottomTextSize = "QrMagistralBottomTextSize";
 
         /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRectxTop = "QrMagistralRectxTop";
+
+        /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralRectyTop = "QrMagistralRectyTop";
+
+        /// <summary>
         /// Field for the max day to look.
         /// </summary>
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
@@ -618,7 +628,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// const for the cooling.
         /// </summary>
-        public const string NeedsCooling = "\nRequiere refrigeración";
+        public const string NeedsCooling = "\nRefrigerado";
 
         /// <summary>
         /// the insert value.
@@ -701,6 +711,91 @@ namespace Omicron.Pedidos.Services.Constants
         public const string InvoiceQrContainer = "InvoiceQrContainer";
 
         /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string QrTopTextOrden = "P: {0}\nSKU: {1}";
+
+        /// <summary>
+        /// Inidicates the font type in the QR text.
+        /// </summary>
+        public const string QrTextFontType = "Tahoma";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryBottomTextSize = "QrDeliveryBottomTextSize";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryHeight = "QrDeliveryHeight";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryWidth = "QrDeliveryWidth";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryMargin = "QrDeliveryMargin";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryRectx = "QrDeliveryRectx";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryRecty = "QrDeliveryRecty";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryRectWidth = "QrDeliveryRectWidth";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryRectHeight = "QrDeliveryRectHeight";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryRectxTop = "QrDeliveryRectxTop";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryRectyTop = "QrDeliveryRectyTop";
+
+        /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string QrTopTextRemision = "\n{0}";
+
+        /// <summary>
+        /// Gets the delivery qr.
+        /// </summary>
+        public const string DeliveryQr = "QrDelivery";
+
+        /// <summary>
+        /// Gets the delivery qr.
+        /// </summary>
+        public const string LocalShip = "Local";
+
+        /// <summary>
+        /// Gets the delivery qr.
+        /// </summary>
+        public const string ForeignShip = "Foráneo";
+
+        /// <summary>
+        /// Gets the delivery qr.
+        /// </summary>
+        public const string LocalShipAbr = "L";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -759,6 +854,19 @@ namespace Omicron.Pedidos.Services.Constants
             Finalizado,
             Entregado,
             Almacenado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> ValidStatusToFillFinalizedate { get; } = new List<string>
+        {
+            Finalizado,
+            Almacenado,
+            BackOrder,
         };
 
         /// <summary>

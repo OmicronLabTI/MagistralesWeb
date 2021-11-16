@@ -153,12 +153,12 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string FooterPayment = "<p>Para realizar el pago de este pedido le compartimos los datos para la transferencia:</p><p>OMICRONLAB S.A. DE C.V.<br/>Banco: Banorte<br/>Número de cuenta: 0515319189<br/>Clave Interbancaria: 072580005153191898<br/>Referencia: <b>{0}</b><br/><br/>Banco: Bancomer<br/>Número de cuenta: 0116534406<br/>Clave Interbancaria: 012580001165344066<br/>Referencia: <b>{0}</b><br/>En caso de haber realizado el pago, haga caso omiso a esta información.</p>";
+        public const string FooterPayment = "<p>Para realizar el pago de este pedido le compartimos los datos para la transferencia:</p><p>OMICRONLAB S.A. DE C.V.<br/><br/>Banco: Banorte<br/>Número de cuenta: 0515319189<br/>Clave Interbancaria: 072580005153191898<br/>Referencia: <b>{0}</b><br/><br/>Banco: Bancomer<br/>Número de cuenta: 0116534406<br/>Clave Interbancaria: 012580001165344066<br/>Referencia: <b>{0}</b><br/><br/>En caso de haber realizado el pago, haga caso omiso a esta información.</p>";
 
         /// <summary>
         /// refund policy.
         /// </summary>
-        public const string RefundPolicy = "<p>*Política de Cambios y Devoluciones*</p><ul><li>Una vez recibido el pedido se otorgan 15 días calendario para notificar cualquier inconsistencia o inconformidad con su solicitud.</li><li>Para notificar cualquier incidencia favor enviar un correo a: <u>incidencias@o-lab.mx</u></li></ul><center>Agradecemos su preferencia.</center><center>OmicronLab SA de CV</center>";
+        public const string RefundPolicy = "<p>*Política de Cambios y Devoluciones*</p><ul><li>Una vez recibido el pedido se otorgan 15 días calendario para notificar cualquier inconsistencia o inconformidad con su solicitud.</li><li>Para notificar cualquier incidencia favor enviar un correo a: <u>incidencias@o-lab.mx</u>; por WhatsApp al número:  8118106776 o a través de su plataforma.</li></ul><center>Agradecemos su preferencia.</center><center>OmicronLab SA de CV</center>";
 
         /// <summary>
         /// Sent local package.

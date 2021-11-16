@@ -377,9 +377,19 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var salesOrder = relatedOrders.First(x => x.IsSalesOrder);
                 var sapMissingOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, sapAdapter);
                 var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).ToList();
+                var productionordersId = cancelledProductionOrders.Select(x => x.Productionorderid).ToList();
 
                 var previousStatus = salesOrder.Status;
-                salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders, productionOrders);
+                salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders, productionOrders, productionordersId);
+
+                var familyOrders = productionOrders.Where(y => !productionordersId.Contains(y.Productionorderid)).ToList();
+                salesOrder.FinishedLabel = familyOrders.Any() && familyOrders.All(x => x.FinishedLabel == 1) ? 1 : 0;
+
+                if (ServiceConstants.ValidStatusToFillFinalizedate.Contains(salesOrder.Status))
+                {
+                    salesOrder.CloseDate = DateTime.Now;
+                    salesOrder.CloseUserId = userId;
+                }
 
                 if (salesOrder.Status.Equals(ServiceConstants.Finalizado))
                 {
@@ -404,14 +414,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
         }
 
-        /// <summary>
-        /// Gets the status for cancelling.
-        /// </summary>
-        /// <param name="saleOrder">the sale order.</param>
-        /// <param name="sapOrders">the missingsap orders.</param>
-        /// <param name="userOrders">the user orders.</param>
-        /// <returns>the status.</returns>
-        private string CalculateStatus(UserOrderModel saleOrder, List<CompleteDetailOrderModel> sapOrders, List<UserOrderModel> userOrders)
+        private string CalculateStatus(UserOrderModel saleOrder, List<CompleteDetailOrderModel> sapOrders, List<UserOrderModel> userOrders, List<string> ordersToCancel)
         {
             if (sapOrders.Any())
             {
@@ -420,6 +423,18 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var minValue = userOrders.OrderBy(x => x.StatusOrder).FirstOrDefault();
             var status = ((StatusEnum)minValue.StatusOrder).ToString();
+
+            if (status == ServiceConstants.Almacenado)
+            {
+                var familyOrders = userOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid) && !ordersToCancel.Contains(y.Productionorderid)).ToList();
+                var areAllDelivered = familyOrders.All(x => x.Status == ServiceConstants.Almacenado && x.DeliveryId != 0);
+                var areAnyDelivered = familyOrders.Any(x => x.DeliveryId != 0) && familyOrders.Any(x => x.DeliveryId == 0);
+
+                var statusLocal = areAllDelivered ? ServiceConstants.Almacenado : ServiceConstants.Finalizado;
+                statusLocal = areAnyDelivered ? ServiceConstants.BackOrder : statusLocal;
+                return statusLocal;
+            }
+
             return ServiceConstants.ValidStatusLiberado.Contains(minValue.Status) ? ServiceConstants.Liberado : status;
         }
 

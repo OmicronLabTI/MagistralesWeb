@@ -129,6 +129,19 @@ namespace Omicron.Reporting.Api.Controllers
         }
 
         /// <summary>
+        /// Method To send Emails.
+        /// </summary>
+        /// <param name="emails">the emails to send.</param>
+        /// <returns>Pong.</returns>
+        [Route("/send/email")]
+        [HttpPost]
+        public async Task<IActionResult> SendEmails(List<EmailGenericDto> emails)
+        {
+            var response = await this.reportingFacade.SendEmails(emails);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Method Ping.
         /// </summary>
         /// <returns>Pong.</returns>
