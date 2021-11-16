@@ -753,7 +753,7 @@ export class DataService {
           ]
         : [],
     },
-  })
+  });
   getPercentageByItem(
     valueItem: number,
     valuesArray: number[],
@@ -787,7 +787,7 @@ export class DataService {
         hoverBorderColor: '#c0c8ce',
       },
     ],
-  })
+  });
   getRandomColorsArray(lengthArrayForGraph: number, isBarGraph: boolean) {
     let countIndex = CONST_NUMBER.zero;
     const range = Colors.length;

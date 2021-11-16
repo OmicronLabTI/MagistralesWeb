@@ -217,14 +217,14 @@ pipeline {
       steps {
         echo 'Running Kubernetes down'
         sh 'kubectl config use-context kubernetes-admin@kubernetes'
-        sh 'sudo kubectl delete -f deploy_qa.yaml --grace-period=0 --force --ignore-not-found'
+        sh 'kubectl delete -f deploy_qa.yaml --grace-period=0 --force --ignore-not-found'
       }
     }
     stage('Kubernetes Up') {
       steps {
         echo 'Running Kubernetes'
         sh 'kubectl config use-context kubernetes-admin@kubernetes'
-        sh 'sudo kubectl apply -f deploy_qa.yaml'
+        sh 'kubectl apply -f deploy_qa.yaml'
       }
     }
     stage('Database') {
