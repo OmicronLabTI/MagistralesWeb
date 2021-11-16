@@ -25,13 +25,13 @@ spec:
               value: uat
           ports:
             - containerPort: 8000
-          # resources:
-          #   limits:
-          #     cpu: 120m
-          #     memory: 480Mi
-          #   requests:
-          #     cpu: 60m
-          #     memory: 280Mi
+          resources:
+            limits:
+              cpu: 384m
+              memory: 768Mi
+            requests:
+              cpu: 192m
+              memory: 384Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -67,13 +67,13 @@ spec:
                   key: omicron_jdbc_postgress_db
           ports:
             - containerPort: 8090
-          # resources:
-          #   limits:
-          #     cpu: 60m
-          #     memory: 240Mi
-          #   requests:
-          #     cpu: 30m
-          #     memory: 120Mi
+          resources:
+            limits:
+              cpu: 384m
+              memory: 768Mi
+            requests:
+              cpu: 192m
+              memory: 384Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -109,13 +109,13 @@ spec:
                   key: omicron_net_postgress_db
           ports:
             - containerPort: 9010
-          # resources:
-          #   limits:
-          #     cpu: 60m
-          #     memory: 240Mi
-          #   requests:
-          #     cpu: 30m
-          #     memory: 120Mi
+          resources:
+            limits:
+              cpu: 384m
+              memory: 768Mi
+            requests:
+              cpu: 192m
+              memory: 384Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -151,13 +151,13 @@ spec:
                   key: omicron_net_postgress_db
           ports:
             - containerPort: 5101
-          # resources:
-          #   limits:
-          #     cpu: 60m
-          #     memory: 240Mi
-          #   requests:
-          #     cpu: 30m
-          #     memory: 120Mi
+          resources:
+            limits:
+              cpu: 16m
+              memory: 64Mi
+            requests:
+              cpu: 8m
+              memory: 32Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -198,13 +198,13 @@ spec:
                   key: sap_connection_string_sql_server
           ports:
             - containerPort: 5102
-          # resources:
-          #   limits:
-          #     cpu: 60m
-          #     memory: 240Mi
-          #   requests:
-          #     cpu: 30m
-          #     memory: 120Mi
+          resources:
+            limits:
+              cpu: 64m
+              memory: 128Mi
+            requests:
+              cpu: 32m
+              memory: 64Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -250,13 +250,13 @@ spec:
                   key: eventhub_net_connection
           ports:
             - containerPort: 5103
-          # resources:
-          #   limits:
-          #     cpu: 60m
-          #     memory: 240Mi
-          #   requests:
-          #     cpu: 30m
-          #     memory: 120Mi
+          resources:
+            limits:
+              cpu: 16m
+              memory: 64Mi
+            requests:
+              cpu: 8m
+              memory: 32Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -292,13 +292,13 @@ spec:
                   key: omicron_net_postgress_db
           ports:
             - containerPort: 5104
-          # resources:
-          #   limits:
-          #     cpu: 60m
-          #     memory: 240Mi
-          #   requests:
-          #     cpu: 30m
-          #     memory: 120Mi
+          resources:
+            limits:
+              cpu: 4m
+              memory: 64Mi
+            requests:
+              cpu: 2m
+              memory: 32Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -329,12 +329,12 @@ spec:
               value: Uat
           ports:
             - containerPort: 5105
-          # resources:
-          #   limits:
-          #     cpu: 60m
-          #     memory: 240Mi
-          #   requests:
-          #     cpu: 30m
-          #     memory: 120Mi
+          resources:
+            limits:
+              cpu: 16m
+              memory: 64Mi
+            requests:
+              cpu: 8m
+              memory: 32Mi
       imagePullSecrets:
         - name: pullsecret
