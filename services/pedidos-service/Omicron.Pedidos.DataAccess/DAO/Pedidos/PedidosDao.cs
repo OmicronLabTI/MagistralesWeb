@@ -280,9 +280,8 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             var idsSaleFinalized = orders.Where(x => x.IsSalesOrder && x.Status.Equals(status) && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
             var orderstoReturn = await this.databaseContext.UserOrderModel.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToListAsync();
 
-            var maquilaOrders = await this.databaseContext.UserOrderModel.Where(x => x.TypeOrder == "MQ").ToListAsync();
-            var maquilaFinalizaed = maquilaOrders.Where(x => x.IsSalesOrder && x.Status == status && x.FinishedLabel == 1).Select(y => y.Salesorderid).ToList();
-            orderstoReturn.AddRange(maquilaOrders.Where(x => maquilaFinalizaed.Contains(x.Salesorderid)));
+            var maquilaOrders = await this.databaseContext.UserOrderModel.Where(x => x.TypeOrder == "MQ" && x.FinishedLabel == 1 && x.Status == status && string.IsNullOrEmpty(x.Productionorderid)).ToListAsync();
+            orderstoReturn.AddRange(maquilaOrders);
 
             var possiblePending = orders.Where(x => x.IsProductionOrder && (x.Status.Equals(status) || x.Status.Equals(secondStatus)) && x.FinishedLabel == 1).Select(y => y.Salesorderid).Distinct().ToList();
             var isPending = possiblePending.Where(x => !idsSaleFinalized.Any(y => y == x)).ToList();
@@ -307,8 +306,8 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <inheritdoc/>
         public async Task<List<UserOrderModel>> GetOrderForAlmacenToIgnore(string status, DateTime dateToLook)
         {
-            var orders = await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate == null || x.FinalizedDate >= dateToLook).ToListAsync();
-            return orders.Where(x => x.IsSalesOrder && (x.Status != status || x.FinishedLabel != 1)).ToList();
+            var orders = await this.databaseContext.UserOrderModel.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status != status && x.FinalizedDate >= dateToLook).ToListAsync();
+            return orders.Where(x => x.FinishedLabel != 1).ToList();
         }
 
         /// <summary>

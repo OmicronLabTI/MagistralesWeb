@@ -50,13 +50,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var response = await this.GetParametersDateToLook(ServiceConstants.AlmacenMaxDayToLook);
             var orders = await this.pedidosDao.GetSaleOrderForAlmacen(ServiceConstants.Finalizado, response.Item1, ServiceConstants.StatuPendingAlmacen, ServiceConstants.Almacenado);
-            orders = orders.DistinctBy(x => x.Id).ToList();
-            var ordersToIgnore = await this.pedidosDao.GetOrderForAlmacenToIgnore(ServiceConstants.Finalizado, response.Item1);
-
-            var odersToLook = orders.Select(x => x.Salesorderid).Distinct().ToList();
-            var possibleToIgnore = ordersToIgnore.Where(x => x.IsSalesOrder).Select(y => y.Salesorderid).ToList();
-            var idsToIgnore = possibleToIgnore.Where(x => !odersToLook.Any(y => y == x)).ToList();
-            var ordersId = ordersToIgnore.Where(x => idsToIgnore.Contains(x.Salesorderid)).Select(y => int.Parse(y.Salesorderid)).Distinct().ToList();
 
             var ordersToReturn = orders.Select(x => new
             {
@@ -70,7 +63,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.TypeOrder,
             }).ToList();
 
-            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, JsonConvert.SerializeObject(ordersId), response.Item2);
+            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, response.Item2);
         }
 
         /// <inheritdoc/>
