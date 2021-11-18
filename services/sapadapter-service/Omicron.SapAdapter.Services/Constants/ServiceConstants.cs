@@ -531,6 +531,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string MagistralWareHouse = "MG";
 
         /// <summary>
+        /// the line products.
+        /// </summary>
+        public const string AlmacenLineProducts = "AlmacenLineProducts";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

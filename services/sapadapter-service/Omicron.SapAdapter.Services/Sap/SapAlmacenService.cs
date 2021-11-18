@@ -21,6 +21,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
@@ -36,6 +37,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly ICatalogsService catalogsService;
 
+        private readonly IRedisService redisService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAlmacenService"/> class.
         /// </summary>
@@ -43,12 +46,14 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="pedidosService">the pedidos service.</param>
         /// <param name="almacenService">The almacen service.</param>
         /// <param name="catalogsService">The catalog service.</param>
-        public SapAlmacenService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService)
+        /// <param name="redisService">thre redis service.</param>
+        public SapAlmacenService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
             this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
             this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
+            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -176,7 +181,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var dates = ServiceUtils.GetDateFilter(parameters);
 
-            var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
+            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
             var details = (await this.sapDao.GetDetailsbyDocDate(dates[ServiceConstants.FechaInicio], dates[ServiceConstants.FechaFin])).GroupBy(x => x.PedidoId).ToList();
             var idsToReturnLine = new List<int>();
             var idsToReturnMix = new List<int>();
@@ -209,11 +214,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveries = await this.sapDao.GetDeliveryDetailByDocEntry(deliveryIds);
             var allDeliveries = await this.sapDao.GetDeliveryDetailBySaleOrder(deliveries.Select(x => x.BaseEntry).ToList());
             var detailsSale = (await this.sapDao.GetDetailByDocNum(deliveries.Select(x => x.BaseEntry).ToList())).ToList();
-            var lineItems = await this.sapDao.GetAllLineProducts();
+            var lineItems = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
             detailsSale.ForEach(x =>
             {
-                x.Label = lineItems.Any(y => y.ProductoId == x.ProductoId).ToString();
+                x.Label = lineItems.Any(y => y == x.ProductoId).ToString();
             });
 
             var objectToReturn = new { DeliveryDetail = allDeliveries, DetallePedido = detailsSale };
@@ -229,13 +234,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrderModel = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrdersAlmancen);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
 
-            var listIds = JsonConvert.DeserializeObject<List<int>>(userOrderModel.ExceptionMessage);
-
             int.TryParse(userOrderModel.Comments.ToString(), out var maxDays);
             var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
             var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
 
-            return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, listIds, dateToLook);
+            return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, new List<int>(), dateToLook);
         }
 
         /// <summary>
@@ -246,9 +249,6 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var lineProductsResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLineProductPedidos, magistralIds);
             var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
-
-            var listProductToReturn = lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Almacenado).ToList();
-            listProductToReturn.AddRange(lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).ToList());
             var listIdToIgnore = lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && ServiceConstants.StatusToIgnoreLineProducts.Contains(x.StatusAlmacen)).Select(y => y.SaleOrderId).ToList();
 
             return new Tuple<List<LineProductsModel>, List<int>>(lineProducts, listIdToIgnore);
@@ -263,8 +263,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<Tuple<List<CompleteAlmacenOrderModel>, int>> GetSapLinesToLook(List<string> types, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
         {
-            var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
-
+            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple);
             var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(sapOrders.Select(x => x.DocNum).ToList())).ToList();
 
