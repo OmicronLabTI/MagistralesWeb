@@ -81,7 +81,7 @@ namespace Omicron.SapAdapter.Test.Services
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "OmicronRecipeAddress")]).Returns("http://localhost:5002/");
 
             mockPedidoService
-                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
+                .Setup(m => m.PostPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockPedidoService
@@ -99,6 +99,10 @@ namespace Omicron.SapAdapter.Test.Services
 
             mockRedis
                 .Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+
+            mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
             IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
@@ -152,7 +156,7 @@ namespace Omicron.SapAdapter.Test.Services
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "OmicronRecipeAddress")]).Returns("http://localhost:5002/");
 
             mockPedidoService
-                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
+                .Setup(m => m.PostPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockPedidoService
@@ -947,7 +951,7 @@ namespace Omicron.SapAdapter.Test.Services
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "OmicronRecipeAddress")]).Returns("http://localhost:5002/");
 
             mockPedidoService
-                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
+                .Setup(m => m.PostPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockUserService

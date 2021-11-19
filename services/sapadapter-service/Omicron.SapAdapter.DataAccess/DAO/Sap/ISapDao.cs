@@ -301,8 +301,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Get the orders.
         /// </summary>
         /// <param name="typeOrder">The type order.</param>
+        /// <param name="orderToLook">The orders to look.</param>
         /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder);
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder, List<int> orderToLook);
 
         /// <summary>
         /// Gets the deliveries by the sale order.
@@ -497,5 +498,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Gets the order by init date.
         /// </summary>
         Task<IEnumerable<OrderModel>> GetOrderModelByDocDateJoinDoctor(DateTime initDate, DateTime endDate);
+
+        /// <summary>
+        /// Gets the detail for the order id.
+        /// </summary>
+        /// <param name="orderIds">the data.</param>
+        /// <returns>the detail.</returns>
+        Task<List<CompleteRecepcionPedidoDetailModel>> GetSapOrderDetailForAlmacenRecepcionById(List<int> orderIds);
     }
 }

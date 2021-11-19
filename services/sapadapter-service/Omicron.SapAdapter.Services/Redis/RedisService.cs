@@ -46,5 +46,11 @@ namespace Omicron.SapAdapter.Services.Redis
             await this.database.StringSetAsync(key, value, timeToLive);
             return true;
         }
+
+        /// <inheritdoc/>
+        public bool IsConnectedRedis()
+        {
+            return this.redis.IsConnected;
+        }
     }
 }

@@ -21,6 +21,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
     using Serilog;
@@ -63,7 +64,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<List<int>>()))
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetLineProductsForDoctorOrders()));
 
             var mockLog = new Mock<ILogger>();
@@ -82,7 +83,17 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultModel(parameters)));
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.almacenOrderDoctorService = new AlmacenOrderDoctorService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, this.catalogService.Object);
+
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
+            this.almacenOrderDoctorService = new AlmacenOrderDoctorService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, this.catalogService.Object, mockRedis.Object);
         }
 
         /// <summary>
@@ -149,10 +160,16 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<List<int>>()))
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetIncidents()));
 
-            var localService = new AlmacenOrderDoctorService(this.sapDao, mockPedido.Object, mockAlmacen.Object, this.catalogService.Object);
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            var localService = new AlmacenOrderDoctorService(this.sapDao, mockPedido.Object, mockAlmacen.Object, this.catalogService.Object, mockRedis.Object);
 
             // act
             var response = await localService.GetOrderdetail(salesOrderId);
