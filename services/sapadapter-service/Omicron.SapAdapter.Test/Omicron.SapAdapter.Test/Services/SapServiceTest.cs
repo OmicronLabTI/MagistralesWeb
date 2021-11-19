@@ -100,6 +100,10 @@ namespace Omicron.SapAdapter.Test.Services
             mockRedis
                 .Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
 
+            mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
+
             this.sapDao = new SapDao(this.context, mockLog.Object);
             IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
             this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object);

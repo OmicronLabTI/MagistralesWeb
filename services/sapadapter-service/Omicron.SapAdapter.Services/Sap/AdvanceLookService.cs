@@ -241,7 +241,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var userResponse = await this.usersService.GetUsersById(almacenData.PackageModels.Select(x => x.AssignedUser).ToList(), ServiceConstants.GetUsersById);
             var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
 
-            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var objectCardOrder = new ParamentsCards
             {

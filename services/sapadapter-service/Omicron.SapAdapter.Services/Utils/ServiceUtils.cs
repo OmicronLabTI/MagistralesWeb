@@ -264,11 +264,28 @@ namespace Omicron.SapAdapter.Services.Utils
         /// Gets the local neigbors.
         /// </summary>
         /// <param name="catalogService">the catalog service.</param>
+        /// <param name="redis">The redis conection.</param>
         /// <returns>the data.</returns>
-        public static async Task<List<string>> GetLocalNeighbors(ICatalogsService catalogService)
+        public static async Task<List<string>> GetLocalNeighbors(ICatalogsService catalogService, IRedisService redis)
         {
-            var localNeigBorsResponse = await catalogService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.LocalNeighborhood}={ServiceConstants.LocalNeighborhood}");
-            return JsonConvert.DeserializeObject<List<ParametersModel>>(localNeigBorsResponse.Response.ToString()).Select(x => x.Value).ToList();
+            if (!redis.IsConnectedRedis())
+            {
+                var localNeigBorsResponse = await catalogService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.LocalNeighborhood}={ServiceConstants.LocalNeighborhood}");
+                return JsonConvert.DeserializeObject<List<ParametersModel>>(localNeigBorsResponse.Response.ToString()).Select(x => x.Value).ToList();
+            }
+
+            var redisResponse = await redis.GetRedisKey(ServiceConstants.LocalNeighbors);
+            var redisProducts = string.IsNullOrEmpty(redisResponse) ? new List<string>() : JsonConvert.DeserializeObject<List<string>>(redisResponse);
+
+            if (redisProducts.Any())
+            {
+                return redisProducts;
+            }
+
+            var localNeigBorsResponses = await catalogService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.LocalNeighborhood}={ServiceConstants.LocalNeighborhood}");
+            var localNeigbors = JsonConvert.DeserializeObject<List<ParametersModel>>(localNeigBorsResponses.Response.ToString()).Select(x => x.Value).ToList();
+            await redis.WriteToRedis(ServiceConstants.LocalNeighbors, JsonConvert.SerializeObject(localNeigbors), new TimeSpan(8, 0, 0));
+            return localNeigbors;
         }
 
         /// <summary>

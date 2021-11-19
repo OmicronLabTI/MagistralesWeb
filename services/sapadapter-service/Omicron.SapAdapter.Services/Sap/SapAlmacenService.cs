@@ -87,7 +87,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineOrders = JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
             var incidences = almacenResponse.Comments == null || string.IsNullOrEmpty(almacenResponse.Comments.ToString()) ? new List<IncidentsModel>() : JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Comments.ToString());
 
-            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var sapOrders = await this.sapDao.GetSapOrderDetailForAlmacenRecepcionById(new List<int> { orderId });
             var batches = (await this.sapDao.GetBatchesByProdcuts(lineOrders.Select(x => x.ItemCode).ToList())).ToList();

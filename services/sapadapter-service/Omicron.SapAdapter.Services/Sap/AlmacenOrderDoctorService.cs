@@ -224,7 +224,7 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             var productsModel = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
-            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             foreach (var doctor in doctors)
             {

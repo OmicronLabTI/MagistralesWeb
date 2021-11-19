@@ -260,7 +260,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
             var saleOrdersByDeliveries = (await this.sapDao.GetOrdersById(details.Select(x => x.BaseEntry).ToList())).ToList();
 
-            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             foreach (var d in listIds)
             {

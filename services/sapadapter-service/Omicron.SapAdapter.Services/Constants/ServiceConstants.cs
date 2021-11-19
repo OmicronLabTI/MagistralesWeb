@@ -541,6 +541,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string AlmacenLineProducts = "AlmacenLineProducts";
 
         /// <summary>
+        /// the line products.
+        /// </summary>
+        public const string LocalNeighbors = "LocalNeighbors";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
