@@ -34,7 +34,12 @@ namespace Omicron.SapAdapter.Services.Utils
         public static Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel> GetSapOrderByType(List<string> types, List<CompleteAlmacenOrderModel> sapOrders, List<string> lineProducts)
         {
             var listToReturn = new List<CompleteAlmacenOrderModel>();
-            var salesTypes = new SaleOrderTypeModel();
+            var salesTypes = new SaleOrderTypeModel
+            {
+                LineSaleOrders = new List<int>(),
+                MagistralSaleOrders = new List<int>(),
+                MixedSaleOrders = new List<int>(),
+            };
 
             var sapOrdersGroup = sapOrders.GroupBy(x => x.DocNum).ToList();
 

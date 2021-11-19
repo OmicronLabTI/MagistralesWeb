@@ -25,6 +25,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Serilog;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Services.Redis;
 
     /// <summary>
     /// Class for the QR test.
@@ -37,6 +38,8 @@ namespace Omicron.SapAdapter.Test.Services
         private ISapDao sapDao;
 
         private DatabaseContext context;
+
+        private Mock<IRedisService> mockRedis;
 
         /// <summary>
         /// The set up.
@@ -65,8 +68,15 @@ namespace Omicron.SapAdapter.Test.Services
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacenService = new Mock<IAlmacenService>();
             var mockCatalogs = new Mock<ICatalogsService>();
+
+            this.mockRedis = new Mock<IRedisService>();
+
+            this.mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object);
+            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object, this.mockRedis.Object);
         }
 
         /// <summary>
@@ -106,7 +116,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Limit, "10" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -156,7 +166,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { "chips", chip },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -203,7 +213,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()}" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -229,31 +239,25 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
-                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderDetailModelAlmacen()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
                 .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
-                .Returns(Task.FromResult(this.GetLineProducts()))
-                .Returns(Task.FromResult(this.GetIncidents()));
+                .Returns(Task.FromResult(this.GetLineProductsRecepcionDetail()));
 
             var mockCatalogos = new Mock<ICatalogsService>();
             mockCatalogos
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
 
-            var dictionary = new Dictionary<string, string>
-            {
-                { ServiceConstants.Offset, "0" },
-                { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()}" },
-            };
+            var ids = 75000;
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
 
             // act
-            var response = await localService.GetOrdersDetails(dictionary);
+            var response = await localService.GetOrdersDetails(ids);
 
             // assert
             Assert.IsNotNull(response);

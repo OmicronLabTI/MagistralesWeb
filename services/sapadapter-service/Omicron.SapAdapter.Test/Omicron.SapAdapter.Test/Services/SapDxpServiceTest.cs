@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Test.Services
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Serilog;
 
@@ -54,8 +55,14 @@ namespace Omicron.SapAdapter.Test.Services
             mockLog
                 .Setup(m => m.Information(It.IsAny<string>()));
 
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapDxpService = new SapDxpService(this.sapDao);
+            this.sapDxpService = new SapDxpService(this.sapDao, mockRedis.Object);
         }
 
         /// <summary>
