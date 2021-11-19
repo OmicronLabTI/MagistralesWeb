@@ -160,6 +160,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple);
+
             var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(sapOrders.Select(x => x.DocNum).ToList())).ToList();
 
             var possibleIdsToIgnore = sapOrders.Where(x => !orderHeaders.Any(y => y.PedidoId.Value == x.DocNum)).ToList();
@@ -171,7 +172,7 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
             var granTotal = sapOrders.Select(x => x.Medico).Distinct().ToList().Count;
 
-            sapOrders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, orderHeaders, lineProducts);
+            sapOrders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1;
 
             return new Tuple<List<CompleteAlmacenOrderModel>, int>(sapOrders, granTotal);
         }

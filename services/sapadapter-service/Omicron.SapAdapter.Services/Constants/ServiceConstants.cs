@@ -383,6 +383,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// producto de linea.
         /// </summary>
+        public const string LineaAlone = "Linea";
+
+        /// <summary>
+        /// producto de linea.
+        /// </summary>
         public const string Line = "linea";
 
         /// <summary>

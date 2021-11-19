@@ -765,9 +765,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder)
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder, List<int> orderToLook)
         {
-            var query = (from order in this.databaseContext.OrderModel
+            var query = (from order in this.databaseContext.OrderModel.Where(x => orderToLook.Contains(x.DocNum))
                          join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                          into DetalleOrden
                          from dp in DetalleOrden.DefaultIfEmpty()
