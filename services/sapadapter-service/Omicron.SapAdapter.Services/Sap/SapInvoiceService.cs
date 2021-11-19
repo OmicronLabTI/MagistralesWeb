@@ -23,6 +23,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
@@ -38,6 +39,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly ICatalogsService catalogsService;
 
+        private readonly IRedisService redisService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapInvoiceService"/> class.
         /// </summary>
@@ -45,12 +48,14 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="pedidosService">the pedidos service.</param>
         /// <param name="almacenService">The almacen service.</param>
         /// <param name="catalogsService">The catalog service.</param>
-        public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService)
+        /// <param name="redisService">The redis service.</param>
+        public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
             this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
             this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
+            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -82,7 +87,7 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeaders = invoiceHeaders.OrderByDescending(x => x.InvoiceId).ToList();
             invoiceDetails = invoiceDetails.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
 
-            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var retrieveMode = new RetrieveInvoiceModel
             {
@@ -210,7 +215,7 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetInvoiceHeader(InvoicePackageSapLookModel dataToLook)
         {
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(dataToLook.InvoiceDocNums)).ToList();
-            var localNeighbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
+            var localNeighbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             invoiceHeader = dataToLook.Type.Equals(ServiceConstants.Local.ToLower()) ?
                 invoiceHeader.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, x.Address) || dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList() :
@@ -382,7 +387,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             if (listIds != null)
             {
-                var response = await this.pedidosService.GetUserPedidos(listIds, route);
+                var response = await this.pedidosService.PostPedidos(listIds, route);
                 return JsonConvert.DeserializeObject<List<UserOrderModel>>(response.Response.ToString());
             }
 

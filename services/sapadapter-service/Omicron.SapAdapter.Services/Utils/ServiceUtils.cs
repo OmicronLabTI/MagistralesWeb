@@ -14,11 +14,13 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Redis;
 
     /// <summary>
     /// The class for the services.
@@ -262,11 +264,28 @@ namespace Omicron.SapAdapter.Services.Utils
         /// Gets the local neigbors.
         /// </summary>
         /// <param name="catalogService">the catalog service.</param>
+        /// <param name="redis">The redis conection.</param>
         /// <returns>the data.</returns>
-        public static async Task<List<string>> GetLocalNeighbors(ICatalogsService catalogService)
+        public static async Task<List<string>> GetLocalNeighbors(ICatalogsService catalogService, IRedisService redis)
         {
-            var localNeigBorsResponse = await catalogService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.LocalNeighborhood}={ServiceConstants.LocalNeighborhood}");
-            return JsonConvert.DeserializeObject<List<ParametersModel>>(localNeigBorsResponse.Response.ToString()).Select(x => x.Value).ToList();
+            if (!redis.IsConnectedRedis())
+            {
+                var localNeigBorsResponse = await catalogService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.LocalNeighborhood}={ServiceConstants.LocalNeighborhood}");
+                return JsonConvert.DeserializeObject<List<ParametersModel>>(localNeigBorsResponse.Response.ToString()).Select(x => x.Value).ToList();
+            }
+
+            var redisResponse = await redis.GetRedisKey(ServiceConstants.LocalNeighbors);
+            var redisProducts = string.IsNullOrEmpty(redisResponse) ? new List<string>() : JsonConvert.DeserializeObject<List<string>>(redisResponse);
+
+            if (redisProducts.Any())
+            {
+                return redisProducts;
+            }
+
+            var localNeigBorsResponses = await catalogService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.LocalNeighborhood}={ServiceConstants.LocalNeighborhood}");
+            var localNeigbors = JsonConvert.DeserializeObject<List<ParametersModel>>(localNeigBorsResponses.Response.ToString()).Select(x => x.Value).ToList();
+            await redis.WriteToRedis(ServiceConstants.LocalNeighbors, JsonConvert.SerializeObject(localNeigbors), new TimeSpan(8, 0, 0));
+            return localNeigbors;
         }
 
         /// <summary>
@@ -279,6 +298,32 @@ namespace Omicron.SapAdapter.Services.Utils
         public static bool CalculateTypeLocal(string state, List<string> neigborhood, string address)
         {
             return address.ToLower().Contains(state.ToLower()) && neigborhood.Any(x => address.ToLower().Contains(x.ToLower()));
+        }
+
+        /// <summary>
+        /// Get the line products.
+        /// </summary>
+        /// <param name="sapDao">the sap dao.</param>
+        /// <param name="redis">tehr edis.</param>
+        /// <returns>the line products.</returns>
+        public static async Task<List<string>> GetLineProducts(ISapDao sapDao, IRedisService redis)
+        {
+            if (!redis.IsConnectedRedis())
+            {
+                return (await sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
+            }
+
+            var redisResponse = await redis.GetRedisKey(ServiceConstants.AlmacenLineProducts);
+            var redisProducts = string.IsNullOrEmpty(redisResponse) ? new List<string>() : JsonConvert.DeserializeObject<List<string>>(redisResponse);
+
+            if (redisProducts.Any())
+            {
+                return redisProducts;
+            }
+
+            var sapProducts = (await sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
+            await redis.WriteToRedis(ServiceConstants.AlmacenLineProducts, JsonConvert.SerializeObject(sapProducts), new TimeSpan(8, 0, 0));
+            return sapProducts;
         }
 
         /// <summary>

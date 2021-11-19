@@ -84,6 +84,7 @@ namespace Omicron.SapAdapter.Test
                 new DetallePedidoModel { Description = "Magistral1", DetalleId = 0, PedidoId = 75000, ProductoId = "Magistral1", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Magistral2", DetalleId = 1, PedidoId = 75000, ProductoId = "Magistral1", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Magistral3", DetalleId = 2, PedidoId = 75000, ProductoId = "Magistral2", Container = "NA", Quantity = 10 },
+                new DetallePedidoModel { Description = "Linea1", DetalleId = 3, PedidoId = 75000, ProductoId = "Linea1", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Linea1", DetalleId = 0, PedidoId = 75001, ProductoId = "Linea1", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Magistral4", DetalleId = 0, PedidoId = 85000, ProductoId = "Magistral4", Container = "NA", Quantity = 10 },
 
@@ -433,6 +434,29 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// Gets the user order model.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetUserOrderDetailModelAlmacen()
+        {
+            var userOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Salesorderid = "75000", Productionorderid = null, Comments = "Comments", FinishedLabel = 1, Status = "Finalizado", },
+                new UserOrderModel { Salesorderid = "75000", Productionorderid = "1", Comments = "Comments", FinishedLabel = 1, Status = "Finalizado", CloseDate = new DateTime(2021, 03, 21) },
+                new UserOrderModel { Salesorderid = "75000", Productionorderid = "2", Comments = "Comments", FinishedLabel = 1, Status = "Finalizado", CloseDate = new DateTime(2021, 03, 21), TypeOrder = "MQ" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = JsonConvert.SerializeObject(new List<int>()),
+                Response = JsonConvert.SerializeObject(userOrders),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
         /// the linse products.
         /// </summary>
         /// <returns>the data.</returns>
@@ -450,6 +474,33 @@ namespace Omicron.SapAdapter.Test
                 Response = JsonConvert.SerializeObject(listProducts),
                 Success = true,
                 Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProductsRecepcionDetail()
+        {
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 75000, StatusAlmacen = "Almacenado" },
+            };
+
+            var incidence = new List<IncidentsModel>
+            {
+                new IncidentsModel { SaleOrderId = 100, ItemCode = "Linea1" },
+                new IncidentsModel { SaleOrderId = 84515, ItemCode = "567   120 ML", Batches = "[{\"BatchNumber\":\"\",\"BatchQty\":2.0}]", Incidence = "producto derramado", Status = "Abierta" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = JsonConvert.SerializeObject(incidence),
             };
         }
 

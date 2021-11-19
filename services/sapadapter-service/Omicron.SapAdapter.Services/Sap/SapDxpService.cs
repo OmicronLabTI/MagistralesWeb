@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
@@ -26,21 +27,24 @@ namespace Omicron.SapAdapter.Services.Sap
     {
         private readonly ISapDao sapDao;
 
+        private readonly IRedisService redisService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapDxpService"/> class.
         /// </summary>
         /// <param name="sapDao">sap dao.</param>
-        /// <param name="logger">the logger.</param>
-        public SapDxpService(ISapDao sapDao)
+        /// <param name="redisService">thre redis service.</param>
+        public SapDxpService(ISapDao sapDao, IRedisService redisService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
+            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersActive(List<int> ordersid)
         {
             var ordersSap = (await this.sapDao.GetAllOrdersWIthDetailByIds(ordersid)).ToList();
-            var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
+            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
             var asesorsIdsToLook = ordersSap.Select(x => x.AsesorId).Distinct().ToList();
             var asesors = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(asesorsIdsToLook)).ToList();
             var listIds = ordersSap.Select(x => x.DocNum).Distinct().ToList();

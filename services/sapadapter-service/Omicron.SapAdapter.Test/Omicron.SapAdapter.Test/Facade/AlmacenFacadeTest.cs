@@ -78,6 +78,19 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetOrdersDetails()
+        {
+            var orderId = 1;
+            var response = await this.almacenFacade.GetOrdersDetails(orderId);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetScannedDataMagistral()
         {
             var type = "magistral";

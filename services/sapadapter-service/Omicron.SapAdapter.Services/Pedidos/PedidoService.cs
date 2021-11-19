@@ -41,7 +41,7 @@ namespace Omicron.SapAdapter.Services.Pedidos
         /// <param name="listPedidos">Pedidos id.</param>
         /// <param name="route">the route.</param>
         /// <returns>Result object.</returns>
-        public async Task<ResultDto> GetUserPedidos(List<int> listPedidos, string route)
+        public async Task<ResultDto> PostPedidos(object listPedidos, string route)
         {
             ResultDto result;
             var stringContent = new StringContent(JsonConvert.SerializeObject(listPedidos), UnicodeEncoding.UTF8, "application/json");

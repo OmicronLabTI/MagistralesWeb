@@ -48,7 +48,7 @@ namespace Omicron.SapAdapter.Test.Services
             var pedidoService = new PedidoService(clientMock);
 
             // act
-            var result = await pedidoService.GetUserPedidos(new List<int>(), "salesOrder");
+            var result = await pedidoService.PostPedidos(new List<int>(), "salesOrder");
 
             // assert
             Assert.IsNotNull(result);
