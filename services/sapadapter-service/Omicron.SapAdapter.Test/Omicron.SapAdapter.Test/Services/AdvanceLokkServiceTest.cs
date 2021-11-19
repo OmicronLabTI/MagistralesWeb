@@ -69,7 +69,7 @@ namespace Omicron.SapAdapter.Test.Services
             var userMock = new Mock<IUsersService>();
 
             mockPedidoService
-                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
+                .Setup(m => m.PostPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockAlmacen

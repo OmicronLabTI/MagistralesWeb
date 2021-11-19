@@ -23,7 +23,7 @@ namespace Omicron.SapAdapter.Services.Pedidos
         /// <param name="listPedidos">the pedidos.</param>
         /// <param name="route">The route.</param>
         /// <returns>the qfb.</returns>
-        Task<ResultDto> GetUserPedidos(List<int> listPedidos, string route);
+        Task<ResultDto> PostPedidos(object listPedidos, string route);
 
         /// <summary>
         /// Makes a get to sapAdapter.

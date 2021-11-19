@@ -382,7 +382,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             if (listIds != null)
             {
-                var response = await this.pedidosService.GetUserPedidos(listIds, route);
+                var response = await this.pedidosService.PostPedidos(listIds, route);
                 return JsonConvert.DeserializeObject<List<UserOrderModel>>(response.Response.ToString());
             }
 

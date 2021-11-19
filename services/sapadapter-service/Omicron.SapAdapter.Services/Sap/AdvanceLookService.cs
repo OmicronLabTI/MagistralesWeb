@@ -97,7 +97,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var listDocs = new List<int> { intDocNum };
-            var userOrdersResponse = await this.pedidosService.GetUserPedidos(listDocs, ServiceConstants.AdvanceLookId);
+            var userOrdersResponse = await this.pedidosService.PostPedidos(listDocs, ServiceConstants.AdvanceLookId);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
 
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listDocs);
@@ -117,7 +117,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var doctorValue = parameters.ContainsKey(ServiceConstants.Doctor) ? parameters[ServiceConstants.Doctor].Split(",").ToList() : new List<string>();
             var listDocs = await this.GetIdsToLookByDoctor(parameters);
-            var userOrdersResponse = await this.pedidosService.GetUserPedidos(listDocs, ServiceConstants.AdvanceLookId);
+            var userOrdersResponse = await this.pedidosService.PostPedidos(listDocs, ServiceConstants.AdvanceLookId);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
 
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listDocs);
@@ -226,7 +226,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listIds = sapDeliveryDetails.Select(x => x.DeliveryId).ToList();
             listIds.AddRange(sapInvoicesHeaders.Select(x => x.DocNum));
-            var userOrdersResponse = await this.pedidosService.GetUserPedidos(listIds, ServiceConstants.AdvanceLookId);
+            var userOrdersResponse = await this.pedidosService.PostPedidos(listIds, ServiceConstants.AdvanceLookId);
             var userOrdersForDelivery = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listIds);
             var almacenDataForDelivery = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());

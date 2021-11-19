@@ -498,5 +498,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Gets the order by init date.
         /// </summary>
         Task<IEnumerable<OrderModel>> GetOrderModelByDocDateJoinDoctor(DateTime initDate, DateTime endDate);
+
+        /// <summary>
+        /// Gets the detail for the order id.
+        /// </summary>
+        /// <param name="orderIds">the data.</param>
+        /// <returns>the detail.</returns>
+        Task<List<CompleteRecepcionPedidoDetailModel>> GetSapOrderDetailForAlmacenRecepcionById(List<int> orderIds);
     }
 }

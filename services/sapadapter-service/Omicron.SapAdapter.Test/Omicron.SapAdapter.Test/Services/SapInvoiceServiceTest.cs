@@ -196,7 +196,7 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
-                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
+                .Setup(m => m.PostPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserOrderInvoice()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
