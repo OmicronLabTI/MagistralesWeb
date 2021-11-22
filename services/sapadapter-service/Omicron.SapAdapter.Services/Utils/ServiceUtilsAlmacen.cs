@@ -45,7 +45,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (types.Contains(ServiceConstants.Magistral.ToLower()))
             {
-                var listMagistral = sapOrdersGroup.Where(x => !x.All(y => lineProducts.Contains(y.Detalles.ProductoId)));
+                var listMagistral = sapOrdersGroup.Where(x => !x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)) && !x.All(y => lineProducts.Contains(y.Detalles.ProductoId)));
                 var keys = listMagistral.Select(x => x.Key).ToList();
 
                 listToReturn.AddRange(sapOrders.Where(x => keys.Contains(x.DocNum)));
@@ -55,7 +55,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (types.Contains(ServiceConstants.Mixto.ToLower()))
             {
-                var listMixta = sapOrdersGroup.Where(x => x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)) && !x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)));
+                var listMixta = sapOrdersGroup.Where(x => x.Any(y => lineProducts.Contains(y.Detalles.ProductoId) && !x.All(y => lineProducts.Contains(y.Detalles.ProductoId))));
                 var keysMixta = listMixta.Select(x => x.Key).ToList();
 
                 listToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
