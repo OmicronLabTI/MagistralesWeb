@@ -1358,6 +1358,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          into DetallePedido
                          from dpf in DetallePedido.DefaultIfEmpty()
                          join p in this.databaseContext.ProductoModel on dp.ProductoId equals p.ProductoId
+                         where p.IsWorkableProduct ==  "Y"
                          select new CompleteRecepcionPedidoDetailModel
                          {
                              DocNum = order.DocNum,
