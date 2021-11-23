@@ -714,7 +714,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = dop.Address2 ?? doctor.AliasName,
+                             Cliente = dop.Address2 ?? string.Empty,
                              Medico = doctor.AliasName,                             
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
@@ -751,7 +751,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         where product.IsWorkableProduct == "Y"
                         select new CompleteAlmacenOrderModel
                         {
-                            Cliente = dop.Address2 ?? doctor.AliasName,
+                            Cliente = dop.Address2 ?? string.Empty,
                             DocNum = order.DocNum,
                             Detalles = detail,
                             FechaInicio = order.FechaInicio,
@@ -791,7 +791,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = dop.Address2 ?? doctor.AliasName,
+                             Cliente = dop.Address2 ?? string.Empty,
                              Medico = doctor.AliasName,
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
@@ -866,7 +866,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = delivery.Address,
                              Canceled = delivery.Canceled,
                              CardCode = delivery.CardCode,
-                             Cliente = dop.Address2 ?? doctor.AliasName,
+                             Cliente = dop.Address2 ?? string.Empty,
                              DeliveryStatus = delivery.DeliveryStatus,
                              DocNum = delivery.DocNum,
                              FechaInicio = delivery.FechaInicio,
@@ -914,7 +914,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = invoice.Address,
                              Canceled = invoice.Canceled,
                              CardCode = invoice.CardCode,
-                             Cliente = dop.Address2 ?? doctor.AliasName,
+                             Cliente = dop.Address2 ?? string.Empty,
                              Comments = invoice.Comments,
                              CommentsInvoice = invoice.CommentsInvoice,
                              DocNum = invoice.DocNum,
@@ -989,7 +989,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = invoice.Address,
                              Canceled = invoice.Canceled,
                              CardCode = invoice.CardCode,
-                             Cliente = dop.Address2 ?? doctor.AliasName,
+                             Cliente = dop.Address2 ?? string.Empty,
                              Comments = invoice.Comments,
                              CommentsInvoice = invoice.CommentsInvoice,
                              DocNum = invoice.DocNum,
@@ -1162,7 +1162,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = delivery.Address,
                              Canceled = delivery.Canceled,
                              CardCode = delivery.CardCode,
-                             Cliente = dop.Address2 ?? doctor.AliasName,
+                             Cliente = dop.Address2 ?? string.Empty,
                              DeliveryStatus = delivery.DeliveryStatus,
                              DocNum = delivery.DocNum,
                              FechaInicio = delivery.FechaInicio,
@@ -1198,7 +1198,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = invoice.Address,
                              Canceled = invoice.Canceled,
                              CardCode = invoice.CardCode,
-                             Cliente = dop.Address2 ?? doctor.AliasName,
+                             Cliente = dop.Address2 ?? string.Empty,
                              Comments = invoice.Comments,
                              CommentsInvoice = invoice.CommentsInvoice,
                              DocNum = invoice.DocNum,
@@ -1267,7 +1267,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          select new CompleteOrderModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = dop.Address2 ?? doctor.AliasName,
+                             Cliente = dop.Address2 ?? string.Empty,
                              Codigo = order.Codigo,
                              Medico = doctor.AliasName,
                              FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
@@ -1316,7 +1316,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Medico = doctor.AliasName,
                              OrderType = order.OrderType,
                              PedidoMuestra = order.PedidoMuestra,
-                             Cliente = dop.Address2 ?? doctor.AliasName,
+                             Cliente = dop.Address2 ?? string.Empty,
                          });
 
             return await this.RetryQuery<OrderModel>(query);
@@ -1362,7 +1362,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          select new CompleteRecepcionPedidoDetailModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = dop.Address2 ?? doctor.AliasName,
+                             Cliente = dop.Address2 ?? string.Empty,
                              Medico = doctor.AliasName,
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
