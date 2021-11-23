@@ -22,6 +22,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
@@ -37,6 +38,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly ICatalogsService catalogsService;
 
+        private readonly IRedisService redisService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAlmacenDeliveryService"/> class.
         /// </summary>
@@ -44,12 +47,14 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="pedidosService">the pedidos service.</param>
         /// <param name="almacenService">The almacen service.</param>
         /// <param name="catalogsService">The catalog service.</param>
-        public SapAlmacenDeliveryService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService)
+        /// <param name="redisService">thre redis service.</param>
+        public SapAlmacenDeliveryService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
             this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
             this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
+            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -136,7 +141,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapOrdersGroup = deliveryDetailDb.GroupBy(x => x.DeliveryId).ToList();
             var granTotal = sapOrdersGroup.Count;
 
-            var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
+            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
             var deliveryToReturn = new List<DeliveryDetailModel>();
 
@@ -255,7 +260,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
             var saleOrdersByDeliveries = (await this.sapDao.GetOrdersById(details.Select(x => x.BaseEntry).ToList())).ToList();
 
-            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService);
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             foreach (var d in listIds)
             {

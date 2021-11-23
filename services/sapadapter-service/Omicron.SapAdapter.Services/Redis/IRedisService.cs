@@ -31,5 +31,11 @@ namespace Omicron.SapAdapter.Services.Redis
         /// <param name="timeToLive">the TTL.</param>
         /// <returns>the data.</returns>
         Task<bool> WriteToRedis(string key, string value, TimeSpan timeToLive);
+
+        /// <summary>
+        /// return if redis is connected.
+        /// </summary>
+        /// <returns>the data.</returns>
+        bool IsConnectedRedis();
     }
 }

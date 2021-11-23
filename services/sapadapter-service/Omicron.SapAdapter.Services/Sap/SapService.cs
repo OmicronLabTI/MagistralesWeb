@@ -97,7 +97,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (!parameters.ContainsKey(ServiceConstants.FechaFin))
             {
-                var userOrderModel = await this.pedidosService.GetUserPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
+                var userOrderModel = await this.pedidosService.PostPedidos(orders.Select(x => x.DocNum).Distinct().ToList(), ServiceConstants.GetUserSalesOrder);
                 userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
             }
 
@@ -128,7 +128,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var details = await this.sapDao.GetAllDetails(new List<int?> { docId });
 
-            var usersOrderModel = await this.pedidosService.GetUserPedidos(new List<int> { docId }, ServiceConstants.GetUserSalesOrder);
+            var usersOrderModel = await this.pedidosService.PostPedidos(new List<int> { docId }, ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(usersOrderModel.Response.ToString());
 
             var listUsers = await this.GetUsers(userOrders);
@@ -219,7 +219,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (returnDetails)
             {
-                var result = await this.pedidosService.GetUserPedidos(ordenFab.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
+                var result = await this.pedidosService.PostPedidos(ordenFab.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
                 userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(result.Response.ToString());
             }
 
@@ -339,7 +339,7 @@ namespace Omicron.SapAdapter.Services.Sap
             fabricationOrders.AddRange(await this.sapDao.GetFabOrderBySalesOrderId(salesOrderIds));
             fabricationOrders = fabricationOrders.Where(x => !string.IsNullOrEmpty(x.Status)).Distinct().ToList();
 
-            var resultUserOrders = await this.pedidosService.GetUserPedidos(fabricationOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
+            var resultUserOrders = await this.pedidosService.PostPedidos(fabricationOrders.Select(x => x.OrdenId).ToList(), ServiceConstants.GetUserOrders);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(resultUserOrders.Response.ToString());
 
             foreach (var fabricationOrder in fabricationOrders)
