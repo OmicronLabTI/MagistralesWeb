@@ -27,11 +27,11 @@ spec:
             - containerPort: 8000
           resources:
             limits:
-              cpu: 120m
-              memory: 480Mi
+              cpu: 500m
+              memory: 1Gi
             requests:
-              cpu: 60m
-              memory: 280Mi
+              cpu: 25m
+              memory: 128Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -69,11 +69,11 @@ spec:
             - containerPort: 8090
           resources:
             limits:
-              cpu: 60m
-              memory: 240Mi
+              cpu: 128m
+              memory: 512Mi
             requests:
-              cpu: 30m
-              memory: 120Mi
+              cpu: 25m
+              memory: 128Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -111,11 +111,11 @@ spec:
             - containerPort: 9010
           resources:
             limits:
-              cpu: 60m
-              memory: 240Mi
+              cpu: 100m
+              memory: 512Mi
             requests:
-              cpu: 30m
-              memory: 120Mi
+              cpu: 25m
+              memory: 128Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -153,11 +153,11 @@ spec:
             - containerPort: 5101
           resources:
             limits:
-              cpu: 60m
-              memory: 240Mi
+              cpu: 100m
+              memory: 512Mi
             requests:
-              cpu: 30m
-              memory: 120Mi
+              cpu: 25m
+              memory: 128Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -200,11 +200,11 @@ spec:
             - containerPort: 5102
           resources:
             limits:
-              cpu: 60m
-              memory: 240Mi
+              cpu: 100m
+              memory: 512Mi
             requests:
-              cpu: 30m
-              memory: 120Mi
+              cpu: 25m
+              memory: 128Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -252,11 +252,11 @@ spec:
             - containerPort: 5103
           resources:
             limits:
-              cpu: 60m
-              memory: 240Mi
+              cpu: 100m
+              memory: 512Mi
             requests:
-              cpu: 30m
-              memory: 120Mi
+              cpu: 25m
+              memory: 128Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -294,11 +294,11 @@ spec:
             - containerPort: 5104
           resources:
             limits:
-              cpu: 60m
-              memory: 240Mi
+              cpu: 100m
+              memory: 512Mi
             requests:
-              cpu: 30m
-              memory: 120Mi
+              cpu: 25m
+              memory: 128Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -331,10 +331,10 @@ spec:
             - containerPort: 5105
           resources:
             limits:
-              cpu: 60m
-              memory: 240Mi
+              cpu: 100m
+              memory: 512Mi
             requests:
-              cpu: 30m
-              memory: 120Mi
+              cpu: 25m
+              memory: 128Mi
       imagePullSecrets:
         - name: pullsecret

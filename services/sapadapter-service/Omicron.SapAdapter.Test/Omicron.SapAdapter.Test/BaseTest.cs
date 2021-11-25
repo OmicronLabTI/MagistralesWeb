@@ -84,6 +84,7 @@ namespace Omicron.SapAdapter.Test
                 new DetallePedidoModel { Description = "Magistral1", DetalleId = 0, PedidoId = 75000, ProductoId = "Magistral1", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Magistral2", DetalleId = 1, PedidoId = 75000, ProductoId = "Magistral1", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Magistral3", DetalleId = 2, PedidoId = 75000, ProductoId = "Magistral2", Container = "NA", Quantity = 10 },
+                new DetallePedidoModel { Description = "Linea1", DetalleId = 3, PedidoId = 75000, ProductoId = "Linea1", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Linea1", DetalleId = 0, PedidoId = 75001, ProductoId = "Linea1", Container = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "Magistral4", DetalleId = 0, PedidoId = 85000, ProductoId = "Magistral4", Container = "NA", Quantity = 10 },
 
@@ -245,14 +246,16 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<ProductoModel>
             {
-                new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Aspirina con 2%", ProductGroupId = 1 },
-                new ProductoModel { IsMagistral = "N", ProductoId = "Ungüento 1", ProductoName = "Ungüento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ungüento 10 GR", ProductGroupId = 1 },
-                new ProductoModel { IsMagistral = "N", ProductoId = "Cápsula 12ML", ProductoName = "Cápsula 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR", ProductGroupId = 1 },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Aspirina con 2%", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Ungüento 1", ProductoName = "Ungüento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ungüento 10 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Cápsula 12ML", ProductoName = "Cápsula 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Buscapina", ProductoName = "Buscapina 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Magistral4", ProductoName = "Magistral 4 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
 
                 // For almacen
-                new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral1", ProductoName = "MagistralSolo1",  Unit = "PZ", LargeDescription = "MAAAAgistral1", NeedsCooling = "Y", ProductGroupId = 1 },
-                new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral2", ProductoName = "MagistralSolo2",  Unit = "PZ", LargeDescription = "MAAAAgistral2", NeedsCooling = "N", ProductGroupId = 1 },
-                new ProductoModel { IsMagistral = "N", ProductoId = "Linea1", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", ProductGroupId = 1 },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral1", ProductoName = "MagistralSolo1",  Unit = "PZ", LargeDescription = "MAAAAgistral1", NeedsCooling = "Y", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral2", ProductoName = "MagistralSolo2",  Unit = "PZ", LargeDescription = "MAAAAgistral2", NeedsCooling = "N", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Linea1", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", ProductGroupId = 1, IsWorkableProduct = "Y" },
             };
         }
 
@@ -431,6 +434,29 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// Gets the user order model.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetUserOrderDetailModelAlmacen()
+        {
+            var userOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Salesorderid = "75000", Productionorderid = null, Comments = "Comments", FinishedLabel = 1, Status = "Finalizado", },
+                new UserOrderModel { Salesorderid = "75000", Productionorderid = "1", Comments = "Comments", FinishedLabel = 1, Status = "Finalizado", CloseDate = new DateTime(2021, 03, 21) },
+                new UserOrderModel { Salesorderid = "75000", Productionorderid = "2", Comments = "Comments", FinishedLabel = 1, Status = "Finalizado", CloseDate = new DateTime(2021, 03, 21), TypeOrder = "MQ" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = JsonConvert.SerializeObject(new List<int>()),
+                Response = JsonConvert.SerializeObject(userOrders),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
         /// the linse products.
         /// </summary>
         /// <returns>the data.</returns>
@@ -448,6 +474,33 @@ namespace Omicron.SapAdapter.Test
                 Response = JsonConvert.SerializeObject(listProducts),
                 Success = true,
                 Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProductsRecepcionDetail()
+        {
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 75000, StatusAlmacen = "Almacenado" },
+            };
+
+            var incidence = new List<IncidentsModel>
+            {
+                new IncidentsModel { SaleOrderId = 100, ItemCode = "Linea1" },
+                new IncidentsModel { SaleOrderId = 84515, ItemCode = "567   120 ML", Batches = "[{\"BatchNumber\":\"\",\"BatchQty\":2.0}]", Incidence = "producto derramado", Status = "Abierta" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = JsonConvert.SerializeObject(incidence),
             };
         }
 
@@ -699,15 +752,15 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<ProductoModel>
             {
-                 new ProductoModel { IsMagistral = "N", ProductoId = "REVE 14", ProductoName = "REVE 14", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y" },
-                 new ProductoModel { IsMagistral = "Y", ProductoId = "150   60 ML", ProductoName = "150   60 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
-                 new ProductoModel { IsMagistral = "Y", ProductoId = "2643   120 ML", ProductoName = "2643   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
-                 new ProductoModel { IsMagistral = "Y", ProductoId = "3567   120 ML", ProductoName = "3567   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
-                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   120 ML", ProductoName = "567   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
-                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   30 ML", ProductoName = "567   30 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
-                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   60 ML", ProductoName = "567   30 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
-                 new ProductoModel { IsMagistral = "Y", ProductoId = "708   60 ML", ProductoName = "708   30 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
-                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   240 ML", ProductoName = "567  240 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N" },
+                 new ProductoModel { IsMagistral = "N", ProductoId = "REVE 14", ProductoName = "REVE 14", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", IsWorkableProduct = "Y" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "150   60 ML", ProductoName = "150   60 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "2643   120 ML", ProductoName = "2643   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "3567   120 ML", ProductoName = "3567   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   120 ML", ProductoName = "567   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   30 ML", ProductoName = "567   30 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   60 ML", ProductoName = "567   30 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "708   60 ML", ProductoName = "708   30 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
+                 new ProductoModel { IsMagistral = "Y", ProductoId = "567   240 ML", ProductoName = "567  240 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
             };
         }
 

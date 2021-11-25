@@ -20,8 +20,10 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
 
@@ -38,6 +40,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IUsersService usersService;
 
+        private readonly ICatalogsService catalogsService;
+
+        private readonly IRedisService redisService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AdvanceLookService"/> class.
         /// </summary>
@@ -45,12 +51,16 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="pedidosService">the pedidos service.</param>
         /// <param name="almacenService">The almacen service.</param>
         /// <param name="usersService">The user servie.</param>
-        public AdvanceLookService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, IUsersService usersService)
+        /// <param name="catalogsService">The catalog service.</param>
+        /// <param name="redisService">thre redis service.</param>
+        public AdvanceLookService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, IUsersService usersService, ICatalogsService catalogsService, IRedisService redisService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
-            this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
+            this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
             this.usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
+            this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
+            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -87,7 +97,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var listDocs = new List<int> { intDocNum };
-            var userOrdersResponse = await this.pedidosService.GetUserPedidos(listDocs, ServiceConstants.AdvanceLookId);
+            var userOrdersResponse = await this.pedidosService.PostPedidos(listDocs, ServiceConstants.AdvanceLookId);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
 
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listDocs);
@@ -107,7 +117,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var doctorValue = parameters.ContainsKey(ServiceConstants.Doctor) ? parameters[ServiceConstants.Doctor].Split(",").ToList() : new List<string>();
             var listDocs = await this.GetIdsToLookByDoctor(parameters);
-            var userOrdersResponse = await this.pedidosService.GetUserPedidos(listDocs, ServiceConstants.AdvanceLookId);
+            var userOrdersResponse = await this.pedidosService.PostPedidos(listDocs, ServiceConstants.AdvanceLookId);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
 
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listDocs);
@@ -177,17 +187,17 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData, List<Tuple<int, string>> tupleIds)
         {
             var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIds(tupleIds.Where(x => x.Item2 == ServiceConstants.SaleOrder || x.Item2 == ServiceConstants.DontExistsTable).Select(y => y.Item1).ToList())).ToList();
-            var sapDeliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntry(tupleIds.Where(x => x.Item2 == ServiceConstants.Delivery).Select(y => y.Item1).ToList())).ToList();
-            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailBySaleOrder(sapSaleOrder.Select(x => x.DocNum).ToList()));
-            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailByDocEntry(sapDeliveryDetails.Select(x => x.DeliveryId).ToList()));
+            var sapDeliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(tupleIds.Where(x => x.Item2 == ServiceConstants.Delivery).Select(y => y.Item1).ToList())).ToList();
+            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailBySaleOrderJoinProduct(sapSaleOrder.Select(x => x.DocNum).ToList()));
+            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(sapDeliveryDetails.Select(x => x.DeliveryId).ToList()));
             var sapDelivery = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(sapDeliveryDetails.Select(y => y.DeliveryId).ToList())).ToList();
 
             var sapInvoicesHeaders = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(tupleIds.Where(x => x.Item2 == ServiceConstants.Invoice || x.Item2 == ServiceConstants.DontExistsTable).Select(y => y.Item1).ToList())).ToList();
-            var sapInvoicesDeatils = (await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList())).ToList();
-            sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByBaseEntry(sapDelivery.Select(x => x.DocNum).ToList()));
+            var sapInvoicesDeatils = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList())).ToList();
+            sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByBaseEntryJoinProduct(sapDelivery.Select(x => x.DocNum).ToList()));
             sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(sapInvoicesDeatils.Select(x => x.InvoiceId).ToList()));
 
-            var lineProducts = (await this.sapDao.GetAllLineProducts()).ToList();
+            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
             var cardToReturns = new CardsAdvancedLook
             {
                 CardOrder = new List<AlmacenSalesHeaderModel>(),
@@ -200,14 +210,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var temporalsapInvoicesDeatils = new List<InvoiceDetailModel>();
             var listInvoicedId = sapDeliveryDetails.Where(x => x.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).ToList();
             sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(listInvoicedId));
-            sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByDocEntry(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList()));
+            sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList()));
 
             sapInvoicesDeatils.GroupBy(x => new { x.BaseEntry, x.InvoiceId }).ToList().ForEach(x =>
             {
                 temporalsapInvoicesDeatils.AddRange(x.DistinctBy(d => d.ProductoId));
             });
             sapInvoicesDeatils = temporalsapInvoicesDeatils;
-            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailByDocEntry(sapInvoicesDeatils.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList()));
+            sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(sapInvoicesDeatils.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList()));
             sapDeliveryDetails.GroupBy(x => new { x.DeliveryId, x.BaseEntry }).ToList().ForEach(x =>
             {
                 temporalsapDeliveryDetails.AddRange(x.DistinctBy(d => d.ProductoId));
@@ -216,7 +226,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listIds = sapDeliveryDetails.Select(x => x.DeliveryId).ToList();
             listIds.AddRange(sapInvoicesHeaders.Select(x => x.DocNum));
-            var userOrdersResponse = await this.pedidosService.GetUserPedidos(listIds, ServiceConstants.AdvanceLookId);
+            var userOrdersResponse = await this.pedidosService.PostPedidos(listIds, ServiceConstants.AdvanceLookId);
             var userOrdersForDelivery = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.AdvanceLookId, listIds);
             var almacenDataForDelivery = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
@@ -230,6 +240,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var userResponse = await this.usersService.GetUsersById(almacenData.PackageModels.Select(x => x.AssignedUser).ToList(), ServiceConstants.GetUsersById);
             var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
+
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var objectCardOrder = new ParamentsCards
             {
@@ -246,6 +258,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Repatridores = deliveryCompanies,
                 Users = users,
                 UserOrdersForDelivery = userOrdersForDelivery,
+                LocalNeighbors = localNeigbors,
             };
 
             tupleIds.ForEach(order =>
@@ -262,7 +275,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private List<AlmacenSalesHeaderModel> GetIsReceptionOrders(Tuple<int, string> tuple, ParamentsCards paramentsCards)
         {
-            var listItemCode = paramentsCards.ProductModel.Select(x => x.ProductoId).ToList();
+            var listItemCode = paramentsCards.ProductModel;
             var orderbyDocNum = paramentsCards.OrderDetail.Where(x => x.DocNum == tuple.Item1 && x.PedidoStatus == "O" && x.Detalles != null).ToList();
             var isLineSale = tuple.Item2 == ServiceConstants.DontExistsTable && orderbyDocNum.Any() && orderbyDocNum.All(x => listItemCode.Contains(x.Detalles.ProductoId));
             if (tuple.Item2 != ServiceConstants.SaleOrder && !isLineSale)
@@ -337,10 +350,10 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = ServiceConstants.StatusForBackOrder.Contains(userOrder.Status) && userOrder.StatusAlmacen == ServiceConstants.BackOrder ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
                 status = userOrder.Status != ServiceConstants.Finalizado && userOrder.Status != ServiceConstants.Almacenado && status != ServiceConstants.BackOrder ? ServiceConstants.Pendiente : status;
                 status = userOrder.Status == ServiceConstants.Almacenado && order.PedidoMuestra == ServiceConstants.IsSampleOrder ? ServiceConstants.Almacenado : status;
-                productType = saporders.Any(x => x.Detalles != null && paramentsCards.ProductModel.Any(p => p.ProductoId == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
+                productType = saporders.Any(x => x.Detalles != null && paramentsCards.ProductModel.Any(p => p == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
                 comments.Append($"{userOrder.Comments}&");
-                hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status, order);
+                hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status, order, userOrder);
             }
 
             var hasDeliveries = paramentsCards.DeliveryDetails.Where(x => x.BaseEntry == tuple.Item1).Select(x => x.DeliveryId).ToList();
@@ -363,7 +376,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 return new List<AlmacenSalesHeaderModel>();
             }
 
-            invoiceType = order.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
+            invoiceType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, paramentsCards.LocalNeighbors, order.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo;
             totalItems = saporders.Count;
             totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
             initDate = order.FechaInicio != null ? DateTime.ParseExact(order.FechaInicio, "dd/MM/yyyy", null) : initDate;
@@ -383,14 +396,21 @@ namespace Omicron.SapAdapter.Services.Sap
                 OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
                 Comments = comments.ToString(),
                 SapComments = order.Comments,
+                TypeOrder = order.OrderType,
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };
         }
 
-        private bool CalulateIfSaleOrderIsCandidate(List<UserOrderModel> userOrders, string statusOrder, CompleteOrderModel order)
+        private bool CalulateIfSaleOrderIsCandidate(List<UserOrderModel> userOrders, string statusOrder, CompleteOrderModel order, UserOrderModel saleOrder)
         {
             var hasCandidate = false;
+
+            if (!string.IsNullOrEmpty(saleOrder.StatusAlmacen) && saleOrder.StatusAlmacen == ServiceConstants.BackOrder)
+            {
+                return true;
+            }
+
             if (statusOrder == ServiceConstants.Finalizado)
             {
                 var localOrders = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado).ToList();
@@ -453,6 +473,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     UserOrders = userOrdersFromSale,
                     LineProducts = lineProductsFromSale,
                     InvoiceHeaders = paramsCard.InvoiceHeaders,
+                    LocalNeighbors = paramsCard.LocalNeighbors,
                 };
                 return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
@@ -473,6 +494,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     UserOrders = userOrdersFromDelivery,
                     LineProducts = lineProductsFromDelivery,
                     InvoiceHeaders = paramsCard.InvoiceHeaders,
+                    LocalNeighbors = paramsCard.LocalNeighbors,
                 };
                 return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
@@ -493,6 +515,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     UserOrders = cancelledOrder,
                     LineProducts = new List<LineProductsModel>(),
                     InvoiceHeaders = new List<InvoiceHeaderModel>(),
+                    LocalNeighbors = paramsCard.LocalNeighbors,
                 };
                 return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
@@ -532,8 +555,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
-                var invoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo;
-                var productType = this.GenerateListProductTypeDelivery(deliveryDetail, lineSapProducts.Select(x => x.ProductoId).ToList());
+                var invoiceType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, paramsCardDelivery.LocalNeighbors, header.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo;
+                var productType = this.GenerateListProductTypeDelivery(deliveryDetail, lineSapProducts);
 
                 var userOrderByDelivery = userOrders.FirstOrDefault(x => x.DeliveryId == delivery);
                 var lineProductByDelivery = lineProducts.FirstOrDefault(x => x.DeliveryId == delivery);
@@ -554,6 +577,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     InvoiceType = invoiceType,
                     DataCheckin = initDate.Value,
                     ListSaleOrder = listSalesOrders.ToString(),
+                    TypeOrder = header.TypeOrder,
                 };
                 saleHeader.Add(saleHeaderItem);
             }
@@ -590,17 +614,17 @@ namespace Omicron.SapAdapter.Services.Sap
             switch (type)
             {
                 case ServiceConstants.SaleOrder:
-                    var orders = (await this.sapDao.GetOrderModelByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
+                    var orders = (await this.sapDao.GetOrderModelByDocDateJoinDoctor(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
                     orders = orders.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return orders.Select(x => x.DocNum).Distinct().ToList();
 
                 case ServiceConstants.Delivery:
-                    var deliveries = (await this.sapDao.GetDeliveryByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
+                    var deliveries = (await this.sapDao.GetDeliveryByDocDateJoinDoctor(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
                     deliveries = deliveries.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return deliveries.Select(x => x.DocNum).Distinct().ToList();
 
                 case ServiceConstants.Invoice:
-                    var invoices = (await this.sapDao.GetInvoiceHeadersByDocDate(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
+                    var invoices = (await this.sapDao.GetInvoiceHeadersByDocDateJoinDoctor(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
                     invoices = invoices.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return invoices.Select(x => x.DocNum).Distinct().ToList();
             }
@@ -628,6 +652,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DeliveryDetailModels = paramsCard.DeliveryDetails,
                     InvoiceHeadersToLook = paramsCard.InvoiceHeaders,
                     InvoiceDetailsToLook = paramsCard.InvoiceDetailsToLook,
+                    LocalNeighbors = paramsCard.LocalNeighbors,
                 };
                 return this.GenerateCardForPackageInvoiceTheSalesOrder(paramsCardInvoice);
             }
@@ -645,6 +670,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DeliveryDetailModels = paramsCard.DeliveryDetails,
                     InvoiceHeadersToLook = paramsCard.InvoiceHeaders,
                     InvoiceDetailsToLook = paramsCard.InvoiceDetailsToLook,
+                    LocalNeighbors = paramsCard.LocalNeighbors,
                 };
                 return this.GenerateCardForPackageInvoiceTheSalesOrder(paramsCardInvoice);
             }
@@ -653,27 +679,27 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var invoice = paramsCard.InvoiceHeaders.FirstOrDefault(x => x.DocNum == tuple.Item1);
                 invoice ??= new InvoiceHeaderModel();
-                return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoice, paramsCard.InvoiceDetailsToLook, paramsCard.DeliveryDetails);
+                return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoice, paramsCard.InvoiceDetailsToLook, paramsCard.DeliveryDetails, paramsCard.LocalNeighbors);
             }
 
             if (tuple.Item2 == ServiceConstants.Invoice && isCancelled)
             {
                 var cancelation = paramsCard.Cancellations.FirstOrDefault(x => x.CancelledId == tuple.Item1);
                 cancelation ??= new CancellationResourceModel();
-                return this.GenerateCardForPackageInvoiceCancelled(paramsCard.InvoiceHeaders, paramsCard.InvoiceDetailsToLook, paramsCard.DeliveryDetails, cancelation);
+                return this.GenerateCardForPackageInvoiceCancelled(paramsCard.InvoiceHeaders, paramsCard.InvoiceDetailsToLook, paramsCard.DeliveryDetails, cancelation, paramsCard.LocalNeighbors);
             }
 
             if ((tuple.Item2 == ServiceConstants.DontExistsTable) && (userOrders.Any() || lineProducts.Any()) && !isCancelled)
             {
                 var invoice = paramsCard.InvoiceHeaders.FirstOrDefault(x => x.DocNum == tuple.Item1);
                 invoice ??= new InvoiceHeaderModel();
-                return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoice, paramsCard.InvoiceDetailsToLook, paramsCard.DeliveryDetails);
+                return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoice, paramsCard.InvoiceDetailsToLook, paramsCard.DeliveryDetails, paramsCard.LocalNeighbors);
             }
 
             return new List<InvoiceHeaderAdvancedLookUp>();
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GenerateCardForPackageInvoiceCancelled(List<InvoiceHeaderModel> invoiceHeaders, List<InvoiceDetailModel> invoiceDetailsToLook, List<DeliveryDetailModel> deliverysToLookSaleOrder, CancellationResourceModel canceled)
+        private List<InvoiceHeaderAdvancedLookUp> GenerateCardForPackageInvoiceCancelled(List<InvoiceHeaderModel> invoiceHeaders, List<InvoiceDetailModel> invoiceDetailsToLook, List<DeliveryDetailModel> deliverysToLookSaleOrder, CancellationResourceModel canceled, List<string> localNeighbors)
         {
             var invoicesHeaders = new List<InvoiceHeaderAdvancedLookUp>();
 
@@ -696,7 +722,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Invoice = invoiceHeader.DocNum,
                 DocEntry = invoiceHeader.InvoiceId,
                 InvoiceDocDate = invoiceHeader.FechaInicio,
-                ProductType = invoiceHeader.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                ProductType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, invoiceHeader.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                 TotalDeliveries = invoiceDetail.DistinctBy(x => x.BaseEntry.Value).Count(),
                 TotalProducts = totalProducts,
                 StatusDelivery = ServiceConstants.Cancelado,
@@ -704,6 +730,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 SalesOrder = deliverysToLookSaleOrder.DistinctBy(x => x.BaseEntry).Count(),
                 IsLookUpInvoices = true,
                 IsRefactura = false,
+                TypeOrder = invoiceHeader.TypeOrder,
             };
             invoicesHeaders.Add(invoiceHeaderLookUp);
             return invoicesHeaders;
@@ -751,7 +778,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             Invoice = invoiceHeader.DocNum,
                             DocEntry = invoiceHeader.InvoiceId,
                             InvoiceDocDate = invoiceHeader.FechaInicio,
-                            ProductType = invoiceHeader.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                            ProductType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, paramsCardInvoice.LocalNeighbors, invoiceHeader.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                             TotalDeliveries = deliverys.Count,
                             TotalProducts = totalProducts,
                             DeliverId = delivery,
@@ -760,6 +787,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             DataCheckin = initDate,
                             IsLookUpInvoices = false,
                             IsRefactura = !string.IsNullOrEmpty(invoiceHeader.Refactura) && invoiceHeader.Refactura == ServiceConstants.IsRefactura,
+                            TypeOrder = invoiceHeader.TypeOrder,
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
@@ -769,7 +797,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return invoicesHeaders;
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, InvoiceHeaderModel invoiceHeaders, List<InvoiceDetailModel> invoiceDetailsToLook, List<DeliveryDetailModel> deliverysToLookSaleOrder)
+        private List<InvoiceHeaderAdvancedLookUp> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, InvoiceHeaderModel invoiceHeaders, List<InvoiceDetailModel> invoiceDetailsToLook, List<DeliveryDetailModel> deliverysToLookSaleOrder, List<string> localNeigbors)
         {
             var invoicesHeaders = new List<InvoiceHeaderAdvancedLookUp>();
 
@@ -797,7 +825,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         Invoice = invoiceHeaders.DocNum,
                         DocEntry = invoiceHeaders.InvoiceId,
                         InvoiceDocDate = invoiceHeaders.FechaInicio,
-                        ProductType = invoiceHeaders.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                        ProductType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, invoiceHeaders.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                         TotalDeliveries = deliverys.Count,
                         TotalProducts = totalProducts,
                         StatusDelivery = ServiceConstants.Almacenado,
@@ -805,6 +833,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         SalesOrder = deliverys.DistinctBy(x => x.SaleOrder).Count(),
                         IsLookUpInvoices = true,
                         IsRefactura = !string.IsNullOrEmpty(invoiceHeaders.Refactura) && invoiceHeaders.Refactura == ServiceConstants.IsRefactura,
+                        TypeOrder = invoiceHeaders.TypeOrder,
                     };
                     invoicesHeaders.Add(invoiceHeaderLookUp);
                 }
@@ -893,6 +922,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsFromInvoice = false,
                 Repatridores = paramentsCards.Repatridores,
                 Users = paramentsCards.Users,
+                LocalNeighbors = paramentsCards.LocalNeighbors,
             };
 
             var card = this.GenerateCardForDistribution(objectForDistribution);
@@ -936,6 +966,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsFromInvoice = false,
                 Repatridores = paramentsCards.Repatridores,
                 Users = paramentsCards.Users,
+                LocalNeighbors = paramentsCards.LocalNeighbors,
             };
 
             var card = this.GenerateCardForDistribution(objectForDistribution);
@@ -968,6 +999,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsFromInvoice = true,
                 Repatridores = paramentsCards.Repatridores,
                 Users = paramentsCards.Users,
+                LocalNeighbors = paramentsCards.LocalNeighbors,
             };
 
             var card = this.GenerateCardForDistribution(objectForDistribution);
@@ -997,7 +1029,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 SalesOrder = !isFromInvoice ? int.Parse(userOrder.Salesorderid) : totalSales.Count,
                 StatusDelivery = userOrder.StatusInvoice,
                 Address = invoice.Address.Replace("\r", string.Empty).ToUpper(),
-                ProductType = invoice.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                ProductType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, parametersDistribution.LocalNeighbors, invoice.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                 Doctor = invoice.Medico,
                 TotalDeliveries = localInvoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),
                 InvoiceDocDate = userOrder.InvoiceStoreDate.Value,

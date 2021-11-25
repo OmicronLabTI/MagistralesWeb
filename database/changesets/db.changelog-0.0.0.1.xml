@@ -788,4 +788,112 @@
 		<column name="field" value="QrMagistralRectyTop"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.90">
+	<insert tableName="parameters"> 
+		<column name="value" value="27"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrMagistralBottomTextSizeDelivery"/>
+	</insert>
+  </changeSet>
+  <changeSet author="jarturoep" id="changelog-1.91">
+	<insert tableName="parameters"> 
+		<column name="value" value="500"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryHeight"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="500"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryWidth"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="15"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryMargin"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="110"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRectx"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="400"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRecty"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="400"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRectWidth"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="100"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRectHeight"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="110"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRectxTop"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="25"/>
+		<column name="type" value="int"/>
+		<column name="field" value="QrDeliveryRectyTop"/>
+	</insert>
+  </changeSet>
+  <changeSet author="jarturoep" id="changelog-1.92">
+      <sql endDelimiter=";">
+          UPDATE parameters SET field = 'QrDeliveryBottomTextSize' WHERE field = 'QrMagistralBottomTextSizeDelivery';
+      </sql>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.93">
+	<insert tableName="parameters"> 
+		<column name="value" value="Apodaca"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="Guadalupe"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="Monterrey"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="San Nicolás de los Garza"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="San Pedro Garza García"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="Santa Catarina"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="General Escobedo"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+  </changeSet>
+  <changeSet author="gramirez" id="changelog-1.94">
+	<insert tableName="parameters"> 
+		<column name="value" value="San Nicolas de los Garza"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="San Pedro Garza Garcia"/>
+		<column name="type" value="string"/>
+		<column name="field" value="LocalNeighborhood"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 

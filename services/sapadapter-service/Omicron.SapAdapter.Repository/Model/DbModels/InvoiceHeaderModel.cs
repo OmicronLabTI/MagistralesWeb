@@ -39,13 +39,6 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// </summary>
         /// <value>The code.</value>
         [Column("CardName")]
-        public string Cliente { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        [Column("ShipToCode")]
         public string Medico { get; set; }
 
         /// <summary>
@@ -82,6 +75,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("CardCode")]
         public string CardCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("ShipToCode")]
+        public string ShippingAddressName { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -178,5 +178,20 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// Bool is production order.
         [NotMapped]
         public string SaleOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        [NotMapped]
+        public int TotalSaleOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [NotMapped]
+        public string Cliente { get; set; }
     }
 }

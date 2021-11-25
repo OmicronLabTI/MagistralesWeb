@@ -76,7 +76,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             saleOrders.RemoveAll(x => savedQrUserOrders.Contains(x.Id));
 
-            var urls = await this.GetUrlQrMagistral(saleOrders, parameters, savedQrRoutes, azureAccount, azureKey, azureContainer);
+            var dimensionsQr = this.GetMagistralParameters(parameters);
+            var urls = await this.GetUrlQrMagistral(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureContainer);
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
 
@@ -102,7 +103,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return ServiceUtils.CreateResult(true, 200, null, savedQrRoutes, null, null);
             }
 
-            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.MagistralQr);
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
             var saleOrders = (await this.pedidosDao.GetUserOrderByDeliveryId(ordersId)).ToList();
 
             if (!saleOrders.Any())
@@ -124,8 +125,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).DistinctBy(y => y.DeliveryId).ToList();
-
-            var urls = await this.GetUrlQrRemision(saleOrders, parameters, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
+            var dimensionsQr = this.GetDeliveryParameters(parameters);
+            var urls = await this.GetUrlQrRemision(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
 
@@ -151,7 +152,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return ServiceUtils.CreateResult(true, 200, null, savedQrRoutes, null, null);
             }
 
-            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.MagistralQr);
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
             var saleOrders = await this.pedidosDao.GetUserOrdersByInvoiceId(invoiceIds);
 
             if (!saleOrders.Any())
@@ -170,8 +171,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             saleOrders = saleOrders.DistinctBy(x => x.InvoiceId).ToList();
-
-            var urls = await this.GetUrlQrFactura(saleOrders, parameters, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
+            var dimensionsQr = this.GetDeliveryParameters(parameters);
+            var urls = await this.GetUrlQrFactura(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
 
@@ -206,7 +207,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return (await this.pedidosDao.GetUserOrderByProducionOrder(stringOrdersId)).ToList();
         }
 
-        private async Task<List<string>> GetUrlQrMagistral(List<UserOrderModel> saleOrders, List<ParametersModel> parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
+        private async Task<List<string>> GetUrlQrMagistral(List<UserOrderModel> saleOrders, QrDimensionsModel parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionOrderQr>();
@@ -220,6 +221,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
                 var topText = string.Format(ServiceConstants.QrTopTextOrden, modelQr.SaleOrder, modelQr.ItemCode);
+                parameters.IsBoldFont = false;
                 bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");
                 var memoryStrem = new MemoryStream();
@@ -247,7 +249,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return listUrls;
         }
 
-        private async Task<List<string>> GetUrlQrRemision(List<UserOrderModel> saleOrders, List<ParametersModel> parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
+        private async Task<List<string>> GetUrlQrRemision(List<UserOrderModel> saleOrders, QrDimensionsModel parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionRemisionQrModel>();
@@ -259,7 +261,14 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
                 var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
 
-                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters);
+                if (!string.IsNullOrEmpty(modelQr.Ship))
+                {
+                    modelQr.Ship = modelQr.Ship == ServiceConstants.LocalShipAbr ? ServiceConstants.LocalShip : ServiceConstants.ForeignShip;
+                }
+
+                var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
+                parameters.IsBoldFont = true;
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
 
                 memoryStrem.Flush();
@@ -288,7 +297,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return listUrls;
         }
 
-        private async Task<List<string>> GetUrlQrFactura(List<UserOrderModel> saleOrders, List<ParametersModel> parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
+        private async Task<List<string>> GetUrlQrFactura(List<UserOrderModel> saleOrders, QrDimensionsModel parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionFacturaQrModel>();
@@ -299,6 +308,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
                 var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
+                parameters.IsBoldFont = true;
                 bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
 
@@ -333,24 +343,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="parameters">The parameters data.</param>
         /// <param name="textToConvert">The text to use.</param>
         /// <returns>the bitmap.</returns>
-        private Bitmap CreateQr(List<ParametersModel> parameters, string textToConvert)
+        private Bitmap CreateQr(QrDimensionsModel parameters, string textToConvert)
         {
-            var heigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrHeight));
-            var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrWidth));
-            var marginField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrMargin));
-
-            var heigth = heigthField != null ? int.Parse(heigthField.Value) : DefaultHeightWidth;
-            var width = widthField != null ? int.Parse(widthField.Value) : DefaultHeightWidth;
-            var margin = marginField != null ? int.Parse(marginField.Value) : DefaultMargin;
-
             var writer = new BarcodeWriter()
             {
                 Format = BarcodeFormat.QR_CODE,
                 Options = new ZXing.Common.EncodingOptions()
                 {
-                    Height = heigth,
-                    Width = width,
-                    Margin = margin,
+                    Height = parameters.QrHeight,
+                    Width = parameters.QrWidth,
+                    Margin = parameters.QrMargin,
                 },
             };
 
@@ -367,20 +369,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="parameters">the parameters.</param>
         /// <param name="topText">Top text.</param>
         /// <returns>the bitmap to return.</returns>
-        private Bitmap AddTextToQr(Bitmap qrsBitmap, bool needsCoolingFlag, string botomText, string identifierToPlace, List<ParametersModel> parameters, string topText = null)
+        private Bitmap AddTextToQr(Bitmap qrsBitmap, bool needsCoolingFlag, string botomText, string identifierToPlace, QrDimensionsModel parameters, string topText = null)
         {
-            var heigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectHeight));
-            var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectWidth));
-            var rectyField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRecty));
-            var rectxField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectx));
-            var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralBottomTextSize));
-
-            var rectx = rectxField != null ? int.Parse(rectxField.Value) : DefaultHeightWidth / 2;
-            var recty = rectyField != null ? int.Parse(rectyField.Value) : DefaultHeightWidth - 25;
-            var heigth = heigthField != null ? int.Parse(heigthField.Value) : 250;
-            var width = widthField != null ? int.Parse(widthField.Value) : 100;
-            var sizeText = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24;
-
             var needsCooling = needsCoolingFlag ? ServiceConstants.NeedsCooling : string.Empty;
             var bottomText = string.Format(botomText, identifierToPlace, needsCooling);
 
@@ -388,11 +378,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             graphic.SmoothingMode = SmoothingMode.AntiAlias;
             graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            this.DrawRectangleText(graphic, rectx, recty, width, heigth, bottomText, new Font(ServiceConstants.QrTextFontType, sizeText));
+            var fontStyle = parameters.IsBoldFont ? new Font(ServiceConstants.QrTextFontType, parameters.QrBottomTextSize, FontStyle.Bold) : new Font(ServiceConstants.QrTextFontType, parameters.QrBottomTextSize);
+            this.DrawRectangleText(graphic, parameters.QrRectx, parameters.QrRecty, parameters.QrRectWidth, parameters.QrRectHeight, bottomText, fontStyle);
 
             if (!string.IsNullOrEmpty(topText))
             {
-                this.CreateQrTopText(graphic, parameters, topText, sizeText, width, heigth);
+                this.CreateQrTopText(graphic, parameters, topText, fontStyle);
             }
 
             graphic.Flush();
@@ -421,16 +412,67 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="graphic">Graph where the rectangle will be draw.</param>
         /// <param name="parameters">Parameters.</param>
         /// <param name="topText">Top text to draw.</param>
-        /// <param name="sizeText">Size text.</param>
-        /// <param name="width">Rectangle width.</param>
-        /// <param name="heigth">Rectangle heght.</param>
-        private void CreateQrTopText(Graphics graphic, List<ParametersModel> parameters, string topText, int sizeText, int width, int heigth)
+        /// <param name="fontStyle">Font Style.</param>
+        private void CreateQrTopText(Graphics graphic, QrDimensionsModel parameters, string topText, Font fontStyle)
         {
-            var rectxFieldTop = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectxTop));
-            var rectyFieldTop = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectyTop));
-            var rectxTop = rectxFieldTop != null ? int.Parse(rectxFieldTop.Value) : 130;
-            var rectyTop = rectyFieldTop != null ? int.Parse(rectyFieldTop.Value) : 25;
-            this.DrawRectangleText(graphic, rectxTop, rectyTop, width, heigth, topText, new Font(ServiceConstants.QrTextFontType, sizeText));
+            this.DrawRectangleText(graphic, parameters.QrRectxTop, parameters.QrRectyTop, parameters.QrRectWidth, parameters.QrRectHeight, topText, fontStyle);
+        }
+
+        private QrDimensionsModel GetMagistralParameters(List<ParametersModel> parameters)
+        {
+            var rectHeigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectHeight));
+            var rectWidthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectWidth));
+            var rectyField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRecty));
+            var rectxField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectx));
+            var rectxTopField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectxTop));
+            var rectyTopField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralRectyTop));
+            var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralBottomTextSize));
+            var heigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrHeight));
+            var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrWidth));
+            var marginField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrMargin));
+
+            return new QrDimensionsModel
+            {
+                QrRectHeight = rectHeigthField != null ? int.Parse(rectHeigthField.Value) : 250,
+                QrRectWidth = rectWidthField != null ? int.Parse(rectWidthField.Value) : 100,
+                QrRecty = rectyField != null ? int.Parse(rectyField.Value) : DefaultHeightWidth - 25,
+                QrRectx = rectxField != null ? int.Parse(rectxField.Value) : DefaultHeightWidth / 2,
+                QrRectxTop = rectxTopField != null ? int.Parse(rectxTopField.Value) : 130,
+                QrRectyTop = rectyTopField != null ? int.Parse(rectyTopField.Value) : 25,
+                QrBottomTextSize = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24,
+                QrHeight = heigthField != null ? int.Parse(heigthField.Value) : DefaultHeightWidth,
+                QrWidth = widthField != null ? int.Parse(widthField.Value) : DefaultHeightWidth,
+                QrMargin = marginField != null ? int.Parse(marginField.Value) : DefaultMargin,
+            };
+        }
+
+        private QrDimensionsModel GetDeliveryParameters(List<ParametersModel> parameters)
+        {
+            var rectHeigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryRectHeight));
+            var rectWidthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryRectWidth));
+            var rectyField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryRecty));
+            var rectxField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryRectx));
+            var rectxTopField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryRectxTop));
+            var rectyTopField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryRectyTop));
+
+            var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryBottomTextSize));
+            var heigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryHeight));
+            var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryWidth));
+            var marginField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryMargin));
+
+            return new QrDimensionsModel
+            {
+                QrRectHeight = rectHeigthField != null ? int.Parse(rectHeigthField.Value) : 250,
+                QrRectWidth = rectWidthField != null ? int.Parse(rectWidthField.Value) : 100,
+                QrRecty = rectyField != null ? int.Parse(rectyField.Value) : DefaultHeightWidth - 25,
+                QrRectx = rectxField != null ? int.Parse(rectxField.Value) : DefaultHeightWidth / 2,
+                QrRectxTop = rectxTopField != null ? int.Parse(rectxTopField.Value) : 130,
+                QrRectyTop = rectyTopField != null ? int.Parse(rectyTopField.Value) : 25,
+                QrBottomTextSize = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24,
+                QrHeight = heigthField != null ? int.Parse(heigthField.Value) : DefaultHeightWidth,
+                QrWidth = widthField != null ? int.Parse(widthField.Value) : DefaultHeightWidth,
+                QrMargin = marginField != null ? int.Parse(marginField.Value) : DefaultMargin,
+            };
         }
     }
 }

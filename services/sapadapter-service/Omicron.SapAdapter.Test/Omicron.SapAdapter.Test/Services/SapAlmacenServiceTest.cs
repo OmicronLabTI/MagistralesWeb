@@ -10,19 +10,22 @@ namespace Omicron.SapAdapter.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Sap;
     using Serilog;
+    using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Services.Redis;
 
     /// <summary>
     /// Class for the QR test.
@@ -35,6 +38,8 @@ namespace Omicron.SapAdapter.Test.Services
         private ISapDao sapDao;
 
         private DatabaseContext context;
+
+        private Mock<IRedisService> mockRedis;
 
         /// <summary>
         /// The set up.
@@ -62,9 +67,20 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacenService = new Mock<IAlmacenService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+
+            this.mockRedis = new Mock<IRedisService>();
+
+            this.mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            this.mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object);
+            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object, this.mockRedis.Object);
         }
 
         /// <summary>
@@ -77,7 +93,7 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var parameters = new List<ParametersModel>
             {
-                new ParametersModel { Value = "10" },
+                new ParametersModel { Value = "Apodaca" },
             };
 
             var parametersResponse = this.GetResultModel(parameters);
@@ -104,7 +120,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Limit, "10" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -126,7 +142,7 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var parameters = new List<ParametersModel>
             {
-                new ParametersModel { Value = "10" },
+                new ParametersModel { Value = "Apodaca" },
             };
 
             var parametersResponse = this.GetResultModel(parameters);
@@ -154,7 +170,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { "chips", chip },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -201,10 +217,51 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()}" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersDetails()
+        {
+            // arrange
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "10" },
+            };
+
+            var parametersResponse = this.GetResultModel(parameters);
+
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderDetailModelAlmacen()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetLineProductsRecepcionDetail()));
+
+            var mockCatalogos = new Mock<ICatalogsService>();
+            mockCatalogos
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(parametersResponse));
+
+            var ids = 75000;
+
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
+
+            // act
+            var response = await localService.GetOrdersDetails(ids);
 
             // assert
             Assert.IsNotNull(response);
@@ -276,6 +333,26 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersByIds()
+        {
+            var ordersToLook = new List<int> { 100, 101, 102 };
+
+            // act
+            var response = await this.sapService.GetOrdersByIds(ordersToLook);
+            var orders = response.Response as List<OrderModel>;
+
+            // asserts
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsInstanceOf<List<OrderModel>>(response.Response);
+            Assert.IsTrue(orders.Any());
         }
 
         /// <summary>

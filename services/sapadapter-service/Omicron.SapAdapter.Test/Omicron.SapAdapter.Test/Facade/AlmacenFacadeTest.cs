@@ -78,6 +78,19 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetOrdersDetails()
+        {
+            var orderId = 1;
+            var response = await this.almacenFacade.GetOrdersDetails(orderId);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetScannedDataMagistral()
         {
             var type = "magistral";
@@ -112,6 +125,20 @@ namespace Omicron.SapAdapter.Test.Facade
             var response = await this.almacenFacade.GetCompleteDetail(order);
 
             Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersById()
+        {
+            var response = await this.almacenFacade.GetOrdersByIds(new List<int>());
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.UserError);
         }
 
         /// <summary>

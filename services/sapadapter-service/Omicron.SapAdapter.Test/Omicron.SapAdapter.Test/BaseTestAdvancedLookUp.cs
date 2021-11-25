@@ -112,13 +112,13 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 84434,  DocNum = 84434, FechaInicio = new DateTime(2021, 03, 23), Medico = "Medico B", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125 },
-                new OrderModel { PedidoId = 85000, DocNum = 85000, FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico B", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", AsesorId = 125 },
+                new OrderModel { PedidoId = 84434,  DocNum = 84434, FechaInicio = new DateTime(2021, 03, 23), Medico = "Medico B", Codigo = "MB", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125 },
+                new OrderModel { PedidoId = 85000, DocNum = 85000, FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico B", Codigo = "MB", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", AsesorId = 125 },
 
-                new OrderModel { PedidoId = 84458, DocNum = 84458, FechaInicio = new DateTime(2021, 04, 01), Medico = "Medico A", PedidoStatus = "O", Address = "Guadalajara", OrderType = "BE", AsesorId = 125 },
+                new OrderModel { PedidoId = 84458, DocNum = 84458, FechaInicio = new DateTime(2021, 04, 01), Medico = "Medico A", Codigo = "MA", PedidoStatus = "O", Address = "Guadalajara", OrderType = "BE", AsesorId = 125 },
 
-                new OrderModel { PedidoId = 84473, DocNum = 84473, FechaInicio = new DateTime(2021, 03, 06), Medico = "Medico A", PedidoStatus = "C", Address = "Puebla", OrderType = "BE", AsesorId = 125 },
-                new OrderModel { PedidoId = 84508, DocNum = 84508, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125 },
+                new OrderModel { PedidoId = 84473, DocNum = 84473, FechaInicio = new DateTime(2021, 03, 06), Medico = "Medico A", Codigo = "MA", PedidoStatus = "C", Address = "Puebla", OrderType = "BE", AsesorId = 125 },
+                new OrderModel { PedidoId = 84508, DocNum = 84508, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", Codigo = "MA", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125 },
             };
         }
 
@@ -210,13 +210,13 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<DeliverModel>
             {
-                new DeliverModel { Cliente = "Cliente A", DeliveryStatus = "C", DocNum = 74709, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico A", PedidoId = 74709, Address = "MONTERREY,Nuevo León" },
-                new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74710, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico A", PedidoId = 74710, Address = "MONTERREY ,Nuevo León" },
-                new DeliverModel { Cliente = "Cliente C", DeliveryStatus = "O", DocNum = 74728, FechaInicio = new DateTime(2021, 04, 05), Medico = "Medico B", PedidoId = 74728, Address = "Guadalajara" },
+                new DeliverModel { Cliente = "Cliente A", DeliveryStatus = "C", DocNum = 74709, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico A", CardCode = "MA", PedidoId = 74709, Address = "MONTERREY,Nuevo León" },
+                new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74710, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico A", CardCode = "MA", PedidoId = 74710, Address = "MONTERREY ,Nuevo León" },
+                new DeliverModel { Cliente = "Cliente C", DeliveryStatus = "O", DocNum = 74728, FechaInicio = new DateTime(2021, 04, 05), Medico = "Medico B", CardCode = "MB", PedidoId = 74728, Address = "Guadalajara" },
 
-                new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74751, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", PedidoId = 74751, Address = "Puebla" },
+                new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74751, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", CardCode = "MB", PedidoId = 74751, Address = "Puebla" },
 
-                new DeliverModel { Cliente = "Cliente F", DeliveryStatus = "O", DocNum = 74746, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", PedidoId = 74746, Address = "Guadalajara" },
+                new DeliverModel { Cliente = "Cliente F", DeliveryStatus = "O", DocNum = 74746, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", CardCode = "MB", PedidoId = 74746, Address = "Guadalajara" },
             };
         }
 
@@ -283,15 +283,23 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<ProductoModel>
             {
-                new ProductoModel { IsMagistral = "N", ProductoId = "REVE 14", ProductoName = "Ungüento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ungüento 10 GR", IsLine = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "REVE 21", ProductoName = "Cápsula 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR", IsLine = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "REVE 22", ProductoName = "Ungüento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ungüento 10 GR", IsLine = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "DZ 28", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "REVE 32", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "DZ 49", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "REVE 14", ProductoName = "Ungüento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ungüento 10 GR", IsLine = "Y", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "REVE 21", ProductoName = "Cápsula 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR", IsLine = "Y", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "REVE 22", ProductoName = "Ungüento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ungüento 10 GR", IsLine = "Y", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "DZ 28", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "REVE 32", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "DZ 49", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", IsWorkableProduct = "Y" },
 
-                new ProductoModel { IsMagistral = "N", ProductoId = "DZ 45", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "DZ 38", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "DZ 45", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "DZ 38", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", IsWorkableProduct = "Y" },
+
+                new ProductoModel { IsMagistral = "Y", ProductoId = "104   120 ML", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "N", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "567   120 ML", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "N", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "567   60 MLML", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "N", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "567   60 ML", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "N", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "149   60 ML", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "N", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "567   30 ML", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "N", IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "Y", ProductoId = "2777   30 ML", ProductoName = "product name", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "N", IsWorkableProduct = "Y" },
             };
         }
 
@@ -304,6 +312,39 @@ namespace Omicron.SapAdapter.Test
             return new List<Repartidores>
             {
                new Repartidores { TrnspCode = 1, TrnspName = "DHL" },
+            };
+        }
+
+        /// <summary>
+        /// get the doctors.
+        /// </summary>
+        /// <returns>the product.</returns>
+        public List<ClientCatalogModel> GetDoctorsModels()
+        {
+            return new List<ClientCatalogModel>
+            {
+                new ClientCatalogModel { ClientId = "MB", AliasName = "médico B alias", Email = "email@email" },
+                new ClientCatalogModel { ClientId = "MA", AliasName = "médico A alias", Email = "email@email" },
+                new ClientCatalogModel { ClientId = "C1", AliasName = "médico C1 alias", Email = "email@email" },
+                new ClientCatalogModel { ClientId = "C8", AliasName = "médico C8 alias", Email = "email@email" },
+                new ClientCatalogModel { ClientId = "C03911", AliasName = "médico C03911 alias", Email = "email@email" },
+                new ClientCatalogModel { ClientId = "C00005", AliasName = "médico C00005 alias", Email = "email@email" },
+                new ClientCatalogModel { ClientId = "C00214", AliasName = "médico C00214 alias", Email = "email@email" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the resultDto.
+        /// </summary>
+        /// <param name="dataToSend">the data to send.</param>
+        /// <returns>the object.</returns>
+        public ResultModel GetResultModel(object dataToSend)
+        {
+            return new ResultModel
+            {
+                Code = 200,
+                Comments = null,
+                Response = JsonConvert.SerializeObject(dataToSend),
             };
         }
     }

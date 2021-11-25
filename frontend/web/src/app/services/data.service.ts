@@ -315,9 +315,6 @@ export class DataService {
     let finishMessaje = '';
     switch (messageType) {
       case MessageType.processOrder:
-        firstMessage = '';
-        finishMessaje = '\n';
-        break;
       case MessageType.processDetailOrder:
         firstMessage = '';
         finishMessaje = '\n';
@@ -661,15 +658,15 @@ export class DataService {
   }
 
   openNewTapByUrl(url: string, typeToSeeTap: TypeToSeeTap, orderId?: number) {
-    let tapTitle = CONST_STRING.empty;
-    switch (typeToSeeTap) {
-      case TypeToSeeTap.order:
-        tapTitle = `Pedido ${orderId}`;
-        break;
-      case TypeToSeeTap.receipt:
-        tapTitle = `Receta pedido ${orderId}`;
-        break;
-    }
+    // let tapTitle = CONST_STRING.empty;
+    // switch (typeToSeeTap) {
+    //  case TypeToSeeTap.order:
+    //    tapTitle = `Pedido ${orderId}`;
+    //    break;
+    //  case TypeToSeeTap.receipt:
+    //    tapTitle = `Receta pedido ${orderId}`;
+    //    break;
+    // }
     // const prntWin = window.open();
     // prntWin.document.write('<html><head><title>' + tapTitle + '</title></head><body style="background-color: rgb(60, 61, 62)">'
     //     + '<embed width="100%" height="100%" name="plugin" src="' + url + '" '

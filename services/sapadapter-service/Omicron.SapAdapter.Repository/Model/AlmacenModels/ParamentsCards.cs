@@ -45,7 +45,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public List<ProductoModel> ProductModel { get; set; }
+        public List<string> ProductModel { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -106,5 +106,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public List<UserOrderModel> UserOrdersForDelivery { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<string> LocalNeighbors { get; set; }
     }
 }

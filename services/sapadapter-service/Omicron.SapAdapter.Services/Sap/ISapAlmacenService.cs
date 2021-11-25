@@ -25,6 +25,13 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetOrders(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Gets the order detail.
+        /// </summary>
+        /// <param name="orderId">the id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOrdersDetails(int orderId);
+
+        /// <summary>
         /// Gets the data of the magistral scanned data.
         /// </summary>
         /// <param name="code">the code.</param>
@@ -44,6 +51,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="orderId">The order id.</param>
         /// <returns>The data.</returns>
         Task<ResultModel> GetCompleteDetail(int orderId);
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="ordersId">The orders id.</param>
+        /// <returns>The data.</returns>
+        Task<ResultModel> GetOrdersByIds(List<int> ordersId);
 
         /// <summary>
         /// The list of orders by delivery.

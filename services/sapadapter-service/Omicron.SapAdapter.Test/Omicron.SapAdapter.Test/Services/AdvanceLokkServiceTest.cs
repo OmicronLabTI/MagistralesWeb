@@ -20,8 +20,10 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
     using Serilog;
@@ -37,6 +39,8 @@ namespace Omicron.SapAdapter.Test.Services
         private ISapDao sapDao;
 
         private DatabaseContext context;
+
+        private Mock<ICatalogsService> catalogService;
 
         /// <summary>
         /// The set up.
@@ -58,6 +62,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.ProductoModel.AddRange(this.GetProductoModel());
             this.context.Repartidores.AddRange(this.GetRepartidores());
             this.context.AsesorModel.AddRange(this.GetAsesorModel());
+            this.context.ClientCatalogModel.AddRange(this.GetDoctorsModels());
             this.context.SaveChanges();
 
             var mockPedidoService = new Mock<IPedidosService>();
@@ -65,7 +70,7 @@ namespace Omicron.SapAdapter.Test.Services
             var userMock = new Mock<IUsersService>();
 
             mockPedidoService
-                .Setup(m => m.GetUserPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
+                .Setup(m => m.PostPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockAlmacen
@@ -81,8 +86,28 @@ namespace Omicron.SapAdapter.Test.Services
             mockLog
                 .Setup(m => m.Information(It.IsAny<string>()));
 
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "10" },
+            };
+
+            this.catalogService = new Mock<ICatalogsService>();
+            this.catalogService
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModel(parameters)));
+
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
+
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object);
+            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object, this.catalogService.Object, mockRedis.Object);
         }
 
         /// <summary>
@@ -140,7 +165,6 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.AreEqual(cards.CardInvoice.Count, invoices);
             Assert.AreEqual(cards.CardDelivery.Count, deliverys);
             Assert.AreEqual(cards.CardDistribution.Count, distribution);
-            Assert.AreEqual(cards.CardOrder.Count, orders);
         }
 
         /// <summary>

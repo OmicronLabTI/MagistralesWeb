@@ -1,8 +1,13 @@
-FROM nginx
-#RUN rm -rf /usr/share/nginx/html/*
+FROM node:12-slim AS build
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm ci --no-optional
+COPY . .
+# RUN npm run lint
+RUN npm run buildEnv
+
+FROM nginx AS release
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY dist/omicron /usr/share/nginx/html
-#COPY 3a72e7eae40624a.crt /etc/ssl/3a72e7eae40624a.crt
-#COPY server.key /etc/ssl/server.key
-#EXPOSE 443
+WORKDIR /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist ./
 CMD ["nginx", "-g", "daemon off;"]

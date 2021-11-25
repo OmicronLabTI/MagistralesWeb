@@ -53,22 +53,19 @@ namespace Omicron.SapAdapter.Facade.Sap
             this.almacenOrderDoctorService = almacenOrderDoctorService ?? throw new ArgumentNullException(nameof(almacenOrderDoctorService));
         }
 
-        /// <summary>
-        /// Gets the orders for almacen.
-        /// </summary>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultDto> GetOrders(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.GetOrders(parameters));
         }
 
-        /// <summary>
-        /// Gets the data for the scanned qr or bar code.
-        /// </summary>
-        /// <param name="type">the type of the scan.</param>
-        /// <param name="code">the code scanned.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersDetails(int orderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetOrdersDetails(orderId));
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> GetScannedData(string type, string code)
         {
             switch (type)
@@ -96,14 +93,16 @@ namespace Omicron.SapAdapter.Facade.Sap
             }
         }
 
-        /// <summary>
-        /// Gets all the details.
-        /// </summary>
-        /// <param name="orderId">the order id.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<ResultDto> GetCompleteDetail(int orderId)
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.GetCompleteDetail(orderId));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersByIds(List<int> ordersId)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetOrdersByIds(ordersId));
         }
 
         /// <inheritdoc/>

@@ -19,8 +19,10 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
@@ -34,17 +36,25 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IAlmacenService almacenService;
 
+        private readonly ICatalogsService catalogsService;
+
+        private readonly IRedisService redisService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAlmacenDeliveryService"/> class.
         /// </summary>
         /// <param name="sapDao">the sap dao.</param>
         /// <param name="pedidosService">the pedidos service.</param>
         /// <param name="almacenService">The almacen service.</param>
-        public SapAlmacenDeliveryService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService)
+        /// <param name="catalogsService">The catalog service.</param>
+        /// <param name="redisService">thre redis service.</param>
+        public SapAlmacenDeliveryService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
         {
             this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
             this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
             this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
+            this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
+            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -76,7 +86,7 @@ namespace Omicron.SapAdapter.Services.Sap
             userOrders = userOrders.Where(x => x.Salesorderid == orderSaleId.ToString()).ToList();
             lineProducts = lineProducts.Where(x => x.SaleOrderId == orderSaleId).ToList();
 
-            var deliveryDetails = (await this.sapDao.GetDeliveryDetailBySaleOrder(new List<int> { orderSaleId })).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryDetailBySaleOrderJoinProduct(new List<int> { orderSaleId })).ToList();
             deliveryDetails = deliveryDetails.Where(x => x.DeliveryId == deliveryId).ToList();
 
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { orderSaleId });
@@ -123,7 +133,7 @@ namespace Omicron.SapAdapter.Services.Sap
             listDeliveryIds.AddRange(userOrders.Select(x => x.DeliveryId).ToList());
             listDeliveryIds = listDeliveryIds.OrderBy(x => x).Distinct().ToList();
 
-            var deliveryDetailDb = (await this.sapDao.GetDeliveryDetailByDocEntry(listDeliveryIds)).ToList();
+            var deliveryDetailDb = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(listDeliveryIds)).ToList();
             var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(deliveryDetailDb.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList())).ToList();
             var invoiceRefactura = invoices.Where(x => !string.IsNullOrEmpty(x.Refactura) && x.Refactura == ServiceConstants.IsRefactura).Select(y => y.InvoiceId).ToList();
             invoices = invoices.Where(x => string.IsNullOrEmpty(x.Refactura) || x.Refactura != ServiceConstants.IsRefactura).ToList();
@@ -131,7 +141,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapOrdersGroup = deliveryDetailDb.GroupBy(x => x.DeliveryId).ToList();
             var granTotal = sapOrdersGroup.Count;
 
-            var lineProducts = (await this.sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
+            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
             var deliveryToReturn = new List<DeliveryDetailModel>();
 
@@ -250,12 +260,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
             var saleOrdersByDeliveries = (await this.sapDao.GetOrdersById(details.Select(x => x.BaseEntry).ToList())).ToList();
 
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+
             foreach (var d in listIds)
             {
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
                 header ??= new DeliverModel { Medico = string.Empty, FechaInicio = DateTime.Now, Cliente = string.Empty, Address = string.Empty };
                 header.Address = string.IsNullOrEmpty(header.Address) ? string.Empty : header.Address;
-                var deliveryDetail = details.Where(x => x.DeliveryId == d).ToList();
+                var deliveryDetail = details.Where(x => x.DeliveryId == d).DistinctBy(x => new { x.BaseEntry, x.ProductoId }).ToList();
                 var saleOrders = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.Select(x => x.BaseEntry).ToList() : new List<int> { 0 };
                 var saleOrdersString = saleOrders.Select(y => y.ToString()).ToList();
                 var totalItems = deliveryDetail.Count;
@@ -292,7 +304,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
                     Remision = d,
-                    InvoiceType = header.Address.Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                    InvoiceType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, header.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                     TypeOrder = header.TypeOrder,
                 };
 

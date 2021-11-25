@@ -16,9 +16,12 @@ namespace Omicron.SapAdapter.Test.Services
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
     using Serilog;
@@ -34,6 +37,8 @@ namespace Omicron.SapAdapter.Test.Services
         private ISapDao sapDao;
 
         private DatabaseContext context;
+
+        private Mock<ICatalogsService> catalogService;
 
         /// <summary>
         /// The set up.
@@ -59,7 +64,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<List<int>>()))
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetLineProductsForDoctorOrders()));
 
             var mockLog = new Mock<ILogger>();
@@ -67,8 +72,28 @@ namespace Omicron.SapAdapter.Test.Services
             mockLog
                 .Setup(m => m.Information(It.IsAny<string>()));
 
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "10" },
+            };
+
+            this.catalogService = new Mock<ICatalogsService>();
+            this.catalogService
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModel(parameters)));
+
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.almacenOrderDoctorService = new AlmacenOrderDoctorService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object);
+
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
+            this.almacenOrderDoctorService = new AlmacenOrderDoctorService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, this.catalogService.Object, mockRedis.Object);
         }
 
         /// <summary>
@@ -135,10 +160,16 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<List<int>>()))
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetIncidents()));
 
-            var localService = new AlmacenOrderDoctorService(this.sapDao, mockPedido.Object, mockAlmacen.Object);
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            var localService = new AlmacenOrderDoctorService(this.sapDao, mockPedido.Object, mockAlmacen.Object, this.catalogService.Object, mockRedis.Object);
 
             // act
             var response = await localService.GetOrderdetail(salesOrderId);

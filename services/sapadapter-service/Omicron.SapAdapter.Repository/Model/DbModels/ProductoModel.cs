@@ -99,6 +99,13 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        [Column("U_Trabajable")]
+        public string IsWorkableProduct { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         [NotMapped]
         public string Groupname { get; set; }
     }

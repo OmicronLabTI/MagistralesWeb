@@ -9,7 +9,7 @@
 import UIKit
 import Resolver
 import Moya
-#if QA || RELEASE
+#if QA || RELEASE || UAT
 import  Firebase
 #endif
 
@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         self.setupRegistrationsDI()
-        #if QA || RELEASE
+        #if QA || RELEASE || UAT
         FirebaseApp.configure()
         #endif
         return true

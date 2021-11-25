@@ -25,6 +25,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetOrders(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Gets the order detail.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersDetails(int orderId);
+
+        /// <summary>
         /// Gets the data for the scanned qr or bar code.
         /// </summary>
         /// <param name="type">the type of the scan.</param>
@@ -38,6 +45,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetCompleteDetail(int orderId);
+
+        /// <summary>
+        /// Gets all the orders.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersByIds(List<int> ordersId);
 
         /// <summary>
         /// Gets the orders from delivery.

@@ -383,6 +383,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// producto de linea.
         /// </summary>
+        public const string LineaAlone = "Linea";
+
+        /// <summary>
+        /// producto de linea.
+        /// </summary>
         public const string Line = "linea";
 
         /// <summary>
@@ -444,6 +449,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the max days.
         /// </summary>
         public const string SentMaxDays = "AlmacenMaxDayToLook";
+
+        /// <summary>
+        /// the max days.
+        /// </summary>
+        public const string LocalNeighborhood = "LocalNeighborhood";
 
         /// <summary>
         /// error when batche are missing.
@@ -524,6 +534,16 @@ namespace Omicron.SapAdapter.Services.Constants
         /// value for refactua.
         /// </summary>
         public const string MagistralWareHouse = "MG";
+
+        /// <summary>
+        /// the line products.
+        /// </summary>
+        public const string AlmacenLineProducts = "AlmacenLineProducts";
+
+        /// <summary>
+        /// the line products.
+        /// </summary>
+        public const string LocalNeighbors = "LocalNeighbors";
 
         /// <summary>
         /// Gets the status of the order.

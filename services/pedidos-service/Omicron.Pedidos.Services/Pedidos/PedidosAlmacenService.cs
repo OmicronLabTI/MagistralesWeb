@@ -54,7 +54,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var ordersToIgnore = await this.pedidosDao.GetOrderForAlmacenToIgnore(ServiceConstants.Finalizado, response.Item1);
 
             var odersToLook = orders.Select(x => x.Salesorderid).Distinct().ToList();
-            var possibleToIgnore = ordersToIgnore.Where(x => x.IsSalesOrder).Select(y => y.Salesorderid).ToList();
+            var possibleToIgnore = ordersToIgnore.Select(y => y.Salesorderid).ToList();
             var idsToIgnore = possibleToIgnore.Where(x => !odersToLook.Any(y => y == x)).ToList();
             var ordersId = ordersToIgnore.Where(x => idsToIgnore.Contains(x.Salesorderid)).Select(y => int.Parse(y.Salesorderid)).Distinct().ToList();
 
@@ -178,6 +178,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.StatusAlmacen,
                     x.InvoiceStoreDate,
                     x.StatusInvoice,
+                    x.UserInvoiceStored,
                 })
                 .ToList();
 

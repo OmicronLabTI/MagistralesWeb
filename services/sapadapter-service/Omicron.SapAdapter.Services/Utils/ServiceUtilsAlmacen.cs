@@ -29,80 +29,62 @@ namespace Omicron.SapAdapter.Services.Utils
         /// </summary>
         /// <param name="types">the type to filter.</param>
         /// <param name="sapOrders">the sap orders.</param>
-        /// <param name="orderHeaders">the orders header.</param>
         /// <param name="lineProducts">the lines products.</param>
         /// <returns>the datetime.</returns>
-        public static List<CompleteAlmacenOrderModel> GetSapOrderByType(List<string> types, List<CompleteAlmacenOrderModel> sapOrders, List<OrdenFabricacionModel> orderHeaders, List<string> lineProducts)
+        public static Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel> GetSapOrderByType(List<string> types, List<CompleteAlmacenOrderModel> sapOrders, List<string> lineProducts)
         {
             var listToReturn = new List<CompleteAlmacenOrderModel>();
+            var salesTypes = new SaleOrderTypeModel
+            {
+                LineSaleOrders = new List<int>(),
+                MagistralSaleOrders = new List<int>(),
+                MixedSaleOrders = new List<int>(),
+            };
+
             var sapOrdersGroup = sapOrders.GroupBy(x => x.DocNum).ToList();
 
             if (types.Contains(ServiceConstants.Magistral.ToLower()))
             {
-                var listMagistral = sapOrdersGroup.Where(x => x.Count() == orderHeaders.Where(y => y.PedidoId == x.Key).Count());
+                var listMagistral = sapOrdersGroup.Where(x => !x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)) && !x.All(y => lineProducts.Contains(y.Detalles.ProductoId)));
                 var keys = listMagistral.Select(x => x.Key).ToList();
 
                 listToReturn.AddRange(sapOrders.Where(x => keys.Contains(x.DocNum)));
+                salesTypes.MagistralSaleOrders = keys;
+                sapOrdersGroup.RemoveAll(x => keys.Contains(x.Key));
             }
 
             if (types.Contains(ServiceConstants.Mixto.ToLower()))
             {
-                var listMixta = sapOrdersGroup.Where(x => x.Count() != orderHeaders.Where(y => y.PedidoId == x.Key).Count() && orderHeaders.Where(y => y.PedidoId == x.Key).Count() > 0);
+                var listMixta = sapOrdersGroup.Where(x => x.Any(y => lineProducts.Contains(y.Detalles.ProductoId) && !x.All(y => lineProducts.Contains(y.Detalles.ProductoId))));
                 var keysMixta = listMixta.Select(x => x.Key).ToList();
 
                 listToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
+                salesTypes.MixedSaleOrders = keysMixta;
+                sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
             }
 
             if (types.Contains(ServiceConstants.Line))
             {
-                var listMixta = sapOrdersGroup.Where(x => orderHeaders.Where(y => y.PedidoId == x.Key).Count() == 0 && x.All(y => lineProducts.Contains(y.Detalles.ProductoId)));
+                var listMixta = sapOrdersGroup.Where(x => x.All(y => lineProducts.Contains(y.Detalles.ProductoId)));
                 var keysMixta = listMixta.Select(x => x.Key).ToList();
 
                 listToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
+                salesTypes.LineSaleOrders = keysMixta;
+                sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
             }
 
-            if (types.Contains(ServiceConstants.Maquila.ToLower()))
-            {
-                var ordersMaquila = sapOrders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
-                var orderListToAdd = new List<CompleteAlmacenOrderModel>();
-                foreach (var order in ordersMaquila)
-                {
-                    var orderExists = listToReturn.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
-                    if (orderExists == null)
-                    {
-                        orderListToAdd.Add(order);
-                    }
-                }
-
-                listToReturn.AddRange(orderListToAdd);
-            }
-            else
+            if (!types.Contains(ServiceConstants.Maquila.ToLower()))
             {
                 listToReturn = listToReturn.Where(x => x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
             }
 
-            if (types.Contains(ServiceConstants.Muestra.ToLower()))
-            {
-                var ordersMuestra = sapOrders.Where(x => !string.IsNullOrEmpty(x.PedidoMuestra) && x.PedidoMuestra == ServiceConstants.IsSampleOrder).ToList();
-                var orderListToAdd = new List<CompleteAlmacenOrderModel>();
-                foreach (var order in ordersMuestra)
-                {
-                    var orderExists = listToReturn.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
-                    if (orderExists == null)
-                    {
-                        orderListToAdd.Add(order);
-                    }
-                }
-
-                listToReturn.AddRange(orderListToAdd);
-            }
-            else
+            if (!types.Contains(ServiceConstants.Muestra.ToLower()))
             {
                 listToReturn = listToReturn.Where(x => string.IsNullOrEmpty(x.PedidoMuestra) || x.PedidoMuestra != ServiceConstants.IsSampleOrder).ToList();
             }
 
-            return listToReturn;
-        }
+            return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listToReturn.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList(), salesTypes);
+    }
 
         /// <summary>
         /// Get the orders for recepcion pedidos.
@@ -120,20 +102,11 @@ namespace Omicron.SapAdapter.Services.Utils
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
 
-            var orderToAppear = userOrdersTuple.Item1.Select(x => x.Salesorderid).ToList();
-            var ordersSapMaquila = (await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ)).ToList();
-            ordersSapMaquila = ordersSapMaquila.Where(x => x.Detalles != null).ToList();
-            ordersSapMaquila = ordersSapMaquila.Where(x => orderToAppear.Contains(x.DocNum.ToString())).ToList();
+            var orderToAppear = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).ToList();
+            var ordersSapMaquila = (await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ, orderToAppear)).ToList();
+            sapOrders.AddRange(ordersSapMaquila.Where(x => x.Detalles != null));
 
-            foreach (var order in ordersSapMaquila)
-            {
-                var orderSapExists = sapOrders.FirstOrDefault(x => x.DocNum == order.DocNum && x.Detalles.ProductoId == order.Detalles.ProductoId);
-                if (orderSapExists == null)
-                {
-                    sapOrders.Add(order);
-                }
-            }
-
+            sapOrders = sapOrders.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
             return sapOrders;
         }
     }

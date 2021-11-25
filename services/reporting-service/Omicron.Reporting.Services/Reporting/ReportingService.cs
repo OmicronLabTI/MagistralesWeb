@@ -13,6 +13,7 @@ namespace Omicron.Reporting.Services
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Omicron.Reporting.Dtos.Model;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services.Clients;
     using Omicron.Reporting.Services.Constants;
@@ -221,6 +222,34 @@ namespace Omicron.Reporting.Services
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> SendEmails(List<EmailGenericDto> emails)
+        {
+            var config = await this.catalogsService.GetParams(ServiceConstants.ValuesForEmail);
+            var smtpConfig = this.GetSmtpConfig(config);
+            var newListEmails = this.GetGroupsOfList(emails, 3);
+
+            foreach (var orderList in newListEmails)
+            {
+                await Task.WhenAll(orderList.Select(async x =>
+                {
+                    var atachments = this.GetAtachments(x.Atachments, x.AtachmentFormat, x.AtachmentName);
+
+                    var mailStatus = await this.omicronMailClient.SendMail(
+                    smtpConfig,
+                    x.DestinityEmail,
+                    x.Subject,
+                    x.BodyEmail,
+                    x.CopyEmails,
+                    atachments);
+                }));
+
+                await Task.Delay(1000);
+            }
+
+            return new ResultModel { Success = true, Code = 200, Response = true };
+        }
+
         /// <summary>
         /// Gets the smtp config.
         /// </summary>
@@ -250,8 +279,8 @@ namespace Omicron.Reporting.Services
             var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
 
             //// ToDo descomentar el boton cuando pase dxp a prod
-            //// var button = string.Format(ServiceConstants.ButtonEmail, package.DxpRoute);
-            var button = string.Empty;
+            ////  var button = string.Empty;
+            var button = string.Format(ServiceConstants.ButtonEmail, package.DxpRoute);
 
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
@@ -411,6 +440,26 @@ namespace Omicron.Reporting.Services
                 default:
                     return string.Empty;
             }
+        }
+
+        private Dictionary<string, MemoryStream> GetAtachments(List<byte[]> atachments, string format, string name)
+        {
+            if (atachments == null || !atachments.Any())
+            {
+                return null;
+            }
+
+            var dictionaryToReturn = new Dictionary<string, MemoryStream>();
+            var count = 0;
+            atachments.ForEach(x =>
+            {
+                var stream = new MemoryStream(x);
+                var fileName = string.IsNullOrEmpty(name) ? $"File{count}.{format}" : name;
+                dictionaryToReturn.Add(fileName, stream);
+                count++;
+            });
+
+            return dictionaryToReturn;
         }
     }
 }
