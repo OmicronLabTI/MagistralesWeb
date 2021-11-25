@@ -27,11 +27,12 @@ export class FinalizeOrdersComponent implements OnInit {
   ordersIsolated: IOrdersReq[] = [];
   toDay = new Date();
   isCorrectData = false;
-  constructor(@Inject(MAT_DIALOG_DATA) public finalizeData: any,
-              private orderService: PedidosService,
-              private errorService: ErrorService,
-              private dataService: DataService,
-              private dialogRef: MatDialogRef<FinalizeOrdersComponent>) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public finalizeData: any,
+    private orderService: PedidosService,
+    private errorService: ErrorService,
+    private dataService: DataService,
+    private dialogRef: MatDialogRef<FinalizeOrdersComponent>) {
     this.finalizeData = finalizeData || new Array();
   }
 
@@ -50,11 +51,11 @@ export class FinalizeOrdersComponent implements OnInit {
             let count = 0;
             order[1][0].batche = this.getZfFll(fullBatchCode[0], fullBatchCode[1], count);
             if (order[1].length > 1) {
-              for (const {} of order[1]) {
+              order[1].forEach(_ => {
                 // set default batch code
                 order[1][count].batche = this.getZfFll(fullBatchCode[0], fullBatchCode[1], count);
                 count++;
-              }
+              });
             }
             ordersIsolatedFull.push(...order[1]);
           }
@@ -171,10 +172,10 @@ export class FinalizeOrdersComponent implements OnInit {
     });
   }
 
-  groupBy(list, keyGetter) {
-    const map = new Map();
+  groupBy(list: IOrdersReq[], keyGetter): Map<string, IOrdersReq[]> {
+    const map = new Map<string, IOrdersReq[]>();
     list.forEach((item) => {
-      const key = keyGetter(item);
+      const key = keyGetter(item.itemCode);
       const collection = map.get(key);
       if (!collection) {
         map.set(key, [item]);
