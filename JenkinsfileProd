@@ -212,6 +212,21 @@ pipeline {
         }
       }
     }
+    stage('Deploy App Service') {
+      when {
+        anyOf {
+          changeset "*frontend/web/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        azureWebAppPublish azureCredentialsId: 'Omicronapp', publishType: 'docker',
+          resourceGroup: 'OmicronProduccion', appName: 'omicronlab',
+          dockerImageName: 'omicron.azurecr.io/omicron-web-repository', dockerImageTag: 'latest',
+          dockerRegistryEndpoint: [credentialsId: 'omicronacr', url: 'https://omicron.azurecr.io'],
+          skipDockerBuild: true
+      }
+    }
     stage('Kubernetes Down') {
       steps {
         echo 'Running Kubernetes down'
