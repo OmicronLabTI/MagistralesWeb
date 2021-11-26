@@ -100,10 +100,31 @@ namespace Omicron.SapAdapter.Services.Utils
 
             var sapOrders = (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
+            var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
+            sapOrders.GroupBy(x => x.DocNum).ToList().ForEach(x =>
+            {
+                if (x.All(y => y.IsMagistral == "Y") && idsMagistrales.Contains(x.Key))
+                {
+                    arrayOfSaleToProcess.AddRange(x.ToList());
+                }
+                else if (x.All(y => y.IsLine == "Y") && !idsToIgnore.Contains(x.Key))
+                {
+                    arrayOfSaleToProcess.AddRange(x.ToList());
+                }
+                else if (x.Any(y => y.IsLine == "Y") && x.Any(y => y.IsMagistral == "Y") && idsMagistrales.Contains(x.Key))
+                {
+                    arrayOfSaleToProcess.AddRange(x.ToList());
+                }
+            });
+
+            /*
             var sapOrdersMg = sapOrders.Where(x => idsMagistrales.Contains(x.DocNum)).ToList();
-            sapOrders = sapOrders.Where(x => x.IsLine == "Y" && !idsToIgnore.Contains(x.DocNum)).ToList();
-            sapOrders.AddRange(sapOrdersMg);
+            sapOrders = sapOrders.Where(x => x.IsLine == "Y" && !idsToIgnore.Contains(x.DocNum) && !idsMagistrales.Contains(x.DocNum)).ToList();
+            var algo = sapOrders.Select(x => x.DocNum).Distinct().ToList();
+            sapOrders.AddRange(sapOrdersMg);*/
+
+            sapOrders = arrayOfSaleToProcess;
 
             var orderToAppear = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).ToList();
             var ordersSapMaquila = (await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ, orderToAppear)).ToList();
