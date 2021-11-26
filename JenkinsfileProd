@@ -195,16 +195,6 @@ pipeline {
         }
       }
     }
-    stage('KafkaConsumer') {
-      when {
-        anyOf {
-          changeset "*services/kafkaconsumer-service/**"
-          expression {
-            currentBuild.previousBuild.result != "SUCCESS"
-          }
-        }
-      }
-    }
     stage('Deploy App Service') {
       when {
         anyOf {
