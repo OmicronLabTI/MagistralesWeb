@@ -722,6 +722,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              TypeOrder = order.OrderType,
                              PedidoMuestra = order.PedidoMuestra,
                              Comments = order.Comments,
+                             IsLine = product.IsLine,
+                             IsMagistral = product.IsMagistral,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);

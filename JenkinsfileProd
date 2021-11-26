@@ -195,23 +195,6 @@ pipeline {
         }
       }
     }
-    stage('KafkaConsumer') {
-      when {
-        anyOf {
-          changeset "*services/kafkaconsumer-service/**"
-          expression {
-            currentBuild.previousBuild.result != "SUCCESS"
-          }
-        }
-      }
-      steps {
-        dir('services/kafkaconsumer-service/') {
-          script {
-            DockerBuildAndPush("kafkaconsumer")
-          }
-        }
-      }
-    }
     stage('Deploy App Service') {
       when {
         anyOf {
@@ -231,14 +214,14 @@ pipeline {
       steps {
         echo 'Running Kubernetes down'
         sh 'kubectl config use-context omicron-aks'
-        sh 'kubectl delete -f deploy_uat.yaml --grace-period=0 --force --ignore-not-found'
+        sh 'kubectl delete -f deploy_prod.yaml --grace-period=0 --force --ignore-not-found'
       }
     }
     stage('Kubernetes Up') {
       steps {
         echo 'Running Kubernetes'
         sh 'kubectl config use-context omicron-aks'
-        sh 'kubectl apply -f deploy_uat.yaml'
+        sh 'kubectl apply -f deploy_prod.yaml'
       }
     }
     stage('Database') {
