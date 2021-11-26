@@ -95,7 +95,6 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the orders.</returns>
         public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(ISapDao sapDao, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
         {
-            var idsToIgnore = lineProductTuple.Item2;
             var idsMagistrales = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
 
             var sapOrders = (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
@@ -108,7 +107,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 {
                     arrayOfSaleToProcess.AddRange(x.ToList());
                 }
-                else if (x.All(y => y.IsLine == "Y") && !idsToIgnore.Contains(x.Key))
+                else if (x.All(y => y.IsLine == "Y") && !lineProductTuple.Item2.Contains(x.Key))
                 {
                     arrayOfSaleToProcess.AddRange(x.ToList());
                 }
@@ -118,20 +117,12 @@ namespace Omicron.SapAdapter.Services.Utils
                 }
             });
 
-            /*
-            var sapOrdersMg = sapOrders.Where(x => idsMagistrales.Contains(x.DocNum)).ToList();
-            sapOrders = sapOrders.Where(x => x.IsLine == "Y" && !idsToIgnore.Contains(x.DocNum) && !idsMagistrales.Contains(x.DocNum)).ToList();
-            var algo = sapOrders.Select(x => x.DocNum).Distinct().ToList();
-            sapOrders.AddRange(sapOrdersMg);*/
-
-            sapOrders = arrayOfSaleToProcess;
-
             var orderToAppear = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).ToList();
             var ordersSapMaquila = (await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ, orderToAppear)).ToList();
-            sapOrders.AddRange(ordersSapMaquila.Where(x => x.Detalles != null));
+            arrayOfSaleToProcess.AddRange(ordersSapMaquila.Where(x => x.Detalles != null));
 
-            sapOrders = sapOrders.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
-            return sapOrders;
+            arrayOfSaleToProcess = arrayOfSaleToProcess.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
+            return arrayOfSaleToProcess;
         }
     }
 }
