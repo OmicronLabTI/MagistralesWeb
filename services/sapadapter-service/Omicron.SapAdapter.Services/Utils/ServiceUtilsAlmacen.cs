@@ -95,12 +95,15 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the orders.</returns>
         public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(ISapDao sapDao, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
         {
-            var idsToIgnore = userOrdersTuple.Item2;
-            idsToIgnore.AddRange(lineProductTuple.Item2);
+            var idsToIgnore = lineProductTuple.Item2;
+            var idsMagistrales = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
 
             var sapOrders = (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
-            sapOrders = sapOrders.Where(x => !idsToIgnore.Contains(x.DocNum)).ToList();
+
+            var sapOrdersMg = sapOrders.Where(x => idsMagistrales.Contains(x.DocNum)).ToList();
+            sapOrders = sapOrders.Where(x => x.IsLine == "Y" && !idsToIgnore.Contains(x.DocNum)).ToList();
+            sapOrders.AddRange(sapOrdersMg);
 
             var orderToAppear = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).ToList();
             var ordersSapMaquila = (await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ, orderToAppear)).ToList();
