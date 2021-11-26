@@ -252,13 +252,12 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var userOrderModel = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrdersAlmancen);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
-            var listIds = JsonConvert.DeserializeObject<List<int>>(userOrderModel.ExceptionMessage);
 
             int.TryParse(userOrderModel.Comments.ToString(), out var maxDays);
             var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
             var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
 
-            return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, listIds, dateToLook);
+            return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, new List<int>(), dateToLook);
         }
 
         private ReceipcionPedidosDetailModel GetDetailRecpcionToReturn(int orderId, List<UserOrderModel> pedidos, List<LineProductsModel> lineOrders, List<IncidentsModel> incidences, List<string> localNeigbors, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<Batches> batches)
