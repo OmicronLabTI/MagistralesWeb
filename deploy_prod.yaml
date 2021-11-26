@@ -170,8 +170,8 @@ spec:
                   key: omicron_file_url
           ports:
             - containerPort: 5102
-    imagePullSecrets:
-      - name: pullsecret
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -239,8 +239,8 @@ spec:
                   key: storage_account_key
           ports:
             - containerPort: 5103
-    imagePullSecrets:
-      - name: pullsecret
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -273,8 +273,8 @@ spec:
                   key: omicron_net_postgress_db
           ports:
             - containerPort: 5104
-    imagePullSecrets:
-      - name: pullsecret
+      imagePullSecrets:
+        - name: pullsecret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -302,5 +302,5 @@ spec:
               value: Prod
           ports:
             - containerPort: 5105
-    imagePullSecrets:
-      - name: pullsecret
+      imagePullSecrets:
+        - name: pullsecret
