@@ -204,13 +204,6 @@ pipeline {
           }
         }
       }
-      steps {
-        dir('services/kafkaconsumer-service/') {
-          script {
-            DockerBuildAndPush("kafkaconsumer")
-          }
-        }
-      }
     }
     stage('Deploy App Service') {
       when {
