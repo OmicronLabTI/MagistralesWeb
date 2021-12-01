@@ -66,6 +66,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var ids = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
             var lineProductsTuple = await this.GetLineProducts(ids, userOrdersTuple.Item3);
             var sapOrders = await this.GetSapOrders(userOrdersTuple, lineProductsTuple, types);
+            var ordersByFilter = this.GetSapOrdersToLookByDoctor(sapOrders, parameters);
 
             var total = sapOrders.Item2;
             var ordersByFilter = await this.GetSapOrdersToLookByDoctor(sapOrders.Item1, parameters);
@@ -73,7 +74,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listToReturn = await this.GetCardOrdersToReturn(ordersByFilter, userOrdersTuple.Item1);
             listToReturn = this.GetDoctorsToProcess(listToReturn, parameters);
-            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{total}-{totalFilter}");
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
 
         /// <inheritdoc/>
@@ -153,7 +154,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the sap orders.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<CompleteAlmacenOrderModel>, int>> GetSapOrders(Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, List<string> types)
+        private async Task<List<CompleteAlmacenOrderModel>> GetSapOrders(Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, List<string> types)
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
@@ -168,11 +169,8 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = this.FilterByStatusToReceive(sapOrders, userOrdersTuple, lineProductTuple);
             sapOrders = await this.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductTuple.Item1, sapOrders);
             sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
-            var granTotal = sapOrders.Select(x => x.Medico).Distinct().ToList().Count;
 
-            sapOrders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1;
-
-            return new Tuple<List<CompleteAlmacenOrderModel>, int>(sapOrders, granTotal);
+            return ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1;
         }
 
         /// <summary>

@@ -70,8 +70,8 @@ namespace Omicron.SapAdapter.Services.Sap
             deliveryIds.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct().ToList());
 
             var sapResponse = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
-            var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders, sapResponse.Item5);
-            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{sapResponse.Item4}-{sapResponse.Item3}");
+            var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders, sapResponse.Item4);
+            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{sapResponse.Item3}-{sapResponse.Item3}");
         }
 
         /// <inheritdoc/>
@@ -127,7 +127,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="lineModels">the line produtcs.</param>
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, int, List<InvoiceHeaderModel>>> GetOrdersByType(List<string> types, List<UserOrderModel> userOrders, List<LineProductsModel> lineModels, Dictionary<string, string> parameters)
+        private async Task<Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, List<InvoiceHeaderModel>>> GetOrdersByType(List<string> types, List<UserOrderModel> userOrders, List<LineProductsModel> lineModels, Dictionary<string, string> parameters)
         {
             var listDeliveryIds = lineModels.Select(x => x.DeliveryId).ToList();
             listDeliveryIds.AddRange(userOrders.Select(x => x.DeliveryId).ToList());
@@ -139,7 +139,6 @@ namespace Omicron.SapAdapter.Services.Sap
             invoices = invoices.Where(x => string.IsNullOrEmpty(x.Refactura) || x.Refactura != ServiceConstants.IsRefactura).ToList();
             deliveryDetailDb = deliveryDetailDb.Where(x => !x.InvoiceId.HasValue || !invoiceRefactura.Contains(x.InvoiceId.Value)).ToList();
             var sapOrdersGroup = deliveryDetailDb.GroupBy(x => x.DeliveryId).ToList();
-            var granTotal = sapOrdersGroup.Count;
 
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
@@ -192,7 +191,7 @@ namespace Omicron.SapAdapter.Services.Sap
             deliveryToReturn = deliveryToReturn.Where(x => deliveryHeaders.Any(y => y.DocNum == x.DeliveryId)).ToList();
             deliveryToReturn = deliveryToReturn.OrderByDescending(x => x.DeliveryId).ToList();
 
-            return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, granTotal, invoices);
+            return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, invoices);
         }
 
         /// <summary>
