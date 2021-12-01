@@ -1036,6 +1036,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Client = invoice.Cliente,
                 TotalProducts = localInvoiceDetails.Count,
                 DeliveredBy = this.GetDeliveredBy(userOrder.StatusInvoice, package, parametersDistribution.Users),
+                DeliveryGuyName = package.Status == ServiceConstants.Entregado ? this.GetDeliveredGuyBy(package, parametersDistribution.Users) : string.Empty,
                 ReasonNotDelivered = package != null && package.Status == ServiceConstants.NoEntregado ? package.ReasonNotDelivered : string.Empty,
                 DataCheckin = this.CalculateDistributioDate(userOrder.StatusInvoice, package, userOrder),
                 IsLookUpInvoices = isFromInvoice,
@@ -1089,6 +1090,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 default:
                     return string.Empty;
             }
+        }
+
+        private string GetDeliveredGuyBy(PackageModel package, List<UserModel> users)
+        {
+            var user = users.FirstOrDefault(x => x.Id == package.AssignedUser);
+            return user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
         }
     }
 }
