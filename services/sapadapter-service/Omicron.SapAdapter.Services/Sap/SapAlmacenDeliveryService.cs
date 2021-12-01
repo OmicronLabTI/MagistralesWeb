@@ -183,7 +183,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 deliveryHeaders = deliveryHeaders.Where(x => x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
             }
 
-            deliveryHeaders = this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
+            deliveryHeaders = await this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
             deliveryHeaders = deliveryHeaders.OrderByDescending(x => x.DocNum).ToList();
             var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
 
@@ -200,8 +200,14 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="sapOrders">the orders.</param>
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        private List<DeliverModel> GetSapDeliveriesToLookByPedidoDoctor(List<DeliverModel> sapOrders, Dictionary<string, string> parameters)
+        private async Task<List<DeliverModel>> GetSapDeliveriesToLookByPedidoDoctor(List<DeliverModel> sapOrders, Dictionary<string, string> parameters)
         {
+            if (parameters.ContainsKey(ServiceConstants.Shipping))
+            {
+                var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+                sapOrders = sapOrders.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+            }
+
             if (!parameters.ContainsKey(ServiceConstants.Chips))
             {
                 return sapOrders;

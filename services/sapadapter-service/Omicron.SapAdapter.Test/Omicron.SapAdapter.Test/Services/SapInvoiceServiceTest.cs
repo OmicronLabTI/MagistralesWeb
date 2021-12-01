@@ -157,6 +157,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
                 { "chips", chip },
+                { ServiceConstants.Shipping, "Foraneo" },
             };
 
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
