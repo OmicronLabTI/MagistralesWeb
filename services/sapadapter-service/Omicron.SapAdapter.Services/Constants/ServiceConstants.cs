@@ -126,6 +126,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Chips = "chips";
 
         /// <summary>
+        /// value for chips.
+        /// </summary>
+        public const string Shipping = "shipping";
+
+        /// <summary>
         /// values cuando no hay chips.
         /// </summary>
         public const string NoChipsError = "No se encontraron filtros";

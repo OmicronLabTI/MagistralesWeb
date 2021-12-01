@@ -66,7 +66,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var ids = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
             var lineProductsTuple = await this.GetLineProducts(ids, userOrdersTuple.Item3);
             var sapOrders = await this.GetSapOrders(userOrdersTuple, lineProductsTuple, types);
-            var ordersByFilter = this.GetSapOrdersToLookByDoctor(sapOrders, parameters);
+            var ordersByFilter = await this.GetSapOrdersToLookByDoctor(sapOrders, parameters);
             var totalFilter = ordersByFilter.Select(x => x.Medico).Distinct().ToList().Count;
 
             var listToReturn = await this.GetCardOrdersToReturn(ordersByFilter, userOrdersTuple.Item1);
@@ -191,8 +191,14 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
-        private List<CompleteAlmacenOrderModel> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
+        private async Task<List<CompleteAlmacenOrderModel>> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
         {
+            if (parameters.ContainsKey(ServiceConstants.Shipping))
+            {
+                var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+                sapOrders = sapOrders.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+            }
+
             if (!parameters.ContainsKey(ServiceConstants.Chips))
             {
                 return sapOrders;

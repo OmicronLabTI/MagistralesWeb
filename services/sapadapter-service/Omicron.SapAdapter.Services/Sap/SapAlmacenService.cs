@@ -70,7 +70,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = await this.GetLineProductsToLook(ids, userResponse.Item3);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts);
             var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, status);
-            orders = this.GetSapLinesToLookByChips(orders, parameters);
+            orders = await this.GetSapLinesToLookByChips(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = this.GetOrdersToReturn(userResponse.Item1, orders, lineProducts.Item1, parameters, sapOrders.Item3);
 
@@ -387,8 +387,14 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="sapOrders">the orders.</param>
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        private List<CompleteAlmacenOrderModel> GetSapLinesToLookByChips(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
+        private async Task<List<CompleteAlmacenOrderModel>> GetSapLinesToLookByChips(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
         {
+            if (parameters.ContainsKey(ServiceConstants.Shipping))
+            {
+                var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+                sapOrders = sapOrders.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+            }
+
             if (!parameters.ContainsKey(ServiceConstants.Chips))
             {
                 return sapOrders;

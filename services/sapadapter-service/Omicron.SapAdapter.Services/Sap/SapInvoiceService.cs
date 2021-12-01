@@ -75,7 +75,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(invoicesId)).Where(x => x.InvoiceStatus != "C").ToList();
             invoiceHeaders = invoiceHeaders.Where(x => string.IsNullOrEmpty(x.Refactura) || x.Refactura != ServiceConstants.IsRefactura).ToList();
-            invoiceHeaders = this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
+            invoiceHeaders = await this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
             var totalByFilters = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(invoiceHeaders.Select(x => x.InvoiceId).ToList())).ToList();
 
@@ -226,7 +226,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 dictParams.Add(ServiceConstants.Chips, dataToLook.Chip);
             }
 
-            invoiceHeader = this.GetInvoiceHeaderByParameters(invoiceHeader, new List<DeliveryDetailModel>(), dictParams);
+            invoiceHeader = await this.GetInvoiceHeaderByParameters(invoiceHeader, new List<DeliveryDetailModel>(), dictParams);
             var total = invoiceHeader.Count;
             var invoiceHeaderOrdered = new List<InvoiceHeaderModel>();
             dataToLook.InvoiceDocNums.ForEach(y =>
@@ -435,8 +435,14 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="deliveryDetails">the deliverys.</param>
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        private List<InvoiceHeaderModel> GetInvoiceHeaderByParameters(List<InvoiceHeaderModel> invoices, List<DeliveryDetailModel> deliveryDetails, Dictionary<string, string> parameters)
+        private async Task<List<InvoiceHeaderModel>> GetInvoiceHeaderByParameters(List<InvoiceHeaderModel> invoices, List<DeliveryDetailModel> deliveryDetails, Dictionary<string, string> parameters)
         {
+            if (parameters.ContainsKey(ServiceConstants.Shipping))
+            {
+                var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+                invoices = invoices.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+            }
+
             if (!parameters.ContainsKey(ServiceConstants.Chips))
             {
                 return invoices;

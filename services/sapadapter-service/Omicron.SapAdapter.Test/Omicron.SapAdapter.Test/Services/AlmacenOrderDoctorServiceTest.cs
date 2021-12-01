@@ -134,7 +134,17 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
                 { ServiceConstants.Chips, "Medico B" },
+                { ServiceConstants.Shipping, "Local" },
             };
+
+            var localNeighBors = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "Nuevo León", Field = "LocalNeighborhood" },
+            };
+
+            this.catalogService
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModel(localNeighBors)));
 
             // act
             var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersByDoctor(dictionary);
