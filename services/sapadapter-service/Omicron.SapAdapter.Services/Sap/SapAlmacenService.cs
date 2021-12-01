@@ -74,7 +74,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = this.GetOrdersToReturn(userResponse.Item1, orders, lineProducts.Item1, parameters, sapOrders.Item3);
 
-            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{sapOrders.Item2}-{totalFilter}");
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
 
         /// <inheritdoc/>
@@ -337,11 +337,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var possibleIdsToIgnore = sapOrders.Where(x => !userOrdersTuple.Item1.Any(y => y.Salesorderid == x.DocNum.ToString())).ToList();
             var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
-            var granTotal = sapOrders.Select(x => x.DocNum).Distinct().ToList().Count;
 
             var listHeaderToReturn = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts);
 
-            return new Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>(listHeaderToReturn.Item1, granTotal, listHeaderToReturn.Item2);
+            return new Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>(listHeaderToReturn.Item1, 0, listHeaderToReturn.Item2);
         }
 
         /// <summary>
