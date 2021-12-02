@@ -92,8 +92,9 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="sapDao">dao.</param>
         /// <param name="userOrdersTuple">user order tuuple.</param>
         /// <param name="lineProductTuple">line produc tuple.</param>
+        /// <param name="isFromReceptionOrders">if query come from recepcion pedidos.</param>
         /// <returns>the orders.</returns>
-        public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(ISapDao sapDao, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
+        public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(ISapDao sapDao, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, bool isFromReceptionOrders)
         {
             var idsMagistrales = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
 
@@ -101,7 +102,7 @@ namespace Omicron.SapAdapter.Services.Utils
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
-            sapOrders.GroupBy(x => x.DocNum).ToList().ForEach(x =>
+            sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList().ForEach(x =>
             {
                 if (x.All(y => y.IsMagistral == "Y") && idsMagistrales.Contains(x.Key))
                 {
@@ -116,6 +117,11 @@ namespace Omicron.SapAdapter.Services.Utils
                     arrayOfSaleToProcess.AddRange(x.ToList());
                 }
             });
+
+            if (isFromReceptionOrders)
+            {
+                arrayOfSaleToProcess.AddRange(sapOrders.Where(o => o.Canceled == "Y"));
+            }
 
             var orderToAppear = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).ToList();
             var ordersSapMaquila = (await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ, orderToAppear)).ToList();
