@@ -80,5 +80,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The IsChecked.</value>
         public string FabricationOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether order is cancelled.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public string Canceled { get; set; }
     }
 }
