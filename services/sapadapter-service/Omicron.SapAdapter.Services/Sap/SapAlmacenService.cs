@@ -290,7 +290,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Comments = userOrder == null ? string.Empty : userOrder.Comments,
                 Doctor = order.Medico,
                 InitDate = order == null ? DateTime.Now : order.FechaInicio,
-                Status = salesStatus,
+                Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : salesStatus,
                 TotalItems = sapOrders.DistinctBy(x => x.Producto.ProductoId).Count(),
                 TotalPieces = sapOrders.DistinctBy(x => x.Producto.ProductoId).Sum(y => y.Detalles.Quantity),
                 TypeSaleOrder = $"Pedido {productType}",
@@ -332,12 +332,14 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>> GetSapLinesToLook(List<string> types, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
-            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple);
+            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple, true);
+            var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
+            sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
 
             var possibleIdsToIgnore = sapOrders.Where(x => !userOrdersTuple.Item1.Any(y => y.Salesorderid == x.DocNum.ToString())).ToList();
             var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
-
+            sapOrders.AddRange(sapCancelled);
             var listHeaderToReturn = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts);
 
             return new Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>(listHeaderToReturn.Item1, 0, listHeaderToReturn.Item2);
@@ -355,6 +357,12 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listToReturn = new List<CompleteAlmacenOrderModel>();
 
+            if (parameters.Contains(ServiceConstants.Cancelado))
+            {
+                listToReturn.AddRange(sapOrders.Where(x => x.Canceled == "Y"));
+            }
+
+            sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
             if (parameters.Contains(ServiceConstants.Recibir))
             {
                 var allIds = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Salesorderid)).ToList();
@@ -456,7 +464,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DocNum = so,
                     Doctor = doctor,
                     InitDate = order == null ? DateTime.Now : order.FechaInicio,
-                    Status = salesStatus,
+                    Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : salesStatus,
                     TotalItems = totalItems,
                     TotalPieces = totalpieces,
                     TypeOrder = order.TypeOrder,
@@ -569,7 +577,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     NeedsCooling = order.Producto.NeedsCooling,
                     ProductType = $"Producto {productType}",
                     Pieces = order.Detalles.Quantity,
-                    Status = orderStatus,
+                    Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : orderStatus,
                     IsMagistral = order.Producto.IsMagistral.Equals("Y"),
                     Batches = batches,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,

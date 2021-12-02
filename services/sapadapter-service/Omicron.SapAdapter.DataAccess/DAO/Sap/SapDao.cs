@@ -710,7 +710,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
-                         where order.FechaInicio >= initDate && order.PedidoStatus == "O" && product.IsWorkableProduct == "Y"
+                         where order.FechaInicio >= initDate && (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y"
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
@@ -724,6 +724,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Comments = order.Comments,
                              IsLine = product.IsLine,
                              IsMagistral = product.IsMagistral,
+                             Canceled = order.Canceled,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -799,6 +800,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Detalles = dp,
                              Address = order.Address,
                              TypeOrder = order.OrderType,
+                             Canceled = order.Canceled,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -1374,6 +1376,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Comments = order.Comments,
                              Producto = p,
                              FabricationOrder = dpf != null ? dpf.OrdenId.ToString() : string.Empty,
+                             Canceled = order.Canceled,
                          });
 
             return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();

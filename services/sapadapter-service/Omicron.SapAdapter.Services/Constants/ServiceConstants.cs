@@ -443,7 +443,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllStatus = "Recibir,Pendiente,Back Order";
+        public const string AllStatus = "Recibir,Pendiente,Back Order,Cancelado";
 
         /// <summary>
         /// Get the params.
