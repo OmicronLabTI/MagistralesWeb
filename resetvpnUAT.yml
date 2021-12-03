@@ -1,0 +1,24 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: resetvpn
+spec:
+  schedule: "45 6 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: resetvpn
+            image: bitnami/azure-cli
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - az login --service-principal -u c9c3614b-f51a-469b-906c-527ecce5ce5a -p P7l7Q~TNPU0we1Dlf5kRooMko_g5Ae0o6x7hE --tenant 86df17a5-d3d5-4bd2-8553-7b0d57a3b73c;az network vnet-gateway reset -g OmicronUAT -n omicron-uat-gateway;az network vnet-gateway show -g OmicronUAT -n omicron-uat-gateway;echo done;
+          restartPolicy: OnFailure
+          
+  
+ln7  
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 0
