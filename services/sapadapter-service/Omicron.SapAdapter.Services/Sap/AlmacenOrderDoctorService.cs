@@ -155,8 +155,9 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
-            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple, false);
-
+            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple);
+            var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
+            sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
             var orderHeaders = (await this.sapDao.GetFabOrderBySalesOrderId(sapOrders.Select(x => x.DocNum).ToList())).ToList();
 
             var possibleIdsToIgnore = sapOrders.Where(x => !orderHeaders.Any(y => y.PedidoId.Value == x.DocNum)).ToList();
@@ -166,7 +167,7 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = this.FilterByStatusToReceive(sapOrders, userOrdersTuple, lineProductTuple);
             sapOrders = await this.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductTuple.Item1, sapOrders);
             sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
-
+            sapOrders.AddRange(sapCancelled);
             return ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1;
         }
 
@@ -292,7 +293,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     DocNum = so,
                     InitDate = order == null ? DateTime.Now : order.FechaInicio,
-                    Status = ServiceConstants.PorRecibir,
+                    Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : ServiceConstants.PorRecibir,
                     TotalItems = totalItems,
                     TotalPieces = totalpieces,
                     TypeSaleOrder = $"Pedido {productType}",

@@ -8,7 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -23,7 +22,6 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
-    using Omicron.SapAdapter.Services.User;
     using Serilog;
 
     /// <summary>
@@ -54,6 +52,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.ProductoModel.AddRange(this.GetProductoModelForDoctorOrders());
             this.context.OrderModel.AddRange(this.GetOrderModelForDoctorOrders());
             this.context.DetallePedido.AddRange(this.GetDetallePedidoForDoctorOrders());
+            this.context.ClientCatalogModel.AddRange(this.GetClients());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModelForDoctorOrders());
             this.context.SaveChanges();
 
@@ -133,8 +132,8 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Chips, "Medico B" },
-                { ServiceConstants.Shipping, "Local" },
+                { ServiceConstants.Chips, "alias" },
+                { ServiceConstants.Shipping, "Foraneo" },
             };
 
             var localNeighBors = new List<ParametersModel>
