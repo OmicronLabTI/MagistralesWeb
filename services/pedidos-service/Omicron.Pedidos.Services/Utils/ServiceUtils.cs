@@ -66,7 +66,7 @@ namespace Omicron.Pedidos.Services.Utils
                     ProductionOrderId = int.TryParse(x.Productionorderid, out int productOrderInt) ? productOrderInt : 0,
                     StatusSalesOrder = string.IsNullOrEmpty(x.Productionorderid) ? x.Status : string.Empty,
                     StatusProductionOrder = !string.IsNullOrEmpty(x.Productionorderid) ? x.Status : string.Empty,
-                    DataCheckin = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("America/Mexico_City")),
+                    DataCheckin = CalculateDateNow(1),
                     UserId = user,
                     IsProductionOrder = !string.IsNullOrEmpty(x.Productionorderid),
                 });
@@ -474,6 +474,27 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return dateArrayNum;
+        }
+
+        private static DateTime CalculateDateNow(int tries)
+        {
+            if (tries == 3)
+            {
+                return DateTime.Now;
+            }
+
+            try
+            {
+                var dateLinux = (tries == 1) ?
+                    TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("America/Mexico_City")) :
+                    TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time (Mexico)"));
+                return dateLinux;
+            }
+            catch
+            {
+                var localTries = tries == 1 ? 2 : 3;
+                return CalculateDateNow(localTries);
+            }
         }
     }
 }
