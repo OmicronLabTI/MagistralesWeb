@@ -66,7 +66,7 @@ namespace Omicron.Pedidos.Services.Utils
                     ProductionOrderId = int.TryParse(x.Productionorderid, out int productOrderInt) ? productOrderInt : 0,
                     StatusSalesOrder = string.IsNullOrEmpty(x.Productionorderid) ? x.Status : string.Empty,
                     StatusProductionOrder = !string.IsNullOrEmpty(x.Productionorderid) ? x.Status : string.Empty,
-                    DataCheckin = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time (Mexico)")),
+                    DataCheckin = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("America/Mexico_City")),
                     UserId = user,
                     IsProductionOrder = !string.IsNullOrEmpty(x.Productionorderid),
                 });
