@@ -92,9 +92,8 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="sapDao">dao.</param>
         /// <param name="userOrdersTuple">user order tuuple.</param>
         /// <param name="lineProductTuple">line produc tuple.</param>
-        /// <param name="isFromReceptionOrders">if query come from recepcion pedidos.</param>
         /// <returns>the orders.</returns>
-        public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(ISapDao sapDao, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, bool isFromReceptionOrders)
+        public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(ISapDao sapDao, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
         {
             var idsMagistrales = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
 
@@ -118,11 +117,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 }
             });
 
-            if (isFromReceptionOrders)
-            {
-                arrayOfSaleToProcess.AddRange(sapOrders.Where(o => o.Canceled == "Y"));
-            }
-
+            arrayOfSaleToProcess.AddRange(sapOrders.Where(o => o.Canceled == "Y"));
             var orderToAppear = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).ToList();
             var ordersSapMaquila = (await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ, orderToAppear)).ToList();
             arrayOfSaleToProcess.AddRange(ordersSapMaquila.Where(x => x.Detalles != null));

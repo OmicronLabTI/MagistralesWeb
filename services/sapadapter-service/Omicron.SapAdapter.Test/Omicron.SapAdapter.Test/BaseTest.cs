@@ -349,6 +349,8 @@ namespace Omicron.SapAdapter.Test
                 new ClientCatalogModel { ClientId = "C1", Email = "email", AliasName = "alias" },
                 new ClientCatalogModel { ClientId = "C8", Email = "email", AliasName = "alias" },
                 new ClientCatalogModel { ClientId = "Codigo", Email = "email", AliasName = "alias" },
+                new ClientCatalogModel { ClientId = "Medico A", Email = "email", AliasName = "alias" },
+                new ClientCatalogModel { ClientId = "Medico B", Email = "email", AliasName = "alias" },
             };
         }
 
@@ -772,9 +774,9 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 84503, AsesorId = 1, Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ" },
-                new OrderModel { PedidoId = 84517, AsesorId = 1, Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = new DateTime(2021, 04, 12), Medico = "Medico B", PedidoStatus = "O" },
-                new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = new DateTime(2021, 04, 12), Medico = "Medico B", PedidoStatus = "O" },
+                new OrderModel { PedidoId = 84503, AsesorId = 1, Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = DateTime.Today.AddDays(-1), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ", Canceled = "N", Address = "CDMX" },
+                new OrderModel { PedidoId = 84517, AsesorId = 1, Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX" },
+                new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX" },
             };
         }
 
