@@ -214,6 +214,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Address = address,
                     TotalOrders = totalOrders,
                     TotalItems = totalItems,
+                    SaleOrderId = orders.Select(x => x.DocNum).Distinct().ToList(),
                 };
 
                 var saleModel = new SalesByDoctorModel
