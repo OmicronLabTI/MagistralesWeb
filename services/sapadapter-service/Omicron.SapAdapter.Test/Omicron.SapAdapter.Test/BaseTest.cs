@@ -755,6 +755,7 @@ namespace Omicron.SapAdapter.Test
             return new List<ProductoModel>
             {
                  new ProductoModel { IsMagistral = "N", ProductoId = "REVE 14", ProductoName = "REVE 14", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", IsWorkableProduct = "Y" },
+                 new ProductoModel { IsMagistral = "N", ProductoId = "REVE 12", ProductoName = "REVE 12", Unit = "PZ", LargeDescription = "Liiiiinea2", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", IsWorkableProduct = "Y" },
                  new ProductoModel { IsMagistral = "Y", ProductoId = "150   60 ML", ProductoName = "150   60 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
                  new ProductoModel { IsMagistral = "Y", ProductoId = "2643   120 ML", ProductoName = "2643   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
                  new ProductoModel { IsMagistral = "Y", ProductoId = "3567   120 ML", ProductoName = "3567   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
@@ -795,7 +796,7 @@ namespace Omicron.SapAdapter.Test
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 84517, ProductoId = "708   60 ML", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 2, PedidoId = 84517, ProductoId = "567   120 ML", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
 
-                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 0, PedidoId = 84515, ProductoId = "567   120 ML", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 0, PedidoId = 84515, ProductoId = "REVE 12", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 84515, ProductoId = "REVE 14", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
             };
         }

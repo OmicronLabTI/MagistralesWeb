@@ -270,7 +270,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orderType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, order.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo;
 
                 var userOrder = usersOrders.FirstOrDefault(x => x.Salesorderid.Equals(so.ToString()) && string.IsNullOrEmpty(x.Productionorderid));
-                var comments = userOrder == null ? string.Empty : userOrder.Comments;
 
                 var saleItem = new OrderListByDoctorModel
                 {
@@ -281,7 +280,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
                     TypeSaleOrder = $"Pedido {productType}",
                     InvoiceType = orderType,
-                    Comments = comments,
+                    Comments = userOrder == null ? string.Empty : userOrder.Comments,
                     OrderType = order.TypeOrder,
                 };
                 listOrders.Add(saleItem);
