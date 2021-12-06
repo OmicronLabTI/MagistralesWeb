@@ -282,6 +282,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     InvoiceType = orderType,
                     Comments = userOrder == null ? string.Empty : userOrder.Comments,
                     OrderType = order.TypeOrder,
+                    Address = order.Address,
                 };
                 listOrders.Add(saleItem);
             }
