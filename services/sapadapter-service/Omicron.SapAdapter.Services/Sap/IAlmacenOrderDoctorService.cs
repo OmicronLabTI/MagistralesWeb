@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Services.Sap
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
 
     /// <summary>
@@ -23,6 +24,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the details.
+        /// </summary>
+        /// <param name="details">the details.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details);
 
         /// <summary>
         /// Gets the advance look up.
