@@ -157,6 +157,38 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task SearchAlmacenOrdersDetailsByDoctor()
+        {
+            // arrange
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Chips, "alias" },
+                { ServiceConstants.Shipping, "Foraneo" },
+            };
+
+            var localNeighBors = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "Nuevo León", Field = "LocalNeighborhood" },
+            };
+
+            this.catalogService
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModel(localNeighBors)));
+
+            // act
+            var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersDetailsByDoctor(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetOrderdetail()
         {
             // arrange

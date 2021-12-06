@@ -144,6 +144,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Gets the header and the orders.
+        /// </summary>
+        /// <param name="details">the details.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details);
+
+        /// <summary>
         /// Get the Almacen Orders By Doctor.
         /// </summary>
         /// <param name="saleorderid">the parameters.</param>

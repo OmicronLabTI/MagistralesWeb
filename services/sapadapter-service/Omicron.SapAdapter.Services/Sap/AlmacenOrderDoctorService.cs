@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
@@ -71,6 +72,28 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listToReturn = this.GetCardOrdersToReturn(ordersByFilter, parameters);
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details)
+        {
+            var sapOrders = await this.sapDao.GetSapOrderDetailForAlmacenRecepcionById(details.SaleOrders);
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+            var userOrdersResponse = await this.pedidosService.PostPedidos(details.SaleOrders, ServiceConstants.GetUserSalesOrder);
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
+            var saleModel = new SalesByDoctorModel();
+
+            saleModel.AlmacenHeaderByDoctor = new AlmacenSalesByDoctorHeaderModel
+            {
+                Address = details.Address,
+                Doctor = details.Name,
+                TotalItems = sapOrders.Count(y => y.Detalles != null),
+                TotalPieces = sapOrders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
+            };
+
+            saleModel.Items = this.GetTotalOrdersByDoctor(sapOrders.ToList(), localNeigbors, userOrders);
+
+            return ServiceUtils.CreateResult(true, 200, null, saleModel, null, null);
         }
 
         /// <inheritdoc/>
@@ -230,7 +253,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
-        private List<OrderListByDoctorModel> GetTotalOrdersByDoctor(List<CompleteAlmacenOrderModel> sapOrders, List<string> productsModel, List<UserOrderModel> userOrders, List<string> localNeighbors)
+        private List<OrderListByDoctorModel> GetTotalOrdersByDoctor(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<string> localNeighbors, List<UserOrderModel> usersOrders)
         {
             var listOrders = new List<OrderListByDoctorModel>();
             var salesIds = sapOrders.Select(x => x.DocNum).Distinct().OrderByDescending(x => x);
@@ -240,16 +263,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 
-                var totalItems = orders.Count;
-                var totalpieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
-
-                var productType = orders.Any(x => x.Detalles != null && productsModel.Any(p => p == x.Detalles.ProductoId)) ? ServiceConstants.Mixto : ServiceConstants.Magistral;
-                productType = orders.All(x => x.Detalles != null && productsModel.Contains(x.Detalles.ProductoId)) ? ServiceConstants.Linea : productType;
+                var productType = orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y") ? ServiceConstants.Magistral : ServiceConstants.Mixto;
+                productType = orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y") ? ServiceConstants.Linea : productType;
 
                 order.Address = string.IsNullOrEmpty(order.Address) ? string.Empty : order.Address;
                 var orderType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, order.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo;
 
-                var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid.Equals(so.ToString()) && string.IsNullOrEmpty(x.Productionorderid));
+                var userOrder = usersOrders.FirstOrDefault(x => x.Salesorderid.Equals(so.ToString()) && string.IsNullOrEmpty(x.Productionorderid));
                 var comments = userOrder == null ? string.Empty : userOrder.Comments;
 
                 var saleItem = new OrderListByDoctorModel
@@ -257,8 +277,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     DocNum = so,
                     InitDate = order == null ? DateTime.Now : order.FechaInicio,
                     Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : ServiceConstants.PorRecibir,
-                    TotalItems = totalItems,
-                    TotalPieces = totalpieces,
+                    TotalItems = orders.Count,
+                    TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
                     TypeSaleOrder = $"Pedido {productType}",
                     InvoiceType = orderType,
                     Comments = comments,
