@@ -273,6 +273,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string CreateDate = "CreateDateString";
 
         /// <summary>
+        /// Create date.
+        /// </summary>
+        public const string Mixto = "Mixto";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -179,11 +179,22 @@ namespace Omicron.Reporting.Services
                     var text = this.GetBodyForCancelDeliveryEmail(delivery, logoUrl);
                     var mailStatus = await this.omicronMailClient.SendMail(
                         smtpConfig,
-                        logisticEmail,
+                        customerServiceEmail,
                         text.Item1,
                         text.Item2,
-                        $"{customerServiceEmail};{logisticEmail2}{this.CalculateExtraCcCancelation(delivery, config)}");
+                        string.Empty);
                     results.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
+
+                    if (delivery.DeliveryOrderType.ToUpper().Contains(ServiceConstants.Mixto.ToUpper()))
+                    {
+                        mailStatus = await this.omicronMailClient.SendMail(
+                            smtpConfig,
+                            logisticEmail,
+                            text.Item1,
+                            text.Item2,
+                            $"{logisticEmail2}{this.CalculateExtraCcCancelation(delivery, config)}");
+                        results.Add(new ResultModel { Success = true, Code = 200, Response = mailStatus });
+                    }
                 }));
 
                 await Task.Delay(1000);
