@@ -34,5 +34,13 @@ namespace Omicron.Reporting.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string DeliveryType { get; set; }
+
+        /// <summary>
+        /// Gets or sets FirstName.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string DeliveryOrderType { get; set; }
     }
 }

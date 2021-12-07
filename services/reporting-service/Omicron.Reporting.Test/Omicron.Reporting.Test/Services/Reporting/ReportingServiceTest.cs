@@ -195,24 +195,28 @@ namespace Omicron.Reporting.Test.Services.Request
                     DeliveryId = 1,
                     SalesOrders = new List<int> { 1478 },
                     DeliveryType = "BE",
+                    DeliveryOrderType = string.Empty,
                 },
                 new SendCancelDeliveryModel
                 {
                     DeliveryId = 2,
                     SalesOrders = new List<int> { 1479 },
                     DeliveryType = "MN",
+                    DeliveryOrderType = "Mixto",
                 },
                 new SendCancelDeliveryModel
                 {
                     DeliveryId = 3,
                     SalesOrders = new List<int> { 1479 },
                     DeliveryType = "MX",
+                    DeliveryOrderType = string.Empty,
                 },
                 new SendCancelDeliveryModel
                 {
                     DeliveryId = 4,
                     SalesOrders = new List<int> { 1479 },
                     DeliveryType = "MG",
+                    DeliveryOrderType = string.Empty,
                 },
             };
 
