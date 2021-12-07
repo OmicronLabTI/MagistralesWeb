@@ -1048,6 +1048,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             LineStatus = deliveryDet.LineStatus,
                             ProductoId = deliveryDet.ProductoId,
                             Quantity = deliveryDet.Quantity,
+                            Producto = product
                         };
             return await this.RetryQuery<DeliveryDetailModel>(query);
         }

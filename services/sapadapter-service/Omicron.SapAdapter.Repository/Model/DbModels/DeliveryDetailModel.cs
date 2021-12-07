@@ -89,5 +89,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Column("LineStatus")]
         public string LineStatus { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [NotMapped]
+        public ProductoModel Producto { get; set; }
     }
 }

@@ -70,7 +70,7 @@ namespace Omicron.SapAdapter.Services.Sap
             deliveryIds.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct().ToList());
 
             var sapResponse = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
-            var dataToReturn = await this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, userOrders, sapResponse.Item4);
+            var dataToReturn = this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, sapResponse.Item4);
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{sapResponse.Item3}-{sapResponse.Item3}");
         }
 
@@ -144,20 +144,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var deliveryToReturn = new List<DeliveryDetailModel>();
 
-            var deliveryTypes = new SaleOrderTypeModel
-            {
-                LineSaleOrders = new List<int>(),
-                MagistralSaleOrders = new List<int>(),
-                MixedSaleOrders = new List<int>(),
-            };
-
             if (types.Contains(ServiceConstants.Magistral.ToLower()))
             {
                 var listMagistral = sapOrdersGroup.Where(x => !x.Any(y => lineProducts.Contains(y.ProductoId))).ToList();
                 var keys = listMagistral.Select(x => x.Key).ToList();
 
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keys.Contains(x.DeliveryId)));
-                deliveryTypes.MagistralSaleOrders = keys;
                 sapOrdersGroup.RemoveAll(x => keys.Contains(x.Key));
             }
 
@@ -167,7 +159,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var keysMixta = listMixta.Select(x => x.Key).ToList();
 
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysMixta.Contains(x.DeliveryId)));
-                deliveryTypes.MixedSaleOrders = keysMixta;
                 sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
             }
 
@@ -177,23 +168,16 @@ namespace Omicron.SapAdapter.Services.Sap
                 var keysLine = listMixta.Select(x => x.Key).ToList();
 
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysLine.Contains(x.DeliveryId)));
-                deliveryTypes.LineSaleOrders = keysLine;
                 sapOrdersGroup.RemoveAll(x => keysLine.Contains(x.Key));
             }
 
             var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(deliveryToReturn.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
 
-            if (types.Contains(ServiceConstants.Maquila.ToLower()))
+            if (!types.Contains(ServiceConstants.Maquila.ToLower()))
             {
-                var deliveryHeadersMaquila = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(deliveryDetailDb.Select(x => x.DeliveryId).ToList())).ToList();
-                var listMaquila = deliveryHeadersMaquila.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
-                deliveryHeaders.AddRange(listMaquila);
-                deliveryHeaders = deliveryHeaders.DistinctBy(x => x.DocNum).ToList();
-                deliveryToReturn.AddRange(deliveryDetailDb.Where(x => listMaquila.Select(l => l.DocNum).ToList().Contains(x.DeliveryId)));
-            }
-            else
-            {
-                deliveryHeaders = deliveryHeaders.Where(x => x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
+                var listMaquila = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).Select(x => x.DocNum).ToList();
+                deliveryHeaders = deliveryHeaders.Where(x => !listMaquila.Contains(x.DocNum)).ToList();
+                deliveryToReturn = deliveryToReturn.Where(x => !listMaquila.Contains(x.DeliveryId)).ToList();
             }
 
             deliveryHeaders = await this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
@@ -260,10 +244,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="details">the delivery details.</param>
         /// <param name="headers">the delivery header.</param>
-        /// <param name="userOrders">the user orders.</param>
         /// <param name="invoices">The invoices.</param>
         /// <returns>the data.</returns>
-        private async Task<AlmacenOrdersModel> GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<UserOrderModel> userOrders, List<InvoiceHeaderModel> invoices)
+        private AlmacenOrdersModel GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<InvoiceHeaderModel> invoices)
         {
             var listIds = details.Select(x => x.DeliveryId).Distinct().ToList();
 
@@ -274,26 +257,17 @@ namespace Omicron.SapAdapter.Services.Sap
                 TotalSalesOrders = listIds.Count,
             };
 
-            var productsIds = details.Where(x => listIds.Contains(x.DeliveryId)).Select(y => y.ProductoId).Distinct().ToList();
-            var productItems = (await this.sapDao.GetProductByIds(productsIds)).ToList();
-            var saleOrdersByDeliveries = (await this.sapDao.GetOrdersById(details.Select(x => x.BaseEntry).ToList())).ToList();
-
-            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-
             foreach (var d in listIds)
             {
                 var header = headers.FirstOrDefault(x => x.DocNum == d);
                 header ??= new DeliverModel { Medico = string.Empty, FechaInicio = DateTime.Now, Cliente = string.Empty, Address = string.Empty };
                 header.Address = string.IsNullOrEmpty(header.Address) ? string.Empty : header.Address;
                 var deliveryDetail = details.Where(x => x.DeliveryId == d).DistinctBy(x => new { x.BaseEntry, x.ProductoId }).ToList();
-                var saleOrders = deliveryDetail.FirstOrDefault() != null ? deliveryDetail.Select(x => x.BaseEntry).ToList() : new List<int> { 0 };
-                var saleOrdersString = saleOrders.Select(y => y.ToString()).ToList();
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
 
-                var ordersByDelivery = saleOrdersByDeliveries.Where(x => deliveryDetail.Any(y => y.BaseEntry == x.DocNum)).ToList();
-                var userOrdersBySale = userOrders.Where(x => saleOrdersString.Contains(x.Salesorderid)).ToList();
-                var salesCards = this.CreateSaleCard(ordersByDelivery, deliveryDetail, userOrdersBySale, productItems);
+                var deliveryType = deliveryDetail.All(x => x.Producto.IsLine == "Y") ? ServiceConstants.LineaAlone : ServiceConstants.Mixto;
+                deliveryType = deliveryDetail.All(x => x.Producto.IsMagistral == "Y") ? ServiceConstants.Magistral : deliveryType;
 
                 var deliveryWithInvoice = deliveryDetail.FirstOrDefault(x => x.InvoiceId.HasValue && x.InvoiceId.Value != 0);
                 deliveryWithInvoice ??= new DeliveryDetailModel { InvoiceId = 0 };
@@ -310,30 +284,16 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = totalPieces,
                     HasInvoice = hasInvoice,
                     TypeOrder = header.TypeOrder,
-                };
-
-                var saleHeader = new AlmacenSalesHeaderModel
-                {
-                    Client = header.Cliente,
-                    DocNum = saleOrders.Distinct().Count(),
-                    Doctor = header.Medico,
-                    InitDate = header.FechaInicio,
-                    Status = ServiceConstants.Almacenado,
-                    TotalItems = totalItems,
-                    TotalPieces = totalPieces,
-                    Remision = d,
-                    InvoiceType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, header.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo,
-                    TypeOrder = header.TypeOrder,
+                    DeliveryTypeModel = deliveryType,
                 };
 
                 var saleModel = new SalesModel
                 {
-                    AlmacenHeader = saleHeader,
+                    AlmacenHeader = null,
                     AlmacenSales = salesOrderModel,
-                    SalesOrders = salesCards,
+                    SalesOrders = null,
                 };
 
-                listToReturn.TotalItems += salesCards.Sum(y => y.Products);
                 listToReturn.SalesOrders.Add(saleModel);
             }
 
