@@ -144,12 +144,21 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var deliveryToReturn = new List<DeliveryDetailModel>();
 
+            var deliveryTypes = new SaleOrderTypeModel
+            {
+                LineSaleOrders = new List<int>(),
+                MagistralSaleOrders = new List<int>(),
+                MixedSaleOrders = new List<int>(),
+            };
+
             if (types.Contains(ServiceConstants.Magistral.ToLower()))
             {
                 var listMagistral = sapOrdersGroup.Where(x => !x.Any(y => lineProducts.Contains(y.ProductoId))).ToList();
                 var keys = listMagistral.Select(x => x.Key).ToList();
 
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keys.Contains(x.DeliveryId)));
+                deliveryTypes.MagistralSaleOrders = keys;
+                sapOrdersGroup.RemoveAll(x => keys.Contains(x.Key));
             }
 
             if (types.Contains(ServiceConstants.Mixto.ToLower()))
@@ -158,6 +167,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var keysMixta = listMixta.Select(x => x.Key).ToList();
 
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysMixta.Contains(x.DeliveryId)));
+                deliveryTypes.MixedSaleOrders = keysMixta;
+                sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
             }
 
             if (types.Contains(ServiceConstants.Line))
@@ -166,6 +177,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var keysLine = listMixta.Select(x => x.Key).ToList();
 
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysLine.Contains(x.DeliveryId)));
+                deliveryTypes.LineSaleOrders = keysLine;
+                sapOrdersGroup.RemoveAll(x => keysLine.Contains(x.Key));
             }
 
             var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(deliveryToReturn.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
