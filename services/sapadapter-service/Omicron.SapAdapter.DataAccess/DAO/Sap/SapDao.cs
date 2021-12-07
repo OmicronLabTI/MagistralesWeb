@@ -516,7 +516,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DetallePedidoModel>> GetPedidoByIdJoinProduct(int pedidoId)
         {
-            var query = from saleDetail in this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId)
+            var query = from saleOrder in this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoId)
+                        join saleDetail in this.databaseContext.DetallePedido on saleOrder.PedidoId equals saleDetail.PedidoId
                         join product in this.databaseContext.ProductoModel on saleDetail.ProductoId equals product.ProductoId
                         where product.IsWorkableProduct == "Y"
                         select new DetallePedidoModel
@@ -532,6 +533,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             PedidoId = saleDetail.PedidoId,
                             ProductoId = saleDetail.ProductoId,
                             Quantity = saleDetail.Quantity,
+                            CanceledOrder = saleOrder.Canceled
                         };
             return await this.RetryQuery<DetallePedidoModel>(query);
         }
