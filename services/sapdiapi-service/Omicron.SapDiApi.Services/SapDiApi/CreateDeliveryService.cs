@@ -305,11 +305,17 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     inventoryGenExit.Comments = $"Pedido muestra basado en {order.SaleOrderId}";
                     for (var i = 0; i < saleOrder.Lines.Count; i++)
                     {
-                        inventoryGenExit.Lines.SetCurrentLine(i);
                         saleOrder.Lines.SetCurrentLine(i);
                         var itemCode = saleOrder.Lines.ItemCode;
+                        if (saleOrder.Lines.ItemCode == ServiceConstants.ShippingCostItemCode)
+                        {
+                            continue;
+                        }
+
+                        inventoryGenExit.Lines.SetCurrentLine(i);
+                        
                         inventoryGenExit.Lines.BaseType = -1;
-                        inventoryGenExit.Lines.BaseLine = i;
+                        inventoryGenExit.Lines.BaseLine = saleOrder.Lines.LineNum;
                         inventoryGenExit.Lines.Quantity = saleOrder.Lines.Quantity;
                         inventoryGenExit.Lines.WarehouseCode = "PT";
                         inventoryGenExit.Lines.AccountCode = "6213001";
