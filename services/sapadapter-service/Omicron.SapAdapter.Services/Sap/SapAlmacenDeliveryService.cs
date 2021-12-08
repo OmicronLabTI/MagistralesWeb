@@ -75,6 +75,39 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersDeliveryDetail(int deliveryId)
+        {
+            var deliveryDetails = await this.sapDao.GetDeliveryDetailForDeliveryById(new List<int> { deliveryId });
+
+            var saleOrders = deliveryDetails.Select(x => x.Detalles.BaseEntry).Distinct().ToList();
+
+            var sapSaleOrders = await this.sapDao.GetOrdersById(saleOrders);
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+            var pedidosResponse = await this.pedidosService.PostPedidos(saleOrders, ServiceConstants.GetUserSalesOrder);
+            var pedidos = JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
+
+            var dataToReturn = new SalesModel();
+
+            dataToReturn.SalesOrders = this.CreateSaleCard(deliveryDetails, pedidos, sapSaleOrders);
+            dataToReturn.AlmacenHeader = new AlmacenSalesHeaderModel
+            {
+                Client = deliveryDetails.FirstOrDefault().Cliente,
+                DocNum = saleOrders.Count,
+                Doctor = deliveryDetails.FirstOrDefault().Medico,
+                InitDate = deliveryDetails.FirstOrDefault().FechaInicio,
+                Status = ServiceConstants.Almacenado,
+                TotalItems = dataToReturn.SalesOrders.Sum(x => x.Products),
+                TotalPieces = dataToReturn.SalesOrders.Sum(x => x.Pieces),
+                Remision = deliveryId,
+                InvoiceType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, deliveryDetails.FirstOrDefault().Address) ? ServiceConstants.Label : ServiceConstants.Foraneo,
+                TypeOrder = deliveryDetails.FirstOrDefault().TypeOrder,
+                HasInvoice = deliveryDetails.FirstOrDefault().Detalles.InvoiceId.HasValue,
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> GetProductsDelivery(string saleId)
         {
             var saleArray = saleId.Split("-").ToList();
@@ -300,31 +333,24 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
-        /// <summary>
-        /// Gets the sale cads.
-        /// </summary>
-        /// <param name="orders">the orders.</param>
-        /// <param name="details">the delivery details.</param>
-        /// <param name="userOrders">the user orders.</param>
-        /// <param name="products">the products.</param>
-        /// <returns>the list to retur.</returns>
-        private List<SaleOrderByDeliveryModel> CreateSaleCard(List<OrderModel> orders, List<DeliveryDetailModel> details, List<UserOrderModel> userOrders, List<ProductoModel> products)
+        private List<SaleOrderByDeliveryModel> CreateSaleCard(List<CompleteDeliveryDetailModel> details, List<UserOrderModel> userOrders, List<OrderModel> saleOrders)
         {
             var listToReturn = new List<SaleOrderByDeliveryModel>();
 
-            orders.ForEach(x =>
+            saleOrders.ForEach(s =>
             {
-                var userOrder = userOrders.FirstOrDefault(y => y.Salesorderid == x.DocNum.ToString() && string.IsNullOrEmpty(y.Productionorderid));
-                var localDetails = details.Where(y => y.BaseEntry == x.DocNum).ToList();
-                var productsBySale = products.Where(y => localDetails.Any(z => z.ProductoId == y.ProductoId)).ToList();
-                var productType = productsBySale.All(y => y.IsMagistral == "Y") ? ServiceConstants.Magistral : ServiceConstants.Mixto;
-                productType = productsBySale.All(y => y.IsMagistral != "Y") ? ServiceConstants.Linea : productType;
+                var userOrder = userOrders.FirstOrDefault(y => y.Salesorderid == s.DocNum.ToString() && string.IsNullOrEmpty(y.Productionorderid));
+                var localDetails = details.Where(y => y.Detalles.BaseEntry == s.DocNum).ToList();
+
+                var productType = localDetails.All(y => y.Producto.IsMagistral == "Y") ? ServiceConstants.Magistral : ServiceConstants.Mixto;
+                productType = localDetails.All(y => y.Producto.IsLine == "Y") ? ServiceConstants.Linea : productType;
+
                 listToReturn.Add(new SaleOrderByDeliveryModel
                 {
-                    DocNum = x.DocNum,
+                    DocNum = s.DocNum,
                     Comments = userOrder == null ? string.Empty : userOrder.Comments,
-                    FechaInicio = x.FechaInicio,
-                    Pieces = localDetails.Sum(y => (int)y.Quantity),
+                    FechaInicio = s.FechaInicio,
+                    Pieces = localDetails.Sum(y => (int)y.Detalles.Quantity),
                     Products = localDetails.Count,
                     Status = ServiceConstants.Almacenado,
                     SaleOrderType = $"Pedido {productType}",
