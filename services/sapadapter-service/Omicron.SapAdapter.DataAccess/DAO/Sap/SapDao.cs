@@ -516,7 +516,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DetallePedidoModel>> GetPedidoByIdJoinProduct(int pedidoId)
         {
-            var query = from saleDetail in this.databaseContext.DetallePedido.Where(x => x.PedidoId == pedidoId)
+            var query = from saleOrder in this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoId)
+                        join saleDetail in this.databaseContext.DetallePedido on saleOrder.PedidoId equals saleDetail.PedidoId
                         join product in this.databaseContext.ProductoModel on saleDetail.ProductoId equals product.ProductoId
                         where product.IsWorkableProduct == "Y"
                         select new DetallePedidoModel
@@ -532,6 +533,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             PedidoId = saleDetail.PedidoId,
                             ProductoId = saleDetail.ProductoId,
                             Quantity = saleDetail.Quantity,
+                            CanceledOrder = saleOrder.Canceled
                         };
             return await this.RetryQuery<DetallePedidoModel>(query);
         }
@@ -1269,6 +1271,51 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
+                         select new CompleteOrderModel
+                         {
+                             DocNum = order.DocNum,
+                             Cliente = dop.Address2 ?? string.Empty,
+                             Codigo = order.Codigo,
+                             Medico = doctor.AliasName,
+                             FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
+                             FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
+                             PedidoStatus = order.PedidoStatus,
+                             IsChecked = false,
+                             Detalles = dp,
+                             OrderType = order.OrderType,
+                             Address = order.Address,
+                             PedidoMuestra = order.PedidoMuestra,
+                             Comments = order.Comments,
+                             AsesorId = order.AsesorId,
+                         });
+
+            return await this.RetryQuery<CompleteOrderModel>(query);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByIdsJoinProduct(List<int> ids)
+        {
+            var query = (from order in this.databaseContext.OrderModel.Where(x => ids.Contains(x.DocNum))
+                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                         into DetalleOrden
+                         from dp in DetalleOrden.DefaultIfEmpty()
+                         join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
+                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                         new
+                         {
+                             DoctorId = order.Codigo,
+                             Address = order.ShippingAddressName
+                         }
+                         equals
+                         new
+                         {
+                             DoctorId = doctordet.CardCode,
+                             Address = doctordet.NickName
+                         }
+                         into detalleDireccion
+                         from dop in detalleDireccion.DefaultIfEmpty()
+                         where product.IsWorkableProduct == "Y"
                          select new CompleteOrderModel
                          {
                              DocNum = order.DocNum,

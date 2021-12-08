@@ -132,7 +132,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ProductType = $"Producto {productType}",
                     Pieces = detail.Quantity,
                     Container = detail.Container,
-                    Status = ServiceConstants.PorRecibir,
+                    Status = detail.CanceledOrder == "Y" ? ServiceConstants.Cancelado : ServiceConstants.PorRecibir,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                 };
                 listDetails.Add(detailItem);
