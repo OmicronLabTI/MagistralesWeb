@@ -78,6 +78,7 @@ namespace Omicron.SapAdapter.Test
             new InvoiceDeliveryModel(),
             new OrderModel(),
             new DoctorOrdersSearchDeatilDto(),
+            new CompleteDeliveryDetailModel(),
         };
 
         /// <summary>

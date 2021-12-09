@@ -182,10 +182,13 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<DeliverModel>
             {
-                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000, Address = null },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000, Address = "direccion CD MX" },
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001, Address = "direccion Nuevo León" },
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46038, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75002, Address = "direccion CD MX" },
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46039, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75003, Address = "direccion Oax", TypeOrder = "MQ" },
+
+                // for almacen detail
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 46040, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 46040, Address = "direccion Oax", TypeOrder = "MQ" },
             };
         }
 
@@ -201,6 +204,9 @@ namespace Omicron.SapAdapter.Test
                 new DeliveryDetailModel { BaseEntry = 75001, DeliveryId = 46037, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
                 new DeliveryDetailModel { BaseEntry = 100, DeliveryId = 46038, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
                 new DeliveryDetailModel { BaseEntry = 100, DeliveryId = 46039, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 2 },
+
+                // for almacen detail
+                new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 46040, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1, InvoiceId = 1 },
             };
         }
 

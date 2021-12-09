@@ -1050,6 +1050,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             LineStatus = deliveryDet.LineStatus,
                             ProductoId = deliveryDet.ProductoId,
                             Quantity = deliveryDet.Quantity,
+                            Producto = product
                         };
             return await this.RetryQuery<DeliveryDetailModel>(query);
         }
@@ -1373,6 +1374,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<OrderModel>(query);
         }
 
+        /// <inheritdoc/>
         public async Task<List<CompleteRecepcionPedidoDetailModel>> GetSapOrderDetailForAlmacenRecepcionById(List<int> orderIds)
         {
             var query = (from order in this.databaseContext.OrderModel.Where(x => orderIds.Contains(x.DocNum))
@@ -1427,6 +1429,46 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          });
 
             return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<CompleteDeliveryDetailModel>> GetDeliveryDetailForDeliveryById(List<int> delveryId)
+        {
+            var query = (from order in this.databaseContext.DeliverModel.Where(x => delveryId.Contains(x.DocNum))
+                         join detalle in this.databaseContext.DeliveryDetailModel on order.PedidoId equals detalle.DeliveryId
+                         into DetalleOrden
+                         from dp in DetalleOrden.DefaultIfEmpty()
+                         join doctor in this.databaseContext.ClientCatalogModel on order.CardCode equals doctor.ClientId
+                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                         new
+                         {
+                             DoctorId = order.CardCode,
+                             Address = order.ShippingAddressName
+                         }
+                         equals
+                         new
+                         {
+                             DoctorId = doctordet.CardCode,
+                             Address = doctordet.NickName
+                         }
+                         into detalleDireccion
+                         from dop in detalleDireccion.DefaultIfEmpty()
+                         join p in this.databaseContext.ProductoModel on dp.ProductoId equals p.ProductoId
+                         where p.IsWorkableProduct == "Y"
+                         select new CompleteDeliveryDetailModel
+                         {
+                             DocNum = order.DocNum,
+                             Cliente = dop.Address2 ?? string.Empty,
+                             Medico = doctor.AliasName,
+                             FechaInicio = order.FechaInicio,
+                             Detalles = dp,
+                             TypeOrder = order.TypeOrder,
+                             Address = order.Address,
+                             Producto = p,
+                         });
+
+            return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
+
         }
 
         /// <summary>

@@ -118,6 +118,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersDeliveryDetail(int deliveryId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapAlmacenDeliveryService.GetOrdersDeliveryDetail(deliveryId));
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> GetProductsDelivery(string saleId)
         {
             return this.mapper.Map<ResultDto>(await this.sapAlmacenDeliveryService.GetProductsDelivery(saleId));

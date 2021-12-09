@@ -98,24 +98,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersForDelivery()
         {
-            var userOrders = (await this.pedidosDao.GetUserOrderForDelivery(new List<string> { ServiceConstants.Almacenado })).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderForDelivery(new List<string> { ServiceConstants.Almacenado }, ServiceConstants.Empaquetado)).ToList();
 
-            var listToAdd = new List<UserOrderModel>();
+            var saleOrder = (await this.pedidosDao.GetOnlySaleOrderBySaleId(userOrders.Select(x => x.Salesorderid).ToList())).ToList();
+            userOrders.AddRange(saleOrder);
 
-            userOrders.GroupBy(x => x.DeliveryId).ToList().ForEach(y =>
-            {
-                var products = y.Where(z => z.IsProductionOrder).ToList();
-
-                if (!products.All(z => z.StatusAlmacen == ServiceConstants.Empaquetado))
-                {
-                    listToAdd.AddRange(products);
-                }
-            });
-
-            var saleOrder = (await this.pedidosDao.GetUserOrderBySaleOrder(listToAdd.Select(x => x.Salesorderid).ToList())).ToList();
-            listToAdd.AddRange(saleOrder.Where(x => x.IsSalesOrder));
-
-            var orderToReturn = listToAdd
+            var orderToReturn = userOrders
                 .Select(x => new
                 {
                     x.Salesorderid,
