@@ -68,6 +68,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetDelivery(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// gets the details.
+        /// </summary>
+        /// <param name="deliveryId">the delivery ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersDeliveryDetail(int deliveryId);
+
+        /// <summary>
         /// Gets the products of a specific delivery.
         /// </summary>
         /// <param name="saleId">the ids.</param>

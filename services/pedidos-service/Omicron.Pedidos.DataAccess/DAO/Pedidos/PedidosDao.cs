@@ -42,14 +42,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return true;
         }
 
-        /// <summary>
-        /// the list ids.
-        /// </summary>
-        /// <param name="listIDs">the list ids.</param>
-        /// <returns>the data.</returns>
+        /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderBySaleOrder(List<string> listIDs)
         {
             return await this.databaseContext.UserOrderModel.Where(x => listIDs.Contains(x.Salesorderid)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetOnlySaleOrderBySaleId(List<string> listIds)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.Salesorderid) && string.IsNullOrEmpty(x.Productionorderid)).ToListAsync();
         }
 
         /// <summary>
@@ -87,9 +89,9 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return await this.databaseContext.UserOrderModel.Where(x => listStatus.Contains(x.Status)).ToListAsync();
         }
 
-        public async Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus)
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus, string statusToIgnore)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => listStatus.Contains(x.Status) && x.DeliveryId != 0 && !string.IsNullOrEmpty(x.Productionorderid)).ToListAsync();
+            return await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && listStatus.Contains(x.Status) && x.DeliveryId != 0 && x.StatusAlmacen != statusToIgnore).ToListAsync();
         }
 
         /// <summary>
