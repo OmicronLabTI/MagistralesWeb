@@ -178,6 +178,39 @@ namespace Omicron.SapAdapter.Test.Services
         }
 
         /// <summary>
+        /// Test the method to get the invoice detail.
+        /// </summary>
+        /// <param name="invoice">the invoice to look for.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase(124)]
+        public async Task GetInvoiceDetail(int invoice)
+        {
+            // arrange
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderInvoice()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetLineProductsRemision()));
+
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
+
+            // act
+            var response = await service.GetInvoiceDetail(invoice);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsNotNull(response.Response);
+            Assert.IsInstanceOf<InvoiceOrderModel>(response.Response);
+        }
+
+        /// <summary>
         /// Test the method to get the orders for almacen.
         /// </summary>
         /// <returns>the data.</returns>

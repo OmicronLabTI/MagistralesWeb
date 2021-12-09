@@ -99,6 +99,44 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetInvoiceDetail(int invoice)
+        {
+            var invoiceDetails = (await this.sapDao.GetInvoiceHeaderDetailByInvoiceIdJoinDoctor(new List<int> { invoice })).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(invoiceDetails.Select(x => (int)x.Detail.BaseEntry).Distinct().ToList())).ToList();
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+
+            var salesOrdersId = deliveryDetails.Select(x => x.BaseEntry).ToList();
+            var userOrders = await this.GetUserOrders(ServiceConstants.GetUserSalesOrder, salesOrdersId);
+            var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, salesOrdersId);
+
+            var invoiceHeader = invoiceDetails.FirstOrDefault();
+            var invoiceToReturn = new InvoiceSaleHeaderModel
+            {
+                Address = invoiceHeader.InvoiceHeader.Address.Replace("\r", string.Empty).ToUpper(),
+                Client = invoiceHeader.Cliente,
+                Doctor = invoiceHeader.Medico ?? string.Empty,
+                Invoice = invoiceHeader.InvoiceHeader.DocNum,
+                DocEntry = invoiceHeader.InvoiceHeader.InvoiceId,
+                InvoiceDocDate = invoiceHeader.InvoiceHeader.FechaInicio,
+                ProductType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, invoiceHeader.InvoiceHeader.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                TotalDeliveries = invoiceDetails.Select(x => x.Detail.BaseEntry).Distinct().Count(),
+                TotalProducts = invoiceDetails.Count,
+                Comments = invoiceHeader.InvoiceHeader.Comments,
+                TypeOrder = invoiceHeader.InvoiceHeader.TypeOrder,
+                CodeClient = invoiceHeader.InvoiceHeader.CardCode,
+                TotalPieces = invoiceDetails.Where(y => y.Detail.Quantity > 0).Sum(x => (int)x.Detail.Quantity),
+            };
+
+            var invoiceModelToAdd = new InvoicesModel
+            {
+                Deliveries = this.GetDeliveryModel(deliveryDetails, invoiceDetails, userOrders, lineOrders),
+                InvoiceHeader = invoiceToReturn,
+                InvoiceSale = null,
+            };
+            return ServiceUtils.CreateResult(true, 200, null, invoiceModelToAdd, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> GetInvoiceProducts(int invoiceId)
         {
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
@@ -501,7 +539,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="userOrderModels">the user order modesl.</param>
         /// <param name="lineProducts">the lines prodcuts.</param>
         /// <returns>the data.</returns>
-        private List<InvoiceDeliveryModel> GetDeliveryModel(List<DeliveryDetailModel> delivery, List<InvoiceDetailModel> invoiceDetails, List<UserOrderModel> userOrderModels, List<LineProductsModel> lineProducts)
+        private List<InvoiceDeliveryModel> GetDeliveryModel(List<DeliveryDetailModel> delivery, List<CompleteInvoiceDetailModel> invoiceDetails, List<UserOrderModel> userOrderModels, List<LineProductsModel> lineProducts)
         {
             var listToReturn = new List<InvoiceDeliveryModel>();
             delivery.DistinctBy(x => x.DeliveryId).ToList()
@@ -516,7 +554,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         DeliveryDocDate = y.DocDate,
                         SaleOrder = salesOrders.Distinct().Count(),
                         Status = userOrderStatus.Any() && userOrderStatus.All(z => z == ServiceConstants.Empaquetado) ? ServiceConstants.Empaquetado : ServiceConstants.Almacenado,
-                        TotalItems = invoiceDetails.Where(a => a.BaseEntry.HasValue).Count(z => z.BaseEntry == y.DeliveryId),
+                        TotalItems = invoiceDetails.Where(a => a.Detail.BaseEntry.HasValue).Count(z => z.Detail.BaseEntry == y.DeliveryId),
                     };
 
                     listToReturn.Add(deliveryModel);
