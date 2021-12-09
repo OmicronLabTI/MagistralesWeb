@@ -959,6 +959,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
+                         join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
+                         where product.IsWorkableProduct == "Y"
                          select new CompleteInvoiceDetailModel
                          {
                              InvoiceHeader = invoice,
