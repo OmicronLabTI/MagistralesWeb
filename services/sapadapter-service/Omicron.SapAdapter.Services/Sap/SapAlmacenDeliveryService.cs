@@ -99,7 +99,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 TotalItems = dataToReturn.SalesOrders.Sum(x => x.Products),
                 TotalPieces = dataToReturn.SalesOrders.Sum(x => x.Pieces),
                 Remision = deliveryId,
-                InvoiceType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, deliveryDetails.FirstOrDefault().Address) ? ServiceConstants.Label : ServiceConstants.Foraneo,
+                InvoiceType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, deliveryDetails.FirstOrDefault().Address) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                 TypeOrder = deliveryDetails.FirstOrDefault().TypeOrder,
                 HasInvoice = deliveryDetails.FirstOrDefault().Detalles.InvoiceId.HasValue,
             };
