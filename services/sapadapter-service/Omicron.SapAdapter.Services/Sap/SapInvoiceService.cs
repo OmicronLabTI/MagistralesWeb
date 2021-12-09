@@ -63,8 +63,6 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
             var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
-            userOrders = userOrders.Where(x => string.IsNullOrEmpty(x.StatusInvoice)).ToList();
-            lineProducts = lineProducts.Where(x => string.IsNullOrEmpty(x.StatusInvoice)).ToList();
 
             var listIds = userOrders.Select(y => y.DeliveryId).ToList();
             listIds.AddRange(lineProducts.Select(y => y.DeliveryId));
@@ -82,11 +80,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && y.BaseEntry.Value != 0).Select(x => x.BaseEntry.Value).Distinct().Count();
 
             var idsToLook = this.GetInvoicesToLook(parameters, invoiceHeaders);
-            invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
-            invoiceHeaders = invoiceHeaders.OrderByDescending(x => x.InvoiceId).ToList();
+            invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).OrderByDescending(x => x.InvoiceId).ToList();
             invoiceDetails = invoiceDetails.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
-
-            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var retrieveMode = new RetrieveInvoiceModel
             {
@@ -95,7 +90,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 InvoiceHeader = invoiceHeaders,
                 LineProducts = lineProducts,
                 UserOrders = userOrders,
-                LocalNeigbors = localNeigbors,
+                LocalNeigbors = new List<string>(),
             };
 
             var dataToReturn = this.GetInvoiceToReturn(retrieveMode);
@@ -473,53 +468,25 @@ namespace Omicron.SapAdapter.Services.Sap
             foreach (var invoice in retrieveModel.InvoiceHeader)
             {
                 var invoiceDetails = retrieveModel.InvoiceDetails.Where(x => x.InvoiceId == invoice.InvoiceId).ToList();
-                var deliveryDetails = retrieveModel.DeliveryDetailModel.Where(x => x.InvoiceId.HasValue && x.InvoiceId.Value == invoice.InvoiceId).ToList();
-
-                var salesId = deliveryDetails.Select(x => x.BaseEntry).ToList();
-                var userOrders = retrieveModel.UserOrders.Where(x => salesId.Contains(int.Parse(x.Salesorderid))).ToList();
-                var lineProducts = retrieveModel.LineProducts.Where(x => salesId.Contains(x.SaleOrderId)).ToList();
-
-                var doctor = invoice.Medico ?? string.Empty;
-                var totalProducts = invoiceDetails.Count;
 
                 var invoiceModel = new InvoiceSaleModel
                 {
-                    Doctor = doctor,
+                    Doctor = invoice.Medico ?? string.Empty,
                     Invoice = invoice.DocNum,
-                    Deliveries = 0,
-                    Products = totalProducts,
+                    Deliveries = invoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),
+                    Products = invoiceDetails.Count,
                     InvoiceDocDate = invoice.FechaInicio,
                     TypeOrder = invoice.TypeOrder,
-                };
-
-                var invoiceHeader = new InvoiceSaleHeaderModel
-                {
-                    Address = invoice.Address.Replace("\r", string.Empty).ToUpper(),
-                    Client = invoice.Cliente,
-                    Doctor = doctor,
-                    Invoice = invoice.DocNum,
-                    DocEntry = invoice.InvoiceId,
-                    InvoiceDocDate = invoice.FechaInicio,
-                    ProductType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, retrieveModel.LocalNeigbors, invoice.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo,
-                    TotalDeliveries = 0,
-                    TotalProducts = totalProducts,
-                    Comments = invoice.Comments,
-                    TypeOrder = invoice.TypeOrder,
-                    CodeClient = invoice.CardCode,
-                    TotalPieces = invoiceDetails.Where(y => y.Quantity > 0).Sum(x => (int)x.Quantity),
                 };
 
                 var invoiceModelToAdd = new InvoicesModel
                 {
-                    Deliveries = this.GetDeliveryModel(deliveryDetails, invoiceDetails, userOrders, lineProducts),
-                    InvoiceHeader = invoiceHeader,
+                    Deliveries = null,
+                    InvoiceHeader = null,
                     InvoiceSale = invoiceModel,
                 };
 
-                invoiceModelToAdd.InvoiceHeader.TotalDeliveries = invoiceModelToAdd.Deliveries.Count;
-                invoiceModelToAdd.InvoiceSale.Deliveries = invoiceModelToAdd.Deliveries.Count;
-
-                listToReturn.TotalDeliveries += invoiceModelToAdd.Deliveries.Count;
+                listToReturn.TotalDeliveries += invoiceModelToAdd.InvoiceSale.Deliveries;
                 listToReturn.Invoices.Add(invoiceModelToAdd);
             }
 

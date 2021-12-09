@@ -361,7 +361,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <inheritdoc/>
         public async Task<List<UserOrderModel>> GetUserOrdersForInvoice(string statusForSale, string statusForOrder)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => x.StatusAlmacen == statusForSale || x.StatusAlmacen == statusForOrder).ToListAsync();
+            return await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && string.IsNullOrEmpty(x.StatusInvoice) && (x.StatusAlmacen == statusForSale || x.StatusAlmacen == statusForOrder)).ToListAsync();
         }
 
         /// <inheritdoc/>
