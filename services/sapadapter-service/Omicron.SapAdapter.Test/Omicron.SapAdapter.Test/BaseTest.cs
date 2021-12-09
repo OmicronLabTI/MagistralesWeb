@@ -207,6 +207,9 @@ namespace Omicron.SapAdapter.Test
 
                 // for almacen detail
                 new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 46040, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1, InvoiceId = 1 },
+
+                // for detail invoice
+                new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 1, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1, InvoiceId = 1 },
             };
         }
 

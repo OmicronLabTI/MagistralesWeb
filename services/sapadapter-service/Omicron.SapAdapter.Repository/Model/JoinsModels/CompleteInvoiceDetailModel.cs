@@ -8,9 +8,6 @@
 
 namespace Omicron.SapAdapter.Entities.Model.JoinsModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     using Omicron.SapAdapter.Entities.Model.DbModels;
 
     /// <summary>
