@@ -129,6 +129,10 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsNotNull(response.Response);
+            Assert.IsInstanceOf<InvoiceOrderModel>(response.Response);
         }
 
         /// <summary>
@@ -138,7 +142,7 @@ namespace Omicron.SapAdapter.Test.Services
         /// <returns>the data.</returns>
         [Test]
         [TestCase("1")]
-        [TestCase("aaa")]
+        [TestCase("alias")]
         public async Task GetInvoice(string chip)
         {
             // arrange
@@ -167,6 +171,10 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsNotNull(response.Response);
+            Assert.IsInstanceOf<InvoiceOrderModel>(response.Response);
         }
 
         /// <summary>
