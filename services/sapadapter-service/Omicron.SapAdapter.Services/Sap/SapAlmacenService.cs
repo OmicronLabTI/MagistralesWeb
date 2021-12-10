@@ -383,6 +383,7 @@ namespace Omicron.SapAdapter.Services.Sap
             if (parameters.Contains(ServiceConstants.BackOrder))
             {
                 var idsBackOrder = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.StatusAlmacen == ServiceConstants.BackOrder).Select(y => int.Parse(y.Salesorderid)).ToList();
+                idsBackOrder.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.BackOrder).Select(y => y.SaleOrderId));
                 listToReturn.AddRange(sapOrders.Where(x => idsBackOrder.Contains(x.DocNum)));
             }
 
