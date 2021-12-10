@@ -129,6 +129,10 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsNotNull(response.Response);
+            Assert.IsInstanceOf<InvoiceOrderModel>(response.Response);
         }
 
         /// <summary>
@@ -138,7 +142,7 @@ namespace Omicron.SapAdapter.Test.Services
         /// <returns>the data.</returns>
         [Test]
         [TestCase("1")]
-        [TestCase("aaa")]
+        [TestCase("alias")]
         public async Task GetInvoice(string chip)
         {
             // arrange
@@ -167,6 +171,44 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsNotNull(response.Response);
+            Assert.IsInstanceOf<InvoiceOrderModel>(response.Response);
+        }
+
+        /// <summary>
+        /// Test the method to get the invoice detail.
+        /// </summary>
+        /// <param name="invoice">the invoice to look for.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetInvoiceDetail(int invoice)
+        {
+            // arrange
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderInvoice()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetLineProductsRemision()));
+
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
+
+            // act
+            var response = await service.GetInvoiceDetail(invoice);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsNotNull(response.Response);
+            Assert.IsInstanceOf<InvoicesModel>(response.Response);
         }
 
         /// <summary>

@@ -198,6 +198,18 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetInvoiceDetail()
+        {
+            var response = await this.almacenFacade.GetInvoiceDetail(123);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetInvoiceProducts()
         {
             var response = await this.almacenFacade.GetInvoiceProducts(10);
