@@ -26,6 +26,13 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetInvoice(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Gets the invoice detail.
+        /// </summary>
+        /// <param name="invoice">the invoice to look for.</param>
+        /// <returns>The data.</returns>
+        Task<ResultModel> GetInvoiceDetail(int invoice);
+
+        /// <summary>
         /// Get the invoice products.
         /// </summary>
         /// <param name="invoiceId">the invoice id.</param>

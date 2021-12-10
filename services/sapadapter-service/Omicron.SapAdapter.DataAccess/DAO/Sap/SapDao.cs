@@ -940,6 +940,39 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<CompleteInvoiceDetailModel>> GetInvoiceHeaderDetailByInvoiceIdJoinDoctor(List<int> docNums)
+        {
+            var query = (from invoice in this.databaseContext.InvoiceHeaderModel.Where(x => docNums.Contains(x.DocNum))
+                         join detail in this.databaseContext.InvoiceDetailModel on invoice.InvoiceId equals detail.InvoiceId
+                         join doctor in this.databaseContext.ClientCatalogModel on invoice.CardCode equals doctor.ClientId
+                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                         new
+                         {
+                             DoctorId = invoice.CardCode,
+                             Address = invoice.ShippingAddressName
+                         }
+                         equals
+                         new
+                         {
+                             DoctorId = doctordet.CardCode,
+                             Address = doctordet.NickName
+                         }
+                         into detalleDireccion
+                         from dop in detalleDireccion.DefaultIfEmpty()
+                         join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
+                         where product.IsWorkableProduct == "Y"
+                         select new CompleteInvoiceDetailModel
+                         {
+                             InvoiceHeader = invoice,
+                             Detail = detail,
+                             Cliente = dop.Address2 ?? string.Empty,
+                             Medico = doctor.AliasName ?? string.Empty,
+                         });
+
+            return (await this.RetryQuery<CompleteInvoiceDetailModel>(query)).ToList();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByDocEntry(List<int> docEntry)
         {
             return await this.RetryQuery<InvoiceDetailModel>(this.databaseContext.InvoiceDetailModel.Where(x => docEntry.Contains(x.InvoiceId)));

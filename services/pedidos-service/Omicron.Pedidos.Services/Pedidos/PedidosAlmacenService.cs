@@ -122,7 +122,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var userOrders = (await this.pedidosDao.GetUserOrdersForInvoice(ServiceConstants.Almacenado, ServiceConstants.Empaquetado)).ToList();
 
-            var orderToReturn = userOrders.Where(y => y.IsProductionOrder)
+            var orderToReturn = userOrders
                 .Select(x => new
                 {
                     x.Salesorderid,
