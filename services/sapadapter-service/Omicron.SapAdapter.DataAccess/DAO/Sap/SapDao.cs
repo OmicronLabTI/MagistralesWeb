@@ -792,7 +792,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
-                         where order.OrderType == typeOrder && order.PedidoStatus == "O" && product.IsWorkableProduct == "Y"
+                         where order.OrderType == typeOrder && (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y"
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,

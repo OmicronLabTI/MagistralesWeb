@@ -285,7 +285,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
-                Client = order.Cliente ?? string.Empty,
+                Client = order.Cliente.ValidateNull(),
                 DocNum = orderId,
                 Comments = userOrder == null ? string.Empty : userOrder.Comments,
                 Doctor = order.Medico,
