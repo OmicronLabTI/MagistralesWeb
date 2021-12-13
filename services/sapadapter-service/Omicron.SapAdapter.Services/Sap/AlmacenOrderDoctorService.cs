@@ -266,7 +266,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var productType = orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y") ? ServiceConstants.Magistral : ServiceConstants.Mixto;
                 productType = orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y") ? ServiceConstants.Linea : productType;
 
-                order.Address = string.IsNullOrEmpty(order.Address) ? string.Empty : order.Address;
                 var orderType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, order.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo;
 
                 var userOrder = usersOrders.FirstOrDefault(x => x.Salesorderid.Equals(so.ToString()) && string.IsNullOrEmpty(x.Productionorderid));
@@ -282,7 +281,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     InvoiceType = orderType,
                     Comments = userOrder == null ? string.Empty : userOrder.Comments,
                     OrderType = order.TypeOrder,
-                    Address = order.Address,
+                    Address = order.Address.ValidateNull(),
                 };
                 listOrders.Add(saleItem);
             }
