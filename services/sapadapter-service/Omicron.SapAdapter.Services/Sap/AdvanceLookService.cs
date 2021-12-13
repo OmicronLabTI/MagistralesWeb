@@ -294,7 +294,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var userOrder = paramentsCards.UserOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)));
-            var lineProductOrder = paramentsCards.LineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Recibir);
+            var lineProductOrder = paramentsCards.LineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen));
             paramentsCards.UserOrder = userOrder;
             paramentsCards.LineProductOrder = lineProductOrder;
 
