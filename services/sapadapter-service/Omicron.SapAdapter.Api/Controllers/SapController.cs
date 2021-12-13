@@ -12,6 +12,7 @@ namespace Omicron.SapAdapter.Api.Controllers
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Hosting;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Facade.Sap;
@@ -32,15 +33,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// </summary>
         private readonly ILogger logger;
 
+        private readonly IHostApplicationLifetime lifetime;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapController"/> class.
         /// </summary>
         /// <param name="sapFacade">the sap facade.</param>
         /// <param name="logger">the logger factory.</param>
-        public SapController(ISapFacade sapFacade, ILogger logger)
+        /// <param name="lifeTime">The life time.</param>
+        public SapController(ISapFacade sapFacade, ILogger logger, IHostApplicationLifetime lifeTime)
         {
             this.sapFacade = sapFacade ?? throw new ArgumentNullException(nameof(sapFacade));
             this.logger = logger;
+            this.lifetime = lifeTime;
         }
 
         /// <summary>
@@ -375,6 +380,18 @@ namespace Omicron.SapAdapter.Api.Controllers
         public IActionResult Ping()
         {
             return this.Ok("Pong");
+        }
+
+        /// <summary>
+        /// Makes the ping.
+        /// </summary>
+        /// <returns>return the pong.</returns>
+        [Route("/exit")]
+        [HttpGet]
+        public IActionResult Exit()
+        {
+            this.lifetime.StopApplication();
+            return this.Ok("Dead");
         }
     }
 }

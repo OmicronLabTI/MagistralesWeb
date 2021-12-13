@@ -16,11 +16,16 @@ or alternatively using `brew install fastlane`
 
 # Available Actions
 ## iOS
-### ios metrics
+### ios metrics_dev
 ```
-fastlane ios metrics
+fastlane ios metrics_dev
 ```
 Code coverage and sonar
+### ios metrics_qa
+```
+fastlane ios metrics_qa
+```
+
 ### ios archive_dev
 ```
 fastlane ios archive_dev
