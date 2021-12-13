@@ -384,7 +384,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var saleHeader = new AlmacenSalesHeaderModel
             {
                 DocNum = order.DocNum,
-                Status = status,
+                Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : status,
                 TypeSaleOrder = $"Pedido {productType}",
                 Doctor = order.Medico,
                 InvoiceType = invoiceType,
