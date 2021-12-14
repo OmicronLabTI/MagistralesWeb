@@ -695,6 +695,12 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, packaginList, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task HealthCheck()
+        {
+            await this.sapDao.HealthCheck();
+        }
+
         /// <summary>
         /// gets the orders from sap.
         /// </summary>

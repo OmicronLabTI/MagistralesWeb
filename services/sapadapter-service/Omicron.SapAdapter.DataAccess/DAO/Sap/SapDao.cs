@@ -1505,6 +1505,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 
         }
 
+        /// <inheritdoc/>
+        public async Task HealthCheck()
+        {
+            await this.databaseContext.ProductoModel.FirstOrDefaultAsync();
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

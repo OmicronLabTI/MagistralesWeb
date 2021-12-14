@@ -393,5 +393,17 @@ namespace Omicron.SapAdapter.Api.Controllers
             this.lifetime.StopApplication();
             return this.Ok("Dead");
         }
+
+        /// <summary>
+        /// Makes the ping.
+        /// </summary>
+        /// <returns>return the pong.</returns>
+        [Route("/healthcheck")]
+        [HttpGet]
+        public async Task<IActionResult> HealthCheck()
+        {
+            await this.sapFacade.HealthCheck();
+            return this.Ok();
+        }
     }
 }

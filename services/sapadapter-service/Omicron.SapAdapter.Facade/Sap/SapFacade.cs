@@ -258,5 +258,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapDxpService.GetOrdersActive(ordersid));
         }
+
+        /// <inheritdoc/>
+        public async Task HealthCheck()
+        {
+            await this.sapService.HealthCheck();
+        }
     }
 }
