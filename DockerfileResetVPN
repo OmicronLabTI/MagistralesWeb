@@ -3,6 +3,6 @@ RUN apk add iputils
 RUN apk add py3-pip
 RUN apk add gcc musl-dev python3-dev libffi-dev openssl-dev cargo make
 RUN pip install azure-cli
-COPY testpingvpn.sh /testpingvpn.sh
-RUN chmod +x /testpingvpn.sh
-CMD ["/testpingvpn.sh"]
+COPY testpingvpn.sh testpingvpn.sh
+RUN chmod +x testpingvpn.sh
+CMD [".\testpingvpn.sh"]
