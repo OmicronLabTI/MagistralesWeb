@@ -379,7 +379,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => types.Contains(x.InvoiceType)).ToListAsync();
+            return await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && !string.IsNullOrEmpty(x.StatusInvoice) && types.Contains(x.InvoiceType)).ToListAsync();
         }
 
         /// <inheritdoc/>
