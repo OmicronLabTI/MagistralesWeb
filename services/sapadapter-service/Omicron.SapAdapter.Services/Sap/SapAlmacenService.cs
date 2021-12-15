@@ -233,11 +233,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveries = await this.sapDao.GetDeliveryDetailByDocEntry(deliveryIds);
             var allDeliveries = await this.sapDao.GetDeliveryDetailBySaleOrder(deliveries.Select(x => x.BaseEntry).ToList());
             var detailsSale = (await this.sapDao.GetDetailByDocNum(deliveries.Select(x => x.BaseEntry).ToList())).ToList();
-            var lineItems = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
+            var products = (await this.sapDao.GetProductByIds(detailsSale.Select(x => x.ProductoId).ToList())).ToList();
 
             detailsSale.ForEach(x =>
             {
-                x.Label = lineItems.Any(y => y == x.ProductoId).ToString();
+                var product = products.FirstOrDefault(y => y.ProductoId == x.ProductoId);
+                var type = product.IsWorkableProduct == "Y" && product.IsMagistral == "Y" && product.IsLine == "N" ? "mg" : "extra";
+                type = product.IsWorkableProduct == "Y" && product.IsMagistral == "N" && product.IsLine == "Y" ? "ln" : type;
+                x.Label = type;
             });
 
             var objectToReturn = new { DeliveryDetail = allDeliveries, DetallePedido = detailsSale };
