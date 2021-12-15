@@ -298,7 +298,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoDxpId?.ToUpper()).Distinct().ToList());
                 x.TotalSaleOrder = saleOrders.Select(y => y.PedidoId).Distinct().Count();
                 x.SalesPrsonEmail = salePerson.Email.ValidateNull();
-                x.SalesPrsonName = string.IsNullOrEmpty(salePerson.FirstName) ? string.Empty : salePerson.FirstName + ' ' + salePerson.LastName;
+                x.SalesPrsonName = $"{salePerson.FirstName.ValidateNull()} {salePerson.LastName.ValidateNull()}".Trim();
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
