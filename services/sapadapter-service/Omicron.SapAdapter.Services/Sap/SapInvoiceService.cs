@@ -265,7 +265,6 @@ namespace Omicron.SapAdapter.Services.Sap
             dataToLook.InvoiceDocNums.ForEach(y =>
             {
                 var invoiceDb = invoiceHeader.FirstOrDefault(a => a.DocNum == y);
-
                 if (invoiceDb != null)
                 {
                     invoiceHeaderOrdered.Add(invoiceDb);
@@ -275,19 +274,13 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeaderOrdered = invoiceHeaderOrdered.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
 
             var invoicesDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(invoiceHeaderOrdered.Select(x => x.InvoiceId).ToList())).ToList();
-
-            var invoicesNull = invoicesDetails.Select(x => x.InvoiceId).Cast<int?>().ToList();
-            var deliveries = (await this.sapDao.GetDeliveryByInvoiceId(invoicesNull)).ToList();
+            var deliveries = (await this.sapDao.GetDeliveryByInvoiceId(invoicesDetails.Select(x => x.InvoiceId).Cast<int?>().ToList())).ToList();
 
             var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeaderOrdered.Select(x => x.TransportCode).ToList())).ToList();
-            var clients = (await this.sapDao.GetClientsById(invoiceHeaderOrdered.Select(x => x.CardCode).ToList())).ToList();
             var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(invoiceHeaderOrdered.Select(x => x.SalesPrsonId).ToList())).ToList();
             invoiceHeaderOrdered.ForEach(x =>
             {
                 var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
-                var client = clients.FirstOrDefault(y => y.ClientId == x.CardCode);
-                client ??= new ClientCatalogModel();
-
                 var salePerson = salesPerson.FirstOrDefault(y => y.AsesorId == x.SalesPrsonId);
                 salePerson ??= new SalesPersonModel();
 
@@ -297,15 +290,15 @@ namespace Omicron.SapAdapter.Services.Sap
                 var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
 
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
-                x.ClientEmail = client.Email;
+                x.ClientEmail = x.ClientEmail;
                 x.TransportName = company.TrnspName;
 
                 //// ToDo descomentar linea siguiente si hay deploy magis a prod antes que dxp
                 //// x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoId).Distinct().ToList());
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoDxpId?.ToUpper()).Distinct().ToList());
                 x.TotalSaleOrder = saleOrders.Select(y => y.PedidoId).Distinct().Count();
-                x.SalesPrsonEmail = string.IsNullOrEmpty(salePerson.Email) ? string.Empty : salePerson.Email;
-                x.SalesPrsonName = string.IsNullOrEmpty(salePerson.FirstName) ? string.Empty : salePerson.FirstName + ' ' + salePerson.LastName;
+                x.SalesPrsonEmail = salePerson.Email.ValidateNull();
+                x.SalesPrsonName = $"{salePerson.FirstName.ValidateNull()} {salePerson.LastName.ValidateNull()}".Trim();
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
