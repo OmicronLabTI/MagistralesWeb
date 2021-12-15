@@ -1042,6 +1042,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              SalesPrsonId = invoice.SalesPrsonId,
                              TypeOrder = invoice.TypeOrder,
                              UpdateDate = invoice.UpdateDate,
+                             ClientEmail = doctor.Email,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
