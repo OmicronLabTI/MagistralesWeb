@@ -402,8 +402,16 @@ namespace Omicron.SapAdapter.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> HealthCheck()
         {
-            await this.sapFacade.HealthCheck();
-            return this.Ok();
+            try
+            {
+                await this.sapFacade.HealthCheck();
+                return this.Ok();
+            }
+            catch (Exception)
+            {
+                this.lifetime.StopApplication();
+                return this.Ok("Dead");
+            }
         }
     }
 }
