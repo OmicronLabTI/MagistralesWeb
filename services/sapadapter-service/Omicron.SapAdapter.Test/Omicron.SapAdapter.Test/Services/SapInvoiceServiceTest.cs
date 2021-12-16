@@ -16,6 +16,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
@@ -358,6 +359,10 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsTrue(response.Success);
+            Assert.IsInstanceOf<List<InvoiceHeaderModel>>(response.Response);
+            Assert.IsNotNull(response.Comments);
         }
 
         /// <summary>

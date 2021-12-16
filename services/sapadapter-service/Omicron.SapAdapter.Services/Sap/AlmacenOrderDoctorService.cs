@@ -281,7 +281,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     InvoiceType = orderType,
                     Comments = userOrder == null ? string.Empty : userOrder.Comments,
                     OrderType = order.TypeOrder,
-                    Address = order.Address.ValidateNull(),
+                    Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
                 };
                 listOrders.Add(saleItem);
             }

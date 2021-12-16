@@ -1042,6 +1042,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              SalesPrsonId = invoice.SalesPrsonId,
                              TypeOrder = invoice.TypeOrder,
                              UpdateDate = invoice.UpdateDate,
+                             ClientEmail = doctor.Email,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -1052,7 +1053,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             return await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.DeliveryId)).Select(x => new DeliveryDetailModel
             {
-                BaseEntry = x.BaseEntry != null ? x.BaseEntry : 0,
+                BaseEntry = x.BaseEntry,
                 Container = x.Container,
                 DeliveryId = x.DeliveryId,
                 Description = x.Description,
@@ -1155,6 +1156,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              ProductoName = p.ProductoName,
                              Unit = p.Unit,
                              Groupname = g.CatalogName,
+                             IsWorkableProduct = p.IsWorkableProduct,
                          });
 
             return await this.RetryQuery<ProductoModel>(query);

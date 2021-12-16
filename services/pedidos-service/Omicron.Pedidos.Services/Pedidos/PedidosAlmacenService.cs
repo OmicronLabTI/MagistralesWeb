@@ -145,14 +145,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             var type = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.Local.ToLower();
 
             var userOrderByType = (await this.pedidosDao.GetUserOrderByInvoiceType(new List<string> { type })).ToList();
-            userOrderByType = userOrderByType.Where(x => !string.IsNullOrEmpty(x.StatusInvoice)).ToList();
 
-            var ordersToLoop = userOrderByType.Where(x => x.IsProductionOrder && !ServiceConstants.StatusDelivered.Contains(x.StatusInvoice)).ToList();
-            var invoiceIDs = ordersToLoop.Where(x => x.IsProductionOrder).DistinctBy(y => y.InvoiceId).Select(z => z.InvoiceId).ToList();
-            ordersToLoop.AddRange(userOrderByType.Where(x => x.IsProductionOrder && ServiceConstants.StatusDelivered.Contains(x.StatusInvoice) && x.InvoiceStoreDate >= dataToLook.Item1));
+            var ordersToLoop = userOrderByType.Where(x => !ServiceConstants.StatusDelivered.Contains(x.StatusInvoice)).ToList();
+            ordersToLoop.AddRange(userOrderByType.Where(x => ServiceConstants.StatusDelivered.Contains(x.StatusInvoice) && x.InvoiceStoreDate >= dataToLook.Item1));
 
             var orderToReturn = ordersToLoop
-                .Where(x => x.IsProductionOrder && arrayStatus.Contains(x.StatusInvoice))
+                .Where(x => arrayStatus.Contains(x.StatusInvoice))
                 .DistinctBy(y => y.InvoiceId)
                 .Select(x => new
                 {
@@ -164,7 +162,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 })
                 .ToList();
 
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, JsonConvert.SerializeObject(invoiceIDs), dataToLook.Item2);
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, dataToLook.Item2);
         }
 
         /// <inheritdoc/>
