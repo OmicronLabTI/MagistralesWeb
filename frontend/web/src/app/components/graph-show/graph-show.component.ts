@@ -77,7 +77,8 @@ export class GraphShowComponent implements OnInit, OnChanges, AfterViewInit {
           count: this.myChart.data.datasets[0].data[index]
           }];
     });
-    this.newItemsIndicatorsEmitter.emit(this.newItemsIndicators.sort((a, b) => ( b.count - a.count )));
+    const items = [...this.newItemsIndicators].sort((a, b) => ( b.count - a.count ));
+    this.newItemsIndicatorsEmitter.emit(items);
   }
 
   generateInitConfigurationGraph() {

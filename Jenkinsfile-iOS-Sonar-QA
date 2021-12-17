@@ -27,7 +27,7 @@ pipeline {
       steps {
         echo 'Sonar Frontend iOS'
         dir('frontend/ios/') {
-          sh 'fastlane metrics'
+          sh 'fastlane metrics_qa'
         }
       }
     }

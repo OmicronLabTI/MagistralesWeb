@@ -70,11 +70,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = await this.GetLineProductsToLook(ids, userResponse.Item3);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts);
             var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, status);
-            orders = this.GetSapLinesToLookByChips(orders, parameters);
+            orders = await this.GetSapLinesToLookByChips(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = this.GetOrdersToReturn(userResponse.Item1, orders, lineProducts.Item1, parameters, sapOrders.Item3);
 
-            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{sapOrders.Item2}-{totalFilter}");
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
 
         /// <inheritdoc/>
@@ -233,11 +233,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveries = await this.sapDao.GetDeliveryDetailByDocEntry(deliveryIds);
             var allDeliveries = await this.sapDao.GetDeliveryDetailBySaleOrder(deliveries.Select(x => x.BaseEntry).ToList());
             var detailsSale = (await this.sapDao.GetDetailByDocNum(deliveries.Select(x => x.BaseEntry).ToList())).ToList();
-            var lineItems = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
+            var products = (await this.sapDao.GetProductByIds(detailsSale.Select(x => x.ProductoId).ToList())).ToList();
 
             detailsSale.ForEach(x =>
             {
-                x.Label = lineItems.Any(y => y == x.ProductoId).ToString();
+                var product = products.FirstOrDefault(y => y.ProductoId == x.ProductoId);
+                var type = product.IsWorkableProduct == "Y" && product.IsMagistral == "Y" && product.IsLine == "N" ? "mg" : "extra";
+                type = product.IsWorkableProduct == "Y" && product.IsMagistral == "N" && product.IsLine == "Y" ? "ln" : type;
+                x.Label = type;
             });
 
             var objectToReturn = new { DeliveryDetail = allDeliveries, DetallePedido = detailsSale };
@@ -252,13 +255,12 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var userOrderModel = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrdersAlmancen);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
-            var listIds = JsonConvert.DeserializeObject<List<int>>(userOrderModel.ExceptionMessage);
 
             int.TryParse(userOrderModel.Comments.ToString(), out var maxDays);
             var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
             var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
 
-            return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, listIds, dateToLook);
+            return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, new List<int>(), dateToLook);
         }
 
         private ReceipcionPedidosDetailModel GetDetailRecpcionToReturn(int orderId, List<UserOrderModel> pedidos, List<LineProductsModel> lineOrders, List<IncidentsModel> incidences, List<string> localNeigbors, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<Batches> batches)
@@ -286,12 +288,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
-                Client = order.Cliente ?? string.Empty,
+                Client = order.Cliente.ValidateNull(),
                 DocNum = orderId,
                 Comments = userOrder == null ? string.Empty : userOrder.Comments,
                 Doctor = order.Medico,
                 InitDate = order == null ? DateTime.Now : order.FechaInicio,
-                Status = salesStatus,
+                Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : salesStatus,
                 TotalItems = sapOrders.DistinctBy(x => x.Producto.ProductoId).Count(),
                 TotalPieces = sapOrders.DistinctBy(x => x.Producto.ProductoId).Sum(y => y.Detalles.Quantity),
                 TypeSaleOrder = $"Pedido {productType}",
@@ -334,15 +336,16 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple);
+            var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
+            sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
 
             var possibleIdsToIgnore = sapOrders.Where(x => !userOrdersTuple.Item1.Any(y => y.Salesorderid == x.DocNum.ToString())).ToList();
             var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
-            var granTotal = sapOrders.Select(x => x.DocNum).Distinct().ToList().Count;
-
+            sapOrders.AddRange(sapCancelled);
             var listHeaderToReturn = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts);
 
-            return new Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>(listHeaderToReturn.Item1, granTotal, listHeaderToReturn.Item2);
+            return new Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>(listHeaderToReturn.Item1, 0, listHeaderToReturn.Item2);
         }
 
         /// <summary>
@@ -357,13 +360,19 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listToReturn = new List<CompleteAlmacenOrderModel>();
 
+            if (parameters.Contains(ServiceConstants.Cancelado))
+            {
+                listToReturn.AddRange(sapOrders.Where(x => x.Canceled == "Y"));
+            }
+
+            sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
             if (parameters.Contains(ServiceConstants.Recibir))
             {
                 var allIds = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Salesorderid)).ToList();
                 allIds.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).Select(y => y.SaleOrderId));
 
                 var idsToLook = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status == ServiceConstants.Finalizado && !ServiceConstants.StatusToIgnorePorRecibir.Contains(x.StatusAlmacen)).Select(y => int.Parse(y.Salesorderid)).ToList();
-                idsToLook.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Almacenado).Select(y => y.SaleOrderId));
+                idsToLook.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && !ServiceConstants.StatusToIgnorePorRecibir.Contains(x.StatusAlmacen)).Select(y => y.SaleOrderId));
                 idsToLook.AddRange(sapOrders.Where(x => !allIds.Contains(x.DocNum)).Select(y => y.DocNum));
                 listToReturn.AddRange(sapOrders.Where(x => idsToLook.Contains(x.DocNum)));
             }
@@ -377,6 +386,7 @@ namespace Omicron.SapAdapter.Services.Sap
             if (parameters.Contains(ServiceConstants.BackOrder))
             {
                 var idsBackOrder = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.StatusAlmacen == ServiceConstants.BackOrder).Select(y => int.Parse(y.Salesorderid)).ToList();
+                idsBackOrder.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.BackOrder).Select(y => y.SaleOrderId));
                 listToReturn.AddRange(sapOrders.Where(x => idsBackOrder.Contains(x.DocNum)));
             }
 
@@ -389,8 +399,14 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="sapOrders">the orders.</param>
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        private List<CompleteAlmacenOrderModel> GetSapLinesToLookByChips(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
+        private async Task<List<CompleteAlmacenOrderModel>> GetSapLinesToLookByChips(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
         {
+            if (parameters.ContainsKey(ServiceConstants.Shipping) && parameters[ServiceConstants.Shipping].Split(",").Count() == 1)
+            {
+                var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+                sapOrders = sapOrders.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+            }
+
             if (!parameters.ContainsKey(ServiceConstants.Chips))
             {
                 return sapOrders;
@@ -452,7 +468,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DocNum = so,
                     Doctor = doctor,
                     InitDate = order == null ? DateTime.Now : order.FechaInicio,
-                    Status = salesStatus,
+                    Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : salesStatus,
                     TotalItems = totalItems,
                     TotalPieces = totalpieces,
                     TypeOrder = order.TypeOrder,
@@ -565,7 +581,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     NeedsCooling = order.Producto.NeedsCooling,
                     ProductType = $"Producto {productType}",
                     Pieces = order.Detalles.Quantity,
-                    Status = orderStatus,
+                    Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : orderStatus,
                     IsMagistral = order.Producto.IsMagistral.Equals("Y"),
                     Batches = batches,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,

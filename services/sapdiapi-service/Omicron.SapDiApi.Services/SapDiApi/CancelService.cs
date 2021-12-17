@@ -101,6 +101,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             for (var i = 0; i < deliveryIds.MagistralProducts.Count; i++)
             {
+                if (deliveryIds.MagistralProducts[i].ItemCode == ServiceConstants.ShippingCostItemCode)
+                {
+                    continue;
+                }
+
                 transfer.Lines.SetCurrentLine(i);
                 transfer.Lines.ItemCode = deliveryIds.MagistralProducts[i].ItemCode;
                 transfer.Lines.FromWarehouseCode = "PT";

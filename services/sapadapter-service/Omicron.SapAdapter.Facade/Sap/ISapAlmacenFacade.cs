@@ -68,6 +68,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetDelivery(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// gets the details.
+        /// </summary>
+        /// <param name="deliveryId">the delivery ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersDeliveryDetail(int deliveryId);
+
+        /// <summary>
         /// Gets the products of a specific delivery.
         /// </summary>
         /// <param name="saleId">the ids.</param>
@@ -80,6 +87,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetInvoice(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the invoices.
+        /// </summary>
+        /// <param name="invoice">the invoice to look for.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetInvoiceDetail(int invoice);
 
         /// <summary>
         /// Gets the invoices.
@@ -142,6 +156,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the header and the orders.
+        /// </summary>
+        /// <param name="details">the details.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details);
 
         /// <summary>
         /// Get the Almacen Orders By Doctor.

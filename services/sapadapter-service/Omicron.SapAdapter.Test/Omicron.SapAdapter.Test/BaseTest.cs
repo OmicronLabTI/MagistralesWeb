@@ -48,10 +48,10 @@ namespace Omicron.SapAdapter.Test
                 new OrderModel { PedidoId = 102, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2, OrderType = "MN" },
 
                 // For Almacen
-                new OrderModel { PedidoId = 75000, DocNum = 75000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ" },
-                new OrderModel { PedidoId = 75001, DocNum = 75001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo León" },
-                new OrderModel { PedidoId = 75002, DocNum = 75002, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null },
-                new OrderModel { PedidoId = 85000, DocNum = 85000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ" },
+                new OrderModel { PedidoId = 75000, DocNum = 75000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N" },
+                new OrderModel { PedidoId = 75001, DocNum = 75001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo León", Canceled = "N" },
+                new OrderModel { PedidoId = 75002, DocNum = 75002, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null, Canceled = "N" },
+                new OrderModel { PedidoId = 85000, DocNum = 85000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N" },
             };
         }
 
@@ -182,10 +182,13 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<DeliverModel>
             {
-                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000, Address = null },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000, Address = "direccion CD MX" },
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001, Address = "direccion Nuevo León" },
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46038, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75002, Address = "direccion CD MX" },
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46039, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75003, Address = "direccion Oax", TypeOrder = "MQ" },
+
+                // for almacen detail
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 46040, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 46040, Address = "direccion Oax", TypeOrder = "MQ" },
             };
         }
 
@@ -201,6 +204,12 @@ namespace Omicron.SapAdapter.Test
                 new DeliveryDetailModel { BaseEntry = 75001, DeliveryId = 46037, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
                 new DeliveryDetailModel { BaseEntry = 100, DeliveryId = 46038, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
                 new DeliveryDetailModel { BaseEntry = 100, DeliveryId = 46039, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 2 },
+
+                // for almacen detail
+                new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 46040, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1, InvoiceId = 1 },
+
+                // for detail invoice
+                new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 1, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1, InvoiceId = 1 },
             };
         }
 
@@ -349,6 +358,8 @@ namespace Omicron.SapAdapter.Test
                 new ClientCatalogModel { ClientId = "C1", Email = "email", AliasName = "alias" },
                 new ClientCatalogModel { ClientId = "C8", Email = "email", AliasName = "alias" },
                 new ClientCatalogModel { ClientId = "Codigo", Email = "email", AliasName = "alias" },
+                new ClientCatalogModel { ClientId = "Medico A", Email = "email", AliasName = "alias" },
+                new ClientCatalogModel { ClientId = "Medico B", Email = "email", AliasName = "alias" },
             };
         }
 
@@ -753,6 +764,7 @@ namespace Omicron.SapAdapter.Test
             return new List<ProductoModel>
             {
                  new ProductoModel { IsMagistral = "N", ProductoId = "REVE 14", ProductoName = "REVE 14", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", IsWorkableProduct = "Y" },
+                 new ProductoModel { IsMagistral = "N", ProductoId = "REVE 12", ProductoName = "REVE 12", Unit = "PZ", LargeDescription = "Liiiiinea2", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", IsWorkableProduct = "Y" },
                  new ProductoModel { IsMagistral = "Y", ProductoId = "150   60 ML", ProductoName = "150   60 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
                  new ProductoModel { IsMagistral = "Y", ProductoId = "2643   120 ML", ProductoName = "2643   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
                  new ProductoModel { IsMagistral = "Y", ProductoId = "3567   120 ML", ProductoName = "3567   120 ML", Unit = "PZ", LargeDescription = "magi", NeedsCooling = "Y", BarCode = "mag", IsLine = "N", IsWorkableProduct = "Y" },
@@ -772,9 +784,9 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 84503, AsesorId = 1, Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ" },
-                new OrderModel { PedidoId = 84517, AsesorId = 1, Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = new DateTime(2021, 04, 12), Medico = "Medico B", PedidoStatus = "O" },
-                new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = new DateTime(2021, 04, 12), Medico = "Medico B", PedidoStatus = "O" },
+                new OrderModel { PedidoId = 84503, AsesorId = 1, Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = DateTime.Today.AddDays(-1), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ", Canceled = "N", Address = "CDMX" },
+                new OrderModel { PedidoId = 84517, AsesorId = 1, Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX" },
+                new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX" },
             };
         }
 
@@ -793,7 +805,7 @@ namespace Omicron.SapAdapter.Test
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 84517, ProductoId = "708   60 ML", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 2, PedidoId = 84517, ProductoId = "567   120 ML", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
 
-                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 0, PedidoId = 84515, ProductoId = "567   120 ML", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 0, PedidoId = 84515, ProductoId = "REVE 12", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 84515, ProductoId = "REVE 14", Container = "NA", Quantity = 2, DocDate = DateTime.Today },
             };
         }

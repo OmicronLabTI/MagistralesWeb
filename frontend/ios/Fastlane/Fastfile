@@ -17,7 +17,7 @@ default_platform(:ios)
 
 platform :ios do
   desc "Code coverage and sonar"
-  lane :metrics do
+  lane :metrics_dev do
     cocoapods()
     scan(scheme: "RELEASE",
       code_coverage: true,
@@ -34,10 +34,38 @@ platform :ios do
       ignore: ["Pods/*", "**/Common/Constants.swift"]
     )
 
-     swiftlint(output_file: "./sonar-reports/swiftlint.txt",
-      ignore_exit_status: true)
+    swiftlint(output_file: "./sonar-reports/swiftlint.txt",
+    ignore_exit_status: true)
 
-     sonar
+    sonar(
+      project_key: "20_Omicron_AppiOSFormulas_ios_Dev",
+      project_name: "20_Omicron_AppiOSFormulas_ios_Dev",
+      )
+  end
+  lane :metrics_qa do
+    cocoapods()
+    scan(scheme: "RELEASE",
+      code_coverage: true,
+      derived_data_path: "./DerivedData",
+      output_directory: "./sonar-reports",
+      devices: "iPad Pro (9.7-inch)")
+    
+    slather(cobertura_xml: true,
+      build_directory: "./DerivedData",
+      scheme: "RELEASE",
+      workspace: "./Omicron.xcworkspace",
+      proj: "./Omicron.xcodeproj",
+      output_directory: "./sonar-reports",
+      ignore: ["Pods/*", "**/Common/Constants.swift"]
+    )
+
+    swiftlint(output_file: "./sonar-reports/swiftlint.txt",
+    ignore_exit_status: true)
+
+    sonar(
+    project_key: "20_Omicron_AppiOSFormulas_ios_QA",
+    project_name: "20_Omicron_AppiOSFormulas_ios_QA",
+    )
   end
   desc "Archive iOS App DEV"
   lane :archive_dev do

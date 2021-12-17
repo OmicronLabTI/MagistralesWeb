@@ -118,6 +118,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersDeliveryDetail(int deliveryId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapAlmacenDeliveryService.GetOrdersDeliveryDetail(deliveryId));
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> GetProductsDelivery(string saleId)
         {
             return this.mapper.Map<ResultDto>(await this.sapAlmacenDeliveryService.GetProductsDelivery(saleId));
@@ -127,6 +133,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetInvoice(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoice(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoiceDetail(int invoice)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceDetail(invoice));
         }
 
         /// <inheritdoc/>
@@ -181,6 +193,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.almacenOrderDoctorService.SearchAlmacenOrdersByDoctor(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenOrderDoctorService.SearchAlmacenOrdersDetailsByDoctor(details));
         }
 
         /// <inheritdoc/>

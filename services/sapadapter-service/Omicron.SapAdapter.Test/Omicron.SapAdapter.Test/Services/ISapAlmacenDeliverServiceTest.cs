@@ -217,6 +217,35 @@ namespace Omicron.SapAdapter.Test.Services
         /// <param name="chip">the chip.</param>
         /// <returns>the data.</returns>
         [Test]
+        [TestCase(46040)]
+        public async Task GetOrdersDeliveryDetail(int chip)
+        {
+            // arrange
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderRemision()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
+
+            // act
+            var response = await service.GetOrdersDeliveryDetail(chip);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+            Assert.IsInstanceOf<SalesModel>(response.Response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <param name="chip">the chip.</param>
+        /// <returns>the data.</returns>
+        [Test]
         [TestCase("75001-46037")]
         public async Task GetProductsDelivery(string chip)
         {

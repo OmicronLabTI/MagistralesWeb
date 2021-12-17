@@ -1,0 +1,19 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: resetvpn
+spec:
+  schedule: "*/5 * * * *"
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: resetvpn
+            image: omicron.azurecr.io/omicron-resetvpn-uat:latest
+            imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: pullsecret

@@ -8,13 +8,13 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Services.Almacen;
@@ -23,7 +23,6 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
-    using Omicron.SapAdapter.Services.User;
     using Serilog;
 
     /// <summary>
@@ -54,12 +53,17 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.ProductoModel.AddRange(this.GetProductoModelForDoctorOrders());
             this.context.OrderModel.AddRange(this.GetOrderModelForDoctorOrders());
             this.context.DetallePedido.AddRange(this.GetDetallePedidoForDoctorOrders());
+            this.context.ClientCatalogModel.AddRange(this.GetClients());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModelForDoctorOrders());
             this.context.SaveChanges();
 
             var mockPedidoService = new Mock<IPedidosService>();
             mockPedidoService
                 .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultGetUserPedidosForDoctorOrders()));
+
+            mockPedidoService
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidosForDoctorOrders()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
@@ -133,11 +137,57 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Chips, "Medico B" },
+                { ServiceConstants.Chips, "alias" },
+                { ServiceConstants.Shipping, "Foraneo" },
             };
+
+            var localNeighBors = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "Nuevo León", Field = "LocalNeighborhood" },
+            };
+
+            this.catalogService
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModel(localNeighBors)));
 
             // act
             var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersByDoctor(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task SearchAlmacenOrdersDetailsByDoctor()
+        {
+            // arrange
+            var request = new DoctorOrdersSearchDeatilDto
+            {
+                Address = "CDMX",
+                Name = "alias",
+                SaleOrders = new List<int>
+                {
+                    84503,
+                    84517,
+                    84515,
+                },
+            };
+
+            var localNeighBors = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "Nuevo León", Field = "LocalNeighborhood" },
+            };
+
+            this.catalogService
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModel(localNeighBors)));
+
+            // act
+            var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersDetailsByDoctor(request);
 
             // assert
             Assert.IsNotNull(response);

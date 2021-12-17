@@ -45,7 +45,7 @@ namespace Omicron.Pedidos.Services.Broker
 
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            if (environment == "Uat")
+            if (environment == "Uat" || environment == "Prod")
             {
                 this.producer.SecurityProtocol = SecurityProtocol.SaslSsl;
                 this.producer.SaslMechanism = SaslMechanism.Plain;

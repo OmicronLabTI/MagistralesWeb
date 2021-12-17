@@ -20,6 +20,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     using SAPbobsCOM;
     using Omicron.SapDiApi.Log;
     using Omicron.LeadToCash.Resources.Exceptions;
+    using System.Text;
 
     public class CreateDeliveryService : ICreateDeliveryService
     {
@@ -60,7 +61,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.Address2 = saleOrder.Address2;
                 deliveryNote.ShipToCode = saleOrder.ShipToCode;
                 deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
-                deliveryNote.Comments = $"Basado en pedido: {saleOrderId}";
+                deliveryNote.Comments = saleOrder.Comments;
+                deliveryNote.UserFields.Fields.Item("U_comentarioremision").Value = $"Basado en pedido: {saleOrderId}";
 
                 for (var i = 0; i < saleOrder.Lines.Count; i++)
                 {
@@ -132,7 +134,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.Address2 = saleOrder.Address2;
                 deliveryNote.ShipToCode = saleOrder.ShipToCode;
                 deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
-                deliveryNote.Comments = $"Basado en pedido: {saleOrderId}";
+                deliveryNote.Comments = saleOrder.Comments;
+                deliveryNote.UserFields.Fields.Item("U_comentarioremision").Value = $"Basado en pedido: {saleOrderId}";
 
                 for (var i = 0; i < saleOrder.Lines.Count; i++)
                 {
@@ -201,7 +204,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
                 }
 
-                var ids = JsonConvert.SerializeObject(createDelivery.Select(x => x.SaleOrderId).Distinct().ToList()).Replace("[", string.Empty).Replace("]", string.Empty);
+                var ids = string.Join(", ", createDelivery.Select(x => x.SaleOrderId).Distinct().ToList());
                 var listOrderType = new List<string>();
 
                 var deliveryNote = (Documents)company.GetBusinessObject(BoObjectTypes.oDeliveryNotes);
@@ -213,17 +216,22 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.Address2 = saleOrder.Address2;
                 deliveryNote.ShipToCode = saleOrder.ShipToCode;
                 deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
-                deliveryNote.Comments = $"Basado en pedido: {ids}"; 
+                deliveryNote.UserFields.Fields.Item("U_comentarioremision").Value = $"Basado en pedido: {ids}";
+
+                var commentMultiple = new StringBuilder();
 
                 foreach (var sale in createDelivery.GroupBy(p => p.SaleOrderId).ToList())
                 {
                     var saleOrderFoundLocal = saleOrder.GetByKey(sale.FirstOrDefault().SaleOrderId);
-                    listOrderType.Add(saleOrder.UserFields.Fields.Item("U_TipoPedido").Value);
+                    
                     if (!saleOrderFoundLocal)
                     {
                         _loggerProxy.Info($"The sale Order {sale.FirstOrDefault().SaleOrderId} was not found for creating the delivery");
                         continue;
                     }
+
+                    listOrderType.Add(saleOrder.UserFields.Fields.Item("U_TipoPedido").Value);
+                    commentMultiple.Append($"{saleOrder.Comments} |");
 
                     for (var i = 0; i < saleOrder.Lines.Count; i++)
                     {
@@ -252,6 +260,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                 var areAllSame = listOrderType.All(o => o == listOrderType.FirstOrDefault());
                 deliveryNote.UserFields.Fields.Item("U_TipoPedido").Value = areAllSame ? listOrderType.FirstOrDefault() : "MX";
+                deliveryNote.Comments = commentMultiple.Length > 253 ? commentMultiple.ToString().Substring(0, 253) : commentMultiple.ToString();
+
                 var update = deliveryNote.Add();
                 company.GetLastError(out int errCode, out string errMsg);
 
@@ -295,11 +305,17 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     inventoryGenExit.Comments = $"Pedido muestra basado en {order.SaleOrderId}";
                     for (var i = 0; i < saleOrder.Lines.Count; i++)
                     {
-                        inventoryGenExit.Lines.SetCurrentLine(i);
                         saleOrder.Lines.SetCurrentLine(i);
                         var itemCode = saleOrder.Lines.ItemCode;
+                        if (saleOrder.Lines.ItemCode == ServiceConstants.ShippingCostItemCode)
+                        {
+                            continue;
+                        }
+
+                        inventoryGenExit.Lines.SetCurrentLine(i);
+                        
                         inventoryGenExit.Lines.BaseType = -1;
-                        inventoryGenExit.Lines.BaseLine = i;
+                        inventoryGenExit.Lines.BaseLine = saleOrder.Lines.LineNum;
                         inventoryGenExit.Lines.Quantity = saleOrder.Lines.Quantity;
                         inventoryGenExit.Lines.WarehouseCode = "PT";
                         inventoryGenExit.Lines.AccountCode = "6213001";
@@ -366,6 +382,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             deliveryNote.Lines.WarehouseCode = saleOrder.Lines.WarehouseCode;
 
             deliveryNote.Lines.UserFields.Fields.Item("U_ENVASE").Value = saleOrder.Lines.UserFields.Fields.Item("U_ENVASE").Value;
+            deliveryNote.Lines.UserFields.Fields.Item("U_ETIQUETA").Value = saleOrder.Lines.UserFields.Fields.Item("U_ETIQUETA").Value;
 
             deliveryNote.Lines.BaseEntry = saleOrderId;
             deliveryNote.Lines.BaseLine = saleOrder.Lines.LineNum;

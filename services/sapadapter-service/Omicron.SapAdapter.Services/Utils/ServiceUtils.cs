@@ -301,6 +301,26 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// Calculates if an address is local.
+        /// </summary>
+        /// <param name="word">the state.</param>
+        /// <returns>the desition.</returns>
+        public static bool IsLocalString(string word)
+        {
+            return word == ServiceConstants.Local;
+        }
+
+        /// <summary>
+        /// creates the result.
+        /// </summary>
+        /// <param name="word">the word to split.</param>
+        /// <returns>the resultModel.</returns>
+        public static string ValidateNull(this string word)
+        {
+            return string.IsNullOrEmpty(word) ? string.Empty : word;
+        }
+
+        /// <summary>
         /// Get the line products.
         /// </summary>
         /// <param name="sapDao">the sap dao.</param>

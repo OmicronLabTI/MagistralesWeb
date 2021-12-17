@@ -128,6 +128,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Gets the orders.
         /// </summary>
+        /// <param name="deliveryId">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/delivery/orders/{deliveryId}/details")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersDeliveryDetail(int deliveryId)
+        {
+            var response = await this.sapAlmacenFacade.GetOrdersDeliveryDetail(deliveryId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
         /// <param name="saleId">The parameters.</param>
         /// <returns>the data.</returns>
         [Route("/delivery/{saleId}/products")]
@@ -148,6 +161,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetInvoice([FromQuery] Dictionary<string, string> parameters)
         {
             var response = await this.sapAlmacenFacade.GetInvoice(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="invoice">The invoice to look for.</param>
+        /// <returns>the data.</returns>
+        [Route("/invoice/orders/{invoice}/detail")]
+        [HttpGet]
+        public async Task<IActionResult> GetInvoiceDetail([FromRoute] int invoice)
+        {
+            var response = await this.sapAlmacenFacade.GetInvoiceDetail(invoice);
             return this.Ok(response);
         }
 
@@ -264,6 +290,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> SearchAlmacenOrdersByDoctor([FromQuery] Dictionary<string, string> parameters)
         {
             var response = await this.sapAlmacenFacade.SearchAlmacenOrdersByDoctor(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the delivery and invoice id by sale order..
+        /// </summary>
+        /// <param name="details">The sales id separated by commas.</param>
+        /// <returns>the data.</returns>
+        [Route("/almacen/orders/doctor/detail")]
+        [HttpPost]
+        public async Task<IActionResult> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details)
+        {
+            var response = await this.sapAlmacenFacade.SearchAlmacenOrdersDetailsByDoctor(details);
             return this.Ok(response);
         }
 
