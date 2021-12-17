@@ -177,11 +177,5 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="ordersid">The parameters.</param>
         /// <returns>List of orders.</returns>
         Task<ResultDto> GetOrdersActive(List<int> ordersid);
-
-        /// <summary>
-        /// The health check.
-        /// </summary>
-        /// <returns>the data.</returns>
-        Task HealthCheck();
     }
 }

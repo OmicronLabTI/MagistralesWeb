@@ -1504,13 +1504,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          });
 
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
-
-        }
-
-        /// <inheritdoc/>
-        public async Task HealthCheck()
-        {
-            await this.databaseContext.ProductoModel.FirstOrDefaultAsync();
         }
 
         /// <summary>

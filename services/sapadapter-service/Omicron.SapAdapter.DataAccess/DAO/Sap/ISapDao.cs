@@ -525,11 +525,5 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="delveryId">the ids to look.</param>
         /// <returns>the data.</returns>
         Task<List<CompleteDeliveryDetailModel>> GetDeliveryDetailForDeliveryById(List<int> delveryId);
-
-        /// <summary>
-        /// Checks the healthcheck.
-        /// </summary>
-        /// <returns>the data.</returns>
-        Task HealthCheck();
     }
 }

@@ -164,11 +164,5 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="userId">The parameters.</param>
         /// <returns>List.</returns>
         Task<ResultModel> GetPackingRequiredForOrderInAssignedStatus(string userId);
-
-        /// <summary>
-        /// the healthcheck.
-        /// </summary>
-        /// <returns>the data.</returns>
-        Task HealthCheck();
     }
 }
