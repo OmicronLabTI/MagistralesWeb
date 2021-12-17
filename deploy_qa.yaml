@@ -205,12 +205,11 @@ spec:
             - containerPort: 5102
           livenessProbe:
             httpGet:
-              path: /healthcheck
+              path: /hc
               port: 5102
-            initialDelaySeconds: 120
-            periodSeconds: 300
+            initialDelaySeconds: 30
+            periodSeconds: 600
             timeoutSeconds: 40
-            failureThreshold: 1
       imagePullSecrets:
         - name: pullsecret
 ---
