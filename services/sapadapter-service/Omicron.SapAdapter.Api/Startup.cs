@@ -99,7 +99,7 @@ namespace Omicron.SapAdapter.Api
 
             var mvcBuilder = services.AddMvc();
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomActionFilterAttribute(Log.Logger)));
-            mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomExceptionFilterAttribute(Log.Logger)));
+            mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomExceptionFilterAttribute()));
 
             services.AddSwaggerGen(c =>
             {
