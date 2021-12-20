@@ -1546,7 +1546,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          });
 
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
-
         }
 
         /// <summary>
