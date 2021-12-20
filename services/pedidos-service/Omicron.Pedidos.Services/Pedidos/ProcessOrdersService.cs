@@ -69,11 +69,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var listToSend = await this.GetListToCreateFromOrders(pedidosId);
                 var dictResult = await this.CreateFabOrders(listToSend);
                 var listOrders = await this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok]);
+                var productNoLabel = (await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.ProductNoLabel)).Select(x => x.Value).ToList();
 
                 var listPedidos = pedidosId.ListIds.Select(x => x.ToString()).ToList();
                 var dataBaseSaleOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(listPedidos)).ToList();
 
-                var createUserModelOrders = this.CreateUserModelOrders(listOrders, listToSend, pedidosId.User);
+                var createUserModelOrders = this.CreateUserModelOrders(listOrders, listToSend, pedidosId.User, productNoLabel);
                 var listToInsert = createUserModelOrders.Item1;
                 var listOrderLogToInsert = new List<SalesLogs>();
                 listOrderLogToInsert.AddRange(createUserModelOrders.Item2);
@@ -112,6 +113,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 await this.BlockSaleOrderWhilePlaning(new List<int> { processByOrder.PedidoId });
                 var ordersSap = await this.GetOrdersWithDetail(new List<int> { processByOrder.PedidoId });
+                var productNoLabel = (await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.ProductNoLabel)).Select(x => x.Value).ToList();
 
                 var orders = ordersSap.FirstOrDefault(x => x.Order.PedidoId == processByOrder.PedidoId);
                 var completeListOrders = orders.Detalle.Count;
@@ -122,7 +124,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var listOrders = await this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok]);
                 var dataBaseOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { processByOrder.PedidoId.ToString() })).ToList();
-                var createUserModelOrders = this.CreateUserModelOrders(listOrders, ordersSap, processByOrder.UserId);
+                var createUserModelOrders = this.CreateUserModelOrders(listOrders, ordersSap, processByOrder.UserId, productNoLabel);
                 var dataToInsert = createUserModelOrders.Item1;
 
                 // logs
@@ -268,8 +270,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="dataToCreate">the data to create.</param>
         /// <param name="salesOrders">The sales orders.</param>
         /// <param name="userLogistic">The sales user.</param>
+        /// <param name="productNoLabel">Product that doesnt need a label.</param>
         /// <returns>the data.</returns>
-        private Tuple<List<UserOrderModel>, List<SalesLogs>> CreateUserModelOrders(List<FabricacionOrderModel> dataToCreate, List<OrderWithDetailModel> salesOrders, string userLogistic)
+        private Tuple<List<UserOrderModel>, List<SalesLogs>> CreateUserModelOrders(List<FabricacionOrderModel> dataToCreate, List<OrderWithDetailModel> salesOrders, string userLogistic, List<string> productNoLabel)
         {
             var listOrderLogToInsert = new List<SalesLogs>();
             var listToReturn = new List<UserOrderModel>();
@@ -286,6 +289,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     TypeOrder = saleOrder.Order.OrderType,
                     PlanningDate = DateTime.Now,
                     Quantity = x.Quantity,
+                    FinishedLabel = productNoLabel.Any(y => x.ProductoId.Contains(y)) ? 1 : 0,
                 };
                 listToReturn.Add(userOrder);
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));
