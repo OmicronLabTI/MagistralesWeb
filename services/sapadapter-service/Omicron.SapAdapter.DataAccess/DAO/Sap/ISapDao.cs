@@ -362,6 +362,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByDocEntry(List<int> docEntry);
 
         /// <summary>
+        /// Gets the invoiceHeader by doc num.
+        /// </summary>
+        /// <param name="docNums">the doc nums.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<CompleteInvoiceDetailModel>> GetInvoiceHeaderDetailByInvoiceIdJoinDoctor(List<int> docNums);
+
+        /// <summary>
         /// Gets the invoice detail by docEntry.
         /// </summary>
         /// <param name="docEntry">the doc entries.</param>
@@ -495,6 +502,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByIds(List<int> ids);
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByIdsJoinProduct(List<int> ids);
+
+        /// <summary>
         /// Gets the order by init date.
         /// </summary>
         Task<IEnumerable<OrderModel>> GetOrderModelByDocDateJoinDoctor(DateTime initDate, DateTime endDate);
@@ -505,5 +518,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="orderIds">the data.</param>
         /// <returns>the detail.</returns>
         Task<List<CompleteRecepcionPedidoDetailModel>> GetSapOrderDetailForAlmacenRecepcionById(List<int> orderIds);
+
+        /// <summary>
+        /// Gets the deatils for the delivry.
+        /// </summary>
+        /// <param name="delveryId">the ids to look.</param>
+        /// <returns>the data.</returns>
+        Task<List<CompleteDeliveryDetailModel>> GetDeliveryDetailForDeliveryById(List<int> delveryId);
     }
 }

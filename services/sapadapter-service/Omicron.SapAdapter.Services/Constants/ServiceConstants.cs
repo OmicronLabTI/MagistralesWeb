@@ -126,6 +126,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Chips = "chips";
 
         /// <summary>
+        /// value for chips.
+        /// </summary>
+        public const string Shipping = "shipping";
+
+        /// <summary>
         /// values cuando no hay chips.
         /// </summary>
         public const string NoChipsError = "No se encontraron filtros";
@@ -438,7 +443,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllStatus = "Recibir,Pendiente,Back Order";
+        public const string AllStatus = "Recibir,Pendiente,Back Order,Cancelado";
 
         /// <summary>
         /// Get the params.

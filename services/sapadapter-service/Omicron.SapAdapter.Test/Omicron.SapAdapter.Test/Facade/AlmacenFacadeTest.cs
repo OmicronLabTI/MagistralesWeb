@@ -172,10 +172,35 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetOrdersDeliveryDetail()
+        {
+            var dictionary = 1;
+            var response = await this.almacenFacade.GetOrdersDeliveryDetail(dictionary);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetInvoice()
         {
             var dictionary = new Dictionary<string, string>();
             var response = await this.almacenFacade.GetInvoice(dictionary);
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetInvoiceDetail()
+        {
+            var response = await this.almacenFacade.GetInvoiceDetail(123);
 
             Assert.IsNotNull(response);
         }
@@ -359,6 +384,18 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task SearchAlmacenOrdersByDoctor()
         {
             var response = await this.almacenFacade.SearchAlmacenOrdersByDoctor(new Dictionary<string, string>());
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get Almacen Orders By Doctor.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task SearchAlmacenOrdersDetailsByDoctor()
+        {
+            var response = await this.almacenFacade.SearchAlmacenOrdersDetailsByDoctor(new DoctorOrdersSearchDeatilDto());
 
             Assert.IsNotNull(response);
         }

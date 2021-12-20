@@ -168,6 +168,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
                 { "chips", chip },
+                { ServiceConstants.Shipping, "Foraneo" },
             };
 
             var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);

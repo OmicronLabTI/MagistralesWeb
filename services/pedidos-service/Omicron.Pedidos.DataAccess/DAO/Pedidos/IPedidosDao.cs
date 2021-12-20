@@ -31,6 +31,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<IEnumerable<UserOrderModel>> GetUserOrderBySaleOrder(List<string> listIDs);
 
         /// <summary>
+        /// Gets only the sale orders by id.
+        /// </summary>
+        /// <param name="listIds">the list ids.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetOnlySaleOrderBySaleId(List<string> listIds);
+
+        /// <summary>
         /// Returns the user orders by SalesOrder (Pedido)
         /// </summary>
         /// <param name="listIDs">the list ids.</param>
@@ -62,8 +69,9 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// Returns the user order by user id.
         /// </summary>
         /// <param name="listStatus">the list of users.</param>
+        /// <param name="statusToIgnore">status to ingnore.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus);
+        Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus, string statusToIgnore);
 
         /// <summary>
         /// Returns the user order by user id.

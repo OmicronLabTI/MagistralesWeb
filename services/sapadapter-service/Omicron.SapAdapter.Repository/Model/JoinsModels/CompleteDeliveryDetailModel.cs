@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="CompleteRecepcionPedidoDetailModel.cs" company="Axity">
+// <copyright file="CompleteDeliveryDetailModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -9,11 +9,12 @@
 namespace Omicron.SapAdapter.Entities.Model.JoinsModels
 {
     using System;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
 
     /// <summary>
-    /// class for the detail.
+    /// class for delivery detail.
     /// </summary>
-    public class CompleteRecepcionPedidoDetailModel
+    public class CompleteDeliveryDetailModel
     {
         /// <summary>
         /// Gets or sets Code.
@@ -43,7 +44,7 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Gets or sets a value indicating whether gets or sets IsChecked.
         /// </summary>
         /// <value>The IsChecked.</value>
-        public DetallePedidoModel Detalles { get; set; }
+        public DeliveryDetailModel Detalles { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether gets or sets IsChecked.
@@ -67,24 +68,6 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Gets or sets a value indicating whether gets or sets Order Type.
         /// </summary>
         /// <value>The IsChecked.</value>
-        public string PedidoMuestra { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Order Type.
-        /// </summary>
-        /// <value>The IsChecked.</value>
         public string Comments { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Order Type.
-        /// </summary>
-        /// <value>The IsChecked.</value>
-        public string FabricationOrder { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether order is cancelled.
-        /// </summary>
-        /// <value>The IsChecked.</value>
-        public string Canceled { get; set; }
     }
 }

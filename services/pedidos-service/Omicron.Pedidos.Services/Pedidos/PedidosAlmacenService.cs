@@ -98,24 +98,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersForDelivery()
         {
-            var userOrders = (await this.pedidosDao.GetUserOrderForDelivery(new List<string> { ServiceConstants.Almacenado })).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderForDelivery(new List<string> { ServiceConstants.Almacenado }, ServiceConstants.Empaquetado)).ToList();
 
-            var listToAdd = new List<UserOrderModel>();
+            var saleOrder = (await this.pedidosDao.GetOnlySaleOrderBySaleId(userOrders.Select(x => x.Salesorderid).ToList())).ToList();
+            userOrders.AddRange(saleOrder);
 
-            userOrders.GroupBy(x => x.DeliveryId).ToList().ForEach(y =>
-            {
-                var products = y.Where(z => z.IsProductionOrder).ToList();
-
-                if (!products.All(z => z.StatusAlmacen == ServiceConstants.Empaquetado))
-                {
-                    listToAdd.AddRange(products);
-                }
-            });
-
-            var saleOrder = (await this.pedidosDao.GetUserOrderBySaleOrder(listToAdd.Select(x => x.Salesorderid).ToList())).ToList();
-            listToAdd.AddRange(saleOrder.Where(x => x.IsSalesOrder));
-
-            var orderToReturn = listToAdd
+            var orderToReturn = userOrders
                 .Select(x => new
                 {
                     x.Salesorderid,
@@ -134,7 +122,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var userOrders = (await this.pedidosDao.GetUserOrdersForInvoice(ServiceConstants.Almacenado, ServiceConstants.Empaquetado)).ToList();
 
-            var orderToReturn = userOrders.Where(y => y.IsProductionOrder)
+            var orderToReturn = userOrders
                 .Select(x => new
                 {
                     x.Salesorderid,
@@ -157,14 +145,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             var type = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.Local.ToLower();
 
             var userOrderByType = (await this.pedidosDao.GetUserOrderByInvoiceType(new List<string> { type })).ToList();
-            userOrderByType = userOrderByType.Where(x => !string.IsNullOrEmpty(x.StatusInvoice)).ToList();
 
-            var ordersToLoop = userOrderByType.Where(x => x.IsProductionOrder && !ServiceConstants.StatusDelivered.Contains(x.StatusInvoice)).ToList();
-            var invoiceIDs = ordersToLoop.Where(x => x.IsProductionOrder).DistinctBy(y => y.InvoiceId).Select(z => z.InvoiceId).ToList();
-            ordersToLoop.AddRange(userOrderByType.Where(x => x.IsProductionOrder && ServiceConstants.StatusDelivered.Contains(x.StatusInvoice) && x.InvoiceStoreDate >= dataToLook.Item1));
+            var ordersToLoop = userOrderByType.Where(x => !ServiceConstants.StatusDelivered.Contains(x.StatusInvoice)).ToList();
+            ordersToLoop.AddRange(userOrderByType.Where(x => ServiceConstants.StatusDelivered.Contains(x.StatusInvoice) && x.InvoiceStoreDate >= dataToLook.Item1));
 
             var orderToReturn = ordersToLoop
-                .Where(x => x.IsProductionOrder && arrayStatus.Contains(x.StatusInvoice))
+                .Where(x => arrayStatus.Contains(x.StatusInvoice))
                 .DistinctBy(y => y.InvoiceId)
                 .Select(x => new
                 {
@@ -176,7 +162,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 })
                 .ToList();
 
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, JsonConvert.SerializeObject(invoiceIDs), dataToLook.Item2);
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, dataToLook.Item2);
         }
 
         /// <inheritdoc/>
