@@ -356,6 +356,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             doctorSap.Addresses.Street = address.Street;
             doctorSap.Addresses.StreetNo = address.Number;
             doctorSap.Addresses.GlobalLocationNumber = address.Phone;
+            doctorSap.Addresses.AddressName2 = address.ResponsibleDoctor;
             doctorSap.Addresses.AddressType = BoAddressType.bo_ShipTo;
             return doctorSap;
         }
