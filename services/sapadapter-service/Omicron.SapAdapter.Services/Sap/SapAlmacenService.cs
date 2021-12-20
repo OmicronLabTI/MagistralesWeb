@@ -65,10 +65,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var listStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status] : ServiceConstants.AllStatus;
             var status = listStatus.Split(",").ToList();
 
-            var userResponse = await this.GetUserOrdersToLook();
+            var userResponse = await this.GetUserOrdersToLook(parameters);
             var ids = userResponse.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
-            var lineProducts = await this.GetLineProductsToLook(ids, userResponse.Item3);
-            var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts);
+            var lineProducts = await this.GetLineProductsToLook(ids, userResponse.Item3, parameters);
+            var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts, parameters);
             var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, status);
             orders = await this.GetSapLinesToLookByChips(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
@@ -80,11 +80,10 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersDetails(int orderId)
         {
-            var pedidosResponse = await this.pedidosService.PostPedidos(new List<int> { orderId }, ServiceConstants.GetUserSalesOrder);
-            var pedidos = JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
-
+            var pedidos = await this.GetUserOrderByids(new List<int> { orderId });
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesBySaleOrder, new List<int> { orderId });
             var lineOrders = JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
+
             var incidences = almacenResponse.Comments == null || string.IsNullOrEmpty(almacenResponse.Comments.ToString()) ? new List<IncidentsModel>() : JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Comments.ToString());
 
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
@@ -247,12 +246,30 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
         }
 
+        private async Task<List<UserOrderModel>> GetUserOrderByids(List<int> ordersId)
+        {
+            var pedidosResponse = await this.pedidosService.PostPedidos(ordersId, ServiceConstants.GetUserSalesOrder);
+            return JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
+        }
+
+        private async Task<List<LineProductsModel>> GetLineOrdersByIds(List<int> ordersId)
+        {
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesBySaleOrder, ordersId);
+            return JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
+        }
+
         /// <summary>
         /// Gets the orders that are finalized and all the productin orders.
         /// </summary>
         /// <returns>thhe data.</returns>
-        private async Task<Tuple<List<UserOrderModel>, List<int>, DateTime>> GetUserOrdersToLook()
+        private async Task<Tuple<List<UserOrderModel>, List<int>, DateTime>> GetUserOrdersToLook(Dictionary<string, string> parameters)
         {
+            if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
+            {
+                var pedidos = await this.GetUserOrderByids(new List<int> { pedidoId });
+                return new Tuple<List<UserOrderModel>, List<int>, DateTime>(pedidos, new List<int>(), DateTime.Now);
+            }
+
             var userOrderModel = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrdersAlmancen);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
 
@@ -316,10 +333,17 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the product lines to look and ignore.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<LineProductsModel>, List<int>>> GetLineProductsToLook(List<int> magistralIds, DateTime maxDate)
+        private async Task<Tuple<List<LineProductsModel>, List<int>>> GetLineProductsToLook(List<int> magistralIds, DateTime maxDate, Dictionary<string, string> parameters)
         {
+            List<LineProductsModel> lineProducts;
+            if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
+            {
+                lineProducts = await this.GetLineOrdersByIds(new List<int> { pedidoId });
+                return new Tuple<List<LineProductsModel>, List<int>>(lineProducts, new List<int>());
+            }
+
             var lineProductsResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLineProductPedidos, new AlmacenGetRecepcionModel { MagistralIds = magistralIds, MaxDateToLook = maxDate });
-            var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
+            lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
             var listIdToIgnore = lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && ServiceConstants.StatusToIgnoreLineProducts.Contains(x.StatusAlmacen)).Select(y => y.SaleOrderId).ToList();
 
             return new Tuple<List<LineProductsModel>, List<int>>(lineProducts, listIdToIgnore);
@@ -332,9 +356,17 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="userOrdersTuple">the user order tuple.</param>
         /// <param name="lineProductTuple">the line product tuple.</param>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>> GetSapLinesToLook(List<string> types, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple)
+        private async Task<Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>> GetSapLinesToLook(List<string> types, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, Dictionary<string, string> parameters)
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
+
+            if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
+            {
+                var sapOrdersById = (await this.sapDao.GetAllOrdersForAlmacenByListIds(new List<int> { pedidoId })).ToList();
+                var listHeaders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrdersById, lineProducts);
+                return new Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>(listHeaders.Item1, 0, listHeaders.Item2);
+            }
+
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple);
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
