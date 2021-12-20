@@ -88,7 +88,7 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
-        public async Task GetOrders()
+        public async Task GetOrdersBasic()
         {
             // arrange
             var parameters = new List<ParametersModel>
@@ -101,6 +101,10 @@ namespace Omicron.SapAdapter.Test.Services
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
                 .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
+
+            mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
@@ -150,6 +154,10 @@ namespace Omicron.SapAdapter.Test.Services
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
                 .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
+
+            mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
