@@ -72,5 +72,11 @@ namespace Omicron.SapDiApi.Dtos.Models.Experience
         /// </summary>
         /// <value>The user that is assigning.</value>
         public string Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor degree type.
+        /// </summary>
+        /// <value>Degree Type.</value>
+        public string ResponsibleDoctor { get; set; }
     }
 }

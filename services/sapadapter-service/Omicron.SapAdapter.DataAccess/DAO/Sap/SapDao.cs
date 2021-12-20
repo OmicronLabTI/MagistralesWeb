@@ -732,6 +732,48 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
         }
 
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByListIds(List<int> saleordersIds)
+        {
+            var query = (from order in this.databaseContext.OrderModel.Where(x => saleordersIds.Contains(x.DocNum))
+                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                         into DetalleOrden
+                         from dp in DetalleOrden.DefaultIfEmpty()
+                         join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
+                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                         new
+                         {
+                             DoctorId = order.Codigo,
+                             Address = order.ShippingAddressName
+                         }
+                         equals
+                         new
+                         {
+                             DoctorId = doctordet.CardCode,
+                             Address = doctordet.NickName
+                         }
+                         into detalleDireccion
+                         from dop in detalleDireccion.DefaultIfEmpty()
+                         where (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y"
+                         select new CompleteAlmacenOrderModel
+                         {
+                             DocNum = order.DocNum,
+                             Cliente = dop.Address2 ?? string.Empty,
+                             Medico = doctor.AliasName,
+                             FechaInicio = order.FechaInicio,
+                             Detalles = dp,
+                             Address = order.Address,
+                             TypeOrder = order.OrderType,
+                             PedidoMuestra = order.PedidoMuestra,
+                             Comments = order.Comments,
+                             IsLine = product.IsLine,
+                             IsMagistral = product.IsMagistral,
+                             Canceled = order.Canceled,
+                         });
+
+            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
+        }
+
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenById(int saleOrderId)
         {
