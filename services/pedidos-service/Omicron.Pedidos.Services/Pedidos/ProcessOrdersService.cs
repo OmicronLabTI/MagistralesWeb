@@ -148,9 +148,10 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
 
                 var previousStatus = saleOrder.Status;
-                saleOrder.Status = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders ? ServiceConstants.Planificado : ServiceConstants.Abierto;
+                var isOrderComplete = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders;
+                saleOrder.Status = isOrderComplete ? ServiceConstants.Planificado : ServiceConstants.Abierto;
                 saleOrder.TypeOrder = orders.Order.OrderType;
-                saleOrder.FinishedLabel = productionOrders.All(x => x.FinishedLabel == 1) && !insertUserOrdersale ? 1 : 0;
+                saleOrder.FinishedLabel = productionOrders.All(x => x.FinishedLabel == 1) && isOrderComplete ? 1 : 0;
 
                 if (insertUserOrdersale)
                 {
