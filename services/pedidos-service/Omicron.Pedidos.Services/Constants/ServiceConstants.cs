@@ -801,6 +801,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string LocalShipAbr = "L";
 
         /// <summary>
+        /// impresapor cliente.
+        /// </summary>
+        public const string LabelImpresaPorCliente = "IMPRESA POR CLIENTE";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

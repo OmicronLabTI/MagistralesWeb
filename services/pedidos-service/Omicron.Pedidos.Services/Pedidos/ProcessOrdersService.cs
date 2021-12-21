@@ -78,7 +78,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var listToInsert = createUserModelOrders.Item1;
                 var listOrderLogToInsert = new List<SalesLogs>();
                 listOrderLogToInsert.AddRange(createUserModelOrders.Item2);
-                var dataToInsertUpdate = this.GetListToUpdateInsert(pedidosId.ListIds, dataBaseSaleOrders, dictResult[ServiceConstants.ErrorCreateFabOrd], listToSend, pedidosId.User);
+                var dataToInsertUpdate = this.GetListToUpdateInsert(pedidosId.ListIds, dataBaseSaleOrders, dictResult[ServiceConstants.ErrorCreateFabOrd], listToSend, pedidosId.User, createUserModelOrders.Item1);
                 listToInsert.AddRange(dataToInsertUpdate.Item1);
                 var listToUpdate = new List<UserOrderModel>(dataToInsertUpdate.Item2);
                 listOrderLogToInsert.AddRange(dataToInsertUpdate.Item3);
@@ -134,6 +134,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var saleOrder = dataBaseOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
                 bool insertUserOrdersale = false;
 
+                var productionOrders = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid.Equals(processByOrder.PedidoId.ToString())).ToList();
+                productionOrders.AddRange(dataToInsert.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid.Equals(processByOrder.PedidoId.ToString())));
+
                 if (saleOrder == null)
                 {
                     saleOrder = new UserOrderModel
@@ -147,6 +150,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var previousStatus = saleOrder.Status;
                 saleOrder.Status = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders ? ServiceConstants.Planificado : ServiceConstants.Abierto;
                 saleOrder.TypeOrder = orders.Order.OrderType;
+                saleOrder.FinishedLabel = productionOrders.All(x => x.FinishedLabel == 1) && !insertUserOrdersale ? 1 : 0;
 
                 if (insertUserOrdersale)
                 {
@@ -279,6 +283,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             dataToCreate.ForEach(x =>
             {
                 var saleOrder = salesOrders.FirstOrDefault(y => y.Order != null && y.Order.DocNum == x.PedidoId);
+                var detailByItem = saleOrder.Detalle.FirstOrDefault(y => y.CodigoProducto == x.ProductoId);
 
                 var userOrder = new UserOrderModel
                 {
@@ -289,7 +294,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     TypeOrder = saleOrder.Order.OrderType,
                     PlanningDate = DateTime.Now,
                     Quantity = x.Quantity,
-                    FinishedLabel = productNoLabel.Any(y => x.ProductoId.Contains(y)) ? 1 : 0,
+                    FinishedLabel = productNoLabel.Any(y => x.ProductoId.Contains(y)) || detailByItem.Label == ServiceConstants.LabelImpresaPorCliente ? 1 : 0,
                 };
                 listToReturn.Add(userOrder);
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));
@@ -328,7 +333,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="listOrders">List with orders.</param>
         /// <param name="userLogistic">List with user.</param>
         /// <returns>the first is the list to insert the second the list to update.</returns>
-        private Tuple<List<UserOrderModel>, List<UserOrderModel>, List<SalesLogs>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders,  List<string> errors, List<OrderWithDetailModel> listOrders, string userLogistic)
+        private Tuple<List<UserOrderModel>, List<UserOrderModel>, List<SalesLogs>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders,  List<string> errors, List<OrderWithDetailModel> listOrders, string userLogistic, List<UserOrderModel> newOrdersToCreate)
         {
             var listToInsert = new List<UserOrderModel>();
             var listToUpdate = new List<UserOrderModel>();
@@ -337,6 +342,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var insertUserOrdersale = false;
                 var saleOrder = dataBaseSaleOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid.Equals(p.ToString()));
+                var productionOrders = dataBaseSaleOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid.Equals(p.ToString())).ToList();
+                productionOrders.AddRange(newOrdersToCreate.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid.Equals(p.ToString())));
 
                 if (saleOrder == null)
                 {
@@ -355,6 +362,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 saleOrder.Status = haveErrors ? ServiceConstants.Abierto : ServiceConstants.Planificado;
                 saleOrder.TypeOrder = order.Order.OrderType;
+                saleOrder.FinishedLabel = productionOrders.All(x => x.FinishedLabel == 1) ? 1 : 0;
 
                 if (insertUserOrdersale)
                 {
