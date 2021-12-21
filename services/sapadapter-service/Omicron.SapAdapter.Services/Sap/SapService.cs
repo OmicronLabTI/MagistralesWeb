@@ -153,6 +153,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
                 x.Comments = pedido == null ? null : pedido.Comments;
                 x.Label = x.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()) ? ServiceConstants.Personalizado : ServiceConstants.Generico;
+                x.RealLabel = x.Label;
                 x.FinishedLabel = userOrder.FinishedLabel;
                 x.PedidoId = docId;
             }
