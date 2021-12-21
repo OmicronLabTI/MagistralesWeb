@@ -391,6 +391,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string DeleteFiles = "delete/files";
 
         /// <summary>
+        /// deletes the files.
+        /// </summary>
+        public const string ProductNoLabel = "ProductNoLabel";
+
+        /// <summary>
         /// the id for qfb role.
         /// </summary>
         public const int QfbRoleId = 2;
@@ -794,6 +799,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// Gets the delivery qr.
         /// </summary>
         public const string LocalShipAbr = "L";
+
+        /// <summary>
+        /// impresapor cliente.
+        /// </summary>
+        public const string LabelImpresaPorCliente = "IMPRESA POR CLIENTE";
 
         /// <summary>
         /// Gets the status of the order.

@@ -118,10 +118,44 @@ namespace Omicron.Pedidos.Test.Services
                 User = "abc",
             };
 
+            var listDetalles = new List<CompleteDetailOrderModel>
+            {
+                new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L", CreatedDate = DateTime.Now, Label = "Pesonalizada" },
+                new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, CreatedDate = DateTime.Now, Label = "Pesonalizada" },
+            };
+
+            var listOrders = new List<OrderWithDetailModel>
+            {
+                new OrderWithDetailModel
+                {
+                    Detalle = new List<CompleteDetailOrderModel>(listDetalles),
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 1, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L", OrderType = "MN" },
+                },
+                new OrderWithDetailModel
+                {
+                    Detalle = new List<CompleteDetailOrderModel>(listDetalles),
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L", OrderType = "MG" },
+                },
+                new OrderWithDetailModel
+                {
+                    Detalle = new List<CompleteDetailOrderModel>(listDetalles),
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 101, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L", OrderType = "MX" },
+                },
+            };
+
+            var resultmodel = new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listOrders,
+                Success = true,
+                UserError = string.Empty,
+            };
+
             var localSapAdapter = new Mock<ISapAdapter>();
             localSapAdapter
                 .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
+                .Returns(Task.FromResult(resultmodel))
                 .Returns(Task.FromResult(this.GetResultModelGetFabricacionModel()));
 
             var mockSaDiApi = new Mock<ISapDiApi>();
