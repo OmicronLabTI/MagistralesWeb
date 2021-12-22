@@ -102,7 +102,7 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetInvoiceDetail(int invoice)
         {
             var invoiceDetails = (await this.sapDao.GetInvoiceHeaderDetailByInvoiceIdJoinDoctor(new List<int> { invoice })).ToList();
-            var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(invoiceDetails.Select(x => (int)x.Detail.BaseEntry).Distinct().ToList())).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(invoiceDetails.Where(y => y.Detail.BaseEntry.HasValue).Select(x => (int)x.Detail.BaseEntry).Distinct().ToList())).ToList();
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var salesOrdersId = deliveryDetails.Select(x => x.BaseEntry).ToList();
