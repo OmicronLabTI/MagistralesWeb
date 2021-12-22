@@ -12,7 +12,7 @@ spec:
         spec:
           containers:
           - name: resetvpn
-            image: omicron.azurecr.io/omicron-resetvpn-uat:latest
+            image: omicron.azurecr.io/omicron-resetvpn:latest
             imagePullPolicy: Always
           restartPolicy: OnFailure
           imagePullSecrets:
