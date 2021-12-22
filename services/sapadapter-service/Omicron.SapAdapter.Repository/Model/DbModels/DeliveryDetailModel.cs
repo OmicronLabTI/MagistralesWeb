@@ -39,7 +39,7 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// </summary>
         /// <value>The code.</value>
         [Column("BaseEntry")]
-        public int BaseEntry { get; set; }
+        public int? BaseEntry { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
