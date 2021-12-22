@@ -825,6 +825,7 @@ namespace Omicron.Pedidos.Services.Constants
         public static List<string> StatusDelivered { get; } = new List<string>
         {
             Enviado,
+            Entregado,
         };
 
         /// <summary>
