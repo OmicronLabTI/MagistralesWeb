@@ -855,7 +855,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     {
                         DeliveryId = y.DeliveryId,
                         DeliveryDocDate = y.DocDate,
-                        SaleOrder = y.BaseEntry,
+                        SaleOrder = y.BaseEntry ?? 0,
                         Status = userOrderStatus.Any() && userOrderStatus.All(z => z == ServiceConstants.Empaquetado) ? ServiceConstants.Empaquetado : ServiceConstants.Almacenado,
                         TotalItems = invoiceDetails.Where(a => a.BaseEntry.HasValue).Count(z => z.BaseEntry == y.DeliveryId),
                     };

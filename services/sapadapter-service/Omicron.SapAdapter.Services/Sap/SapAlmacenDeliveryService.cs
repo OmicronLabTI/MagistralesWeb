@@ -79,7 +79,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var deliveryDetails = await this.sapDao.GetDeliveryDetailForDeliveryById(new List<int> { deliveryId });
 
-            var saleOrders = deliveryDetails.Select(x => x.Detalles.BaseEntry).Distinct().ToList();
+            var saleOrders = deliveryDetails.Where(y => y.Detalles.BaseEntry.HasValue).Select(x => x.Detalles.BaseEntry.Value).Distinct().ToList();
 
             var sapSaleOrders = await this.sapDao.GetOrdersById(saleOrders);
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
@@ -368,7 +368,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<List<ProductListModel>> GetProductListModel(List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<IncidentsModel> incidents, List<ProductoModel> products)
         {
             var listToReturn = new List<ProductListModel>();
-            var saleId = deliveryDetails.FirstOrDefault().BaseEntry;
+            var saleId = deliveryDetails.FirstOrDefault().BaseEntry ?? 0;
             var baseDelivery = deliveryDetails.FirstOrDefault().DeliveryId;
             var prodOrders = (await this.sapDao.GetFabOrderBySalesOrderId(new List<int> { saleId })).ToList();
             var batchesQty = await this.GetBatchesBySale(baseDelivery, saleId, deliveryDetails.Select(x => x.ProductoId).ToList());
@@ -376,6 +376,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var order in deliveryDetails)
             {
+                order.BaseEntry = order.BaseEntry ?? 0;
                 var item = products.FirstOrDefault(x => order.ProductoId == x.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
@@ -417,12 +418,12 @@ namespace Omicron.SapAdapter.Services.Sap
                     NeedsCooling = item.NeedsCooling,
                     ProductType = $"Producto {productType}",
                     Pieces = order.Quantity,
-                    Status = this.CalculateStatus(userOrders, lineProducts, item.IsMagistral, order.BaseEntry, orderNum, item.ProductoId),
+                    Status = this.CalculateStatus(userOrders, lineProducts, item.IsMagistral, order.BaseEntry.Value, orderNum, item.ProductoId),
                     IsMagistral = item.IsMagistral.Equals("Y"),
                     Batches = listBatches,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                     DeliveryId = order.DeliveryId,
-                    SaleOrderId = order.BaseEntry,
+                    SaleOrderId = order.BaseEntry.Value,
                 };
 
                 listToReturn.Add(productModel);
