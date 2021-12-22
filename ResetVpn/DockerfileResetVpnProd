@@ -4,6 +4,6 @@ RUN apk add iputils
 RUN apk add py3-pip
 RUN apk add gcc musl-dev python3-dev libffi-dev openssl-dev cargo make
 RUN pip install azure-cli
-COPY vpnprod.sh /vpn.sh
-RUN chmod +x /vpn.sh
-CMD ["/vpn.sh"]
+COPY vpnprod.sh /vpnprod.sh
+RUN chmod +x /vpnprod.sh
+CMD ["/vpnprod.sh"]
