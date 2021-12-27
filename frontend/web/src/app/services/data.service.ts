@@ -120,6 +120,14 @@ export class DataService {
   getRememberSession() {
     return localStorage.getItem(ConstToken.rememberSession);
   }
+  setProductNoLabel(ProductNoLabel) {
+    localStorage.setItem(ConstToken.ProductNoLabel, JSON.stringify(ProductNoLabel));
+  }
+  
+  getProductNoLabel() {
+    return localStorage.getItem(ConstToken.ProductNoLabel);
+  }
+
   setRefreshToken(refreshToken: string) {
     localStorage.setItem(ConstToken.refreshToken, refreshToken);
   }
@@ -418,7 +426,8 @@ export class DataService {
             (t) =>
               t.isChecked &&
               t.status !== status &&
-              t.status !== ConstStatus.cancelado
+              t.status !== ConstStatus.cancelado && 
+              t.finishedLabel != 1
           ).length > 0
         );
       default:

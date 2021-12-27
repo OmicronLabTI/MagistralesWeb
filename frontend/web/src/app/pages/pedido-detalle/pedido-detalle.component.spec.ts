@@ -16,12 +16,14 @@ import {UrlsOfQrEachOrderMock} from '../../../mocks/urlsOfQrEachOrderMock';
 import {ErrorService} from '../../services/error.service';
 import {error} from 'util';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { DataService } from 'src/app/services/data.service';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
   let fixture: ComponentFixture<PedidoDetalleComponent>;
   let pedidosServiceSpy;
   let downloadImagesServiceSpy;
+  let dataServiceSpy;
   let errorServiceSpy;
   beforeEach(async(() => {
     errorServiceSpy = pedidosServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
@@ -29,6 +31,9 @@ describe('PedidoDetalleComponent', () => {
     ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos', 'processOrders', 'getDetallePedido', 'qrByEachOrder'
+    ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'getProductNoLabel'
     ]);
     downloadImagesServiceSpy = jasmine.createSpyObj<DownloadImagesService>('DownloadImagesService', ['downloadImageFromUrl']);
     pedidosServiceSpy.qrByEachOrder.and.callFake( () => {
@@ -61,6 +66,9 @@ describe('PedidoDetalleComponent', () => {
   });
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  it('should getProductoNoLabel', () => {
+    expect(component.getProductoNoLabel())
   });
   it('should getDetallePedido', () => {
     /*component.getDetallePedido();

@@ -87,6 +87,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
       this.onSuccessSearchOrderModal(this.dataService.getFiltersActivesAsModel());
     } else {
       this.createInitRage();
+      this.createProductoNoLabel();
     }
     this.subscriptionCallHttp.add(this.dataService.getCallHttpService().subscribe(callHttpService => {
       if (callHttpService === HttpServiceTOCall.ORDERS) {
@@ -449,6 +450,16 @@ export class PedidosComponent implements OnInit, OnDestroy {
       case OrderType.muestra:
         return ClassCssOrderType.mu;
     }
+  }
+
+  createProductoNoLabel(){
+    this.pedidosService.getInitRangeDate().subscribe(({response}) => 
+    this.setProductNoLabel(response.filter(value => value.field === 'ProductNoLabel')[0]),
+    error => this.errorService.httpError(error));
+  }
+
+  setProductNoLabel(value: any){
+    this.dataService.setProductNoLabel(value);
   }
 
 
