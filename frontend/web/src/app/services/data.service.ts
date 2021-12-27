@@ -21,7 +21,7 @@ import { DatePipe } from '@angular/common';
 import { QfbWithNumber } from '../model/http/users';
 import { GeneralMessage } from '../model/device/general';
 import { CancelOrders, SearchComponentModal } from '../model/device/orders';
-import { CancelOrderReq, ParamsPedidos } from '../model/http/pedidos';
+import { CancelOrderReq, Catalogs, ParamsPedidos } from '../model/http/pedidos';
 import { IncidentsGraphicsMatrix } from '../model/http/incidents.model';
 import { CommentsConfig } from '../model/device/incidents.model';
 import { Router } from '@angular/router';
@@ -120,12 +120,16 @@ export class DataService {
   getRememberSession() {
     return localStorage.getItem(ConstToken.rememberSession);
   }
-  setProductNoLabel(ProductNoLabel) {
-    localStorage.setItem(ConstToken.ProductNoLabel, JSON.stringify(ProductNoLabel));
+  setProductNoLabel(productNoLabel: Catalogs) {
+    localStorage.setItem(ConstToken.productNoLabel, JSON.stringify(productNoLabel));
   }
   
-  getProductNoLabel() {
-    return localStorage.getItem(ConstToken.ProductNoLabel);
+  getProductNoLabel(): Catalogs {
+    let productNoLabelSTR = localStorage.getItem(ConstToken.productNoLabel);
+    let productNoLabel = JSON.parse(productNoLabelSTR) as Catalogs;
+    return productNoLabel;
+
+    
   }
 
   setRefreshToken(refreshToken: string) {

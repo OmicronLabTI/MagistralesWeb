@@ -9,11 +9,18 @@ import {
   MessageType,
 } from '../constants/const';
 import {CommentsConfig} from '../model/device/incidents.model';
-import {ParamsPedidos} from '../model/http/pedidos';
+import {Catalogs, ParamsPedidos} from '../model/http/pedidos';
 import {RouterTestingModule} from '@angular/router/testing';
 
 describe('DataService', () => {
+  let catalogs = new Catalogs();
+    catalogs.id = 74;
+    catalogs.value = 'DZ';
+    catalogs.type = 'string';
+    catalogs.field = 'ProductNoLabel';
+
   beforeEach(() => TestBed.configureTestingModule({
+    
     imports: [RouterTestingModule],
     providers: [DatePipe]
   }));
@@ -238,6 +245,11 @@ describe('DataService', () => {
     service.setRememberSession('anyRememberSession');
     expect(service.getRememberSession()).toEqual('anyRememberSession');
   });
+  // it('should getProductNoLabel', () => {
+  //   const service: DataService = TestBed.get(DataService);
+  //   service.setProductNoLabel(catalogs);
+  //   expect(service.getProductNoLabel());
+  // });
   it('should getIsLogout true', () => {
     const service: DataService = TestBed.get(DataService);
     service.getIsLogout().subscribe(isLogout => {

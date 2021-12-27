@@ -21,7 +21,7 @@ import {
 } from '../../constants/const';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
-import { CancelOrderReq, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq } from '../../model/http/pedidos';
+import { CancelOrderReq, Catalogs, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq } from '../../model/http/pedidos';
 import { Messages } from '../../constants/messages';
 import { ErrorService } from '../../services/error.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -36,7 +36,7 @@ import { CommentsConfig } from '../../model/device/incidents.model';
 export class PedidoDetalleComponent implements OnInit, OnDestroy {
   allComplete = false;
   docStatus: string;
-  ProductNoLabel: any;
+  ProductNoLabel: Catalogs;
   productCodeSplit= [];
   realLabel: string;
   displayedColumns: string[] = [
@@ -337,7 +337,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   getArrayToFinishLabel(isFromRemoveSignature: boolean, index?: number,) { 
     if (!isFromRemoveSignature) {
       return this.dataSource.data.filter(order => order.isChecked && (order.status !== ConstStatus.abierto &&
-        order.status !== ConstStatus.cancelado) && order.codigoProducto.split(' ')[0] !== this.ProductNoLabel && order.finishedLabel != 1)
+        order.status !== ConstStatus.cancelado) && order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value && order.finishedLabel != 1)
         .map(order => {
             const labelToFinish = new LabelToFinish();            
             labelToFinish.orderId = order.ordenFabricacionId;
@@ -472,9 +472,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getProductoNoLabel(){
-    const ProductNoLabel = this.dataService.getProductNoLabel();
-    const valueProductNoLabel = JSON.parse(ProductNoLabel);
-    this.ProductNoLabel = valueProductNoLabel.value;    
+    this.ProductNoLabel = this.dataService.getProductNoLabel();    
   }
 }
 

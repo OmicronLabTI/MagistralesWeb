@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PedidoDetalleComponent } from './pedido-detalle.component';
 import {RouterTestingModule} from '@angular/router/testing';
-import { IPedidoDetalleReq } from 'src/app/model/http/detallepedidos.model';
+import { IPedidoDetalleListRes, IPedidoDetalleReq } from 'src/app/model/http/detallepedidos.model';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,24 +17,56 @@ import {ErrorService} from '../../services/error.service';
 import {error} from 'util';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
+import { Catalogs } from 'src/app/model/http/pedidos';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
   let fixture: ComponentFixture<PedidoDetalleComponent>;
-  let pedidosServiceSpy;
+  let pedidosServiceSpy: jasmine.SpyObj<PedidosService>;
   let downloadImagesServiceSpy;
-  let dataServiceSpy;
+  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let errorServiceSpy;
+  let catalogs = new Catalogs();
+  let iPedidoDetalleRes = new IPedidoDetalleListRes();
+  let iPedidoDetalleReq: IPedidoDetalleReq[] = [];
+  iPedidoDetalleRes.response = iPedidoDetalleReq; 
+  catalogs.id = 74;
+  catalogs.value = 'DZ';
+  catalogs.type = 'string';
+  catalogs.field = 'ProductNoLabel';
   beforeEach(async(() => {
-    errorServiceSpy = pedidosServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos', 'processOrders', 'getDetallePedido', 'qrByEachOrder'
     ]);
+    pedidosServiceSpy.getDetallePedido.and.returnValue(of(iPedidoDetalleRes))
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'getProductNoLabel'
+    'getProductNoLabel', 
+    'setUrlActive', 
+    'getIsThereOnData', 
+    'presentToastCustom', 
+    'getUserId', 
+    'getMessageTitle', 
+    'setCancelOrders', 
+    'setFinalizeOrders', 
+    'setQbfToPlace', 
+    'setPathUrl', 
+    'setCurrentDetailOrder', 
+    'setOpenCommentsDialog', 
+    'setMessageGeneralCallHttp',
+    'setOpenSignatureDialog', 
+    'getUserRole', 
+    'openNewTapByUrl', 
+    'getItemOnDataOnlyIds', 
+    'getFiltersActives', 
+    'getNewDataToFilter', 
+    'getFullStringForCarousel', 
+    'getCurrentDetailOrder', 
+    'getCallHttpService'
     ]);
+    dataServiceSpy.getProductNoLabel.and.returnValue(catalogs);
     downloadImagesServiceSpy = jasmine.createSpyObj<DownloadImagesService>('DownloadImagesService', ['downloadImageFromUrl']);
     pedidosServiceSpy.qrByEachOrder.and.callFake( () => {
       return of(UrlsOfQrEachOrderMock);
@@ -53,7 +85,8 @@ describe('PedidoDetalleComponent', () => {
       providers: [DatePipe,
         { provide: PedidosService, useValue: pedidosServiceSpy },
         { provide: DownloadImagesService, useValue: downloadImagesServiceSpy },
-        { provide: ErrorService, useValue: errorServiceSpy }],
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: DataService, useValue: dataServiceSpy}],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
     .compileComponents();
@@ -68,7 +101,9 @@ describe('PedidoDetalleComponent', () => {
     expect(component).toBeTruthy();
   });
   it('should getProductoNoLabel', () => {
-    expect(component.getProductoNoLabel())
+    component.getProductoNoLabel();
+    expect(component.ProductNoLabel.value).toEqual(catalogs.value);
+    
   });
   it('should getDetallePedido', () => {
     /*component.getDetallePedido();

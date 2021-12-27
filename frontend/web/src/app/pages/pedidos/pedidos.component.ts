@@ -21,6 +21,7 @@ import { Messages } from '../../constants/messages';
 import { ErrorService } from '../../services/error.service';
 import {
   CancelOrderReq,
+  Catalogs,
   ICreatePdfOrdersRes,
   IPedidoReq,
   IRecipesRes,
@@ -458,7 +459,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     error => this.errorService.httpError(error));
   }
 
-  setProductNoLabel(value: any){
+  setProductNoLabel(value: Catalogs){
     this.dataService.setProductNoLabel(value);
   }
 
