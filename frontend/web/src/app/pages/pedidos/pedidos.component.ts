@@ -453,13 +453,13 @@ export class PedidosComponent implements OnInit, OnDestroy {
     }
   }
 
-  createProductoNoLabel(){
-    this.pedidosService.getInitRangeDate().subscribe(({response}) => 
+  createProductoNoLabel() {
+    this.pedidosService.getInitRangeDate().subscribe(({response}) =>
     this.setProductNoLabel(response.filter(value => value.field === 'ProductNoLabel')[0]),
     error => this.errorService.httpError(error));
   }
 
-  setProductNoLabel(value: Catalogs){
+  setProductNoLabel(value: Catalogs) {
     this.dataService.setProductNoLabel(value);
   }
 

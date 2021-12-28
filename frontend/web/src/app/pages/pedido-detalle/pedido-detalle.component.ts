@@ -17,7 +17,7 @@ import {
   RolesType,
   RouterPaths,
   TypeToSeeTap,
-  Const_RealLabel
+  constRealLabel
 } from '../../constants/const';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
@@ -110,7 +110,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.dataSource.data.forEach(element => {
       const productCodeSplit = element.codigoProducto.split(' ');
       this.productCodeSplit.push(productCodeSplit[0]);
-      this.realLabel = Const_RealLabel.impresaCliente;
+      this.realLabel = constRealLabel.impresaCliente;
       const patientName = element.patientName !== CONST_STRING.empty && element.patientName !== undefined ?
         element.patientName.split(':')[1]
         : CONST_STRING.empty;

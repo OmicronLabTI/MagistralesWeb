@@ -319,8 +319,8 @@ export const ClassCssOrderType = {
     mu: 'clasification-mu',
 };
 
-export const Const_RealLabel = {
+export const constRealLabel = {
     dermazone: 'DERMAZONE',
     impresaCliente: 'IMPRESA POR CLIENTE',
     personalizada: 'PERSONALIZADA'
-}
+};

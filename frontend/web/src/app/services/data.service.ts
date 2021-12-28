@@ -123,13 +123,11 @@ export class DataService {
   setProductNoLabel(productNoLabel: Catalogs) {
     localStorage.setItem(ConstToken.productNoLabel, JSON.stringify(productNoLabel));
   }
-  
   getProductNoLabel(): Catalogs {
-    let productNoLabelSTR = localStorage.getItem(ConstToken.productNoLabel);
-    let productNoLabel = JSON.parse(productNoLabelSTR) as Catalogs;
+    const productNoLabelSTR = localStorage.getItem(ConstToken.productNoLabel);
+    const productNoLabel = JSON.parse(productNoLabelSTR) as Catalogs;
     return productNoLabel;
 
-    
   }
 
   setRefreshToken(refreshToken: string) {
@@ -430,8 +428,8 @@ export class DataService {
             (t) =>
               t.isChecked &&
               t.status !== status &&
-              t.status !== ConstStatus.cancelado && 
-              t.finishedLabel != 1
+              t.status !== ConstStatus.cancelado &&
+              t.finishedLabel !== 1
           ).length > 0
         );
       default:

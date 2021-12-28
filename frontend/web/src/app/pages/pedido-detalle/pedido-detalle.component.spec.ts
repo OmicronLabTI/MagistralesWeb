@@ -99,7 +99,7 @@ describe('PedidoDetalleComponent', () => {
       return of(UrlsOfQrEachOrderMock);
     });
     pedidosServiceSpy.finishLabels.and.returnValue(of(iPedidoDetalleRes));
-    pedidosServiceSpy.putOrdersToDelivered.and.returnValue(of(iCreatePdfOrdersRes))
+    pedidosServiceSpy.putOrdersToDelivered.and.returnValue(of(iCreatePdfOrdersRes));
     dataServiceSpy.getNewDataSignature.and.returnValue(of({}));
     dataServiceSpy.getNewCommentsResult.and.returnValue(of(comentsConfig));
     dataServiceSpy.getNewDataToFilter.and.returnValue([parametrosPedidos, '']);
