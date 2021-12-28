@@ -123,7 +123,8 @@ export const ConstToken = {
     isolatedOrder: 'istOrder',
     filtersActive: 'filters-active',
     filtersActiveOrders: 'filters-active-orders',
-    detailOrderCurrent: 'detail-current'
+    detailOrderCurrent: 'detail-current',
+    productNoLabel: 'productNoLabel'
 };
 export const BOOLEANS = {
     verdadero: true,
@@ -316,4 +317,10 @@ export const ClassCssOrderType = {
     mx: 'clasification-mx',
     mq: 'clasification-mq',
     mu: 'clasification-mu',
+};
+
+export const constRealLabel = {
+    dermazone: 'DERMAZONE',
+    impresaCliente: 'IMPRESA POR CLIENTE',
+    personalizada: 'PERSONALIZADA'
 };

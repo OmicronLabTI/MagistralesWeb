@@ -21,7 +21,7 @@ import { DatePipe } from '@angular/common';
 import { QfbWithNumber } from '../model/http/users';
 import { GeneralMessage } from '../model/device/general';
 import { CancelOrders, SearchComponentModal } from '../model/device/orders';
-import { CancelOrderReq, ParamsPedidos } from '../model/http/pedidos';
+import { CancelOrderReq, Catalogs, ParamsPedidos } from '../model/http/pedidos';
 import { IncidentsGraphicsMatrix } from '../model/http/incidents.model';
 import { CommentsConfig } from '../model/device/incidents.model';
 import { Router } from '@angular/router';
@@ -120,6 +120,16 @@ export class DataService {
   getRememberSession() {
     return localStorage.getItem(ConstToken.rememberSession);
   }
+  setProductNoLabel(productNoLabel: Catalogs) {
+    localStorage.setItem(ConstToken.productNoLabel, JSON.stringify(productNoLabel));
+  }
+  getProductNoLabel(): Catalogs {
+    const productNoLabelSTR = localStorage.getItem(ConstToken.productNoLabel);
+    const productNoLabel = JSON.parse(productNoLabelSTR) as Catalogs;
+    return productNoLabel;
+
+  }
+
   setRefreshToken(refreshToken: string) {
     localStorage.setItem(ConstToken.refreshToken, refreshToken);
   }
@@ -418,7 +428,8 @@ export class DataService {
             (t) =>
               t.isChecked &&
               t.status !== status &&
-              t.status !== ConstStatus.cancelado
+              t.status !== ConstStatus.cancelado &&
+              t.finishedLabel !== 1
           ).length > 0
         );
       default:
