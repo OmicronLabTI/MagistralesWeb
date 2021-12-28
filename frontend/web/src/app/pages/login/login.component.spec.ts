@@ -11,14 +11,18 @@ import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {of} from 'rxjs';
 import {LoginMock} from '../../../mocks/loginMock';
+import { Router } from '@angular/router';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let securityServiceSpy;
   let dataServiceSpy;
+  let routerSpy: jasmine.SpyObj<Router>;
 
 
   beforeEach(async(() => {
+    routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
+
     securityServiceSpy = jasmine.createSpyObj<SecurityService>('SecurityService', [
       'login', 'getUser'
     ]);
@@ -53,7 +57,8 @@ describe('LoginComponent', () => {
       providers: [
         DatePipe,
         { provide: SecurityService, useValue: securityServiceSpy },
-        { provide: DataService, useValue: dataServiceSpy }
+        { provide: DataService, useValue: dataServiceSpy },
+        { provide: Router, useValue: routerSpy },
       ]
     })
     .compileComponents();

@@ -61,7 +61,7 @@ describe('FinalizeOrdersComponent', () => {
       imports: [MATERIAL_COMPONENTS, FormsModule, HttpClientTestingModule, RouterTestingModule],
       providers: [
         { provide: MatDialogRef, useValue: {} },
-        { provide: MAT_DIALOG_DATA, useValue: { finalizeData: { finalizeOrdersData: [] } } },
+        { provide: MAT_DIALOG_DATA, useValue: { finalizeOrdersData: [] } },
         DatePipe,
         { provide: PedidosService, useValue: orderServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
