@@ -87,7 +87,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     });
     this.subscriptionCallHttpDetail.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
       if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
-        this.getDetallePedido();
+        this.getDetallePedidoService();
       }
     }));
     this.subscriptionCallHttpDetail.add(this.dataService.getNewDataSignature().subscribe(newDataSignature => {
@@ -99,7 +99,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       this.getProductoNoLabel();
   }
 
-  getDetallePedido() {
+  getDetallePedidoService() {
     this.pedidosService.getDetallePedido(this.paramsDetailOrder.current).subscribe(
       ({ response }) => this.onSuccessDetailPedido(response), error => this.errorService.httpError(error));
   }
@@ -238,7 +238,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             if (resultProcessDetail.success && resultProcessDetail.response.length > 0) {
               const titleProcessDetailWithError = this.dataService.getMessageTitle(
                 resultProcessDetail.response, MessageType.processDetailOrder);
-              this.getDetallePedido();
+              this.getDetallePedidoService();
               this.dataService.presentToastCustom(titleProcessDetailWithError, 'error',
                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             } else {
@@ -313,7 +313,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   reloadOrderDetail() {
-    this.getDetallePedido();
+    this.getDetallePedidoService();
     this.dataService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
   }
 
@@ -413,7 +413,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.paramsDetailOrder = JSON.parse(this.dataService.getFiltersActives());
     this.paramsDetailOrder = { ...this.paramsDetailOrder, current: order };
     this.baseQueryString = this.dataService.getNewDataToFilter(this.paramsDetailOrder)[1];
-    this.getDetallePedido();
+    this.getDetallePedidoService();
 
   }
 

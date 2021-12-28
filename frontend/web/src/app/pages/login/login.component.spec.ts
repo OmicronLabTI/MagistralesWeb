@@ -29,7 +29,17 @@ describe('LoginComponent', () => {
       return of({});
     });
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'setToken', 'setIsLogin', 'setUserName', 'userIsAuthenticated', 'setGeneralNotificationMessage'
+      'setToken',
+      'setIsLogin',
+      'setUserName',
+      'userIsAuthenticated',
+      'setGeneralNotificationMessage',
+      'setRefreshToken',
+      'setRememberSession',
+      'setUserId',
+      'setUserRole',
+      'setMessageGeneralCallHttp',
+      'getUserRole',
     ]);
     TestBed.configureTestingModule({
       declarations: [ LoginComponent ],
