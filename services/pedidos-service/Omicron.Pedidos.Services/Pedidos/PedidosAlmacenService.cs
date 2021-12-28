@@ -179,7 +179,13 @@ namespace Omicron.Pedidos.Services.Pedidos
             });
 
             await this.pedidosDao.UpdateUserOrders(orders);
-            var objectToReturn = new { SaleOrderId = orders.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList() };
+            var userOrdersComplete = (await this.pedidosDao.GetUserOrderBySaleOrder(orders.Select(x => x.Salesorderid).Distinct().ToList())).ToList();
+            var objectToReturn = new
+            {
+                SaleOrderId = orders.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(),
+                UserOrders = userOrdersComplete,
+            };
+
             return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
         }
 
