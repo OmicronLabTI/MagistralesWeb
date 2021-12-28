@@ -1,42 +1,111 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PedidoDetalleComponent } from './pedido-detalle.component';
-import {RouterTestingModule} from '@angular/router/testing';
-import { IPedidoDetalleReq } from 'src/app/model/http/detallepedidos.model';
+import { RouterTestingModule } from '@angular/router/testing';
+import { IPedidoDetalleListRes, IPedidoDetalleReq } from 'src/app/model/http/detallepedidos.model';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {PedidosService} from '../../services/pedidos.service';
-import {of, throwError} from 'rxjs';
-import {DetailOrderMock} from '../../../mocks/detailOrder.Mock';
-import {DownloadImagesService} from '../../services/download-images.service';
-import {UrlsOfQrEachOrderMock} from '../../../mocks/urlsOfQrEachOrderMock';
-import {ErrorService} from '../../services/error.service';
-import {error} from 'util';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { PedidosService } from '../../services/pedidos.service';
+import { of, throwError } from 'rxjs';
+import { DetailOrderMock } from '../../../mocks/detailOrder.Mock';
+import { DownloadImagesService } from '../../services/download-images.service';
+import { UrlsOfQrEachOrderMock } from '../../../mocks/urlsOfQrEachOrderMock';
+import { ErrorService } from '../../services/error.service';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { DataService } from 'src/app/services/data.service';
+import { Catalogs, ICreatePdfOrdersRes, ParamsPedidos } from 'src/app/model/http/pedidos';
+import { HttpServiceTOCall } from 'src/app/constants/const';
+import { CommentsConfig } from '../../model/device/incidents.model';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
   let fixture: ComponentFixture<PedidoDetalleComponent>;
-  let pedidosServiceSpy;
+  let pedidosServiceSpy: jasmine.SpyObj<PedidosService>;
   let downloadImagesServiceSpy;
+  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let errorServiceSpy;
+
+  const catalogs = new Catalogs();
+  const iPedidoDetalleRes = new IPedidoDetalleListRes();
+  const iPedidoDetalleReq: IPedidoDetalleReq[] = [];
+
+  const iCreatePdfOrdersRes = new ICreatePdfOrdersRes();
+
+  const httpServiceTOCallRes: HttpServiceTOCall = HttpServiceTOCall.DETAIL_ORDERS;
+  const comentsConfig = new CommentsConfig();
+  const parametrosPedidos = new ParamsPedidos();
+  parametrosPedidos.offset = 0;
+  parametrosPedidos.limit = 10;
+  parametrosPedidos.pageIndex = 0;
+
+  iPedidoDetalleRes.response = iPedidoDetalleReq;
+  catalogs.id = 74;
+  catalogs.value = 'DZ';
+  catalogs.type = 'string';
+  catalogs.field = 'ProductNoLabel';
   beforeEach(async(() => {
-    errorServiceSpy = pedidosServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
+
+
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
-      'getPedidos', 'processOrders', 'getDetallePedido', 'qrByEachOrder'
+      'getPedidos',
+      'processOrders',
+      'getDetallePedido',
+      'qrByEachOrder',
+      'finishLabels',
+      'savedComments',
+      'putOrdersToDelivered',
     ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'getProductNoLabel',
+      'setUrlActive',
+      'getIsThereOnData',
+      'presentToastCustom',
+      'getUserId',
+      'getMessageTitle',
+      'setCancelOrders',
+      'setFinalizeOrders',
+      'setQbfToPlace',
+      'setPathUrl',
+      'setCurrentDetailOrder',
+      'setOpenCommentsDialog',
+      'setMessageGeneralCallHttp',
+      'setOpenSignatureDialog',
+      'getUserRole',
+      'openNewTapByUrl',
+      'getItemOnDataOnlyIds',
+      'getFiltersActives',
+      'getNewDataToFilter',
+      'getFullStringForCarousel',
+      'getCurrentDetailOrder',
+      'getCallHttpService',
+      'getNewDataSignature',
+      'getNewCommentsResult',
+      'removeCurrentDetailOrder',
+      'getItemOnDateWithFilter'
+    ]);
+    dataServiceSpy.getProductNoLabel.and.returnValue(catalogs);
+    dataServiceSpy.getCallHttpService.and.returnValue(of(httpServiceTOCallRes));
+    dataServiceSpy.getFiltersActives.and.returnValue(JSON.stringify(parametrosPedidos));
+    dataServiceSpy.getCurrentDetailOrder.and.returnValue('');
+    dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
     downloadImagesServiceSpy = jasmine.createSpyObj<DownloadImagesService>('DownloadImagesService', ['downloadImageFromUrl']);
-    pedidosServiceSpy.qrByEachOrder.and.callFake( () => {
+    pedidosServiceSpy.qrByEachOrder.and.callFake(() => {
       return of(UrlsOfQrEachOrderMock);
     });
-    pedidosServiceSpy.getDetallePedido.and.callFake(() => {
-      return of(DetailOrderMock);
-    });
+    pedidosServiceSpy.finishLabels.and.returnValue(of(iPedidoDetalleRes));
+    pedidosServiceSpy.putOrdersToDelivered.and.returnValue(of(iCreatePdfOrdersRes));
+    dataServiceSpy.getNewDataSignature.and.returnValue(of({}));
+    dataServiceSpy.getNewCommentsResult.and.returnValue(of(comentsConfig));
+    dataServiceSpy.getNewDataToFilter.and.returnValue([parametrosPedidos, '']);
+    dataServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
+    pedidosServiceSpy.getDetallePedido.and.returnValue(of(DetailOrderMock));
+    pedidosServiceSpy.savedComments.and.returnValue(of(iPedidoDetalleRes));
     TestBed.configureTestingModule({
       imports: [
         MATERIAL_COMPONENTS,
@@ -44,14 +113,16 @@ describe('PedidoDetalleComponent', () => {
         RouterTestingModule,
         FormsModule,
         BrowserAnimationsModule],
-      declarations: [ PedidoDetalleComponent ],
+      declarations: [PedidoDetalleComponent],
       providers: [DatePipe,
         { provide: PedidosService, useValue: pedidosServiceSpy },
         { provide: DownloadImagesService, useValue: downloadImagesServiceSpy },
-        { provide: ErrorService, useValue: errorServiceSpy }],
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: DataService, useValue: dataServiceSpy },
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -62,13 +133,9 @@ describe('PedidoDetalleComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should getDetallePedido', () => {
-    /*component.getDetallePedido();
-    expect(pedidosServiceSpy.getDetallePedido).toHaveBeenCalled();
-    expect(component.isThereOrdersDetailToPlan).toBeFalsy();
-    expect(component.isThereOrdersDetailToPlace).toBeFalsy();
-    expect(component.isThereOrdersDetailToCancel).toBeFalsy();
-    expect(component.isThereOrdersDetailToFinalize).toBeFalsy();*/
+  it('should getProductoNoLabel', () => {
+    component.getProductoNoLabel();
+    expect(component.ProductNoLabel.value).toEqual(catalogs.value);
   });
 
   it('should someComplete return false', () => {
@@ -97,9 +164,10 @@ describe('PedidoDetalleComponent', () => {
     component.dataSource.data = DetailOrderMock.response;
     component.updateAllComplete();
     expect(component.allComplete).toBeFalsy();
-    // component.dataSource.data = DetailOrderMock.response;
     component.dataSource.data.forEach(detail => detail.isChecked = true);
+    expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => detail.isChecked)).toBeTruthy();
     component.updateAllComplete();
+    expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => detail.isChecked)).toBeTruthy();
     expect(component.allComplete).toBeTruthy();
   });
   it('should setAll', () => {
@@ -111,9 +179,11 @@ describe('PedidoDetalleComponent', () => {
     component.setAll(true);
     expect(component.allComplete).toBe(true);
     expect(component.dataSource.data.every(detail => detail.isChecked)).toBeTruthy();
+    expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => detail.isChecked)).toBeTruthy();
     component.setAll(false);
     expect(component.allComplete).toBe(false);
     expect(component.dataSource.data.every(detail => !detail.isChecked)).toBeTruthy();
+    expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => !detail.isChecked)).toBeTruthy();
   });
 
   it('should call ordersToDownloadQr()', () => {
@@ -124,6 +194,7 @@ describe('PedidoDetalleComponent', () => {
         isChecked: true,
       } as IPedidoDetalleReq
     ];
+
     component.ordersToDownloadQr();
     expect(pedidosServiceSpy.qrByEachOrder).toHaveBeenCalled();
     expect(downloadImagesServiceSpy.downloadImageFromUrl).toHaveBeenCalledTimes(1);

@@ -72,8 +72,8 @@
                 (click)="ordersToDelivered()" *ngIf="dataService.getUserRole() === '5'">
                 Entregado
             </button>
-            <button [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
-                [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'"
+            <button [disabled]="!OrderToGenerateQR" mat-raised-button
+                [ngClass]="OrderToGenerateQR ? 'button-blue' : 'disable-button'"
                 *ngIf="dataService.getUserRole() === '4'" (click)="ordersToDownloadQr()">
                 Descargar código QR&nbsp;
             </button>
@@ -264,7 +264,7 @@
                             </mat-icon>
                         </button>
                         <button mat-icon-button matTooltip="Etiqueta genérica"
-                            [disabled]="dataService.getUserRole() !== '4'" class="ico-col-pri generic"
+                            [disabled]="dataService.getUserRole() !== '4' || productCodeSplit[i] == ProductNoLabel || element.realLabel == realLabel || element.finishedLabel == '0'" class="ico-col-pri generic"
                             *ngIf="element.label === 'Genérica'">
                             <mat-icon>
                                 <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg"
@@ -285,7 +285,7 @@
                                         </g>
                                     </g>
                                 </svg>
-                                <svg *ngIf="element.finishedLabel === 1" (click)="removeSignature(i)"
+                                <svg *ngIf="element.finishedLabel === 1" (click)="productCodeSplit[i] != ProductNoLabel &&  element.realLabel != realLabel ? removeSignature(i) : return "
                                     xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.5em"
                                     viewBox="0 0 337 342">
                                     <defs>
@@ -311,7 +311,7 @@
                             </mat-icon>
                         </button>
                         <button mat-icon-button matTooltip="Etiqueta personalizada"
-                            [disabled]="dataService.getUserRole() !== '4'" class="ico-col-pri person"
+                            [disabled]="dataService.getUserRole() !== '4' || productCodeSplit[i] == ProductNoLabel || element.realLabel == realLabel || element.finishedLabel == '0'" class="ico-col-pri person"
                             *ngIf="element.label === 'Personalizada'">
                             <mat-icon>
                                 <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg"
@@ -338,7 +338,7 @@
                                     </g>
                                 </svg>
 
-                                <svg *ngIf="element.finishedLabel === 1" (click)="removeSignature(i)"
+                                <svg *ngIf="element.finishedLabel === 1" (click)="productCodeSplit[i] != ProductNoLabel &&  element.realLabel != realLabel ? removeSignature(i) : return "
                                     xmlns="http://www.w3.org/2000/svg" width="2.3em" height="2.7em"
                                     viewBox="0 0 337 342">
                                     <defs>

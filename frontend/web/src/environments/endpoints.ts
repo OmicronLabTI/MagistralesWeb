@@ -36,7 +36,8 @@ export const Endpoints = {
     getNextBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/next`,
     checkIfExistsBatchCode: `${environment.baseUrl}/api/sapadapter/batchcode/exists`,
     getRecipes: `${environment.baseUrl}/api/sapadapter/recipe`,
-    rangeDateInit: `${environment.baseUrl}/api/catalogos/params/contains/field?MagistralesDaysToLook=MagistralesDaysToLook`,
+    rangeDateInit:
+    `${environment.baseUrl}/api/catalogos/params/contains/field?MagistralesDaysToLook=MagistralesDaysToLook&ProductNoLabel=ProductNoLabel`,
     refuseOrdersService: `${environment.baseUrl}/api/pedidos/salesOrder/reject`,
 },
   inventoryBatches: {

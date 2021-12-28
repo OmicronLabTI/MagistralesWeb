@@ -24,6 +24,7 @@ import {DataService} from '../../services/data.service';
 import { HttpServiceTOCall} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
 import {PageEvent} from '@angular/material/paginator';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -65,7 +66,8 @@ describe('UserListComponent', () => {
         MatFormFieldModule,
         ReactiveFormsModule,
         MatInputModule,
-        MatSelectModule],
+        MatSelectModule,
+      RouterTestingModule],
       declarations: [ UserListComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [DatePipe,
