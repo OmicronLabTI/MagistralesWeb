@@ -37,7 +37,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   allComplete = false;
   docStatus: string;
   ProductNoLabel: Catalogs;
-  productCodeSplit= [];
+  productCodeSplit = [];
   realLabel: string;
   displayedColumns: string[] = [
     'seleccion',
@@ -81,6 +81,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getProductoNoLabel();
     this.route.paramMap.subscribe(params => {
       this.validateToGetCurrentDetail(params.get('id'));
       this.titleService.setTitle('Pedido ' + params.get('id'));
@@ -95,8 +96,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       this.sendToLabelsFinish();
     }));
     this.subscriptionCallHttpDetail.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
-      this.successNewComments(newCommentsResult)));
-      this.getProductoNoLabel();
+    this.successNewComments(newCommentsResult)));
   }
 
   getDetallePedidoService() {
@@ -107,10 +107,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.productCodeSplit = [];
     this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
     this.dataSource.data = response;
-    this.dataSource.data.forEach(element => {      
+    this.dataSource.data.forEach(element => {
       const productCodeSplit = element.codigoProducto.split(' ');
       this.productCodeSplit.push(productCodeSplit[0]);
-      this.realLabel = Const_RealLabel.impresaCliente;      
+      this.realLabel = Const_RealLabel.impresaCliente;
       const patientName = element.patientName !== CONST_STRING.empty && element.patientName !== undefined ?
         element.patientName.split(':')[1]
         : CONST_STRING.empty;
@@ -170,14 +170,13 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.isOnInit = false;
     this.signatureData = CONST_STRING.empty;
     this.isCorrectToAddComments = this.dataSource.data.every(order => order.status === ConstStatus.abierto
-      && order.ordenFabricacionId === CONST_NUMBER.zero);      
+      && order.ordenFabricacionId === CONST_NUMBER.zero);
   }
 
   updateAllComplete() {
     this.OrderToGenerateQR = false;
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
-    this.getButtonsToUnLooked();
   }
 
   someComplete(): boolean {
@@ -192,7 +191,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     if (this.dataSource.data == null) {
       return;
     }
-    this.dataSource.data.forEach(t => t.isChecked = completed);    
+    this.dataSource.data.forEach(t => t.isChecked = completed);
     this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
     this.getButtonsToUnLooked();
   }
@@ -210,7 +209,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.isThereOrdersToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
     this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
-      FromToFilter.fromOrderDetailLabel);    
+      FromToFilter.fromOrderDetailLabel);
 
     this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
       FromToFilter.fromDetailOrder);
@@ -334,15 +333,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     }, error => this.errorService.httpError(error));
   }
 
-  getArrayToFinishLabel(isFromRemoveSignature: boolean, index?: number,) { 
+  getArrayToFinishLabel(isFromRemoveSignature: boolean, index?: number) {
     if (!isFromRemoveSignature) {
-      return this.dataSource.data.filter(order => order.isChecked && (order.status !== ConstStatus.abierto &&
-        order.status !== ConstStatus.cancelado) && order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value && order.finishedLabel != 1)
+      return this.dataSource.data.filter(order => order.isChecked &&
+        (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado)
+        && order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value && order.finishedLabel !== 1)
         .map(order => {
-            const labelToFinish = new LabelToFinish();            
+            const labelToFinish = new LabelToFinish();
             labelToFinish.orderId = order.ordenFabricacionId;
             labelToFinish.checked = !isFromRemoveSignature;
-            return labelToFinish;            
+            return labelToFinish;
         });
     } else {
       const labelsToFinish: LabelToFinish[] = [];
@@ -351,7 +351,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeSignature(index: number) {    
+  removeSignature(index: number) {
     if (this.dataService.getUserRole() === RolesType.design) {
       this.dataService.presentToastCustom(`${Messages.removeLabelFinish} ${this.dataSource.data[index].label.toLowerCase()}?`,
         'question', CONST_STRING.empty, true, true)
@@ -471,8 +471,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   }
 
-  getProductoNoLabel(){
-    this.ProductNoLabel = this.dataService.getProductNoLabel();    
+  getProductoNoLabel() {
+    this.ProductNoLabel = this.dataService.getProductNoLabel();
   }
 }
 
