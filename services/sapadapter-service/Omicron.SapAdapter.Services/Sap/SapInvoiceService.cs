@@ -146,9 +146,10 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeader ??= new InvoiceHeaderModel();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(new List<int> { invoiceHeader.InvoiceId })).ToList();
             var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntry(invoiceDetails.Select(x => x.BaseEntry.Value).ToList())).ToList();
-            var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(deliveryDetails.Where(y => y.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList())).ToList();
+            var ordersIdToLookFor = deliveryDetails.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).Distinct().ToList();
+            var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(ordersIdToLookFor)).ToList();
 
-            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, deliveryDetails.Select(x => x.BaseEntry).ToList());
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, ordersIdToLookFor);
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
             var products = await this.GetProductModels(invoiceDetails, deliveryDetails, userOrders, lineProducts, fabOrders, incidents);
