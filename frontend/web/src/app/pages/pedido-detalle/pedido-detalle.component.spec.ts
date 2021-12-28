@@ -1,23 +1,22 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PedidoDetalleComponent } from './pedido-detalle.component';
-import {RouterTestingModule} from '@angular/router/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { IPedidoDetalleListRes, IPedidoDetalleReq } from 'src/app/model/http/detallepedidos.model';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {PedidosService} from '../../services/pedidos.service';
-import {of, throwError} from 'rxjs';
-import {DetailOrderMock} from '../../../mocks/detailOrder.Mock';
-import {DownloadImagesService} from '../../services/download-images.service';
-import {UrlsOfQrEachOrderMock} from '../../../mocks/urlsOfQrEachOrderMock';
-import {ErrorService} from '../../services/error.service';
-import {error} from 'util';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { PedidosService } from '../../services/pedidos.service';
+import { of, throwError } from 'rxjs';
+import { DetailOrderMock } from '../../../mocks/detailOrder.Mock';
+import { DownloadImagesService } from '../../services/download-images.service';
+import { UrlsOfQrEachOrderMock } from '../../../mocks/urlsOfQrEachOrderMock';
+import { ErrorService } from '../../services/error.service';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { Catalogs, ParamsPedidos } from 'src/app/model/http/pedidos';
+import { Catalogs, ICreatePdfOrdersRes, ParamsPedidos } from 'src/app/model/http/pedidos';
 import { HttpServiceTOCall } from 'src/app/constants/const';
 import { CommentsConfig } from '../../model/device/incidents.model';
 
@@ -28,9 +27,12 @@ describe('PedidoDetalleComponent', () => {
   let downloadImagesServiceSpy;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let errorServiceSpy;
+
   const catalogs = new Catalogs();
   const iPedidoDetalleRes = new IPedidoDetalleListRes();
   const iPedidoDetalleReq: IPedidoDetalleReq[] = [];
+
+  const iCreatePdfOrdersRes = new ICreatePdfOrdersRes();
 
   const httpServiceTOCallRes: HttpServiceTOCall = HttpServiceTOCall.DETAIL_ORDERS;
   const comentsConfig = new CommentsConfig();
@@ -45,6 +47,8 @@ describe('PedidoDetalleComponent', () => {
   catalogs.type = 'string';
   catalogs.field = 'ProductNoLabel';
   beforeEach(async(() => {
+
+
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
@@ -54,50 +58,52 @@ describe('PedidoDetalleComponent', () => {
       'getDetallePedido',
       'qrByEachOrder',
       'finishLabels',
-      'savedComments'
+      'savedComments',
+      'putOrdersToDelivered',
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-    'getProductNoLabel',
-    'setUrlActive',
-    'getIsThereOnData',
-    'presentToastCustom',
-    'getUserId',
-    'getMessageTitle',
-    'setCancelOrders',
-    'setFinalizeOrders',
-    'setQbfToPlace',
-    'setPathUrl',
-    'setCurrentDetailOrder',
-    'setOpenCommentsDialog',
-    'setMessageGeneralCallHttp',
-    'setOpenSignatureDialog',
-    'getUserRole',
-    'openNewTapByUrl',
-    'getItemOnDataOnlyIds',
-    'getFiltersActives',
-    'getNewDataToFilter',
-    'getFullStringForCarousel',
-    'getCurrentDetailOrder',
-    'getCallHttpService',
-    'getNewDataSignature',
-    'getNewCommentsResult',
-    'removeCurrentDetailOrder'
+      'getProductNoLabel',
+      'setUrlActive',
+      'getIsThereOnData',
+      'presentToastCustom',
+      'getUserId',
+      'getMessageTitle',
+      'setCancelOrders',
+      'setFinalizeOrders',
+      'setQbfToPlace',
+      'setPathUrl',
+      'setCurrentDetailOrder',
+      'setOpenCommentsDialog',
+      'setMessageGeneralCallHttp',
+      'setOpenSignatureDialog',
+      'getUserRole',
+      'openNewTapByUrl',
+      'getItemOnDataOnlyIds',
+      'getFiltersActives',
+      'getNewDataToFilter',
+      'getFullStringForCarousel',
+      'getCurrentDetailOrder',
+      'getCallHttpService',
+      'getNewDataSignature',
+      'getNewCommentsResult',
+      'removeCurrentDetailOrder',
+      'getItemOnDateWithFilter'
     ]);
     dataServiceSpy.getProductNoLabel.and.returnValue(catalogs);
     dataServiceSpy.getCallHttpService.and.returnValue(of(httpServiceTOCallRes));
     dataServiceSpy.getFiltersActives.and.returnValue(JSON.stringify(parametrosPedidos));
     dataServiceSpy.getCurrentDetailOrder.and.returnValue('');
+    dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
     downloadImagesServiceSpy = jasmine.createSpyObj<DownloadImagesService>('DownloadImagesService', ['downloadImageFromUrl']);
-    pedidosServiceSpy.qrByEachOrder.and.callFake( () => {
+    pedidosServiceSpy.qrByEachOrder.and.callFake(() => {
       return of(UrlsOfQrEachOrderMock);
     });
     pedidosServiceSpy.finishLabels.and.returnValue(of(iPedidoDetalleRes));
+    pedidosServiceSpy.putOrdersToDelivered.and.returnValue(of(iCreatePdfOrdersRes))
     dataServiceSpy.getNewDataSignature.and.returnValue(of({}));
     dataServiceSpy.getNewCommentsResult.and.returnValue(of(comentsConfig));
     dataServiceSpy.getNewDataToFilter.and.returnValue([parametrosPedidos, '']);
-    // pedidosServiceSpy.getDetallePedido.and.callFake(() => {
-    //   return of(DetailOrderMock);
-    // });
+    dataServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
     pedidosServiceSpy.getDetallePedido.and.returnValue(of(DetailOrderMock));
     pedidosServiceSpy.savedComments.and.returnValue(of(iPedidoDetalleRes));
     TestBed.configureTestingModule({
@@ -107,15 +113,16 @@ describe('PedidoDetalleComponent', () => {
         RouterTestingModule,
         FormsModule,
         BrowserAnimationsModule],
-      declarations: [ PedidoDetalleComponent ],
+      declarations: [PedidoDetalleComponent],
       providers: [DatePipe,
         { provide: PedidosService, useValue: pedidosServiceSpy },
         { provide: DownloadImagesService, useValue: downloadImagesServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
-        { provide: DataService, useValue: dataServiceSpy}],
+        { provide: DataService, useValue: dataServiceSpy },
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -130,15 +137,6 @@ describe('PedidoDetalleComponent', () => {
     component.getProductoNoLabel();
     expect(component.ProductNoLabel.value).toEqual(catalogs.value);
   });
-  // it('should getDetallePedido', () => {
-  //   /*component.getDetallePedido();
-  //   expect(pedidosServiceSpy.getDetallePedido).toHaveBeenCalled();
-  //   expect(component.isThereOrdersDetailToPlan).toBeFalsy();
-  //   expect(component.isThereOrdersDetailToPlace).toBeFalsy();
-  //   expect(component.isThereOrdersDetailToCancel).toBeFalsy();
-  //   expect(component.isThereOrdersDetailToFinalize).toBeFalsy();*/
-  // });
-
 
   it('should someComplete return false', () => {
     component.allComplete = true;
@@ -166,7 +164,6 @@ describe('PedidoDetalleComponent', () => {
     component.dataSource.data = DetailOrderMock.response;
     component.updateAllComplete();
     expect(component.allComplete).toBeFalsy();
-    // component.dataSource.data = DetailOrderMock.response;
     component.dataSource.data.forEach(detail => detail.isChecked = true);
     expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => detail.isChecked)).toBeTruthy();
     component.updateAllComplete();
@@ -197,6 +194,7 @@ describe('PedidoDetalleComponent', () => {
         isChecked: true,
       } as IPedidoDetalleReq
     ];
+
     component.ordersToDownloadQr();
     expect(pedidosServiceSpy.qrByEachOrder).toHaveBeenCalled();
     expect(downloadImagesServiceSpy.downloadImageFromUrl).toHaveBeenCalledTimes(1);
