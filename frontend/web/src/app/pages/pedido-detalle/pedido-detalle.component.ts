@@ -177,6 +177,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.OrderToGenerateQR = false;
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
+    this.getButtonsToUnLooked();
   }
 
   someComplete(): boolean {
