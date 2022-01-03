@@ -8,10 +8,13 @@ import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { DetalleFormulaMock } from 'src/mocks/pedidosListMock';
-import {Observable, of, throwError} from 'rxjs';
+import {Observable, of, Subject, throwError} from 'rxjs';
 import {DataService} from '../../services/data.service';
 import {CONST_DETAIL_FORMULA} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
+import { ButtonRefreshComponent } from 'src/app/components/button-refresh/button-refresh.component';
+import { ComponentsModule } from 'src/app/components/components.module';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -19,6 +22,7 @@ describe('DetalleFormulaComponent', () => {
   let pedidosServiceSpy;
   let dataServiceSpy;
   let errorServiceSpy;
+  // let routerSpy: jasmine.SpyObj<ActivatedRoute>;
 
   beforeEach(async(() => {
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
@@ -28,13 +32,17 @@ describe('DetalleFormulaComponent', () => {
       'getFormulaDetail', 'getFormulaCarousel'
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setIsLoading',
+      'presentToastCustom', 'getCallHttpService', 'setUrlActive', 'setIsLoading',
       'setCallHttpService', 'setMessageGeneralCallHttp', 'getOrderIsolated', 'removeOrderIsolated', 'getNewSearchOrdersModal',
       'getCallHttpService', 'transformDate', 'setSearchComponentModal', 'getNewDataToFilter', 'setCancelOrders', 'setQbfToPlace',
       'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter', 'getNewFormulaComponent',
       'setIsToSaveAnything', 'setIsToSaveAnything', 'setIsToSaveAnything', 'setFiltersActivesOrders', 'getFiltersActivesOrders',
-      'removeFiltersActiveOrders', 'getFiltersActivesAsModelOrders'
+      'removeFiltersActiveOrders',  'getFiltersActivesAsModelOrders'
     ]);
+    // routerSpy = jasmine.createSpyObj<ActivatedRoute>('ActivateRoute', [
+    //   'paramMap'
+    // ]);
+    // routerSpy.paramMap.and.returnValue();
     dataServiceSpy.getNewFormulaComponent.and.callFake(() => {
       return new Observable();
     });
@@ -44,6 +52,7 @@ describe('DetalleFormulaComponent', () => {
     pedidosServiceSpy.getFormulaCarousel.and.callFake(() => {
       return of(DetalleFormulaMock);
     });
+    dataServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
@@ -51,7 +60,9 @@ describe('DetalleFormulaComponent', () => {
         HttpClientTestingModule,
         ReactiveFormsModule,
         FormsModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        ComponentsModule,
+        RouterModule
       ],
       declarations: [ DetalleFormulaComponent ],
       providers: [
@@ -59,7 +70,8 @@ describe('DetalleFormulaComponent', () => {
           provide: PedidosService, useValue: pedidosServiceSpy
         },
         { provide: DataService, useValue: dataServiceSpy },
-        { provide: ErrorService, useValue: errorServiceSpy }
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: ActivatedRoute, useValue: { paramMap: new Subject() } }
       ]
     })
     .compileComponents();
@@ -71,7 +83,7 @@ describe('DetalleFormulaComponent', () => {
     fixture.detectChanges();
   });
 
-/*  it('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
     expect(component.displayedColumns).toEqual([
       'seleccion',
@@ -88,9 +100,9 @@ describe('DetalleFormulaComponent', () => {
       'enstock',
       'cantalmacen'
     ]);
-  });*/
+  });
 
-  /*it('should call getDetalleFormula ok', () => {
+  it('should call getDetalleFormula ok', () => {
     component.ordenFabricacionId = '1234';
     component.getDetalleFormula();
     expect(pedidosServiceSpy.getFormulaDetail).toHaveBeenCalledWith(component.ordenFabricacionId);
@@ -114,7 +126,7 @@ describe('DetalleFormulaComponent', () => {
     expect(component.allComplete).toBeTruthy();
 
   });
-/!*  it('should someComplete', () => {
+  it('should someComplete', () => {
     component.dataSource.data = [];
     component.dataSource.data = DetalleFormulaMock.response.details;
     component.dataSource.data.forEach( element => element.isChecked = false);
@@ -131,7 +143,7 @@ describe('DetalleFormulaComponent', () => {
     component.setAll(false);
     expect(component.allComplete).toBeFalsy();
     expect(component.dataSource.data.every(element => element.isChecked)).toBeFalsy();
-  });*!/
+  });
   it('should getOpenDialog()', () => {
     component.openDialog();
     expect(dataServiceSpy.setSearchComponentModal).toHaveBeenCalled();
@@ -182,6 +194,11 @@ describe('DetalleFormulaComponent', () => {
     component.onRequiredQuantityChange(1, 0);
     expect(component.dataSource.data[0].action).toBeDefined();
     expect(component.dataSource.data[0].requiredQuantity).toBeDefined();
-  });*/
+  });
 
+  it('should saveFormulaDetail', () => {
+    component.saveFormulaDetail();
+    expect(component.isPlannedQuantityError).toBe(false);
+    // expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+  });
 });

@@ -16,12 +16,12 @@ import {CommentsConfig} from '../../model/device/incidents.model';
   styleUrls: ['./add-comments-dialog.component.scss']
 })
 export class AddCommentsDialogComponent implements OnInit, AfterViewInit {
+  @ViewChild('finishComments', {static: true}) finishComments: ElementRef;
   comments = CONST_STRING.empty;
   newComments = CONST_STRING.empty;
   arrayComments: string [] = [];
   isCorrectData = true;
   maxLengthComments = CONST_STRING.empty;
-  @ViewChild('finishComments', {static: true}) finishComments: ElementRef;
   constructor( private dialogRef: MatDialogRef<AddCommentsDialogComponent>, @Inject(MAT_DIALOG_DATA) public commentsConfig: any) {
     this.comments = this.commentsConfig.comments || CONST_STRING.empty;
     this.arrayComments = this.comments.trim().split('&').filter( comment => comment !== CONST_STRING.empty);
@@ -58,7 +58,9 @@ export class AddCommentsDialogComponent implements OnInit, AfterViewInit {
     this.finishComments.nativeElement.scrollIntoView();
   }
   ngAfterViewInit(): void {
-    this.scroll();
+    setTimeout(() => {
+      this.scroll();
+      }, 1000);
   }
 
   checkData() {

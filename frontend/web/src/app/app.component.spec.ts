@@ -6,8 +6,58 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {DatePipe} from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { PedidosService } from './services/pedidos.service';
+import { DataService } from './services/data.service';
 describe('AppComponent', () => {
+  let pedidosServiceSpy: jasmine.SpyObj<PedidosService>;
+  let dataServiceSpy: jasmine.SpyObj<DataService>;
+
+
   beforeEach(async(() => {
+    pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
+      'postPlaceOrders',
+      'postPlaceOrderAutomatic',
+      'putCancelOrders',
+      'putFinalizeOrders',
+      'createIsolatedOrder'
+    ]);
+
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'getUserRole',
+      'getIsLoading',
+      'userIsAuthenticated',
+      'getIsLogin',
+      'getGeneralNotificationMessage',
+      'getUrlActive',
+      'getQfbToPlace',
+      'getMessageGeneralCalHttp',
+      'getCancelOrder',
+      'getFinalizeOrders',
+      'getPathUrl',
+      'getIsLogout',
+      'getSearchComponentModal',
+      'getSearchOrdersModal',
+      'getOpenSignatureDialog',
+      'getOpenCommentsDialog',
+      'setIsLogin',
+      'clearSession',
+      'getOrderIsolated',
+      'removeOrderIsolated',
+      'getIsToSaveAnything',
+      'presentToastCustom',
+      'getUserId',
+      'setCallHttpService',
+      'getUserName',
+      'removeFiltersActiveOrders',
+      'removeFiltersActive',
+      'getMessageTitle',
+      'setNewFormulaComponent',
+      'setNewMaterialComponent',
+      'getFiltersActivesAsModelOrders',
+      'setFiltersActivesOrders',
+      'setNewSearchOrderModal',
+      'setNewCommentsResult'
+    ]);
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
