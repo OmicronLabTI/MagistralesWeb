@@ -69,6 +69,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var ids = userResponse.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
             var lineProducts = await this.GetLineProductsToLook(ids, userResponse.Item3, parameters);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts, parameters);
+
+            if (!this.ValidateOrdersById(userResponse.Item1, sapOrders.Item1))
+            {
+                var emptyData = new AlmacenOrdersModel { SalesOrders = new List<SalesModel>() };
+                return ServiceUtils.CreateResult(true, 200, null, emptyData, null, "0-0");
+            }
+
             var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, status);
             orders = await this.GetSapLinesToLookByChips(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
@@ -80,7 +87,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersDetails(int orderId)
         {
-            var pedidos = await this.GetUserOrderByids(new List<int> { orderId });
+            var pedidos = await this.GetUserOrderByids(new List<int> { orderId }, ServiceConstants.GetUserSalesOrder);
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesBySaleOrder, new List<int> { orderId });
             var lineOrders = JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
 
@@ -246,9 +253,9 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
         }
 
-        private async Task<List<UserOrderModel>> GetUserOrderByids(List<int> ordersId)
+        private async Task<List<UserOrderModel>> GetUserOrderByids(List<int> ordersId, string route)
         {
-            var pedidosResponse = await this.pedidosService.PostPedidos(ordersId, ServiceConstants.GetUserSalesOrder);
+            var pedidosResponse = await this.pedidosService.PostPedidos(ordersId, route);
             return JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
         }
 
@@ -256,6 +263,22 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesBySaleOrder, ordersId);
             return JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
+        }
+
+        private bool ValidateOrdersById(List<UserOrderModel> userOrderModels, List<CompleteAlmacenOrderModel> sapOrders)
+        {
+            if (!sapOrders.Any(x => x.IsMagistral == "Y"))
+            {
+                return true;
+            }
+
+            var magistralProducts = sapOrders.Count(x => x.IsMagistral == "Y");
+            if (!userOrderModels.Any() || magistralProducts != userOrderModels.Count(x => !string.IsNullOrEmpty(x.Productionorderid)))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -266,7 +289,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
             {
-                var pedidos = await this.GetUserOrderByids(new List<int> { pedidoId });
+                var pedidos = await this.GetUserOrderByids(new List<int> { pedidoId }, ServiceConstants.GetUserOrdersAlmancenId);
                 return new Tuple<List<UserOrderModel>, List<int>, DateTime>(pedidos, new List<int>(), DateTime.Now);
             }
 
@@ -450,7 +473,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
-            return sapOrders.Where(x => listNames.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
+            return sapOrders.Where(x => listNames.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower()))).ToList();
         }
 
         /// <summary>
