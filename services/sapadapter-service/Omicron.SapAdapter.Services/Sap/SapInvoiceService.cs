@@ -291,7 +291,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
 
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
-                x.ClientEmail = x.ClientEmail;
                 x.TransportName = company.TrnspName;
 
                 //// ToDo descomentar linea siguiente si hay deploy magis a prod antes que dxp
