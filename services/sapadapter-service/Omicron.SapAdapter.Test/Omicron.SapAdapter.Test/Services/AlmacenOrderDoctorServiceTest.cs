@@ -84,7 +84,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.catalogService = new Mock<ICatalogsService>();
             this.catalogService
                 .Setup(m => m.GetParams(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModel(parameters)));
+                .Returns(Task.FromResult(this.GetResultDto(parameters)));
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
 
@@ -148,7 +148,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.catalogService
                 .Setup(m => m.GetParams(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModel(localNeighBors)));
+                .Returns(Task.FromResult(this.GetResultDto(localNeighBors)));
 
             // act
             var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersByDoctor(dictionary);
@@ -184,7 +184,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.catalogService
                 .Setup(m => m.GetParams(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModel(localNeighBors)));
+                .Returns(Task.FromResult(this.GetResultDto(localNeighBors)));
 
             // act
             var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersDetailsByDoctor(request);

@@ -12,11 +12,13 @@ namespace Omicron.SapAdapter.Test.Services
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Moq;
     using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.User;
+    using Serilog;
 
     /// <summary>
     /// Class UsersServiceTest.
@@ -43,9 +45,11 @@ namespace Omicron.SapAdapter.Test.Services
                 },
             };
 
+            var mockLogger = new Mock<ILogger>();
+            mockLogger.Setup(x => x.Information(It.IsAny<string>()));
             HttpClient clientMock = new HttpClient(new MockHttpMessageHandler(responses));
             clientMock.BaseAddress = new System.Uri("http://test.com/");
-            var pedidoService = new UsersService(clientMock);
+            var pedidoService = new UsersService(clientMock, mockLogger.Object);
 
             // act
             var result = await pedidoService.GetUsersById(new List<string>(), ServiceConstants.GetUsersById);
