@@ -70,7 +70,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = await this.GetLineProductsToLook(ids, userResponse.Item3, parameters);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts, parameters);
 
-            if (!this.ValidateOrdersById(userResponse.Item1, sapOrders.Item1))
+            if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId) && !this.ValidateOrdersById(userResponse.Item1, sapOrders.Item1))
             {
                 var emptyData = new AlmacenOrdersModel { SalesOrders = new List<SalesModel>() };
                 return ServiceUtils.CreateResult(true, 200, null, emptyData, null, "0-0");
