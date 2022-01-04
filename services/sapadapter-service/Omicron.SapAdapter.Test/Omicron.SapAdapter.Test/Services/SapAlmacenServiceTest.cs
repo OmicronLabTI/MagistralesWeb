@@ -96,7 +96,7 @@ namespace Omicron.SapAdapter.Test.Services
                 new ParametersModel { Value = "Apodaca" },
             };
 
-            var parametersResponse = this.GetResultModel(parameters);
+            var parametersResponse = this.GetResultDto(parameters);
 
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
@@ -149,7 +149,7 @@ namespace Omicron.SapAdapter.Test.Services
                 new ParametersModel { Value = "Apodaca" },
             };
 
-            var parametersResponse = this.GetResultModel(parameters);
+            var parametersResponse = this.GetResultDto(parameters);
 
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
@@ -201,7 +201,7 @@ namespace Omicron.SapAdapter.Test.Services
                 new ParametersModel { Value = "10" },
             };
 
-            var parametersResponse = this.GetResultModel(parameters);
+            var parametersResponse = this.GetResultDto(parameters);
 
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
@@ -248,7 +248,7 @@ namespace Omicron.SapAdapter.Test.Services
                 new ParametersModel { Value = "10" },
             };
 
-            var parametersResponse = this.GetResultModel(parameters);
+            var parametersResponse = this.GetResultDto(parameters);
 
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos

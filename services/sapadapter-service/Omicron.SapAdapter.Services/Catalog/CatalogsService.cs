@@ -12,7 +12,9 @@ namespace Omicron.SapAdapter.Services.Catalog
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Services.Utils;
     using Serilog;
 
     /// <summary>
@@ -42,22 +44,14 @@ namespace Omicron.SapAdapter.Services.Catalog
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetParams(string route)
+        public async Task<ResultDto> GetParams(string route)
         {
-            ResultModel result;
+            ResultDto result;
             var url = this.httpClient.BaseAddress + route;
 
             using (var response = await this.httpClient.GetAsync(url))
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-
-                if ((int)response.StatusCode >= 300)
-                {
-                    this.logger.Information($"Error peticion catalogs {jsonString}");
-                    throw new CustomServiceException(jsonString);
-                }
-
-                result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+                result = await ServiceUtils.GetResponse(response, this.logger, "Error peticion catalogs");
             }
 
             return result;
