@@ -16,11 +16,12 @@ import {
   MODAL_NAMES,
   RolesType,
   RouterPaths,
-  TypeToSeeTap
+  TypeToSeeTap,
+  constRealLabel
 } from '../../constants/const';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
-import { CancelOrderReq, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq } from '../../model/http/pedidos';
+import { CancelOrderReq, Catalogs, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq } from '../../model/http/pedidos';
 import { Messages } from '../../constants/messages';
 import { ErrorService } from '../../services/error.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -35,6 +36,9 @@ import { CommentsConfig } from '../../model/device/incidents.model';
 export class PedidoDetalleComponent implements OnInit, OnDestroy {
   allComplete = false;
   docStatus: string;
+  ProductNoLabel: Catalogs;
+  productCodeSplit = [];
+  realLabel: string;
   displayedColumns: string[] = [
     'seleccion',
     'ordenFabricacionId',
@@ -58,6 +62,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToReassign = false;
   isOnInit = true;
   isThereOrdersToFinishLabel = false;
+  OrderToGenerateQR = false;
   signatureData = CONST_STRING.empty;
   isThereOrdersToViewPdf = false;
   isCorrectToAddComments = false;
@@ -76,13 +81,14 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getProductoNoLabel();
     this.route.paramMap.subscribe(params => {
       this.validateToGetCurrentDetail(params.get('id'));
       this.titleService.setTitle('Pedido ' + params.get('id'));
     });
     this.subscriptionCallHttpDetail.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
       if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
-        this.getDetallePedido();
+        this.getDetallePedidoService();
       }
     }));
     this.subscriptionCallHttpDetail.add(this.dataService.getNewDataSignature().subscribe(newDataSignature => {
@@ -90,17 +96,21 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       this.sendToLabelsFinish();
     }));
     this.subscriptionCallHttpDetail.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
-      this.successNewComments(newCommentsResult)));
+    this.successNewComments(newCommentsResult)));
   }
 
-  getDetallePedido() {
+  getDetallePedidoService() {
     this.pedidosService.getDetallePedido(this.paramsDetailOrder.current).subscribe(
       ({ response }) => this.onSuccessDetailPedido(response), error => this.errorService.httpError(error));
   }
   onSuccessDetailPedido(response: IPedidoDetalleReq[]) {
+    this.productCodeSplit = [];
     this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
     this.dataSource.data = response;
     this.dataSource.data.forEach(element => {
+      const productCodeSplit = element.codigoProducto.split(' ');
+      this.productCodeSplit.push(productCodeSplit[0]);
+      this.realLabel = constRealLabel.impresaCliente;
       const patientName = element.patientName !== CONST_STRING.empty && element.patientName !== undefined ?
         element.patientName.split(':')[1]
         : CONST_STRING.empty;
@@ -150,6 +160,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.isThereOrdersToViewPdf = false;
     this.isThereOrdersDetailToDelivered = false;
     this.isThereOrdersToFinishLabel = false;
+    this.OrderToGenerateQR = false;
     this.isThereOrdersDetailToPlan = false;
     this.isThereOrdersDetailToPlace = false;
     this.isThereOrdersDetailToCancel = false;
@@ -163,7 +174,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   updateAllComplete() {
+    this.OrderToGenerateQR = false;
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
+    this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
     this.getButtonsToUnLooked();
   }
 
@@ -180,6 +193,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       return;
     }
     this.dataSource.data.forEach(t => t.isChecked = completed);
+    this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
     this.getButtonsToUnLooked();
   }
 
@@ -224,7 +238,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             if (resultProcessDetail.success && resultProcessDetail.response.length > 0) {
               const titleProcessDetailWithError = this.dataService.getMessageTitle(
                 resultProcessDetail.response, MessageType.processDetailOrder);
-              this.getDetallePedido();
+              this.getDetallePedidoService();
               this.dataService.presentToastCustom(titleProcessDetailWithError, 'error',
                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             } else {
@@ -299,7 +313,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   reloadOrderDetail() {
-    this.getDetallePedido();
+    this.getDetallePedidoService();
     this.dataService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
   }
 
@@ -322,13 +336,14 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   getArrayToFinishLabel(isFromRemoveSignature: boolean, index?: number) {
     if (!isFromRemoveSignature) {
-      return this.dataSource.data.filter(order => order.isChecked && (order.status !== ConstStatus.abierto &&
-        order.status !== ConstStatus.cancelado))
+      return this.dataSource.data.filter(order => order.isChecked &&
+        (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado)
+        && order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value && order.finishedLabel !== 1)
         .map(order => {
-          const labelToFinish = new LabelToFinish();
-          labelToFinish.orderId = order.ordenFabricacionId;
-          labelToFinish.checked = !isFromRemoveSignature;
-          return labelToFinish;
+            const labelToFinish = new LabelToFinish();
+            labelToFinish.orderId = order.ordenFabricacionId;
+            labelToFinish.checked = !isFromRemoveSignature;
+            return labelToFinish;
         });
     } else {
       const labelsToFinish: LabelToFinish[] = [];
@@ -399,7 +414,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.paramsDetailOrder = JSON.parse(this.dataService.getFiltersActives());
     this.paramsDetailOrder = { ...this.paramsDetailOrder, current: order };
     this.baseQueryString = this.dataService.getNewDataToFilter(this.paramsDetailOrder)[1];
-    this.getDetallePedido();
+    this.getDetallePedidoService();
 
   }
 
@@ -455,6 +470,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         }
       });
 
+  }
+
+  getProductoNoLabel() {
+    this.ProductNoLabel = this.dataService.getProductNoLabel();
   }
 }
 

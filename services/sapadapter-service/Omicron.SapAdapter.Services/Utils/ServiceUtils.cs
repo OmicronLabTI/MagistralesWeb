@@ -11,16 +11,20 @@ namespace Omicron.SapAdapter.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Redis;
+    using Serilog;
 
     /// <summary>
     /// The class for the services.
@@ -344,6 +348,26 @@ namespace Omicron.SapAdapter.Services.Utils
             var sapProducts = (await sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
             await redis.WriteToRedis(ServiceConstants.AlmacenLineProducts, JsonConvert.SerializeObject(sapProducts), new TimeSpan(8, 0, 0));
             return sapProducts;
+        }
+
+        /// <summary>
+        /// Gets the response from a http response.
+        /// </summary>
+        /// <param name="response">the response.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="error">the error.</param>
+        /// <returns>the data.</returns>
+        public static async Task<ResultDto> GetResponse(HttpResponseMessage response, ILogger logger, string error)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            if ((int)response.StatusCode >= 300)
+            {
+                logger.Information($"{error} {jsonString}");
+                throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
+            }
+
+            return JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
         }
 
         /// <summary>

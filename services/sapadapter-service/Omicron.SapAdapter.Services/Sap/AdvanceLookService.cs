@@ -615,17 +615,17 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 case ServiceConstants.SaleOrder:
                     var orders = (await this.sapDao.GetOrderModelByDocDateJoinDoctor(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
-                    orders = orders.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
+                    orders = orders.Where(x => !string.IsNullOrEmpty(x.Medico) && doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return orders.Select(x => x.DocNum).Distinct().ToList();
 
                 case ServiceConstants.Delivery:
                     var deliveries = (await this.sapDao.GetDeliveryByDocDateJoinDoctor(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
-                    deliveries = deliveries.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
+                    deliveries = deliveries.Where(x => !string.IsNullOrEmpty(x.Medico) && doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return deliveries.Select(x => x.DocNum).Distinct().ToList();
 
                 case ServiceConstants.Invoice:
                     var invoices = (await this.sapDao.GetInvoiceHeadersByDocDateJoinDoctor(dictDates[ServiceConstants.FechaInicio], dictDates[ServiceConstants.FechaFin])).ToList();
-                    invoices = invoices.Where(x => doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
+                    invoices = invoices.Where(x => !string.IsNullOrEmpty(x.Medico) && doctorValue.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
                     return invoices.Select(x => x.DocNum).Distinct().ToList();
             }
 
@@ -855,7 +855,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     {
                         DeliveryId = y.DeliveryId,
                         DeliveryDocDate = y.DocDate,
-                        SaleOrder = y.BaseEntry,
+                        SaleOrder = y.BaseEntry ?? 0,
                         Status = userOrderStatus.Any() && userOrderStatus.All(z => z == ServiceConstants.Empaquetado) ? ServiceConstants.Empaquetado : ServiceConstants.Almacenado,
                         TotalItems = invoiceDetails.Where(a => a.BaseEntry.HasValue).Count(z => z.BaseEntry == y.DeliveryId),
                     };

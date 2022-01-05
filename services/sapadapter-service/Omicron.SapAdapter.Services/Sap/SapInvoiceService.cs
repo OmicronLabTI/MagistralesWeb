@@ -105,7 +105,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(invoiceDetails.Where(y => y.Detail.BaseEntry.HasValue).Select(x => (int)x.Detail.BaseEntry).Distinct().ToList())).ToList();
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
-            var salesOrdersId = deliveryDetails.Select(x => x.BaseEntry).ToList();
+            var salesOrdersId = deliveryDetails.Where(y => y.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList();
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserSalesOrder, salesOrdersId);
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, salesOrdersId);
 
@@ -146,9 +146,10 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeader ??= new InvoiceHeaderModel();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(new List<int> { invoiceHeader.InvoiceId })).ToList();
             var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntry(invoiceDetails.Select(x => x.BaseEntry.Value).ToList())).ToList();
-            var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(deliveryDetails.Select(x => x.BaseEntry).ToList())).ToList();
+            var ordersIdToLookFor = deliveryDetails.Where(x => x.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).Distinct().ToList();
+            var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(ordersIdToLookFor)).ToList();
 
-            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, deliveryDetails.Select(x => x.BaseEntry).ToList());
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, ordersIdToLookFor);
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
             var products = await this.GetProductModels(invoiceDetails, deliveryDetails, userOrders, lineProducts, fabOrders, incidents);
@@ -161,7 +162,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryId = int.Parse(code);
 
             var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntry(new List<int> { deliveryId })).ToList();
-            var listSaleOrder = deliveryDetails.Select(x => x.BaseEntry).Distinct().ToList();
+            var listSaleOrder = deliveryDetails.Where(y => y.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).Distinct().ToList();
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserSalesOrder, listSaleOrder);
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, listSaleOrder);
 
@@ -290,7 +291,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
 
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
-                x.ClientEmail = x.ClientEmail;
                 x.TransportName = company.TrnspName;
 
                 //// ToDo descomentar linea siguiente si hay deploy magis a prod antes que dxp
@@ -579,7 +579,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var localDeliverDetails = deliveryDetails.Where(x => !usedDeliveries.Any(y => y.ProductoId == x.ProductoId && x.BaseEntry == y.BaseEntry)).ToList();
                 var deliveriesDetail = localDeliverDetails.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value && x.ProductoId == invoice.ProductoId);
-                var saleId = deliveriesDetail == null ? 0 : deliveriesDetail.BaseEntry;
+                var saleId = deliveriesDetail == null || !deliveriesDetail.BaseEntry.HasValue ? 0 : deliveriesDetail.BaseEntry.Value;
                 var prodId = deliveriesDetail == null ? string.Empty : deliveriesDetail.ProductoId;
 
                 usedDeliveries.Add(new DeliveryDetailModel { BaseEntry = saleId, ProductoId = prodId });
@@ -645,7 +645,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var status = ServiceConstants.Almacenado;
             var deliveriesDetail = deliveries.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value && invoice.ProductoId == x.ProductoId && x.BaseEntry == saleIdLook);
-            var saleId = deliveriesDetail == null ? 0 : deliveriesDetail.BaseEntry;
+            var saleId = deliveriesDetail == null || !deliveriesDetail.BaseEntry.HasValue ? 0 : deliveriesDetail.BaseEntry.Value;
             var order = orders.FirstOrDefault(x => x.PedidoId == saleId && x.ProductoId == invoice.ProductoId);
 
             if (order != null)
@@ -696,9 +696,9 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<DeliveryScannedModel> GetDeliveryScannedData(InvoiceHeaderModel invoice, List<DeliveryDetailModel> deliveries, List<InvoiceDetailModel> invoices, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders)
         {
             var delivery = deliveries.FirstOrDefault();
-            delivery = delivery == null ? new DeliveryDetailModel() : delivery;
+            delivery = delivery == null || !delivery.BaseEntry.HasValue ? new DeliveryDetailModel { BaseEntry = 0 } : delivery;
 
-            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { delivery.BaseEntry });
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { delivery.BaseEntry.Value });
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
             invoices = invoices.Where(x => x.BaseEntry.HasValue && x.BaseEntry.Value == delivery.DeliveryId).ToList();

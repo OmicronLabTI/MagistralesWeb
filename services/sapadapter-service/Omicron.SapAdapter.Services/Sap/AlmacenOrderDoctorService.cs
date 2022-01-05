@@ -205,7 +205,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var doctorName = parameters[ServiceConstants.Chips].Split(",").ToList();
-            return sapOrders.Where(x => doctorName.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
+            return sapOrders.Where(x => doctorName.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower()))).ToList();
         }
 
         /// <summary>
