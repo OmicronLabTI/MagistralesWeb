@@ -383,6 +383,18 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// creates the result.
+        /// </summary>
+        /// <param name="dic">the dictioanry.</param><
+        /// <param name="key">the key to search.</param>
+        /// <param name="defaultValue">default value.</param>
+        /// <returns>the resultModel.</returns>
+        public static string GetDictionaryValueString(Dictionary<string, string> dic, string key, string defaultValue)
+        {
+            return dic.ContainsKey(key) ? dic[key] : defaultValue;
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>
