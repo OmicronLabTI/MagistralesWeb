@@ -90,6 +90,7 @@ namespace Omicron.SapAdapter.Test
             new SaleOrderTypeModel(),
             new DeliveyJoinOrderModel(),
             new SalesPersonModel(),
+            new AssignedBatches(),
         };
 
         /// <summary>
