@@ -37,8 +37,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">The reddis service.</param>
         public ComponentsService(ISapDao sapDao, IRedisService redisService)
         {
-            this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>

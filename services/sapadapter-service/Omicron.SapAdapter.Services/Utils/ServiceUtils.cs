@@ -371,6 +371,18 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        ///    test.
+        /// </summary>
+        /// <typeparam name="T">s.</typeparam>
+        /// <param name="obj">sfr.</param>
+        /// <param name="name">name of param.</param>
+        /// <returns>ca.</returns>
+        public static T ThrowIfNull<T>(this T obj, string name)
+        {
+            return obj ?? throw new ArgumentNullException(name);
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>

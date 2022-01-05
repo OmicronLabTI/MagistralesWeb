@@ -65,13 +65,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">The reddis service.</param>
         public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration, ILogger logger, IGetProductionOrderUtils getProductionOrderUtils, IRedisService redisService)
         {
-            this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
-            this.usersService = userService ?? throw new ArgumentNullException(nameof(userService));
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
+            this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
+            this.usersService = userService.ThrowIfNull(nameof(userService));
+            this.configuration = configuration.ThrowIfNull(nameof(configuration));
             this.logger = logger;
             this.getProductionOrderUtils = getProductionOrderUtils;
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <summary>
