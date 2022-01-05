@@ -83,8 +83,10 @@ namespace Omicron.Pedidos.Test.Services
         [Test]
         public async Task GetOrdersForAlmacenById()
         {
+            var listIds = new List<int> { 207, 206 };
+
             // act
-            var result = await this.pedidosAlmacen.GetOrdersForAlmacen(new List<int>());
+            var result = await this.pedidosAlmacen.GetOrdersForAlmacen(listIds);
 
             // assert
             Assert.IsNotNull(result);
