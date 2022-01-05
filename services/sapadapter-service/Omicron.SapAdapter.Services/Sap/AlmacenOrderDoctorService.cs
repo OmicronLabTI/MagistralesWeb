@@ -109,7 +109,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var item = productItems.FirstOrDefault(x => x.ProductoId == detail.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
-                var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+                var productType = ServiceUtils.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
                 var saleDetail = saleDetails.FirstOrDefault(x => x.CodigoProducto == detail.ProductoId);
                 var orderId = saleDetail == null ? string.Empty : saleDetail.OrdenFabricacionId.ToString();
                 var itemcode = !string.IsNullOrEmpty(orderId) ? $"{item.ProductoId} - {orderId}" : item.ProductoId;
@@ -132,7 +132,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ProductType = $"Producto {productType}",
                     Pieces = detail.Quantity,
                     Container = detail.Container,
-                    Status = detail.CanceledOrder == "Y" ? ServiceConstants.Cancelado : ServiceConstants.PorRecibir,
+                    Status = ServiceUtils.CalculateTernary(detail.CanceledOrder == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                 };
                 listDetails.Add(detailItem);
@@ -263,8 +263,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 
-                var productType = orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y") ? ServiceConstants.Magistral : ServiceConstants.Mixto;
-                productType = orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y") ? ServiceConstants.Linea : productType;
+                var productType = ServiceUtils.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
+                productType = ServiceUtils.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
 
                 var orderType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, order.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo;
 
@@ -274,12 +274,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     DocNum = so,
                     InitDate = order == null ? DateTime.Now : order.FechaInicio,
-                    Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : ServiceConstants.PorRecibir,
+                    Status = ServiceUtils.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
                     TotalItems = orders.Count,
                     TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
                     TypeSaleOrder = $"Pedido {productType}",
                     InvoiceType = orderType,
-                    Comments = userOrder == null ? string.Empty : userOrder.Comments,
+                    Comments = userOrder?.Comments ?? string.Empty,
                     OrderType = order.TypeOrder,
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
                 };

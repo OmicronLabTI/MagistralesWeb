@@ -395,6 +395,29 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// Calculate value from validation.
+        /// </summary>
+        /// <param name="validation">Validation.</param>
+        /// <param name="value">True value.</param>
+        /// <param name="defaultValue">False value.</param>
+        /// <returns>Result.</returns>
+        public static string CalculateTernary(bool validation, string value, string defaultValue)
+        {
+            return validation ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// get a date value or default value.
+        /// </summary>
+        /// <param name="date">the date to check.</param>
+        /// <param name="defaultDate">tehd efault date.</param>
+        /// <returns>a date in string format.</returns>
+        public static string GetDateValueOrDefault(DateTime? date, string defaultDate)
+        {
+            return date.HasValue ? date.Value.ToString("dd/MM/yyyy") : defaultDate;
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>

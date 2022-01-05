@@ -299,8 +299,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
 
-                var deliveryType = deliveryDetail.All(x => x.Producto.IsLine == "Y") ? ServiceConstants.LineaAlone : ServiceConstants.Mixto;
-                deliveryType = deliveryDetail.All(x => x.Producto.IsMagistral == "Y") ? ServiceConstants.Magistral : deliveryType;
+                var deliveryType = ServiceUtils.CalculateTernary(deliveryDetail.All(x => x.Producto.IsLine == "Y"), ServiceConstants.LineaAlone, ServiceConstants.Mixto);
+                deliveryType = ServiceUtils.CalculateTernary(deliveryDetail.All(x => x.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, deliveryType);
 
                 var deliveryWithInvoice = deliveryDetail.FirstOrDefault(x => x.InvoiceId.HasValue && x.InvoiceId.Value != 0);
                 deliveryWithInvoice ??= new DeliveryDetailModel { InvoiceId = 0 };
@@ -342,13 +342,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrder = userOrders.FirstOrDefault(y => y.Salesorderid == s.DocNum.ToString() && string.IsNullOrEmpty(y.Productionorderid));
                 var localDetails = details.Where(y => y.Detalles.BaseEntry == s.DocNum).ToList();
 
-                var productType = localDetails.All(y => y.Producto.IsMagistral == "Y") ? ServiceConstants.Magistral : ServiceConstants.Mixto;
-                productType = localDetails.All(y => y.Producto.IsLine == "Y") ? ServiceConstants.Linea : productType;
+                var productType = ServiceUtils.CalculateTernary(localDetails.All(y => y.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
+                productType = ServiceUtils.CalculateTernary(localDetails.All(y => y.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
 
                 listToReturn.Add(new SaleOrderByDeliveryModel
                 {
                     DocNum = s.DocNum,
-                    Comments = userOrder == null ? string.Empty : userOrder.Comments,
+                    Comments = userOrder?.Comments ?? string.Empty,
                     FechaInicio = s.FechaInicio,
                     Pieces = localDetails.Sum(y => (int)y.Detalles.Quantity),
                     Products = localDetails.Count,
@@ -376,11 +376,11 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var order in deliveryDetails)
             {
-                order.BaseEntry = order.BaseEntry ?? 0;
+                order.BaseEntry ??= 0;
                 var item = products.FirstOrDefault(x => order.ProductoId == x.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+                var productType = ServiceUtils.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
                 var saleDetail = prodOrders.FirstOrDefault(x => x.ProductoId == order.ProductoId);
                 var orderId = saleDetail == null ? string.Empty : saleDetail.OrdenId.ToString();

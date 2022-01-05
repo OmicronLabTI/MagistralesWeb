@@ -63,7 +63,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     InitDate = order.FechaInicio,
                     AsesorId = order.AsesorId,
                     PedidoStatus = order.PedidoStatus,
-                    IsLine = isLine ? "Y" : "N",
+                    IsLine = ServiceUtils.CalculateTernary(isLine, "Y", "N"),
                     EmailAsesor = asesor.Email,
                     PhoneAsesor = asesor.PhoneMobile,
                 });
