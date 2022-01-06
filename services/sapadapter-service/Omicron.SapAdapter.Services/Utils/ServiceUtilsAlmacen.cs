@@ -11,10 +11,8 @@ namespace Omicron.SapAdapter.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;

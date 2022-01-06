@@ -55,12 +55,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">thre redis service.</param>
         public AdvanceLookService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, IUsersService usersService, ICatalogsService catalogsService, IRedisService redisService)
         {
-            this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
-            this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
-            this.usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
-            this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
+            this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
+            this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
+            this.usersService = usersService.ThrowIfNull(nameof(usersService));
+            this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -609,7 +609,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var doctorValue = parameters.ContainsKey(ServiceConstants.Doctor) ? parameters[ServiceConstants.Doctor].Split(",").ToList() : new List<string>();
             var dictDates = ServiceUtils.GetDateFilter(parameters);
-            var type = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.SaleOrder;
+            var type = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.SaleOrder);
 
             switch (type)
             {
