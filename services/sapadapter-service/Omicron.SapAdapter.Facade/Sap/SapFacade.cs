@@ -8,13 +8,13 @@
 
 namespace Omicron.SapAdapter.Facade.Sap
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Services.Sap;
+    using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
     /// Class for the facade.
@@ -39,9 +39,9 @@ namespace Omicron.SapAdapter.Facade.Sap
         public SapFacade(ISapService sapService, IMapper mapper, IComponentsService componentsService, ISapDxpService sapDxpService)
         {
             this.mapper = mapper;
-            this.sapService = sapService ?? throw new ArgumentNullException(nameof(sapService));
-            this.componentsService = componentsService ?? throw new ArgumentNullException(nameof(componentsService));
-            this.sapDxpService = sapDxpService ?? throw new ArgumentException(nameof(sapDxpService));
+            this.sapService = sapService.ThrowIfNull(nameof(sapService));
+            this.componentsService = componentsService.ThrowIfNull(nameof(componentsService));
+            this.sapDxpService = sapDxpService.ThrowIfNull(nameof(sapDxpService));
         }
 
         /// <summary>

@@ -371,6 +371,53 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        ///    test.
+        /// </summary>
+        /// <typeparam name="T">s.</typeparam>
+        /// <param name="obj">sfr.</param>
+        /// <param name="name">name of param.</param>
+        /// <returns>ca.</returns>
+        public static T ThrowIfNull<T>(this T obj, string name)
+        {
+            return obj ?? throw new ArgumentNullException(name);
+        }
+
+        /// <summary>
+        /// creates the result.
+        /// </summary>
+        /// <param name="dic">the dictioanry.</param><
+        /// <param name="key">the key to search.</param>
+        /// <param name="defaultValue">default value.</param>
+        /// <returns>the resultModel.</returns>
+        public static string GetDictionaryValueString(Dictionary<string, string> dic, string key, string defaultValue)
+        {
+            return dic.ContainsKey(key) ? dic[key] : defaultValue;
+        }
+
+        /// <summary>
+        /// Calculate value from validation.
+        /// </summary>
+        /// <param name="validation">Validation.</param>
+        /// <param name="value">True value.</param>
+        /// <param name="defaultValue">False value.</param>
+        /// <returns>Result.</returns>
+        public static string CalculateTernary(bool validation, string value, string defaultValue)
+        {
+            return validation ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// get a date value or default value.
+        /// </summary>
+        /// <param name="date">the date to check.</param>
+        /// <param name="defaultDate">tehd efault date.</param>
+        /// <returns>a date in string format.</returns>
+        public static string GetDateValueOrDefault(DateTime? date, string defaultDate)
+        {
+            return date.HasValue ? date.Value.ToString("dd/MM/yyyy") : defaultDate;
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>

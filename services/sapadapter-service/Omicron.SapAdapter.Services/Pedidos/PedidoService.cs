@@ -8,12 +8,10 @@
 
 namespace Omicron.SapAdapter.Services.Pedidos
 {
-    using System.Collections.Generic;
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
