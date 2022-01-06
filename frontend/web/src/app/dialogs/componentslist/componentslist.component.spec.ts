@@ -99,7 +99,7 @@ describe('ComponentslistComponent', () => {
     });
     // matDialogRef.close.and.re
     component.selectComponent(baseComponent);
-    // expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
+    expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
 
   it('should removeCustomList', () => {
@@ -111,5 +111,10 @@ describe('ComponentslistComponent', () => {
     component.removeCustomList(baseComponent);
     expect(component.removeCustomList).toBeTruthy();
     // expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+  });
+
+  it('should getCustomList', () => {
+    component.getCustomList();
+    expect(ordersServiceSpy.getCustomList).toBeTruthy();
   });
 });

@@ -142,7 +142,7 @@ describe('ComponentSearchComponent', () => {
       isItemSelected: false
     };
     // component.selectComponent({componente: 'crema', chips: []});
-    // expect(component.selectComponent).toBeTruthy();
+    expect(component.selectComponent).toBeTruthy();
   });
 
   it('should selectComponent isFromSearchComponent = false', () => {
@@ -166,6 +166,6 @@ describe('ComponentSearchComponent', () => {
     };
     component.isFromSearchComponent = false;
     component.selectComponent({componente: 'crema', chips: []});
-    // expect(component.selectComponent).toBeTruthy();
+    expect(component.selectComponent).toBeTruthy();
   });
 });

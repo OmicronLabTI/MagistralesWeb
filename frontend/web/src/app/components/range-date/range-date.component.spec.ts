@@ -40,5 +40,6 @@ describe('RangeDateComponent', () => {
 
   it('should onDataChange', () => {
     component.onDataChange();
+    expect(component.onDataChange).toBeTruthy();
   });
 });

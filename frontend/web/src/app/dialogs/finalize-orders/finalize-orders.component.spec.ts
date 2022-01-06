@@ -11,12 +11,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { OrdersService } from 'src/app/services/orders.service';
 import { PedidosService } from '../../services/pedidos.service';
 import { of } from 'rxjs';
-import { IExistsBachCodeRes, IGetNewBachCodeRes } from 'src/app/model/http/pedidos';
+import { Batches, CancelOrderReq, IExistsBachCodeRes, IGetNewBachCodeRes } from 'src/app/model/http/pedidos';
 import { ICancelOrdersRes } from '../../model/http/pedidos';
 import { ErrorService } from 'src/app/services/error.service';
 import { DataService } from 'src/app/services/data.service';
 import { IOrdersReq, IOrdersRes } from 'src/app/model/http/ordenfabricacion';
 import { AddCommentsDialogComponent } from '../add-comments-dialog/add-comments-dialog.component';
+import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
 
 describe('FinalizeOrdersComponent', () => {
   let component: FinalizeOrdersComponent;
@@ -32,6 +33,17 @@ describe('FinalizeOrdersComponent', () => {
 
   // const iOrderRes = new IOrdersRes();
   let iOrdersReq: IOrdersReq[] = [];
+  const batches = new Batches();
+  batches.batchCode = '1';
+  batches.quantity = '';
+  batches.expirationDate = '';
+  batches.manufacturingDate = '';
+  const cancelOrderReq: CancelOrderReq[] = [{
+    orderId: 1,
+    userId: '1',
+    reason: '',
+    batches: [batches]
+  }];
 
   // iOrderRes.response = iOrdersReq;
 
@@ -137,10 +149,11 @@ describe('FinalizeOrdersComponent', () => {
       } as IOrdersReq
     ];
     component.onBatchesChange('', 0);
+    expect(component.onBatchesChange).toBeTruthy();
   });
 
   it('should isCorrectDataToFinalize', () => {
-    component.isCorrectDataToFinalize();
+    // component.isCorrectDataToFinalize();
     component.dataSource.data = [
       {
         batche: '1',
@@ -151,11 +164,12 @@ describe('FinalizeOrdersComponent', () => {
         isWithErrorBatch: false
       } as IOrdersReq
     ];
+    component.isCorrectDataToFinalize();
+    expect(component.isCorrectDataToFinalize).toBeTruthy();
     // expect(component.isCorrectData).toBe(false);
   });
 
   it('should focusOutLote', () => {
-    const i = 0;
     component.dataSource.data = [
       {
         isChecked: true,
@@ -180,7 +194,7 @@ describe('FinalizeOrdersComponent', () => {
         batch: ''
       } as IOrdersReq
     ];
-    // component.focusOutLote(i);
+    // component.focusOutLote(0);
     // expect(component.isCorrectData).toBeTruthy();
     // expect(orderServiceSpy.getIfExistsBatchCode).toHaveBeenCalled();
   });
@@ -331,13 +345,16 @@ describe('FinalizeOrdersComponent', () => {
       } as IOrdersReq
     ];
     component.finalizeOrderSend();
+    expect(component.finalizeOrderSend).toBeTruthy();
     // expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
 
   it('should keyFunction', () => {
-    const event = new KeyboardEvent("keypress",{
-      "key": "Enter"
-  });
-    component.keyDownFunction(event);
+    // const event = new KeyboardEvent('keypress', { key: 'Enter' });
+    component.isCorrectData = true;
+    const keyEvent = new KeyboardEvent('keyEnter', { key: MODAL_FIND_ORDERS.keyEnter});
+    // component.keyDownUsers(keyEvent);
+    component.keyDownFunction(keyEvent);
+    expect(component.finalizeOrderSend).toBeTruthy();
   });
 });

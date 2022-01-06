@@ -243,6 +243,7 @@ describe('FindOrdersDialogComponent', () => {
     component.findOrdersForm.get('docNumUntil').setValue('11');
     const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: ''});
     component.keyDownFunction(keyEvent);
+    expect(MockDialogRef.close).toHaveBeenCalled();
   });
 
   it('should call changeDocNumber with KeyboardEvent in true isDocNUmUntil = true', () => {
