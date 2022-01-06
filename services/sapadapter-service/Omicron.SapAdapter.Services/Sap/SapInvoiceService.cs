@@ -51,11 +51,11 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">The redis service.</param>
         public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
         {
-            this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
-            this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
-            this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
+            this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
+            this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
+            this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -445,8 +445,8 @@ namespace Omicron.SapAdapter.Services.Sap
         private List<int> GetInvoicesToLook(Dictionary<string, string> parameters, List<InvoiceHeaderModel> invoiceHeaders)
         {
             var invoiceHeadersIds = invoiceHeaders.OrderByDescending(x => x.InvoiceId).Select(y => y.InvoiceId).ToList();
-            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
-            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+            var offset = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);

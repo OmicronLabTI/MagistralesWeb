@@ -49,20 +49,20 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">thre redis service.</param>
         public SapAlmacenService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
         {
-            this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
-            this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
-            this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
+            this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
+            this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
+            this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
-            var typesString = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.AllTypes;
+            var typesString = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypes);
             var types = typesString.Split(",").ToList();
 
-            var listStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status] : ServiceConstants.AllStatus;
+            var listStatus = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.AllStatus);
             var status = listStatus.Split(",").ToList();
 
             var userResponse = await this.GetUserOrdersToLook(parameters);
@@ -555,8 +555,8 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = sapOrders.OrderBy(x => x.DocNum).ToList();
             var pedidosId = sapOrders.Select(x => x.DocNum).Distinct().ToList();
 
-            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
-            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+            var offset = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
