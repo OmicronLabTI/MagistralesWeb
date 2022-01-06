@@ -15,10 +15,12 @@ import {MatCardModule} from '@angular/material/card';
 import {MatInputModule} from '@angular/material/input';
 import {of} from 'rxjs';
 import {RolesMock} from '../../../mocks/rolesMock';
+import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
 
 describe('SearchUsersDialogComponent', () => {
   let component: SearchUsersDialogComponent;
   let fixture: ComponentFixture<SearchUsersDialogComponent>;
+  // const matDialogSpy = jasmine.createSpyObj('MatDialogRef', ['onNoClick', 'closeDialog']);
   let dataServiceSpy;
   let userServiceSpy;
   let errorServiceSpy;
@@ -36,6 +38,7 @@ describe('SearchUsersDialogComponent', () => {
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
+    const matDialogSpy = jasmine.createSpyObj('MatDialogRef', ['onNoClick', 'closeDialog']);
     TestBed.configureTestingModule({
       imports: [FormsModule, HttpClientTestingModule, MatCardModule, ReactiveFormsModule,
         MatDialogModule,
@@ -50,15 +53,7 @@ describe('SearchUsersDialogComponent', () => {
           provide: MatDialogRef,
           useValue: {close}
         },
-        { provide: MAT_DIALOG_DATA, useValue: {
-            activoSe: '0',
-            asignableSe: '1',
-            firstNameSe: 'name',
-            lastNameSe: 'last',
-            userNameSe: 'user',
-            userTypeRSe: '2',
-            classificationQFBSe: 'BE'
-          } } ,
+        { provide: MAT_DIALOG_DATA, useValue: matDialogSpy } ,
         { provide: UsersService, useValue: userServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: DataService, useValue: dataServiceSpy }]
@@ -74,5 +69,22 @@ describe('SearchUsersDialogComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should resetSearchParams', () => {
+    component.resetSearchParams();
+    expect(component.resetSearchParams).toBeTruthy();
+  });
+
+  // it('should keyDownUsers', () => {
+  //   // component.keyDownUsers();
+  // });
+
+  it('should keyDownUsers', () => {
+    // expect(component.keyDownFunction).toBeTruthy();
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: MODAL_FIND_ORDERS.keyEnter});
+    component.keyDownUsers(keyEvent);
+    // expect(MockDialogRef.close).toHaveBeenCalled();
+    expect(component.keyDownUsers).toBeTruthy();
   });
 });

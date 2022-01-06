@@ -8,17 +8,35 @@ import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {DataService} from '../../services/data.service';
 import {MODAL_NAMES} from '../../constants/const';
+import { PedidosService } from 'src/app/services/pedidos.service';
+import { IQfbWithNumberRes, QfbWithNumber } from 'src/app/model/http/users';
+import { of } from 'rxjs';
 
 describe('PlaceOrderDialogComponent', () => {
   let component: PlaceOrderDialogComponent;
   let fixture: ComponentFixture<PlaceOrderDialogComponent>;
   let dataServiceSpy;
+  let pedidosServiceSpy: jasmine.SpyObj<PedidosService>;
+  const iQfbWithNumberRes = new IQfbWithNumberRes();
+  const qfbWithNumber: QfbWithNumber[] = [{
+    countTotalOrders: 1,
+    countTotalFabOrders: 1,
+    countTotalPieces: 1,
+    clasification: ''
+  }];
+  iQfbWithNumberRes.response = qfbWithNumber;
 
   beforeEach(async(() => {
       dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
           'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'getFormattedNumber',
           'setQbfToPlace', 'setIsLoading'
       ]);
+      pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
+        'getQfbsWithOrders'
+      ]);
+      pedidosServiceSpy.getQfbsWithOrders.and.callFake(() => {
+        return of(iQfbWithNumberRes);
+      });
       TestBed.configureTestingModule({
       declarations: [ PlaceOrderDialogComponent ],
       imports: [
@@ -73,5 +91,10 @@ describe('PlaceOrderDialogComponent', () => {
             list: [],
             assignType: MODAL_NAMES.assignAutomatic
         });
+    });
+
+  it('should changeCurrentQfbs', () => {
+        component.qfbs = qfbWithNumber;
+        component.changeCurrentQfbs();
     });
 });

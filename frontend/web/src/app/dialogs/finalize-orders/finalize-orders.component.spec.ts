@@ -18,7 +18,7 @@ import { DataService } from 'src/app/services/data.service';
 import { IOrdersReq, IOrdersRes } from 'src/app/model/http/ordenfabricacion';
 import { AddCommentsDialogComponent } from '../add-comments-dialog/add-comments-dialog.component';
 
-fdescribe('FinalizeOrdersComponent', () => {
+describe('FinalizeOrdersComponent', () => {
   let component: FinalizeOrdersComponent;
   let fixture: ComponentFixture<FinalizeOrdersComponent>;
   let orderServiceSpy: jasmine.SpyObj<PedidosService>;
@@ -31,7 +31,7 @@ fdescribe('FinalizeOrdersComponent', () => {
   const putFinalizeOrders = new ICancelOrdersRes();
 
   // const iOrderRes = new IOrdersRes();
-  const iOrdersReq: IOrdersReq[] = [];
+  let iOrdersReq: IOrdersReq[] = [];
 
   // iOrderRes.response = iOrdersReq;
 
@@ -100,41 +100,14 @@ fdescribe('FinalizeOrdersComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should groupBy', () => {
-    component.groupBy(iOrdersReq, '');
-  });
-  it('should onBatchesChange', () => {
-    component.dataSource.data = [
-      {
-        batche: '',
-        itemCode: '',
-        isWithErrorBatch: false
-      } as IOrdersReq
-    ];
-    component.onBatchesChange('', 0);
-  });
-
-  it('should isCorrectDataToFinalize', () => {
-    component.dataSource.data = [
-      {
-        batche: '1',
-        itemCode: '1',
-        isWithErrorBatch: false
-      } as IOrdersReq
-    ];
-    component.isCorrectDataToFinalize();
-    expect(component.isCorrectData).toBeFalsy();
-  });
-
-  it('should focusOutLote', () => {
-    let i = 1;
-    component.dataSource.data = [
+  it('should groupBy if ordersIsolated.lenght >0', () => {
+    iOrdersReq = [
       {
         isChecked: true,
         docNum: 1,
         fabOrderId: 1,
-        itemCode: '1',
-        description: 'string',
+        itemCode: '',
+        description: '',
         quantity: 1,
         createDate: '',
         finishDate: '',
@@ -150,9 +123,64 @@ fdescribe('FinalizeOrdersComponent', () => {
         isWithErrorBatch: false,
         hasMissingStock: false,
         batch: ''
+      }
+    ];
+    // component.groupBy(iOrdersReq, keyGetter);
+  });
+  // component.groupBy(iOrdersReq, '');
+  it('should onBatchesChange', () => {
+    component.dataSource.data = [
+      {
+        batche: '',
+        itemCode: '',
+        isWithErrorBatch: false
       } as IOrdersReq
     ];
-    // component.focusOutLote(1);
+    component.onBatchesChange('', 0);
+  });
+
+  it('should isCorrectDataToFinalize', () => {
+    component.isCorrectDataToFinalize();
+    component.dataSource.data = [
+      {
+        batche: '1',
+        itemCode: '1',
+        quantityFinish: 1,
+        fabDate: new Date('12/12/12'),
+        endDate: new Date('12/12/12'),
+        isWithErrorBatch: false
+      } as IOrdersReq
+    ];
+    // expect(component.isCorrectData).toBe(false);
+  });
+
+  it('should focusOutLote', () => {
+    const i = 0;
+    component.dataSource.data = [
+      {
+        isChecked: true,
+        docNum: 1,
+        fabOrderId: 1,
+        itemCode: '1',
+        description: 'string',
+        quantity: 1,
+        createDate: '',
+        finishDate: '',
+        qfb: '',
+        status: '',
+        class: '',
+        unit: '',
+        batche: '1',
+        quantityFinish: 1,
+        endDate: new Date('22/12/12'),
+        fabDate: new Date('22/12/12'),
+        isWithError: false,
+        isWithErrorBatch: false,
+        hasMissingStock: false,
+        batch: ''
+      } as IOrdersReq
+    ];
+    // component.focusOutLote(i);
     // expect(component.isCorrectData).toBeTruthy();
     // expect(orderServiceSpy.getIfExistsBatchCode).toHaveBeenCalled();
   });
@@ -269,7 +297,7 @@ fdescribe('FinalizeOrdersComponent', () => {
       } as IOrdersReq
     ];
     component.onQuantityFinishChange('', 0);
-    expect(component.isCorrectData).toBeFalsy();
+    expect(component.onQuantityFinishChange).toBeTruthy();
   });
 
   it('should finalizeOrderSend', () => {
