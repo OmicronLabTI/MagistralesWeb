@@ -28,9 +28,9 @@ describe('MaterialRequestComponent', () => {
   let errorServiceSpy: jasmine.SpyObj<ErrorService>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let fileDownloaderServiceSpy: jasmine.SpyObj<FileDownloaderService>;
-  let reportingServiceSpy: jasmine.SpyObj<ReportingService>
+  let reportingServiceSpy: jasmine.SpyObj<ReportingService>;
 
-  const getPreMaterialRequestMock = new IMaterialRequestRes()
+  const getPreMaterialRequestMock = new IMaterialRequestRes();
   const postMaterialRequestMock = new IMaterialPostRes();
   const blobResponse = new HttpResponse<Blob>();
 
@@ -117,5 +117,5 @@ describe('MaterialRequestComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  })
+  });
 });

@@ -10,7 +10,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
 import { BatchesService } from 'src/app/services/batches.service';
 import { ErrorService } from 'src/app/services/error.service';
-import { ILotesAsignadosReq, ILotesFormulaReq, ILotesFormulaRes, ILotesReq, 
+import { ILotesAsignadosReq, ILotesFormulaReq, ILotesFormulaRes, ILotesReq,
   ILotesSaveRes, ILotesSelectedReq } from 'src/app/model/http/lotesformula';
 import { of } from 'rxjs';
 import { CONST_NUMBER } from 'src/app/constants/const';

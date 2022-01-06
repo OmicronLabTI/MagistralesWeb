@@ -16,8 +16,8 @@ describe('WarehouseComponent', () => {
   let component: WarehouseComponent;
   let fixture: ComponentFixture<WarehouseComponent>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
-  let errorServiceSpy: jasmine.SpyObj<ErrorService>;;
-  let incidentsServiceSpy: jasmine.SpyObj<IncidentsService>;;
+  let errorServiceSpy: jasmine.SpyObj<ErrorService>;
+  let incidentsServiceSpy: jasmine.SpyObj<IncidentsService>;
 
   beforeEach(async(() => {
     // -------------DATA SERVICE -----------------
@@ -68,7 +68,7 @@ describe('WarehouseComponent', () => {
 
   it('getWarehouseGraph service success', () => {
     incidentsServiceSpy.getWarehouseGraph.and.returnValue(of(WarehouseMock));
-    component.checkNewRange('12/01/21 - 12/02/21')
+    component.checkNewRange('12/01/21 - 12/02/21');
     expect(incidentsServiceSpy.getWarehouseGraph).toHaveBeenCalledWith('12/01/21 - 12/02/21');
     expect(component.itemsGraphReceive.length).toBeGreaterThanOrEqual(4);
     expect(component.itemsGraph.length).toBeGreaterThanOrEqual(4);
@@ -81,7 +81,7 @@ describe('WarehouseComponent', () => {
   });
 
   it('getNewReceptionData should change color items', () => {
-    let incidentsGraphicsMatrices = WarehouseMock.response
+    const incidentsGraphicsMatrices = WarehouseMock.response;
     const result = component.getNewReceptionData(incidentsGraphicsMatrices);
     expect(result.length).toBeGreaterThanOrEqual(15);
     expect(result[0].color).toBe('#007AFF');
