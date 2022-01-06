@@ -36,8 +36,9 @@ fdescribe('WarehouseComponent', () => {
       return of(WarehouseMock);
     });
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule,
-      RouterTestingModule],
+      imports: [
+        HttpClientTestingModule,
+        RouterTestingModule],
       declarations: [ WarehouseComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [DatePipe,
