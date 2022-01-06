@@ -11,7 +11,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { DataService } from 'src/app/services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
 
-fdescribe('WarehouseComponent', () => {
+describe('WarehouseComponent', () => {
   let component: WarehouseComponent;
   let fixture: ComponentFixture<WarehouseComponent>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;

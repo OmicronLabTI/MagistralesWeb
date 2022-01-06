@@ -151,7 +151,7 @@ describe('InventorybatchesComponent', () => {
       selected: true,
       lotesSeleccionados: iLotesSelectReq,
       lotes: iLotesReqq,
-      lotesAsignados: iLotesAsignadosReq[0]
+      lotesAsignados: [iLotesAsignadosReq]
     }];
     iLotesFormulaReq.codigoProducto = '1';
     iLotesFormulaReq.descripcionProducto = '';
@@ -161,7 +161,7 @@ describe('InventorybatchesComponent', () => {
     iLotesFormulaReq.lotesSeleccionados = iLotesSelectReq,
     iLotesFormulaReq.selected = true,
     iLotesFormulaReq.lotes = iLotesReqq,
-    iLotesFormulaReq.lotesAsignados = iLotesAsignadosReq[0];
+    iLotesFormulaReq.lotesAsignados = [iLotesAsignadosReq];
 
     // component.setSelectedTr(iLotesFormulaReq);
     // expect(component.setSelectedTr()).toBeTruthy();
@@ -281,7 +281,7 @@ describe('InventorybatchesComponent', () => {
       selected: true,
       lotesSeleccionados: iLotesSelectReq,
       lotes: iLotesReqq,
-      lotesAsignados: iLotesAsignadosReq[0]
+      lotesAsignados: [iLotesAsignadosReq]
     }];
     component.deleteLotes(iLotesAsignadosReq);
     expect(component.deleteLotes()).toBeFalsy();
@@ -326,7 +326,7 @@ describe('InventorybatchesComponent', () => {
       selected: true,
       lotesSeleccionados: iLotesSelectReq,
       lotes: iLotesReqq,
-      lotesAsignados: iLotesAsignadosReq[0]
+      lotesAsignados: [iLotesAsignadosReq]
     }];
     // component.deleteDetails(iLotesAsignadosReq[0]);
     // expect(component.deleteDetails()).toBeFalsy();
@@ -369,7 +369,7 @@ describe('InventorybatchesComponent', () => {
       selected: true,
       lotesSeleccionados: iLotesSelectReq,
       lotes: iLotesReqq,
-      lotesAsignados: iLotesAsignadosReq[0]
+      lotesAsignados: [iLotesAsignadosReq]
     }];
     component.deleteDetails(iLotesAsignadosReq);
     // expect(component.deleteDetails()).toBeFalsy();
@@ -421,7 +421,7 @@ describe('InventorybatchesComponent', () => {
         selected: true,
         lotesSeleccionados: iLotesSelectReq,
         lotes: iLotesReqq,
-        lotesAsignados: iLotesAsignadosReq[0]
+        lotesAsignados: [iLotesAsignadosReq]
       }];
     component.addLotes(iLotesReqq[0]);
     expect(dataServiceSpy.setGeneralNotificationMessage).toBeTruthy();
@@ -464,7 +464,7 @@ describe('InventorybatchesComponent', () => {
         selected: true,
         lotesSeleccionados: iLotesSelectReq,
         lotes: iLotesReqq,
-        lotesAsignados: iLotesAsignadosReq[0]
+        lotesAsignados: [iLotesAsignadosReq]
       }];
     component.buildObjectToSap();
     expect(component.buildObjectToSap).toBeTruthy();
