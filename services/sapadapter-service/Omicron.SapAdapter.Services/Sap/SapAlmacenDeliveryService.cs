@@ -50,17 +50,17 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">thre redis service.</param>
         public SapAlmacenDeliveryService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
         {
-            this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
-            this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
-            this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
+            this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
+            this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
+            this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
         public async Task<ResultModel> GetDelivery(Dictionary<string, string> parameters)
         {
-            var typesString = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.AllTypes;
+            var typesString = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypes);
             var types = typesString.Split(",").ToList();
 
             var userOrders = await this.GetUserOrders();
@@ -249,7 +249,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
-            return sapOrders.Where(x => listNames.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
+            return sapOrders.Where(x => listNames.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower()))).ToList();
         }
 
         /// <summary>
@@ -260,8 +260,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private List<DeliverModel> GetOrdersToLook(List<DeliverModel> deliveries, Dictionary<string, string> parameters)
         {
-            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
-            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+            var offset = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
@@ -299,8 +299,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalItems = deliveryDetail.Count;
                 var totalPieces = deliveryDetail.Sum(x => x.Quantity);
 
-                var deliveryType = deliveryDetail.All(x => x.Producto.IsLine == "Y") ? ServiceConstants.LineaAlone : ServiceConstants.Mixto;
-                deliveryType = deliveryDetail.All(x => x.Producto.IsMagistral == "Y") ? ServiceConstants.Magistral : deliveryType;
+                var deliveryType = ServiceUtils.CalculateTernary(deliveryDetail.All(x => x.Producto.IsLine == "Y"), ServiceConstants.LineaAlone, ServiceConstants.Mixto);
+                deliveryType = ServiceUtils.CalculateTernary(deliveryDetail.All(x => x.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, deliveryType);
 
                 var deliveryWithInvoice = deliveryDetail.FirstOrDefault(x => x.InvoiceId.HasValue && x.InvoiceId.Value != 0);
                 deliveryWithInvoice ??= new DeliveryDetailModel { InvoiceId = 0 };
@@ -342,13 +342,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrder = userOrders.FirstOrDefault(y => y.Salesorderid == s.DocNum.ToString() && string.IsNullOrEmpty(y.Productionorderid));
                 var localDetails = details.Where(y => y.Detalles.BaseEntry == s.DocNum).ToList();
 
-                var productType = localDetails.All(y => y.Producto.IsMagistral == "Y") ? ServiceConstants.Magistral : ServiceConstants.Mixto;
-                productType = localDetails.All(y => y.Producto.IsLine == "Y") ? ServiceConstants.Linea : productType;
+                var productType = ServiceUtils.CalculateTernary(localDetails.All(y => y.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
+                productType = ServiceUtils.CalculateTernary(localDetails.All(y => y.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
 
                 listToReturn.Add(new SaleOrderByDeliveryModel
                 {
                     DocNum = s.DocNum,
-                    Comments = userOrder == null ? string.Empty : userOrder.Comments,
+                    Comments = userOrder?.Comments ?? string.Empty,
                     FechaInicio = s.FechaInicio,
                     Pieces = localDetails.Sum(y => (int)y.Detalles.Quantity),
                     Products = localDetails.Count,
@@ -376,11 +376,11 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var order in deliveryDetails)
             {
-                order.BaseEntry = order.BaseEntry ?? 0;
+                order.BaseEntry ??= 0;
                 var item = products.FirstOrDefault(x => order.ProductoId == x.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+                var productType = ServiceUtils.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
                 var saleDetail = prodOrders.FirstOrDefault(x => x.ProductoId == order.ProductoId);
                 var orderId = saleDetail == null ? string.Empty : saleDetail.OrdenId.ToString();

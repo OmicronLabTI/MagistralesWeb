@@ -68,6 +68,36 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersForAlmacen(List<int> idsToLook)
+        {
+            var listToReturn = new List<UserOrderModel>();
+            var familyOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(idsToLook.Select(x => x.ToString()).ToList())).GroupBy(x => x.Salesorderid).ToList();
+
+            foreach (var x in familyOrders)
+            {
+                var orders = x.Where(y => y.IsProductionOrder && y.Status != ServiceConstants.Cancelled).ToList();
+                var productionStatus = x.Where(z => z.IsProductionOrder && (z.Status == ServiceConstants.Finalizado || z.Status == ServiceConstants.Almacenado)).ToList();
+                var saleOrde = x.FirstOrDefault(y => y.IsSalesOrder);
+
+                if (saleOrde != null && saleOrde.Status == ServiceConstants.Finalizado && saleOrde.FinishedLabel == 1)
+                {
+                    listToReturn.AddRange(x.ToList());
+                    continue;
+                }
+
+                if (productionStatus.Any() &&
+                productionStatus.All(z => z.FinishedLabel == 1) &&
+                orders.All(z => ServiceConstants.StatuPendingAlmacen.Contains(z.Status) &&
+                !orders.All(z => z.Status == ServiceConstants.Almacenado)))
+                {
+                    listToReturn.AddRange(x.ToList());
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, "0");
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateUserOrders(List<UserOrderModel> listOrders)
         {
             var ids = listOrders.Select(x => x.Id).ToList();

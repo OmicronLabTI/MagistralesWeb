@@ -50,17 +50,17 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">thre redis service.</param>
         public AlmacenOrderDoctorService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
         {
-            this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
-            this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
-            this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
+            this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
+            this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
+            this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
         public async Task<ResultModel> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters)
         {
-            var typesString = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.AllTypesByDoctor;
+            var typesString = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypesByDoctor);
             var types = typesString.Split(",").ToList();
 
             var userOrdersTuple = await this.GetUserOrders();
@@ -109,7 +109,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var item = productItems.FirstOrDefault(x => x.ProductoId == detail.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
-                var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+                var productType = ServiceUtils.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
                 var saleDetail = saleDetails.FirstOrDefault(x => x.CodigoProducto == detail.ProductoId);
                 var orderId = saleDetail == null ? string.Empty : saleDetail.OrdenFabricacionId.ToString();
                 var itemcode = !string.IsNullOrEmpty(orderId) ? $"{item.ProductoId} - {orderId}" : item.ProductoId;
@@ -132,7 +132,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ProductType = $"Producto {productType}",
                     Pieces = detail.Quantity,
                     Container = detail.Container,
-                    Status = detail.CanceledOrder == "Y" ? ServiceConstants.Cancelado : ServiceConstants.PorRecibir,
+                    Status = ServiceUtils.CalculateTernary(detail.CanceledOrder == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                 };
                 listDetails.Add(detailItem);
@@ -205,7 +205,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var doctorName = parameters[ServiceConstants.Chips].Split(",").ToList();
-            return sapOrders.Where(x => doctorName.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
+            return sapOrders.Where(x => doctorName.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower()))).ToList();
         }
 
         /// <summary>
@@ -263,8 +263,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 
-                var productType = orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y") ? ServiceConstants.Magistral : ServiceConstants.Mixto;
-                productType = orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y") ? ServiceConstants.Linea : productType;
+                var productType = ServiceUtils.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
+                productType = ServiceUtils.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
 
                 var orderType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, order.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo;
 
@@ -274,12 +274,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     DocNum = so,
                     InitDate = order == null ? DateTime.Now : order.FechaInicio,
-                    Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : ServiceConstants.PorRecibir,
+                    Status = ServiceUtils.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
                     TotalItems = orders.Count,
                     TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
                     TypeSaleOrder = $"Pedido {productType}",
                     InvoiceType = orderType,
-                    Comments = userOrder == null ? string.Empty : userOrder.Comments,
+                    Comments = userOrder?.Comments ?? string.Empty,
                     OrderType = order.TypeOrder,
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
                 };
@@ -291,8 +291,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private List<string> GetDoctorsToProcess(List<string> doctors, Dictionary<string, string> parameters)
         {
-            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
-            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+            var offset = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);

@@ -8,7 +8,6 @@
 
 namespace Omicron.SapAdapter.Services.Sap
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
@@ -36,8 +35,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">thre redis service.</param>
         public SapDxpService(ISapDao sapDao, IRedisService redisService)
         {
-            this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -64,7 +63,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     InitDate = order.FechaInicio,
                     AsesorId = order.AsesorId,
                     PedidoStatus = order.PedidoStatus,
-                    IsLine = isLine ? "Y" : "N",
+                    IsLine = ServiceUtils.CalculateTernary(isLine, "Y", "N"),
                     EmailAsesor = asesor.Email,
                     PhoneAsesor = asesor.PhoneMobile,
                 });

@@ -83,7 +83,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.catalogService = new Mock<ICatalogsService>();
             this.catalogService
                 .Setup(m => m.GetParams(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModel(parameters)));
+                .Returns(Task.FromResult(this.GetResultDto(parameters)));
 
             this.mockRedis = new Mock<IRedisService>();
 

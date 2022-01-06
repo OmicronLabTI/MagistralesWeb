@@ -11,16 +11,20 @@ namespace Omicron.SapAdapter.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Redis;
+    using Serilog;
 
     /// <summary>
     /// The class for the services.
@@ -344,6 +348,73 @@ namespace Omicron.SapAdapter.Services.Utils
             var sapProducts = (await sapDao.GetAllLineProducts()).Select(x => x.ProductoId).ToList();
             await redis.WriteToRedis(ServiceConstants.AlmacenLineProducts, JsonConvert.SerializeObject(sapProducts), new TimeSpan(8, 0, 0));
             return sapProducts;
+        }
+
+        /// <summary>
+        /// Gets the response from a http response.
+        /// </summary>
+        /// <param name="response">the response.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="error">the error.</param>
+        /// <returns>the data.</returns>
+        public static async Task<ResultDto> GetResponse(HttpResponseMessage response, ILogger logger, string error)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            if ((int)response.StatusCode >= 300)
+            {
+                logger.Information($"{error} {jsonString}");
+                throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
+            }
+
+            return JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
+        }
+
+        /// <summary>
+        ///    test.
+        /// </summary>
+        /// <typeparam name="T">s.</typeparam>
+        /// <param name="obj">sfr.</param>
+        /// <param name="name">name of param.</param>
+        /// <returns>ca.</returns>
+        public static T ThrowIfNull<T>(this T obj, string name)
+        {
+            return obj ?? throw new ArgumentNullException(name);
+        }
+
+        /// <summary>
+        /// creates the result.
+        /// </summary>
+        /// <param name="dic">the dictioanry.</param><
+        /// <param name="key">the key to search.</param>
+        /// <param name="defaultValue">default value.</param>
+        /// <returns>the resultModel.</returns>
+        public static string GetDictionaryValueString(Dictionary<string, string> dic, string key, string defaultValue)
+        {
+            return dic.ContainsKey(key) ? dic[key] : defaultValue;
+        }
+
+        /// <summary>
+        /// Calculate value from validation.
+        /// </summary>
+        /// <param name="validation">Validation.</param>
+        /// <param name="value">True value.</param>
+        /// <param name="defaultValue">False value.</param>
+        /// <returns>Result.</returns>
+        public static string CalculateTernary(bool validation, string value, string defaultValue)
+        {
+            return validation ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// get a date value or default value.
+        /// </summary>
+        /// <param name="date">the date to check.</param>
+        /// <param name="defaultDate">tehd efault date.</param>
+        /// <returns>a date in string format.</returns>
+        public static string GetDateValueOrDefault(DateTime? date, string defaultDate)
+        {
+            return date.HasValue ? date.Value.ToString("dd/MM/yyyy") : defaultDate;
         }
 
         /// <summary>

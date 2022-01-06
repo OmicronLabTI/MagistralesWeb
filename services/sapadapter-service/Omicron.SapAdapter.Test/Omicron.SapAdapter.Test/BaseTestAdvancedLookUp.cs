@@ -338,9 +338,9 @@ namespace Omicron.SapAdapter.Test
         /// </summary>
         /// <param name="dataToSend">the data to send.</param>
         /// <returns>the object.</returns>
-        public ResultModel GetResultModel(object dataToSend)
+        public ResultDto GetResultModel(object dataToSend)
         {
-            return new ResultModel
+            return new ResultDto
             {
                 Code = 200,
                 Comments = null,

@@ -834,7 +834,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
-                         where order.OrderType == typeOrder && (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y"
+                         where order.OrderType == typeOrder && order.PedidoStatus == "O" && product.IsWorkableProduct == "Y"
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
@@ -1095,7 +1095,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             return await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.DeliveryId)).Select(x => new DeliveryDetailModel
             {
-                BaseEntry = x.BaseEntry,
+                BaseEntry = x.BaseEntry != null ? x.BaseEntry : 0,
                 Container = x.Container,
                 DeliveryId = x.DeliveryId,
                 Description = x.Description,

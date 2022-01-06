@@ -68,6 +68,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.UserFields.Fields.Item("U_DXPNEEDSSHIPCOST").Value = saleOrderModel.ShippingCost;
                 // ToDo descomentar la siguiente linea cuando se pase a prod, porque en qa el campo no existe
                 // order.UserFields.Fields.Item("U_BXP_USOCFDI").Value = saleOrderModel.CfdiValue;
+                order.UserFields.Fields.Item("U_CFDI_Provisional").Value = saleOrderModel.CfdiValue;
                 order.UserFields.Fields.Item("U_BXP_METPAGO33").Value = saleOrderModel.PaymentMethodSapCode;
                 order.UserFields.Fields.Item("U_BXP_FORMAPAGO33").Value = saleOrderModel.WayToPaySapCode;
 

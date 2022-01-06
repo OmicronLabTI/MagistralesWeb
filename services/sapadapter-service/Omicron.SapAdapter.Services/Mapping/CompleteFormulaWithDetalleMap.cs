@@ -7,12 +7,12 @@
 // </summary>
 namespace Omicron.SapAdapter.Services.Mapping
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
     /// Map methods for CompleteFormulaWithDetalleMap.
@@ -30,17 +30,17 @@ namespace Omicron.SapAdapter.Services.Mapping
 
             self.ProductionOrderId = fabricationOrder.OrdenId;
             self.Code = fabricationOrder.ProductoId;
-            self.Type = ServiceConstants.DictStatusType.ContainsKey(fabricationOrder.Type) ? ServiceConstants.DictStatusType[fabricationOrder.Type] : fabricationOrder.Type;
-            self.Status = ServiceConstants.DictStatus.ContainsKey(fabricationOrder.Status) ? ServiceConstants.DictStatus[fabricationOrder.Status] : fabricationOrder.Status;
+            self.Type = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictStatusType, fabricationOrder.Type, fabricationOrder.Type);
+            self.Status = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictStatus, fabricationOrder.Status, fabricationOrder.Status);
             self.PlannedQuantity = (int)fabricationOrder.Quantity;
             self.Unit = fabricationOrder.Unit;
             self.Warehouse = fabricationOrder.Wharehouse;
             self.Number = fabricationOrder.PedidoId.Value;
             self.FabDate = fabricationOrder.CreatedDate.Value.ToString("dd/MM/yyyy");
-            self.DueDate = fabricationOrder.DueDate.HasValue ? fabricationOrder.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty;
+            self.DueDate = ServiceUtils.GetDateValueOrDefault(fabricationOrder.DueDate, string.Empty);
             self.StartDate = fabricationOrder.StartDate.ToString("dd/MM/yyyy");
-            self.EndDate = fabricationOrder.PostDate.HasValue ? fabricationOrder.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty;
-            self.Origin = ServiceConstants.DictStatusOrigin.ContainsKey(fabricationOrder.OriginType) ? ServiceConstants.DictStatusOrigin[fabricationOrder.OriginType] : fabricationOrder.OriginType;
+            self.EndDate = ServiceUtils.GetDateValueOrDefault(fabricationOrder.PostDate, string.Empty);
+            self.Origin = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictStatusOrigin, fabricationOrder.OriginType, fabricationOrder.OriginType);
             self.BaseDocument = fabricationOrder.PedidoId.Value;
             self.Client = fabricationOrder.CardCode;
             self.CompleteQuantity = (int)fabricationOrder.CompleteQuantity;
@@ -72,7 +72,7 @@ namespace Omicron.SapAdapter.Services.Mapping
             if (userOrder != null)
             {
                 self.Status = userOrder.Status;
-                self.RealEndDate = userOrder.CloseDate.HasValue ? userOrder.CloseDate.Value.ToString("dd/MM/yyyy") : string.Empty;
+                self.RealEndDate = ServiceUtils.GetDateValueOrDefault(userOrder.CloseDate, string.Empty);
                 self.Comments = userOrder.Comments;
             }
         }

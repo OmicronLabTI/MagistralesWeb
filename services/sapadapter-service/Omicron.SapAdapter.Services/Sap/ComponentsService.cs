@@ -8,7 +8,6 @@
 
 namespace Omicron.SapAdapter.Services.Sap
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -37,8 +36,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">The reddis service.</param>
         public ComponentsService(ISapDao sapDao, IRedisService redisService)
         {
-            this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
@@ -56,7 +55,7 @@ namespace Omicron.SapAdapter.Services.Sap
             redisComponents = redisComponents.OrderByDescending(x => x.Total).ToList();
             var ids = redisComponents.Skip(0).Take(10).Select(x => x.ItemCode.ToLower()).ToList();
 
-            var warehouse = parameters.ContainsKey(ServiceConstants.CatalogGroup) ? parameters[ServiceConstants.CatalogGroup] : ServiceConstants.MagistralWareHouse;
+            var warehouse = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, ServiceConstants.MagistralWareHouse);
             var listComponents = await this.sapDao.GetItemsByContainsItemCode(ids, warehouse);
 
             ids.ForEach(x =>

@@ -81,6 +81,22 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetOrdersForAlmacenById()
+        {
+            var listIds = new List<int> { 207, 206 };
+
+            // act
+            var result = await this.pedidosAlmacen.GetOrdersForAlmacen(listIds);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task UpdateUserOrders()
         {
             // arrange

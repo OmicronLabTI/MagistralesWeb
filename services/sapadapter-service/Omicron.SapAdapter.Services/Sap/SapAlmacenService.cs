@@ -49,26 +49,33 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="redisService">thre redis service.</param>
         public SapAlmacenService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
         {
-            this.sapDao = sapDao ?? throw new ArgumentNullException(nameof(sapDao));
-            this.pedidosService = pedidosService ?? throw new ArgumentNullException(nameof(pedidosService));
-            this.almacenService = almacenService ?? throw new ArgumentException(nameof(almacenService));
-            this.catalogsService = catalogsService ?? throw new ArgumentNullException(nameof(catalogsService));
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
+            this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
+            this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
+            this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
-            var typesString = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.AllTypes;
+            var typesString = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypes);
             var types = typesString.Split(",").ToList();
 
-            var listStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status] : ServiceConstants.AllStatus;
+            var listStatus = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.AllStatus);
             var status = listStatus.Split(",").ToList();
 
             var userResponse = await this.GetUserOrdersToLook(parameters);
             var ids = userResponse.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
             var lineProducts = await this.GetLineProductsToLook(ids, userResponse.Item3, parameters);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts, parameters);
+
+            if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId) && !this.ValidateOrdersById(userResponse.Item1, sapOrders.Item1))
+            {
+                var emptyData = new AlmacenOrdersModel { SalesOrders = new List<SalesModel>() };
+                return ServiceUtils.CreateResult(true, 200, null, emptyData, null, "0-0");
+            }
+
             var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, status);
             orders = await this.GetSapLinesToLookByChips(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
@@ -80,7 +87,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersDetails(int orderId)
         {
-            var pedidos = await this.GetUserOrderByids(new List<int> { orderId });
+            var pedidos = await this.GetUserOrderByids(new List<int> { orderId }, ServiceConstants.GetUserSalesOrder);
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesBySaleOrder, new List<int> { orderId });
             var lineOrders = JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
 
@@ -246,9 +253,9 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
         }
 
-        private async Task<List<UserOrderModel>> GetUserOrderByids(List<int> ordersId)
+        private async Task<List<UserOrderModel>> GetUserOrderByids(List<int> ordersId, string route)
         {
-            var pedidosResponse = await this.pedidosService.PostPedidos(ordersId, ServiceConstants.GetUserSalesOrder);
+            var pedidosResponse = await this.pedidosService.PostPedidos(ordersId, route);
             return JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
         }
 
@@ -256,6 +263,22 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesBySaleOrder, ordersId);
             return JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
+        }
+
+        private bool ValidateOrdersById(List<UserOrderModel> userOrderModels, List<CompleteAlmacenOrderModel> sapOrders)
+        {
+            if (!sapOrders.Any(x => x.IsMagistral == "Y"))
+            {
+                return true;
+            }
+
+            var magistralProducts = sapOrders.Count(x => x.IsMagistral == "Y");
+            if (!userOrderModels.Any() || magistralProducts != userOrderModels.Count(x => !string.IsNullOrEmpty(x.Productionorderid)))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -266,7 +289,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
             {
-                var pedidos = await this.GetUserOrderByids(new List<int> { pedidoId });
+                var pedidos = await this.GetUserOrderByids(new List<int> { pedidoId }, ServiceConstants.GetUserOrdersAlmancenId);
                 return new Tuple<List<UserOrderModel>, List<int>, DateTime>(pedidos, new List<int>(), DateTime.Now);
             }
 
@@ -450,7 +473,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
-            return sapOrders.Where(x => listNames.All(y => x.Medico.ToLower().Contains(y.ToLower()))).ToList();
+            return sapOrders.Where(x => listNames.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower()))).ToList();
         }
 
         /// <summary>
@@ -532,8 +555,8 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = sapOrders.OrderBy(x => x.DocNum).ToList();
             var pedidosId = sapOrders.Select(x => x.DocNum).Distinct().ToList();
 
-            var offset = parameters.ContainsKey(ServiceConstants.Offset) ? parameters[ServiceConstants.Offset] : "0";
-            var limit = parameters.ContainsKey(ServiceConstants.Limit) ? parameters[ServiceConstants.Limit] : "1";
+            var offset = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
