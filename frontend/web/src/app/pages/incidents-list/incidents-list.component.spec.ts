@@ -7,19 +7,26 @@ import {PipesModule} from '../../pipes/pipes.module';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {IncidentsService} from '../../services/incidents.service';
-import {of} from 'rxjs';
+import {of, throwError} from 'rxjs';
 import {IncidentListMock} from '../../../mocks/incidentsListMock';
 import {ConstStatus} from '../../constants/const';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterTestingModule} from '@angular/router/testing';
+import { ErrorService } from 'src/app/services/error.service';
+import { PageEvent } from '@angular/material';
 
 describe('IncidentsListComponent', () => {
   let component: IncidentsListComponent;
   let fixture: ComponentFixture<IncidentsListComponent>;
   let incidentsServiceSpy;
+  let errorServiceSpy;
+  const pageEvent = new PageEvent();
   beforeEach(async(() => {
     incidentsServiceSpy = jasmine.createSpyObj<IncidentsService>('IncidentsService', [
       'getIncidentsList'
+    ]);
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
+      'httpError'
     ]);
     incidentsServiceSpy.getIncidentsList.and.callFake(() => {
       return of(IncidentListMock);
@@ -27,7 +34,9 @@ describe('IncidentsListComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ IncidentsListComponent ],
       providers: [DatePipe,
-        { provide: IncidentsService, useValue: incidentsServiceSpy }],
+        { provide: IncidentsService, useValue: incidentsServiceSpy },
+        { provide: ErrorService, useValue: errorServiceSpy },
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [ PipesModule, MATERIAL_COMPONENTS, HttpClientTestingModule,
         BrowserAnimationsModule, RouterTestingModule]
@@ -66,4 +75,27 @@ describe('IncidentsListComponent', () => {
     expect(component.isOnInit).toBeFalsy();
   });
 
+  it('should openFindOrdersDialog', () => {
+    component.openFindOrdersDialog();
+  });
+
+  it('should updateIncidentList error', () => {
+    incidentsServiceSpy.getIncidentsList.and.callFake(() => {
+      return throwError({ error: true});
+    });
+    component.updateIncidentList();
+    expect(errorServiceSpy.httpError).toHaveBeenCalledWith({ error: true });
+  });
+
+  it('should reloadIncidentsList', () => {
+    component.reloadIncidentsList();
+  });
+
+  it('should openCommentsDialog', () => {
+    component.openCommentsDialog(0);
+  });
+
+  it('should changeDataEvent', () => {
+    component.changeDataEvent(pageEvent);
+  });
 });

@@ -8,42 +8,60 @@ import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { DetalleFormulaMock } from 'src/mocks/pedidosListMock';
-import {Observable, of, throwError} from 'rxjs';
+import {Observable, of, Subject, throwError} from 'rxjs';
 import {DataService} from '../../services/data.service';
-import {CONST_DETAIL_FORMULA} from '../../constants/const';
+import {CarouselOption, CONST_DETAIL_FORMULA} from '../../constants/const';
 import {ErrorService} from '../../services/error.service';
+import { ButtonRefreshComponent } from 'src/app/components/button-refresh/button-refresh.component';
+import { ComponentsModule } from 'src/app/components/components.module';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ParamsPedidos } from 'src/app/model/http/pedidos';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
   let fixture: ComponentFixture<DetalleFormulaComponent>;
   let pedidosServiceSpy;
-  let dataServiceSpy;
+  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let errorServiceSpy;
+  const paramsPedidos = new ParamsPedidos();
+  // let routerSpy: jasmine.SpyObj<ActivatedRoute>;
 
   beforeEach(async(() => {
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
-      'getFormulaDetail', 'getFormulaCarousel'
+      'getFormulaDetail', 'getFormulaCarousel', 'updateFormula'
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setIsLoading',
+      'presentToastCustom', 'getCallHttpService', 'setUrlActive', 'setIsLoading',
       'setCallHttpService', 'setMessageGeneralCallHttp', 'getOrderIsolated', 'removeOrderIsolated', 'getNewSearchOrdersModal',
       'getCallHttpService', 'transformDate', 'setSearchComponentModal', 'getNewDataToFilter', 'setCancelOrders', 'setQbfToPlace',
       'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter', 'getNewFormulaComponent',
       'setIsToSaveAnything', 'setIsToSaveAnything', 'setIsToSaveAnything', 'setFiltersActivesOrders', 'getFiltersActivesOrders',
-      'removeFiltersActiveOrders', 'getFiltersActivesAsModelOrders'
+      'removeFiltersActiveOrders',  'getFiltersActivesAsModelOrders', 'setPathUrl', 'getFullStringForCarousel', 'getIsToSaveAnything'
     ]);
+    // routerSpy = jasmine.createSpyObj<ActivatedRoute>('ActivateRoute', [
+    //   'paramMap'
+    // ]);
+    // routerSpy.paramMap.and.returnValue();
+    dataServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
+      return;
+    });
     dataServiceSpy.getNewFormulaComponent.and.callFake(() => {
       return new Observable();
     });
+    dataServiceSpy.getFiltersActivesAsModelOrders.and.returnValue(paramsPedidos);
     pedidosServiceSpy.getFormulaDetail.and.callFake(() => {
       return of(DetalleFormulaMock);
     });
     pedidosServiceSpy.getFormulaCarousel.and.callFake(() => {
       return of(DetalleFormulaMock);
     });
+    pedidosServiceSpy.updateFormula.and.callFake(() => {
+      return of();
+    });
+    dataServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
@@ -51,7 +69,9 @@ describe('DetalleFormulaComponent', () => {
         HttpClientTestingModule,
         ReactiveFormsModule,
         FormsModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        ComponentsModule,
+        RouterModule
       ],
       declarations: [ DetalleFormulaComponent ],
       providers: [
@@ -59,7 +79,8 @@ describe('DetalleFormulaComponent', () => {
           provide: PedidosService, useValue: pedidosServiceSpy
         },
         { provide: DataService, useValue: dataServiceSpy },
-        { provide: ErrorService, useValue: errorServiceSpy }
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: ActivatedRoute, useValue: { paramMap: new Subject() } }
       ]
     })
     .compileComponents();
@@ -71,7 +92,7 @@ describe('DetalleFormulaComponent', () => {
     fixture.detectChanges();
   });
 
-/*  it('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
     expect(component.displayedColumns).toEqual([
       'seleccion',
@@ -88,9 +109,9 @@ describe('DetalleFormulaComponent', () => {
       'enstock',
       'cantalmacen'
     ]);
-  });*/
+  });
 
-  /*it('should call getDetalleFormula ok', () => {
+  it('should call getDetalleFormula ok', () => {
     component.ordenFabricacionId = '1234';
     component.getDetalleFormula();
     expect(pedidosServiceSpy.getFormulaDetail).toHaveBeenCalledWith(component.ordenFabricacionId);
@@ -114,7 +135,7 @@ describe('DetalleFormulaComponent', () => {
     expect(component.allComplete).toBeTruthy();
 
   });
-/!*  it('should someComplete', () => {
+  it('should someComplete', () => {
     component.dataSource.data = [];
     component.dataSource.data = DetalleFormulaMock.response.details;
     component.dataSource.data.forEach( element => element.isChecked = false);
@@ -131,7 +152,7 @@ describe('DetalleFormulaComponent', () => {
     component.setAll(false);
     expect(component.allComplete).toBeFalsy();
     expect(component.dataSource.data.every(element => element.isChecked)).toBeFalsy();
-  });*!/
+  });
   it('should getOpenDialog()', () => {
     component.openDialog();
     expect(dataServiceSpy.setSearchComponentModal).toHaveBeenCalled();
@@ -182,6 +203,118 @@ describe('DetalleFormulaComponent', () => {
     component.onRequiredQuantityChange(1, 0);
     expect(component.dataSource.data[0].action).toBeDefined();
     expect(component.dataSource.data[0].requiredQuantity).toBeDefined();
-  });*/
+  });
 
+  it('should saveFormulaDetail is false', () => {
+    component.saveFormulaDetail();
+    expect(component.isPlannedQuantityError).toBe(false);
+    // expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+  });
+  // it('should saveFormulaDetail is true', () => {
+  //   dataServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
+  //     return;
+  //   });
+  //   component.saveFormulaDetail();
+  //   component.isPlannedQuantityError = false;
+  //   // expect(component.isPlannedQuantityError).toBe(true);
+  //   expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+  // });
+
+
+  it('should deleteComponentsToDelete', () => {
+    pedidosServiceSpy.updateFormula.and.callFake(() => {
+      return of();
+    });
+    dataServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.deleteComponents();
+    // expect(pedidosServiceSpy.updateFormula).toHaveBeenCalled();
+  });
+
+  it('should changeData', () => {
+    component.changeData();
+    expect(component.changeData).toBeTruthy();
+  });
+
+  it('should onSelectWareHouseChange', () => {
+    component.dataSource.data = [];
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false
+    };
+    component.onSelectWareHouseChange('', 0);
+
+    expect(component.onSelectWareHouseChange).toBeTruthy();
+  });
+  it('should goToOrders', () => {
+
+    component.goToOrders([]);
+    expect(component.goToOrders).toBeTruthy();
+  });
+
+  it('should goToDetailOrder', () => {
+
+    component.goToDetailOrder([]);
+    expect(component.goToDetailOrder).toBeTruthy();
+  });
+
+  it('should getIsElementsToSave', () => {
+    component.getIsElementsToSave();
+    expect(component.getIsElementsToSave).toBeTruthy();
+  });
+
+  it('should changeFormulaByFIltersService', () => {
+    pedidosServiceSpy.getFormulaCarousel.and.callFake(() => {
+      return of(DetalleFormulaMock);
+    });
+    component.changeFormulaByFIltersService('');
+    expect(component.changeFormulaByFIltersService).toBeTruthy();
+  });
+
+  it('should changeFormulaByFIltersService error', () => {
+    pedidosServiceSpy.getFormulaCarousel.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.changeFormulaByFIltersService('');
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
+  it('should createfilterDataOrdersForOrderIsolated', () => {
+    component.createfilterDataOrdersForOrderIsolated();
+    expect(dataServiceSpy.setFiltersActivesOrders).toHaveBeenCalled();
+  });
+
+  it('should changeFormulaValidate = 0', () => {
+    component.changeFormulaValidate(0);
+    // CarouselOption.backDetail;
+
+  });
+  it('should changeDetailFormula', () => {
+    dataServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.changeDetailFormula(0);
+    // expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
+
+  it('should changeFormulaByIndex', () => {
+    component.changeFormulaByIndex(CarouselOption.backDetail);
+  });
 });
