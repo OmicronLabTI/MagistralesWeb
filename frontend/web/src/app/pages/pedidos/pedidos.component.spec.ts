@@ -28,16 +28,18 @@ describe('PedidosComponent', () => {
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   beforeEach(async(() => {
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
-      'getUserId', 'setRefreshToken',
+      'getUserId', 'setRefreshToken', 'getUserRole',
+      'setProductNoLabel',
+      'setFiltersActives',
+      'getFiltersActives',
+      'removeFiltersActive',
+      'getFiltersActivesAsModel'
     ]);
+    // localStorageServiceSpy.getUserRole.and.returnValue('');
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
         'presentToastCustom',
         'transformDate',
-        'setFiltersActives',
-        'getFiltersActives',
-        'removeFiltersActive',
-        'getFiltersActivesAsModel'
       ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos', 'processOrders', 'getInitRangeDate'
@@ -79,6 +81,7 @@ describe('PedidosComponent', () => {
         { provide: PedidosService, useValue: pedidosServiceSpy },
         // { provide: DataService, useValue: dataServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

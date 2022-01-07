@@ -143,11 +143,11 @@ describe('DataService', () => {
   //   service.setToken('token');
   //   expect(service.userIsAuthenticated()).toBeTruthy();
   // });
-  it('should get userName', () => {
-    const service: DataService = TestBed.get(DataService);
-    service.setUserName('xxxx');
-    expect(service.getUserName()).toEqual('xxxx');
-  });
+  // it('should get userName', () => {
+  //   const service: DataService = TestBed.get(DataService);
+  //   service.setUserName('xxxx');
+  //   expect(service.getUserName()).toEqual('xxxx');
+  // });
 
 
   // it('should get userIds', () => {
@@ -319,10 +319,10 @@ describe('DataService', () => {
         !== new Date().getMonth()).toBeTruthy();
 
   });
-  it('should userRole', () => {
-    const service: DataService = TestBed.get(DataService);
-    service.setUserRole(3);
-    expect(service.getUserRole).toBeTruthy('3');
-  });
+  // it('should userRole', () => {
+  //   const service: DataService = TestBed.get(DataService);
+  //   service.setUserRole(3);
+  //   expect(service.getUserRole).toBeTruthy('3');
+  // });
 
 });

@@ -42,19 +42,19 @@ describe('AppComponent', () => {
       'clearSession',
       'getUserId',
       'userIsAuthenticated',
-    ]);
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'getUserName',
       'getUserRole',
       'getOrderIsolated',
       'removeOrderIsolated',
-      'getIsToSaveAnything',
-      'presentToastCustom',
-      'getUserName',
-      'removeFiltersActiveOrders',
       'removeFiltersActive',
-      'getMessageTitle',
       'getFiltersActivesAsModelOrders',
       'setFiltersActivesOrders',
+      'removeFiltersActiveOrders',
+    ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'getIsToSaveAnything',
+      'presentToastCustom',
+      'getMessageTitle',
     ]);
     // ------------ Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>
@@ -113,6 +113,7 @@ describe('AppComponent', () => {
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: PedidosService, useValue: pedidosServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();

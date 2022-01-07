@@ -134,7 +134,7 @@
                     </div>
                     <div class="form-field-right" >
                         <mat-form-field class="custom-field-full custom-order" [ngClass]="filterData.filterOrdersData.isFromIncidents ? 'order-custom-incidents' : ''"
-                                        *ngIf="dataService.getUserRole() === '7' && filterData.filterOrdersData.isFromIncidents">
+                                        *ngIf="localStorageService.getUserRole() === '7' && filterData.filterOrdersData.isFromIncidents">
                             <input matInput placeholder="Número de pedido"
                                    type="text"
                                    maxlength="10"
@@ -147,7 +147,7 @@
                         </mat-form-field>
 
                         <mat-form-field appearance="outline" class="custom-field"
-                                        *ngIf="(dataService.getUserRole() === '3' || dataService.getUserRole() === '4') && isFromSearchOrders">
+                                        *ngIf="(localStorageService.getUserRole() === '3' || localStorageService.getUserRole() === '4') && isFromSearchOrders">
                             <mat-label>Tipo de etiqueta</mat-label>
                             <mat-select formControlName="label" >
                                 <mat-option value="G">Genérica</mat-option>
@@ -159,7 +159,7 @@
                         </mat-form-field>
 
                         <mat-form-field appearance="outline" class="custom-field-full"
-                                        *ngIf="dataService.getUserRole() === '5' || (!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents )">
+                                        *ngIf="localStorageService.getUserRole() === '5' || (!isFromSearchOrders && !filterData.filterOrdersData.isFromIncidents )">
                             <mat-label>QFB asignado</mat-label>
                             <mat-select formControlName="qfb">
                                 <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
@@ -169,7 +169,7 @@
                 </div>
                 <div class="row-form-order">
                     <div class="form-field-left">
-                        <mat-form-field appearance="outline" class="custom-field" *ngIf="(dataService.getUserRole() === '3' || dataService.getUserRole() === '4') && isFromSearchOrders">
+                        <mat-form-field appearance="outline" class="custom-field" *ngIf="(localStorageService.getUserRole() === '3' || localStorageService.getUserRole() === '4') && isFromSearchOrders">
                             <mat-label>Etiqueta terminada</mat-label>
                             <mat-select formControlName="finlabel" >
                                 <mat-option value="1">Si</mat-option>
@@ -177,7 +177,7 @@
                             </mat-select>
                         </mat-form-field>
 
-                        <mat-form-field class="custom-field-full" *ngIf="dataService.getUserRole() === '5' && isFromSearchOrders">
+                        <mat-form-field class="custom-field-full" *ngIf="localStorageService.getUserRole() === '5' && isFromSearchOrders">
                             <input matInput placeholder="Nombre del cliente" type="text"
                                    maxlength="80"
                                    class="height-input"
@@ -187,7 +187,7 @@
                                 Solo 80 caracteres
                             </mat-error>
                         </mat-form-field>
-                        <mat-form-field class="custom-field-full" *ngIf="(dataService.getUserRole() === '5' || dataService.getUserRole() === '3') && !isFromSearchOrders">
+                        <mat-form-field class="custom-field-full" *ngIf="(localStorageService.getUserRole() === '5' || localStorageService.getUserRole() === '3') && !isFromSearchOrders">
                             <input matInput placeholder="Código del producto" type="text"
                                    maxlength="40"
                                    class="height-input"
@@ -199,15 +199,15 @@
                         </mat-form-field>
                     </div>
 
-                    <div [ngClass]="dataService.getUserRole() === '4' && isFromSearchOrders ? 'form-field-right-no-padding' : 'form-field-right' ">
-                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '3' && isFromSearchOrders">
+                    <div [ngClass]="localStorageService.getUserRole() === '4' && isFromSearchOrders ? 'form-field-right-no-padding' : 'form-field-right' ">
+                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="localStorageService.getUserRole() === '3' && isFromSearchOrders">
                             <mat-label>QFB asignado</mat-label>
                             <mat-select formControlName="qfb">
                                 <mat-option value="{{qfb.qfbId}}" *ngFor="let qfb of qfbsSelect">{{qfb.qfbName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
 
-                        <mat-form-field class="custom-field-full no-padding-custom" *ngIf="dataService.getUserRole() === '4' && isFromSearchOrders">
+                        <mat-form-field class="custom-field-full no-padding-custom" *ngIf="localStorageService.getUserRole() === '4' && isFromSearchOrders">
                             <input matInput placeholder="Nombre del cliente" type="text"
                                    maxlength="80"
                                    class="height-input"
@@ -221,7 +221,7 @@
                 </div>
                 <div class="row-form-order">
                     <div class="form-field-left" *ngIf="isFromSearchOrders">
-                        <mat-form-field class="custom-field-full" *ngIf="dataService.getUserRole() === '3' ">
+                        <mat-form-field class="custom-field-full" *ngIf="localStorageService.getUserRole() === '3' ">
                             <input matInput placeholder="Nombre del cliente" type="text"
                                    maxlength="80"
                                    class="height-input"
@@ -233,7 +233,7 @@
                         </mat-form-field>
                     </div>
                     <div class="form-field-right padding-tp" *ngIf="isFromSearchOrders">
-                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="dataService.getUserRole() === '3' && isFromSearchOrders">
+                        <mat-form-field appearance="outline" class="custom-field-full" *ngIf="localStorageService.getUserRole() === '3' && isFromSearchOrders">
                             <mat-label>Clasificación</mat-label>
                             <mat-select formControlName="clasification">
                                 <mat-option value="MN">Bioelite (MN) </mat-option>

@@ -107,6 +107,7 @@ describe('FinalizeOrdersComponent', () => {
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ]
     })
       .compileComponents();

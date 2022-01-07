@@ -23,6 +23,7 @@ import { ComponentslistComponent } from 'src/app/dialogs/componentslist/componen
 import { Components } from 'src/app/model/http/listacomponentes';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { ObservableService } from '../../services/observable.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -74,7 +75,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public dataService: DataService,
     private titleService: Title,
-    private observableService: ObservableService) {
+    private observableService: ObservableService,
+    public localStorageService: LocalStorageService) {
   }
 
   ngOnInit() {
@@ -82,9 +84,9 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.ordenFabricacionId = params.get('ordenid');
       this.isFromDetail = Number(params.get('isFromDetail')) === CONST_NUMBER.one;
       this.detailOrders = params.get('detailsOrders').split(',');
-      this.queryString = this.dataService.getNewDataToFilter(this.dataService.getFiltersActivesAsModelOrders())[1];
+      this.queryString = this.dataService.getNewDataToFilter(this.localStorageService.getFiltersActivesAsModelOrders())[1];
       this.titleService.setTitle('Orden de fabricación ' + this.ordenFabricacionId);
-      if (this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
+      if (this.localStorageService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
         this.createfilterDataOrdersForOrderIsolated();
       }
 
@@ -422,7 +424,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   changeFormulaValidate(optionChangeDetail: number) {
     switch (optionChangeDetail) {
       case CarouselOption.backDetail:
-        if (this.isFromDetail || this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
+        if (this.isFromDetail || this.localStorageService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
           this.changeFormulaByIndex(CarouselOption.backDetail);
         } else {
           this.changeFormulaByFIltersService(this.dataService.getFullStringForCarousel(
@@ -431,7 +433,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         }
         break;
       case CarouselOption.nextDetail:
-        if (this.isFromDetail || this.dataService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
+        if (this.isFromDetail || this.localStorageService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
           this.changeFormulaByIndex(CarouselOption.nextDetail);
         } else {
           this.changeFormulaByFIltersService(this.dataService.getFullStringForCarousel(
@@ -465,7 +467,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.filterDataOrdersForOrderIsolated.docNumUntil = this.ordenFabricacionId;
     this.filterDataOrdersForOrderIsolated.isFromOrders = false;
     this.filterDataOrdersForOrderIsolated.isfromCreateOrderIsolate = true;
-    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrdersForOrderIsolated));
+    this.localStorageService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrdersForOrderIsolated));
   }
 
   changeFormulaByFIltersService(fullStringForCarousel: string) {

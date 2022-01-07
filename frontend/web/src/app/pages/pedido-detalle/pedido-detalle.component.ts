@@ -82,7 +82,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     private router: Router,
     private downloadImagesService: DownloadImagesService,
     private observableService: ObservableService,
-    private localStorageService: LocalStorageService) {
+    public localStorageService: LocalStorageService) {
     this.observableService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -283,7 +283,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   materialRequestDetail() {
-    this.dataService.setCurrentDetailOrder(this.paramsDetailOrder.current);
+    this.localStorageService.setCurrentDetailOrder(this.paramsDetailOrder.current);
     this.router.navigate([RouterPaths.materialRequest,
     this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString() || CONST_NUMBER.zero,
     CONST_NUMBER.zero]);
@@ -359,7 +359,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   removeSignature(index: number) {
-    if (this.dataService.getUserRole() === RolesType.design) {
+    if (this.localStorageService.getUserRole() === RolesType.design) {
       this.dataService.presentToastCustom(`${Messages.removeLabelFinish} ${this.dataSource.data[index].label.toLowerCase()}?`,
         'question', CONST_STRING.empty, true, true)
         .then((result: any) => {
@@ -417,7 +417,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.addCommentsOnService(newCommentsResult.comments);
   }
   generateParamsToGetDetail(order: string) {
-    this.paramsDetailOrder = JSON.parse(this.dataService.getFiltersActives());
+    this.paramsDetailOrder = JSON.parse(this.localStorageService.getFiltersActives());
     this.paramsDetailOrder = { ...this.paramsDetailOrder, current: order };
     this.baseQueryString = this.dataService.getNewDataToFilter(this.paramsDetailOrder)[1];
     this.getDetallePedidoService();
@@ -450,9 +450,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   validateToGetCurrentDetail(paramsOrder: string) {
-    if (this.dataService.getCurrentDetailOrder()) {
-      this.generateParamsToGetDetail(this.dataService.getCurrentDetailOrder());
-      this.dataService.removeCurrentDetailOrder();
+    if (this.localStorageService.getCurrentDetailOrder()) {
+      this.generateParamsToGetDetail(this.localStorageService.getCurrentDetailOrder());
+      this.localStorageService.removeCurrentDetailOrder();
     } else {
       this.generateParamsToGetDetail(paramsOrder);
     }

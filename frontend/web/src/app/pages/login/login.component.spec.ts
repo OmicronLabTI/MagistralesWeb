@@ -54,8 +54,6 @@ describe('LoginComponent', () => {
       'setRefreshToken',
       'setUserId',
       'userIsAuthenticated',
-    ]);
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'setUserName',
       'setUserRole',
       'getUserRole',
@@ -63,10 +61,10 @@ describe('LoginComponent', () => {
     localStorageServiceSpy.setUserId.and.callFake(() => {
       return;
     });
-    dataServiceSpy.setUserName.and.callFake(() => {
+    localStorageServiceSpy.setUserName.and.callFake(() => {
       return;
     });
-    dataServiceSpy.getUserRole.and.callFake(() => {
+    localStorageServiceSpy.getUserRole.and.callFake(() => {
       return '';
     });
     //  --- Observable Service
@@ -96,6 +94,7 @@ describe('LoginComponent', () => {
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ]
     })
       .compileComponents();
@@ -149,15 +148,15 @@ describe('LoginComponent', () => {
     // expect(MockDialogRef.close).toHaveBeenCalled();
   });
 
-  it('Should evaluatedGoTo if dataService.getUserRole = 3 || 4 || 5', () => {
-    dataServiceSpy.getUserRole.and.callFake(() => {
+  it('Should evaluatedGoTo if localStorageService.getUserRole = 3 || 4 || 5', () => {
+    localStorageServiceSpy.getUserRole.and.callFake(() => {
       return '3';
     });
     component.evaluatedGoTo();
   });
 
-  it('Should evaluatedGoTo if dataService.getUserRole = 7', () => {
-    dataServiceSpy.getUserRole.and.callFake(() => {
+  it('Should evaluatedGoTo if localStorageService.getUserRole = 7', () => {
+    localStorageServiceSpy.getUserRole.and.callFake(() => {
       return '7';
     });
     component.evaluatedGoTo();

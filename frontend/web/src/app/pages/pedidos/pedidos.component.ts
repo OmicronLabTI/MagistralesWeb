@@ -76,7 +76,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private titleService: Title,
     private router: Router,
-    private localStorageService: LocalStorageService,
+    public localStorageService: LocalStorageService,
     private observableService: ObservableService,
   ) {
     this.observableService.setUrlActive(HttpServiceTOCall.ORDERS);
@@ -85,8 +85,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
-    if (this.dataService.getFiltersActives()) {
-      this.onSuccessSearchOrderModal(this.dataService.getFiltersActivesAsModel());
+    if (this.localStorageService.getFiltersActives()) {
+      this.onSuccessSearchOrderModal(this.localStorageService.getFiltersActivesAsModel());
     } else {
       this.createInitRage();
       this.createProductoNoLabel();
@@ -103,7 +103,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     }));
     this.subscriptionCallHttp.add(this.observableService.getNewCommentsResult().subscribe(newCommentsResult =>
       this.successNewComments(newCommentsResult)));
-    this.dataService.removeFiltersActive();
+    this.localStorageService.removeFiltersActive();
   }
   createInitRage() {
 
@@ -336,7 +336,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.filterDataOrders.offset = this.offset;
     this.filterDataOrders.limit = this.limit;
     this.filterDataOrders.pageIndex = this.pageIndex;
-    this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
+    this.localStorageService.setFiltersActives(JSON.stringify(this.filterDataOrders));
     this.router.navigate([RouterPaths.materialRequest,
     this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString() || CONST_NUMBER.zero,
     CONST_NUMBER.one]);
@@ -385,7 +385,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.filterDataOrders.offset = this.offset;
     this.filterDataOrders.limit = this.limit;
     this.filterDataOrders.pageIndex = this.pageIndex;
-    this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
+    this.localStorageService.setFiltersActives(JSON.stringify(this.filterDataOrders));
     this.router.navigate([RouterPaths.orderDetail, order]);
   }
   viewPedidosWithPdf() {

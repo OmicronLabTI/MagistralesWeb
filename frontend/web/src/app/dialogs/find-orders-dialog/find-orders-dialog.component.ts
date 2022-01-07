@@ -8,6 +8,7 @@ import { QfbSelect } from '../../model/http/users';
 import { Subscription } from 'rxjs';
 import { UsersService } from '../../services/users.service';
 import { DataService } from '../../services/data.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 
 @Component({
@@ -35,7 +36,8 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                 private ordersServices: PedidosService,
                 private errorService: ErrorService,
                 private usersService: UsersService,
-                public dataService: DataService) {
+                public dataService: DataService,
+                public localStorageService: LocalStorageService) {
         this.isFromSearchOrders = this.filterData.modalType === ConstOrders.modalOrders;
         this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
         this.findOrdersForm = this.formBuilder.group({

@@ -53,6 +53,7 @@ describe('MaterialRequestComponent', () => {
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getUserId',
+      'getUserName',
     ]);
 
     // ------------------ DataService
@@ -62,10 +63,9 @@ describe('MaterialRequestComponent', () => {
           'presentToastCustom',
           'setIsToSaveAnything',
           'getMessageTitle',
-          'getUserName',
         ]);
     dataServiceSpy.getMessageTitle.and.returnValue('');
-    dataServiceSpy.getUserName.and.returnValue('');
+    localStorageServiceSpy.getUserName.and.returnValue('');
     localStorageServiceSpy.getUserId.and.returnValue('');
     // -------------------- FileDownloaderService
     fileDownloaderServiceSpy = jasmine.createSpyObj<FileDownloaderService>
@@ -114,6 +114,7 @@ describe('MaterialRequestComponent', () => {
         { provide: FileDownloaderService, useValue: fileDownloaderServiceSpy },
         { provide: ReportingService, useValue: reportingServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA

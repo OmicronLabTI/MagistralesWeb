@@ -60,13 +60,13 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
               private localStorageService: LocalStorageService
               ) {
     this.getFullName();
-    this.role = this.dataService.getUserRole();
+    this.role = this.localStorageService.getUserRole();
     this.isLoading = this.observableService.getIsLoading();
     this.isLogin = this.localStorageService.userIsAuthenticated();
     this.observableService.getIsLogin().subscribe( isLoginS => {
       this.getFullName();
       this.isLogin = isLoginS;
-      this.role = this.dataService.getUserRole();
+      this.role = this.localStorageService.getUserRole();
     });
 
     this.observableService
@@ -115,8 +115,8 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   }
 
   goToPage(url: string[]) {
-      if (url[0] === 'ordenes' && this.dataService.getOrderIsolated()) {
-          this.dataService.removeOrderIsolated();
+      if (url[0] === 'ordenes' && this.localStorageService.getOrderIsolated()) {
+          this.localStorageService.removeOrderIsolated();
       }
       this.goToPageEvaluate(url);
   }
@@ -217,14 +217,14 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   }
 
   getFullName() {
-    this.fullName = this.dataService.getUserName();
-    this.role = this.dataService.getUserRole();
+    this.fullName = this.localStorageService.getUserName();
+    this.role = this.localStorageService.getUserRole();
   }
 
   ngOnDestroy() {
     this.subscriptionObservables.unsubscribe();
-    this.dataService.removeFiltersActiveOrders();
-    this.dataService.removeFiltersActive();
+    this.localStorageService.removeFiltersActiveOrders();
+    this.localStorageService.removeFiltersActive();
   }
   onSuccessGeneralMessage(generalMessage: GeneralMessage) {
     this.dataService.presentToastCustom(generalMessage.title,
@@ -342,9 +342,9 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
         this.pedidosService.createIsolatedOrder(createIsolatedReq).subscribe( resultCreateIsolated => {
             if (resultCreateIsolated.response !== 0) {// 0 = with error
                 this.onSuccessGeneralMessage({title: Messages.success, icon: 'success', isButtonAccept: false});
-                this.filterDataOrders = this.dataService.getFiltersActivesAsModelOrders();
+                this.filterDataOrders = this.localStorageService.getFiltersActivesAsModelOrders();
                 this.filterDataOrders.isfromCreateOrderIsolate = true;
-                this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
+                this.localStorageService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
                 // tslint:disable-next-line:max-line-length
                 this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString(), resultCreateIsolated.response.toString(), CONST_NUMBER.zero]);
             } else {

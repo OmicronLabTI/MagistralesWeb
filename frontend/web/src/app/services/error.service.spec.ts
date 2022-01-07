@@ -6,21 +6,22 @@ import { ErrorHttpInterface } from '../model/http/commons';
 import { DataService } from './data.service';
 import { ObservableService } from './observable.service';
 import { LocalStorageService } from './local-storage.service';
+import { RouterTestingModule } from '@angular/router/testing';
 describe('ErrorService', () => {
-  let dataServiceSpy;
+  // let dataServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   beforeEach(() => {
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'setToken',
-      'userIsAuthenticated'
+      'userIsAuthenticated',
+      'setUserName',
     ]);
-    dataServiceSpy = jasmine.createSpyObj<DataService>
-      ('DataService',
-        [
-          'setUserName',
-        ]
-      );
+    // dataServiceSpy = jasmine.createSpyObj<DataService>
+    //   ('DataService',
+    //     [
+    //     ]
+    //   );
     //  --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>
       ('ObservableService',
@@ -32,10 +33,12 @@ describe('ErrorService', () => {
         ]
       );
     TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
       providers: [
         DatePipe,
-        { provide: DataService, useValue: dataServiceSpy },
+        // { provide: DataService, useValue: dataServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ]
     });
   });

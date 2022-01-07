@@ -61,8 +61,8 @@ export class LoginComponent implements OnInit {
       await this.securityService.getUser(userLoginReq.user).toPromise().then(
           userRes => {
               this.localStorageService.setUserId(userRes.response.id);
-              this.dataService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
-              this.dataService.setUserRole(userRes.response.role);
+              this.localStorageService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
+              this.localStorageService.setUserRole(userRes.response.role);
           }
       ).catch((error) => {
         this.errorService.httpError(error);
@@ -97,10 +97,10 @@ export class LoginComponent implements OnInit {
   }
 
   evaluatedGoTo() {
-    if (this.dataService.getUserRole() === RolesType.logistic || this.dataService.getUserRole() === RolesType.design
-      || this.dataService.getUserRole() === RolesType.warehouse) {
+    if (this.localStorageService.getUserRole() === RolesType.logistic || this.localStorageService.getUserRole() === RolesType.design
+      || this.localStorageService.getUserRole() === RolesType.warehouse) {
       this.goToPedidos();
-    } else if (this.dataService.getUserRole() === RolesType.incidents) {
+    } else if (this.localStorageService.getUserRole() === RolesType.incidents) {
       this.router.navigate([RouterPaths.incidentsList]);
     } else {
       this.goToUsers();

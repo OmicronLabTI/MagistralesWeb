@@ -17,6 +17,7 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { ObservableService } from 'src/app/services/observable.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -25,6 +26,7 @@ describe('DetalleFormulaComponent', () => {
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   const paramsPedidos = new ParamsPedidos();
   // let routerSpy: jasmine.SpyObj<ActivatedRoute>;
 
@@ -32,6 +34,15 @@ describe('DetalleFormulaComponent', () => {
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService',
       [
         'httpError'
+      ]);
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+        'getUserId',
+        'getOrderIsolated',
+        'removeOrderIsolated',
+        'setFiltersActivesOrders',
+        'getFiltersActivesOrders',
+        'removeFiltersActiveOrders',
+        'getFiltersActivesAsModelOrders',
       ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService',
       [
@@ -41,8 +52,6 @@ describe('DetalleFormulaComponent', () => {
       ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom',
-      'getOrderIsolated',
-      'removeOrderIsolated',
       'transformDate',
       'getNewDataToFilter',
       'getItemOnDataOnlyIds',
@@ -51,10 +60,6 @@ describe('DetalleFormulaComponent', () => {
       'setIsToSaveAnything',
       'setIsToSaveAnything',
       'setIsToSaveAnything',
-      'setFiltersActivesOrders',
-      'getFiltersActivesOrders',
-      'removeFiltersActiveOrders',
-      'getFiltersActivesAsModelOrders',
       'getFullStringForCarousel',
       'getIsToSaveAnything'
     ]);
@@ -62,7 +67,7 @@ describe('DetalleFormulaComponent', () => {
     //   'paramMap'
     // ]);
     // routerSpy.paramMap.and.returnValue();
-    dataServiceSpy.getFiltersActivesAsModelOrders.and.returnValue(paramsPedidos);
+    localStorageServiceSpy.getFiltersActivesAsModelOrders.and.returnValue(paramsPedidos);
     pedidosServiceSpy.getFormulaDetail.and.callFake(() => {
       return of(DetalleFormulaMock);
     });
@@ -74,7 +79,7 @@ describe('DetalleFormulaComponent', () => {
     });
     dataServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
 
-    // --- Observable Service 
+    // --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
       [
         'getCallHttpService',
@@ -115,6 +120,7 @@ describe('DetalleFormulaComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: ActivatedRoute, useValue: { paramMap: new Subject() } }
       ]
     })
@@ -331,7 +337,7 @@ describe('DetalleFormulaComponent', () => {
 
   it('should createfilterDataOrdersForOrderIsolated', () => {
     component.createfilterDataOrdersForOrderIsolated();
-    expect(dataServiceSpy.setFiltersActivesOrders).toHaveBeenCalled();
+    expect(localStorageServiceSpy.setFiltersActivesOrders).toHaveBeenCalled();
   });
 
   it('should changeFormulaValidate = 0', () => {

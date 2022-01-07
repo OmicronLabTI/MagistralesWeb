@@ -26,6 +26,7 @@ import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-or
 import {Router} from '@angular/router';
 import {PedidosService} from '../../services/pedidos.service';
 import { ObservableService } from '../../services/observable.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 @Component({
   selector: 'app-faborders-list',
@@ -69,6 +70,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   constructor(
     private ordersService: OrdersService,
     private dataService: DataService,
+    private localStorageService: LocalStorageService,
     private errorService: ErrorService,
     private titleService: Title,
     private dialog: MatDialog,
@@ -80,13 +82,13 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.dataService.getOrderIsolated()) {
-      this.filterDataOrders.docNum = this.dataService.getOrderIsolated();
-      this.queryString = `?docNum=${this.dataService.getOrderIsolated()}`;
-      this.dataService.removeOrderIsolated();
+    if (this.localStorageService.getOrderIsolated()) {
+      this.filterDataOrders.docNum = this.localStorageService.getOrderIsolated();
+      this.queryString = `?docNum=${this.localStorageService.getOrderIsolated()}`;
+      this.localStorageService.removeOrderIsolated();
     }
-    if (this.dataService.getFiltersActivesAsModelOrders()) {
-      this.onSuccessSearchOrdersModal(this.dataService.getFiltersActivesAsModelOrders());
+    if (this.localStorageService.getFiltersActivesAsModelOrders()) {
+      this.onSuccessSearchOrdersModal(this.localStorageService.getFiltersActivesAsModelOrders());
     } else {
       this.createInitRageOrders();
     }
@@ -102,7 +104,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
             this.getOrdersAction();
           }
         }));
-    this.dataService.removeFiltersActiveOrders();
+    this.localStorageService.removeFiltersActiveOrders();
   }
   createInitRageOrders() {
     this.pedidosService.getInitRangeDate().subscribe(({response}) => this.getInitRange(response.filter(
@@ -212,7 +214,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   createOrderIsolated() {
-    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
+    this.localStorageService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.observableService.setSearchComponentModal({modalType: ComponentSearch.createOrderIsolated});
   }
 
@@ -280,7 +282,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.filterDataOrders.offset = this.offset;
     this.filterDataOrders.limit = this.limit;
     this.filterDataOrders.pageIndex = this.pageIndex;
-    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
+    this.localStorageService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.router.navigate([RouterPaths.materialRequest,
       this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated).toString() || CONST_NUMBER.zero
       , CONST_NUMBER.zero]);
@@ -290,7 +292,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.filterDataOrders.offset = this.offset;
     this.filterDataOrders.limit = this.limit;
     this.filterDataOrders.pageIndex = this.pageIndex;
-    this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
+    this.localStorageService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
     this.dataService.changeRouterForFormula(fabOrderId,
         this.dataSource.data.map(order => order.fabOrderId).toString(),
         CONST_NUMBER.zero);

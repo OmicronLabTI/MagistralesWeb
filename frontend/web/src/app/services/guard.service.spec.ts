@@ -17,11 +17,12 @@ describe('GuardService', () => {
     ]);
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'userIsAuthenticated',
-    ]);
-
-    dataSpyService = jasmine.createSpyObj<DataService>('DataService', [
       'getUserRole'
     ]);
+
+    // dataSpyService = jasmine.createSpyObj<DataService>('DataService', [
+    //   'getUserRole'
+    // ]);
     localStorageServiceSpy.userIsAuthenticated.and.returnValue(true);
     TestBed.configureTestingModule({
       imports: [
@@ -43,7 +44,7 @@ describe('GuardService', () => {
   });
 
   it('should can activate true', () => {
-      dataSpyService.getUserRole.and.returnValue('1');
+      localStorageServiceSpy.getUserRole.and.returnValue('1');
       const service: GuardService = TestBed.get(GuardService);
       const route = {url: [{
         path: 'userList'
@@ -54,7 +55,7 @@ describe('GuardService', () => {
   });
 
   it('should can activate false', () => {
-    dataSpyService.getUserRole.and.returnValue('1');
+    localStorageServiceSpy.getUserRole.and.returnValue('1');
     const service: GuardService = TestBed.get(GuardService);
     localStorageServiceSpy.userIsAuthenticated.and.returnValue(false);
     const route = {url: [{
@@ -66,7 +67,7 @@ describe('GuardService', () => {
   });
 
   it('should can activate true', () => {
-    dataSpyService.getUserRole.and.returnValue('3');
+    localStorageServiceSpy.getUserRole.and.returnValue('3');
     const service: GuardService = TestBed.get(GuardService);
     const route = {url: [{
       path: 'pedidos'
@@ -77,7 +78,7 @@ describe('GuardService', () => {
 });
 
   it('should can activate false', () => {
-    dataSpyService.getUserRole.and.returnValue('3');
+    localStorageServiceSpy.getUserRole.and.returnValue('3');
     const service: GuardService = TestBed.get(GuardService);
     localStorageServiceSpy.userIsAuthenticated.and.returnValue(false);
     const route = {url: [{

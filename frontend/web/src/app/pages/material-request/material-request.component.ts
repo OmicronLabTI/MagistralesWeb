@@ -223,7 +223,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.dataSource.data.forEach(order => order.requestQuantity = Number(Number(order.requestQuantity).toFixed(CONST_NUMBER.seven)));
     this.oldData.orderedProducts = this.dataSource.data;
     this.oldData.signature = this.oldData.signature || '';
-    this.oldData.signingUserName = this.dataService.getUserName();
+    this.oldData.signingUserName = this.localStorageService.getUserName();
   }
   private getFileNamePreview(): string {
     const date = new Date();

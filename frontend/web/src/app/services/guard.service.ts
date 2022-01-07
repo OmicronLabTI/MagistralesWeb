@@ -19,7 +19,7 @@ export class GuardService implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     let pass = false;
     if (this.localStorageService.userIsAuthenticated()) {
-      switch (this.dataService.getUserRole()) {
+      switch (this.localStorageService.getUserRole()) {
         case RolesType.admin:
           pass = pathRoles.admin.includes(route.url[CONST_NUMBER.zero].path);
           if (!pass) {

@@ -7,7 +7,7 @@
                     Detalle del pedido</div>
             </div>
             <div class="icon-next-container no-padding" 
-            *ngIf="dataService.getUserRole() === '4' && patientName !== ''">
+            *ngIf="localStorageService.getUserRole() === '4' && patientName !== ''">
                 <span class="no-margin patient-name docbase">Nombre del paciente:</span>
                 <span class="no-margin patient-name-bold spandoc">{{ patientName }}</span>
             </div>
@@ -69,53 +69,53 @@
             </button>
             <button [disabled]="!isThereOrdersDetailToDelivered" mat-raised-button
                 [ngClass]="isThereOrdersDetailToDelivered ? 'button-blue' : 'disable-button'"
-                (click)="ordersToDelivered()" *ngIf="dataService.getUserRole() === '5'">
+                (click)="ordersToDelivered()" *ngIf="localStorageService.getUserRole() === '5'">
                 Entregado
             </button>
             <button [disabled]="!OrderToGenerateQR" mat-raised-button
                 [ngClass]="OrderToGenerateQR ? 'button-blue' : 'disable-button'"
-                *ngIf="dataService.getUserRole() === '4'" (click)="ordersToDownloadQr()">
+                *ngIf="localStorageService.getUserRole() === '4'" (click)="ordersToDownloadQr()">
                 Descargar código QR&nbsp;
             </button>
             <button [disabled]="!isThereOrdersToFinishLabel" mat-raised-button
                 [ngClass]="isThereOrdersToFinishLabel ? 'button-blue' : 'disable-button'" (click)="finishOrdersLabels()"
-                *ngIf="dataService.getUserRole() === '4'">
+                *ngIf="localStorageService.getUserRole() === '4'">
                 Terminar etiquetas &nbsp;
             </button>
             <button mat-raised-button class="button-blue" (click)="materialRequestDetail()"
-                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">
                 Solicitud de insumos
             </button>
             <button [disabled]="!isThereOrdersDetailToPlan" mat-raised-button
                 [ngClass]="isThereOrdersDetailToPlan ? 'button-blue' : 'disable-button'" (click)="processOrdersDetail()"
-                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">
                 &nbsp; Planificar &nbsp;
             </button>
 
             <button [disabled]="!isThereOrdersDetailToPlace" mat-raised-button
                 [ngClass]="isThereOrdersDetailToPlace ? 'button-blue' : 'disable-button'"
                 (click)="openPlaceOrderDialog()"
-                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">
                 &nbsp; Asignar &nbsp;
             </button>
 
             <button [disabled]="!isThereOrdersDetailToReassign" mat-raised-button
                 [ngClass]="isThereOrdersDetailToReassign ? 'button-blue' : 'disable-button'"
                 (click)="reassignOrderDetail()"
-                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">
                 &nbsp; Reasignar &nbsp;
             </button>
 
             <button [disabled]="!isThereOrdersDetailToFinalize" mat-raised-button
                 [ngClass]="isThereOrdersDetailToFinalize ? 'button-blue' : 'disable-button'"
                 (click)="finalizeOrdersDetail()"
-                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">
                 &nbsp; Finalizar &nbsp;
             </button>
 
             <button mat-raised-button [disabled]="!isThereOrdersDetailToCancel"
                 [ngClass]="isThereOrdersDetailToCancel ? 'button-blue' : 'disable-button'" (click)="cancelOrders()"
-                *ngIf="dataService.getUserRole() !== '4' && dataService.getUserRole() !== '5'">
+                *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">
                 Cancelar
             </button>
         </div>
@@ -203,7 +203,7 @@
                     class="tdcell tdcell-center tdactions-centeres-elements">
                     <div class="icons-actions-container">
                         <button mat-icon-button matTooltip="Ver fórmula" class="ico-col-pri"
-                            *ngIf="element.ordenFabricacionId !== 0 && dataService.getUserRole() !== '5' && dataService.getUserRole() !== '4'"
+                            *ngIf="element.ordenFabricacionId !== 0 && localStorageService.getUserRole() !== '5' && localStorageService.getUserRole() !== '4'"
                             (click)="goToDetailFormula(element.ordenFabricacionId)">
                             <mat-icon>
                                 <svg *ngIf="!element.hasMissingStock" xmlns="http://www.w3.org/2000/svg"
@@ -264,7 +264,7 @@
                             </mat-icon>
                         </button>
                         <button mat-icon-button matTooltip="Etiqueta genérica"
-                            [disabled]="dataService.getUserRole() !== '4' || productCodeSplit[i] == ProductNoLabel.value || element.realLabel == realLabel || element.finishedLabel == '0'" class="ico-col-pri generic"
+                            [disabled]="localStorageService.getUserRole() !== '4' || productCodeSplit[i] == ProductNoLabel.value || element.realLabel == realLabel || element.finishedLabel == '0'" class="ico-col-pri generic"
                             *ngIf="element.label === 'Genérica'">
                             <mat-icon>
                                 <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg"
@@ -311,7 +311,7 @@
                             </mat-icon>
                         </button>
                         <button mat-icon-button matTooltip="Etiqueta personalizada"
-                            [disabled]="dataService.getUserRole() !== '4' || productCodeSplit[i] == ProductNoLabel.value || element.realLabel == realLabel || element.finishedLabel == '0'" class="ico-col-pri person"
+                            [disabled]="localStorageService.getUserRole() !== '4' || productCodeSplit[i] == ProductNoLabel.value || element.realLabel == realLabel || element.finishedLabel == '0'" class="ico-col-pri person"
                             *ngIf="element.label === 'Personalizada'">
                             <mat-icon>
                                 <svg *ngIf="element.finishedLabel === 0" xmlns="http://www.w3.org/2000/svg"

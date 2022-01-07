@@ -85,6 +85,7 @@ describe('MiListaComponent', () => {
         },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: OrdersService, useValue: ordersServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ]
     })
     .compileComponents();

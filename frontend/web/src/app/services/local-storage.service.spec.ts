@@ -59,4 +59,14 @@ describe('LocalStorageService', () => {
     service.setRefreshToken('anyRefreshToken');
     expect(service.getRefreshToken()).toEqual('anyRefreshToken');
   });
+  it('should get userName', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setUserName('xxxx');
+    expect(service.getUserName()).toEqual('xxxx');
+  });
+  it('should userRole', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setUserRole(3);
+    expect(service.getUserRole).toBeTruthy('3');
+  });
 });

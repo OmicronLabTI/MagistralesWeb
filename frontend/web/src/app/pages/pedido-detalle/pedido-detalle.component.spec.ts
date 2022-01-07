@@ -68,25 +68,26 @@ describe('PedidoDetalleComponent', () => {
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getProductNoLabel',
       'getUserId',
+      'getUserRole',
+      'getFiltersActives',
+      'getCurrentDetailOrder',
+      'removeCurrentDetailOrder',
+      'setCurrentDetailOrder',
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'getIsThereOnData',
       'presentToastCustom',
       'getMessageTitle',
-      'setCurrentDetailOrder',
-      'getUserRole',
       'openNewTapByUrl',
       'getItemOnDataOnlyIds',
-      'getFiltersActives',
       'getNewDataToFilter',
       'getFullStringForCarousel',
-      'getCurrentDetailOrder',
-      'removeCurrentDetailOrder',
       'getItemOnDateWithFilter'
     ]);
     localStorageServiceSpy.getProductNoLabel.and.returnValue(catalogs);
-    dataServiceSpy.getFiltersActives.and.returnValue(JSON.stringify(parametrosPedidos));
-    dataServiceSpy.getCurrentDetailOrder.and.returnValue('');
+    localStorageServiceSpy.getUserRole.and.returnValue('');
+    localStorageServiceSpy.getFiltersActives.and.returnValue(JSON.stringify(parametrosPedidos));
+    localStorageServiceSpy.getCurrentDetailOrder.and.returnValue('');
     dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
     downloadImagesServiceSpy = jasmine.createSpyObj<DownloadImagesService>('DownloadImagesService', ['downloadImageFromUrl']);
     pedidosServiceSpy.qrByEachOrder.and.callFake(() => {

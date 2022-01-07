@@ -18,10 +18,12 @@ import { PipesModule } from '../../pipes/pipes.module';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
 import { ObservableService } from 'src/app/services/observable.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;
   let fixture: ComponentFixture<FabordersListComponent>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let dataServiceSpy;
   let ordersServiceSpy;
   let errorServiceSpy;
@@ -30,19 +32,22 @@ describe('FabordersListComponent', () => {
 
   const iOrdersReq: IOrdersReq[] = [];
   beforeEach(async(() => {
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom',
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getOrderIsolated',
       'removeOrderIsolated',
+      'setFiltersActivesOrders',
+      'getFiltersActivesOrders',
+      'removeFiltersActiveOrders',
+      'getFiltersActivesAsModelOrders',
+    ]);
+
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'presentToastCustom',
       'transformDate',
       'getNewDataToFilter',
       'getItemOnDataOnlyIds',
       'getIsThereOnData',
       'getItemOnDateWithFilter',
-      'setFiltersActivesOrders',
-      'getFiltersActivesOrders',
-      'removeFiltersActiveOrders',
-      'getFiltersActivesAsModelOrders',
       'getIsWithFilter',
       'changeRouterForFormula'
     ]);
@@ -55,7 +60,7 @@ describe('FabordersListComponent', () => {
     ordersServiceSpy.getOrders.and.callFake(() => {
       return of(FabOrderListMock);
     });
-    dataServiceSpy.getOrderIsolated.and.callFake(() => {
+    localStorageServiceSpy.getOrderIsolated.and.callFake(() => {
       return '12345Id';
     });
     dataServiceSpy.getNewDataToFilter.and.callFake(() => {
@@ -96,7 +101,8 @@ describe('FabordersListComponent', () => {
         DatePipe,
         { provide: DataService, useValue: dataServiceSpy },
         { provide: OrdersService, useValue: ordersServiceSpy },
-        { provide: ObservableService, useValue: observableServiceSpy }
+        { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

@@ -230,13 +230,13 @@ export class DataService {
   //   return localStorage.getItem(ConstToken.userId);
   // }
 
-  setUserName(userName: string) {
-    localStorage.setItem(ConstToken.userName, userName);
-  }
+  // setUserName(userName: string) {
+  //   localStorage.setItem(ConstToken.userName, userName);
+  // }
 
-  getUserName() {
-    return localStorage.getItem(ConstToken.userName);
-  }
+  // getUserName() {
+  //   return localStorage.getItem(ConstToken.userName);
+  // }
 
   // userIsAuthenticated(): boolean {
   //   return !!localStorage.getItem(ConstToken.accessToken);
@@ -652,21 +652,21 @@ export class DataService {
     );
   }
 
-  setUserRole(role: number) {
-    localStorage.setItem(ConstToken.userRole, String(role));
-  }
+  // setUserRole(role: number) {
+  //   localStorage.setItem(ConstToken.userRole, String(role));
+  // }
 
-  getUserRole() {
-    return localStorage.getItem(ConstToken.userRole);
-  }
+  // getUserRole() {
+  //   return localStorage.getItem(ConstToken.userRole);
+  // }
 
-  getOrderIsolated() {
-    return localStorage.getItem(ConstToken.isolatedOrder);
-  }
+  // getOrderIsolated() {
+  //   return localStorage.getItem(ConstToken.isolatedOrder);
+  // }
 
-  removeOrderIsolated() {
-    localStorage.removeItem(ConstToken.isolatedOrder);
-  }
+  // removeOrderIsolated() {
+  //   localStorage.removeItem(ConstToken.isolatedOrder);
+  // }
 
   openNewTapByUrl(url: string, typeToSeeTap: TypeToSeeTap, orderId?: number) {
     // let tapTitle = CONST_STRING.empty;
@@ -846,39 +846,39 @@ export class DataService {
       return `?docNum=${docNum}-${docNumUntil}`;
     }
   }
-  setFiltersActives(filters: string) {
-    localStorage.setItem(ConstToken.filtersActive, filters);
-  }
-  getFiltersActives() {
-    return localStorage.getItem(ConstToken.filtersActive);
-  }
-  removeFiltersActive() {
-    localStorage.removeItem(ConstToken.filtersActive);
-  }
-  getFiltersActivesAsModel(): ParamsPedidos {
-    return JSON.parse(this.getFiltersActives());
-  }
-  setFiltersActivesOrders(filters: string) {
-    localStorage.setItem(ConstToken.filtersActiveOrders, filters);
-  }
-  getFiltersActivesOrders() {
-    return localStorage.getItem(ConstToken.filtersActiveOrders);
-  }
-  removeFiltersActiveOrders() {
-    localStorage.removeItem(ConstToken.filtersActiveOrders);
-  }
-  getFiltersActivesAsModelOrders(): ParamsPedidos {
-    return JSON.parse(this.getFiltersActivesOrders());
-  }
-  setCurrentDetailOrder(detailOrder: string) {
-    localStorage.setItem(ConstToken.detailOrderCurrent, detailOrder);
-  }
-  getCurrentDetailOrder() {
-    return localStorage.getItem(ConstToken.detailOrderCurrent);
-  }
-  removeCurrentDetailOrder() {
-    localStorage.removeItem(ConstToken.detailOrderCurrent);
-  }
+  // setFiltersActives(filters: string) {
+  //   localStorage.setItem(ConstToken.filtersActive, filters);
+  // }
+  // getFiltersActives() {
+  //   return localStorage.getItem(ConstToken.filtersActive);
+  // }
+  // removeFiltersActive() {
+  //   localStorage.removeItem(ConstToken.filtersActive);
+  // }
+  // getFiltersActivesAsModel(): ParamsPedidos {
+  //   return JSON.parse(this.getFiltersActives());
+  // }
+  // setFiltersActivesOrders(filters: string) {
+  //   localStorage.setItem(ConstToken.filtersActiveOrders, filters);
+  // }
+  // getFiltersActivesOrders() {
+  //   return localStorage.getItem(ConstToken.filtersActiveOrders);
+  // }
+  // removeFiltersActiveOrders() {
+  //   localStorage.removeItem(ConstToken.filtersActiveOrders);
+  // }
+  // getFiltersActivesAsModelOrders(): ParamsPedidos {
+  //   return JSON.parse(this.getFiltersActivesOrders());
+  // }
+  // setCurrentDetailOrder(detailOrder: string) {
+  //   localStorage.setItem(ConstToken.detailOrderCurrent, detailOrder);
+  // }
+  // getCurrentDetailOrder() {
+  //   return localStorage.getItem(ConstToken.detailOrderCurrent);
+  // }
+  // removeCurrentDetailOrder() {
+  //   localStorage.removeItem(ConstToken.detailOrderCurrent);
+  // }
   inputNumbersOnly(event): boolean {
     return CONST_USER_DIALOG.patternOnlyNumbers.test(event.key);
   }

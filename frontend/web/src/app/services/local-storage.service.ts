@@ -4,7 +4,7 @@ import {
   ConstToken,
   HttpServiceTOCall,
 } from '../constants/const';
-import { Catalogs } from '../model/http/pedidos';
+import { Catalogs, ParamsPedidos } from '../model/http/pedidos';
 
 @Injectable({
   providedIn: 'root'
@@ -58,5 +58,61 @@ export class LocalStorageService {
     return !!localStorage.getItem(ConstToken.accessToken);
   }
 
+  setUserName(userName: string) {
+    localStorage.setItem(ConstToken.userName, userName);
+  }
+
+  getUserName() {
+    return localStorage.getItem(ConstToken.userName);
+  }
+
+  setUserRole(role: number) {
+    localStorage.setItem(ConstToken.userRole, String(role));
+  }
+
+  getUserRole() {
+    return localStorage.getItem(ConstToken.userRole);
+  }
+  getOrderIsolated() {
+    return localStorage.getItem(ConstToken.isolatedOrder);
+  }
+
+  removeOrderIsolated() {
+    localStorage.removeItem(ConstToken.isolatedOrder);
+  }
+  setFiltersActives(filters: string) {
+    localStorage.setItem(ConstToken.filtersActive, filters);
+  }
+  getFiltersActives() {
+    return localStorage.getItem(ConstToken.filtersActive);
+  }
+  removeFiltersActive() {
+    localStorage.removeItem(ConstToken.filtersActive);
+  }
+  getFiltersActivesAsModel(): ParamsPedidos {
+    return JSON.parse(this.getFiltersActives());
+  }
+
+  setFiltersActivesOrders(filters: string) {
+    localStorage.setItem(ConstToken.filtersActiveOrders, filters);
+  }
+  getFiltersActivesOrders() {
+    return localStorage.getItem(ConstToken.filtersActiveOrders);
+  }
+  removeFiltersActiveOrders() {
+    localStorage.removeItem(ConstToken.filtersActiveOrders);
+  }
+  getFiltersActivesAsModelOrders(): ParamsPedidos {
+    return JSON.parse(this.getFiltersActivesOrders());
+  }
+  setCurrentDetailOrder(detailOrder: string) {
+    localStorage.setItem(ConstToken.detailOrderCurrent, detailOrder);
+  }
+  getCurrentDetailOrder() {
+    return localStorage.getItem(ConstToken.detailOrderCurrent);
+  }
+  removeCurrentDetailOrder() {
+    localStorage.removeItem(ConstToken.detailOrderCurrent);
+  }
 }
 
