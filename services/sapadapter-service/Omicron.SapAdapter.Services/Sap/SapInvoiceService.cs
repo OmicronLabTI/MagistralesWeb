@@ -169,7 +169,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceId = deliveryDetails.FirstOrDefault() == null || !deliveryDetails.FirstOrDefault().InvoiceId.HasValue ? 0 : deliveryDetails.FirstOrDefault().InvoiceId.Value;
 
             var invoiceHeader = (await this.sapDao.GetInvoiceHeaderByInvoiceId(new List<int> { invoiceId })).FirstOrDefault();
-            invoiceHeader = invoiceHeader == null ? new InvoiceHeaderModel() : invoiceHeader;
+            invoiceHeader ??= new InvoiceHeaderModel();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(new List<int> { invoiceHeader.InvoiceId })).ToList();
             var fabOrders = (await this.sapDao.GetFabOrderBySalesOrderId(listSaleOrder)).ToList();
 
@@ -186,10 +186,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var details = (await this.sapDao.GetAllDetails(new List<int?> { saleOrder })).ToList();
             var order = details.FirstOrDefault(x => x.OrdenFabricacionId == orderId);
-            order = order == null ? new CompleteDetailOrderModel() : order;
+            order ??= new CompleteDetailOrderModel();
 
             var itemCode = (await this.sapDao.GetProductById(order.CodigoProducto)).FirstOrDefault();
-            var productType = itemCode.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+            var productType = ServiceUtils.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
             var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId);
 
@@ -222,11 +222,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 return ServiceUtils.CreateResult(true, 404, null, new LineScannerModel(), null, null);
             }
 
-            var productType = itemCode.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+            var productType = ServiceUtils.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
             var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId);
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, new List<int> { saleOrder });
             var lineProduct = lineOrders.FirstOrDefault(x => x.ItemCode == itemCode.ProductoId);
-            lineProduct = lineProduct == null ? new LineProductsModel { BatchName = JsonConvert.SerializeObject(new List<AlmacenBatchModel>()) } : lineProduct;
+            lineProduct ??= new LineProductsModel { BatchName = JsonConvert.SerializeObject(new List<AlmacenBatchModel>()) };
             var batchModel = JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
             var batches = await this.GetBatchesForInvoice(itemCode, batchModel);
 
@@ -348,7 +348,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 deliveries.Where(y => y.BaseEntry == x).ToList().ForEach(d =>
                 {
-                    var invoiceId = d.InvoiceId.HasValue ? d.InvoiceId.Value : 0;
+                    var invoiceId = d.InvoiceId ?? 0;
                     var localInvoice = invoices.FirstOrDefault(i => i.InvoiceId == invoiceId);
                     localInvoice ??= new InvoiceHeaderModel();
 
@@ -389,13 +389,12 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var batchDb = (await this.sapDao.GetBatchByProductDistNumber(new List<string> { itemCode.ProductoId }, new List<string> { b.BatchNumber })).FirstOrDefault();
                 batchDb ??= new Batches { ExpDate = DateTime.Now };
-                var expDate = batchDb.ExpDate.HasValue ? batchDb.ExpDate.Value.ToString("dd/MM/yyyy") : string.Empty;
 
                 var batch = new LineProductBatchesModel
                 {
                     AvailableQuantity = b.BatchQty,
                     Batch = b.BatchNumber,
-                    ExpDate = expDate,
+                    ExpDate = ServiceUtils.GetDateValueOrDefault(batchDb.ExpDate, string.Empty),
                 };
 
                 batches.Add(batch);
@@ -580,11 +579,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 var localDeliverDetails = deliveryDetails.Where(x => !usedDeliveries.Any(y => y.ProductoId == x.ProductoId && x.BaseEntry == y.BaseEntry)).ToList();
                 var deliveriesDetail = localDeliverDetails.FirstOrDefault(x => x.DeliveryId == invoice.BaseEntry.Value && x.ProductoId == invoice.ProductoId);
                 var saleId = deliveriesDetail == null || !deliveriesDetail.BaseEntry.HasValue ? 0 : deliveriesDetail.BaseEntry.Value;
-                var prodId = deliveriesDetail == null ? string.Empty : deliveriesDetail.ProductoId;
+                var prodId = deliveriesDetail?.ProductoId ?? string.Empty;
 
                 usedDeliveries.Add(new DeliveryDetailModel { BaseEntry = saleId, ProductoId = prodId });
 
-                var productType = item.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+                var productType = ServiceUtils.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
                 if (item.IsMagistral.Equals("N"))
                 {
