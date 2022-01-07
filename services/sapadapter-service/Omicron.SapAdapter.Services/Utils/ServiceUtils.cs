@@ -429,6 +429,49 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// get item code with fabrication order.
+        /// </summary>
+        /// <param name="productoId">the productoId.</param>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>complete itemcode.</returns>
+        public static string GetItemcode(string productoId, string orderId)
+        {
+            return !string.IsNullOrEmpty(orderId) ? $"{productoId} - {orderId}" : productoId;
+        }
+
+        /// <summary>
+        /// get if is valid filter by type shipping.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>a bool.</returns>
+        public static bool IsValidFilterByTypeShipping(Dictionary<string, string> parameters)
+        {
+            return parameters.ContainsKey(ServiceConstants.Shipping) && parameters[ServiceConstants.Shipping].Split(",").Count() == 1;
+        }
+
+        /// <summary>
+        /// get the userorder header.
+        /// </summary>
+        /// <param name="userOrders">the userorders.</param>
+        /// <param name="saleOrderId">the saleorderid to look for.</param>
+        /// <returns>a user order model.</returns>
+        public static UserOrderModel GetSaleOrderHeader(this List<UserOrderModel> userOrders, string saleOrderId)
+        {
+            return userOrders.FirstOrDefault(x => x.Salesorderid == saleOrderId && string.IsNullOrEmpty(x.Productionorderid));
+        }
+
+        /// <summary>
+        /// get the line products order header.
+        /// </summary>
+        /// <param name="lineProducts">the lineProducts.</param>
+        /// <param name="saleOrderId">the saleorderid to look for.</param>
+        /// <returns>a line product model.</returns>
+        public static LineProductsModel GetLineProductOrderHeader(this List<LineProductsModel> lineProducts, int saleOrderId)
+        {
+            return lineProducts.FirstOrDefault(x => x.SaleOrderId == saleOrderId && string.IsNullOrEmpty(x.ItemCode));
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>
