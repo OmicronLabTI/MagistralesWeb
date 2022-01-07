@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import {
   Colors,
@@ -9,21 +8,13 @@ import {
   CONST_USER_DIALOG,
   ConstOrders,
   ConstStatus,
-  ConstToken,
   FromToFilter,
-  HttpServiceTOCall,
   MessageType,
-  MODAL_FIND_ORDERS,
   RouterPaths,
   TypeToSeeTap,
 } from '../constants/const';
-import { DatePipe } from '@angular/common';
-import { QfbWithNumber } from '../model/http/users';
-import { GeneralMessage } from '../model/device/general';
-import { CancelOrders, SearchComponentModal } from '../model/device/orders';
-import { CancelOrderReq, Catalogs, ParamsPedidos } from '../model/http/pedidos';
+import { CancelOrderReq, ParamsPedidos } from '../model/http/pedidos';
 import { IncidentsGraphicsMatrix } from '../model/http/incidents.model';
-import { CommentsConfig } from '../model/device/incidents.model';
 import { Router } from '@angular/router';
 import { DateService } from './date.service';
 
@@ -31,217 +22,16 @@ import { DateService } from './date.service';
   providedIn: 'root',
 })
 export class DataService {
-  // private isLoading = new Subject<boolean>();
-  // private generalNotificationMessage = new Subject<string>();
-  // private isLogin = new Subject<boolean>();
-  // private qfbTOPlace = new Subject<QfbWithNumber>();
-  // private callHttpService = new Subject<HttpServiceTOCall>();
-  // private messageGenericCallHttp = new Subject<GeneralMessage>();
   private isToSaVeAnything = false;
-  // private urlActive = new Subject<HttpServiceTOCall>();
-  // private cancelOrders = new Subject<CancelOrders>();
-  // private finalizeOrders = new Subject<CancelOrders>();
-  // private pathUrl = new Subject<any[]>();
-  // private isLogout = new Subject<boolean>();
-  // private searchComponentModal = new Subject<SearchComponentModal>();
-  // private newFormulaComponent = new Subject<any>();
-  // private newMaterialComponent = new Subject<any>();
-  // private searchOrdersModal = new Subject<SearchComponentModal>();
-  // private newSearchOrdersParams = new Subject<ParamsPedidos>();
-  // private openSignatureDialog = new Subject<any>();
-  // private newDataSignature = new Subject<any>();
-  // private openCommentsDialog = new Subject<CommentsConfig>();
-  // private newCommentsResult = new Subject<CommentsConfig>();
-  constructor(private datePipe: DatePipe, private router: Router, private dateService: DateService) {}
+  constructor(private router: Router, private dateService: DateService) {}
 
-  // setNewCommentsResult(newCommentsConfig: CommentsConfig) {
-  //   this.newCommentsResult.next(newCommentsConfig);
-  // }
-  // getNewCommentsResult() {
-  //   return this.newCommentsResult.asObservable();
-  // }
-  // setOpenCommentsDialog(commentsConfig: CommentsConfig) {
-  //   this.openCommentsDialog.next(commentsConfig);
-  // }
-  // getOpenCommentsDialog() {
-  //   return this.openCommentsDialog.asObservable();
-  // }
-
-  // setNewDataSignature(newSignature: any) {
-  //   this.newDataSignature.next(newSignature);
-  // }
-  // getNewDataSignature() {
-  //   return this.newDataSignature.asObservable();
-  // }
-  // setOpenSignatureDialog(datSignature: any) {
-  //   this.openSignatureDialog.next(datSignature);
-  // }
-  // getOpenSignatureDialog() {
-  //   return this.openSignatureDialog.asObservable();
-  // }
-  // setNewSearchOrderModal(searchOrdersParams: ParamsPedidos) {
-  //   this.newSearchOrdersParams.next(searchOrdersParams);
-  // }
-  // getNewSearchOrdersModal() {
-  //   return this.newSearchOrdersParams.asObservable();
-  // }
-  // setSearchOrdersModal(searchOrder: SearchComponentModal) {
-  //   this.searchOrdersModal.next(searchOrder);
-  // }
-  // getSearchOrdersModal() {
-  //   return this.searchOrdersModal.asObservable();
-  // }
-  // setNewFormulaComponent(newFormulaComponent: any) {
-  //   this.newFormulaComponent.next(newFormulaComponent);
-  // }
-  // getNewFormulaComponent() {
-  //   return this.newFormulaComponent.asObservable();
-  // }
-  // setNewMaterialComponent(newFormulaComponent: any) {
-  //   this.newMaterialComponent.next(newFormulaComponent);
-  // }
-  // getNewMaterialComponent() {
-  //   return this.newMaterialComponent.asObservable();
-  // }
-  // setSearchComponentModal(searchComponentModal: SearchComponentModal) {
-  //   this.searchComponentModal.next(searchComponentModal);
-  // }
-  // getSearchComponentModal() {
-  //   return this.searchComponentModal.asObservable();
-  // }
-  // setIsLogout(isLogout: boolean) {
-  //   this.isLogout.next(isLogout);
-  // }
-  // getIsLogout() {
-  //   return this.isLogout.asObservable();
-  // }
-  // setRememberSession(rememberSession: string) {
-  //   localStorage.setItem(ConstToken.rememberSession, rememberSession);
-  // }
-  // getRememberSession() {
-  //   return localStorage.getItem(ConstToken.rememberSession);
-  // }
-  // setProductNoLabel(productNoLabel: Catalogs) {
-  //   localStorage.setItem(ConstToken.productNoLabel, JSON.stringify(productNoLabel));
-  // }
-  // getProductNoLabel(): Catalogs {
-  //   const productNoLabelSTR = localStorage.getItem(ConstToken.productNoLabel);
-  //   const productNoLabel = JSON.parse(productNoLabelSTR) as Catalogs;
-  //   return productNoLabel;
-
-  // }
-
-  // setRefreshToken(refreshToken: string) {
-  //   localStorage.setItem(ConstToken.refreshToken, refreshToken);
-  // }
-  // getRefreshToken() {
-  //   return localStorage.getItem(ConstToken.refreshToken);
-  // }
-
-  // setPathUrl(pathUrl: any[]) {
-  //   this.pathUrl.next(pathUrl);
-  // }
-  // getPathUrl() {
-  //   return this.pathUrl.asObservable();
-  // }
-  // setFinalizeOrders(finalizeOrders: CancelOrders) {
-  //   this.finalizeOrders.next(finalizeOrders);
-  // }
-  // getFinalizeOrders() {
-  //   return this.finalizeOrders.asObservable();
-  // }
-  // setCancelOrders(cancelOrder: CancelOrders) {
-  //   this.cancelOrders.next(cancelOrder);
-  // }
-  // getCancelOrder() {
-  //   return this.cancelOrders.asObservable();
-  // }
   setIsToSaveAnything(isToSave: boolean) {
     this.isToSaVeAnything = isToSave;
   }
   getIsToSaveAnything() {
     return this.isToSaVeAnything;
   }
-  // setUrlActive(url: HttpServiceTOCall) {
-  //   this.urlActive.next(url);
-  // }
-  // getUrlActive() {
-  //   return this.urlActive;
-  // }
-  // setMessageGeneralCallHttp(messageGeneral: GeneralMessage) {
-  //   this.messageGenericCallHttp.next(messageGeneral);
-  // }
-  // getMessageGeneralCalHttp() {
-  //   return this.messageGenericCallHttp.asObservable();
-  // }
-  // setCallHttpService(numberServiceToCall: HttpServiceTOCall) {
-  //   this.callHttpService.next(numberServiceToCall);
-  // }
-  // getCallHttpService() {
-  //   return this.callHttpService.asObservable();
-  // }
-  // setIsLogin(isLogin: boolean) {
-  //   this.isLogin.next(isLogin);
-  // }
 
-  // getIsLogin() {
-  //   return this.isLogin.asObservable();
-  // }
-  // setIsLoading(loading: boolean) {
-  //   this.isLoading.next(loading);
-  // }
-
-  // getIsLoading() {
-  //   return this.isLoading.asObservable();
-  // }
-
-  // getGeneralNotificationMessage() {
-  //   return this.generalNotificationMessage.asObservable();
-  // }
-  // setQbfToPlace(qfb: QfbWithNumber) {
-  //   this.qfbTOPlace.next(qfb);
-  // }
-  // getQfbToPlace() {
-  //   return this.qfbTOPlace.asObservable();
-  // }
-  // setGeneralNotificationMessage(msg: string) {
-  //   this.generalNotificationMessage.next(msg);
-  // }
-
-  // getToken(): string {
-  //   return localStorage.getItem(ConstToken.accessToken);
-  // }
-  // setToken(token: string) {
-  //   localStorage.setItem(ConstToken.accessToken, token);
-  // }
-  // clearSession() {
-  //   localStorage.removeItem(ConstToken.accessToken);
-  //   localStorage.removeItem(ConstToken.rememberSession);
-  //   localStorage.removeItem(ConstToken.refreshToken);
-  //   localStorage.removeItem(ConstToken.userId);
-  //   localStorage.removeItem(ConstToken.userName);
-  //   localStorage.removeItem(ConstToken.isolatedOrder);
-  // }
-
-  // setUserId(userId: string) {
-  //   localStorage.setItem(ConstToken.userId, userId);
-  // }
-
-  // getUserId() {
-  //   return localStorage.getItem(ConstToken.userId);
-  // }
-
-  // setUserName(userName: string) {
-  //   localStorage.setItem(ConstToken.userName, userName);
-  // }
-
-  // getUserName() {
-  //   return localStorage.getItem(ConstToken.userName);
-  // }
-
-  // userIsAuthenticated(): boolean {
-  //   return !!localStorage.getItem(ConstToken.accessToken);
-  // }
   presentToastCustom(
     title: string,
     icon: SweetAlertIcon,
@@ -280,41 +70,6 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
-  // getDateFormatted(
-  //   initDate: Date,
-  //   finishDate: Date,
-  //   isBeginDate: boolean,
-  //   isProductivity: boolean = false,
-  //   numberCustomRange: number = CONST_NUMBER.lessOne
-  // ) {
-  //   if (isBeginDate) {
-  //     if (isProductivity) {
-  //       initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.ninetyDays);
-  //     } else {
-  //       initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
-  //     }
-  //   }
-  //   if (
-  //     numberCustomRange !== CONST_NUMBER.lessOne &&
-  //     numberCustomRange > CONST_NUMBER.zero
-  //   ) {
-  //     initDate = new Date(
-  //       initDate.getTime() - MODAL_FIND_ORDERS.operationDay * numberCustomRange
-  //     );
-  //   }
-  //   return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
-  // }
-  // transformDate(date: Date, isSecondFormat: boolean = false) {
-  //   if (!isSecondFormat) {
-  //     return this.datePipe.transform(date, 'dd/MM/yyyy');
-  //   } else {
-  //     return this.datePipe.transform(date, 'yyyy-MM-dd');
-  //   }
-  // }
-
-  // getDateArray(startDate: Date) {
-  //   return this.transformDate(startDate).split('/');
-  // }
 
   getMessageTitle(
     itemsWithError: any[],
@@ -645,29 +400,6 @@ export class DataService {
     return new Intl.NumberFormat().format(Number(numberToFormatted));
   }
 
-  // getMaxMinDate(date: Date, moths: number, isAdd: boolean) {
-  //   return new Date(
-  //     date.getFullYear(),
-  //     isAdd ? date.getMonth() + moths : date.getMonth() - moths,
-  //     date.getDate()
-  //   );
-  // }
-
-  // setUserRole(role: number) {
-  //   localStorage.setItem(ConstToken.userRole, String(role));
-  // }
-
-  // getUserRole() {
-  //   return localStorage.getItem(ConstToken.userRole);
-  // }
-
-  // getOrderIsolated() {
-  //   return localStorage.getItem(ConstToken.isolatedOrder);
-  // }
-
-  // removeOrderIsolated() {
-  //   localStorage.removeItem(ConstToken.isolatedOrder);
-  // }
 
   openNewTapByUrl(url: string, typeToSeeTap: TypeToSeeTap, orderId?: number) {
     // let tapTitle = CONST_STRING.empty;
@@ -847,39 +579,6 @@ export class DataService {
       return `?docNum=${docNum}-${docNumUntil}`;
     }
   }
-  // setFiltersActives(filters: string) {
-  //   localStorage.setItem(ConstToken.filtersActive, filters);
-  // }
-  // getFiltersActives() {
-  //   return localStorage.getItem(ConstToken.filtersActive);
-  // }
-  // removeFiltersActive() {
-  //   localStorage.removeItem(ConstToken.filtersActive);
-  // }
-  // getFiltersActivesAsModel(): ParamsPedidos {
-  //   return JSON.parse(this.getFiltersActives());
-  // }
-  // setFiltersActivesOrders(filters: string) {
-  //   localStorage.setItem(ConstToken.filtersActiveOrders, filters);
-  // }
-  // getFiltersActivesOrders() {
-  //   return localStorage.getItem(ConstToken.filtersActiveOrders);
-  // }
-  // removeFiltersActiveOrders() {
-  //   localStorage.removeItem(ConstToken.filtersActiveOrders);
-  // }
-  // getFiltersActivesAsModelOrders(): ParamsPedidos {
-  //   return JSON.parse(this.getFiltersActivesOrders());
-  // }
-  // setCurrentDetailOrder(detailOrder: string) {
-  //   localStorage.setItem(ConstToken.detailOrderCurrent, detailOrder);
-  // }
-  // getCurrentDetailOrder() {
-  //   return localStorage.getItem(ConstToken.detailOrderCurrent);
-  // }
-  // removeCurrentDetailOrder() {
-  //   localStorage.removeItem(ConstToken.detailOrderCurrent);
-  // }
   inputNumbersOnly(event): boolean {
     return CONST_USER_DIALOG.patternOnlyNumbers.test(event.key);
   }
