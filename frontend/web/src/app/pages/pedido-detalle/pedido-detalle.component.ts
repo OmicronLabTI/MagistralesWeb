@@ -28,6 +28,7 @@ import { DownloadImagesService } from '../../services/download-images.service';
 import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -82,7 +83,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     private router: Router,
     private downloadImagesService: DownloadImagesService,
     private observableService: ObservableService,
-    public localStorageService: LocalStorageService) {
+    public localStorageService: LocalStorageService,
+    private messagesService: MessagesService) {
     this.observableService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -233,7 +235,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   processOrdersDetail() {
-    this.dataService.presentToastCustom(Messages.processOrdersDetail, 'warning', CONST_STRING.empty, true, true)
+    this.messagesService.presentToastCustom(Messages.processOrdersDetail, 'warning', CONST_STRING.empty, true, true)
       .then((result: any) => {
         if (result.isConfirmed) {
           this.detailsOrderToProcess.pedidoId = Number(this.paramsDetailOrder.current);
@@ -242,10 +244,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
             this.dataSource.data.filter(t => (t.isChecked && t.status === ConstStatus.abierto)).map(detail => detail.codigoProducto);
           this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(resultProcessDetail => {
             if (resultProcessDetail.success && resultProcessDetail.response.length > 0) {
-              const titleProcessDetailWithError = this.dataService.getMessageTitle(
+              const titleProcessDetailWithError = this.messagesService.getMessageTitle(
                 resultProcessDetail.response, MessageType.processDetailOrder);
               this.getDetallePedidoService();
-              this.dataService.presentToastCustom(titleProcessDetailWithError, 'error',
+              this.messagesService.presentToastCustom(titleProcessDetailWithError, 'error',
                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             } else {
               this.reloadOrderDetail();
@@ -360,7 +362,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   removeSignature(index: number) {
     if (this.localStorageService.getUserRole() === RolesType.design) {
-      this.dataService.presentToastCustom(`${Messages.removeLabelFinish} ${this.dataSource.data[index].label.toLowerCase()}?`,
+      this.messagesService.presentToastCustom(`${Messages.removeLabelFinish} ${this.dataSource.data[index].label.toLowerCase()}?`,
         'question', CONST_STRING.empty, true, true)
         .then((result: any) => {
           if (result.isConfirmed) {
@@ -408,8 +410,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     }
   }
   createMessageWithOrdersWithoutQr(ordersWithoutQr: string[]) {
-    this.dataService.presentToastCustom(
-      this.dataService.getMessageTitle(ordersWithoutQr, MessageType.ordersWithoutQr, false), 'error',
+    this.messagesService.presentToastCustom(
+      this.messagesService.getMessageTitle(ordersWithoutQr, MessageType.ordersWithoutQr, false), 'error',
       CONST_STRING.empty, true, false, ClassNames.popupCustom);
   }
 
@@ -459,7 +461,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   ordersToDelivered() {
-    this.dataService.presentToastCustom(Messages.deliveredOrders, 'question', CONST_STRING.empty, true, true)
+    this.messagesService.presentToastCustom(Messages.deliveredOrders, 'question', CONST_STRING.empty, true, true)
       .then((result: any) => {
         if (result.isConfirmed) {
           this.pedidosService.putOrdersToDelivered(

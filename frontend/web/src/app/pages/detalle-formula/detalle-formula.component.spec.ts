@@ -19,6 +19,7 @@ import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { ObservableService } from 'src/app/services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from 'src/app/services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -30,9 +31,15 @@ describe('DetalleFormulaComponent', () => {
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let dateServiceSpy: jasmine.SpyObj<DateService>;
   const paramsPedidos = new ParamsPedidos();
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+
   // let routerSpy: jasmine.SpyObj<ActivatedRoute>;
 
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
+    ]);
+
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService',
       [
         'httpError'
@@ -53,7 +60,6 @@ describe('DetalleFormulaComponent', () => {
         'updateFormula'
       ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom',
       'getNewDataToFilter',
       'getItemOnDataOnlyIds',
       'getIsThereOnData',
@@ -78,7 +84,7 @@ describe('DetalleFormulaComponent', () => {
     pedidosServiceSpy.updateFormula.and.callFake(() => {
       return of();
     });
-    dataServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
+    messagesServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
 
     // --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
@@ -128,6 +134,7 @@ describe('DetalleFormulaComponent', () => {
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: DateService, useValue: dateServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
         { provide: ActivatedRoute, useValue: { paramMap: new Subject() } },
       ]
     })
@@ -273,7 +280,7 @@ describe('DetalleFormulaComponent', () => {
     pedidosServiceSpy.updateFormula.and.callFake(() => {
       return of();
     });
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
@@ -353,7 +360,7 @@ describe('DetalleFormulaComponent', () => {
 
   });
   it('should changeDetailFormula', () => {
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });

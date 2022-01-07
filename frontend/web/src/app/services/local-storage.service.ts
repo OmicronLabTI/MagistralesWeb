@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
 import {
   ConstToken,
-  HttpServiceTOCall,
 } from '../constants/const';
 import { Catalogs, ParamsPedidos } from '../model/http/pedidos';
 

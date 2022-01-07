@@ -8,6 +8,7 @@ import { OrdersService } from 'src/app/services/orders.service';
 import { Messages } from 'src/app/constants/messages';
 import {MODAL_FIND_ORDERS} from '../../constants/const';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   selector: 'app-mi-lista',
@@ -22,14 +23,15 @@ export class MiListaComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dataService: DataService,
     private orderService: OrdersService,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private messagesService: MessagesService
   ) {}
 
   ngOnInit() {
   }
 
   saveMyList() {
-    this.dataService.presentToastCustom(Messages.confirmSaveMyList, 'question', '', true, true).then( (res: any) => {
+    this.messagesService.presentToastCustom(Messages.confirmSaveMyList, 'question', '', true, true).then( (res: any) => {
       if (res.isConfirmed) {
         const datos = new IMyNewListReq();
         datos.userId = this.localStorageService.getUserId();
@@ -40,11 +42,11 @@ export class MiListaComponent implements OnInit {
         const nameFC = this.name.value;
         this.orderService.saveMyListComponent(datos).subscribe( result => {
           if (result.response === 0) {
-            this.dataService.presentToastCustom('Error al guardar la lista', 'error',
+            this.messagesService.presentToastCustom('Error al guardar la lista', 'error',
             'La lista <b>' + nameFC + '</b> ya existe.', true, false);
           } else {
             this.dialogRef.close(true);
-            this.dataService.presentToastCustom(Messages.successMyList, 'success', '', false, false);
+            this.messagesService.presentToastCustom(Messages.successMyList, 'success', '', false, false);
           }
         }, error => this.errorService.httpError(error));
       }

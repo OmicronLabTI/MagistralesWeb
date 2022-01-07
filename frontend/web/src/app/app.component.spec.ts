@@ -16,11 +16,13 @@ import { GeneralMessage } from './model/device/general';
 import { CancelOrders, SearchComponentModal } from './model/device/orders';
 import { CommentsConfig } from './model/device/incidents.model';
 import { LocalStorageService } from './services/local-storage.service';
+import { MessagesService } from './services/messages.service';
 describe('AppComponent', () => {
   let pedidosServiceSpy: jasmine.SpyObj<PedidosService>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
 
   const httpServiceTOCall = HttpServiceTOCall.ORDERS;
   const qfbWithNumber = new QfbWithNumber();
@@ -30,6 +32,11 @@ describe('AppComponent', () => {
   const commentsConfig = new CommentsConfig();
 
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom',
+      'getMessageTitle'
+    ]);
+
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'postPlaceOrders',
       'postPlaceOrderAutomatic',
@@ -53,8 +60,6 @@ describe('AppComponent', () => {
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'getIsToSaveAnything',
-      'presentToastCustom',
-      'getMessageTitle',
     ]);
     // ------------ Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>
@@ -113,7 +118,8 @@ describe('AppComponent', () => {
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: PedidosService, useValue: pedidosServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy}
+        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: MessagesService, useValue: messagesServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();

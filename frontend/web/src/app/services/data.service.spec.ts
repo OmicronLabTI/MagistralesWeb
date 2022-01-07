@@ -223,18 +223,18 @@ describe('DataService', () => {
   //   });
   //   service.setCancelOrders({list: [{orderId: 55, reason: 'Hubo un error', userId: 'user-id-22'}], cancelType: 'Pedido'});
   // });
-  it('should getMessageTitle', () => {
-    const service: DataService = TestBed.get(DataService);
-    expect(service.getMessageTitle(['1234'], MessageType.processOrder)).toEqual(' 1234 \n');
-    expect(service.getMessageTitle(['1234'], MessageType.processDetailOrder))
-        .toEqual(' 1234 \n');
-    expect(service.getMessageTitle(['1234'], MessageType.placeOrder))
-        .toEqual('La orden de fabricación  1234 no pudo ser Asignada \n');
-    expect(service.getMessageTitle([{reason: 'Hubo un error'}], MessageType.cancelOrder, true))
-        .toEqual('Hubo un error \n');
-    expect(service.getMessageTitle(['1234'], MessageType.saveBatches))
-        .toEqual('Error al asignar lotes a  1234 , por favor verificar \n');
-  });
+  // it('should getMessageTitle', () => {
+  //   const service: DataService = TestBed.get(DataService);
+  //   expect(service.getMessageTitle(['1234'], MessageType.processOrder)).toEqual(' 1234 \n');
+  //   expect(service.getMessageTitle(['1234'], MessageType.processDetailOrder))
+  //       .toEqual(' 1234 \n');
+  //   expect(service.getMessageTitle(['1234'], MessageType.placeOrder))
+  //       .toEqual('La orden de fabricación  1234 no pudo ser Asignada \n');
+  //   expect(service.getMessageTitle([{reason: 'Hubo un error'}], MessageType.cancelOrder, true))
+  //       .toEqual('Hubo un error \n');
+  //   expect(service.getMessageTitle(['1234'], MessageType.saveBatches))
+  //       .toEqual('Error al asignar lotes a  1234 , por favor verificar \n');
+  // });
   // it('should getRefreshToken', () => {
   //   const service: DataService = TestBed.get(DataService);
   //   service.setRefreshToken('anyRefreshToken');

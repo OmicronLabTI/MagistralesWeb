@@ -21,6 +21,7 @@ import { HttpServiceTOCall } from 'src/app/constants/const';
 import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -31,6 +32,7 @@ describe('PedidoDetalleComponent', () => {
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
 
   const catalogs = new Catalogs();
   const iPedidoDetalleRes = new IPedidoDetalleListRes();
@@ -51,7 +53,10 @@ describe('PedidoDetalleComponent', () => {
   catalogs.type = 'string';
   catalogs.field = 'ProductNoLabel';
   beforeEach(async(() => {
-
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom',
+      'getMessageTitle',
+    ]);
 
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
@@ -76,8 +81,6 @@ describe('PedidoDetalleComponent', () => {
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'getIsThereOnData',
-      'presentToastCustom',
-      'getMessageTitle',
       'openNewTapByUrl',
       'getItemOnDataOnlyIds',
       'getNewDataToFilter',
@@ -134,6 +137,7 @@ describe('PedidoDetalleComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

@@ -20,6 +20,7 @@ import { ReportingService } from 'src/app/services/reporting.service';
 import { FileTypeContentEnum } from 'src/app/enums/FileTypeContentEnum';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 
 @Component({
@@ -51,7 +52,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     private reportingService: ReportingService,
     private location: Location,
     private localStorageService: LocalStorageService,
-    private observableService: ObservableService) {
+    private observableService: ObservableService,
+    private messagesService: MessagesService) {
   }
 
   ngOnInit() {
@@ -93,7 +95,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
         titleStatusOrders = `${titleStatusOrders} \n\n ${this.getIdsLit(resultMaterialRequest.response.productionOrderIds).toString()}`;
       }
 
-      this.dataService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
+      this.messagesService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
         titleStatusOrders, 'info', '', true, false, ClassNames.popupCustom);
 
       if (resultMaterialRequest.response.productionOrderIds.length !== 0) {
@@ -155,7 +157,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   cancelRequest() {
-    this.dataService.presentToastCustom(Messages.cancelMaterialRequest, 'question', '', true
+    this.messagesService.presentToastCustom(Messages.cancelMaterialRequest, 'question', '', true
       , true).then((resultCancel: any) => {
         if (resultCancel.isConfirmed) {
           this.goBack();
@@ -190,7 +192,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   deleteComponents() {
-    this.dataService.presentToastCustom(Messages.deleteComponents, 'question', '', true, true)
+    this.messagesService.presentToastCustom(Messages.deleteComponents, 'question', '', true, true)
       .then((resultDeleteMessage: any) => {
         if (resultDeleteMessage.isConfirmed) {
           this.dataSource.data = this.dataSource.data.filter(order => !order.isChecked);
@@ -204,11 +206,11 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.location.back();
   }
   onDataError(errorData: any[], isOnInitError: boolean = false) {
-    this.generateMessage(this.dataService.getMessageTitle(errorData,
+    this.generateMessage(this.messagesService.getMessageTitle(errorData,
       isOnInitError ? MessageType.materialRequest : MessageType.default, !isOnInitError));
   }
   generateMessage(title: string) {
-    this.dataService.presentToastCustom(title, 'error',
+    this.messagesService.presentToastCustom(title, 'error',
       Messages.errorToAssignOrderAutomaticSubtitle,
       true, false, ClassNames.popupCustom);
   }

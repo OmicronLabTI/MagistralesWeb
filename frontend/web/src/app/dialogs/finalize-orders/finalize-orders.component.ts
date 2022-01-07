@@ -18,6 +18,7 @@ import { Messages } from '../../constants/messages';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { DateService } from '../../services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
 @Component({
   selector: 'app-finalize-orders',
   templateUrl: './finalize-orders.component.html',
@@ -38,7 +39,8 @@ export class FinalizeOrdersComponent implements OnInit {
     private dialogRef: MatDialogRef<FinalizeOrdersComponent>,
     private observableService: ObservableService,
     private localStorageService: LocalStorageService,
-    private dateService: DateService) {
+    private dateService: DateService,
+    private messagesService: MessagesService) {
     this.finalizeData = finalizeData || new Array();
   }
 
@@ -161,11 +163,11 @@ export class FinalizeOrdersComponent implements OnInit {
     });
     this.orderService.putFinalizeOrders(finalizeOrderReq, false).subscribe(finalizeResult => {
       if (finalizeResult.success && finalizeResult.response.failed.length > 0) {
-        const titleFinalizeWithError = this.dataService.getMessageTitle(
+        const titleFinalizeWithError = this.messagesService.getMessageTitle(
           finalizeResult.response.failed, MessageType.finalizeOrder, true);
         this.dialogRef.close();
         this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
-        this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
+        this.messagesService.presentToastCustom(titleFinalizeWithError, 'error',
           Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
       } else {
         this.dialogRef.close();

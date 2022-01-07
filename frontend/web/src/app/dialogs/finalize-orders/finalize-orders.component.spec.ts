@@ -20,6 +20,7 @@ import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { DateService } from 'src/app/services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('FinalizeOrdersComponent', () => {
   let component: FinalizeOrdersComponent;
@@ -31,6 +32,7 @@ describe('FinalizeOrdersComponent', () => {
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let dateServiceSpy: jasmine.SpyObj<DateService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
 
   const getNextBatchCodeRes = new IGetNewBachCodeRes();
   const getIfExistsBatchCodeRes = new IExistsBachCodeRes();
@@ -54,6 +56,11 @@ describe('FinalizeOrdersComponent', () => {
 
 
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom',
+      'getMessageTitle',
+    ]);
+
     dialogRefSpy = jasmine.createSpyObj<MatDialogRef<AddCommentsDialogComponent>>('MatDialogRef', [
       'close',
     ]);
@@ -75,15 +82,13 @@ describe('FinalizeOrdersComponent', () => {
       'getUserId',
     ]);
 
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
-      [
-        'getMessageTitle',
-        'presentToastCustom',
-      ]);
+    // dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
+    //   [
+    //   ]);
 
     localStorageServiceSpy.getUserId.and.returnValue('');
-    dataServiceSpy.getMessageTitle.and.returnValue('');
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.getMessageTitle.and.returnValue('');
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve();
     });
     // --- Observable Service
@@ -112,6 +117,7 @@ describe('FinalizeOrdersComponent', () => {
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: DateService, useValue: dateServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
       ]
     })
       .compileComponents();
@@ -329,7 +335,7 @@ describe('FinalizeOrdersComponent', () => {
   });
 
   it('should finalizeOrderSend', () => {
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });

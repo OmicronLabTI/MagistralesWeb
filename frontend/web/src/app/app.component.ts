@@ -37,6 +37,7 @@ import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comm
 import {CommentsConfig} from './model/device/incidents.model';
 import { LocalStorageService } from './services/local-storage.service';
 import { ObservableService } from './services/observable.service';
+import { MessagesService } from './services/messages.service';
 
 @Component({
   selector: 'app-root',
@@ -57,7 +58,8 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
               private router: Router,  private dialog: MatDialog,
               private pedidosService: PedidosService, private errorService: ErrorService,
               private cdRef: ChangeDetectorRef, private observableService: ObservableService,
-              private localStorageService: LocalStorageService
+              private localStorageService: LocalStorageService,
+              private messagesService: MessagesService
               ) {
     this.getFullName();
     this.role = this.localStorageService.getUserRole();
@@ -124,7 +126,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
       if (!this.dataService.getIsToSaveAnything()) {
           this.navigatePage(url);
       } else {
-          this.dataService.presentToastCustom(Messages.leftWithoutSave, 'question', '', true, true)
+          this.messagesService.presentToastCustom(Messages.leftWithoutSave, 'question', '', true, true)
               .then((savedResult: any) => {
                   if (savedResult.isConfirmed) {
                       this.navigatePage(url);
@@ -138,7 +140,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
 
   onSuccessPlaceOrder(qfbToPlace: QfbWithNumber) {
     if (qfbToPlace.userId) {
-      this.dataService.presentToastCustom(
+      this.messagesService.presentToastCustom(
           qfbToPlace.modalType === MODAL_NAMES.placeOrders ? !qfbToPlace.isFromReassign ?
               `${Messages.placeOrder} ${qfbToPlace.userName} ?` :
               `${Messages.reassignOrder} ${qfbToPlace.userName} ?` :
@@ -163,7 +165,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             }
           });
     } else if (qfbToPlace.assignType === MODAL_NAMES.assignAutomatic) {
-      this.dataService.presentToastCustom(
+      this.messagesService.presentToastCustom(
           Messages.placeOrderAutomatic,
           'question',
           CONST_STRING.empty,
@@ -227,15 +229,15 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     this.localStorageService.removeFiltersActive();
   }
   onSuccessGeneralMessage(generalMessage: GeneralMessage) {
-    this.dataService.presentToastCustom(generalMessage.title,
+    this.messagesService.presentToastCustom(generalMessage.title,
         generalMessage.icon, CONST_STRING.empty, generalMessage.isButtonAccept, false);
 
   }
   onSuccessPlaceOrdersHttp(resPlaceOrders: IPlaceOrdersAutomaticRes, modalType: string, isFromOrderIsolated: boolean) {
       if (resPlaceOrders.success && resPlaceOrders.response !== null && resPlaceOrders.response.length > CONST_NUMBER.zero) {
-          const titleItemsWithError = this.dataService.getMessageTitle(resPlaceOrders.response, MessageType.placeOrder);
+          const titleItemsWithError = this.messagesService.getMessageTitle(resPlaceOrders.response, MessageType.placeOrder);
           this.callHttpAboutModalFrom(modalType, isFromOrderIsolated);
-          this.dataService.presentToastCustom(titleItemsWithError, 'error',
+          this.messagesService.presentToastCustom(titleItemsWithError, 'error',
               Messages.errorToAssignOrderAutomaticSubtitle , true, false, ClassNames.popupCustom);
       } else {
           this.createDialogHttpOhAboutTypePlace(modalType, isFromOrderIsolated);
@@ -243,7 +245,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   }
 
     private onSuccessCancelOrder(resultCancel: CancelOrders) {
-        this.dataService.presentToastCustom(resultCancel.cancelType === MODAL_NAMES.placeOrders ?
+        this.messagesService.presentToastCustom(resultCancel.cancelType === MODAL_NAMES.placeOrders ?
             Messages.cancelOrders : Messages.cancelOrdersDetail,
             'question', CONST_STRING.empty, true, true)
             .then((result: any) => {
@@ -270,7 +272,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     }
 
     onSuccessFinalizeOrders(resultFinalize: CancelOrders) {
-        this.dataService.presentToastCustom(resultFinalize.cancelType === MODAL_NAMES.placeOrders ?
+        this.messagesService.presentToastCustom(resultFinalize.cancelType === MODAL_NAMES.placeOrders ?
             Messages.finalizeOrders : Messages.finalizeOrdersDetail,
             'question', CONST_STRING.empty, true, true)
             .then((result: any) => {
@@ -287,10 +289,10 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     }
     onSuccessFinalizeHttp(resultCancelHttp: ICancelOrdersRes, fromCall: string, isFromOrderIsolated: boolean) {
         if (resultCancelHttp.success && resultCancelHttp.response.failed.length > 0) {
-            const titleFinalizeWithError = this.dataService.getMessageTitle(
+            const titleFinalizeWithError = this.messagesService.getMessageTitle(
                 resultCancelHttp.response.failed, MessageType.finalizeOrder, true);
             this.callHttpAboutModalFrom(fromCall, isFromOrderIsolated);
-            this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
+            this.messagesService.presentToastCustom(titleFinalizeWithError, 'error',
                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
         } else {
             this.createDialogHttpOhAboutTypePlace(fromCall, isFromOrderIsolated);
@@ -318,7 +320,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
                     this.observableService.setNewMaterialComponent(resultComponents);
                 }
             } else if (resultComponents) {
-                this.dataService.presentToastCustom(Messages.createIsolatedOrder + resultComponents.productoId + '?',
+                this.messagesService.presentToastCustom(Messages.createIsolatedOrder + resultComponents.productoId + '?',
                     'question', CONST_STRING.empty, true, true)
                     .then((resultCreateIsolated: any) => {
                         if (resultCreateIsolated.isConfirmed) {
@@ -348,7 +350,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
                 // tslint:disable-next-line:max-line-length
                 this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString(), resultCreateIsolated.response.toString(), CONST_NUMBER.zero]);
             } else {
-                this.dataService.presentToastCustom(resultCreateIsolated.userError, 'error',
+                this.messagesService.presentToastCustom(resultCreateIsolated.userError, 'error',
                     Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             }
         }, error => this.errorService.httpError(error));

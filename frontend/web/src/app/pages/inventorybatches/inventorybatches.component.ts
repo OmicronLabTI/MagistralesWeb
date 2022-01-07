@@ -17,6 +17,7 @@ import { Messages } from '../../constants/messages';
 import { DataService } from '../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   selector: 'app-inventorybatches',
@@ -70,6 +71,7 @@ export class InventorybatchesComponent implements OnInit {
     private dataService: DataService,
     private errorService: ErrorService,
     private observableService: ObservableService,
+    private messagesService: MessagesService
   ) { }
 
   ngOnInit() {
@@ -335,17 +337,18 @@ export class InventorybatchesComponent implements OnInit {
         });
       }
     });
-    this.dataService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then((resultSaveMessage: any) => {
+    this.messagesService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then((resultSaveMessage: any) => {
       if (resultSaveMessage.isConfirmed) {
 
         this.batchesService.updateBatches(objectToSave).subscribe(resultSaveBatches => {
           if (resultSaveBatches.success && resultSaveBatches.response.length > 0) {
-            const titleFinalizeWithError = this.dataService.getMessageTitle(
+            const titleFinalizeWithError = this.messagesService.getMessageTitle(
               resultSaveBatches.response, MessageType.saveBatches);
-            this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
+            this.messagesService.presentToastCustom(titleFinalizeWithError, 'error',
               Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
           } else {
-            this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, false).then((resultBatchSave: any) => {
+            this.messagesService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, false).then(
+              (resultBatchSave: any) => {
               if (resultBatchSave.isConfirmed) {
                 window.location.reload();
               }

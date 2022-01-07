@@ -21,6 +21,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('MaterialRequestComponent', () => {
   let component: MaterialRequestComponent;
@@ -33,12 +34,19 @@ describe('MaterialRequestComponent', () => {
   let reportingServiceSpy: jasmine.SpyObj<ReportingService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+
 
   const getPreMaterialRequestMock = new IMaterialRequestRes();
   const postMaterialRequestMock = new IMaterialPostRes();
   const blobResponse = new HttpResponse<Blob>();
 
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom',
+      'getMessageTitle',
+    ]);
+
     //  ------------------ MaterialRequestService
     materialReServiceSpy = jasmine.createSpyObj<MaterialRequestService>
       ('MaterialRequestService',
@@ -60,11 +68,9 @@ describe('MaterialRequestComponent', () => {
     dataServiceSpy = jasmine.createSpyObj<DataService>
       ('DataService',
         [
-          'presentToastCustom',
           'setIsToSaveAnything',
-          'getMessageTitle',
         ]);
-    dataServiceSpy.getMessageTitle.and.returnValue('');
+    messagesServiceSpy.getMessageTitle.and.returnValue('');
     localStorageServiceSpy.getUserName.and.returnValue('');
     localStorageServiceSpy.getUserId.and.returnValue('');
     // -------------------- FileDownloaderService

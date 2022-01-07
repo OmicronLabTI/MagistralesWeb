@@ -17,6 +17,7 @@ import {
 import { of } from 'rxjs';
 import { CONST_NUMBER } from 'src/app/constants/const';
 import { ObservableService } from 'src/app/services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('InventorybatchesComponent', () => {
   let component: InventorybatchesComponent;
@@ -24,7 +25,8 @@ describe('InventorybatchesComponent', () => {
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let batchesServiceSpy: jasmine.SpyObj<BatchesService>;
   let errorServiceSpy;
-  let observableServiceSpy: jasmine.SpyObj<ObservableService>
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   const iLotesFormulaRes = new ILotesFormulaRes();
   const iLotesSaveRes = new ILotesSaveRes();
   const iLotesReq = new ILotesReq();
@@ -36,6 +38,10 @@ describe('InventorybatchesComponent', () => {
   iLotesReq.fechaExp = new Date('12/12/21');
   iLotesReq.isValid = true;
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom',
+      'getMessageTitle',
+    ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
@@ -48,12 +54,10 @@ describe('InventorybatchesComponent', () => {
     });
     batchesServiceSpy.updateBatches.and.returnValue(of(iLotesSaveRes));
 
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom',
-      'getMessageTitle',
-    ]);
-    dataServiceSpy.presentToastCustom.and.returnValue(Promise.resolve());
-    dataServiceSpy.getMessageTitle.and.returnValue('');
+    // dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+    // ]);
+    messagesServiceSpy.presentToastCustom.and.returnValue(Promise.resolve());
+    messagesServiceSpy.getMessageTitle.and.returnValue('');
     // --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
       [
@@ -479,7 +483,7 @@ describe('InventorybatchesComponent', () => {
       }];
     component.buildObjectToSap();
     expect(component.buildObjectToSap).toBeTruthy();
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });

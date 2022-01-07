@@ -8,6 +8,7 @@ import { Messages } from 'src/app/constants/messages';
 import { MatTableDataSource} from '@angular/material';
 import {ErrorService} from '../../services/error.service';
 import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   selector: 'app-componentslist',
@@ -24,7 +25,8 @@ export class ComponentslistComponent implements AfterViewInit {
     private dataService: DataService,
     private orderService: OrdersService,
     private errorService: ErrorService,
-    private observableService: ObservableService
+    private observableService: ObservableService,
+    private messagesService: MessagesService
   ) { }
 
   ngAfterViewInit() {
@@ -38,14 +40,14 @@ export class ComponentslistComponent implements AfterViewInit {
   }
 
   selectComponent(element: BaseComponent) {
-    this.dataService.presentToastCustom(Messages.confirmReplaceWithListComponents, 'question', '', true, true).then( (res: any) => {
+    this.messagesService.presentToastCustom(Messages.confirmReplaceWithListComponents, 'question', '', true, true).then( (res: any) => {
       if (res.isConfirmed) {
         this.dialogRef.close({componentes: element.components});
       }
     });
   }
   removeCustomList(element: BaseComponent) {
-    this.dataService.presentToastCustom(`${Messages.removeListComponents} ${element.name.toUpperCase()}?`,
+    this.messagesService.presentToastCustom(`${Messages.removeListComponents} ${element.name.toUpperCase()}?`,
         'question', '', true, true).then( (res: any) => {
       if (res.isConfirmed) {
         this.orderService.deleteCustomList({productId: element.productId, name: element.name}).subscribe( () => {

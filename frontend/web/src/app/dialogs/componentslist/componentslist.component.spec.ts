@@ -18,6 +18,7 @@ import { BaseComponent, Components, IMyCustomListRes } from 'src/app/model/http/
 import { OrdersService } from 'src/app/services/orders.service';
 import { of } from 'rxjs';
 import { ObservableService } from 'src/app/services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('ComponentslistComponent', () => {
   let component: ComponentslistComponent;
@@ -25,6 +26,7 @@ describe('ComponentslistComponent', () => {
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let ordersServiceSpy: jasmine.SpyObj<OrdersService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let matDialogRef;
   const iMyCustomListRes = new IMyCustomListRes();
   const baseComponent = new BaseComponent();
@@ -34,15 +36,19 @@ describe('ComponentslistComponent', () => {
   baseComponent.components = Components[0];
 
   beforeEach(async(() => {
-    const matDialogSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom',
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
     ]);
+
+    const matDialogSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
+    // dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+    //   'presentToastCustom',
+    // ]);
     ordersServiceSpy = jasmine.createSpyObj('OrdersService', [
       'getCustomList',
       'deleteCustomList'
     ]);
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
@@ -83,7 +89,8 @@ describe('ComponentslistComponent', () => {
           provide: MAT_DIALOG_DATA, useValue: {}
         },
         { provide: DataService, useValue: dataServiceSpy },
-        { provide: ObservableService, useValue: observableServiceSpy }
+        { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
       ]
     })
       .compileComponents();
@@ -100,18 +107,18 @@ describe('ComponentslistComponent', () => {
     expect(component).toBeTruthy();
   });
   it('should selectComponent', () => {
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
     });
     // matDialogRef.close.and.re
     component.selectComponent(baseComponent);
-    expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
 
   it('should removeCustomList', () => {
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });

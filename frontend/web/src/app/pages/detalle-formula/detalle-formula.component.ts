@@ -25,6 +25,7 @@ import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { ObservableService } from '../../services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from '../../services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -79,6 +80,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     private observableService: ObservableService,
     public localStorageService: LocalStorageService,
     private dateService: DateService,
+    private messagesService: MessagesService
     ) {
   }
 
@@ -195,7 +197,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.getIsThereNull()) {
-      this.dataService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
+      this.messagesService.presentToastCustom(Messages.saveFormulaDetail, 'question', '', true, true)
         .then((resultSaveMessage: any) => {
           if (resultSaveMessage.isConfirmed) {
             const detailComponentsTOSave = this.createDetailTOSave(true);
@@ -231,7 +233,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.isComponentsToDelete = this.dataSource.data.filter(t => t.isChecked).length > 0;
   }
   deleteComponents() {
-    this.dataService.presentToastCustom(Messages.deleteComponents, 'warning', '', true, true)
+    this.messagesService.presentToastCustom(Messages.deleteComponents, 'warning', '', true, true)
       .then((resultDeleteMessage: any) => {
         if (resultDeleteMessage.isConfirmed) {
           const detailComponentsToDelete = this.createDetailTOSave();
@@ -336,7 +338,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         this.isSaveToMyList = !result;
       });
     } else {
-      this.dataService.presentToastCustom(Messages.noComponentsToCreateList, 'info', CONST_STRING.empty, true, false);
+      this.messagesService.presentToastCustom(Messages.noComponentsToCreateList, 'info', CONST_STRING.empty, true, false);
     }
   }
 
@@ -414,7 +416,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
   changeDetailFormula(optionChangeDetail: number) {
     if (this.dataService.getIsToSaveAnything()) {
-      this.dataService.presentToastCustom(Messages.leftWithoutSaveOnCarousel, 'question', '', true, true)
+      this.messagesService.presentToastCustom(Messages.leftWithoutSaveOnCarousel, 'question', '', true, true)
         .then((savedResult: any) => {
           if (savedResult.isConfirmed) {
             this.changeFormulaValidate(optionChangeDetail);

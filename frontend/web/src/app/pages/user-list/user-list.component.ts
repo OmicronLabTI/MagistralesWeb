@@ -13,6 +13,7 @@ import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { SearchUsersDialogComponent } from '../../dialogs/search-users-dialog/search-users-dialog.component';
 import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
     selector: 'app-user-list',
@@ -38,6 +39,7 @@ export class UserListComponent implements OnInit, OnDestroy {
         private dialog: MatDialog,
         private usersService: UsersService,
         private dataService: DataService,
+        private messagesService: MessagesService,
         private errorService: ErrorService,
         private titleService: Title,
         private observableService: ObservableService) {
@@ -104,7 +106,7 @@ export class UserListComponent implements OnInit, OnDestroy {
             this.dataSource.data.filter(user => user.id === idUser).forEach(user => user.isChecked = true);
         }
 
-        this.dataService.presentToastCustom(Messages.deleteUsers, 'warning', CONST_STRING.empty, true, true)
+        this.messagesService.presentToastCustom(Messages.deleteUsers, 'warning', CONST_STRING.empty, true, true)
             .then((result: any) => {
                 if (result.isConfirmed) {
                     this.usersService.deleteUsers(this.dataSource.data.filter(user => user.isChecked).map(user => user.id)).subscribe(

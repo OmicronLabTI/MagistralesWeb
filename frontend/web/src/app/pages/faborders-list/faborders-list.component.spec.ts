@@ -20,6 +20,7 @@ import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
 import { ObservableService } from 'src/app/services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from 'src/app/services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;
@@ -30,10 +31,16 @@ describe('FabordersListComponent', () => {
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let dateServiceSpy: jasmine.SpyObj<DateService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+
   const paramsPedidos = new ParamsPedidos();
 
   const iOrdersReq: IOrdersReq[] = [];
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
+    ]);
+
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getOrderIsolated',
       'removeOrderIsolated',
@@ -44,7 +51,6 @@ describe('FabordersListComponent', () => {
     ]);
 
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom',
       'getNewDataToFilter',
       'getItemOnDataOnlyIds',
       'getIsThereOnData',
@@ -113,6 +119,7 @@ describe('FabordersListComponent', () => {
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: DateService, useValue: dateServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

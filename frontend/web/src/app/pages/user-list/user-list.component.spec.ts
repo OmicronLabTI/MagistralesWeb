@@ -26,10 +26,12 @@ import { ErrorService } from '../../services/error.service';
 import { PageEvent } from '@angular/material/paginator';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
   let fixture: ComponentFixture<UserListComponent>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let userServiceSpy;
   let dataServiceSpy;
   let errorServiceSpy;
@@ -43,12 +45,14 @@ describe('UserListComponent', () => {
     userServiceSpy.getUsers.and.callFake(() => {
       return of(UserListMock);
     });
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
+    ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
-        'presentToastCustom',
         'getFormattedNumber'
       ]);
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return new Promise(resolve => { resolve(''); });
     });
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService',
@@ -89,6 +93,7 @@ describe('UserListComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
       ]
     })
       .compileComponents();
@@ -147,7 +152,7 @@ describe('UserListComponent', () => {
     component.dataSource.data = UserListMock.response;
     component.deleteUsers('cda94a8a-366e-46c9-b120-68c6edce3c44');
     expect(component.dataSource.data.filter(user => user.id === 'cda94a8a-366e-46c9-b120-68c6edce3c44')[0].isChecked).toBeTruthy();
-    expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
   it('should call createMessageHttpOk()', () => {
     component.createMessageHttpOk();

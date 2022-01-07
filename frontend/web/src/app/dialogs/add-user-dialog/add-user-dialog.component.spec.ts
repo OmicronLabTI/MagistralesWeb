@@ -18,6 +18,7 @@ import { RolesMock } from '../../../mocks/rolesMock';
 import { ErrorService } from '../../services/error.service';
 import { DataService } from '../../services/data.service';
 import { ObservableService } from 'src/app/services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('AddUserDialogComponent', () => {
   let component: AddUserDialogComponent;
@@ -26,6 +27,7 @@ describe('AddUserDialogComponent', () => {
   let errorServiceSpy;
   let dataServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
 
   const close = () => { };
   const userEditSpec = {
@@ -42,9 +44,12 @@ describe('AddUserDialogComponent', () => {
     classification: 'BE'
   };
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
+    ]);
+
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
-        'presentToastCustom',
         'getNormalizeString'
       ]);
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService',
@@ -94,6 +99,7 @@ describe('AddUserDialogComponent', () => {
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
         DatePipe
       ]
     })

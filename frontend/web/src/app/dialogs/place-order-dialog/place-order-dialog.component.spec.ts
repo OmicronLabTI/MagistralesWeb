@@ -12,6 +12,7 @@ import { PedidosService } from 'src/app/services/pedidos.service';
 import { IQfbWithNumberRes, QfbWithNumber } from 'src/app/model/http/users';
 import { of } from 'rxjs';
 import { ObservableService } from 'src/app/services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('PlaceOrderDialogComponent', () => {
   let component: PlaceOrderDialogComponent;
@@ -19,6 +20,7 @@ describe('PlaceOrderDialogComponent', () => {
   let dataServiceSpy;
   let pedidosServiceSpy: jasmine.SpyObj<PedidosService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
 
   const iQfbWithNumberRes = new IQfbWithNumberRes();
   const qfbWithNumber: QfbWithNumber[] = [{
@@ -30,9 +32,12 @@ describe('PlaceOrderDialogComponent', () => {
   iQfbWithNumberRes.response = qfbWithNumber;
 
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
+    ]);
+
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
-        'presentToastCustom',
         'getFormattedNumber',
       ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService',
@@ -75,6 +80,7 @@ describe('PlaceOrderDialogComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         DatePipe,
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
       ]
     })
       .compileComponents();

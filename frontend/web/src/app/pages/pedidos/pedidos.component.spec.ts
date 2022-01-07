@@ -19,6 +19,7 @@ import { RangeDateMOck } from '../../../mocks/rangeDateMock';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { DateService } from 'src/app/services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
@@ -27,9 +28,16 @@ describe('PedidosComponent', () => {
   let pedidosServiceSpy;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
-  let dateServiceSpy: jasmine.SpyObj<DateService>
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+
   const paramsPedidos = new ParamsPedidos();
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom',
+      'getMessageTitle'
+    ]);
+
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getUserId', 'setRefreshToken', 'getUserRole',
       'setProductNoLabel',
@@ -41,22 +49,20 @@ describe('PedidosComponent', () => {
     // localStorageServiceSpy.getUserRole.and.returnValue('');
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
-        'presentToastCustom',
         'getIsThereOnData',
         'getItemOnDataOnlyIds',
         'getNewDataToFilter',
         'getIsWithFilter',
         'getItemOnDateWithFilter',
         'openNewTapByUrl',
-        'getMessageTitle'
       ]);
     dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
-    dataServiceSpy.presentToastCustom.and.returnValue(Promise.resolve(true));
+    messagesServiceSpy.presentToastCustom.and.returnValue(Promise.resolve(true));
     dataServiceSpy.getIsWithFilter.and.returnValue(false);
     dataServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
     dataServiceSpy.getIsThereOnData.and.returnValue(true);
     dataServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
-    dataServiceSpy.getMessageTitle.and.returnValue('');
+    messagesServiceSpy.getMessageTitle.and.returnValue('');
 
     localStorageServiceSpy.getFiltersActives.and.returnValue('');
     localStorageServiceSpy.getFiltersActivesAsModel.and.returnValue(paramsPedidos);
@@ -110,6 +116,7 @@ describe('PedidosComponent', () => {
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: DateService, useValue: dateServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

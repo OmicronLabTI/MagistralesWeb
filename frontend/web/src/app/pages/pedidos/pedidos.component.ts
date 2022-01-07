@@ -38,6 +38,7 @@ import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from '../../services/observable.service';
 import { DateService } from '../../services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -80,6 +81,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     public localStorageService: LocalStorageService,
     private observableService: ObservableService,
     private dateService: DateService,
+    private messagesService: MessagesService
   ) {
     this.observableService.setUrlActive(HttpServiceTOCall.ORDERS);
   }
@@ -200,7 +202,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   processOrdersService() {
-    this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
+    this.messagesService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
       .then((result: any) => {
         if (result.isConfirmed) {
           this.ordersToProcess.listIds = this.getOrdersOnlyOpen();
@@ -208,9 +210,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
           this.pedidosService.processOrders(this.ordersToProcess).subscribe(
             resProcessOrder => {
               if (resProcessOrder.success && resProcessOrder.response.length > 0) {
-                const titleProcessWithError = this.dataService.getMessageTitle(resProcessOrder.response, MessageType.processOrder);
+                const titleProcessWithError = this.messagesService.getMessageTitle(resProcessOrder.response, MessageType.processOrder);
                 this.getPedidos();
-                this.dataService.presentToastCustom(titleProcessWithError, 'error',
+                this.messagesService.presentToastCustom(titleProcessWithError, 'error',
                   Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
               } else {
                 this.showMessagesAndRefresh();
@@ -219,7 +221,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
             },
             error => {
               if (error.status === HttpStatus.badRequest) {
-                this.dataService.presentToastCustom(error.error, 'error',
+                this.messagesService.presentToastCustom(error.error, 'error',
                   Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
               } else {
                 this.errorService.httpError(error);
@@ -346,7 +348,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   printOrderAsPdfFile() {
     if (this.isCheckedOrders) {
-      this.dataService.presentToastCustom(Messages.confirmCreateOrderPdf, 'question', '', true, true)
+      this.messagesService.presentToastCustom(Messages.confirmCreateOrderPdf, 'question', '', true, true)
         .then((res: any) => {
           if (res.isConfirmed) {
             this.printOrderAsPdfFileConfirmedAction();
@@ -369,9 +371,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
           } else {
             message = `${Messages.errorMessageCreateOrderPdf}${formatedNumbers}`;
           }
-          this.dataService.presentToastCustom(Messages.errorTitleCreateOrderPdf, 'error', message, true, false, ClassNames.popupCustom);
+          this.messagesService.presentToastCustom(Messages.errorTitleCreateOrderPdf, 'error', message, true, false, ClassNames.popupCustom);
         } else {
-          this.dataService.presentToastCustom(Messages.successTitleCreateOrderPdf, 'success', null, true, false);
+          this.messagesService.presentToastCustom(Messages.successTitleCreateOrderPdf, 'success', null, true, false);
         }
         this.getPedidos();
       },
@@ -409,7 +411,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   ordersToRefuse() {
 
-    this.dataService.presentToastCustom(Messages.refuseOrders, 'warning', CONST_STRING.empty, true, true)
+    this.messagesService.presentToastCustom(Messages.refuseOrders, 'warning', CONST_STRING.empty, true, true)
       .then((result: any) => {
         if (result.isConfirmed) {
           this.showCommentsToRefuse();
@@ -433,7 +435,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
       this.showMessagesAndRefresh();
       return;
     }
-    this.dataService.presentToastCustom(this.dataService.getMessageTitle(failed, MessageType.default, true)
+    this.messagesService.presentToastCustom(this.messagesService.getMessageTitle(failed, MessageType.default, true)
       , 'info', CONST_STRING.empty, true, false, ClassNames.popupCustom);
     this.getPedidos();
   }

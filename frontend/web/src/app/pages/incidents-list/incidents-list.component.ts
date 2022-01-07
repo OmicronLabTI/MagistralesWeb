@@ -20,6 +20,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { Title } from '@angular/platform-browser';
 import { ObservableService } from '../../services/observable.service';
 import { DateService } from '../../services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   selector: 'app-incidents-list',
@@ -59,7 +60,8 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private titleService: Title,
     private observableService: ObservableService,
-    private dateService: DateService) {
+    private dateService: DateService,
+    private messagesService: MessagesService) {
     this.observableService.setUrlActive(HttpServiceTOCall.INCIDENTS_LIST);
     this.filterDataIncidents.dateType = ConstOrders.defaultDateInit;
     this.filterDataIncidents.dateFull = this.dateService.getDateFormatted(new Date(), new Date(), true);
@@ -170,8 +172,9 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   }
 
   private changeStatusComments() {
-    const title = `La incidencia del pedido ${this.dataSource.data[this.currentIndex].saleOrder} - ${this.dataSource.data[this.currentIndex].itemCode} será Atendida`;
-    this.dataService.presentToastCustom(title, 'question', CONST_STRING.empty, true, true)
+    const title = `La incidencia del pedido
+    ${this.dataSource.data[this.currentIndex].saleOrder} - ${this.dataSource.data[this.currentIndex].itemCode} será Atendida`;
+    this.messagesService.presentToastCustom(title, 'question', CONST_STRING.empty, true, true)
       .then((result: any) => {
         if (result.isConfirmed) {
           this.changeStatusIncidentService({

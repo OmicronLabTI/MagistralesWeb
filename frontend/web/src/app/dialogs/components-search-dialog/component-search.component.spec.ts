@@ -18,14 +18,20 @@ import {ComponentSearchMock} from '../../../mocks/componentsMock';
 import {ErrorService} from '../../services/error.service';
 import {PageEvent} from '@angular/material/paginator';
 import {RouterTestingModule} from '@angular/router/testing';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('ComponentSearchComponent', () => {
   let component: ComponentSearchComponent;
   let fixture: ComponentFixture<ComponentSearchComponent>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let ordersServiceSpy;
   let errorServiceSpy;
   const catalogGroup = 'MG';
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
+    ]);
+
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
@@ -50,7 +56,8 @@ describe('ComponentSearchComponent', () => {
                                                 chips: ['crema'],
                                                 catalogGroupName: catalogGroup } },
         { provide: PedidosService, useValue: ordersServiceSpy },
-        { provide: ErrorService, useValue: errorServiceSpy }]
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },]
     })
     .compileComponents();
   }));
