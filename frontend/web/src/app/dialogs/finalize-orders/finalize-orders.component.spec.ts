@@ -19,6 +19,7 @@ import { AddCommentsDialogComponent } from '../add-comments-dialog/add-comments-
 import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from 'src/app/services/date.service';
 
 describe('FinalizeOrdersComponent', () => {
   let component: FinalizeOrdersComponent;
@@ -29,6 +30,7 @@ describe('FinalizeOrdersComponent', () => {
   let dialogRefSpy: jasmine.SpyObj<MatDialogRef<AddCommentsDialogComponent>>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
 
   const getNextBatchCodeRes = new IGetNewBachCodeRes();
   const getIfExistsBatchCodeRes = new IExistsBachCodeRes();
@@ -75,13 +77,11 @@ describe('FinalizeOrdersComponent', () => {
 
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
-        'transformDate',
         'getMessageTitle',
         'presentToastCustom',
       ]);
 
     localStorageServiceSpy.getUserId.and.returnValue('');
-    dataServiceSpy.transformDate.and.returnValue('');
     dataServiceSpy.getMessageTitle.and.returnValue('');
     dataServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve();
@@ -95,6 +95,9 @@ describe('FinalizeOrdersComponent', () => {
     );
     observableServiceSpy.setCallHttpService.and.returnValue();
     observableServiceSpy.setMessageGeneralCallHttp.and.returnValue();
+    // --- Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', ['transformDate',]);
+    dateServiceSpy.transformDate.and.returnValue('');
     TestBed.configureTestingModule({
       declarations: [FinalizeOrdersComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -107,7 +110,8 @@ describe('FinalizeOrdersComponent', () => {
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy}
+        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: DateService, useValue: dateServiceSpy },
       ]
     })
       .compileComponents();

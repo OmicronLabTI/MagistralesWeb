@@ -19,6 +19,7 @@ import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
 import { ObservableService } from 'src/app/services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { DateService } from 'src/app/services/date.service';
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;
@@ -27,7 +28,8 @@ describe('FabordersListComponent', () => {
   let dataServiceSpy;
   let ordersServiceSpy;
   let errorServiceSpy;
-  let observableServiceSpy: jasmine.SpyObj<ObservableService>
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
   const paramsPedidos = new ParamsPedidos();
 
   const iOrdersReq: IOrdersReq[] = [];
@@ -43,7 +45,6 @@ describe('FabordersListComponent', () => {
 
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom',
-      'transformDate',
       'getNewDataToFilter',
       'getItemOnDataOnlyIds',
       'getIsThereOnData',
@@ -93,6 +94,14 @@ describe('FabordersListComponent', () => {
       return;
     });
 
+    //  Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'transformDate',
+      'getDateFormatted',
+    ]);
+    dateServiceSpy.transformDate.and.returnValue('');
+    dateServiceSpy.getDateFormatted.and.returnValue('');
+
     TestBed.configureTestingModule({
       declarations: [FabordersListComponent],
       imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientTestingModule,
@@ -102,7 +111,8 @@ describe('FabordersListComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         { provide: OrdersService, useValue: ordersServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy}
+        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: DateService, useValue: dateServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

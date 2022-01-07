@@ -13,6 +13,7 @@ import { IWorkLoadRes, WorkLoad } from 'src/app/model/http/pedidos';
 import { of, throwError } from 'rxjs';
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from 'src/app/services/date.service';
 
 describe('WorkLoadComponent', () => {
   let component: WorkLoadComponent;
@@ -21,6 +22,7 @@ describe('WorkLoadComponent', () => {
   let errorServiceSpy: any;
   let pedidosServiceSpy: any;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>
 
   const load = new WorkLoad();
   load.assigned = '1';
@@ -80,6 +82,15 @@ describe('WorkLoadComponent', () => {
       [
         'setUrlActive'
       ]);
+      // --- Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'transformDate',
+      'getMaxMinDate',
+      'getDateFormatted'
+    ]);
+    dateServiceSpy.transformDate.and.returnValue('');
+    dateServiceSpy.getMaxMinDate.and.returnValue(new Date());
+    dateServiceSpy.getDateFormatted.and.returnValue('');
     TestBed.configureTestingModule({
       declarations: [WorkLoadComponent],
       imports: [
@@ -96,6 +107,7 @@ describe('WorkLoadComponent', () => {
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: PedidosService, useValue: pedidosServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: DateService, useValue: dateServiceSpy },
       ]
     })
       .compileComponents();

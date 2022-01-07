@@ -18,6 +18,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { ObservableService } from 'src/app/services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { DateService } from 'src/app/services/date.service';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -27,6 +28,7 @@ describe('DetalleFormulaComponent', () => {
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
   const paramsPedidos = new ParamsPedidos();
   // let routerSpy: jasmine.SpyObj<ActivatedRoute>;
 
@@ -52,7 +54,6 @@ describe('DetalleFormulaComponent', () => {
       ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom',
-      'transformDate',
       'getNewDataToFilter',
       'getItemOnDataOnlyIds',
       'getIsThereOnData',
@@ -101,6 +102,11 @@ describe('DetalleFormulaComponent', () => {
     observableServiceSpy.getNewFormulaComponent.and.callFake(() => {
       return new Observable();
     });
+    // --- Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'transformDate',
+    ]);
+    dateServiceSpy.transformDate.and.returnValue('');
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
@@ -121,7 +127,8 @@ describe('DetalleFormulaComponent', () => {
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
-        { provide: ActivatedRoute, useValue: { paramMap: new Subject() } }
+        { provide: DateService, useValue: dateServiceSpy },
+        { provide: ActivatedRoute, useValue: { paramMap: new Subject() } },
       ]
     })
       .compileComponents();

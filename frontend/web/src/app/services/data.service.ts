@@ -25,6 +25,7 @@ import { CancelOrderReq, Catalogs, ParamsPedidos } from '../model/http/pedidos';
 import { IncidentsGraphicsMatrix } from '../model/http/incidents.model';
 import { CommentsConfig } from '../model/device/incidents.model';
 import { Router } from '@angular/router';
+import { DateService } from './date.service';
 
 @Injectable({
   providedIn: 'root',
@@ -51,7 +52,7 @@ export class DataService {
   // private newDataSignature = new Subject<any>();
   // private openCommentsDialog = new Subject<CommentsConfig>();
   // private newCommentsResult = new Subject<CommentsConfig>();
-  constructor(private datePipe: DatePipe, private router: Router) {}
+  constructor(private datePipe: DatePipe, private router: Router, private dateService: DateService) {}
 
   // setNewCommentsResult(newCommentsConfig: CommentsConfig) {
   //   this.newCommentsResult.next(newCommentsConfig);
@@ -279,41 +280,41 @@ export class DataService {
       }).then((result) => resolve(result));
     });
   }
-  getDateFormatted(
-    initDate: Date,
-    finishDate: Date,
-    isBeginDate: boolean,
-    isProductivity: boolean = false,
-    numberCustomRange: number = CONST_NUMBER.lessOne
-  ) {
-    if (isBeginDate) {
-      if (isProductivity) {
-        initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.ninetyDays);
-      } else {
-        initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
-      }
-    }
-    if (
-      numberCustomRange !== CONST_NUMBER.lessOne &&
-      numberCustomRange > CONST_NUMBER.zero
-    ) {
-      initDate = new Date(
-        initDate.getTime() - MODAL_FIND_ORDERS.operationDay * numberCustomRange
-      );
-    }
-    return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
-  }
-  transformDate(date: Date, isSecondFormat: boolean = false) {
-    if (!isSecondFormat) {
-      return this.datePipe.transform(date, 'dd/MM/yyyy');
-    } else {
-      return this.datePipe.transform(date, 'yyyy-MM-dd');
-    }
-  }
+  // getDateFormatted(
+  //   initDate: Date,
+  //   finishDate: Date,
+  //   isBeginDate: boolean,
+  //   isProductivity: boolean = false,
+  //   numberCustomRange: number = CONST_NUMBER.lessOne
+  // ) {
+  //   if (isBeginDate) {
+  //     if (isProductivity) {
+  //       initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.ninetyDays);
+  //     } else {
+  //       initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
+  //     }
+  //   }
+  //   if (
+  //     numberCustomRange !== CONST_NUMBER.lessOne &&
+  //     numberCustomRange > CONST_NUMBER.zero
+  //   ) {
+  //     initDate = new Date(
+  //       initDate.getTime() - MODAL_FIND_ORDERS.operationDay * numberCustomRange
+  //     );
+  //   }
+  //   return `${this.transformDate(initDate)}-${this.transformDate(finishDate)}`;
+  // }
+  // transformDate(date: Date, isSecondFormat: boolean = false) {
+  //   if (!isSecondFormat) {
+  //     return this.datePipe.transform(date, 'dd/MM/yyyy');
+  //   } else {
+  //     return this.datePipe.transform(date, 'yyyy-MM-dd');
+  //   }
+  // }
 
-  getDateArray(startDate: Date) {
-    return this.transformDate(startDate).split('/');
-  }
+  // getDateArray(startDate: Date) {
+  //   return this.transformDate(startDate).split('/');
+  // }
 
   getMessageTitle(
     itemsWithError: any[],
@@ -546,7 +547,7 @@ export class DataService {
 
     if (resultSearchOrderModal.docNum) {
       filterDataOrders.docNum = resultSearchOrderModal.docNum;
-      filterDataOrders.dateFull = this.getDateFormatted(
+      filterDataOrders.dateFull = this.dateService.getDateFormatted(
         new Date(),
         new Date(),
         true
@@ -558,7 +559,7 @@ export class DataService {
       );
     } else if (resultSearchOrderModal.docNumDxp) {
       filterDataOrders.docNumDxp = resultSearchOrderModal.docNumDxp;
-      filterDataOrders.dateFull = this.getDateFormatted(
+      filterDataOrders.dateFull = this.dateService.getDateFormatted(
         new Date(),
         new Date(),
         true
@@ -568,7 +569,7 @@ export class DataService {
       if (resultSearchOrderModal.dateType) {
         filterDataOrders.dateType = resultSearchOrderModal.dateType;
         if (resultSearchOrderModal.fini || resultSearchOrderModal.ffin) {
-          rangeDate = this.getDateFormatted(
+          rangeDate = this.dateService.getDateFormatted(
             resultSearchOrderModal.fini,
             resultSearchOrderModal.ffin,
             false
@@ -644,13 +645,13 @@ export class DataService {
     return new Intl.NumberFormat().format(Number(numberToFormatted));
   }
 
-  getMaxMinDate(date: Date, moths: number, isAdd: boolean) {
-    return new Date(
-      date.getFullYear(),
-      isAdd ? date.getMonth() + moths : date.getMonth() - moths,
-      date.getDate()
-    );
-  }
+  // getMaxMinDate(date: Date, moths: number, isAdd: boolean) {
+  //   return new Date(
+  //     date.getFullYear(),
+  //     isAdd ? date.getMonth() + moths : date.getMonth() - moths,
+  //     date.getDate()
+  //   );
+  // }
 
   // setUserRole(role: number) {
   //   localStorage.setItem(ConstToken.userRole, String(role));

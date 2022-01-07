@@ -17,6 +17,7 @@ import { PageEvent } from '@angular/material';
 import { ObservableService } from 'src/app/services/observable.service';
 import { ParamsPedidos } from '../../model/http/pedidos';
 import { CommentsConfig } from '../../model/device/incidents.model';
+import { DateService } from 'src/app/services/date.service';
 
 describe('IncidentsListComponent', () => {
   let component: IncidentsListComponent;
@@ -24,6 +25,7 @@ describe('IncidentsListComponent', () => {
   let incidentsServiceSpy;
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
 
   const paramPedidos = new ParamsPedidos();
   const commentsConfig = new CommentsConfig();
@@ -51,12 +53,18 @@ describe('IncidentsListComponent', () => {
       ]);
     observableServiceSpy.getNewSearchOrdersModal.and.returnValue(of(paramPedidos));
     observableServiceSpy.getNewCommentsResult.and.returnValue(of(commentsConfig));
+    // --- Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'getDateFormatted'
+    ]);
+    dateServiceSpy.getDateFormatted.and.returnValue('');
     TestBed.configureTestingModule({
       declarations: [IncidentsListComponent],
       providers: [DatePipe,
         { provide: IncidentsService, useValue: incidentsServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: DateService, useValue: dateServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [PipesModule, MATERIAL_COMPONENTS, HttpClientTestingModule,

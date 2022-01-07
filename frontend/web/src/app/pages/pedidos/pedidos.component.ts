@@ -37,6 +37,7 @@ import { IOrdersRefuseReq, ReasonRefuse } from '../../model/http/detallepedidos.
 import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from '../../services/observable.service';
+import { DateService } from '../../services/date.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -78,6 +79,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private router: Router,
     public localStorageService: LocalStorageService,
     private observableService: ObservableService,
+    private dateService: DateService,
   ) {
     this.observableService.setUrlActive(HttpServiceTOCall.ORDERS);
   }
@@ -115,7 +117,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.filterDataOrders = new ParamsPedidos();
     this.filterDataOrders.isFromOrders = true;
     this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
-    this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(rangeDateResult));
+    this.filterDataOrders.dateFull = this.dateService.getDateFormatted(new Date(), new Date(), false, false, Number(rangeDateResult));
     this.queryString = `?fini=${this.filterDataOrders.dateFull}`;
     this.getFullQueryString();
     this.getPedidos();

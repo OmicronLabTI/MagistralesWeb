@@ -12,12 +12,14 @@ import { of } from 'rxjs';
 import { ProductivityListMock } from 'src/mocks/productivityMock';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from 'src/app/services/date.service';
 
 describe('ProductivityComponent', () => {
   let component: ProductivityComponent;
   let fixture: ComponentFixture<ProductivityComponent>;
   let productivityServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
 
   beforeEach(async(() => {
     productivityServiceSpy = jasmine.createSpyObj<ProductivityService>(
@@ -34,6 +36,11 @@ describe('ProductivityComponent', () => {
       [
         'setUrlActive'
       ]);
+    //  --- Date Service 
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'getDateFormatted',
+    ]);
+    dateServiceSpy.getDateFormatted.and.returnValue('12/12/21 - 12/12/23');
 
     TestBed.configureTestingModule({
       declarations: [ProductivityComponent],
@@ -49,6 +56,7 @@ describe('ProductivityComponent', () => {
         DatePipe,
         { provide: ProductivityService, useValue: productivityServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: DateService, useValue: dateServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
