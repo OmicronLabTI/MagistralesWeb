@@ -418,6 +418,17 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// get a parse exact date time.
+        /// </summary>
+        /// <param name="date">the date.</param>
+        /// <param name="defaultDate">the default value.</param>
+        /// <returns>string value.</returns>
+        public static DateTime ParseExactDateOrDefault(string date, DateTime defaultDate)
+        {
+            return !string.IsNullOrEmpty(date) ? DateTime.ParseExact(date, "dd/MM/yyyy", null) : defaultDate;
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>
