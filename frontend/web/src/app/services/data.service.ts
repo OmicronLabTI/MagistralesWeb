@@ -30,90 +30,90 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class DataService {
-  private isLoading = new Subject<boolean>();
-  private generalNotificationMessage = new Subject<string>();
-  private isLogin = new Subject<boolean>();
-  private qfbTOPlace = new Subject<QfbWithNumber>();
-  private callHttpService = new Subject<HttpServiceTOCall>();
-  private messageGenericCallHttp = new Subject<GeneralMessage>();
+  // private isLoading = new Subject<boolean>();
+  // private generalNotificationMessage = new Subject<string>();
+  // private isLogin = new Subject<boolean>();
+  // private qfbTOPlace = new Subject<QfbWithNumber>();
+  // private callHttpService = new Subject<HttpServiceTOCall>();
+  // private messageGenericCallHttp = new Subject<GeneralMessage>();
   private isToSaVeAnything = false;
-  private urlActive = new Subject<HttpServiceTOCall>();
-  private cancelOrders = new Subject<CancelOrders>();
-  private finalizeOrders = new Subject<CancelOrders>();
-  private pathUrl = new Subject<any[]>();
-  private isLogout = new Subject<boolean>();
-  private searchComponentModal = new Subject<SearchComponentModal>();
-  private newFormulaComponent = new Subject<any>();
-  private newMaterialComponent = new Subject<any>();
-  private searchOrdersModal = new Subject<SearchComponentModal>();
-  private newSearchOrdersParams = new Subject<ParamsPedidos>();
-  private openSignatureDialog = new Subject<any>();
-  private newDataSignature = new Subject<any>();
-  private openCommentsDialog = new Subject<CommentsConfig>();
-  private newCommentsResult = new Subject<CommentsConfig>();
+  // private urlActive = new Subject<HttpServiceTOCall>();
+  // private cancelOrders = new Subject<CancelOrders>();
+  // private finalizeOrders = new Subject<CancelOrders>();
+  // private pathUrl = new Subject<any[]>();
+  // private isLogout = new Subject<boolean>();
+  // private searchComponentModal = new Subject<SearchComponentModal>();
+  // private newFormulaComponent = new Subject<any>();
+  // private newMaterialComponent = new Subject<any>();
+  // private searchOrdersModal = new Subject<SearchComponentModal>();
+  // private newSearchOrdersParams = new Subject<ParamsPedidos>();
+  // private openSignatureDialog = new Subject<any>();
+  // private newDataSignature = new Subject<any>();
+  // private openCommentsDialog = new Subject<CommentsConfig>();
+  // private newCommentsResult = new Subject<CommentsConfig>();
   constructor(private datePipe: DatePipe, private router: Router) {}
 
-  setNewCommentsResult(newCommentsConfig: CommentsConfig) {
-    this.newCommentsResult.next(newCommentsConfig);
-  }
-  getNewCommentsResult() {
-    return this.newCommentsResult.asObservable();
-  }
-  setOpenCommentsDialog(commentsConfig: CommentsConfig) {
-    this.openCommentsDialog.next(commentsConfig);
-  }
-  getOpenCommentsDialog() {
-    return this.openCommentsDialog.asObservable();
-  }
+  // setNewCommentsResult(newCommentsConfig: CommentsConfig) {
+  //   this.newCommentsResult.next(newCommentsConfig);
+  // }
+  // getNewCommentsResult() {
+  //   return this.newCommentsResult.asObservable();
+  // }
+  // setOpenCommentsDialog(commentsConfig: CommentsConfig) {
+  //   this.openCommentsDialog.next(commentsConfig);
+  // }
+  // getOpenCommentsDialog() {
+  //   return this.openCommentsDialog.asObservable();
+  // }
 
-  setNewDataSignature(newSignature: any) {
-    this.newDataSignature.next(newSignature);
-  }
-  getNewDataSignature() {
-    return this.newDataSignature.asObservable();
-  }
-  setOpenSignatureDialog(datSignature: any) {
-    this.openSignatureDialog.next(datSignature);
-  }
-  getOpenSignatureDialog() {
-    return this.openSignatureDialog.asObservable();
-  }
-  setNewSearchOrderModal(searchOrdersParams: ParamsPedidos) {
-    this.newSearchOrdersParams.next(searchOrdersParams);
-  }
-  getNewSearchOrdersModal() {
-    return this.newSearchOrdersParams.asObservable();
-  }
-  setSearchOrdersModal(searchOrder: SearchComponentModal) {
-    this.searchOrdersModal.next(searchOrder);
-  }
-  getSearchOrdersModal() {
-    return this.searchOrdersModal.asObservable();
-  }
-  setNewFormulaComponent(newFormulaComponent: any) {
-    this.newFormulaComponent.next(newFormulaComponent);
-  }
-  getNewFormulaComponent() {
-    return this.newFormulaComponent.asObservable();
-  }
-  setNewMaterialComponent(newFormulaComponent: any) {
-    this.newMaterialComponent.next(newFormulaComponent);
-  }
-  getNewMaterialComponent() {
-    return this.newMaterialComponent.asObservable();
-  }
-  setSearchComponentModal(searchComponentModal: SearchComponentModal) {
-    this.searchComponentModal.next(searchComponentModal);
-  }
-  getSearchComponentModal() {
-    return this.searchComponentModal.asObservable();
-  }
-  setIsLogout(isLogout: boolean) {
-    this.isLogout.next(isLogout);
-  }
-  getIsLogout() {
-    return this.isLogout.asObservable();
-  }
+  // setNewDataSignature(newSignature: any) {
+  //   this.newDataSignature.next(newSignature);
+  // }
+  // getNewDataSignature() {
+  //   return this.newDataSignature.asObservable();
+  // }
+  // setOpenSignatureDialog(datSignature: any) {
+  //   this.openSignatureDialog.next(datSignature);
+  // }
+  // getOpenSignatureDialog() {
+  //   return this.openSignatureDialog.asObservable();
+  // }
+  // setNewSearchOrderModal(searchOrdersParams: ParamsPedidos) {
+  //   this.newSearchOrdersParams.next(searchOrdersParams);
+  // }
+  // getNewSearchOrdersModal() {
+  //   return this.newSearchOrdersParams.asObservable();
+  // }
+  // setSearchOrdersModal(searchOrder: SearchComponentModal) {
+  //   this.searchOrdersModal.next(searchOrder);
+  // }
+  // getSearchOrdersModal() {
+  //   return this.searchOrdersModal.asObservable();
+  // }
+  // setNewFormulaComponent(newFormulaComponent: any) {
+  //   this.newFormulaComponent.next(newFormulaComponent);
+  // }
+  // getNewFormulaComponent() {
+  //   return this.newFormulaComponent.asObservable();
+  // }
+  // setNewMaterialComponent(newFormulaComponent: any) {
+  //   this.newMaterialComponent.next(newFormulaComponent);
+  // }
+  // getNewMaterialComponent() {
+  //   return this.newMaterialComponent.asObservable();
+  // }
+  // setSearchComponentModal(searchComponentModal: SearchComponentModal) {
+  //   this.searchComponentModal.next(searchComponentModal);
+  // }
+  // getSearchComponentModal() {
+  //   return this.searchComponentModal.asObservable();
+  // }
+  // setIsLogout(isLogout: boolean) {
+  //   this.isLogout.next(isLogout);
+  // }
+  // getIsLogout() {
+  //   return this.isLogout.asObservable();
+  // }
   // setRememberSession(rememberSession: string) {
   //   localStorage.setItem(ConstToken.rememberSession, rememberSession);
   // }
@@ -137,75 +137,75 @@ export class DataService {
   //   return localStorage.getItem(ConstToken.refreshToken);
   // }
 
-  setPathUrl(pathUrl: any[]) {
-    this.pathUrl.next(pathUrl);
-  }
-  getPathUrl() {
-    return this.pathUrl.asObservable();
-  }
-  setFinalizeOrders(finalizeOrders: CancelOrders) {
-    this.finalizeOrders.next(finalizeOrders);
-  }
-  getFinalizeOrders() {
-    return this.finalizeOrders.asObservable();
-  }
-  setCancelOrders(cancelOrder: CancelOrders) {
-    this.cancelOrders.next(cancelOrder);
-  }
-  getCancelOrder() {
-    return this.cancelOrders.asObservable();
-  }
+  // setPathUrl(pathUrl: any[]) {
+  //   this.pathUrl.next(pathUrl);
+  // }
+  // getPathUrl() {
+  //   return this.pathUrl.asObservable();
+  // }
+  // setFinalizeOrders(finalizeOrders: CancelOrders) {
+  //   this.finalizeOrders.next(finalizeOrders);
+  // }
+  // getFinalizeOrders() {
+  //   return this.finalizeOrders.asObservable();
+  // }
+  // setCancelOrders(cancelOrder: CancelOrders) {
+  //   this.cancelOrders.next(cancelOrder);
+  // }
+  // getCancelOrder() {
+  //   return this.cancelOrders.asObservable();
+  // }
   setIsToSaveAnything(isToSave: boolean) {
     this.isToSaVeAnything = isToSave;
   }
   getIsToSaveAnything() {
     return this.isToSaVeAnything;
   }
-  setUrlActive(url: HttpServiceTOCall) {
-    this.urlActive.next(url);
-  }
-  getUrlActive() {
-    return this.urlActive;
-  }
-  setMessageGeneralCallHttp(messageGeneral: GeneralMessage) {
-    this.messageGenericCallHttp.next(messageGeneral);
-  }
-  getMessageGeneralCalHttp() {
-    return this.messageGenericCallHttp.asObservable();
-  }
-  setCallHttpService(numberServiceToCall: HttpServiceTOCall) {
-    this.callHttpService.next(numberServiceToCall);
-  }
-  getCallHttpService() {
-    return this.callHttpService.asObservable();
-  }
-  setIsLogin(isLogin: boolean) {
-    this.isLogin.next(isLogin);
-  }
+  // setUrlActive(url: HttpServiceTOCall) {
+  //   this.urlActive.next(url);
+  // }
+  // getUrlActive() {
+  //   return this.urlActive;
+  // }
+  // setMessageGeneralCallHttp(messageGeneral: GeneralMessage) {
+  //   this.messageGenericCallHttp.next(messageGeneral);
+  // }
+  // getMessageGeneralCalHttp() {
+  //   return this.messageGenericCallHttp.asObservable();
+  // }
+  // setCallHttpService(numberServiceToCall: HttpServiceTOCall) {
+  //   this.callHttpService.next(numberServiceToCall);
+  // }
+  // getCallHttpService() {
+  //   return this.callHttpService.asObservable();
+  // }
+  // setIsLogin(isLogin: boolean) {
+  //   this.isLogin.next(isLogin);
+  // }
 
-  getIsLogin() {
-    return this.isLogin.asObservable();
-  }
-  setIsLoading(loading: boolean) {
-    this.isLoading.next(loading);
-  }
+  // getIsLogin() {
+  //   return this.isLogin.asObservable();
+  // }
+  // setIsLoading(loading: boolean) {
+  //   this.isLoading.next(loading);
+  // }
 
-  getIsLoading() {
-    return this.isLoading.asObservable();
-  }
+  // getIsLoading() {
+  //   return this.isLoading.asObservable();
+  // }
 
-  getGeneralNotificationMessage() {
-    return this.generalNotificationMessage.asObservable();
-  }
-  setQbfToPlace(qfb: QfbWithNumber) {
-    this.qfbTOPlace.next(qfb);
-  }
-  getQfbToPlace() {
-    return this.qfbTOPlace.asObservable();
-  }
-  setGeneralNotificationMessage(msg: string) {
-    this.generalNotificationMessage.next(msg);
-  }
+  // getGeneralNotificationMessage() {
+  //   return this.generalNotificationMessage.asObservable();
+  // }
+  // setQbfToPlace(qfb: QfbWithNumber) {
+  //   this.qfbTOPlace.next(qfb);
+  // }
+  // getQfbToPlace() {
+  //   return this.qfbTOPlace.asObservable();
+  // }
+  // setGeneralNotificationMessage(msg: string) {
+  //   this.generalNotificationMessage.next(msg);
+  // }
 
   // getToken(): string {
   //   return localStorage.getItem(ConstToken.accessToken);

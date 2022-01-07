@@ -4,18 +4,19 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { DetalleFormulaMock } from 'src/mocks/pedidosListMock';
-import {Observable, of, Subject, throwError} from 'rxjs';
-import {DataService} from '../../services/data.service';
-import {CarouselOption, CONST_DETAIL_FORMULA} from '../../constants/const';
-import {ErrorService} from '../../services/error.service';
+import { Observable, of, Subject, throwError } from 'rxjs';
+import { DataService } from '../../services/data.service';
+import { CarouselOption, CONST_DETAIL_FORMULA } from '../../constants/const';
+import { ErrorService } from '../../services/error.service';
 import { ButtonRefreshComponent } from 'src/app/components/button-refresh/button-refresh.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
+import { ObservableService } from 'src/app/services/observable.service';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -23,34 +24,44 @@ describe('DetalleFormulaComponent', () => {
   let pedidosServiceSpy;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let errorServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   const paramsPedidos = new ParamsPedidos();
   // let routerSpy: jasmine.SpyObj<ActivatedRoute>;
 
   beforeEach(async(() => {
-    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
-      'httpError'
-    ]);
-    pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
-      'getFormulaDetail', 'getFormulaCarousel', 'updateFormula'
-    ]);
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService',
+      [
+        'httpError'
+      ]);
+    pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService',
+      [
+        'getFormulaDetail',
+        'getFormulaCarousel',
+        'updateFormula'
+      ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom', 'getCallHttpService', 'setUrlActive', 'setIsLoading',
-      'setCallHttpService', 'setMessageGeneralCallHttp', 'getOrderIsolated', 'removeOrderIsolated', 'getNewSearchOrdersModal',
-      'getCallHttpService', 'transformDate', 'setSearchComponentModal', 'getNewDataToFilter', 'setCancelOrders', 'setQbfToPlace',
-      'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter', 'getNewFormulaComponent',
-      'setIsToSaveAnything', 'setIsToSaveAnything', 'setIsToSaveAnything', 'setFiltersActivesOrders', 'getFiltersActivesOrders',
-      'removeFiltersActiveOrders',  'getFiltersActivesAsModelOrders', 'setPathUrl', 'getFullStringForCarousel', 'getIsToSaveAnything'
+      'presentToastCustom',
+      'getOrderIsolated',
+      'removeOrderIsolated',
+      'transformDate',
+      'getNewDataToFilter',
+      'getItemOnDataOnlyIds',
+      'getIsThereOnData',
+      'getItemOnDateWithFilter',
+      'setIsToSaveAnything',
+      'setIsToSaveAnything',
+      'setIsToSaveAnything',
+      'setFiltersActivesOrders',
+      'getFiltersActivesOrders',
+      'removeFiltersActiveOrders',
+      'getFiltersActivesAsModelOrders',
+      'getFullStringForCarousel',
+      'getIsToSaveAnything'
     ]);
     // routerSpy = jasmine.createSpyObj<ActivatedRoute>('ActivateRoute', [
     //   'paramMap'
     // ]);
     // routerSpy.paramMap.and.returnValue();
-    dataServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
-      return;
-    });
-    dataServiceSpy.getNewFormulaComponent.and.callFake(() => {
-      return new Observable();
-    });
     dataServiceSpy.getFiltersActivesAsModelOrders.and.returnValue(paramsPedidos);
     pedidosServiceSpy.getFormulaDetail.and.callFake(() => {
       return of(DetalleFormulaMock);
@@ -62,6 +73,29 @@ describe('DetalleFormulaComponent', () => {
       return of();
     });
     dataServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
+
+    // --- Observable Service 
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'getCallHttpService',
+        'setUrlActive',
+        'setIsLoading',
+        'setCallHttpService',
+        'setMessageGeneralCallHttp',
+        'getNewSearchOrdersModal',
+        'setSearchComponentModal',
+        'setCancelOrders',
+        'setQbfToPlace',
+        'getNewFormulaComponent',
+        'setPathUrl',
+      ]
+    );
+    observableServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
+      return;
+    });
+    observableServiceSpy.getNewFormulaComponent.and.callFake(() => {
+      return new Observable();
+    });
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
@@ -73,17 +107,18 @@ describe('DetalleFormulaComponent', () => {
         ComponentsModule,
         RouterModule
       ],
-      declarations: [ DetalleFormulaComponent ],
+      declarations: [DetalleFormulaComponent],
       providers: [
         DatePipe, {
           provide: PedidosService, useValue: pedidosServiceSpy
         },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
         { provide: ActivatedRoute, useValue: { paramMap: new Subject() } }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -127,10 +162,10 @@ describe('DetalleFormulaComponent', () => {
 
   it('should updateAllComplete', () => {
     component.dataSource.data = DetalleFormulaMock.response.details;
-    component.dataSource.data.forEach( element => element.isChecked = false);
+    component.dataSource.data.forEach(element => element.isChecked = false);
     component.updateAllComplete();
     expect(component.allComplete).toBeFalsy();
-    component.dataSource.data.forEach( element => element.isChecked = true);
+    component.dataSource.data.forEach(element => element.isChecked = true);
     component.updateAllComplete();
     expect(component.allComplete).toBeTruthy();
 
@@ -138,10 +173,10 @@ describe('DetalleFormulaComponent', () => {
   it('should someComplete', () => {
     component.dataSource.data = [];
     component.dataSource.data = DetalleFormulaMock.response.details;
-    component.dataSource.data.forEach( element => element.isChecked = false);
+    component.dataSource.data.forEach(element => element.isChecked = false);
     component.allComplete = false;
     expect(component.someComplete()).toBeFalsy();
-    component.dataSource.data.forEach( element => element.isChecked = true);
+    component.dataSource.data.forEach(element => element.isChecked = true);
     expect(component.someComplete()).toBeTruthy();
   });
   it('should setAll', () => {
@@ -155,7 +190,7 @@ describe('DetalleFormulaComponent', () => {
   });
   it('should getOpenDialog()', () => {
     component.openDialog();
-    expect(dataServiceSpy.setSearchComponentModal).toHaveBeenCalled();
+    expect(observableServiceSpy.setSearchComponentModal).toHaveBeenCalled();
   });
   it('should onBaseQuantityChange()', () => {
     component.dataSource.data = [];

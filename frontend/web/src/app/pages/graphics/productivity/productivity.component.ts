@@ -17,6 +17,7 @@ import { ProductivityService } from 'src/app/services/productivity.service';
 import { ErrorHttpInterface } from 'src/app/model/http/commons';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
+import { ObservableService } from '../../../services/observable.service';
 
 @Component({
   selector: 'app-productivity',
@@ -45,12 +46,13 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
     private productivityService: ProductivityService,
     private formBuilder: FormBuilder,
     private cdRef: ChangeDetectorRef,
+    private observableService: ObservableService,
   ) {
     this.productivityForm = this.formBuilder.group({
       fini: ['', []],
       ffin: ['', []],
     });
-    this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
+    this.observableService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
   }
 
   ngOnInit() {

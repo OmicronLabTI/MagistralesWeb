@@ -11,6 +11,7 @@ import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
 import {ConfigurationGraphic} from '../../../model/device/incidents.model';
 import {IncidentsService} from '../../../services/incidents.service';
 import {ErrorService} from '../../../services/error.service';
+import { ObservableService } from '../../../services/observable.service';
 
 
 @Component({
@@ -28,9 +29,12 @@ export class WarehouseComponent implements OnInit {
   percentageLocal = CONST_NUMBER.zero;
   percentageForeign = CONST_NUMBER.zero;
   isNoDataNoDeliveredGraph = false;
-  constructor(private dataService: DataService, private incidentsService: IncidentsService,
-              private errorService: ErrorService) {
-    this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
+  constructor(
+    private dataService: DataService, 
+    private incidentsService: IncidentsService,
+    private errorService: ErrorService,
+    private observableService: ObservableService) {
+    this.observableService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
   }
 
   ngOnInit() {

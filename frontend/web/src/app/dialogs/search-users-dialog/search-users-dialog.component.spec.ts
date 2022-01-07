@@ -26,8 +26,7 @@ describe('SearchUsersDialogComponent', () => {
   let errorServiceSpy;
   beforeEach(async(() => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive',
-      'setCallHttpService', 'setMessageGeneralCallHttp', 'getNormalizeString'
+      'getNormalizeString'
     ]);
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
       'getRoles', 'createUserService' , 'updateUser'
@@ -75,7 +74,6 @@ describe('SearchUsersDialogComponent', () => {
     component.resetSearchParams();
     expect(component.resetSearchParams).toBeTruthy();
   });
-
   // it('should keyDownUsers', () => {
   //   // component.keyDownUsers();
   // });

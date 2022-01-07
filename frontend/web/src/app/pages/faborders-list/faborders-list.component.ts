@@ -25,6 +25,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-orders.component';
 import {Router} from '@angular/router';
 import {PedidosService} from '../../services/pedidos.service';
+import { ObservableService } from '../../services/observable.service';
 
 @Component({
   selector: 'app-faborders-list',
@@ -72,9 +73,10 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private dialog: MatDialog,
     private router: Router,
-    private pedidosService: PedidosService
+    private pedidosService: PedidosService,
+    private observableService: ObservableService
   ) {
-    this.dataService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
+    this.observableService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
   }
 
   ngOnInit() {
@@ -90,12 +92,12 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     }
     this.titleService.setTitle('OmicronLab - Órdenes de fabricación');
     this.dataSource.paginator = this.paginator;
-    this.subscriptionObservables.add(this.dataService.getNewSearchOrdersModal().subscribe( resultSearchOrdersModal => {
+    this.subscriptionObservables.add(this.observableService.getNewSearchOrdersModal().subscribe( resultSearchOrdersModal => {
       if (!resultSearchOrdersModal.isFromOrders) {
         this.onSuccessSearchOrdersModal(resultSearchOrdersModal);
       }
     }));
-    this.subscriptionObservables.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
+    this.subscriptionObservables.add(this.observableService.getCallHttpService().subscribe(detailHttpCall => {
           if (detailHttpCall === HttpServiceTOCall.ORDERS_ISOLATED) {
             this.getOrdersAction();
           }
@@ -211,11 +213,11 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   createOrderIsolated() {
     this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
-    this.dataService.setSearchComponentModal({modalType: ComponentSearch.createOrderIsolated});
+    this.observableService.setSearchComponentModal({modalType: ComponentSearch.createOrderIsolated});
   }
 
   openSearchOrders() {
-    this.dataService.setSearchOrdersModal({modalType: ConstOrders.modalOrdersIsolated, filterOrdersData: this.filterDataOrders });
+    this.observableService.setSearchOrdersModal({modalType: ConstOrders.modalOrdersIsolated, filterOrdersData: this.filterDataOrders });
 
   }
 
@@ -233,7 +235,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   cancelOrder() {
-    this.dataService.setCancelOrders({list: this.dataSource.data.filter
+    this.observableService.setCancelOrders({list: this.dataSource.data.filter
       (t => (t.isChecked && t.status !== ConstStatus.finalizado && t.status !== ConstStatus.almacenado)).map(order => {
         const cancelOrder = new CancelOrderReq();
         cancelOrder.orderId = Number(order.fabOrderId);
@@ -242,7 +244,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
       cancelType: MODAL_NAMES.placeOrdersDetail, isFromCancelIsolated: true});
   }
   assignOrderIsolated() {
-    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
+    this.observableService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
       list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrdersIsolated)
       , isFromOrderIsolated: true});
   }
@@ -256,7 +258,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
                                                                       FromToFilter.fromOrderIsolatedReassign);
   }
   reAssignOrder() {
-    this.dataService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
+    this.observableService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
       list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
                                 FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId))
       , isFromOrderIsolated: true, isFromReassign: true});

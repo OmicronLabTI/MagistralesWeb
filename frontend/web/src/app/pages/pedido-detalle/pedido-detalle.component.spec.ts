@@ -20,6 +20,7 @@ import { Catalogs, ICreatePdfOrdersRes, ParamsPedidos } from 'src/app/model/http
 import { HttpServiceTOCall } from 'src/app/constants/const';
 import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ObservableService } from 'src/app/services/observable.service';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -29,6 +30,7 @@ describe('PedidoDetalleComponent', () => {
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let errorServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
 
   const catalogs = new Catalogs();
   const iPedidoDetalleRes = new IPedidoDetalleListRes();
@@ -68,18 +70,10 @@ describe('PedidoDetalleComponent', () => {
       'getUserId',
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'setUrlActive',
       'getIsThereOnData',
       'presentToastCustom',
       'getMessageTitle',
-      'setCancelOrders',
-      'setFinalizeOrders',
-      'setQbfToPlace',
-      'setPathUrl',
       'setCurrentDetailOrder',
-      'setOpenCommentsDialog',
-      'setMessageGeneralCallHttp',
-      'setOpenSignatureDialog',
       'getUserRole',
       'openNewTapByUrl',
       'getItemOnDataOnlyIds',
@@ -87,14 +81,10 @@ describe('PedidoDetalleComponent', () => {
       'getNewDataToFilter',
       'getFullStringForCarousel',
       'getCurrentDetailOrder',
-      'getCallHttpService',
-      'getNewDataSignature',
-      'getNewCommentsResult',
       'removeCurrentDetailOrder',
       'getItemOnDateWithFilter'
     ]);
     localStorageServiceSpy.getProductNoLabel.and.returnValue(catalogs);
-    dataServiceSpy.getCallHttpService.and.returnValue(of(httpServiceTOCallRes));
     dataServiceSpy.getFiltersActives.and.returnValue(JSON.stringify(parametrosPedidos));
     dataServiceSpy.getCurrentDetailOrder.and.returnValue('');
     dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
@@ -104,12 +94,30 @@ describe('PedidoDetalleComponent', () => {
     });
     pedidosServiceSpy.finishLabels.and.returnValue(of(iPedidoDetalleRes));
     pedidosServiceSpy.putOrdersToDelivered.and.returnValue(of(iCreatePdfOrdersRes));
-    dataServiceSpy.getNewDataSignature.and.returnValue(of({}));
-    dataServiceSpy.getNewCommentsResult.and.returnValue(of(comentsConfig));
     dataServiceSpy.getNewDataToFilter.and.returnValue([parametrosPedidos, '']);
     dataServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
     pedidosServiceSpy.getDetallePedido.and.returnValue(of(DetailOrderMock));
     pedidosServiceSpy.savedComments.and.returnValue(of(iPedidoDetalleRes));
+
+    // --- ObservableService
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'setUrlActive',
+        'setCancelOrders',
+        'setFinalizeOrders',
+        'setQbfToPlace',
+        'setPathUrl',
+        'setOpenCommentsDialog',
+        'setMessageGeneralCallHttp',
+        'setOpenSignatureDialog',
+        'getCallHttpService',
+        'getNewDataSignature',
+        'getNewCommentsResult',
+      ]
+    );
+    observableServiceSpy.getNewDataSignature.and.returnValue(of({}));
+    observableServiceSpy.getNewCommentsResult.and.returnValue(of(comentsConfig));
+    observableServiceSpy.getCallHttpService.and.returnValue(of(httpServiceTOCallRes));
     TestBed.configureTestingModule({
       imports: [
         MATERIAL_COMPONENTS,
@@ -123,7 +131,8 @@ describe('PedidoDetalleComponent', () => {
         { provide: DownloadImagesService, useValue: downloadImagesServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy}
+        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: ObservableService, useValue: observableServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

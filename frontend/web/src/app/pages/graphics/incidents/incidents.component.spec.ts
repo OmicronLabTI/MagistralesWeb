@@ -5,31 +5,32 @@ import {DatePipe} from '@angular/common';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import { DataService } from 'src/app/services/data.service';
 import {IncidentsService} from '../../../services/incidents.service';
 import { of, throwError } from 'rxjs';
-import { IIncidentsGraphicRes, IncidentsGraphicsMatrix } from 'src/app/model/http/incidents.model';
+import { IIncidentsGraphicRes } from 'src/app/model/http/incidents.model';
 import { ConfigurationGraphic, ItemIndicator } from 'src/app/model/device/incidents.model';
 import { ErrorService } from 'src/app/services/error.service';
+import { ObservableService } from 'src/app/services/observable.service';
 
 describe('IncidentsComponent', () => {
   let component: IncidentsComponent;
   let fixture: ComponentFixture<IncidentsComponent>;
-  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let incidentsServiceSpy: jasmine.SpyObj<IncidentsService>;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+
   const iIncidentsGraphicRes = new IIncidentsGraphicRes();
   let errorServiceSpy;
   const configurationGraphic = new ConfigurationGraphic();
   // const incidentsGraphicsMatrix = new IncidentsGraphicsMatrix[0][0]();
 
   beforeEach(async(() => {
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('DataService', [
       'setUrlActive'
     ]);
+    observableServiceSpy.setUrlActive.and.returnValue();
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
-    dataServiceSpy.setUrlActive.and.returnValue();
     incidentsServiceSpy = jasmine.createSpyObj<IncidentsService>('IncidentsService', [
       'getIncidentsGraph'
     ]);
@@ -40,7 +41,7 @@ describe('IncidentsComponent', () => {
       declarations: [ IncidentsComponent ],
       imports: [HttpClientTestingModule, RouterTestingModule],
       providers: [DatePipe,
-        { provide: DataService, useValue: dataServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
         { provide: IncidentsService, useValue: incidentsServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy }],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

@@ -7,6 +7,7 @@ import { OrdersService } from 'src/app/services/orders.service';
 import { Messages } from 'src/app/constants/messages';
 import { MatTableDataSource} from '@angular/material';
 import {ErrorService} from '../../services/error.service';
+import { ObservableService } from '../../services/observable.service';
 
 @Component({
   selector: 'app-componentslist',
@@ -22,7 +23,8 @@ export class ComponentslistComponent implements AfterViewInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dataService: DataService,
     private orderService: OrdersService,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private observableService: ObservableService
   ) { }
 
   ngAfterViewInit() {
@@ -47,7 +49,7 @@ export class ComponentslistComponent implements AfterViewInit {
         'question', '', true, true).then( (res: any) => {
       if (res.isConfirmed) {
         this.orderService.deleteCustomList({productId: element.productId, name: element.name}).subscribe( () => {
-          this.dataService.setMessageGeneralCallHttp({isButtonAccept: false, icon: 'success', title: Messages.success});
+          this.observableService.setMessageGeneralCallHttp({isButtonAccept: false, icon: 'success', title: Messages.success});
           this.getCustomList();
         }, error =>  this.errorService.httpError(error));
       }});

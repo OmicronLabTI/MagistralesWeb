@@ -1,30 +1,31 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserListComponent } from './user-list.component';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { UserListRoutingModule } from './user-list-routing.module';
-import {MatTableModule} from '@angular/material/table';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatCardModule} from '@angular/material/card';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatSelectModule} from '@angular/material/select';
-import {DatePipe} from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {UsersService} from '../../services/users.service';
-import {of, Subject, throwError} from 'rxjs';
-import {UserListMock} from '../../../mocks/userListMock';
-import {DataService} from '../../services/data.service';
-import { HttpServiceTOCall} from '../../constants/const';
-import {ErrorService} from '../../services/error.service';
-import {PageEvent} from '@angular/material/paginator';
+import { UsersService } from '../../services/users.service';
+import { of, Subject, throwError } from 'rxjs';
+import { UserListMock } from '../../../mocks/userListMock';
+import { DataService } from '../../services/data.service';
+import { HttpServiceTOCall } from '../../constants/const';
+import { ErrorService } from '../../services/error.service';
+import { PageEvent } from '@angular/material/paginator';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ObservableService } from '../../services/observable.service';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -32,28 +33,41 @@ describe('UserListComponent', () => {
   let userServiceSpy;
   let dataServiceSpy;
   let errorServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+
   beforeEach(async(() => {
-    userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
-      'getUsers'
-    ]);
+    userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService',
+      [
+        'getUsers'
+      ]);
     userServiceSpy.getUsers.and.callFake(() => {
       return of(UserListMock);
     });
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'getFormattedNumber'
-    ]);
-    dataServiceSpy.getCallHttpService.and.callFake(() => {
-      const callHttpService = new Subject<HttpServiceTOCall>();
-      return callHttpService.asObservable();
-    });
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
+      [
+        'presentToastCustom',
+        'getFormattedNumber'
+      ]);
     dataServiceSpy.presentToastCustom.and.callFake(() => {
       return new Promise(resolve => { resolve(''); });
     });
-    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
-      'httpError'
-    ]);
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService',
+      [
+        'httpError'
+      ]);
+    // --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'getCallHttpService',
+        'setMessageGeneralCallHttp',
+        'setUrlActive',
+      ]);
+    observableServiceSpy.getCallHttpService.and.callFake(() => {
+      const callHttpService = new Subject<HttpServiceTOCall>();
+      return callHttpService.asObservable();
+    });
     TestBed.configureTestingModule({
-      imports: [        CommonModule,
+      imports: [CommonModule,
         HttpClientTestingModule,
         UserListRoutingModule,
         MatTableModule,
@@ -67,16 +81,17 @@ describe('UserListComponent', () => {
         ReactiveFormsModule,
         MatInputModule,
         MatSelectModule,
-      RouterTestingModule],
-      declarations: [ UserListComponent ],
+        RouterTestingModule],
+      declarations: [UserListComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [DatePipe,
         { provide: UsersService, useValue: userServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
-        { provide: ErrorService, useValue: errorServiceSpy }
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -110,7 +125,7 @@ describe('UserListComponent', () => {
     component.dataSource.data = UserListMock.response;
     component.updateAllComplete();
     expect(component.isAllComplete).toBeFalsy();
-    component.dataSource.data.forEach( user => user.isChecked = true);
+    component.dataSource.data.forEach(user => user.isChecked = true);
     component.updateAllComplete();
     expect(component.isAllComplete).toBeTruthy();
   });
@@ -118,7 +133,7 @@ describe('UserListComponent', () => {
     component.dataSource.data = UserListMock.response;
     component.isAllComplete = false;
     expect(component.someComplete()).toBeFalsy();
-    component.dataSource.data.forEach( user => user.isChecked = true);
+    component.dataSource.data.forEach(user => user.isChecked = true);
     expect(component.someComplete()).toBeTruthy();
   });
   it('should call setAll()', () => {
@@ -136,10 +151,10 @@ describe('UserListComponent', () => {
   });
   it('should call createMessageHttpOk()', () => {
     component.createMessageHttpOk();
-    expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+    expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
   });
   it('should call changeDataEvent', () => {
-    expect(component.changeDataEvent({pageSize: 10, pageIndex: 0} as PageEvent)).toEqual({pageSize: 10, pageIndex: 0} as PageEvent);
+    expect(component.changeDataEvent({ pageSize: 10, pageIndex: 0 } as PageEvent)).toEqual({ pageSize: 10, pageIndex: 0 } as PageEvent);
     expect(component.offset).toEqual(0);
     expect(component.limit).toEqual(10);
   });

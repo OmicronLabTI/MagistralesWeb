@@ -20,6 +20,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ObservableService } from 'src/app/services/observable.service';
 
 describe('MaterialRequestComponent', () => {
   let component: MaterialRequestComponent;
@@ -31,6 +32,7 @@ describe('MaterialRequestComponent', () => {
   let fileDownloaderServiceSpy: jasmine.SpyObj<FileDownloaderService>;
   let reportingServiceSpy: jasmine.SpyObj<ReportingService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
 
   const getPreMaterialRequestMock = new IMaterialRequestRes();
   const postMaterialRequestMock = new IMaterialPostRes();
@@ -57,18 +59,11 @@ describe('MaterialRequestComponent', () => {
     dataServiceSpy = jasmine.createSpyObj<DataService>
       ('DataService',
         [
-          'getNewMaterialComponent',
-          'getNewDataSignature',
           'presentToastCustom',
           'setIsToSaveAnything',
-          'setSearchComponentModal',
-          'setOpenSignatureDialog',
-          'setMessageGeneralCallHttp',
           'getMessageTitle',
           'getUserName',
         ]);
-    dataServiceSpy.getNewMaterialComponent.and.returnValue(of({}));
-    dataServiceSpy.getNewDataSignature.and.returnValue(of({}));
     dataServiceSpy.getMessageTitle.and.returnValue('');
     dataServiceSpy.getUserName.and.returnValue('');
     localStorageServiceSpy.getUserId.and.returnValue('');
@@ -84,6 +79,19 @@ describe('MaterialRequestComponent', () => {
         ]
       );
     reportingServiceSpy.downloadPreviewRawMaterialRequest.and.returnValue(of(blobResponse));
+
+    // -------------------- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'getNewMaterialComponent',
+        'getNewDataSignature',
+        'setSearchComponentModal',
+        'setOpenSignatureDialog',
+        'setMessageGeneralCallHttp',
+      ]
+    );
+    observableServiceSpy.getNewMaterialComponent.and.returnValue(of({}));
+    observableServiceSpy.getNewDataSignature.and.returnValue(of({}));
 
     TestBed.configureTestingModule({
       declarations: [MaterialRequestComponent],
@@ -105,6 +113,7 @@ describe('MaterialRequestComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         { provide: FileDownloaderService, useValue: fileDownloaderServiceSpy },
         { provide: ReportingService, useValue: reportingServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
       ],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA

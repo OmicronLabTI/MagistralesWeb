@@ -7,16 +7,16 @@ import { DataService } from 'src/app/services/data.service';
 import { SecurityService } from 'src/app/services/security.service';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {of, throwError} from 'rxjs';
-import {LoginMock} from '../../../mocks/loginMock';
+import { of, throwError } from 'rxjs';
+import { LoginMock } from '../../../mocks/loginMock';
 import { Router } from '@angular/router';
-import { HttpStatus, MODAL_FIND_ORDERS } from 'src/app/constants/const';
+import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
 import { ErrorService } from 'src/app/services/error.service';
-import { ErrorHttpInterface } from 'src/app/model/http/commons';
 import { IUserRes, UserRes } from 'src/app/model/http/users';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ObservableService } from 'src/app/services/observable.service';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
@@ -24,6 +24,8 @@ describe('LoginComponent', () => {
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let errorServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+
   const routerSpy = {
     navigate: jasmine.createSpy('navigate')
   };
@@ -54,16 +56,10 @@ describe('LoginComponent', () => {
       'userIsAuthenticated',
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'setIsLogin',
       'setUserName',
-      'setGeneralNotificationMessage',
       'setUserRole',
-      'setMessageGeneralCallHttp',
       'getUserRole',
     ]);
-    dataServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
-      return;
-    });
     localStorageServiceSpy.setUserId.and.callFake(() => {
       return;
     });
@@ -73,8 +69,19 @@ describe('LoginComponent', () => {
     dataServiceSpy.getUserRole.and.callFake(() => {
       return '';
     });
+    //  --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'setIsLogin',
+        'setGeneralNotificationMessage',
+        'setMessageGeneralCallHttp',
+      ]
+    );
+    observableServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
+      return;
+    });
     TestBed.configureTestingModule({
-      declarations: [ LoginComponent ],
+      declarations: [LoginComponent],
       imports: [
         BrowserAnimationsModule,
         ReactiveFormsModule,
@@ -88,9 +95,10 @@ describe('LoginComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -133,10 +141,10 @@ describe('LoginComponent', () => {
     component.formLogin = fb.group({
       username: [''],
       password: [''],
-        rememberSession: [false, []]
+      rememberSession: [false, []]
     });
     // component.findOrdersForm.get('docNumDxp').setValue('XXXPOK');
-    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: MODAL_FIND_ORDERS.keyEnter});
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: MODAL_FIND_ORDERS.keyEnter });
     component.keyDownFunction(keyEvent);
     // expect(MockDialogRef.close).toHaveBeenCalled();
   });

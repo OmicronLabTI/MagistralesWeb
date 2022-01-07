@@ -36,6 +36,7 @@ import {RequestSignatureDialogComponent} from './dialogs/request-signature-dialo
 import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comments-dialog.component';
 import {CommentsConfig} from './model/device/incidents.model';
 import { LocalStorageService } from './services/local-storage.service';
+import { ObservableService } from './services/observable.service';
 
 @Component({
   selector: 'app-root',
@@ -55,19 +56,20 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   constructor(private dataService: DataService, private snackBar: MatSnackBar,
               private router: Router,  private dialog: MatDialog,
               private pedidosService: PedidosService, private errorService: ErrorService,
-              private cdRef: ChangeDetectorRef, private localStorageService: LocalStorageService
+              private cdRef: ChangeDetectorRef, private observableService: ObservableService,
+              private localStorageService: LocalStorageService
               ) {
     this.getFullName();
     this.role = this.dataService.getUserRole();
-    this.isLoading = this.dataService.getIsLoading();
+    this.isLoading = this.observableService.getIsLoading();
     this.isLogin = this.localStorageService.userIsAuthenticated();
-    this.dataService.getIsLogin().subscribe( isLoginS => {
+    this.observableService.getIsLogin().subscribe( isLoginS => {
       this.getFullName();
       this.isLogin = isLoginS;
       this.role = this.dataService.getUserRole();
     });
 
-    this.dataService
+    this.observableService
       .getGeneralNotificationMessage()
       .subscribe(msg => {
         this.snackBar.open(msg, 'OK', {
@@ -79,25 +81,25 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
         this.cdRef.detectChanges();
     }
   ngOnInit() {
-    this.subscriptionObservables.add(this.dataService.getUrlActive().subscribe(url => this.iconMenuActive = url));
-    this.subscriptionObservables.add(this.dataService.getQfbToPlace().subscribe(qfbToPlace =>
+    this.subscriptionObservables.add(this.observableService.getUrlActive().subscribe(url => this.iconMenuActive = url));
+    this.subscriptionObservables.add(this.observableService.getQfbToPlace().subscribe(qfbToPlace =>
       this.onSuccessPlaceOrder(qfbToPlace)));
-    this.subscriptionObservables.add(this.dataService.getMessageGeneralCalHttp()
+    this.subscriptionObservables.add(this.observableService.getMessageGeneralCalHttp()
         .subscribe(generalMessage => this.onSuccessGeneralMessage(generalMessage)));
-    this.subscriptionObservables.add(this.dataService.getCancelOrder().subscribe(resultCancel =>
+    this.subscriptionObservables.add(this.observableService.getCancelOrder().subscribe(resultCancel =>
         this.onSuccessCancelOrder(resultCancel)));
-    this.subscriptionObservables.add(this.dataService.getFinalizeOrders().subscribe(resultFinalize =>
+    this.subscriptionObservables.add(this.observableService.getFinalizeOrders().subscribe(resultFinalize =>
         this.onSuccessFinalizeOrders(resultFinalize)));
-    this.subscriptionObservables.add(this.dataService.getPathUrl().subscribe(resultPath =>
+    this.subscriptionObservables.add(this.observableService.getPathUrl().subscribe(resultPath =>
         this.goToPageEvaluate(resultPath)));
-    this.subscriptionObservables.add(this.dataService.getIsLogout().subscribe(() => this.logoutSession(false)));
-    this.subscriptionObservables.add(this.dataService.getSearchComponentModal().subscribe(resultSearchComponentModal =>
+    this.subscriptionObservables.add(this.observableService.getIsLogout().subscribe(() => this.logoutSession(false)));
+    this.subscriptionObservables.add(this.observableService.getSearchComponentModal().subscribe(resultSearchComponentModal =>
          this.onSuccessSearchComponentModal(resultSearchComponentModal)));
-    this.subscriptionObservables.add(this.dataService.getSearchOrdersModal().subscribe(resultSearchOrdersModal =>
+    this.subscriptionObservables.add(this.observableService.getSearchOrdersModal().subscribe(resultSearchOrdersModal =>
         this.onSuccessSearchOrders(resultSearchOrdersModal)));
-    this.subscriptionObservables.add(this.dataService.getOpenSignatureDialog().subscribe(dataSignature =>
+    this.subscriptionObservables.add(this.observableService.getOpenSignatureDialog().subscribe(dataSignature =>
         this.onSuccessOpenSignatureDialog(dataSignature)));
-    this.subscriptionObservables.add(this.dataService.getOpenCommentsDialog().subscribe(commentsResult =>
+    this.subscriptionObservables.add(this.observableService.getOpenCommentsDialog().subscribe(commentsResult =>
        this.onSuccessCommentsResult(commentsResult)));
   }
   endSession() {
@@ -105,7 +107,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
 
   }
   logoutSession(isFromEndSession: boolean) {
-      this.dataService.setIsLogin(false);
+      this.observableService.setIsLogin(false);
       this.localStorageService.clearSession();
       this.onSuccessGeneralMessage({title: isFromEndSession ? Messages.endSession : Messages.expiredSession ,
       icon: isFromEndSession ? 'success' : 'info', isButtonAccept: false});
@@ -191,16 +193,16 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   }
   createDialogHttpOhAboutTypePlace(modalType: string, isFromOrderIsolated: boolean, error = CONST_STRING.empty) {
     if (isFromOrderIsolated) {
-        this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
+        this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
         this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
     } else {
         if (modalType === MODAL_NAMES.placeOrders) {
-            this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
+            this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS);
             this.onSuccessGeneralMessage({title: error === CONST_STRING.empty ? Messages.success : error,
                 isButtonAccept: error === CONST_STRING.empty ? false : true,
                 icon: error === CONST_STRING.empty ? 'success' : 'error' });
         } else {
-            this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+            this.observableService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
             this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
         }
     }
@@ -257,12 +259,12 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     }
     callHttpAboutModalFrom(modalType: string, isFromOrdersIsolated: boolean) {
        if (isFromOrdersIsolated) {
-           this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
+           this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
        } else {
            if (modalType === MODAL_NAMES.placeOrders) {
-               this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
+               this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS);
            } else {
-               this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+               this.observableService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
            }
        }
     }
@@ -310,10 +312,10 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             if (resultComponents && (resultSearchComponentModal.modalType === ComponentSearch.searchComponent
                 || resultSearchComponentModal.modalType === ComponentSearch.addComponent)) {
                 if (resultSearchComponentModal.modalType === ComponentSearch.searchComponent) {
-                    this.dataService.setNewFormulaComponent(resultComponents);
+                    this.observableService.setNewFormulaComponent(resultComponents);
                 }
                 if (resultSearchComponentModal.modalType === ComponentSearch.addComponent) {
-                    this.dataService.setNewMaterialComponent(resultComponents);
+                    this.observableService.setNewMaterialComponent(resultComponents);
                 }
             } else if (resultComponents) {
                 this.dataService.presentToastCustom(Messages.createIsolatedOrder + resultComponents.productoId + '?',
@@ -361,7 +363,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             }
         }).afterClosed().subscribe((result: ParamsPedidos) => {
            if (result) {
-               this.dataService.setNewSearchOrderModal(result);
+               this.observableService.setNewSearchOrderModal(result);
            }
         });
     }
@@ -374,7 +376,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             })
             .afterClosed().subscribe(result => {
             if (result) {
-                this.dataService.setNewDataSignature(result);
+                this.observableService.setNewDataSignature(result);
             }
         });
     }
@@ -385,7 +387,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
           data: commentsResult
         }).afterClosed().subscribe(addCommentsResult => {
           if ( addCommentsResult) {
-            this.dataService.setNewCommentsResult(addCommentsResult);
+            this.observableService.setNewCommentsResult(addCommentsResult);
           }
         });
     }

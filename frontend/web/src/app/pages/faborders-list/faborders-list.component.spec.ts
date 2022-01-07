@@ -1,22 +1,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {DatePipe} from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { FabordersListComponent } from './faborders-list.component';
-import {DataService} from '../../services/data.service';
-import {Observable, of, throwError} from 'rxjs';
-import {FabOrderListMock} from '../../../mocks/fabOrderListMock';
-import {OrdersService} from '../../services/orders.service';
-import {ErrorService} from '../../services/error.service';
-import {ErrorHttpInterface} from '../../model/http/commons';
-import {PageEvent} from '@angular/material/paginator';
-import {PipesModule} from '../../pipes/pipes.module';
+import { DataService } from '../../services/data.service';
+import { Observable, of, throwError } from 'rxjs';
+import { FabOrderListMock } from '../../../mocks/fabOrderListMock';
+import { OrdersService } from '../../services/orders.service';
+import { ErrorService } from '../../services/error.service';
+import { ErrorHttpInterface } from '../../model/http/commons';
+import { PageEvent } from '@angular/material/paginator';
+import { PipesModule } from '../../pipes/pipes.module';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
+import { ObservableService } from 'src/app/services/observable.service';
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;
@@ -24,16 +25,26 @@ describe('FabordersListComponent', () => {
   let dataServiceSpy;
   let ordersServiceSpy;
   let errorServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>
   const paramsPedidos = new ParamsPedidos();
 
   const iOrdersReq: IOrdersReq[] = [];
   beforeEach(async(() => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setIsLoading',
-      'setCallHttpService', 'setMessageGeneralCallHttp', 'getOrderIsolated', 'removeOrderIsolated', 'getNewSearchOrdersModal',
-        'getCallHttpService', 'transformDate', 'setSearchComponentModal', 'getNewDataToFilter', 'setCancelOrders', 'setQbfToPlace',
-        'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter', 'setFiltersActivesOrders', 'getFiltersActivesOrders',
-      'removeFiltersActiveOrders', 'getFiltersActivesAsModelOrders', 'getIsWithFilter', 'changeRouterForFormula'
+      'presentToastCustom',
+      'getOrderIsolated',
+      'removeOrderIsolated',
+      'transformDate',
+      'getNewDataToFilter',
+      'getItemOnDataOnlyIds',
+      'getIsThereOnData',
+      'getItemOnDateWithFilter',
+      'setFiltersActivesOrders',
+      'getFiltersActivesOrders',
+      'removeFiltersActiveOrders',
+      'getFiltersActivesAsModelOrders',
+      'getIsWithFilter',
+      'changeRouterForFormula'
     ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
@@ -43,12 +54,6 @@ describe('FabordersListComponent', () => {
     ]);
     ordersServiceSpy.getOrders.and.callFake(() => {
       return of(FabOrderListMock);
-    });
-    dataServiceSpy.getNewSearchOrdersModal.and.callFake(() => {
-      return new Observable();
-    });
-    dataServiceSpy.getCallHttpService.and.callFake(() => {
-      return new Observable();
     });
     dataServiceSpy.getOrderIsolated.and.callFake(() => {
       return '12345Id';
@@ -60,21 +65,42 @@ describe('FabordersListComponent', () => {
     dataServiceSpy.getItemOnDataOnlyIds.and.callFake(() => {
       return [];
     });
-    dataServiceSpy.setCancelOrders.and.callFake(() => {
+    // --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'getCallHttpService',
+        'setMessageGeneralCallHttp',
+        'setUrlActive',
+        'setIsLoading',
+        'setCallHttpService',
+        'getNewSearchOrdersModal',
+        'setSearchComponentModal',
+        'setCancelOrders',
+        'setQbfToPlace',
+      ]);
+    observableServiceSpy.getCallHttpService.and.callFake(() => {
+      return new Observable();
+    });
+    observableServiceSpy.getNewSearchOrdersModal.and.callFake(() => {
+      return new Observable();
+    });
+    observableServiceSpy.setCancelOrders.and.callFake(() => {
       return;
     });
+
     TestBed.configureTestingModule({
-      declarations: [ FabordersListComponent ],
-      imports: [ RouterTestingModule, MATERIAL_COMPONENTS, HttpClientTestingModule,
-        BrowserAnimationsModule, PipesModule ],
+      declarations: [FabordersListComponent],
+      imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientTestingModule,
+        BrowserAnimationsModule, PipesModule],
       providers: [
         DatePipe,
         { provide: DataService, useValue: dataServiceSpy },
-        { provide: OrdersService, useValue: ordersServiceSpy }
+        { provide: OrdersService, useValue: ordersServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -85,10 +111,10 @@ describe('FabordersListComponent', () => {
 
   it('should updateAllComplete', () => {
     component.dataSource.data = FabOrderListMock.response;
-    component.dataSource.data.forEach( user => user.isChecked = false);
+    component.dataSource.data.forEach(user => user.isChecked = false);
     component.updateAllComplete();
     expect(component.allComplete).toBeFalsy();
-    component.dataSource.data.forEach( user => user.isChecked = true);
+    component.dataSource.data.forEach(user => user.isChecked = true);
     component.updateAllComplete();
     expect(component.allComplete).toBeTruthy();
 
@@ -96,10 +122,10 @@ describe('FabordersListComponent', () => {
   it('should someComplete', () => {
     component.dataSource.data = [];
     component.dataSource.data = FabOrderListMock.response;
-    component.dataSource.data.forEach( user => user.isChecked = false);
+    component.dataSource.data.forEach(user => user.isChecked = false);
     component.allComplete = false;
     expect(component.someComplete()).toBeFalsy();
-    component.dataSource.data.forEach( user => user.isChecked = true);
+    component.dataSource.data.forEach(user => user.isChecked = true);
     expect(component.someComplete()).toBeTruthy();
   });
   it('should setAll', () => {
@@ -149,14 +175,14 @@ describe('FabordersListComponent', () => {
     /*expect(dataServiceSpy.transformDate).toHaveBeenCalledTimes(4);*/
   });
   it('should changeDataEvent()', () => {
-    expect(component.changeDataEvent({pageIndex: 0, pageSize: 5} as PageEvent)).toEqual({pageIndex: 0, pageSize: 5} as PageEvent);
-    expect(component.pageIndex ).toEqual(0);
+    expect(component.changeDataEvent({ pageIndex: 0, pageSize: 5 } as PageEvent)).toEqual({ pageIndex: 0, pageSize: 5 } as PageEvent);
+    expect(component.pageIndex).toEqual(0);
     expect(component.offset).toEqual(0);
     expect(component.limit).toEqual(5);
   });
   it('should createOrderIsolated()', () => {
     component.createOrderIsolated();
-    expect(dataServiceSpy.setSearchComponentModal).toHaveBeenCalled();
+    expect(observableServiceSpy.setSearchComponentModal).toHaveBeenCalled();
   });
   it('should onSuccessSearchOrdersModal', () => {
     paramsPedidos[0] = [{
