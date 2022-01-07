@@ -17,6 +17,7 @@ import { ComponentsModule } from 'src/app/components/components.module';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from 'src/app/services/date.service';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -25,6 +26,7 @@ describe('DetalleFormulaComponent', () => {
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
   const paramsPedidos = new ParamsPedidos();
   // let routerSpy: jasmine.SpyObj<ActivatedRoute>;
 
@@ -43,7 +45,6 @@ describe('DetalleFormulaComponent', () => {
       'presentToastCustom',
       'getOrderIsolated',
       'removeOrderIsolated',
-      'transformDate',
       'getNewDataToFilter',
       'getItemOnDataOnlyIds',
       'getIsThereOnData',
@@ -96,6 +97,11 @@ describe('DetalleFormulaComponent', () => {
     observableServiceSpy.getNewFormulaComponent.and.callFake(() => {
       return new Observable();
     });
+    // --- Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'transformDate',
+    ]);
+    dateServiceSpy.transformDate.and.returnValue('');
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
@@ -115,7 +121,8 @@ describe('DetalleFormulaComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
-        { provide: ActivatedRoute, useValue: { paramMap: new Subject() } }
+        { provide: DateService, useValue: dateServiceSpy },
+        { provide: ActivatedRoute, useValue: { paramMap: new Subject() } },
       ]
     })
       .compileComponents();

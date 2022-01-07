@@ -19,6 +19,7 @@ import { Messages } from '../../constants/messages';
 import { PageEvent } from '@angular/material/paginator';
 import { Title } from '@angular/platform-browser';
 import { ObservableService } from '../../services/observable.service';
+import { DateService } from '../../services/date.service';
 
 @Component({
   selector: 'app-incidents-list',
@@ -57,10 +58,11 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     private incidentsService: IncidentsService,
     private errorService: ErrorService,
     private titleService: Title,
-    private observableService: ObservableService) {
+    private observableService: ObservableService,
+    private dateService: DateService) {
     this.observableService.setUrlActive(HttpServiceTOCall.INCIDENTS_LIST);
     this.filterDataIncidents.dateType = ConstOrders.defaultDateInit;
-    this.filterDataIncidents.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), true);
+    this.filterDataIncidents.dateFull = this.dateService.getDateFormatted(new Date(), new Date(), true);
     this.filterDataIncidents.isFromIncidents = true;
 
 

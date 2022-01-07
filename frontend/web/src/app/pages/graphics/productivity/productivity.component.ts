@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angula
 
 import { Title } from '@angular/platform-browser';
 import { MatPaginator, MatTableDataSource} from '@angular/material';
-import {DataService} from '../../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { Chart } from 'chart.js';
 import {
@@ -18,6 +17,7 @@ import { ErrorHttpInterface } from 'src/app/model/http/commons';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { ObservableService } from '../../../services/observable.service';
+import { DateService } from '../../../services/date.service';
 
 @Component({
   selector: 'app-productivity',
@@ -35,18 +35,18 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   maxDate: Date;
   productivityForm: FormGroup;
   myChart = undefined;
-  fullDate = this.dataService.getDateFormatted(new Date(), new Date(), true, true).split('-');
+  fullDate = this.dateService.getDateFormatted(new Date(), new Date(), true, true).split('-');
   @ViewChild('productivityChart', {static: true}) productivityChart: ElementRef;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   showTable = false;
   constructor(
     private titleService: Title,
-    private dataService: DataService,
     private errorService: ErrorService,
     private productivityService: ProductivityService,
     private formBuilder: FormBuilder,
     private cdRef: ChangeDetectorRef,
     private observableService: ObservableService,
+    private dateService: DateService,
   ) {
     this.productivityForm = this.formBuilder.group({
       fini: ['', []],
@@ -85,7 +85,7 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   }
 
   getProductivityData() {
-    this.queryString = `?ffin=${this.dataService.getDateFormatted(
+    this.queryString = `?ffin=${this.dateService.getDateFormatted(
       this.productivityForm.get('fini').value,
       this.productivityForm.get('ffin').value,
       false,

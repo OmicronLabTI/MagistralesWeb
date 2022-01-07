@@ -278,11 +278,11 @@ describe('DataService', () => {
   //   });
   //   service.setFinalizeOrders({list: [{orderId: 123}], cancelType: 'pedidos'});
   // });
-  it('should getDateFormatted', () => {
-    const service: DataService = TestBed.get(DataService);
-    expect(service.getDateFormatted(new Date(), new Date(), true).includes('/')).toBeTruthy();
-    expect(service.getDateFormatted(new Date(), new Date(), false).includes('/')).toBeTruthy();
-  });
+  // it('should getDateFormatted', () => {
+  //   const service: DataService = TestBed.get(DataService);
+  //   expect(service.getDateFormatted(new Date(), new Date(), true).includes('/')).toBeTruthy();
+  //   expect(service.getDateFormatted(new Date(), new Date(), false).includes('/')).toBeTruthy();
+  // });
   // it('should getNewSearchOrdersModal', () => {
   //   const service: DataService = TestBed.get(DataService);
   //   service.getNewSearchOrdersModal().subscribe(newSearchOrdersModal => {
@@ -303,22 +303,22 @@ describe('DataService', () => {
     expect(service.getItemOnDateWithFilter([], FromToFilter.fromDefault, ConstStatus.cancelado).length).toEqual(0);
 
   });
-  it('should transformDate', () => {
-    const service: DataService = TestBed.get(DataService);
-    expect(service.transformDate(new Date(), true).includes('-')).toBeTruthy();
-  });
-  it('should getDateArray', () => {
-    const service: DataService = TestBed.get(DataService);
-    expect(service.getDateArray(new Date()).length > 0).toBeTruthy();
-  });
-  it('should getMaxMinDate', () => {
-    const service: DataService = TestBed.get(DataService);
-    expect(service.getMaxMinDate(new Date(), 3, false).getMonth()
-            !== new Date().getMonth()).toBeTruthy();
-    expect(service.getMaxMinDate(new Date(), 3, true).getMonth()
-        !== new Date().getMonth()).toBeTruthy();
+  // it('should transformDate', () => {
+  //   const service: DataService = TestBed.get(DataService);
+  //   expect(service.transformDate(new Date(), true).includes('-')).toBeTruthy();
+  // });
+  // it('should getDateArray', () => {
+  //   const service: DataService = TestBed.get(DataService);
+  //   expect(service.getDateArray(new Date()).length > 0).toBeTruthy();
+  // });
+  // it('should getMaxMinDate', () => {
+  //   const service: DataService = TestBed.get(DataService);
+  //   expect(service.getMaxMinDate(new Date(), 3, false).getMonth()
+  //           !== new Date().getMonth()).toBeTruthy();
+  //   expect(service.getMaxMinDate(new Date(), 3, true).getMonth()
+  //       !== new Date().getMonth()).toBeTruthy();
 
-  });
+  // });
   it('should userRole', () => {
     const service: DataService = TestBed.get(DataService);
     service.setUserRole(3);

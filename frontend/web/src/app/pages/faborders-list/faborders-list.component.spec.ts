@@ -18,6 +18,7 @@ import { PipesModule } from '../../pipes/pipes.module';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
 import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from 'src/app/services/date.service';
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;
@@ -25,7 +26,8 @@ describe('FabordersListComponent', () => {
   let dataServiceSpy;
   let ordersServiceSpy;
   let errorServiceSpy;
-  let observableServiceSpy: jasmine.SpyObj<ObservableService>
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
   const paramsPedidos = new ParamsPedidos();
 
   const iOrdersReq: IOrdersReq[] = [];
@@ -34,7 +36,6 @@ describe('FabordersListComponent', () => {
       'presentToastCustom',
       'getOrderIsolated',
       'removeOrderIsolated',
-      'transformDate',
       'getNewDataToFilter',
       'getItemOnDataOnlyIds',
       'getIsThereOnData',
@@ -88,6 +89,14 @@ describe('FabordersListComponent', () => {
       return;
     });
 
+    //  Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'transformDate',
+      'getDateFormatted',
+    ]);
+    dateServiceSpy.transformDate.and.returnValue('');
+    dateServiceSpy.getDateFormatted.and.returnValue('');
+
     TestBed.configureTestingModule({
       declarations: [FabordersListComponent],
       imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientTestingModule,
@@ -96,7 +105,8 @@ describe('FabordersListComponent', () => {
         DatePipe,
         { provide: DataService, useValue: dataServiceSpy },
         { provide: OrdersService, useValue: ordersServiceSpy },
-        { provide: ObservableService, useValue: observableServiceSpy }
+        { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: DateService, useValue: dateServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

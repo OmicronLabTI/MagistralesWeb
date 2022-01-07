@@ -17,6 +17,7 @@ import { DataService } from '../../services/data.service';
 import { Messages } from '../../constants/messages';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from '../../services/date.service';
 @Component({
   selector: 'app-finalize-orders',
   templateUrl: './finalize-orders.component.html',
@@ -36,7 +37,8 @@ export class FinalizeOrdersComponent implements OnInit {
     private dataService: DataService,
     private dialogRef: MatDialogRef<FinalizeOrdersComponent>,
     private observableService: ObservableService,
-    private localStorageService: LocalStorageService) {
+    private localStorageService: LocalStorageService,
+    private dateService: DateService) {
     this.finalizeData = finalizeData || new Array();
   }
 
@@ -149,8 +151,8 @@ export class FinalizeOrdersComponent implements OnInit {
         finalizeOrder.batches = [{
           batchCode: orderIsolated.batche,
           quantity: orderIsolated.quantityFinish.toString(),
-          manufacturingDate: this.dataService.transformDate(orderIsolated.fabDate, true),
-          expirationDate: this.dataService.transformDate(orderIsolated.endDate, true)
+          manufacturingDate: this.dateService.transformDate(orderIsolated.fabDate, true),
+          expirationDate: this.dateService.transformDate(orderIsolated.endDate, true)
         }];
       } else {
         finalizeOrder.batches = [];

@@ -26,6 +26,7 @@ import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-or
 import {Router} from '@angular/router';
 import {PedidosService} from '../../services/pedidos.service';
 import { ObservableService } from '../../services/observable.service';
+import { DateService } from '../../services/date.service';
 
 @Component({
   selector: 'app-faborders-list',
@@ -74,7 +75,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private router: Router,
     private pedidosService: PedidosService,
-    private observableService: ObservableService
+    private observableService: ObservableService,
+    private dateService: DateService,
   ) {
     this.observableService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
   }
@@ -111,7 +113,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   getInitRange(daysInitRange: string) {
     this.filterDataOrders.isFromOrders = false;
     this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
-    this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(daysInitRange));
+    this.filterDataOrders.dateFull = this.dateService.getDateFormatted(new Date(), new Date(), false, false, Number(daysInitRange));
     this.queryString = `?fini=${this.filterDataOrders.dateFull}`;  // init search
     this.getFullQueryString();
     this.getOrdersAction();
@@ -199,7 +201,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     if (isBeginDate) {
       initDate = new Date(initDate.getTime() - MODAL_FIND_ORDERS.thirtyDays);
     }
-    return `${this.dataService.transformDate(initDate)}-${this.dataService.transformDate(finishDate)}`;
+    return `${this.dateService.transformDate(initDate)}-${this.dateService.transformDate(finishDate)}`;
   }
 
   changeDataEvent(event: PageEvent) {

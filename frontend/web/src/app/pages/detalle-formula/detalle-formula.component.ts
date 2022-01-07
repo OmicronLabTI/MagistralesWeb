@@ -23,6 +23,7 @@ import { ComponentslistComponent } from 'src/app/dialogs/componentslist/componen
 import { Components } from 'src/app/model/http/listacomponentes';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { ObservableService } from '../../services/observable.service';
+import { DateService } from '../../services/date.service';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -74,7 +75,9 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public dataService: DataService,
     private titleService: Title,
-    private observableService: ObservableService) {
+    private observableService: ObservableService,
+    private dateService: DateService,
+    ) {
   }
 
   ngOnInit() {
@@ -261,7 +264,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     detailComponentsTOSave.warehouse = isFromSave ? this.warehouse : this.oldDataFormulaDetail.warehouse;
     detailComponentsTOSave.comments = isFromSave ? this.comments : this.oldDataFormulaDetail.comments;
 
-    const endDateToString = isFromSave ? this.dataService.transformDate(this.endDateGeneral).split('/') :
+    const endDateToString = isFromSave ? this.dateService.transformDate(this.endDateGeneral).split('/') :
       this.oldDataFormulaDetail.dueDate.split('/');
     detailComponentsTOSave.fechaFin = `${endDateToString[2]}-${endDateToString[1]}-${endDateToString[0]}`;
     return detailComponentsTOSave;

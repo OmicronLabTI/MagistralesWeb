@@ -13,19 +13,22 @@ import { ConstStatus } from '../../constants/const';
 import { PageEvent } from '@angular/material/paginator';
 import { DataService } from '../../services/data.service';
 import Swal from 'sweetalert2';
-import { IProcessOrdersRes } from '../../model/http/pedidos';
+import { IProcessOrdersRes, ParamsPedidos } from '../../model/http/pedidos';
 import { PipesModule } from '../../pipes/pipes.module';
 import { RangeDateMOck } from '../../../mocks/rangeDateMock';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from 'src/app/services/date.service';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
   let fixture: ComponentFixture<PedidosComponent>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let pedidosServiceSpy;
-  let dataServiceSpy;
+  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>
+  const paramsPedidos = new ParamsPedidos();
   beforeEach(async(() => {
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getUserId', 'setRefreshToken',
@@ -33,12 +36,19 @@ describe('PedidosComponent', () => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
         'presentToastCustom',
-        'transformDate',
         'setFiltersActives',
         'getFiltersActives',
         'removeFiltersActive',
-        'getFiltersActivesAsModel'
+        'getFiltersActivesAsModel',
+        'getItemOnDataOnlyIds',
+        'getUserRole',
+        'getIsThereOnData',
       ]);
+    dataServiceSpy.getIsThereOnData.and.returnValue(true);
+    dataServiceSpy.getFiltersActives.and.returnValue('');
+    dataServiceSpy.getFiltersActivesAsModel.and.returnValue(paramsPedidos);
+    dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
+    dataServiceSpy.presentToastCustom.and.returnValue(Promise.resolve(true));
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos', 'processOrders', 'getInitRangeDate'
     ]);
@@ -70,6 +80,14 @@ describe('PedidosComponent', () => {
     observableServiceSpy.getCallHttpService.and.returnValue(of());
     observableServiceSpy.getNewSearchOrdersModal.and.returnValue(of());
     observableServiceSpy.getNewCommentsResult.and.returnValue(of());
+    // --- Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', 
+    [
+      'transformDate',
+      'getDateFormatted',
+    ]);
+    dateServiceSpy.transformDate.and.returnValue('');
+    dateServiceSpy.getDateFormatted.and.returnValue('');
     TestBed.configureTestingModule({
       declarations: [PedidosComponent],
       imports: [RouterTestingModule, MATERIAL_COMPONENTS,
@@ -79,6 +97,7 @@ describe('PedidosComponent', () => {
         { provide: PedidosService, useValue: pedidosServiceSpy },
         // { provide: DataService, useValue: dataServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: DateService, useValue: dateServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
