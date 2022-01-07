@@ -15,6 +15,7 @@ import {
 import { CancelOrderReq } from '../../model/http/pedidos';
 import { DataService } from '../../services/data.service';
 import { Messages } from '../../constants/messages';
+import { ObservableService } from 'src/app/services/observable.service';
 @Component({
   selector: 'app-finalize-orders',
   templateUrl: './finalize-orders.component.html',
@@ -32,7 +33,8 @@ export class FinalizeOrdersComponent implements OnInit {
     private orderService: PedidosService,
     private errorService: ErrorService,
     private dataService: DataService,
-    private dialogRef: MatDialogRef<FinalizeOrdersComponent>) {
+    private dialogRef: MatDialogRef<FinalizeOrdersComponent>,
+    private observableService: ObservableService) {
     this.finalizeData = finalizeData || new Array();
   }
 
@@ -158,13 +160,13 @@ export class FinalizeOrdersComponent implements OnInit {
         const titleFinalizeWithError = this.dataService.getMessageTitle(
           finalizeResult.response.failed, MessageType.finalizeOrder, true);
         this.dialogRef.close();
-        this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
+        this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
         this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
           Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
       } else {
         this.dialogRef.close();
-        this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
-        this.dataService.setMessageGeneralCallHttp({ title: Messages.success, isButtonAccept: false, icon: 'success' });
+        this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
+        this.observableService.setMessageGeneralCallHttp({ title: Messages.success, isButtonAccept: false, icon: 'success' });
       }
     }, error => {
       this.errorService.httpError(error);

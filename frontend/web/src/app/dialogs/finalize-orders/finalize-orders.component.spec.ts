@@ -8,16 +8,16 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DatePipe } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
-import { OrdersService } from 'src/app/services/orders.service';
 import { PedidosService } from '../../services/pedidos.service';
 import { of } from 'rxjs';
 import { Batches, CancelOrderReq, IExistsBachCodeRes, IGetNewBachCodeRes } from 'src/app/model/http/pedidos';
 import { ICancelOrdersRes } from '../../model/http/pedidos';
 import { ErrorService } from 'src/app/services/error.service';
 import { DataService } from 'src/app/services/data.service';
-import { IOrdersReq, IOrdersRes } from 'src/app/model/http/ordenfabricacion';
+import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
 import { AddCommentsDialogComponent } from '../add-comments-dialog/add-comments-dialog.component';
 import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
+import { ObservableService } from 'src/app/services/observable.service';
 
 describe('FinalizeOrdersComponent', () => {
   let component: FinalizeOrdersComponent;
@@ -26,6 +26,7 @@ describe('FinalizeOrdersComponent', () => {
   let errorServiceSpy: jasmine.SpyObj<ErrorService>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let dialogRefSpy: jasmine.SpyObj<MatDialogRef<AddCommentsDialogComponent>>;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
 
   const getNextBatchCodeRes = new IGetNewBachCodeRes();
   const getIfExistsBatchCodeRes = new IExistsBachCodeRes();
@@ -49,58 +50,63 @@ describe('FinalizeOrdersComponent', () => {
 
 
   beforeEach(async(() => {
-  dialogRefSpy = jasmine.createSpyObj<MatDialogRef<AddCommentsDialogComponent>>('MatDialogRef', [
-    'close',
-  ]);
-  dialogRefSpy.close.and.returnValue();
-  orderServiceSpy = jasmine.createSpyObj<PedidosService>
-    ('PedidosService',
-    [
-      'getNextBatchCode',
-      'getIfExistsBatchCode',
-      'putFinalizeOrders'
+    dialogRefSpy = jasmine.createSpyObj<MatDialogRef<AddCommentsDialogComponent>>('MatDialogRef', [
+      'close',
     ]);
-  orderServiceSpy.getNextBatchCode.and.returnValue(of(getNextBatchCodeRes));
-  orderServiceSpy.getIfExistsBatchCode.and.returnValue(of(getIfExistsBatchCodeRes));
-  orderServiceSpy.putFinalizeOrders.and.returnValue(of(putFinalizeOrders));
+    dialogRefSpy.close.and.returnValue();
+    orderServiceSpy = jasmine.createSpyObj<PedidosService>
+      ('PedidosService',
+        [
+          'getNextBatchCode',
+          'getIfExistsBatchCode',
+          'putFinalizeOrders'
+        ]);
+    orderServiceSpy.getNextBatchCode.and.returnValue(of(getNextBatchCodeRes));
+    orderServiceSpy.getIfExistsBatchCode.and.returnValue(of(getIfExistsBatchCodeRes));
+    orderServiceSpy.putFinalizeOrders.and.returnValue(of(putFinalizeOrders));
 
 
-  errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
 
 
-  dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
-    [
-      'getUserId',
-      'transformDate',
-      'getMessageTitle',
-      'setCallHttpService',
-      'presentToastCustom',
-      'setMessageGeneralCallHttp',
-    ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
+      [
+        'getUserId',
+        'transformDate',
+        'getMessageTitle',
+        'presentToastCustom',
+      ]);
 
-  dataServiceSpy.getUserId.and.returnValue('');
-  dataServiceSpy.transformDate.and.returnValue('');
-  dataServiceSpy.getMessageTitle.and.returnValue('');
-  dataServiceSpy.setCallHttpService.and.returnValue();
-  dataServiceSpy.setMessageGeneralCallHttp.and.returnValue();
-  dataServiceSpy.presentToastCustom.and.callFake(() => {
-    return Promise.resolve();
-  });
-
-  TestBed.configureTestingModule({
-    declarations: [FinalizeOrdersComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [MATERIAL_COMPONENTS, FormsModule, HttpClientTestingModule, RouterTestingModule],
-    providers: [
-      { provide: MatDialogRef, useValue: dialogRefSpy },
-      { provide: MAT_DIALOG_DATA, useValue: { finalizeOrdersData: [] } },
-      DatePipe,
-      { provide: PedidosService, useValue: orderServiceSpy },
-      { provide: ErrorService, useValue: errorServiceSpy },
-      { provide: DataService, useValue: dataServiceSpy },
-    ]
-  })
-    .compileComponents();
+    dataServiceSpy.getUserId.and.returnValue('');
+    dataServiceSpy.transformDate.and.returnValue('');
+    dataServiceSpy.getMessageTitle.and.returnValue('');
+    dataServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve();
+    });
+    // --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'setCallHttpService',
+        'setMessageGeneralCallHttp',
+      ]
+    );
+    observableServiceSpy.setCallHttpService.and.returnValue();
+    observableServiceSpy.setMessageGeneralCallHttp.and.returnValue();
+    TestBed.configureTestingModule({
+      declarations: [FinalizeOrdersComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [MATERIAL_COMPONENTS, FormsModule, HttpClientTestingModule, RouterTestingModule],
+      providers: [
+        { provide: MatDialogRef, useValue: dialogRefSpy },
+        { provide: MAT_DIALOG_DATA, useValue: { finalizeOrdersData: [] } },
+        DatePipe,
+        { provide: PedidosService, useValue: orderServiceSpy },
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: DataService, useValue: dataServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
+      ]
+    })
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -352,7 +358,7 @@ describe('FinalizeOrdersComponent', () => {
   it('should keyFunction', () => {
     // const event = new KeyboardEvent('keypress', { key: 'Enter' });
     component.isCorrectData = true;
-    const keyEvent = new KeyboardEvent('keyEnter', { key: MODAL_FIND_ORDERS.keyEnter});
+    const keyEvent = new KeyboardEvent('keyEnter', { key: MODAL_FIND_ORDERS.keyEnter });
     // component.keyDownUsers(keyEvent);
     component.keyDownFunction(keyEvent);
     expect(component.finalizeOrderSend).toBeTruthy();

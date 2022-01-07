@@ -11,6 +11,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { DataService } from 'src/app/services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { ColorsReception, TypeReception } from 'src/app/constants/const';
+import { ObservableService } from '../../../services/observable.service';
 
 describe('WarehouseComponent', () => {
   let component: WarehouseComponent;
@@ -18,11 +19,11 @@ describe('WarehouseComponent', () => {
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let errorServiceSpy: jasmine.SpyObj<ErrorService>;
   let incidentsServiceSpy: jasmine.SpyObj<IncidentsService>;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
 
   beforeEach(async(() => {
     // -------------DATA SERVICE -----------------
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'setUrlActive',
       'getPercentageByItem'
     ]);
     dataServiceSpy.getPercentageByItem.and.callFake(() => {
@@ -41,6 +42,13 @@ describe('WarehouseComponent', () => {
       'httpError'
     ]);
 
+    // ------------ OBSERVABLE SERVICE ----------------
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService', 
+    [
+      'setUrlActive',
+    ]
+    );
+
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
@@ -51,6 +59,7 @@ describe('WarehouseComponent', () => {
         { provide: IncidentsService, useValue: incidentsServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
       ]
     })
       .compileComponents();

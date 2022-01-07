@@ -1,19 +1,38 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ErrorService } from './error.service';
-import {DatePipe} from '@angular/common';
-import {ErrorHttpInterface} from '../model/http/commons';
-import {DataService} from './data.service';
+import { DatePipe } from '@angular/common';
+import { ErrorHttpInterface } from '../model/http/commons';
+import { DataService } from './data.service';
+import { ObservableService } from './observable.service';
 describe('ErrorService', () => {
   let dataServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>
   beforeEach(() => {
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'setToken', 'setIsLogin', 'setUserName', 'userIsAuthenticated', 'setGeneralNotificationMessage',
-        'setIsLogout', 'setMessageGeneralCallHttp'
-    ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>
+      ('DataService',
+        [
+          'setToken',
+          'setUserName',
+          'userIsAuthenticated',
+        ]
+      );
+    //  --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>
+      ('ObservableService',
+        [
+          'setGeneralNotificationMessage',
+          'setIsLogin',
+          'setIsLogout',
+          'setMessageGeneralCallHttp',
+        ]
+      );
     TestBed.configureTestingModule({
-      providers: [DatePipe,
-        { provide: DataService, useValue: dataServiceSpy }]
+      providers: [
+        DatePipe,
+        { provide: DataService, useValue: dataServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
+      ]
     });
   });
 
@@ -26,15 +45,15 @@ describe('ErrorService', () => {
     const errorHttpTest = new ErrorHttpInterface();
     errorHttpTest.status = 401;
     service.httpError(errorHttpTest);
-    expect(dataServiceSpy.setIsLogout).toHaveBeenCalledWith(true);
+    expect(observableServiceSpy.setIsLogout).toHaveBeenCalledWith(true);
     errorHttpTest.status = 500;
     service.httpError(errorHttpTest);
-    expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+    expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
     errorHttpTest.status = 504;
     service.httpError(errorHttpTest);
-    expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+    expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
     errorHttpTest.status = 0;
     service.httpError(errorHttpTest);
-    expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+    expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
   });
 });

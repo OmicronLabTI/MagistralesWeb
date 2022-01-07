@@ -16,18 +16,25 @@ import Swal from 'sweetalert2';
 import { IProcessOrdersRes } from '../../model/http/pedidos';
 import { PipesModule } from '../../pipes/pipes.module';
 import { RangeDateMOck } from '../../../mocks/rangeDateMock';
+import { ObservableService } from 'src/app/services/observable.service';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
   let fixture: ComponentFixture<PedidosComponent>;
   let pedidosServiceSpy;
   let dataServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   beforeEach(async(() => {
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setQbfToPlace',
-      'transformDate', 'setRefreshToken', 'setFiltersActives', 'getFiltersActives', 'removeFiltersActive',
-      'getFiltersActivesAsModel'
-    ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
+      [
+        'presentToastCustom',
+        'transformDate',
+        'setRefreshToken',
+        'setFiltersActives',
+        'getFiltersActives',
+        'removeFiltersActive',
+        'getFiltersActivesAsModel'
+      ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos', 'processOrders', 'getInitRangeDate'
     ]);
@@ -40,6 +47,25 @@ describe('PedidosComponent', () => {
     pedidosServiceSpy.getPedidos.and.callFake(() => {
       return of(PedidosListMock);
     });
+
+    // -- Observable Service 
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>
+      ('ObservableService',
+        [
+          'getCallHttpService',
+          'setMessageGeneralCallHttp',
+          'setUrlActive',
+          'setQbfToPlace',
+          'setIsLoading',
+          'setFinalizeOrders',
+          'setCancelOrders',
+          'getNewCommentsResult',
+          'getNewSearchOrdersModal'
+        ]
+      );
+      observableServiceSpy.getCallHttpService.and.returnValue(of());
+      observableServiceSpy.getNewSearchOrdersModal.and.returnValue(of());
+      observableServiceSpy.getNewCommentsResult.and.returnValue(of());
     TestBed.configureTestingModule({
       declarations: [PedidosComponent],
       imports: [RouterTestingModule, MATERIAL_COMPONENTS,
@@ -48,6 +74,7 @@ describe('PedidosComponent', () => {
         DatePipe,
         { provide: PedidosService, useValue: pedidosServiceSpy },
         // { provide: DataService, useValue: dataServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

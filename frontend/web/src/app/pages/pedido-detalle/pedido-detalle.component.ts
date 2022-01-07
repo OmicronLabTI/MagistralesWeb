@@ -24,9 +24,9 @@ import { Title } from '@angular/platform-browser';
 import { CancelOrderReq, Catalogs, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq } from '../../model/http/pedidos';
 import { Messages } from '../../constants/messages';
 import { ErrorService } from '../../services/error.service';
-import { MatDialog } from '@angular/material/dialog';
 import { DownloadImagesService } from '../../services/download-images.service';
 import { CommentsConfig } from '../../model/device/incidents.model';
+import { ObservableService } from '../../services/observable.service';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -72,12 +72,16 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   baseQueryString = CONST_STRING.empty;
   isThereOrdersDetailToDelivered = false;
   patientName = CONST_STRING.empty;
-  constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
-              public dataService: DataService,
-              private titleService: Title, private errorService: ErrorService,
-              private router: Router, private dialog: MatDialog,
-              private downloadImagesService: DownloadImagesService) {
-    this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
+  constructor(
+    private pedidosService: PedidosService,
+    private route: ActivatedRoute,
+    public dataService: DataService,
+    private titleService: Title,
+    private errorService: ErrorService,
+    private router: Router,
+    private downloadImagesService: DownloadImagesService,
+    private observableService: ObservableService) {
+    this.observableService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
   ngOnInit() {
@@ -86,17 +90,17 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       this.validateToGetCurrentDetail(params.get('id'));
       this.titleService.setTitle('Pedido ' + params.get('id'));
     });
-    this.subscriptionCallHttpDetail.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
+    this.subscriptionCallHttpDetail.add(this.observableService.getCallHttpService().subscribe(detailHttpCall => {
       if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
         this.getDetallePedidoService();
       }
     }));
-    this.subscriptionCallHttpDetail.add(this.dataService.getNewDataSignature().subscribe(newDataSignature => {
+    this.subscriptionCallHttpDetail.add(this.observableService.getNewDataSignature().subscribe(newDataSignature => {
       this.signatureData = newDataSignature;
       this.sendToLabelsFinish();
     }));
-    this.subscriptionCallHttpDetail.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
-    this.successNewComments(newCommentsResult)));
+    this.subscriptionCallHttpDetail.add(this.observableService.getNewCommentsResult().subscribe(newCommentsResult =>
+      this.successNewComments(newCommentsResult)));
   }
 
   getDetallePedidoService() {
@@ -198,7 +202,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   openPlaceOrderDialog() {
-    this.dataService.setQbfToPlace({
+    this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
       list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder)
     });
@@ -250,21 +254,21 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   cancelOrders() {
-    this.dataService.setCancelOrders({
+    this.observableService.setCancelOrders({
       list: this.getDataCancel(ConstStatus.finalizado),
       cancelType: MODAL_NAMES.placeOrdersDetail
     });
   }
 
   finalizeOrdersDetail() {
-    this.dataService.setFinalizeOrders({
+    this.observableService.setFinalizeOrders({
       list: this.getDataCancelFinalize(ConstStatus.terminado, true),
       cancelType: MODAL_NAMES.placeOrdersDetail
     });
   }
 
   reassignOrderDetail() {
-    this.dataService.setQbfToPlace({
+    this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
       list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
         FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId))
@@ -273,7 +277,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   goToOrders(urlPath: string[]) {
-    this.dataService.setPathUrl(urlPath);
+    this.observableService.setPathUrl(urlPath);
   }
 
   materialRequestDetail() {
@@ -301,7 +305,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   addCommentsDialog() {
     if (!this.isCorrectToAddComments) {
-      this.dataService.setOpenCommentsDialog({ comments: this.dataSource.data[0].comments });
+      this.observableService.setOpenCommentsDialog({ comments: this.dataSource.data[0].comments });
     }
   }
 
@@ -314,11 +318,11 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   reloadOrderDetail() {
     this.getDetallePedidoService();
-    this.dataService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
+    this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
   }
 
   finishOrdersLabels() {
-    this.dataService.setOpenSignatureDialog(this.signatureData);
+    this.observableService.setOpenSignatureDialog(this.signatureData);
   }
   sendToLabelsFinish() {
     this.createConsumeService();
@@ -340,10 +344,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado)
         && order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value && order.finishedLabel !== 1)
         .map(order => {
-            const labelToFinish = new LabelToFinish();
-            labelToFinish.orderId = order.ordenFabricacionId;
-            labelToFinish.checked = !isFromRemoveSignature;
-            return labelToFinish;
+          const labelToFinish = new LabelToFinish();
+          labelToFinish.orderId = order.ordenFabricacionId;
+          labelToFinish.checked = !isFromRemoveSignature;
+          return labelToFinish;
         });
     } else {
       const labelsToFinish: LabelToFinish[] = [];

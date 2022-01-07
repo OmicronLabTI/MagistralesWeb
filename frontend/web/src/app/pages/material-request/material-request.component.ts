@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
 import { FileDownloaderService } from 'src/app/services/file.downloader.service';
 import { ReportingService } from 'src/app/services/reporting.service';
 import { FileTypeContentEnum } from 'src/app/enums/FileTypeContentEnum';
+import { ObservableService } from '../../services/observable.service';
 
 
 @Component({
@@ -47,7 +48,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private fileDownloaderServie: FileDownloaderService,
     private reportingService: ReportingService,
-    private location: Location) {
+    private location: Location,
+    private observableService: ObservableService) {
   }
 
   ngOnInit() {
@@ -58,7 +60,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
       this.validateRequest();
     });
-    this.subscription.add(this.dataService.getNewMaterialComponent().subscribe(resultNewMaterialComponent => {
+    this.subscription.add(this.observableService.getNewMaterialComponent().subscribe(resultNewMaterialComponent => {
       this.dataSource.data = [...this.dataSource.data, {
         ...resultNewMaterialComponent,
         id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one
@@ -67,7 +69,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.checkToDownload();
       this.registerChanges();
     }));
-    this.subscription.add(this.dataService.getNewDataSignature().subscribe(newDataSignature => {
+    this.subscription.add(this.observableService.getNewDataSignature().subscribe(newDataSignature => {
       this.oldData.signature = newDataSignature;
       this.checkIsCorrectData();
     }));
@@ -105,7 +107,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   addNewComponent() {
-    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.addComponent, data: this.dataSource.data });
+    this.observableService.setSearchComponentModal({ modalType: ComponentSearch.addComponent, data: this.dataSource.data });
   }
 
   updateAllComplete() {
@@ -130,7 +132,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   signUser() {
-    this.dataService.setOpenSignatureDialog(this.oldData.signature || CONST_STRING.empty);
+    this.observableService.setOpenSignatureDialog(this.oldData.signature || CONST_STRING.empty);
   }
 
   sendRequest() {
@@ -145,7 +147,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
         this.onDataError(resultMaterialPost.response.failed);
       } else {
         this.goBack();
-        this.dataService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
+        this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
       }
     }, error => this.errorService.httpError(error));
   }

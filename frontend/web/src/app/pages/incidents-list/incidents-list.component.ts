@@ -1,5 +1,5 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {DataService} from '../../services/data.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DataService } from '../../services/data.service';
 import {
   ClassButton,
   CONST_NUMBER,
@@ -8,16 +8,17 @@ import {
   HttpServiceTOCall,
   TypeStatusIncidents
 } from '../../constants/const';
-import {Subscription} from 'rxjs';
-import {ParamsPedidos} from '../../model/http/pedidos';
-import {IncidentsService} from '../../services/incidents.service';
-import {ErrorService} from '../../services/error.service';
-import {ChangeStatusIncidentReq, IIncidentsListRes, IncidentItem} from '../../model/http/incidents.model';
-import {MatTableDataSource} from '@angular/material/table';
-import {CommentsConfig} from '../../model/device/incidents.model';
-import {Messages} from '../../constants/messages';
-import {PageEvent} from '@angular/material/paginator';
-import {Title} from '@angular/platform-browser';
+import { Subscription } from 'rxjs';
+import { ParamsPedidos } from '../../model/http/pedidos';
+import { IncidentsService } from '../../services/incidents.service';
+import { ErrorService } from '../../services/error.service';
+import { ChangeStatusIncidentReq, IIncidentsListRes, IncidentItem } from '../../model/http/incidents.model';
+import { MatTableDataSource } from '@angular/material/table';
+import { CommentsConfig } from '../../model/device/incidents.model';
+import { Messages } from '../../constants/messages';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { ObservableService } from '../../services/observable.service';
 
 @Component({
   selector: 'app-incidents-list',
@@ -34,7 +35,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   isSearchWithFilter = false;
   fullQueryStringIncidents = CONST_STRING.empty;
   displayedColumns: string[] = [
-      'cons',
+    'cons',
     'createDate',
     'saleOrder',
     'delivery',
@@ -51,9 +52,13 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   isOnInit = true;
   pageEvent: PageEvent;
   lengthPaginator = CONST_NUMBER.zero;
-  constructor(private dataService: DataService, private incidentsService: IncidentsService,
-              private errorService: ErrorService, private titleService: Title) {
-    this.dataService.setUrlActive(HttpServiceTOCall.INCIDENTS_LIST);
+  constructor(
+    private dataService: DataService,
+    private incidentsService: IncidentsService,
+    private errorService: ErrorService,
+    private titleService: Title,
+    private observableService: ObservableService) {
+    this.observableService.setUrlActive(HttpServiceTOCall.INCIDENTS_LIST);
     this.filterDataIncidents.dateType = ConstOrders.defaultDateInit;
     this.filterDataIncidents.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), true);
     this.filterDataIncidents.isFromIncidents = true;
@@ -63,13 +68,13 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.titleService.setTitle('OmicronLab - Incidents');
-    this.subscriptionObservables.add(this.dataService.getNewSearchOrdersModal().subscribe(resultSearchOrderModal => {
+    this.subscriptionObservables.add(this.observableService.getNewSearchOrdersModal().subscribe(resultSearchOrderModal => {
       if (resultSearchOrderModal.isFromIncidents) {
         this.onSuccessSearchOrderModal(resultSearchOrderModal);
       }
     }));
-    this.subscriptionObservables.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
-        this.onSuccessResult(newCommentsResult)));
+    this.subscriptionObservables.add(this.observableService.getNewCommentsResult().subscribe(newCommentsResult =>
+      this.onSuccessResult(newCommentsResult)));
     this.queryIncidentsString = `?fini=${this.filterDataIncidents.dateFull}`;
     this.getFullQueryString();
     this.updateIncidentList();
@@ -87,7 +92,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   }
 
   openFindOrdersDialog() {
-    this.dataService.setSearchOrdersModal({modalType: ConstOrders.modalIncidents, filterOrdersData: this.filterDataIncidents });
+    this.observableService.setSearchOrdersModal({ modalType: ConstOrders.modalIncidents, filterOrdersData: this.filterDataIncidents });
   }
 
   ngOnDestroy() {
@@ -97,8 +102,8 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     this.fullQueryStringIncidents = `${this.queryIncidentsString}&offset=${this.offset}&limit=${this.limit}`;
   }
   updateIncidentList() {
-    this.incidentsService.getIncidentsList(this.fullQueryStringIncidents).subscribe( incidentsListResult =>
-        this.onSuccessIncidentsList(incidentsListResult), error => this.errorService.httpError(error));
+    this.incidentsService.getIncidentsList(this.fullQueryStringIncidents).subscribe(incidentsListResult =>
+      this.onSuccessIncidentsList(incidentsListResult), error => this.errorService.httpError(error));
   }
 
   onSuccessIncidentsList(incidentsListResult: IIncidentsListRes) {
@@ -107,23 +112,23 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     this.isOnInit = false;
   }
 
-   getDataWithClass(response: IncidentItem[]) {
-      response.forEach( itemIncident => {
-        switch (itemIncident.status.toLowerCase()) {
-          case TypeStatusIncidents.open.toLowerCase():
-            itemIncident.classButton = ClassButton.openIncident;
-            break;
-          case TypeStatusIncidents.close.toLowerCase():
-            itemIncident.classButton = ClassButton.closeIncident;
-            break;
-          case TypeStatusIncidents.attending.toLowerCase():
-            itemIncident.classButton = ClassButton.attendingIncident;
-            break;
-        }
-        itemIncident.batchesDisplay = this.getDisplayBatchesData(itemIncident, false);
-        itemIncident.batchesTooltip = String(this.getDisplayBatchesData(itemIncident, true));
-      });
-      this.dataSource.data = response;
+  getDataWithClass(response: IncidentItem[]) {
+    response.forEach(itemIncident => {
+      switch (itemIncident.status.toLowerCase()) {
+        case TypeStatusIncidents.open.toLowerCase():
+          itemIncident.classButton = ClassButton.openIncident;
+          break;
+        case TypeStatusIncidents.close.toLowerCase():
+          itemIncident.classButton = ClassButton.closeIncident;
+          break;
+        case TypeStatusIncidents.attending.toLowerCase():
+          itemIncident.classButton = ClassButton.attendingIncident;
+          break;
+      }
+      itemIncident.batchesDisplay = this.getDisplayBatchesData(itemIncident, false);
+      itemIncident.batchesTooltip = String(this.getDisplayBatchesData(itemIncident, true));
+    });
+    this.dataSource.data = response;
   }
 
   onSuccessResult(newCommentsResult: CommentsConfig) {
@@ -132,13 +137,14 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
         saleOrderId: this.dataSource.data[this.currentIndex].saleOrder,
         status: TypeStatusIncidents.close,
         comments: newCommentsResult.comments,
-        itemCode: this.dataSource.data[this.currentIndex].itemCode});
+        itemCode: this.dataSource.data[this.currentIndex].itemCode
+      });
     }
   }
 
   reloadIncidentsList() {
     this.updateIncidentList();
-    this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false });
+    this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
   }
 
   openCommentsDialog(index: number) {
@@ -153,26 +159,27 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
       this.changeStatusComments();
     }
   }
-  setOpenCommentsDialog(index: number, isForClose: boolean = false)  {
-    this.dataService.setOpenCommentsDialog({
+  setOpenCommentsDialog(index: number, isForClose: boolean = false) {
+    this.observableService.setOpenCommentsDialog({
       comments: this.dataSource.data[index].comments,
       isReadOnly: !isForClose,
-      isForClose});
+      isForClose
+    });
   }
 
   private changeStatusComments() {
-    const title =  `La incidencia del pedido ${this.dataSource.data[this.currentIndex].saleOrder} - ${
-      this.dataSource.data[this.currentIndex].itemCode} será Atendida`;
+    const title = `La incidencia del pedido ${this.dataSource.data[this.currentIndex].saleOrder} - ${this.dataSource.data[this.currentIndex].itemCode} será Atendida`;
     this.dataService.presentToastCustom(title, 'question', CONST_STRING.empty, true, true)
-        .then((result: any) => {
-          if (result.isConfirmed) {
-            this.changeStatusIncidentService({
-              saleOrderId: this.dataSource.data[this.currentIndex].saleOrder,
-              status: TypeStatusIncidents.attending,
-              comments: this.dataSource.data[this.currentIndex].comments,
-              itemCode: this.dataSource.data[this.currentIndex].itemCode});
-          }
+      .then((result: any) => {
+        if (result.isConfirmed) {
+          this.changeStatusIncidentService({
+            saleOrderId: this.dataSource.data[this.currentIndex].saleOrder,
+            status: TypeStatusIncidents.attending,
+            comments: this.dataSource.data[this.currentIndex].comments,
+            itemCode: this.dataSource.data[this.currentIndex].itemCode
           });
+        }
+      });
   }
 
   changeStatusIncidentService(changeStatus: ChangeStatusIncidentReq) {
@@ -181,12 +188,12 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     }, error => this.errorService.httpError(error));
   }
   changeDataEvent(event: PageEvent) {
-      this.pageIndex = event.pageIndex;
-      this.offset = (event.pageSize * (event.pageIndex));
-      this.limit = event.pageSize;
-      this.getFullQueryString();
-      this.updateIncidentList();
-      return event;
+    this.pageIndex = event.pageIndex;
+    this.offset = (event.pageSize * (event.pageIndex));
+    this.limit = event.pageSize;
+    this.getFullQueryString();
+    this.updateIncidentList();
+    return event;
   }
 
   getDisplayBatchesData(incident: IncidentItem, isForToolTip: boolean) {
@@ -199,7 +206,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   }
 
   getArrayBatches(incident: IncidentItem): string[] {
-    return incident.batches.split(',').filter( batche => batche !== CONST_STRING.empty);
+    return incident.batches.split(',').filter(batche => batche !== CONST_STRING.empty);
   }
 
   getArrayBatchesToDisplay(arrayBatches: string[]) {
@@ -212,7 +219,7 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
   getDataToDisplay(arrayBatches: string[]) {
     let batchesDataDisplay = CONST_STRING.empty;
     arrayBatches.forEach(
-        batche => batchesDataDisplay += `${batche}, `);
+      batche => batchesDataDisplay += `${batche}, `);
 
     return batchesDataDisplay;
   }
