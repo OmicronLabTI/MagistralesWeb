@@ -28,6 +28,7 @@ import { DownloadImagesService } from '../../services/download-images.service';
 import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from '../../services/observable.service';
+import { FiltersService } from '../../service/filters.service';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -82,7 +83,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     private router: Router,
     private downloadImagesService: DownloadImagesService,
     private observableService: ObservableService,
-    public localStorageService: LocalStorageService) {
+    public localStorageService: LocalStorageService,
+    private filtersService: FiltersService,
+    ) {
     this.observableService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -211,21 +214,21 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getButtonsToUnLooked() {
-    this.isThereOrdersDetailToDelivered = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+    this.isThereOrdersDetailToDelivered = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
       FromToFilter.fromDefault);
     this.isThereOrdersToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
-    this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
+    this.isThereOrdersToFinishLabel = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
       FromToFilter.fromOrderDetailLabel);
 
-    this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+    this.isThereOrdersDetailToCancel = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
       FromToFilter.fromDetailOrder);
-    this.isThereOrdersDetailToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
+    this.isThereOrdersDetailToPlace = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
       FromToFilter.fromDefault);
-    this.isThereOrdersDetailToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado,
+    this.isThereOrdersDetailToFinalize = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado,
       FromToFilter.fromDefault);
-    this.isThereOrdersDetailToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromDefault);
-    this.isThereOrdersDetailToReassign = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
+    this.isThereOrdersDetailToPlan = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromDefault);
+    this.isThereOrdersDetailToReassign = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
       FromToFilter.fromOrderIsolatedReassign);
   }
   ngOnDestroy() {
@@ -272,7 +275,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   reassignOrderDetail() {
     this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+      list: this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
         FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId))
       , isFromReassign: true
     });
@@ -419,7 +422,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   generateParamsToGetDetail(order: string) {
     this.paramsDetailOrder = JSON.parse(this.localStorageService.getFiltersActives());
     this.paramsDetailOrder = { ...this.paramsDetailOrder, current: order };
-    this.baseQueryString = this.dataService.getNewDataToFilter(this.paramsDetailOrder)[1];
+    this.baseQueryString = this.filtersService.getNewDataToFilter(this.paramsDetailOrder)[1];
     this.getDetallePedidoService();
 
   }
@@ -463,7 +466,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       .then((result: any) => {
         if (result.isConfirmed) {
           this.pedidosService.putOrdersToDelivered(
-            this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
+            this.filtersService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
               .map(order => {
                 const orderToDelivered = new OrderToDelivered();
                 orderToDelivered.orderId = order.ordenFabricacionId;

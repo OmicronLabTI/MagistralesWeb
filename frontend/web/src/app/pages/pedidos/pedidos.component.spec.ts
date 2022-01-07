@@ -19,6 +19,7 @@ import { RangeDateMOck } from '../../../mocks/rangeDateMock';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { DateService } from 'src/app/services/date.service';
+import { FiltersService } from 'src/app/service/filters.service';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
@@ -28,6 +29,8 @@ describe('PedidosComponent', () => {
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let dateServiceSpy: jasmine.SpyObj<DateService>
+  let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
+
   const paramsPedidos = new ParamsPedidos();
   beforeEach(async(() => {
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
@@ -42,20 +45,12 @@ describe('PedidosComponent', () => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
         'presentToastCustom',
-        'getIsThereOnData',
         'getItemOnDataOnlyIds',
-        'getNewDataToFilter',
-        'getIsWithFilter',
-        'getItemOnDateWithFilter',
         'openNewTapByUrl',
         'getMessageTitle'
       ]);
     dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
     dataServiceSpy.presentToastCustom.and.returnValue(Promise.resolve(true));
-    dataServiceSpy.getIsWithFilter.and.returnValue(false);
-    dataServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
-    dataServiceSpy.getIsThereOnData.and.returnValue(true);
-    dataServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
     dataServiceSpy.getMessageTitle.and.returnValue('');
 
     localStorageServiceSpy.getFiltersActives.and.returnValue('');
@@ -93,12 +88,24 @@ describe('PedidosComponent', () => {
     observableServiceSpy.getNewCommentsResult.and.returnValue(of());
     // --- Date Service
     dateServiceSpy = jasmine.createSpyObj<DateService>('DateService',
-    [
-      'transformDate',
-      'getDateFormatted',
-    ]);
+      [
+        'transformDate',
+        'getDateFormatted',
+      ]);
     dateServiceSpy.transformDate.and.returnValue('');
     dateServiceSpy.getDateFormatted.and.returnValue('');
+    // --- Filter Service
+    filtersServiceSpy = jasmine.createSpyObj<FiltersService>('FiltersService', [
+      'getIsThereOnData',
+      'getItemOnDateWithFilter',
+      'getNewDataToFilter',
+      'getIsWithFilter',
+    ]);
+
+    filtersServiceSpy.getIsThereOnData.and.returnValue(true);
+    filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
+    filtersServiceSpy.getIsWithFilter.and.returnValue(true)
+    filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
     TestBed.configureTestingModule({
       declarations: [PedidosComponent],
       imports: [RouterTestingModule, MATERIAL_COMPONENTS,
@@ -108,8 +115,9 @@ describe('PedidosComponent', () => {
         { provide: PedidosService, useValue: pedidosServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: LocalStorageService, useValue: localStorageServiceSpy },
         { provide: DateService, useValue: dateServiceSpy },
+        { provide: FiltersService, useValue: filtersServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
