@@ -319,8 +319,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var salesStatusLinea = lineOrders.Any(x => x.DeliveryId != 0) ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
             var salesStatus = userOrder != null ? salesStatusMagistral : salesStatusLinea;
 
-            var productType = productList.All(x => x.IsMagistral) ? ServiceConstants.Magistral : ServiceConstants.Mixto;
-            productType = productList.All(x => !x.IsMagistral) ? ServiceConstants.Linea : productType;
+            var productType = ServiceUtils.CalculateTernary(productList.All(x => x.IsMagistral), ServiceConstants.Magistral, ServiceConstants.Mixto);
+            productType = ServiceUtils.CalculateTernary(productList.All(x => !x.IsMagistral), ServiceConstants.Linea, productType);
 
             var userProdOrders = pedidos.Count(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(ServiceConstants.Almacenado));
             var lineProductsCount = lineOrders.Count(x => !string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.Almacenado);
@@ -330,17 +330,17 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 Client = order.Cliente.ValidateNull(),
                 DocNum = orderId,
-                Comments = userOrder == null ? string.Empty : userOrder.Comments,
+                Comments = userOrder?.Comments ?? string.Empty,
                 Doctor = order.Medico,
-                InitDate = order == null ? DateTime.Now : order.FechaInicio,
-                Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : salesStatus,
+                InitDate = order?.FechaInicio ?? DateTime.Now,
+                Status = ServiceUtils.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, salesStatus),
                 TotalItems = sapOrders.DistinctBy(x => x.Producto.ProductoId).Count(),
                 TotalPieces = sapOrders.DistinctBy(x => x.Producto.ProductoId).Sum(y => y.Detalles.Quantity),
                 TypeSaleOrder = $"Pedido {productType}",
                 OrderCounter = $"{totalAlmacenados}/{productList.Count}",
                 InvoiceType = invoiceType,
                 TypeOrder = order.TypeOrder,
-                OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
+                OrderMuestra = ServiceUtils.CalculateTernary(string.IsNullOrEmpty(order.PedidoMuestra), ServiceConstants.IsNotSampleOrder, order.PedidoMuestra),
                 SapComments = order.Comments,
             };
 
@@ -504,7 +504,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var totalItems = orders.Count;
                 var totalpieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
-                var doctor = order == null ? string.Empty : order.Medico;
+                var doctor = order?.Medico.ValidateNull();
 
                 var localUserOrders = userOrders.Where(x => x.Salesorderid == so.ToString() && !string.IsNullOrEmpty(x.Productionorderid)).ToList();
 
@@ -515,19 +515,20 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var salesStatusLinea = lineOrders.Any(x => x.DeliveryId != 0) ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
                 var salesStatus = userOrder != null ? salesStatusMagistral : salesStatusLinea;
-                var saleOrderType = saleOrderTypes.MagistralSaleOrders.Contains(so) ? ServiceConstants.Magistral : ServiceConstants.LineaAlone;
-                saleOrderType = saleOrderTypes.MixedSaleOrders.Contains(so) ? ServiceConstants.Mixto : saleOrderType;
+
+                var saleOrderType = ServiceUtils.CalculateTernary(saleOrderTypes.MagistralSaleOrders.Contains(so), ServiceConstants.Magistral, ServiceConstants.LineaAlone);
+                saleOrderType = ServiceUtils.CalculateTernary(saleOrderTypes.MixedSaleOrders.Contains(so), ServiceConstants.Mixto, saleOrderType);
 
                 var salesOrderModel = new AlmacenSalesModel
                 {
                     DocNum = so,
                     Doctor = doctor,
-                    InitDate = order == null ? DateTime.Now : order.FechaInicio,
-                    Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : salesStatus,
+                    InitDate = order?.FechaInicio ?? DateTime.Now,
+                    Status = ServiceUtils.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, salesStatus),
                     TotalItems = totalItems,
                     TotalPieces = totalpieces,
                     TypeOrder = order.TypeOrder,
-                    OrderMuestra = string.IsNullOrEmpty(order.PedidoMuestra) ? ServiceConstants.IsNotSampleOrder : order.PedidoMuestra,
+                    OrderMuestra = ServiceUtils.CalculateTernary(string.IsNullOrEmpty(order.PedidoMuestra), ServiceConstants.IsNotSampleOrder, order.PedidoMuestra),
                     SaleOrderType = saleOrderType,
                 };
 
@@ -581,7 +582,7 @@ namespace Omicron.SapAdapter.Services.Sap
             foreach (var order in sapOrders)
             {
                 var itemcode = !string.IsNullOrEmpty(order.FabricationOrder) ? $"{order.Producto.ProductoId} - {order.FabricationOrder}" : order.Producto.ProductoId;
-                var productType = order.Producto.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+                var productType = ServiceUtils.CalculateTernary(order.Producto.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
                 var orderStatus = ServiceConstants.PorRecibir;
                 var hasDelivery = false;
@@ -594,7 +595,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     userFabOrder ??= new UserOrderModel { Status = ServiceConstants.Finalizado };
                     orderStatus = userFabOrder.Status == ServiceConstants.Finalizado ? ServiceConstants.PorRecibir : userFabOrder.Status;
                     orderStatus = orderStatus == ServiceConstants.PorRecibir && userFabOrder.FinishedLabel == 0 ? ServiceConstants.Pendiente : orderStatus;
-                    orderStatus = userFabOrder.Status == ServiceConstants.Cancelado ? ServiceConstants.Cancelado : orderStatus;
+                    orderStatus = ServiceUtils.CalculateTernary(userFabOrder.Status == ServiceConstants.Cancelado, ServiceConstants.Cancelado, orderStatus);
                     hasDelivery = userFabOrder.DeliveryId != 0;
                     deliveryId = userFabOrder.DeliveryId;
                 }
@@ -603,7 +604,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     var userFabLineOrder = lineProductsModel.FirstOrDefault(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode.Equals(order.Producto.ProductoId));
                     userFabLineOrder ??= new LineProductsModel { StatusAlmacen = ServiceConstants.PorRecibir };
                     orderStatus = !userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
-                    orderStatus = userFabLineOrder.StatusAlmacen == ServiceConstants.Cancelado ? ServiceConstants.Cancelado : orderStatus;
+                    orderStatus = ServiceUtils.CalculateTernary(userFabLineOrder.StatusAlmacen == ServiceConstants.Cancelado, ServiceConstants.Cancelado, orderStatus);
                     hasDelivery = userFabLineOrder.DeliveryId != 0;
                     deliveryId = userFabLineOrder.DeliveryId;
 
@@ -612,7 +613,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     {
                         var batch = batchesDataBase.FirstOrDefault(z => z.DistNumber == y.BatchNumber && z.ItemCode == order.Producto.ProductoId);
                         batch ??= new Batches();
-                        var expirationDate = batch.ExpDate.HasValue ? batch.ExpDate.Value.ToString("dd/MM/yyyy") : string.Empty;
+                        var expirationDate = ServiceUtils.GetDateValueOrDefault(batch.ExpDate, string.Empty);
                         batches.Add($"{y.BatchNumber} | {(int)y.BatchQty} pz | Cad: {expirationDate}");
                     });
                 }
@@ -636,7 +637,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     NeedsCooling = order.Producto.NeedsCooling,
                     ProductType = $"Producto {productType}",
                     Pieces = order.Detalles.Quantity,
-                    Status = order.Canceled == "Y" ? ServiceConstants.Cancelado : orderStatus,
+                    Status = ServiceUtils.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, orderStatus),
                     IsMagistral = order.Producto.IsMagistral.Equals("Y"),
                     Batches = batches,
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
