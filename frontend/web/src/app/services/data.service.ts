@@ -114,28 +114,28 @@ export class DataService {
   getIsLogout() {
     return this.isLogout.asObservable();
   }
-  setRememberSession(rememberSession: string) {
-    localStorage.setItem(ConstToken.rememberSession, rememberSession);
-  }
-  getRememberSession() {
-    return localStorage.getItem(ConstToken.rememberSession);
-  }
-  setProductNoLabel(productNoLabel: Catalogs) {
-    localStorage.setItem(ConstToken.productNoLabel, JSON.stringify(productNoLabel));
-  }
-  getProductNoLabel(): Catalogs {
-    const productNoLabelSTR = localStorage.getItem(ConstToken.productNoLabel);
-    const productNoLabel = JSON.parse(productNoLabelSTR) as Catalogs;
-    return productNoLabel;
+  // setRememberSession(rememberSession: string) {
+  //   localStorage.setItem(ConstToken.rememberSession, rememberSession);
+  // }
+  // getRememberSession() {
+  //   return localStorage.getItem(ConstToken.rememberSession);
+  // }
+  // setProductNoLabel(productNoLabel: Catalogs) {
+  //   localStorage.setItem(ConstToken.productNoLabel, JSON.stringify(productNoLabel));
+  // }
+  // getProductNoLabel(): Catalogs {
+  //   const productNoLabelSTR = localStorage.getItem(ConstToken.productNoLabel);
+  //   const productNoLabel = JSON.parse(productNoLabelSTR) as Catalogs;
+  //   return productNoLabel;
 
-  }
+  // }
 
-  setRefreshToken(refreshToken: string) {
-    localStorage.setItem(ConstToken.refreshToken, refreshToken);
-  }
-  getRefreshToken() {
-    return localStorage.getItem(ConstToken.refreshToken);
-  }
+  // setRefreshToken(refreshToken: string) {
+  //   localStorage.setItem(ConstToken.refreshToken, refreshToken);
+  // }
+  // getRefreshToken() {
+  //   return localStorage.getItem(ConstToken.refreshToken);
+  // }
 
   setPathUrl(pathUrl: any[]) {
     this.pathUrl.next(pathUrl);
@@ -207,28 +207,28 @@ export class DataService {
     this.generalNotificationMessage.next(msg);
   }
 
-  getToken(): string {
-    return localStorage.getItem(ConstToken.accessToken);
-  }
-  setToken(token: string) {
-    localStorage.setItem(ConstToken.accessToken, token);
-  }
-  clearSession() {
-    localStorage.removeItem(ConstToken.accessToken);
-    localStorage.removeItem(ConstToken.rememberSession);
-    localStorage.removeItem(ConstToken.refreshToken);
-    localStorage.removeItem(ConstToken.userId);
-    localStorage.removeItem(ConstToken.userName);
-    localStorage.removeItem(ConstToken.isolatedOrder);
-  }
+  // getToken(): string {
+  //   return localStorage.getItem(ConstToken.accessToken);
+  // }
+  // setToken(token: string) {
+  //   localStorage.setItem(ConstToken.accessToken, token);
+  // }
+  // clearSession() {
+  //   localStorage.removeItem(ConstToken.accessToken);
+  //   localStorage.removeItem(ConstToken.rememberSession);
+  //   localStorage.removeItem(ConstToken.refreshToken);
+  //   localStorage.removeItem(ConstToken.userId);
+  //   localStorage.removeItem(ConstToken.userName);
+  //   localStorage.removeItem(ConstToken.isolatedOrder);
+  // }
 
-  setUserId(userId: string) {
-    localStorage.setItem(ConstToken.userId, userId);
-  }
+  // setUserId(userId: string) {
+  //   localStorage.setItem(ConstToken.userId, userId);
+  // }
 
-  getUserId() {
-    return localStorage.getItem(ConstToken.userId);
-  }
+  // getUserId() {
+  //   return localStorage.getItem(ConstToken.userId);
+  // }
 
   setUserName(userName: string) {
     localStorage.setItem(ConstToken.userName, userName);
@@ -238,9 +238,9 @@ export class DataService {
     return localStorage.getItem(ConstToken.userName);
   }
 
-  userIsAuthenticated(): boolean {
-    return !!localStorage.getItem(ConstToken.accessToken);
-  }
+  // userIsAuthenticated(): boolean {
+  //   return !!localStorage.getItem(ConstToken.accessToken);
+  // }
   presentToastCustom(
     title: string,
     icon: SweetAlertIcon,

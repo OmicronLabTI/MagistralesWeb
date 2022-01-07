@@ -36,6 +36,7 @@ import { ErrorHttpInterface } from '../../model/http/commons';
 import { Router } from '@angular/router';
 import { IOrdersRefuseReq, ReasonRefuse } from '../../model/http/detallepedidos.model';
 import { CommentsConfig } from '../../model/device/incidents.model';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -76,6 +77,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private titleService: Title,
     private router: Router,
+    private localStorageService: LocalStorageService
   ) {
     this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
 
@@ -201,7 +203,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
       .then((result: any) => {
         if (result.isConfirmed) {
           this.ordersToProcess.listIds = this.getOrdersOnlyOpen();
-          this.ordersToProcess.user = this.dataService.getUserId();
+          this.ordersToProcess.user = this.localStorageService.getUserId();
           this.pedidosService.processOrders(this.ordersToProcess).subscribe(
             resProcessOrder => {
               if (resProcessOrder.success && resProcessOrder.response.length > 0) {
@@ -420,7 +422,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   successNewComments(newCommentsResult: CommentsConfig) {
     const ordersToRefuseReq = new IOrdersRefuseReq();
     ordersToRefuseReq.comments = newCommentsResult.comments;
-    ordersToRefuseReq.userId = this.dataService.getUserId();
+    ordersToRefuseReq.userId = this.localStorageService.getUserId();
     ordersToRefuseReq.ordersId = this.getOrdersOnlyOpen();
     this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({ response }) =>
       this.successRefuseResult(response.failed), error => this.errorService.httpError(error));
@@ -460,7 +462,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   setProductNoLabel(value: Catalogs) {
-    this.dataService.setProductNoLabel(value);
+    this.localStorageService.setProductNoLabel(value);
   }
 
 

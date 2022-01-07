@@ -21,12 +21,15 @@ import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { of } from 'rxjs';
 import { IMyListRes } from 'src/app/model/http/listacomponentes';
 import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 describe('MiListaComponent', () => {
   let component: MiListaComponent;
   let fixture: ComponentFixture<MiListaComponent>;
   let ordersServiceSpy: jasmine.SpyObj<OrdersService>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+
   const close = () => {};
   const iMyListRes = new IMyListRes();
   iMyListRes.response = 0;
@@ -37,11 +40,13 @@ describe('MiListaComponent', () => {
     ordersServiceSpy = jasmine.createSpyObj<OrdersService>('OrdersService', [
       'saveMyListComponent'
     ]);
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom',
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getUserId'
     ]);
-    dataServiceSpy.getUserId.and.callFake(() => {
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'presentToastCustom',
+    ]);
+    localStorageServiceSpy.getUserId.and.callFake(() => {
       return '123';
     });
     // spyOn(authService, 'isAuthenticated').and.returnValue(Promise.resolve(true));

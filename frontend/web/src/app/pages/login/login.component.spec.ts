@@ -16,11 +16,13 @@ import { HttpStatus, MODAL_FIND_ORDERS } from 'src/app/constants/const';
 import { ErrorService } from 'src/app/services/error.service';
 import { ErrorHttpInterface } from 'src/app/model/http/commons';
 import { IUserRes, UserRes } from 'src/app/model/http/users';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let securityServiceSpy: jasmine.SpyObj<SecurityService>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let errorServiceSpy;
   const routerSpy = {
     navigate: jasmine.createSpy('navigate')
@@ -44,15 +46,17 @@ describe('LoginComponent', () => {
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+      'setRememberSession',
       'setToken',
+      'setRefreshToken',
+      'setUserId',
+      'userIsAuthenticated',
+    ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'setIsLogin',
       'setUserName',
-      'userIsAuthenticated',
       'setGeneralNotificationMessage',
-      'setRefreshToken',
-      'setRememberSession',
-      'setUserId',
       'setUserRole',
       'setMessageGeneralCallHttp',
       'getUserRole',
@@ -60,7 +64,7 @@ describe('LoginComponent', () => {
     dataServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
       return;
     });
-    dataServiceSpy.setUserId.and.callFake(() => {
+    localStorageServiceSpy.setUserId.and.callFake(() => {
       return;
     });
     dataServiceSpy.setUserName.and.callFake(() => {

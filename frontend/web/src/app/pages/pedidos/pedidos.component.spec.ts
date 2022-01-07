@@ -16,16 +16,22 @@ import Swal from 'sweetalert2';
 import { IProcessOrdersRes } from '../../model/http/pedidos';
 import { PipesModule } from '../../pipes/pipes.module';
 import { RangeDateMOck } from '../../../mocks/rangeDateMock';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
   let fixture: ComponentFixture<PedidosComponent>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let pedidosServiceSpy;
   let dataServiceSpy;
   beforeEach(async(() => {
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+      'getUserId', 'setRefreshToken',
+    ]);
+
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setQbfToPlace',
-      'transformDate', 'setRefreshToken', 'setFiltersActives', 'getFiltersActives', 'removeFiltersActive',
+      'transformDate', 'setFiltersActives', 'getFiltersActives', 'removeFiltersActive',
       'getFiltersActivesAsModel'
     ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [

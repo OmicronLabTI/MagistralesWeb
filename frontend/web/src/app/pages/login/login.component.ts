@@ -9,6 +9,7 @@ import {CONST_STRING, ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS, Rol
 import {ErrorService} from '../../services/error.service';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {Messages} from '../../constants/messages';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 @Component({
   selector: 'app-login',
@@ -24,9 +25,10 @@ export class LoginComponent implements OnInit {
     private dataService: DataService,
     private router: Router,
     private titleService: Title,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private localStorageService: LocalStorageService
   ) {
-    if (this.dataService.userIsAuthenticated()) {
+    if (this.localStorageService.userIsAuthenticated()) {
         this.evaluatedGoTo();
     }
     this.formLogin = this.fb.group({
@@ -49,14 +51,14 @@ export class LoginComponent implements OnInit {
         origin: ConstLogin.defaultOrigin
     } as ILoginReq;
     this.securityService.login(userLoginReq).toPromise().then(async res => {
-      this.dataService.setToken(res.access_token);
-      this.dataService.setRefreshToken(res.refresh_token);
+      this.localStorageService.setToken(res.access_token);
+      this.localStorageService.setRefreshToken(res.refresh_token);
       if (this.formLogin.get('rememberSession').value) {
-          this.dataService.setRememberSession(ConstToken.rememberSession);
+          this.localStorageService.setRememberSession(ConstToken.rememberSession);
       }
       await this.securityService.getUser(userLoginReq.user).toPromise().then(
           userRes => {
-              this.dataService.setUserId(userRes.response.id);
+              this.localStorageService.setUserId(userRes.response.id);
               this.dataService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
               this.dataService.setUserRole(userRes.response.role);
           }

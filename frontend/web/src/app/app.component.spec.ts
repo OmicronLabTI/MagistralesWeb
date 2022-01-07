@@ -8,9 +8,12 @@ import {HttpClientModule} from '@angular/common/http';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { PedidosService } from './services/pedidos.service';
 import { DataService } from './services/data.service';
+import { LocalStorageService } from './services/local-storage.service';
 describe('AppComponent', () => {
   let pedidosServiceSpy: jasmine.SpyObj<PedidosService>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+
 
 
   beforeEach(async(() => {
@@ -22,10 +25,14 @@ describe('AppComponent', () => {
       'createIsolatedOrder'
     ]);
 
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+      'clearSession',
+      'getUserId',
+      'userIsAuthenticated',
+    ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'getUserRole',
       'getIsLoading',
-      'userIsAuthenticated',
       'getIsLogin',
       'getGeneralNotificationMessage',
       'getUrlActive',
@@ -40,12 +47,10 @@ describe('AppComponent', () => {
       'getOpenSignatureDialog',
       'getOpenCommentsDialog',
       'setIsLogin',
-      'clearSession',
       'getOrderIsolated',
       'removeOrderIsolated',
       'getIsToSaveAnything',
       'presentToastCustom',
-      'getUserId',
       'setCallHttpService',
       'getUserName',
       'removeFiltersActiveOrders',

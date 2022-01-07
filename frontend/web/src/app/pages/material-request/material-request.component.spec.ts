@@ -19,6 +19,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 describe('MaterialRequestComponent', () => {
   let component: MaterialRequestComponent;
@@ -29,6 +30,7 @@ describe('MaterialRequestComponent', () => {
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let fileDownloaderServiceSpy: jasmine.SpyObj<FileDownloaderService>;
   let reportingServiceSpy: jasmine.SpyObj<ReportingService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
 
   const getPreMaterialRequestMock = new IMaterialRequestRes();
   const postMaterialRequestMock = new IMaterialPostRes();
@@ -47,6 +49,9 @@ describe('MaterialRequestComponent', () => {
 
     // ------------------ ErrorService
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+      'getUserId',
+    ]);
 
     // ------------------ DataService
     dataServiceSpy = jasmine.createSpyObj<DataService>
@@ -60,14 +65,13 @@ describe('MaterialRequestComponent', () => {
           'setOpenSignatureDialog',
           'setMessageGeneralCallHttp',
           'getMessageTitle',
-          'getUserId',
           'getUserName',
         ]);
     dataServiceSpy.getNewMaterialComponent.and.returnValue(of({}));
     dataServiceSpy.getNewDataSignature.and.returnValue(of({}));
     dataServiceSpy.getMessageTitle.and.returnValue('');
     dataServiceSpy.getUserName.and.returnValue('');
-    dataServiceSpy.getUserId.and.returnValue('');
+    localStorageServiceSpy.getUserId.and.returnValue('');
     // -------------------- FileDownloaderService
     fileDownloaderServiceSpy = jasmine.createSpyObj<FileDownloaderService>
       ('FileDownloaderService', ['downloadFile']);

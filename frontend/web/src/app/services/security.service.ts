@@ -6,12 +6,15 @@ import { ConsumeService } from './consume.service';
 import { IUserRes} from '../model/http/users';
 import {DataService} from './data.service';
 import {CONST_STRING} from '../constants/const';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SecurityService {
-  constructor(private consumeService: ConsumeService, private dataService: DataService) { }
+  constructor(
+    private consumeService: ConsumeService, private dataService: DataService,
+    private localStorageService: LocalStorageService) { }
 
   login(req: ILoginReq): Observable<ILoginRes> {
     return this.consumeService.httpPost(Endpoints.security.login, req);
@@ -19,7 +22,7 @@ export class SecurityService {
   refreshToken() {
     const refreshTokenReq = {
       scope: CONST_STRING.empty,
-      refresh_token: this.dataService.getRefreshToken(),
+      refresh_token: this.localStorageService.getRefreshToken(),
       grant_type: CONST_STRING.empty
     } as IRefreshTokenReq;
     return this.consumeService.httpPost<ILoginRes>(Endpoints.security.refresh, refreshTokenReq);

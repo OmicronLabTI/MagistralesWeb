@@ -27,6 +27,7 @@ import { ErrorService } from '../../services/error.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DownloadImagesService } from '../../services/download-images.service';
 import { CommentsConfig } from '../../model/device/incidents.model';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -76,7 +77,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
               public dataService: DataService,
               private titleService: Title, private errorService: ErrorService,
               private router: Router, private dialog: MatDialog,
-              private downloadImagesService: DownloadImagesService) {
+              private downloadImagesService: DownloadImagesService,
+              private localStorageService: LocalStorageService) {
     this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -231,7 +233,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       .then((result: any) => {
         if (result.isConfirmed) {
           this.detailsOrderToProcess.pedidoId = Number(this.paramsDetailOrder.current);
-          this.detailsOrderToProcess.userId = this.dataService.getUserId();
+          this.detailsOrderToProcess.userId = this.localStorageService.getUserId();
           this.detailsOrderToProcess.productId =
             this.dataSource.data.filter(t => (t.isChecked && t.status === ConstStatus.abierto)).map(detail => detail.codigoProducto);
           this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(resultProcessDetail => {
@@ -328,7 +330,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     const labelToFinishReq = new IPedidoDetalleLabelReq();
     labelToFinishReq.details = this.getArrayToFinishLabel(isFromRemoveSignature, index);
     labelToFinishReq.designerSignature = isFromRemoveSignature ? null : this.signatureData;
-    labelToFinishReq.userId = this.dataService.getUserId();
+    labelToFinishReq.userId = this.localStorageService.getUserId();
     this.pedidosService.finishLabels(labelToFinishReq).subscribe(() => {
       this.reloadOrderDetail();
     }, error => this.errorService.httpError(error));
@@ -473,7 +475,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getProductoNoLabel() {
-    this.ProductNoLabel = this.dataService.getProductNoLabel();
+    this.ProductNoLabel = this.localStorageService.getProductNoLabel();
   }
 }
 

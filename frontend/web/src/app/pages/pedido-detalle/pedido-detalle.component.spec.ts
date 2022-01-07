@@ -19,6 +19,7 @@ import { DataService } from 'src/app/services/data.service';
 import { Catalogs, ICreatePdfOrdersRes, ParamsPedidos } from 'src/app/model/http/pedidos';
 import { HttpServiceTOCall } from 'src/app/constants/const';
 import { CommentsConfig } from '../../model/device/incidents.model';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -26,6 +27,7 @@ describe('PedidoDetalleComponent', () => {
   let pedidosServiceSpy: jasmine.SpyObj<PedidosService>;
   let downloadImagesServiceSpy;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let errorServiceSpy;
 
   const catalogs = new Catalogs();
@@ -61,12 +63,14 @@ describe('PedidoDetalleComponent', () => {
       'savedComments',
       'putOrdersToDelivered',
     ]);
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getProductNoLabel',
+      'getUserId',
+    ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'setUrlActive',
       'getIsThereOnData',
       'presentToastCustom',
-      'getUserId',
       'getMessageTitle',
       'setCancelOrders',
       'setFinalizeOrders',
@@ -89,7 +93,7 @@ describe('PedidoDetalleComponent', () => {
       'removeCurrentDetailOrder',
       'getItemOnDateWithFilter'
     ]);
-    dataServiceSpy.getProductNoLabel.and.returnValue(catalogs);
+    localStorageServiceSpy.getProductNoLabel.and.returnValue(catalogs);
     dataServiceSpy.getCallHttpService.and.returnValue(of(httpServiceTOCallRes));
     dataServiceSpy.getFiltersActives.and.returnValue(JSON.stringify(parametrosPedidos));
     dataServiceSpy.getCurrentDetailOrder.and.returnValue('');
@@ -119,6 +123,7 @@ describe('PedidoDetalleComponent', () => {
         { provide: DownloadImagesService, useValue: downloadImagesServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

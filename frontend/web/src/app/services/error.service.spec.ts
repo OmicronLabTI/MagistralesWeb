@@ -4,11 +4,19 @@ import { ErrorService } from './error.service';
 import {DatePipe} from '@angular/common';
 import {ErrorHttpInterface} from '../model/http/commons';
 import {DataService} from './data.service';
+import { LocalStorageService } from './local-storage.service';
 describe('ErrorService', () => {
   let dataServiceSpy;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+
   beforeEach(() => {
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+      'setToken',
+      'userIsAuthenticated'
+    ]);
+
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'setToken', 'setIsLogin', 'setUserName', 'userIsAuthenticated', 'setGeneralNotificationMessage',
+      'setIsLogin', 'setUserName', 'setGeneralNotificationMessage',
         'setIsLogout', 'setMessageGeneralCallHttp'
     ]);
     TestBed.configureTestingModule({

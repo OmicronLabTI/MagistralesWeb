@@ -18,6 +18,7 @@ import { DataService } from 'src/app/services/data.service';
 import { IOrdersReq, IOrdersRes } from 'src/app/model/http/ordenfabricacion';
 import { AddCommentsDialogComponent } from '../add-comments-dialog/add-comments-dialog.component';
 import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 describe('FinalizeOrdersComponent', () => {
   let component: FinalizeOrdersComponent;
@@ -26,6 +27,7 @@ describe('FinalizeOrdersComponent', () => {
   let errorServiceSpy: jasmine.SpyObj<ErrorService>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let dialogRefSpy: jasmine.SpyObj<MatDialogRef<AddCommentsDialogComponent>>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
 
   const getNextBatchCodeRes = new IGetNewBachCodeRes();
   const getIfExistsBatchCodeRes = new IExistsBachCodeRes();
@@ -67,10 +69,11 @@ describe('FinalizeOrdersComponent', () => {
 
   errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
 
-
+  localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+    'getUserId',
+  ]);
   dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
     [
-      'getUserId',
       'transformDate',
       'getMessageTitle',
       'setCallHttpService',
@@ -78,7 +81,7 @@ describe('FinalizeOrdersComponent', () => {
       'setMessageGeneralCallHttp',
     ]);
 
-  dataServiceSpy.getUserId.and.returnValue('');
+  localStorageServiceSpy.getUserId.and.returnValue('');
   dataServiceSpy.transformDate.and.returnValue('');
   dataServiceSpy.getMessageTitle.and.returnValue('');
   dataServiceSpy.setCallHttpService.and.returnValue();

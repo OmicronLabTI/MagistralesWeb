@@ -15,6 +15,7 @@ import {
 import { CancelOrderReq } from '../../model/http/pedidos';
 import { DataService } from '../../services/data.service';
 import { Messages } from '../../constants/messages';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 @Component({
   selector: 'app-finalize-orders',
   templateUrl: './finalize-orders.component.html',
@@ -32,6 +33,7 @@ export class FinalizeOrdersComponent implements OnInit {
     private orderService: PedidosService,
     private errorService: ErrorService,
     private dataService: DataService,
+    private localStorageService: LocalStorageService,
     private dialogRef: MatDialogRef<FinalizeOrdersComponent>) {
     this.finalizeData = finalizeData || new Array();
   }
@@ -140,7 +142,7 @@ export class FinalizeOrdersComponent implements OnInit {
     fullData.forEach(orderIsolated => {
       const finalizeOrder = new CancelOrderReq();
       finalizeOrder.orderId = orderIsolated.fabOrderId;
-      finalizeOrder.userId = this.dataService.getUserId();
+      finalizeOrder.userId = this.localStorageService.getUserId();
       if (orderIsolated.docNum === 0) {
         finalizeOrder.batches = [{
           batchCode: orderIsolated.batche,

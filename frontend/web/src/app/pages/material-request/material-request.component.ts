@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
 import { FileDownloaderService } from 'src/app/services/file.downloader.service';
 import { ReportingService } from 'src/app/services/reporting.service';
 import { FileTypeContentEnum } from 'src/app/enums/FileTypeContentEnum';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 
 @Component({
@@ -47,7 +48,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private fileDownloaderServie: FileDownloaderService,
     private reportingService: ReportingService,
-    private location: Location) {
+    private location: Location,
+    private localStorageService: LocalStorageService) {
   }
 
   ngOnInit() {
@@ -138,7 +140,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.setModelData();
     newComponentsToSend.data = this.oldData;
     newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds || [];
-    newComponentsToSend.userId = this.dataService.getUserId();
+    newComponentsToSend.userId = this.localStorageService.getUserId();
 
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe(resultMaterialPost => {
       if (resultMaterialPost.success && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {

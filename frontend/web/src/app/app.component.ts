@@ -35,6 +35,7 @@ import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-order
 import {RequestSignatureDialogComponent} from './dialogs/request-signature-dialog/request-signature-dialog.component';
 import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comments-dialog.component';
 import {CommentsConfig} from './model/device/incidents.model';
+import { LocalStorageService } from './services/local-storage.service';
 
 @Component({
   selector: 'app-root',
@@ -54,12 +55,12 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   constructor(private dataService: DataService, private snackBar: MatSnackBar,
               private router: Router,  private dialog: MatDialog,
               private pedidosService: PedidosService, private errorService: ErrorService,
-              private cdRef: ChangeDetectorRef
+              private cdRef: ChangeDetectorRef, private localStorageService: LocalStorageService
               ) {
     this.getFullName();
     this.role = this.dataService.getUserRole();
     this.isLoading = this.dataService.getIsLoading();
-    this.isLogin = this.dataService.userIsAuthenticated();
+    this.isLogin = this.localStorageService.userIsAuthenticated();
     this.dataService.getIsLogin().subscribe( isLoginS => {
       this.getFullName();
       this.isLogin = isLoginS;
@@ -105,7 +106,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   }
   logoutSession(isFromEndSession: boolean) {
       this.dataService.setIsLogin(false);
-      this.dataService.clearSession();
+      this.localStorageService.clearSession();
       this.onSuccessGeneralMessage({title: isFromEndSession ? Messages.endSession : Messages.expiredSession ,
       icon: isFromEndSession ? 'success' : 'info', isButtonAccept: false});
       this.router.navigate(['/login']);
@@ -148,7 +149,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
           .then((result: any) => {
             if (result.isConfirmed) {
                 const placeOrder = new IPlaceOrdersReq();
-                placeOrder.userLogistic = this.dataService.getUserId();
+                placeOrder.userLogistic = this.localStorageService.getUserId();
                 placeOrder.userId = qfbToPlace.userId;
                 placeOrder.docEntry = qfbToPlace.list;
                 placeOrder.orderType = qfbToPlace.modalType;
@@ -168,7 +169,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
           .then((result: any) => {
             if (result.isConfirmed) {
               const placeOrdersAutomaticReq = new IPlaceOrdersAutomaticReq();
-              placeOrdersAutomaticReq.userLogistic = this.dataService.getUserId();
+              placeOrdersAutomaticReq.userLogistic = this.localStorageService.getUserId();
               placeOrdersAutomaticReq.docEntry = qfbToPlace.list;
               this.pedidosService.postPlaceOrderAutomatic(placeOrdersAutomaticReq).subscribe( resultAutomatic => {
                   this.onSuccessPlaceOrdersHttp(resultAutomatic, qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated);
@@ -246,7 +247,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             .then((result: any) => {
                 if (result.isConfirmed) {
                     const cancelOrders = [...resultCancel.list];
-                    cancelOrders.forEach(order => order.userId = this.dataService.getUserId());
+                    cancelOrders.forEach(order => order.userId = this.localStorageService.getUserId());
                     this.pedidosService.putCancelOrders(cancelOrders, resultCancel.cancelType === MODAL_NAMES.placeOrders)
                         .subscribe(resultCancelHttp => {
                             this.onSuccessFinalizeHttp(resultCancelHttp, resultCancel.cancelType, resultCancel.isFromCancelIsolated);
@@ -273,7 +274,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             .then((result: any) => {
                 if (result.isConfirmed) {
                     const finalizeOrders = [...resultFinalize.list];
-                    const userId = this.dataService.getUserId();
+                    const userId = this.localStorageService.getUserId();
                     finalizeOrders.forEach(order => order.userId = userId);
                     this.pedidosService.putFinalizeOrders(finalizeOrders, resultFinalize.cancelType === MODAL_NAMES.placeOrders)
                         .subscribe(resultFinalizeHttp => {
@@ -335,7 +336,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     onSuccessDialogClosed(resultComponents: any) {
         const createIsolatedReq = new CreateIsolatedOrderReq();
         createIsolatedReq.productCode = resultComponents.productoId;
-        createIsolatedReq.userId = this.dataService.getUserId();
+        createIsolatedReq.userId = this.localStorageService.getUserId();
         this.pedidosService.createIsolatedOrder(createIsolatedReq).subscribe( resultCreateIsolated => {
             if (resultCreateIsolated.response !== 0) {// 0 = with error
                 this.onSuccessGeneralMessage({title: Messages.success, icon: 'success', isButtonAccept: false});
