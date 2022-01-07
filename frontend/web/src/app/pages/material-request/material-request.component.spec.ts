@@ -1,21 +1,121 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MaterialRequestComponent } from './material-request.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MaterialRequestService } from 'src/app/services/material-request.service';
+import { IMaterialRequestRes, IMaterialPostRes } from '../../model/http/materialReques';
+import { of } from 'rxjs';
+import { ErrorService } from 'src/app/services/error.service';
+import { DataService } from '../../services/data.service';
+import { FileDownloaderService } from 'src/app/services/file.downloader.service';
+import { ReportingService } from 'src/app/services/reporting.service';
+import { HttpResponse } from '@angular/common/http';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatInputModule } from '@angular/material';
 
 describe('MaterialRequestComponent', () => {
   let component: MaterialRequestComponent;
   let fixture: ComponentFixture<MaterialRequestComponent>;
 
+  let materialReServiceSpy: jasmine.SpyObj<MaterialRequestService>;
+  let errorServiceSpy: jasmine.SpyObj<ErrorService>;
+  let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let fileDownloaderServiceSpy: jasmine.SpyObj<FileDownloaderService>;
+  let reportingServiceSpy: jasmine.SpyObj<ReportingService>;
+
+  const getPreMaterialRequestMock = new IMaterialRequestRes();
+  const postMaterialRequestMock = new IMaterialPostRes();
+  const blobResponse = new HttpResponse<Blob>();
+
   beforeEach(async(() => {
+    //  ------------------ MaterialRequestService
+    materialReServiceSpy = jasmine.createSpyObj<MaterialRequestService>
+      ('MaterialRequestService',
+        [
+          'getPreMaterialRequest',
+          'postMaterialRequest'
+        ]);
+    materialReServiceSpy.getPreMaterialRequest.and.returnValue(of(getPreMaterialRequestMock));
+    materialReServiceSpy.postMaterialRequest.and.returnValue(of(postMaterialRequestMock));
+
+    // ------------------ ErrorService
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
+
+    // ------------------ DataService
+    dataServiceSpy = jasmine.createSpyObj<DataService>
+      ('DataService',
+        [
+          'getNewMaterialComponent',
+          'getNewDataSignature',
+          'presentToastCustom',
+          'setIsToSaveAnything',
+          'setSearchComponentModal',
+          'setOpenSignatureDialog',
+          'setMessageGeneralCallHttp',
+          'getMessageTitle',
+          'getUserId',
+          'getUserName',
+        ]);
+    dataServiceSpy.getNewMaterialComponent.and.returnValue(of({}));
+    dataServiceSpy.getNewDataSignature.and.returnValue(of({}));
+    dataServiceSpy.getMessageTitle.and.returnValue('');
+    dataServiceSpy.getUserName.and.returnValue('');
+    dataServiceSpy.getUserId.and.returnValue('');
+    // -------------------- FileDownloaderService
+    fileDownloaderServiceSpy = jasmine.createSpyObj<FileDownloaderService>
+      ('FileDownloaderService', ['downloadFile']);
+
+    //  -------------------- ReportingService
+    reportingServiceSpy = jasmine.createSpyObj<ReportingService>
+      ('ReportingService',
+        [
+          'downloadPreviewRawMaterialRequest'
+        ]
+      );
+    reportingServiceSpy.downloadPreviewRawMaterialRequest.and.returnValue(of(blobResponse));
+
     TestBed.configureTestingModule({
-      declarations: [ MaterialRequestComponent ]
+      declarations: [MaterialRequestComponent],
+      imports: [
+        HttpClientTestingModule,
+        MatTabsModule,
+        MatCheckboxModule,
+        MatTableModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        FormsModule,
+        RouterTestingModule,
+        BrowserAnimationsModule,
+        MatInputModule,
+      ],
+      providers: [
+        { provide: MaterialRequestService, useValue: materialReServiceSpy },
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: DataService, useValue: dataServiceSpy },
+        { provide: FileDownloaderService, useValue: fileDownloaderServiceSpy },
+        { provide: ReportingService, useValue: reportingServiceSpy },
+      ],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(MaterialRequestComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
   });
 });

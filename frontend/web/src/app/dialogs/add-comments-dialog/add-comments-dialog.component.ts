@@ -58,7 +58,7 @@ export class AddCommentsDialogComponent implements OnInit, AfterViewInit {
     this.finishComments.nativeElement.scrollIntoView();
   }
   ngAfterViewInit(): void {
-    this.scroll();
+      this.scroll();
   }
 
   checkData() {

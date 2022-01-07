@@ -34,7 +34,7 @@
                 <span class="title-graph-distribution">Paquetes foráneos</span>
                 <progress-bar [progress]="percentageForeign" [color]="'#5e0e34'">
                 </progress-bar>
-                <mat-card class="mat-card-custom">
+                <mat-card class="mat-card-custom" *ngIf="foreignPackages.length > 0">
                     <mat-list class="mat-list-custom">
                         <mat-list-item >
                             <div class="item-local-container">
@@ -66,7 +66,7 @@
                     <span class="title-graph-distribution">Paquetes locales</span>
                     <progress-bar [progress]="percentageLocal" [color]="'#012584'" >
                     </progress-bar>
-                    <mat-card class="mat-card-custom">
+                    <mat-card class="mat-card-custom" *ngIf="localPackages.length > 0">
                         <mat-list class="mat-list-custom">
                             <mat-list-item >
                                 <div class="item-local-container">

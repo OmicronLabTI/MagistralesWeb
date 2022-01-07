@@ -273,7 +273,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var saleItem = new OrderListByDoctorModel
                 {
                     DocNum = so,
-                    InitDate = order == null ? DateTime.Now : order.FechaInicio,
+                    InitDate = order?.FechaInicio ?? DateTime.Now,
                     Status = ServiceUtils.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
                     TotalItems = orders.Count,
                     TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),

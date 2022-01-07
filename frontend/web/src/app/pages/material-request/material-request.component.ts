@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MaterialComponent, RawRequest, RawRequestPost } from '../../model/http/materialReques';
 import { MaterialRequestService } from '../../services/material-request.service';
@@ -11,7 +11,6 @@ import {
   MessageType
 } from '../../constants/const';
 import { ErrorService } from '../../services/error.service';
-import { MatDialog } from '@angular/material';
 import { DataService } from '../../services/data.service';
 import { Messages } from '../../constants/messages';
 import { Location } from '@angular/common';
@@ -41,15 +40,14 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   isThereToDelete = false;
   isToDownload = false;
   isFreeRequest = false;
-  constructor(private router: Router,
-              private dialog: MatDialog,
-              private materialReService: MaterialRequestService,
-              private errorService: ErrorService,
-              private activeRoute: ActivatedRoute,
-              private dataService: DataService,
-              private fileDownloaderServie: FileDownloaderService,
-              private reportingService: ReportingService,
-              private location: Location) {
+  constructor(
+    private materialReService: MaterialRequestService,
+    private errorService: ErrorService,
+    private activeRoute: ActivatedRoute,
+    private dataService: DataService,
+    private fileDownloaderServie: FileDownloaderService,
+    private reportingService: ReportingService,
+    private location: Location) {
   }
 
   ngOnInit() {

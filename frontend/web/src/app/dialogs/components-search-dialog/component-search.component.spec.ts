@@ -121,4 +121,51 @@ describe('ComponentSearchComponent', () => {
      component.checkIsPrevious({componente: 'crema', chips: []});
 
   });
+
+  it('should selectComponent', () => {
+    component.dataSource.data = [];
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      isItemSelected: false
+    };
+    // component.selectComponent({componente: 'crema', chips: []});
+    expect(component.selectComponent).toBeTruthy();
+  });
+
+  it('should selectComponent isFromSearchComponent = false', () => {
+    component.dataSource.data = [];
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      isItemSelected: false
+    };
+    component.isFromSearchComponent = false;
+    component.selectComponent({componente: 'crema', chips: []});
+    expect(component.selectComponent).toBeTruthy();
+  });
 });

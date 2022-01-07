@@ -111,10 +111,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var details = (await this.sapDao.GetAllDetails(new List<int?> { pedidoId })).ToList();
             var order = details.FirstOrDefault(x => x.OrdenFabricacionId == orderId);
-            order = order == null ? new CompleteDetailOrderModel() : order;
+            order ??= new CompleteDetailOrderModel();
 
             var itemCode = (await this.sapDao.GetProductById(order.CodigoProducto)).FirstOrDefault();
-            var productType = itemCode.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+            var productType = ServiceUtils.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
             var magistralData = new MagistralScannerModel
             {
@@ -147,7 +147,7 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             var validBatches = (await this.sapDao.GetValidBatches(listComponents)).ToList();
-            var productType = itemCode.IsMagistral.Equals("Y") ? ServiceConstants.Magistral : ServiceConstants.Linea;
+            var productType = ServiceUtils.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
             validBatches.ForEach(b =>
             {

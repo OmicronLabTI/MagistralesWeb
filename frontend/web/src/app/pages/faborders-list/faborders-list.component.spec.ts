@@ -15,6 +15,8 @@ import {ErrorService} from '../../services/error.service';
 import {ErrorHttpInterface} from '../../model/http/commons';
 import {PageEvent} from '@angular/material/paginator';
 import {PipesModule} from '../../pipes/pipes.module';
+import { ParamsPedidos } from 'src/app/model/http/pedidos';
+import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;
@@ -22,13 +24,16 @@ describe('FabordersListComponent', () => {
   let dataServiceSpy;
   let ordersServiceSpy;
   let errorServiceSpy;
+  const paramsPedidos = new ParamsPedidos();
+
+  const iOrdersReq: IOrdersReq[] = [];
   beforeEach(async(() => {
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'presentToastCustom', 'getCallHttpService', 'setMessageGeneralCallHttp', 'setUrlActive', 'setIsLoading',
       'setCallHttpService', 'setMessageGeneralCallHttp', 'getOrderIsolated', 'removeOrderIsolated', 'getNewSearchOrdersModal',
         'getCallHttpService', 'transformDate', 'setSearchComponentModal', 'getNewDataToFilter', 'setCancelOrders', 'setQbfToPlace',
         'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter', 'setFiltersActivesOrders', 'getFiltersActivesOrders',
-      'removeFiltersActiveOrders', 'getFiltersActivesAsModelOrders'
+      'removeFiltersActiveOrders', 'getFiltersActivesAsModelOrders', 'getIsWithFilter', 'changeRouterForFormula'
     ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
@@ -47,6 +52,16 @@ describe('FabordersListComponent', () => {
     });
     dataServiceSpy.getOrderIsolated.and.callFake(() => {
       return '12345Id';
+    });
+    dataServiceSpy.getNewDataToFilter.and.callFake(() => {
+      return [paramsPedidos, ''];
+    });
+
+    dataServiceSpy.getItemOnDataOnlyIds.and.callFake(() => {
+      return [];
+    });
+    dataServiceSpy.setCancelOrders.and.callFake(() => {
+      return;
     });
     TestBed.configureTestingModule({
       declarations: [ FabordersListComponent ],
@@ -143,4 +158,75 @@ describe('FabordersListComponent', () => {
     component.createOrderIsolated();
     expect(dataServiceSpy.setSearchComponentModal).toHaveBeenCalled();
   });
+  it('should onSuccessSearchOrdersModal', () => {
+    paramsPedidos[0] = [{
+      finlabel: '',
+      pageIndex: 1,
+      offset: 1,
+      limit: 10
+    }];
+    component.onSuccessSearchOrdersModal(paramsPedidos);
+    // ordersServiceSpy.getOrders();
+  });
+  it('should materialRequestIsolatedOrder', () => {
+    component.dataSource.data = [
+      {
+        isChecked: true,
+        docNum: 1,
+        fabOrderId: 1,
+        itemCode: '1',
+        description: 'string',
+        quantity: 1,
+        createDate: '',
+        finishDate: '',
+        qfb: '',
+        status: '',
+        class: '',
+        unit: '',
+        batche: '1',
+        quantityFinish: 1,
+        endDate: new Date('22/12/12'),
+        fabDate: new Date('22/12/12'),
+        isWithError: false,
+        isWithErrorBatch: false,
+        hasMissingStock: false,
+        batch: ''
+      } as IOrdersReq
+    ];
+    // component.materialRequestIsolatedOrder();
+    // ordersServiceSpy.getOrders();
+  });
+
+  it('should cancelOrder', () => {
+    component.dataSource.data = [
+      {
+        isChecked: true,
+        docNum: 1,
+        fabOrderId: 1,
+        itemCode: '1',
+        description: 'string',
+        quantity: 1,
+        createDate: '',
+        finishDate: '',
+        qfb: '',
+        status: 'abierto',
+        class: '',
+        unit: '',
+        batche: '1',
+        quantityFinish: 1,
+        endDate: new Date('22/12/12'),
+        fabDate: new Date('22/12/12'),
+        isWithError: false,
+        isWithErrorBatch: false,
+        hasMissingStock: false,
+        batch: ''
+      } as IOrdersReq
+    ];
+    component.cancelOrder();
+  });
+
+  it('should goToFormulaDetail', () => {
+    component.goToFormulaDetail('98656');
+  });
+
 });

@@ -141,17 +141,18 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
-                userOrder = userOrder == null ? new UserOrderModel { Userid = string.Empty, Status = string.Empty } : userOrder;
+                userOrder ??= new UserOrderModel { Userid = string.Empty, Status = string.Empty };
                 var userId = userOrder.Userid;
                 var user = listUsers.FirstOrDefault(y => y.Id.Equals(userId));
-                x.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+                user ??= new UserModel();
+                x.Qfb = $"{user.FirstName.ValidateNull()} {user.LastName.ValidateNull()}".Trim();
 
                 x.Status = userOrder.Status;
-                x.Status = x.Status.Equals(ServiceConstants.Proceso) ? ServiceConstants.EnProceso : x.Status;
-                x.FechaOfFin = userOrder.FinishDate.HasValue ? userOrder.FinishDate.Value.ToString("dd/MM/yyyy") : string.Empty;
+                x.Status = ServiceUtils.CalculateTernary(x.Status.Equals(ServiceConstants.Proceso), ServiceConstants.EnProceso, x.Status);
+                x.FechaOfFin = ServiceUtils.GetDateValueOrDefault(userOrder.FinishDate, string.Empty);
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
                 x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
-                x.Comments = pedido == null ? null : pedido.Comments;
+                x.Comments = pedido?.Comments;
                 x.RealLabel = x.Label;
                 x.Label = x.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()) ? ServiceConstants.Personalizado : ServiceConstants.Generico;
                 x.FinishedLabel = userOrder.FinishedLabel;
@@ -240,7 +241,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     dictUser.Add(user.UserId, user.UserName);
                 }
 
-                o.PedidoId = o.PedidoId.HasValue ? o.PedidoId : 0;
+                o.PedidoId ??= 0;
                 var details = new List<CompleteDetalleFormulaModel>();
 
                 if (returnDetails)
@@ -254,7 +255,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
                 userOrder ??= new UserOrderModel { Comments = string.Empty };
                 var comments = userOrder.Comments;
-                var realEndDate = userOrder.CloseDate.HasValue ? userOrder.CloseDate.Value.ToString("dd/MM/yyyy") : string.Empty;
+                var realEndDate = ServiceUtils.GetDateValueOrDefault(userOrder.CloseDate, string.Empty);
 
                 var formulaComponents = detailsFormula.Where(f => f.OrderFabId == o.OrdenId).Select(p => p.ItemCode).Distinct().ToList();
                 var itemsByFormula = listProducts.Where(i => formulaComponents.Contains(i.ProductoId)).ToList();
@@ -272,9 +273,9 @@ namespace Omicron.SapAdapter.Services.Sap
                     Warehouse = o.Wharehouse,
                     Number = o.PedidoId.Value,
                     FabDate = o.CreatedDate.Value.ToString("dd/MM/yyyy"),
-                    DueDate = o.DueDate.HasValue ? o.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                    DueDate = ServiceUtils.GetDateValueOrDefault(o.DueDate, string.Empty),
                     StartDate = o.StartDate.ToString("dd/MM/yyyy"),
-                    EndDate = o.PostDate.HasValue ? o.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                    EndDate = ServiceUtils.GetDateValueOrDefault(o.PostDate, string.Empty),
                     User = dictUser[o.User],
                     Origin = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictStatusOrigin, o.OriginType, o.OriginType),
                     BaseDocument = o.PedidoId.Value,
