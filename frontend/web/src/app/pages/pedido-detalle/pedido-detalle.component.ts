@@ -28,7 +28,7 @@ import { DownloadImagesService } from '../../services/download-images.service';
 import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from '../../services/observable.service';
-import { FiltersService } from '../../service/filters.service';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-pedido-detalle',

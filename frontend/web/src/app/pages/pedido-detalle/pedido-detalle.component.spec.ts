@@ -21,7 +21,7 @@ import { HttpServiceTOCall } from 'src/app/constants/const';
 import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
-import { FiltersService } from 'src/app/service/filters.service';
+import { FiltersService } from 'src/app/services/filters.service';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;

@@ -28,7 +28,7 @@ import {PedidosService} from '../../services/pedidos.service';
 import { ObservableService } from '../../services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from '../../services/date.service';
-import { FiltersService } from '../../service/filters.service';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-faborders-list',

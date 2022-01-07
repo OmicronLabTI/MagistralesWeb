@@ -20,7 +20,7 @@ import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
 import { ObservableService } from 'src/app/services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from 'src/app/services/date.service';
-import { FiltersService } from 'src/app/service/filters.service';
+import { FiltersService } from 'src/app/services/filters.service';
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;

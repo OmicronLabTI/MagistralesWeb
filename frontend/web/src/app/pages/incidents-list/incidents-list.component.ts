@@ -20,7 +20,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { Title } from '@angular/platform-browser';
 import { ObservableService } from '../../services/observable.service';
 import { DateService } from '../../services/date.service';
-import { FiltersService } from '../../service/filters.service';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-incidents-list',

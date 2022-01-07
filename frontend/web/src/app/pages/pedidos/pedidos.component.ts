@@ -38,7 +38,7 @@ import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from '../../services/observable.service';
 import { DateService } from '../../services/date.service';
-import { FiltersService } from '../../service/filters.service';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-pedidos',
