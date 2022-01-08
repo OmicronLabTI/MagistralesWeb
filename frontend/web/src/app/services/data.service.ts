@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import Swal, { SweetAlertIcon } from 'sweetalert2';
 import {
   Colors,
   ColorsBarGraph,
@@ -9,21 +8,19 @@ import {
   ConstOrders,
   ConstStatus,
   FromToFilter,
-  MessageType,
   RouterPaths,
   TypeToSeeTap,
 } from '../constants/const';
-import { CancelOrderReq, ParamsPedidos } from '../model/http/pedidos';
+import { ParamsPedidos } from '../model/http/pedidos';
 import { IncidentsGraphicsMatrix } from '../model/http/incidents.model';
 import { Router } from '@angular/router';
-import { DateService } from './date.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataService {
   private isToSaVeAnything = false;
-  constructor(private router: Router, private dateService: DateService) {}
+  constructor(private router: Router) { }
 
   setIsToSaveAnything(isToSave: boolean) {
     this.isToSaVeAnything = isToSave;
@@ -39,7 +36,7 @@ export class DataService {
       return `?ffin=${date}`;
     }
   }
-  
+
   getFormattedNumber(numberToFormatted: any) {
     return new Intl.NumberFormat().format(Number(numberToFormatted));
   }
@@ -102,12 +99,11 @@ export class DataService {
       callbacks: {
         label: (tooltipItem, data) => {
           if (Boolean(isPie)) {
-            return `${
-              data.labels[tooltipItem.index]
-            }: ${this.getPercentageByItem(
-              data.datasets[0].data[tooltipItem.index],
-              data.datasets[0].data
-            )}`;
+            return `${data.labels[tooltipItem.index]
+              }: ${this.getPercentageByItem(
+                data.datasets[0].data[tooltipItem.index],
+                data.datasets[0].data
+              )}`;
           } else {
             return `${data.datasets[0].data[tooltipItem.index]}`;
           }
@@ -122,23 +118,23 @@ export class DataService {
     plugins: {
       labels: isPie
         ? [
-            {
-              render: 'label',
-              precision: 2,
-              position: 'outside',
-            },
-          ]
+          {
+            render: 'label',
+            precision: 2,
+            position: 'outside',
+          },
+        ]
         : [],
     },
     scales: {
       yAxes: !isPie
         ? [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
+          {
+            ticks: {
+              beginAtZero: true,
             },
-          ]
+          },
+        ]
         : [],
     },
   })
