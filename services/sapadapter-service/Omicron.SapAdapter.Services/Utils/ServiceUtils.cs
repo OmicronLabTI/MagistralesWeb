@@ -397,11 +397,12 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <summary>
         /// Calculate value from validation.
         /// </summary>
+        /// <typeparam name="T">the T type.</typeparam>
         /// <param name="validation">Validation.</param>
         /// <param name="value">True value.</param>
         /// <param name="defaultValue">False value.</param>
-        /// <returns>Result.</returns>
-        public static string CalculateTernary(bool validation, string value, string defaultValue)
+        /// <returns>the type T..</returns>
+        public static T CalculateTernary<T>(bool validation, T value, T defaultValue)
         {
             return validation ? value : defaultValue;
         }
@@ -415,6 +416,60 @@ namespace Omicron.SapAdapter.Services.Utils
         public static string GetDateValueOrDefault(DateTime? date, string defaultDate)
         {
             return date.HasValue ? date.Value.ToString("dd/MM/yyyy") : defaultDate;
+        }
+
+        /// <summary>
+        /// get a parse exact date time.
+        /// </summary>
+        /// <param name="date">the date.</param>
+        /// <param name="defaultDate">the default value.</param>
+        /// <returns>string value.</returns>
+        public static DateTime ParseExactDateOrDefault(string date, DateTime defaultDate)
+        {
+            return !string.IsNullOrEmpty(date) ? DateTime.ParseExact(date, "dd/MM/yyyy", null) : defaultDate;
+        }
+
+        /// <summary>
+        /// get item code with fabrication order.
+        /// </summary>
+        /// <param name="productoId">the productoId.</param>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>complete itemcode.</returns>
+        public static string GetItemcode(string productoId, string orderId)
+        {
+            return !string.IsNullOrEmpty(orderId) ? $"{productoId} - {orderId}" : productoId;
+        }
+
+        /// <summary>
+        /// get if is valid filter by type shipping.
+        /// </summary>
+        /// <param name="parameters">the params.</param>
+        /// <returns>a bool.</returns>
+        public static bool IsValidFilterByTypeShipping(Dictionary<string, string> parameters)
+        {
+            return parameters.ContainsKey(ServiceConstants.Shipping) && parameters[ServiceConstants.Shipping].Split(",").Count() == 1;
+        }
+
+        /// <summary>
+        /// get the userorder header.
+        /// </summary>
+        /// <param name="userOrders">the userorders.</param>
+        /// <param name="saleOrderId">the saleorderid to look for.</param>
+        /// <returns>a user order model.</returns>
+        public static UserOrderModel GetSaleOrderHeader(this List<UserOrderModel> userOrders, string saleOrderId)
+        {
+            return userOrders.FirstOrDefault(x => x.Salesorderid == saleOrderId && string.IsNullOrEmpty(x.Productionorderid));
+        }
+
+        /// <summary>
+        /// get the line products order header.
+        /// </summary>
+        /// <param name="lineProducts">the lineProducts.</param>
+        /// <param name="saleOrderId">the saleorderid to look for.</param>
+        /// <returns>a line product model.</returns>
+        public static LineProductsModel GetLineProductOrderHeader(this List<LineProductsModel> lineProducts, int saleOrderId)
+        {
+            return lineProducts.FirstOrDefault(x => x.SaleOrderId == saleOrderId && string.IsNullOrEmpty(x.ItemCode));
         }
 
         /// <summary>
