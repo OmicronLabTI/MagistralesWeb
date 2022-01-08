@@ -28,6 +28,7 @@ import {PedidosService} from '../../services/pedidos.service';
 import { ObservableService } from '../../services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from '../../services/date.service';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-faborders-list',
@@ -79,6 +80,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     private pedidosService: PedidosService,
     private observableService: ObservableService,
     private dateService: DateService,
+    private filtersService: FiltersService,
   ) {
     this.observableService.setUrlActive(HttpServiceTOCall.ORDERS_ISOLATED);
   }
@@ -227,9 +229,9 @@ export class FabordersListComponent implements OnInit, OnDestroy {
 
   onSuccessSearchOrdersModal(resultSearchOrdersModal: ParamsPedidos) {
     this.filterDataOrders = new ParamsPedidos();
-    this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[0];
-    this.queryString = this.dataService.getNewDataToFilter(resultSearchOrdersModal)[1];
-    this.isSearchOrderWithFilter = this.dataService.getIsWithFilter(resultSearchOrdersModal);
+    this.filterDataOrders = this.filtersService.getNewDataToFilter(resultSearchOrdersModal)[0];
+    this.queryString = this.filtersService.getNewDataToFilter(resultSearchOrdersModal)[1];
+    this.isSearchOrderWithFilter = this.filtersService.getIsWithFilter(resultSearchOrdersModal);
     this.pageIndex = resultSearchOrdersModal.pageIndex || 0;
     this.offset = resultSearchOrdersModal.offset || 0;
     this.limit = resultSearchOrdersModal.limit || 10;
@@ -253,17 +255,17 @@ export class FabordersListComponent implements OnInit, OnDestroy {
       , isFromOrderIsolated: true});
   }
   private getButtonsOrdersIsolatedToUnLooked() {
-    this.isFinalizeOrderIsolated = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromDefault);
-    this.isThereOrdersIsolatedToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+    this.isFinalizeOrderIsolated = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromDefault);
+    this.isThereOrdersIsolatedToCancel = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
                                                                            FromToFilter.fromOrdersIsolatedCancel);
-    this.isAssignOrderIsolated = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
+    this.isAssignOrderIsolated = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
         FromToFilter.fromDefault);
-    this.isReAssignOrderIsolated = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
+    this.isReAssignOrderIsolated = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
                                                                       FromToFilter.fromOrderIsolatedReassign);
   }
   reAssignOrder() {
     this.observableService.setQbfToPlace({modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+      list: this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
                                 FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.fabOrderId))
       , isFromOrderIsolated: true, isFromReassign: true});
   }
@@ -275,7 +277,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.dialog.open(FinalizeOrdersComponent, {
       panelClass: 'custom-dialog-container',
       data: {
-        finalizeOrdersData: this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado)
+        finalizeOrdersData: this.filtersService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado)
       }
     }).afterClosed().subscribe(() => this.getOrdersAction());
   }

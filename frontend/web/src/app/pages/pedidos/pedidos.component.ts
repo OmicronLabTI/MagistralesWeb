@@ -39,6 +39,7 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from '../../services/observable.service';
 import { DateService } from '../../services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -81,7 +82,8 @@ export class PedidosComponent implements OnInit, OnDestroy {
     public localStorageService: LocalStorageService,
     private observableService: ObservableService,
     private dateService: DateService,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
+    private filtersService: FiltersService,
   ) {
     this.observableService.setUrlActive(HttpServiceTOCall.ORDERS);
   }
@@ -256,13 +258,15 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
   getButtonsToUnLooked() {
     this.isCheckedOrders = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
-    this.isThereOrdersToCancel = this.dataService.getIsThereOnData(this.dataSource.data,
+    this.isThereOrdersToCancel = this.filtersService.getIsThereOnData(this.dataSource.data,
       ConstStatus.finalizado, FromToFilter.fromOrdersCancel);
-    this.isThereOrdersToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromOrders);
-    this.isThereOrdersToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
-    this.isThereOrdersToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado, FromToFilter.fromOrders);
+    this.isThereOrdersToFinalize = this.filtersService.getIsThereOnData(this.dataSource.data,
+      ConstStatus.terminado, FromToFilter.fromOrders);
+    this.isThereOrdersToPlan = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
+    this.isThereOrdersToPlace = this.filtersService.getIsThereOnData(this.dataSource.data,
+      ConstStatus.planificado, FromToFilter.fromOrders);
     this.isThereOrdersToReassign =
-      this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
+      this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
     this.isTherePedidosToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
   }
@@ -303,9 +307,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.offset = resultSearchOrderModal.offset || 0;
     this.limit = resultSearchOrderModal.limit || 10;
     this.filterDataOrders = new ParamsPedidos();
-    this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrderModal)[0];
-    this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
-    this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
+    this.filterDataOrders = this.filtersService.getNewDataToFilter(resultSearchOrderModal)[0];
+    this.queryString = this.filtersService.getNewDataToFilter(resultSearchOrderModal)[1];
+    this.isSearchWithFilter = this.filtersService.getIsWithFilter(resultSearchOrderModal);
     this.getFullQueryString();
     this.getPedidos();
   }
@@ -313,7 +317,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   reassignOrders() {
     this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrders,
-      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+      list: this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
         FromToFilter.fromOrdersReassign, ConstStatus.liberado).map(order => order.docNum)
       , isFromReassign: true
     });

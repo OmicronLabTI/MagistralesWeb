@@ -22,6 +22,7 @@ import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { FiltersService } from 'src/app/services/filters.service';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -33,6 +34,7 @@ describe('PedidoDetalleComponent', () => {
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+  let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
 
   const catalogs = new Catalogs();
   const iPedidoDetalleRes = new IPedidoDetalleListRes();
@@ -80,12 +82,9 @@ describe('PedidoDetalleComponent', () => {
       'setCurrentDetailOrder',
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'getIsThereOnData',
       'openNewTapByUrl',
       'getItemOnDataOnlyIds',
-      'getNewDataToFilter',
       'getFullStringForCarousel',
-      'getItemOnDateWithFilter'
     ]);
     localStorageServiceSpy.getProductNoLabel.and.returnValue(catalogs);
     localStorageServiceSpy.getUserRole.and.returnValue('');
@@ -98,8 +97,6 @@ describe('PedidoDetalleComponent', () => {
     });
     pedidosServiceSpy.finishLabels.and.returnValue(of(iPedidoDetalleRes));
     pedidosServiceSpy.putOrdersToDelivered.and.returnValue(of(iCreatePdfOrdersRes));
-    dataServiceSpy.getNewDataToFilter.and.returnValue([parametrosPedidos, '']);
-    dataServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
     pedidosServiceSpy.getDetallePedido.and.returnValue(of(DetailOrderMock));
     pedidosServiceSpy.savedComments.and.returnValue(of(iPedidoDetalleRes));
 
@@ -122,6 +119,20 @@ describe('PedidoDetalleComponent', () => {
     observableServiceSpy.getNewDataSignature.and.returnValue(of({}));
     observableServiceSpy.getNewCommentsResult.and.returnValue(of(comentsConfig));
     observableServiceSpy.getCallHttpService.and.returnValue(of(httpServiceTOCallRes));
+
+    // --- Filter Service
+    filtersServiceSpy = jasmine.createSpyObj<FiltersService>('FiltersService', [
+      'getIsThereOnData',
+      'getItemOnDateWithFilter',
+      'getNewDataToFilter',
+      'getIsWithFilter',
+    ]);
+
+    filtersServiceSpy.getIsThereOnData.and.returnValue(true);
+    filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
+    filtersServiceSpy.getIsWithFilter.and.returnValue(true)
+    filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
+
     TestBed.configureTestingModule({
       imports: [
         MATERIAL_COMPONENTS,
@@ -138,6 +149,7 @@ describe('PedidoDetalleComponent', () => {
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
+        { provide: FiltersService, useValue: filtersServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

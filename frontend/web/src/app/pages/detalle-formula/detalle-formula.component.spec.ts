@@ -12,7 +12,6 @@ import { Observable, of, Subject, throwError } from 'rxjs';
 import { DataService } from '../../services/data.service';
 import { CarouselOption, CONST_DETAIL_FORMULA } from '../../constants/const';
 import { ErrorService } from '../../services/error.service';
-import { ButtonRefreshComponent } from 'src/app/components/button-refresh/button-refresh.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
@@ -20,6 +19,7 @@ import { ObservableService } from 'src/app/services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from 'src/app/services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { FiltersService } from '../../services/filters.service';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -30,6 +30,7 @@ describe('DetalleFormulaComponent', () => {
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let dateServiceSpy: jasmine.SpyObj<DateService>;
+  let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
   const paramsPedidos = new ParamsPedidos();
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
 
@@ -60,10 +61,7 @@ describe('DetalleFormulaComponent', () => {
         'updateFormula'
       ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'getNewDataToFilter',
       'getItemOnDataOnlyIds',
-      'getIsThereOnData',
-      'getItemOnDateWithFilter',
       'setIsToSaveAnything',
       'setIsToSaveAnything',
       'setIsToSaveAnything',
@@ -113,6 +111,16 @@ describe('DetalleFormulaComponent', () => {
       'transformDate',
     ]);
     dateServiceSpy.transformDate.and.returnValue('');
+    // --- Filter Service
+    filtersServiceSpy = jasmine.createSpyObj<FiltersService>('FiltersService', [
+      'getIsThereOnData',
+      'getItemOnDateWithFilter',
+      'getNewDataToFilter',
+    ]);
+    filtersServiceSpy.getIsThereOnData.and.returnValue(true);
+    filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
+    filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
+  
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
@@ -135,6 +143,7 @@ describe('DetalleFormulaComponent', () => {
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: DateService, useValue: dateServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
+        { provide: FiltersService, useValue: filtersServiceSpy },
         { provide: ActivatedRoute, useValue: { paramMap: new Subject() } },
       ]
     })

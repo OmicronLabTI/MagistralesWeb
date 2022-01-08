@@ -21,6 +21,7 @@ import { Title } from '@angular/platform-browser';
 import { ObservableService } from '../../services/observable.service';
 import { DateService } from '../../services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-incidents-list',
@@ -61,7 +62,9 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private observableService: ObservableService,
     private dateService: DateService,
-    private messagesService: MessagesService) {
+    private messagesService: MessagesService,
+    private filtersService: FiltersService,
+    ) {
     this.observableService.setUrlActive(HttpServiceTOCall.INCIDENTS_LIST);
     this.filterDataIncidents.dateType = ConstOrders.defaultDateInit;
     this.filterDataIncidents.dateFull = this.dateService.getDateFormatted(new Date(), new Date(), true);
@@ -88,9 +91,9 @@ export class IncidentsListComponent implements OnInit, OnDestroy {
     this.pageIndex = 0;
     this.offset = 0;
     this.limit = 10;
-    this.filterDataIncidents = this.dataService.getNewDataToFilter(resultSearchOrderModal)[0];
-    this.queryIncidentsString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
-    this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
+    this.filterDataIncidents = this.filtersService.getNewDataToFilter(resultSearchOrderModal)[0];
+    this.queryIncidentsString = this.filtersService.getNewDataToFilter(resultSearchOrderModal)[1];
+    this.isSearchWithFilter = this.filtersService.getIsWithFilter(resultSearchOrderModal);
     this.getFullQueryString();
     this.updateIncidentList();
   }

@@ -21,6 +21,7 @@ import { ObservableService } from 'src/app/services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from 'src/app/services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { FiltersService } from 'src/app/services/filters.service';
 
 describe('FabordersListComponent', () => {
   let component: FabordersListComponent;
@@ -32,7 +33,7 @@ describe('FabordersListComponent', () => {
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let dateServiceSpy: jasmine.SpyObj<DateService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
-
+  let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
   const paramsPedidos = new ParamsPedidos();
 
   const iOrdersReq: IOrdersReq[] = [];
@@ -51,11 +52,7 @@ describe('FabordersListComponent', () => {
     ]);
 
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'getNewDataToFilter',
       'getItemOnDataOnlyIds',
-      'getIsThereOnData',
-      'getItemOnDateWithFilter',
-      'getIsWithFilter',
       'changeRouterForFormula'
     ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
@@ -69,9 +66,6 @@ describe('FabordersListComponent', () => {
     });
     localStorageServiceSpy.getOrderIsolated.and.callFake(() => {
       return '12345Id';
-    });
-    dataServiceSpy.getNewDataToFilter.and.callFake(() => {
-      return [paramsPedidos, ''];
     });
 
     dataServiceSpy.getItemOnDataOnlyIds.and.callFake(() => {
@@ -108,6 +102,18 @@ describe('FabordersListComponent', () => {
     dateServiceSpy.transformDate.and.returnValue('');
     dateServiceSpy.getDateFormatted.and.returnValue('');
 
+    // --- Filters Service
+    filtersServiceSpy = jasmine.createSpyObj<FiltersService>('FiltersService', [
+      'getIsThereOnData',
+      'getItemOnDateWithFilter',
+      'getIsWithFilter',
+      'getNewDataToFilter',
+    ]);
+    filtersServiceSpy.getIsThereOnData.and.returnValue(true);
+    filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
+    filtersServiceSpy.getIsWithFilter.and.returnValue(true)
+    filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
+
     TestBed.configureTestingModule({
       declarations: [FabordersListComponent],
       imports: [RouterTestingModule, MATERIAL_COMPONENTS, HttpClientTestingModule,
@@ -120,6 +126,7 @@ describe('FabordersListComponent', () => {
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: DateService, useValue: dateServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
+        { provide: FiltersService, useValue: filtersServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

@@ -18,6 +18,7 @@ import { ObservableService } from 'src/app/services/observable.service';
 import { ParamsPedidos } from '../../model/http/pedidos';
 import { CommentsConfig } from '../../model/device/incidents.model';
 import { DateService } from 'src/app/services/date.service';
+import { FiltersService } from 'src/app/services/filters.service';
 
 describe('IncidentsListComponent', () => {
   let component: IncidentsListComponent;
@@ -26,7 +27,7 @@ describe('IncidentsListComponent', () => {
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let dateServiceSpy: jasmine.SpyObj<DateService>;
-
+  let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
   const paramPedidos = new ParamsPedidos();
   const commentsConfig = new CommentsConfig();
 
@@ -58,6 +59,18 @@ describe('IncidentsListComponent', () => {
       'getDateFormatted'
     ]);
     dateServiceSpy.getDateFormatted.and.returnValue('');
+    // --- Filter Service
+    filtersServiceSpy = jasmine.createSpyObj<FiltersService>('FiltersService', [
+      'getIsThereOnData',
+      'getItemOnDateWithFilter',
+      'getNewDataToFilter',
+      'getIsWithFilter',
+    ]);
+
+    filtersServiceSpy.getIsThereOnData.and.returnValue(true);
+    filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
+    filtersServiceSpy.getIsWithFilter.and.returnValue(true)
+    filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
     TestBed.configureTestingModule({
       declarations: [IncidentsListComponent],
       providers: [DatePipe,
@@ -65,6 +78,7 @@ describe('IncidentsListComponent', () => {
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: DateService, useValue: dateServiceSpy },
+        { provide: FiltersService, useValue: filtersServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [PipesModule, MATERIAL_COMPONENTS, HttpClientTestingModule,

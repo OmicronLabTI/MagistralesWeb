@@ -26,6 +26,7 @@ import { ObservableService } from '../../services/observable.service';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from '../../services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -80,7 +81,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     private observableService: ObservableService,
     public localStorageService: LocalStorageService,
     private dateService: DateService,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
+    private filtersService: FiltersService
     ) {
   }
 
@@ -89,7 +91,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.ordenFabricacionId = params.get('ordenid');
       this.isFromDetail = Number(params.get('isFromDetail')) === CONST_NUMBER.one;
       this.detailOrders = params.get('detailsOrders').split(',');
-      this.queryString = this.dataService.getNewDataToFilter(this.localStorageService.getFiltersActivesAsModelOrders())[1];
+      this.queryString = this.filtersService.getNewDataToFilter(this.localStorageService.getFiltersActivesAsModelOrders())[1];
       this.titleService.setTitle('Orden de fabricación ' + this.ordenFabricacionId);
       if (this.localStorageService.getFiltersActivesAsModelOrders().isfromCreateOrderIsolate) {
         this.createfilterDataOrdersForOrderIsolated();
