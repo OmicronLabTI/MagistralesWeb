@@ -3,7 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { ErrorService } from './error.service';
 import { DatePipe } from '@angular/common';
 import { ErrorHttpInterface } from '../model/http/commons';
-import { DataService } from './data.service';
 import { ObservableService } from './observable.service';
 import { LocalStorageService } from './local-storage.service';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -17,12 +16,6 @@ describe('ErrorService', () => {
       'userIsAuthenticated',
       'setUserName',
     ]);
-    // dataServiceSpy = jasmine.createSpyObj<DataService>
-    //   ('DataService',
-    //     [
-    //     ]
-    //   );
-    //  --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>
       ('ObservableService',
         [
@@ -36,7 +29,6 @@ describe('ErrorService', () => {
       imports: [RouterTestingModule],
       providers: [
         DatePipe,
-        // { provide: DataService, useValue: dataServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ]

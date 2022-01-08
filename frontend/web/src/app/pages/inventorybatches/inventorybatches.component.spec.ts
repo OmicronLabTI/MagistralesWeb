@@ -7,7 +7,6 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { DataService } from 'src/app/services/data.service';
 import { BatchesService } from 'src/app/services/batches.service';
 import { ErrorService } from 'src/app/services/error.service';
 import {
@@ -22,7 +21,6 @@ import { MessagesService } from 'src/app/services/messages.service';
 describe('InventorybatchesComponent', () => {
   let component: InventorybatchesComponent;
   let fixture: ComponentFixture<InventorybatchesComponent>;
-  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let batchesServiceSpy: jasmine.SpyObj<BatchesService>;
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
@@ -54,8 +52,6 @@ describe('InventorybatchesComponent', () => {
     });
     batchesServiceSpy.updateBatches.and.returnValue(of(iLotesSaveRes));
 
-    // dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-    // ]);
     messagesServiceSpy.presentToastCustom.and.returnValue(Promise.resolve());
     messagesServiceSpy.getMessageTitle.and.returnValue('');
     // --- Observable Service

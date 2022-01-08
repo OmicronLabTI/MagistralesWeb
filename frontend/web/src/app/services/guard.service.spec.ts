@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
 import { GuardService } from './guard.service';
-import { DataService } from './data.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import {ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlSegment} from '@angular/router';
 import {DatePipe} from '@angular/common';
@@ -9,7 +8,6 @@ import { LocalStorageService } from './local-storage.service';
 
 describe('GuardService', () => {
   let routerSpy: jasmine.SpyObj<Router>;
-  let dataSpyService: jasmine.SpyObj<DataService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   beforeEach(() => {
     routerSpy = jasmine.createSpyObj<Router>('Router', [
@@ -20,19 +18,14 @@ describe('GuardService', () => {
       'getUserRole'
     ]);
 
-    // dataSpyService = jasmine.createSpyObj<DataService>('DataService', [
-    //   'getUserRole'
-    // ]);
     localStorageServiceSpy.userIsAuthenticated.and.returnValue(true);
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule
       ],
       providers: [
-        DataService,
         DatePipe,
         { provide: Router, useValue: routerSpy },
-        { provide: DataService, useValue: dataSpyService },
         { provide: LocalStorageService, useValue: localStorageServiceSpy}
       ]
     });

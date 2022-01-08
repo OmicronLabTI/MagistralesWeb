@@ -13,7 +13,6 @@ import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MiListaComponent } from './mi-lista.component';
 import {RouterTestingModule} from '@angular/router/testing';
-import { DataService } from 'src/app/services/data.service';
 import { OrdersService } from 'src/app/services/orders.service';
 import Swal from 'sweetalert2';
 import {PipesModule} from '../../pipes/pipes.module';
@@ -28,7 +27,6 @@ describe('MiListaComponent', () => {
   let component: MiListaComponent;
   let fixture: ComponentFixture<MiListaComponent>;
   let ordersServiceSpy: jasmine.SpyObj<OrdersService>;
-  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
 
@@ -49,9 +47,6 @@ describe('MiListaComponent', () => {
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getUserId'
     ]);
-    // dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-    //   'presentToastCustom',
-    // ]);
     localStorageServiceSpy.getUserId.and.callFake(() => {
       return '123';
     });
@@ -89,7 +84,6 @@ describe('MiListaComponent', () => {
           provide: MatDialogRef,
           useValue: {close}
         },
-        { provide: DataService, useValue: dataServiceSpy },
         { provide: OrdersService, useValue: ordersServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: MessagesService, useValue: messagesServiceSpy },

@@ -13,7 +13,6 @@ import { of } from 'rxjs';
 import { Batches, CancelOrderReq, IExistsBachCodeRes, IGetNewBachCodeRes } from 'src/app/model/http/pedidos';
 import { ICancelOrdersRes } from '../../model/http/pedidos';
 import { ErrorService } from 'src/app/services/error.service';
-import { DataService } from 'src/app/services/data.service';
 import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
 import { AddCommentsDialogComponent } from '../add-comments-dialog/add-comments-dialog.component';
 import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
@@ -27,7 +26,6 @@ describe('FinalizeOrdersComponent', () => {
   let fixture: ComponentFixture<FinalizeOrdersComponent>;
   let orderServiceSpy: jasmine.SpyObj<PedidosService>;
   let errorServiceSpy: jasmine.SpyObj<ErrorService>;
-  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let dialogRefSpy: jasmine.SpyObj<MatDialogRef<AddCommentsDialogComponent>>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
@@ -52,7 +50,6 @@ describe('FinalizeOrdersComponent', () => {
     batches: [batches]
   }];
 
-  // iOrderRes.response = iOrdersReq;
 
 
   beforeEach(async(() => {
@@ -82,10 +79,6 @@ describe('FinalizeOrdersComponent', () => {
       'getUserId',
     ]);
 
-    // dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
-    //   [
-    //   ]);
-
     localStorageServiceSpy.getUserId.and.returnValue('');
     messagesServiceSpy.getMessageTitle.and.returnValue('');
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
@@ -113,7 +106,6 @@ describe('FinalizeOrdersComponent', () => {
         DatePipe,
         { provide: PedidosService, useValue: orderServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
-        { provide: DataService, useValue: dataServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
         { provide: DateService, useValue: dateServiceSpy },
