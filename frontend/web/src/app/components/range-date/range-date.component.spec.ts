@@ -28,7 +28,7 @@ describe('RangeDateComponent', () => {
       declarations: [ RangeDateComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [MATERIAL_COMPONENTS, FormsModule, BrowserAnimationsModule, RouterTestingModule],
-      providers: 
+      providers:
       [
         DatePipe,
         { provide: DateService, useValue: dateServiceSpy },

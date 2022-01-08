@@ -94,7 +94,9 @@ describe('FinalizeOrdersComponent', () => {
     observableServiceSpy.setCallHttpService.and.returnValue();
     observableServiceSpy.setMessageGeneralCallHttp.and.returnValue();
     // --- Date Service
-    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', ['transformDate',]);
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'transformDate',
+    ]);
     dateServiceSpy.transformDate.and.returnValue('');
     TestBed.configureTestingModule({
       declarations: [FinalizeOrdersComponent],

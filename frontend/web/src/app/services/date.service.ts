@@ -52,5 +52,4 @@ export class DateService {
       date.getDate()
     );
   }
-  
 }

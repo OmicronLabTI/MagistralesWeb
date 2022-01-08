@@ -3,7 +3,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { DataService } from 'src/app/services/data.service';
 import { SecurityService } from 'src/app/services/security.service';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -21,7 +20,6 @@ describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let securityServiceSpy: jasmine.SpyObj<SecurityService>;
-  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
@@ -90,7 +88,6 @@ describe('LoginComponent', () => {
       providers: [
         DatePipe,
         { provide: SecurityService, useValue: securityServiceSpy },
-        { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: ObservableService, useValue: observableServiceSpy },

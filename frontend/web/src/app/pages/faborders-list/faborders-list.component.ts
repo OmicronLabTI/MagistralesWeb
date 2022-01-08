@@ -255,7 +255,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
       , isFromOrderIsolated: true});
   }
   private getButtonsOrdersIsolatedToUnLooked() {
-    this.isFinalizeOrderIsolated = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromDefault);
+    this.isFinalizeOrderIsolated = this.filtersService.
+      getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromDefault);
     this.isThereOrdersIsolatedToCancel = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
                                                                            FromToFilter.fromOrdersIsolatedCancel);
     this.isAssignOrderIsolated = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
@@ -277,7 +278,8 @@ export class FabordersListComponent implements OnInit, OnDestroy {
     this.dialog.open(FinalizeOrdersComponent, {
       panelClass: 'custom-dialog-container',
       data: {
-        finalizeOrdersData: this.filtersService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado)
+        finalizeOrdersData: this.filtersService.
+          getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.terminado)
       }
     }).afterClosed().subscribe(() => this.getOrdersAction());
   }

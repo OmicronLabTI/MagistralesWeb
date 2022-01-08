@@ -36,7 +36,7 @@ describe('ProductivityComponent', () => {
       [
         'setUrlActive'
       ]);
-    //  --- Date Service 
+    //  --- Date Service
     dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
       'getDateFormatted',
     ]);

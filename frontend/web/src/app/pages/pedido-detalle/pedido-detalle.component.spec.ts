@@ -130,7 +130,7 @@ describe('PedidoDetalleComponent', () => {
 
     filtersServiceSpy.getIsThereOnData.and.returnValue(true);
     filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
-    filtersServiceSpy.getIsWithFilter.and.returnValue(true)
+    filtersServiceSpy.getIsWithFilter.and.returnValue(true);
     filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
 
     TestBed.configureTestingModule({

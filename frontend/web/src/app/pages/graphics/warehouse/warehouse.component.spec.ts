@@ -43,7 +43,7 @@ describe('WarehouseComponent', () => {
     ]);
 
     // ------------ OBSERVABLE SERVICE ----------------
-    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService', 
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
     [
       'setUrlActive',
     ]

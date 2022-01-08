@@ -13,7 +13,6 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { ComponentslistComponent } from './componentslist.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { DataService } from 'src/app/services/data.service';
 import { BaseComponent, Components, IMyCustomListRes } from 'src/app/model/http/listacomponentes';
 import { OrdersService } from 'src/app/services/orders.service';
 import { of } from 'rxjs';
@@ -23,7 +22,6 @@ import { MessagesService } from 'src/app/services/messages.service';
 describe('ComponentslistComponent', () => {
   let component: ComponentslistComponent;
   let fixture: ComponentFixture<ComponentslistComponent>;
-  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let ordersServiceSpy: jasmine.SpyObj<OrdersService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
@@ -41,9 +39,6 @@ describe('ComponentslistComponent', () => {
     ]);
 
     const matDialogSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
-    // dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-    //   'presentToastCustom',
-    // ]);
     ordersServiceSpy = jasmine.createSpyObj('OrdersService', [
       'getCustomList',
       'deleteCustomList'
@@ -88,7 +83,6 @@ describe('ComponentslistComponent', () => {
         {
           provide: MAT_DIALOG_DATA, useValue: {}
         },
-        { provide: DataService, useValue: dataServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
       ]

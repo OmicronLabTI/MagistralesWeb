@@ -57,7 +57,8 @@ describe('ComponentSearchComponent', () => {
                                                 catalogGroupName: catalogGroup } },
         { provide: PedidosService, useValue: ordersServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
-        { provide: MessagesService, useValue: messagesServiceSpy },]
+        { provide: MessagesService, useValue: messagesServiceSpy },
+      ]
     })
     .compileComponents();
   }));

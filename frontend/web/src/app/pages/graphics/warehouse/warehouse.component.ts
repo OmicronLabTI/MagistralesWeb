@@ -30,7 +30,7 @@ export class WarehouseComponent implements OnInit {
   percentageForeign = CONST_NUMBER.zero;
   isNoDataNoDeliveredGraph = false;
   constructor(
-    private dataService: DataService, 
+    private dataService: DataService,
     private incidentsService: IncidentsService,
     private errorService: ErrorService,
     private observableService: ObservableService) {

@@ -120,7 +120,7 @@ describe('DetalleFormulaComponent', () => {
     filtersServiceSpy.getIsThereOnData.and.returnValue(true);
     filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
     filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
-  
+
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,

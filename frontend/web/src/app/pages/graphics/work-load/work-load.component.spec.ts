@@ -22,7 +22,7 @@ describe('WorkLoadComponent', () => {
   let errorServiceSpy: any;
   let pedidosServiceSpy: any;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
-  let dateServiceSpy: jasmine.SpyObj<DateService>
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
 
   const load = new WorkLoad();
   load.assigned = '1';
@@ -54,19 +54,19 @@ describe('WorkLoadComponent', () => {
     response: list,
   };
   beforeEach(async(() => {
-    dataServiceSpy = jasmine.createSpyObj('DataService', 
+    dataServiceSpy = jasmine.createSpyObj('DataService',
     [
-      'setUrlActive', 
-      'transformDate', 
-      'getDateFormatted', 
+      'setUrlActive',
+      'transformDate',
+      'getDateFormatted',
       'getFormattedNumber',
       'getMaxMinDate'
     ]);
-    errorServiceSpy = jasmine.createSpyObj('ErrorService', 
+    errorServiceSpy = jasmine.createSpyObj('ErrorService',
     [
       'httpError'
     ]);
-    pedidosServiceSpy = jasmine.createSpyObj('PedidosService', 
+    pedidosServiceSpy = jasmine.createSpyObj('PedidosService',
     [
       'getWorLoad'
     ]);
