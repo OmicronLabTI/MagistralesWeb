@@ -397,11 +397,12 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <summary>
         /// Calculate value from validation.
         /// </summary>
+        /// <typeparam name="T">the T type.</typeparam>
         /// <param name="validation">Validation.</param>
         /// <param name="value">True value.</param>
         /// <param name="defaultValue">False value.</param>
-        /// <returns>Result.</returns>
-        public static string CalculateTernary(bool validation, string value, string defaultValue)
+        /// <returns>the type T..</returns>
+        public static T CalculateTernary<T>(bool validation, T value, T defaultValue)
         {
             return validation ? value : defaultValue;
         }
