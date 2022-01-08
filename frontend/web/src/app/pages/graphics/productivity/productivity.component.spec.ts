@@ -2,33 +2,48 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProductivityComponent } from './productivity.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ProductivityService } from 'src/app/services/productivity.service';
-import {of} from 'rxjs';
+import { of } from 'rxjs';
 import { ProductivityListMock } from 'src/mocks/productivityMock';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from 'src/app/services/date.service';
 
 describe('ProductivityComponent', () => {
   let component: ProductivityComponent;
   let fixture: ComponentFixture<ProductivityComponent>;
   let productivityServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
 
   beforeEach(async(() => {
     productivityServiceSpy = jasmine.createSpyObj<ProductivityService>(
       'ProductivityService', [
-        'getProductivity'
-      ]
+      'getProductivity'
+    ]
     );
     productivityServiceSpy.getProductivity.and.callFake(() => {
       return of(ProductivityListMock);
     });
 
+    // --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'setUrlActive'
+      ]);
+    //  --- Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'getDateFormatted',
+    ]);
+    dateServiceSpy.getDateFormatted.and.returnValue('12/12/21 - 12/12/23');
+
     TestBed.configureTestingModule({
-      declarations: [ ProductivityComponent ],
+      declarations: [ProductivityComponent],
       imports: [
         RouterTestingModule,
         MATERIAL_COMPONENTS,
@@ -39,13 +54,13 @@ describe('ProductivityComponent', () => {
       ],
       providers: [
         DatePipe,
-        {
-          provide: ProductivityService, useValue: productivityServiceSpy
-        }
+        { provide: ProductivityService, useValue: productivityServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: DateService, useValue: dateServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

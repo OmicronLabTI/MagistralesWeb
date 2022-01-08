@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
-import {Observable} from 'rxjs';
-import {HttpHeaders, HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
-import { DataService } from './data.service';
+import { Observable } from 'rxjs';
+import { HttpHeaders, HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { ObservableService } from './observable.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConsumeService {
 
-  constructor(private http: HttpClient, private dataService: DataService) { }
+  constructor(
+    private http: HttpClient,
+    private observableService: ObservableService) { }
 
   httpGet<T>(url: string, params?, headers?) {
     let objHeaders = new HttpHeaders();
@@ -24,7 +26,7 @@ export class ConsumeService {
         objParams = objParams.append(key, params[key]);
       });
     }
-    this.dataService.setIsLoading(true);
+    this.observableService.setIsLoading(true);
     return new Observable<T>(observer => {
       this.http.get<any>(url, { headers: objHeaders, params: objParams })
         .subscribe(response => {
@@ -43,7 +45,7 @@ export class ConsumeService {
       });
     }
 
-    this.dataService.setIsLoading(true);
+    this.observableService.setIsLoading(true);
     return new Observable<T>(observer => {
       this.http.post<any>(url, body, { headers: objHeaders })
         .subscribe(response => {
@@ -55,7 +57,7 @@ export class ConsumeService {
   }
 
   httpDownloadFilePost(url: string, body: any, headers?): Observable<HttpResponse<Blob>> {
-    this.dataService.setIsLoading(true);
+    this.observableService.setIsLoading(true);
     return new Observable<HttpResponse<Blob>>(observer => {
       this.http.post<Blob>(url, body, { headers, observe: 'response', responseType: 'blob' as 'json' })
         .subscribe(response => {
@@ -74,7 +76,7 @@ export class ConsumeService {
       });
     }
 
-    this.dataService.setIsLoading(true);
+    this.observableService.setIsLoading(true);
     return new Observable<T>(observer => {
       this.http.put<any>(url, body, { headers: objHeaders })
         .subscribe(response => {
@@ -93,14 +95,14 @@ export class ConsumeService {
       });
     }
 
-    this.dataService.setIsLoading(true);
+    this.observableService.setIsLoading(true);
     return new Observable<T>(observer => {
       this.http.patch<any>(url, body, { headers: objHeaders })
-          .subscribe(response => {
-            this.successObserver(observer, response);
-          }, err => {
-            this.onErrorObserver(observer, err);
-          });
+        .subscribe(response => {
+          this.successObserver(observer, response);
+        }, err => {
+          this.onErrorObserver(observer, err);
+        });
     });
   }
 
@@ -112,25 +114,25 @@ export class ConsumeService {
          });
        }*/
 
-    this.dataService.setIsLoading(true);
+    this.observableService.setIsLoading(true);
     return new Observable<T>(observer => {
       this.http.delete<any>(url)
-          .subscribe(response => {
-            this.successObserver(observer, response);
-          }, err => {
-            this.onErrorObserver(observer, err);
-          });
+        .subscribe(response => {
+          this.successObserver(observer, response);
+        }, err => {
+          this.onErrorObserver(observer, err);
+        });
     });
   }
 
   private successObserver(observer: any, response: any) {
     observer.next(response);
     observer.complete();
-    this.dataService.setIsLoading(false);
+    this.observableService.setIsLoading(false);
   }
 
   private onErrorObserver(observer: any, err: any) {
     observer.error(err);
-    this.dataService.setIsLoading(false);
+    this.observableService.setIsLoading(false);
   }
 }

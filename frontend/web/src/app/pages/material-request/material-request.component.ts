@@ -18,6 +18,9 @@ import { Subscription } from 'rxjs';
 import { FileDownloaderService } from 'src/app/services/file.downloader.service';
 import { ReportingService } from 'src/app/services/reporting.service';
 import { FileTypeContentEnum } from 'src/app/enums/FileTypeContentEnum';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 
 @Component({
@@ -47,7 +50,10 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private fileDownloaderServie: FileDownloaderService,
     private reportingService: ReportingService,
-    private location: Location) {
+    private location: Location,
+    private localStorageService: LocalStorageService,
+    private observableService: ObservableService,
+    private messagesService: MessagesService) {
   }
 
   ngOnInit() {
@@ -58,7 +64,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
       this.validateRequest();
     });
-    this.subscription.add(this.dataService.getNewMaterialComponent().subscribe(resultNewMaterialComponent => {
+    this.subscription.add(this.observableService.getNewMaterialComponent().subscribe(resultNewMaterialComponent => {
       this.dataSource.data = [...this.dataSource.data, {
         ...resultNewMaterialComponent,
         id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one
@@ -67,7 +73,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.checkToDownload();
       this.registerChanges();
     }));
-    this.subscription.add(this.dataService.getNewDataSignature().subscribe(newDataSignature => {
+    this.subscription.add(this.observableService.getNewDataSignature().subscribe(newDataSignature => {
       this.oldData.signature = newDataSignature;
       this.checkIsCorrectData();
     }));
@@ -89,7 +95,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
         titleStatusOrders = `${titleStatusOrders} \n\n ${this.getIdsLit(resultMaterialRequest.response.productionOrderIds).toString()}`;
       }
 
-      this.dataService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
+      this.messagesService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
         titleStatusOrders, 'info', '', true, false, ClassNames.popupCustom);
 
       if (resultMaterialRequest.response.productionOrderIds.length !== 0) {
@@ -105,7 +111,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   addNewComponent() {
-    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.addComponent, data: this.dataSource.data });
+    this.observableService.setSearchComponentModal({ modalType: ComponentSearch.addComponent, data: this.dataSource.data });
   }
 
   updateAllComplete() {
@@ -130,7 +136,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   signUser() {
-    this.dataService.setOpenSignatureDialog(this.oldData.signature || CONST_STRING.empty);
+    this.observableService.setOpenSignatureDialog(this.oldData.signature || CONST_STRING.empty);
   }
 
   sendRequest() {
@@ -138,20 +144,20 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.setModelData();
     newComponentsToSend.data = this.oldData;
     newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds || [];
-    newComponentsToSend.userId = this.dataService.getUserId();
+    newComponentsToSend.userId = this.localStorageService.getUserId();
 
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe(resultMaterialPost => {
       if (resultMaterialPost.success && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {
         this.onDataError(resultMaterialPost.response.failed);
       } else {
         this.goBack();
-        this.dataService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
+        this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
       }
     }, error => this.errorService.httpError(error));
   }
 
   cancelRequest() {
-    this.dataService.presentToastCustom(Messages.cancelMaterialRequest, 'question', '', true
+    this.messagesService.presentToastCustom(Messages.cancelMaterialRequest, 'question', '', true
       , true).then((resultCancel: any) => {
         if (resultCancel.isConfirmed) {
           this.goBack();
@@ -186,7 +192,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   deleteComponents() {
-    this.dataService.presentToastCustom(Messages.deleteComponents, 'question', '', true, true)
+    this.messagesService.presentToastCustom(Messages.deleteComponents, 'question', '', true, true)
       .then((resultDeleteMessage: any) => {
         if (resultDeleteMessage.isConfirmed) {
           this.dataSource.data = this.dataSource.data.filter(order => !order.isChecked);
@@ -200,11 +206,11 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.location.back();
   }
   onDataError(errorData: any[], isOnInitError: boolean = false) {
-    this.generateMessage(this.dataService.getMessageTitle(errorData,
+    this.generateMessage(this.messagesService.getMessageTitle(errorData,
       isOnInitError ? MessageType.materialRequest : MessageType.default, !isOnInitError));
   }
   generateMessage(title: string) {
-    this.dataService.presentToastCustom(title, 'error',
+    this.messagesService.presentToastCustom(title, 'error',
       Messages.errorToAssignOrderAutomaticSubtitle,
       true, false, ClassNames.popupCustom);
   }
@@ -219,7 +225,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.dataSource.data.forEach(order => order.requestQuantity = Number(Number(order.requestQuantity).toFixed(CONST_NUMBER.seven)));
     this.oldData.orderedProducts = this.dataSource.data;
     this.oldData.signature = this.oldData.signature || '';
-    this.oldData.signingUserName = this.dataService.getUserName();
+    this.oldData.signingUserName = this.localStorageService.getUserName();
   }
   private getFileNamePreview(): string {
     const date = new Date();

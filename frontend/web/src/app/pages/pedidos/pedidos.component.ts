@@ -29,13 +29,17 @@ import {
   ProcessOrders
 } from '../../model/http/pedidos';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { ErrorHttpInterface } from '../../model/http/commons';
 import { Router } from '@angular/router';
 import { IOrdersRefuseReq, ReasonRefuse } from '../../model/http/detallepedidos.model';
 import { CommentsConfig } from '../../model/device/incidents.model';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ObservableService } from '../../services/observable.service';
+import { DateService } from '../../services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-pedidos',
@@ -73,36 +77,39 @@ export class PedidosComponent implements OnInit, OnDestroy {
     private pedidosService: PedidosService,
     public dataService: DataService,
     private errorService: ErrorService,
-    private dialog: MatDialog,
     private titleService: Title,
     private router: Router,
+    public localStorageService: LocalStorageService,
+    private observableService: ObservableService,
+    private dateService: DateService,
+    private messagesService: MessagesService,
+    private filtersService: FiltersService,
   ) {
-    this.dataService.setUrlActive(HttpServiceTOCall.ORDERS);
-
+    this.observableService.setUrlActive(HttpServiceTOCall.ORDERS);
   }
 
   ngOnInit() {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
-    if (this.dataService.getFiltersActives()) {
-      this.onSuccessSearchOrderModal(this.dataService.getFiltersActivesAsModel());
+    if (this.localStorageService.getFiltersActives()) {
+      this.onSuccessSearchOrderModal(this.localStorageService.getFiltersActivesAsModel());
     } else {
       this.createInitRage();
       this.createProductoNoLabel();
     }
-    this.subscriptionCallHttp.add(this.dataService.getCallHttpService().subscribe(callHttpService => {
+    this.subscriptionCallHttp.add(this.observableService.getCallHttpService().subscribe(callHttpService => {
       if (callHttpService === HttpServiceTOCall.ORDERS) {
         this.getPedidos();
       }
     }));
-    this.subscriptionCallHttp.add(this.dataService.getNewSearchOrdersModal().subscribe(resultSearchOrderModal => {
+    this.subscriptionCallHttp.add(this.observableService.getNewSearchOrdersModal().subscribe(resultSearchOrderModal => {
       if (resultSearchOrderModal.isFromOrders) {
         this.onSuccessSearchOrderModal(resultSearchOrderModal);
       }
     }));
-    this.subscriptionCallHttp.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
+    this.subscriptionCallHttp.add(this.observableService.getNewCommentsResult().subscribe(newCommentsResult =>
       this.successNewComments(newCommentsResult)));
-    this.dataService.removeFiltersActive();
+    this.localStorageService.removeFiltersActive();
   }
   createInitRage() {
 
@@ -114,7 +121,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.filterDataOrders = new ParamsPedidos();
     this.filterDataOrders.isFromOrders = true;
     this.filterDataOrders.dateType = ConstOrders.defaultDateInit;
-    this.filterDataOrders.dateFull = this.dataService.getDateFormatted(new Date(), new Date(), false, false, Number(rangeDateResult));
+    this.filterDataOrders.dateFull = this.dateService.getDateFormatted(new Date(), new Date(), false, false, Number(rangeDateResult));
     this.queryString = `?fini=${this.filterDataOrders.dateFull}`;
     this.getFullQueryString();
     this.getPedidos();
@@ -197,26 +204,26 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   processOrdersService() {
-    this.dataService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
+    this.messagesService.presentToastCustom(Messages.processOrders, 'warning', CONST_STRING.empty, true, true)
       .then((result: any) => {
         if (result.isConfirmed) {
           this.ordersToProcess.listIds = this.getOrdersOnlyOpen();
-          this.ordersToProcess.user = this.dataService.getUserId();
+          this.ordersToProcess.user = this.localStorageService.getUserId();
           this.pedidosService.processOrders(this.ordersToProcess).subscribe(
             resProcessOrder => {
               if (resProcessOrder.success && resProcessOrder.response.length > 0) {
-                const titleProcessWithError = this.dataService.getMessageTitle(resProcessOrder.response, MessageType.processOrder);
+                const titleProcessWithError = this.messagesService.getMessageTitle(resProcessOrder.response, MessageType.processOrder);
                 this.getPedidos();
-                this.dataService.presentToastCustom(titleProcessWithError, 'error',
+                this.messagesService.presentToastCustom(titleProcessWithError, 'error',
                   Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
               } else {
                 this.showMessagesAndRefresh();
               }
-              this.dataService.setIsLoading(false);
+              this.observableService.setIsLoading(false);
             },
             error => {
               if (error.status === HttpStatus.badRequest) {
-                this.dataService.presentToastCustom(error.error, 'error',
+                this.messagesService.presentToastCustom(error.error, 'error',
                   Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
               } else {
                 this.errorService.httpError(error);
@@ -228,7 +235,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
   showMessagesAndRefresh() {
     this.getPedidos();
-    this.dataService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
+    this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
   }
   changeDataEvent(event: PageEvent) {
     this.pageIndex = event.pageIndex;
@@ -239,11 +246,11 @@ export class PedidosComponent implements OnInit, OnDestroy {
     return event;
   }
   openFindOrdersDialog() {
-    this.dataService.setSearchOrdersModal({ modalType: ConstOrders.modalOrders, filterOrdersData: this.filterDataOrders });
+    this.observableService.setSearchOrdersModal({ modalType: ConstOrders.modalOrders, filterOrdersData: this.filterDataOrders });
   }
 
   openPlaceOrdersDialog() {
-    this.dataService.setQbfToPlace(
+    this.observableService.setQbfToPlace(
       {
         modalType: MODAL_NAMES.placeOrders,
         list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders)
@@ -251,13 +258,15 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
   getButtonsToUnLooked() {
     this.isCheckedOrders = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
-    this.isThereOrdersToCancel = this.dataService.getIsThereOnData(this.dataSource.data,
+    this.isThereOrdersToCancel = this.filtersService.getIsThereOnData(this.dataSource.data,
       ConstStatus.finalizado, FromToFilter.fromOrdersCancel);
-    this.isThereOrdersToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado, FromToFilter.fromOrders);
-    this.isThereOrdersToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
-    this.isThereOrdersToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado, FromToFilter.fromOrders);
+    this.isThereOrdersToFinalize = this.filtersService.getIsThereOnData(this.dataSource.data,
+      ConstStatus.terminado, FromToFilter.fromOrders);
+    this.isThereOrdersToPlan = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromOrders);
+    this.isThereOrdersToPlace = this.filtersService.getIsThereOnData(this.dataSource.data,
+      ConstStatus.planificado, FromToFilter.fromOrders);
     this.isThereOrdersToReassign =
-      this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
+      this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.liberado, FromToFilter.fromOrdersReassign);
     this.isTherePedidosToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
   }
@@ -270,7 +279,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   cancelOrders() {
-    this.dataService.setCancelOrders({
+    this.observableService.setCancelOrders({
       list: this.dataSource.data.filter
         (t => (t.isChecked && t.pedidoStatus !== ConstStatus.finalizado && t.pedidoStatus !== ConstStatus.almacenado)).map(order => {
           const cancelOrder = new CancelOrderReq();
@@ -282,7 +291,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   finalizeOrders() {
-    this.dataService.setFinalizeOrders({
+    this.observableService.setFinalizeOrders({
       list: this.dataSource.data.filter
         (t => (t.isChecked && t.pedidoStatus === ConstStatus.terminado)).map(order => {
           const finalizeOrder = new CancelOrderReq();
@@ -298,17 +307,17 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.offset = resultSearchOrderModal.offset || 0;
     this.limit = resultSearchOrderModal.limit || 10;
     this.filterDataOrders = new ParamsPedidos();
-    this.filterDataOrders = this.dataService.getNewDataToFilter(resultSearchOrderModal)[0];
-    this.queryString = this.dataService.getNewDataToFilter(resultSearchOrderModal)[1];
-    this.isSearchWithFilter = this.dataService.getIsWithFilter(resultSearchOrderModal);
+    this.filterDataOrders = this.filtersService.getNewDataToFilter(resultSearchOrderModal)[0];
+    this.queryString = this.filtersService.getNewDataToFilter(resultSearchOrderModal)[1];
+    this.isSearchWithFilter = this.filtersService.getIsWithFilter(resultSearchOrderModal);
     this.getFullQueryString();
     this.getPedidos();
   }
 
   reassignOrders() {
-    this.dataService.setQbfToPlace({
+    this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrders,
-      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+      list: this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
         FromToFilter.fromOrdersReassign, ConstStatus.liberado).map(order => order.docNum)
       , isFromReassign: true
     });
@@ -317,7 +326,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   toSeeRecipes(docNum: number) {
     this.pedidosService.getRecipesByOrder(docNum).subscribe(recipeByOrderRes => {
       this.onSuccessHttpGetRecipes(recipeByOrderRes);
-      this.dataService.setIsLoading(false);
+      this.observableService.setIsLoading(false);
     }
       , error => this.errorService.httpError(error));
 
@@ -325,7 +334,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   onSuccessHttpGetRecipes(resultGetRecipes: IRecipesRes) {
     if (resultGetRecipes.response.length === CONST_NUMBER.zero) {
-      this.dataService.setMessageGeneralCallHttp({ title: Messages.noHasRecipes, icon: 'info', isButtonAccept: true });
+      this.observableService.setMessageGeneralCallHttp({ title: Messages.noHasRecipes, icon: 'info', isButtonAccept: true });
     } else {
       resultGetRecipes.response.forEach(urlPdf => this.dataService.openNewTapByUrl(urlPdf.recipe, TypeToSeeTap.receipt, urlPdf.order));
     }
@@ -335,7 +344,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.filterDataOrders.offset = this.offset;
     this.filterDataOrders.limit = this.limit;
     this.filterDataOrders.pageIndex = this.pageIndex;
-    this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
+    this.localStorageService.setFiltersActives(JSON.stringify(this.filterDataOrders));
     this.router.navigate([RouterPaths.materialRequest,
     this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromOrders).toString() || CONST_NUMBER.zero,
     CONST_NUMBER.one]);
@@ -343,7 +352,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   printOrderAsPdfFile() {
     if (this.isCheckedOrders) {
-      this.dataService.presentToastCustom(Messages.confirmCreateOrderPdf, 'question', '', true, true)
+      this.messagesService.presentToastCustom(Messages.confirmCreateOrderPdf, 'question', '', true, true)
         .then((res: any) => {
           if (res.isConfirmed) {
             this.printOrderAsPdfFileConfirmedAction();
@@ -366,9 +375,9 @@ export class PedidosComponent implements OnInit, OnDestroy {
           } else {
             message = `${Messages.errorMessageCreateOrderPdf}${formatedNumbers}`;
           }
-          this.dataService.presentToastCustom(Messages.errorTitleCreateOrderPdf, 'error', message, true, false, ClassNames.popupCustom);
+          this.messagesService.presentToastCustom(Messages.errorTitleCreateOrderPdf, 'error', message, true, false, ClassNames.popupCustom);
         } else {
-          this.dataService.presentToastCustom(Messages.successTitleCreateOrderPdf, 'success', null, true, false);
+          this.messagesService.presentToastCustom(Messages.successTitleCreateOrderPdf, 'success', null, true, false);
         }
         this.getPedidos();
       },
@@ -384,7 +393,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.filterDataOrders.offset = this.offset;
     this.filterDataOrders.limit = this.limit;
     this.filterDataOrders.pageIndex = this.pageIndex;
-    this.dataService.setFiltersActives(JSON.stringify(this.filterDataOrders));
+    this.localStorageService.setFiltersActives(JSON.stringify(this.filterDataOrders));
     this.router.navigate([RouterPaths.orderDetail, order]);
   }
   viewPedidosWithPdf() {
@@ -406,7 +415,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   ordersToRefuse() {
 
-    this.dataService.presentToastCustom(Messages.refuseOrders, 'warning', CONST_STRING.empty, true, true)
+    this.messagesService.presentToastCustom(Messages.refuseOrders, 'warning', CONST_STRING.empty, true, true)
       .then((result: any) => {
         if (result.isConfirmed) {
           this.showCommentsToRefuse();
@@ -415,12 +424,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   showCommentsToRefuse() {
-    this.dataService.setOpenCommentsDialog({ comments: CONST_STRING.empty, isForRefuseOrders: true });
+    this.observableService.setOpenCommentsDialog({ comments: CONST_STRING.empty, isForRefuseOrders: true });
   }
   successNewComments(newCommentsResult: CommentsConfig) {
     const ordersToRefuseReq = new IOrdersRefuseReq();
     ordersToRefuseReq.comments = newCommentsResult.comments;
-    ordersToRefuseReq.userId = this.dataService.getUserId();
+    ordersToRefuseReq.userId = this.localStorageService.getUserId();
     ordersToRefuseReq.ordersId = this.getOrdersOnlyOpen();
     this.pedidosService.putRefuseOrders(ordersToRefuseReq).subscribe(({ response }) =>
       this.successRefuseResult(response.failed), error => this.errorService.httpError(error));
@@ -430,7 +439,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
       this.showMessagesAndRefresh();
       return;
     }
-    this.dataService.presentToastCustom(this.dataService.getMessageTitle(failed, MessageType.default, true)
+    this.messagesService.presentToastCustom(this.messagesService.getMessageTitle(failed, MessageType.default, true)
       , 'info', CONST_STRING.empty, true, false, ClassNames.popupCustom);
     this.getPedidos();
   }
@@ -454,13 +463,13 @@ export class PedidosComponent implements OnInit, OnDestroy {
   }
 
   createProductoNoLabel() {
-    this.pedidosService.getInitRangeDate().subscribe(({response}) =>
-    this.setProductNoLabel(response.filter(value => value.field === 'ProductNoLabel')[0]),
-    error => this.errorService.httpError(error));
+    this.pedidosService.getInitRangeDate().subscribe(({ response }) =>
+      this.setProductNoLabel(response.filter(value => value.field === 'ProductNoLabel')[0]),
+      error => this.errorService.httpError(error));
   }
 
   setProductNoLabel(value: Catalogs) {
-    this.dataService.setProductNoLabel(value);
+    this.localStorageService.setProductNoLabel(value);
   }
 
 

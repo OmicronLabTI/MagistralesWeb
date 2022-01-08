@@ -8,24 +8,29 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DatePipe } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
-import { OrdersService } from 'src/app/services/orders.service';
 import { PedidosService } from '../../services/pedidos.service';
 import { of } from 'rxjs';
 import { Batches, CancelOrderReq, IExistsBachCodeRes, IGetNewBachCodeRes } from 'src/app/model/http/pedidos';
 import { ICancelOrdersRes } from '../../model/http/pedidos';
 import { ErrorService } from 'src/app/services/error.service';
-import { DataService } from 'src/app/services/data.service';
-import { IOrdersReq, IOrdersRes } from 'src/app/model/http/ordenfabricacion';
+import { IOrdersReq } from 'src/app/model/http/ordenfabricacion';
 import { AddCommentsDialogComponent } from '../add-comments-dialog/add-comments-dialog.component';
 import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from 'src/app/services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('FinalizeOrdersComponent', () => {
   let component: FinalizeOrdersComponent;
   let fixture: ComponentFixture<FinalizeOrdersComponent>;
   let orderServiceSpy: jasmine.SpyObj<PedidosService>;
   let errorServiceSpy: jasmine.SpyObj<ErrorService>;
-  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let dialogRefSpy: jasmine.SpyObj<MatDialogRef<AddCommentsDialogComponent>>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
 
   const getNextBatchCodeRes = new IGetNewBachCodeRes();
   const getIfExistsBatchCodeRes = new IExistsBachCodeRes();
@@ -45,62 +50,71 @@ describe('FinalizeOrdersComponent', () => {
     batches: [batches]
   }];
 
-  // iOrderRes.response = iOrdersReq;
 
 
   beforeEach(async(() => {
-  dialogRefSpy = jasmine.createSpyObj<MatDialogRef<AddCommentsDialogComponent>>('MatDialogRef', [
-    'close',
-  ]);
-  dialogRefSpy.close.and.returnValue();
-  orderServiceSpy = jasmine.createSpyObj<PedidosService>
-    ('PedidosService',
-    [
-      'getNextBatchCode',
-      'getIfExistsBatchCode',
-      'putFinalizeOrders'
-    ]);
-  orderServiceSpy.getNextBatchCode.and.returnValue(of(getNextBatchCodeRes));
-  orderServiceSpy.getIfExistsBatchCode.and.returnValue(of(getIfExistsBatchCodeRes));
-  orderServiceSpy.putFinalizeOrders.and.returnValue(of(putFinalizeOrders));
-
-
-  errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
-
-
-  dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
-    [
-      'getUserId',
-      'transformDate',
-      'getMessageTitle',
-      'setCallHttpService',
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
       'presentToastCustom',
-      'setMessageGeneralCallHttp',
+      'getMessageTitle',
     ]);
 
-  dataServiceSpy.getUserId.and.returnValue('');
-  dataServiceSpy.transformDate.and.returnValue('');
-  dataServiceSpy.getMessageTitle.and.returnValue('');
-  dataServiceSpy.setCallHttpService.and.returnValue();
-  dataServiceSpy.setMessageGeneralCallHttp.and.returnValue();
-  dataServiceSpy.presentToastCustom.and.callFake(() => {
-    return Promise.resolve();
-  });
+    dialogRefSpy = jasmine.createSpyObj<MatDialogRef<AddCommentsDialogComponent>>('MatDialogRef', [
+      'close',
+    ]);
+    dialogRefSpy.close.and.returnValue();
+    orderServiceSpy = jasmine.createSpyObj<PedidosService>
+      ('PedidosService',
+        [
+          'getNextBatchCode',
+          'getIfExistsBatchCode',
+          'putFinalizeOrders'
+        ]);
+    orderServiceSpy.getNextBatchCode.and.returnValue(of(getNextBatchCodeRes));
+    orderServiceSpy.getIfExistsBatchCode.and.returnValue(of(getIfExistsBatchCodeRes));
+    orderServiceSpy.putFinalizeOrders.and.returnValue(of(putFinalizeOrders));
 
-  TestBed.configureTestingModule({
-    declarations: [FinalizeOrdersComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [MATERIAL_COMPONENTS, FormsModule, HttpClientTestingModule, RouterTestingModule],
-    providers: [
-      { provide: MatDialogRef, useValue: dialogRefSpy },
-      { provide: MAT_DIALOG_DATA, useValue: { finalizeOrdersData: [] } },
-      DatePipe,
-      { provide: PedidosService, useValue: orderServiceSpy },
-      { provide: ErrorService, useValue: errorServiceSpy },
-      { provide: DataService, useValue: dataServiceSpy },
-    ]
-  })
-    .compileComponents();
+
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+      'getUserId',
+    ]);
+
+    localStorageServiceSpy.getUserId.and.returnValue('');
+    messagesServiceSpy.getMessageTitle.and.returnValue('');
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve();
+    });
+    // --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'setCallHttpService',
+        'setMessageGeneralCallHttp',
+      ]
+    );
+    observableServiceSpy.setCallHttpService.and.returnValue();
+    observableServiceSpy.setMessageGeneralCallHttp.and.returnValue();
+    // --- Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'transformDate',
+    ]);
+    dateServiceSpy.transformDate.and.returnValue('');
+    TestBed.configureTestingModule({
+      declarations: [FinalizeOrdersComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [MATERIAL_COMPONENTS, FormsModule, HttpClientTestingModule, RouterTestingModule],
+      providers: [
+        { provide: MatDialogRef, useValue: dialogRefSpy },
+        { provide: MAT_DIALOG_DATA, useValue: { finalizeOrdersData: [] } },
+        DatePipe,
+        { provide: PedidosService, useValue: orderServiceSpy },
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: DateService, useValue: dateServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
+      ]
+    })
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -315,7 +329,7 @@ describe('FinalizeOrdersComponent', () => {
   });
 
   it('should finalizeOrderSend', () => {
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
@@ -352,7 +366,7 @@ describe('FinalizeOrdersComponent', () => {
   it('should keyFunction', () => {
     // const event = new KeyboardEvent('keypress', { key: 'Enter' });
     component.isCorrectData = true;
-    const keyEvent = new KeyboardEvent('keyEnter', { key: MODAL_FIND_ORDERS.keyEnter});
+    const keyEvent = new KeyboardEvent('keyEnter', { key: MODAL_FIND_ORDERS.keyEnter });
     // component.keyDownUsers(keyEvent);
     component.keyDownFunction(keyEvent);
     expect(component.finalizeOrderSend).toBeTruthy();

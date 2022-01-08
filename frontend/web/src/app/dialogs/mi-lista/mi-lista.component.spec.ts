@@ -13,7 +13,6 @@ import {DatePipe} from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MiListaComponent } from './mi-lista.component';
 import {RouterTestingModule} from '@angular/router/testing';
-import { DataService } from 'src/app/services/data.service';
 import { OrdersService } from 'src/app/services/orders.service';
 import Swal from 'sweetalert2';
 import {PipesModule} from '../../pipes/pipes.module';
@@ -21,12 +20,16 @@ import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { of } from 'rxjs';
 import { IMyListRes } from 'src/app/model/http/listacomponentes';
 import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('MiListaComponent', () => {
   let component: MiListaComponent;
   let fixture: ComponentFixture<MiListaComponent>;
   let ordersServiceSpy: jasmine.SpyObj<OrdersService>;
-  let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+
   const close = () => {};
   const iMyListRes = new IMyListRes();
   iMyListRes.response = 0;
@@ -34,18 +37,21 @@ describe('MiListaComponent', () => {
     close: jasmine.createSpy('close')
   };
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
+    ]);
+
     ordersServiceSpy = jasmine.createSpyObj<OrdersService>('OrdersService', [
       'saveMyListComponent'
     ]);
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom',
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getUserId'
     ]);
-    dataServiceSpy.getUserId.and.callFake(() => {
+    localStorageServiceSpy.getUserId.and.callFake(() => {
       return '123';
     });
     // spyOn(authService, 'isAuthenticated').and.returnValue(Promise.resolve(true));
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
@@ -78,8 +84,9 @@ describe('MiListaComponent', () => {
           provide: MatDialogRef,
           useValue: {close}
         },
-        { provide: DataService, useValue: dataServiceSpy },
         { provide: OrdersService, useValue: ordersServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: MessagesService, useValue: messagesServiceSpy },
       ]
     })
     .compileComponents();
@@ -95,13 +102,13 @@ describe('MiListaComponent', () => {
     expect(component).toBeTruthy();
   });
   it('should save My List response 0', () => {
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
     });
     component.saveMyList();
-    expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
   it('should save My List response !=0', () => {
     const iMy = new IMyListRes();
@@ -109,13 +116,13 @@ describe('MiListaComponent', () => {
     ordersServiceSpy.saveMyListComponent.and.callFake(() => {
       return of(iMy);
     });
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
     });
     component.saveMyList();
-    expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
   it('should key Down Function', () => {
     // expect(component.keyDownFunction).toBeTruthy();

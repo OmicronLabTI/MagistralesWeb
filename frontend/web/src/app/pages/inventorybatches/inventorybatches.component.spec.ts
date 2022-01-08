@@ -2,25 +2,29 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InventorybatchesComponent } from './inventorybatches.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { DataService } from 'src/app/services/data.service';
 import { BatchesService } from 'src/app/services/batches.service';
 import { ErrorService } from 'src/app/services/error.service';
-import { ILotesAsignadosReq, ILotesFormulaReq, ILotesFormulaRes, ILotesReq,
-  ILotesSaveRes, ILotesSelectedReq } from 'src/app/model/http/lotesformula';
+import {
+  ILotesAsignadosReq, ILotesFormulaReq, ILotesFormulaRes, ILotesReq,
+  ILotesSaveRes, ILotesSelectedReq
+} from 'src/app/model/http/lotesformula';
 import { of } from 'rxjs';
 import { CONST_NUMBER } from 'src/app/constants/const';
+import { ObservableService } from 'src/app/services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('InventorybatchesComponent', () => {
   let component: InventorybatchesComponent;
   let fixture: ComponentFixture<InventorybatchesComponent>;
-  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let batchesServiceSpy: jasmine.SpyObj<BatchesService>;
   let errorServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   const iLotesFormulaRes = new ILotesFormulaRes();
   const iLotesSaveRes = new ILotesSaveRes();
   const iLotesReq = new ILotesReq();
@@ -32,6 +36,10 @@ describe('InventorybatchesComponent', () => {
   iLotesReq.fechaExp = new Date('12/12/21');
   iLotesReq.isValid = true;
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom',
+      'getMessageTitle',
+    ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
@@ -44,19 +52,19 @@ describe('InventorybatchesComponent', () => {
     });
     batchesServiceSpy.updateBatches.and.returnValue(of(iLotesSaveRes));
 
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'setGeneralNotificationMessage',
-      'setUrlActive',
-      'presentToastCustom',
-      'getMessageTitle',
-      'setPathUrl'
-    ]);
-    dataServiceSpy.setGeneralNotificationMessage.and.returnValue();
-    dataServiceSpy.setUrlActive.and.returnValue();
-    dataServiceSpy.presentToastCustom.and.returnValue(Promise.resolve());
-    dataServiceSpy.getMessageTitle.and.returnValue('');
-    dataServiceSpy.setPathUrl.and.returnValue();
-
+    messagesServiceSpy.presentToastCustom.and.returnValue(Promise.resolve());
+    messagesServiceSpy.getMessageTitle.and.returnValue('');
+    // --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'setGeneralNotificationMessage',
+        'setUrlActive',
+        'setPathUrl',
+        'setIsLoading'
+      ]);
+    observableServiceSpy.setGeneralNotificationMessage.and.returnValue();
+    observableServiceSpy.setUrlActive.and.returnValue();
+    observableServiceSpy.setPathUrl.and.returnValue();
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
@@ -66,10 +74,13 @@ describe('InventorybatchesComponent', () => {
         FormsModule,
         BrowserAnimationsModule
       ],
-      declarations: [ InventorybatchesComponent ],
-      providers: [DatePipe]
+      declarations: [InventorybatchesComponent],
+      providers: [
+        DatePipe,
+        { provide: ObservableService, useValue: observableServiceSpy }
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -142,26 +153,26 @@ describe('InventorybatchesComponent', () => {
     iLotesAsignadosReq.isValid = false;
 
     component.dataSourceDetails.data =
-    [{
-      codigoProducto: '1',
-      descripcionProducto: '',
-      almacen: '',
-      totalNecesario: 1,
-      totalSeleccionado: 1,
-      selected: true,
-      lotesSeleccionados: iLotesSelectReq,
-      lotes: iLotesReqq,
-      lotesAsignados: [iLotesAsignadosReq]
-    }];
+      [{
+        codigoProducto: '1',
+        descripcionProducto: '',
+        almacen: '',
+        totalNecesario: 1,
+        totalSeleccionado: 1,
+        selected: true,
+        lotesSeleccionados: iLotesSelectReq,
+        lotes: iLotesReqq,
+        lotesAsignados: [iLotesAsignadosReq]
+      }];
     iLotesFormulaReq.codigoProducto = '1';
     iLotesFormulaReq.descripcionProducto = '';
     iLotesFormulaReq.almacen = '';
     iLotesFormulaReq.totalNecesario = 1;
     iLotesFormulaReq.totalSeleccionado = 1;
     iLotesFormulaReq.lotesSeleccionados = iLotesSelectReq,
-    iLotesFormulaReq.selected = true,
-    iLotesFormulaReq.lotes = iLotesReqq,
-    iLotesFormulaReq.lotesAsignados = [iLotesAsignadosReq];
+      iLotesFormulaReq.selected = true,
+      iLotesFormulaReq.lotes = iLotesReqq,
+      iLotesFormulaReq.lotesAsignados = [iLotesAsignadosReq];
 
     // component.setSelectedTr(iLotesFormulaReq);
     // expect(component.setSelectedTr()).toBeTruthy();
@@ -272,17 +283,17 @@ describe('InventorybatchesComponent', () => {
     iLotesAsignadosReq.action = '';
     iLotesAsignadosReq.isValid = false;
     component.dataSourceDetails.data =
-    [{
-      codigoProducto: '',
-      descripcionProducto: '',
-      almacen: '',
-      totalNecesario: 1,
-      totalSeleccionado: 1,
-      selected: true,
-      lotesSeleccionados: iLotesSelectReq,
-      lotes: iLotesReqq,
-      lotesAsignados: [iLotesAsignadosReq]
-    }];
+      [{
+        codigoProducto: '',
+        descripcionProducto: '',
+        almacen: '',
+        totalNecesario: 1,
+        totalSeleccionado: 1,
+        selected: true,
+        lotesSeleccionados: iLotesSelectReq,
+        lotes: iLotesReqq,
+        lotesAsignados: [iLotesAsignadosReq]
+      }];
     component.deleteLotes(iLotesAsignadosReq);
     expect(component.deleteLotes()).toBeFalsy();
   });
@@ -317,17 +328,17 @@ describe('InventorybatchesComponent', () => {
       isValid: false,
     }];
     component.dataSourceDetails.data =
-    [{
-      codigoProducto: '',
-      descripcionProducto: '',
-      almacen: '',
-      totalNecesario: 1,
-      totalSeleccionado: 1,
-      selected: true,
-      lotesSeleccionados: iLotesSelectReq,
-      lotes: iLotesReqq,
-      lotesAsignados: [iLotesAsignadosReq]
-    }];
+      [{
+        codigoProducto: '',
+        descripcionProducto: '',
+        almacen: '',
+        totalNecesario: 1,
+        totalSeleccionado: 1,
+        selected: true,
+        lotesSeleccionados: iLotesSelectReq,
+        lotes: iLotesReqq,
+        lotesAsignados: [iLotesAsignadosReq]
+      }];
     // component.deleteDetails(iLotesAsignadosReq[0]);
     // expect(component.deleteDetails()).toBeFalsy();
   });
@@ -360,17 +371,17 @@ describe('InventorybatchesComponent', () => {
     iLotesAsignadosReq.action = '';
     iLotesAsignadosReq.isValid = false;
     component.dataSourceDetails.data =
-    [{
-      codigoProducto: '',
-      descripcionProducto: '',
-      almacen: '',
-      totalNecesario: 1,
-      totalSeleccionado: 1,
-      selected: true,
-      lotesSeleccionados: iLotesSelectReq,
-      lotes: iLotesReqq,
-      lotesAsignados: [iLotesAsignadosReq]
-    }];
+      [{
+        codigoProducto: '',
+        descripcionProducto: '',
+        almacen: '',
+        totalNecesario: 1,
+        totalSeleccionado: 1,
+        selected: true,
+        lotesSeleccionados: iLotesSelectReq,
+        lotes: iLotesReqq,
+        lotesAsignados: [iLotesAsignadosReq]
+      }];
     component.deleteDetails(iLotesAsignadosReq);
     // expect(component.deleteDetails()).toBeFalsy();
   });
@@ -424,7 +435,7 @@ describe('InventorybatchesComponent', () => {
         lotesAsignados: [iLotesAsignadosReq]
       }];
     component.addLotes(iLotesReqq[0]);
-    expect(dataServiceSpy.setGeneralNotificationMessage).toBeTruthy();
+    expect(observableServiceSpy.setGeneralNotificationMessage).toBeTruthy();
   });
 
   it('should buildObjectToSap', () => {
@@ -468,7 +479,7 @@ describe('InventorybatchesComponent', () => {
       }];
     component.buildObjectToSap();
     expect(component.buildObjectToSap).toBeTruthy();
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
