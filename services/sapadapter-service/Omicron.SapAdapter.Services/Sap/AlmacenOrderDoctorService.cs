@@ -60,7 +60,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters)
         {
-            var typesString = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypesByDoctor);
+            var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypesByDoctor);
             var types = typesString.Split(",").ToList();
 
             var userOrdersTuple = await this.GetUserOrders();
@@ -109,10 +109,10 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var item = productItems.FirstOrDefault(x => x.ProductoId == detail.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
-                var productType = ServiceUtils.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+                var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
                 var saleDetail = saleDetails.FirstOrDefault(x => x.CodigoProducto == detail.ProductoId);
                 var orderId = saleDetail?.OrdenFabricacionId.ToString() ?? string.Empty;
-                var itemcode = ServiceUtils.GetItemcode(item.ProductoId, orderId);
+                var itemcode = ServiceShared.GetItemcode(item.ProductoId, orderId);
 
                 var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == saleorderid && x.ItemCode == item.ProductoId);
                 incidentdb ??= new IncidentsModel();
@@ -132,7 +132,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ProductType = $"Producto {productType}",
                     Pieces = detail.Quantity,
                     Container = detail.Container,
-                    Status = ServiceUtils.CalculateTernary(detail.CanceledOrder == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
+                    Status = ServiceShared.CalculateTernary(detail.CanceledOrder == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
                     Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
                 };
                 listDetails.Add(detailItem);
@@ -193,7 +193,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private async Task<List<CompleteAlmacenOrderModel>> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
         {
-            if (ServiceUtils.IsValidFilterByTypeShipping(parameters))
+            if (ServiceShared.IsValidFilterByTypeShipping(parameters))
             {
                 var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
                 sapOrders = sapOrders.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
@@ -263,11 +263,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 
-                var productType = ServiceUtils.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
-                productType = ServiceUtils.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
+                var productType = ServiceShared.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
+                productType = ServiceShared.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
 
                 var isLocal = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, order.Address);
-                var orderType = ServiceUtils.CalculateTernary(isLocal, ServiceConstants.Local, ServiceConstants.Foraneo);
+                var orderType = ServiceShared.CalculateTernary(isLocal, ServiceConstants.Local, ServiceConstants.Foraneo);
 
                 var userOrder = usersOrders.GetSaleOrderHeader(so.ToString());
 
@@ -275,7 +275,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     DocNum = so,
                     InitDate = order?.FechaInicio ?? DateTime.Now,
-                    Status = ServiceUtils.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
+                    Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
                     TotalItems = orders.Count,
                     TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
                     TypeSaleOrder = $"Pedido {productType}",
@@ -292,8 +292,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private List<string> GetDoctorsToProcess(List<string> doctors, Dictionary<string, string> parameters)
         {
-            var offset = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
-            var limit = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
+            var offset = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);

@@ -189,7 +189,7 @@ namespace Omicron.SapAdapter.Services.Sap
             order ??= new CompleteDetailOrderModel();
 
             var itemCode = (await this.sapDao.GetProductById(order.CodigoProducto)).FirstOrDefault();
-            var productType = ServiceUtils.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+            var productType = ServiceShared.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
             var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId);
 
@@ -222,7 +222,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 return ServiceUtils.CreateResult(true, 404, null, new LineScannerModel(), null, null);
             }
 
-            var productType = ServiceUtils.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+            var productType = ServiceShared.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
             var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId);
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, new List<int> { saleOrder });
             var lineProduct = lineOrders.FirstOrDefault(x => x.ItemCode == itemCode.ProductoId);
@@ -394,7 +394,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     AvailableQuantity = b.BatchQty,
                     Batch = b.BatchNumber,
-                    ExpDate = ServiceUtils.GetDateValueOrDefault(batchDb.ExpDate, string.Empty),
+                    ExpDate = ServiceShared.GetDateValueOrDefault(batchDb.ExpDate, string.Empty),
                 };
 
                 batches.Add(batch);
@@ -444,8 +444,8 @@ namespace Omicron.SapAdapter.Services.Sap
         private List<int> GetInvoicesToLook(Dictionary<string, string> parameters, List<InvoiceHeaderModel> invoiceHeaders)
         {
             var invoiceHeadersIds = invoiceHeaders.OrderByDescending(x => x.InvoiceId).Select(y => y.InvoiceId).ToList();
-            var offset = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
-            var limit = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
+            var offset = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
@@ -462,7 +462,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<List<InvoiceHeaderModel>> GetInvoiceHeaderByParameters(List<InvoiceHeaderModel> invoices, List<DeliveryDetailModel> deliveryDetails, Dictionary<string, string> parameters)
         {
-            if (ServiceUtils.IsValidFilterByTypeShipping(parameters))
+            if (ServiceShared.IsValidFilterByTypeShipping(parameters))
             {
                 var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
                 invoices = invoices.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
@@ -583,7 +583,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 usedDeliveries.Add(new DeliveryDetailModel { BaseEntry = saleId, ProductoId = prodId });
 
-                var productType = ServiceUtils.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+                var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
                 if (item.IsMagistral.Equals("N"))
                 {

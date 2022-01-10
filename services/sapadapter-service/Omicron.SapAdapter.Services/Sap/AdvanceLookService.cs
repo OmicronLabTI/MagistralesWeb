@@ -170,7 +170,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 if (adnvaceLookUp.CancelationModel != null && adnvaceLookUp.CancelationModel.Any(x => x.CancelledId == id))
                 {
                     var cancelled = adnvaceLookUp.CancelationModel.FirstOrDefault(x => x.CancelledId == id);
-                    var type = ServiceUtils.CalculateTernary(cancelled.TypeCancellation.ToLower() == ServiceConstants.Invoice, ServiceConstants.Invoice, ServiceConstants.Delivery);
+                    var type = ServiceShared.CalculateTernary(cancelled.TypeCancellation.ToLower() == ServiceConstants.Invoice, ServiceConstants.Invoice, ServiceConstants.Delivery);
                     tupleIds.Add(new Tuple<int, string>(id, type));
                     match = true;
                 }
@@ -367,7 +367,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : status;
                 status = lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Almacenado && order.PedidoMuestra == ServiceConstants.IsSampleOrder ? ServiceConstants.Almacenado : status;
                 productType = ServiceConstants.Linea;
-                porRecibirDate = ServiceUtils.ParseExactDateOrDefault(order.FechaInicio, porRecibirDate);
+                porRecibirDate = ServiceShared.ParseExactDateOrDefault(order.FechaInicio, porRecibirDate);
                 hasCandidate = this.CalculateIfLineOrderIsCandidate(lineProductOrder, status, order);
             }
 
@@ -379,12 +379,12 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceType = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, paramentsCards.LocalNeighbors, order.Address) ? ServiceConstants.Local : ServiceConstants.Foraneo;
             totalItems = saporders.Count;
             totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
-            initDate = ServiceUtils.ParseExactDateOrDefault(order.FechaInicio, initDate);
+            initDate = ServiceShared.ParseExactDateOrDefault(order.FechaInicio, initDate);
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
                 DocNum = order.DocNum,
-                Status = ServiceUtils.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, status),
+                Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, status),
                 TypeSaleOrder = $"Pedido {productType}",
                 Doctor = order.Medico,
                 InvoiceType = invoiceType,
@@ -393,7 +393,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Client = order.Cliente,
                 TotalPieces = totalPieces,
                 DataCheckin = porRecibirDate,
-                OrderMuestra = ServiceUtils.CalculateTernary(string.IsNullOrEmpty(order.PedidoMuestra), ServiceConstants.IsNotSampleOrder, order.PedidoMuestra),
+                OrderMuestra = ServiceShared.CalculateTernary(string.IsNullOrEmpty(order.PedidoMuestra), ServiceConstants.IsNotSampleOrder, order.PedidoMuestra),
                 Comments = comments.ToString(),
                 SapComments = order.Comments,
                 TypeOrder = order.OrderType,
@@ -602,7 +602,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var doctorValue = parameters.ContainsKey(ServiceConstants.Doctor) ? parameters[ServiceConstants.Doctor].Split(",").ToList() : new List<string>();
             var dictDates = ServiceUtils.GetDateFilter(parameters);
-            var type = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.SaleOrder);
+            var type = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.SaleOrder);
 
             switch (type)
             {
@@ -849,7 +849,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         DeliveryId = y.DeliveryId,
                         DeliveryDocDate = y.DocDate,
                         SaleOrder = y.BaseEntry ?? 0,
-                        Status = ServiceUtils.CalculateTernary(userOrderStatus.Any() && userOrderStatus.All(z => z == ServiceConstants.Empaquetado), ServiceConstants.Empaquetado, ServiceConstants.Almacenado),
+                        Status = ServiceShared.CalculateTernary(userOrderStatus.Any() && userOrderStatus.All(z => z == ServiceConstants.Empaquetado), ServiceConstants.Empaquetado, ServiceConstants.Almacenado),
                         TotalItems = invoiceDetails.Where(a => a.BaseEntry.HasValue).Count(z => z.BaseEntry == y.DeliveryId),
                     };
 
