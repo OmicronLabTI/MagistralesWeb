@@ -244,13 +244,18 @@ namespace Omicron.SapAdapter.Services.Sap
             detailsSale.ForEach(x =>
             {
                 var product = products.FirstOrDefault(y => y.ProductoId == x.ProductoId);
-                var type = product.IsWorkableProduct == "Y" && product.IsMagistral == "Y" && product.IsLine == "N" ? "mg" : "extra";
-                type = product.IsWorkableProduct == "Y" && product.IsMagistral == "N" && product.IsLine == "Y" ? "ln" : type;
+                var type = ServiceShared.CalculateTernary(this.CalculateTypeProduct(product, "Y", "N"), "mg", "extra");
+                type = ServiceShared.CalculateTernary(this.CalculateTypeProduct(product, "N", "Y"), "ln", type);
                 x.Label = type;
             });
 
             var objectToReturn = new { DeliveryDetail = allDeliveries, DetallePedido = detailsSale };
             return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
+        }
+
+        private bool CalculateTypeProduct(ProductoModel product, string isMagistral, string isLine)
+        {
+            return product.IsWorkableProduct == "Y" && product.IsMagistral == isMagistral && product.IsLine == isLine;
         }
 
         private async Task<List<UserOrderModel>> GetUserOrderByids(List<int> ordersId, string route)
@@ -312,13 +317,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var productList = this.GetProductListModel(pedidos, sapOrders, lineOrders, incidences, batches);
 
-            var salesStatusMagistral = userOrder != null && userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : ServiceConstants.Pendiente;
-            salesStatusMagistral = userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) && userOrder.StatusAlmacen != ServiceConstants.Recibir ? userOrder.StatusAlmacen : salesStatusMagistral;
-            salesStatusMagistral = salesStatusMagistral == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : salesStatusMagistral;
-            salesStatusMagistral = salesStatusMagistral == ServiceConstants.PorRecibir && productList.Any(y => y.Status == ServiceConstants.Pendiente) ? ServiceConstants.Pendiente : salesStatusMagistral;
+            var salesStatusMagistral = this.GetStatusSaleOrder(userOrder);
+            salesStatusMagistral = ServiceShared.CalculateTernary(salesStatusMagistral == ServiceConstants.PorRecibir && productList.Any(y => y.Status == ServiceConstants.Pendiente), ServiceConstants.Pendiente, salesStatusMagistral);
 
-            var salesStatusLinea = lineOrders.Any(x => x.DeliveryId != 0) ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
-            var salesStatus = userOrder != null ? salesStatusMagistral : salesStatusLinea;
+            var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
+
+            var salesStatus = ServiceShared.CalculateTernary(userOrder != null, salesStatusMagistral, salesStatusLinea);
 
             var productType = ServiceShared.CalculateTernary(productList.All(x => x.IsMagistral), ServiceConstants.Magistral, ServiceConstants.Mixto);
             productType = ServiceShared.CalculateTernary(productList.All(x => !x.IsMagistral), ServiceConstants.Linea, productType);
@@ -509,13 +513,11 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var localUserOrders = userOrders.Where(x => x.Salesorderid == so.ToString() && !string.IsNullOrEmpty(x.Productionorderid)).ToList();
 
-                var salesStatusMagistral = userOrder != null && userOrder.Status.Equals(ServiceConstants.Finalizado) ? ServiceConstants.PorRecibir : ServiceConstants.Pendiente;
-                salesStatusMagistral = userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) && userOrder.StatusAlmacen != ServiceConstants.Recibir ? userOrder.StatusAlmacen : salesStatusMagistral;
-                salesStatusMagistral = salesStatusMagistral == ServiceConstants.Recibir ? ServiceConstants.PorRecibir : salesStatusMagistral;
-                salesStatusMagistral = salesStatusMagistral == ServiceConstants.PorRecibir && localUserOrders.Any(y => y.Status == ServiceConstants.Finalizado && y.FinishedLabel == 0) ? ServiceConstants.Pendiente : salesStatusMagistral;
+                var salesStatusMagistral = this.GetStatusSaleOrder(userOrder);
+                salesStatusMagistral = ServiceShared.CalculateTernary(salesStatusMagistral == ServiceConstants.PorRecibir && localUserOrders.Any(y => y.Status == ServiceConstants.Finalizado && y.FinishedLabel == 0), ServiceConstants.Pendiente, salesStatusMagistral);
 
-                var salesStatusLinea = lineOrders.Any(x => x.DeliveryId != 0) ? ServiceConstants.BackOrder : ServiceConstants.PorRecibir;
-                var salesStatus = userOrder != null ? salesStatusMagistral : salesStatusLinea;
+                var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
+                var salesStatus = ServiceShared.CalculateTernary(userOrder != null, salesStatusMagistral, salesStatusLinea);
 
                 var saleOrderType = ServiceShared.CalculateTernary(saleOrderTypes.MagistralSaleOrders.Contains(so), ServiceConstants.Magistral, ServiceConstants.LineaAlone);
                 saleOrderType = ServiceShared.CalculateTernary(saleOrderTypes.MixedSaleOrders.Contains(so), ServiceConstants.Mixto, saleOrderType);
@@ -582,7 +584,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var listToReturn = new List<ProductListModel>();
             foreach (var order in sapOrders)
             {
-                var itemcode = !string.IsNullOrEmpty(order.FabricationOrder) ? $"{order.Producto.ProductoId} - {order.FabricationOrder}" : order.Producto.ProductoId;
+                var itemcode = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(order.FabricationOrder), $"{order.Producto.ProductoId} - {order.FabricationOrder}", order.Producto.ProductoId);
                 var productType = ServiceShared.CalculateTernary(order.Producto.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
                 var orderStatus = ServiceConstants.PorRecibir;
@@ -594,8 +596,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     var userFabOrder = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid.Equals(order.FabricationOrder));
                     userFabOrder ??= new UserOrderModel { Status = ServiceConstants.Finalizado };
-                    orderStatus = userFabOrder.Status == ServiceConstants.Finalizado ? ServiceConstants.PorRecibir : userFabOrder.Status;
-                    orderStatus = orderStatus == ServiceConstants.PorRecibir && userFabOrder.FinishedLabel == 0 ? ServiceConstants.Pendiente : orderStatus;
+                    orderStatus = ServiceShared.CalculateTernary(userFabOrder.Status == ServiceConstants.Finalizado, ServiceConstants.PorRecibir, userFabOrder.Status);
+                    orderStatus = ServiceShared.CalculateTernary(orderStatus == ServiceConstants.PorRecibir && userFabOrder.FinishedLabel == 0, ServiceConstants.Pendiente, orderStatus);
                     orderStatus = ServiceShared.CalculateTernary(userFabOrder.Status == ServiceConstants.Cancelado, ServiceConstants.Cancelado, orderStatus);
                     hasDelivery = userFabOrder.DeliveryId != 0;
                     deliveryId = userFabOrder.DeliveryId;
@@ -604,7 +606,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     var userFabLineOrder = lineProductsModel.FirstOrDefault(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode.Equals(order.Producto.ProductoId));
                     userFabLineOrder ??= new LineProductsModel { StatusAlmacen = ServiceConstants.PorRecibir };
-                    orderStatus = !userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado) ? orderStatus : userFabLineOrder.StatusAlmacen;
+                    orderStatus = ServiceShared.CalculateTernary(!userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado), orderStatus, userFabLineOrder.StatusAlmacen);
                     orderStatus = ServiceShared.CalculateTernary(userFabLineOrder.StatusAlmacen == ServiceConstants.Cancelado, ServiceConstants.Cancelado, orderStatus);
                     hasDelivery = userFabLineOrder.DeliveryId != 0;
                     deliveryId = userFabLineOrder.DeliveryId;
@@ -641,7 +643,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, orderStatus),
                     IsMagistral = order.Producto.IsMagistral.Equals("Y"),
                     Batches = batches,
-                    Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
+                    Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     HasDelivery = hasDelivery,
                     DeliveryId = deliveryId,
                 };
@@ -650,6 +652,14 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return listToReturn;
+        }
+
+        private string GetStatusSaleOrder(UserOrderModel userOrder)
+        {
+            var salesStatusMagistral = ServiceShared.CalculateTernary(userOrder != null && userOrder.Status.Equals(ServiceConstants.Finalizado), ServiceConstants.PorRecibir, ServiceConstants.Pendiente);
+            salesStatusMagistral = ServiceShared.CalculateTernary(userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) && userOrder.StatusAlmacen != ServiceConstants.Recibir, userOrder?.StatusAlmacen, salesStatusMagistral);
+            salesStatusMagistral = ServiceShared.CalculateTernary(salesStatusMagistral == ServiceConstants.Recibir, ServiceConstants.PorRecibir, salesStatusMagistral);
+            return salesStatusMagistral;
         }
     }
 }
