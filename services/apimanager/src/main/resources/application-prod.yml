@@ -74,6 +74,52 @@ zuul:
     almacen:
       path: /almacen/**
       serviceId: almacenservice
+    dxp:
+      path: /dxp/mock/**
+      url: https://reqres.in/api/ #mock endpoint, agregar serviceId de eureka
+    dxp-favorites:
+      path: /dxp/favorites/**
+      serviceId: favoritiesservice
+    dxp-sapordersadapter:
+      path: /dxp/sapordersadapter/**
+      serviceId: sapordersadapterservice
+    dxp-shoppingcart:
+      path: /dxp/shoppingcart/**
+      serviceId: shoppingcartservice
+    dxp-catalog:
+      path: /dxp/catalog/**
+      serviceId: catalogsdxpservice
+    dxp-advisor:
+      path: /dxp/advisor/**
+      serviceId: advisorservice
+    dxp-notifications:
+      path: /dxp/notifications/**
+      serviceId: notificationsservice
+    dxp-doctors:
+      path: /dxp/doctors/**
+      serviceId: doctorservice
+    dxp-files:
+      path: /dxp/files/**
+      serviceId: filesservice
+    dxp-processpayments:
+      path: /dxp/processpayments/**
+      serviceId: processpaymentservice
+    dxp-payments:
+      sensitiveHeaders:
+      path: /dxp/payments/**
+      serviceId: paymentsservice
+    dxp-pedidosdxp:
+      path: /dxp/pedidosdxp/**
+      serviceId: pedidosdxpservice
+    dxp-incidencia:
+      path: /dxp/incidencia/**
+      serviceId: incidenceservice
+    dxp-discounts:
+      path: /dxp/discounts/**
+      serviceId: discountsservice
+    dxp-reportdxp:
+      path: /dxp/report/**
+      serviceId: reportdxpservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000
