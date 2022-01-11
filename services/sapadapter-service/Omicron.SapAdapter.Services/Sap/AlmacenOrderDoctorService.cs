@@ -112,14 +112,14 @@ namespace Omicron.SapAdapter.Services.Sap
                 var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
                 var saleDetail = saleDetails.FirstOrDefault(x => x.CodigoProducto == detail.ProductoId);
                 var orderId = saleDetail?.OrdenFabricacionId.ToString() ?? string.Empty;
-                var itemcode = ServiceShared.GetItemcode(item.ProductoId, orderId);
+                var itemcode = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(orderId), $"{item.ProductoId} - {orderId}", item.ProductoId);
 
                 var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == saleorderid && x.ItemCode == item.ProductoId);
                 incidentdb ??= new IncidentsModel();
 
                 var localIncident = new IncidentInfoModel
                 {
-                    Batches = !string.IsNullOrEmpty(incidentdb.Batches) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(incidentdb.Batches) : new List<AlmacenBatchModel>(),
+                    Batches = ServiceShared.DeserializeObject(incidentdb.Batches, new List<AlmacenBatchModel>()),
                     Comments = incidentdb.Comments,
                     Incidence = incidentdb.Incidence,
                     Status = incidentdb.Status,
@@ -310,7 +310,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 if (p.All(g => g.IsMagistral == "Y"))
                 {
                     var saleOrder = userOrders.GetSaleOrderHeader(p.Key.ToString());
-                    var familyByOrder = userOrders.Where(x => x.Salesorderid == p.Key.ToString() && !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado).ToList();
+                    var familyByOrder = this.GetFamilyUserOrders(userOrders, p.Key.ToString());
                     var isValid = this.IsValidUserOrdersToReceive(saleOrder, familyByOrder);
                     ordersToReturn.AddRange(this.GetOrdersToAdd(isValid, p.ToList()));
                     continue;
@@ -319,22 +319,32 @@ namespace Omicron.SapAdapter.Services.Sap
                 if (p.All(g => g.IsLine == "Y"))
                 {
                     var saleOrderLn = lineProductsModel.GetLineProductOrderHeader(p.Key);
-                    var userFabLineOrder = lineProductsModel.Where(x => x.SaleOrderId == p.Key && !string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Cancelado).ToList();
+                    var userFabLineOrder = this.GetFamilyLineProducts(lineProductsModel, p.Key);
                     var isValid = (saleOrderLn == null || saleOrderLn.StatusAlmacen != ServiceConstants.Almacenado) && userFabLineOrder.All(x => x.StatusAlmacen != ServiceConstants.Almacenado);
                     ordersToReturn.AddRange(this.GetOrdersToAdd(isValid, p.ToList()));
                     continue;
                 }
 
                 var saleOrderMix = userOrders.GetSaleOrderHeader(p.Key.ToString());
-                var familyMixByOrder = userOrders.Where(x => x.Salesorderid == p.Key.ToString() && !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado).ToList();
+                var familyMixByOrder = this.GetFamilyUserOrders(userOrders, p.Key.ToString());
                 var isValidMg = this.IsValidUserOrdersToReceive(saleOrderMix, familyMixByOrder);
 
-                var userFabMixLineOrder = lineProductsModel.Where(x => x.SaleOrderId == p.Key && !string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Cancelado).ToList();
+                var userFabMixLineOrder = this.GetFamilyLineProducts(lineProductsModel, p.Key);
                 var isValidLn = userFabMixLineOrder.All(x => x.StatusAlmacen != ServiceConstants.Almacenado);
                 ordersToReturn.AddRange(this.GetOrdersToAdd(isValidMg && isValidLn, p.ToList()));
             }
 
             return ordersToReturn;
+        }
+
+        private List<LineProductsModel> GetFamilyLineProducts(List<LineProductsModel> lineProductsModel, int saleorderId)
+        {
+            return lineProductsModel.Where(x => x.SaleOrderId == saleorderId && !string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Cancelado).ToList();
+        }
+
+        private List<UserOrderModel> GetFamilyUserOrders(List<UserOrderModel> userOrders, string saleOrderId)
+        {
+            return userOrders.Where(x => x.Salesorderid == saleOrderId && !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado).ToList();
         }
 
         private bool IsValidUserOrdersToReceive(UserOrderModel saleOrder, List<UserOrderModel> familyByOrder)
