@@ -265,7 +265,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     IsChecked = false,
                     ProductionOrderId = o.OrdenId,
                     Code = o.ProductoId,
-                    ProductDescription = item == null ? string.Empty : item.LargeDescription,
+                    ProductDescription = item?.LargeDescription ?? string.Empty,
                     Type = ServiceShared.GetDictionaryValueString(ServiceConstants.DictStatusType, o.Type, o.Type),
                     Status = ServiceShared.GetDictionaryValueString(ServiceConstants.DictStatus, o.Status, o.Status),
                     PlannedQuantity = o.Quantity,
@@ -282,14 +282,14 @@ namespace Omicron.SapAdapter.Services.Sap
                     Client = o.CardCode,
                     CompleteQuantity = o.CompleteQuantity,
                     RealEndDate = realEndDate,
-                    ProductLabel = pedido == null ? string.Empty : pedido.Label,
-                    Container = pedido == null ? string.Empty : pedido.Container,
-                    DestinyAddress = pedido == null ? string.Empty : pedido.DestinyAddress,
+                    ProductLabel = pedido?.Label ?? string.Empty,
+                    Container = pedido?.Container ?? string.Empty,
+                    DestinyAddress = pedido?.DestinyAddress ?? string.Empty,
                     Comments = comments,
                     HasBatches = details.Any(x => x.HasBatches),
-                    HasMissingStock = returnDetails ? details.Any(y => y.Stock == 0) : itemsByFormula.Any(y => y.OnHand == 0),
+                    HasMissingStock = ServiceShared.CalculateTernary(returnDetails, details.Any(y => y.Stock == 0), itemsByFormula.Any(y => y.OnHand == 0)),
                     CatalogGroupName = ServiceShared.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),
-                    Details = returnDetails ? details : new List<CompleteDetalleFormulaModel>(),
+                    Details = ServiceShared.CalculateTernary(returnDetails, details, new List<CompleteDetalleFormulaModel>()),
                 };
 
                 listToReturn.Add(formulaDetalle);
@@ -316,14 +316,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var asesorsCompleted = new List<SalesAsesorModel>();
 
             asesorsCompleted.AddRange(asesors);
-            asesorsWithoutEmail.ForEach(x =>
-                asesorsCompleted.Add(new SalesAsesorModel
-                {
-                    Email = string.Empty,
-                    OrderId = x.PedidoId,
-                    Cliente = x.Medico,
-                }));
-
+            var asesorsWithoutEmailToAdd = asesorsWithoutEmail.Select(x => new SalesAsesorModel { Email = string.Empty, OrderId = x.PedidoId, Cliente = x.Medico }).ToList();
+            asesorsCompleted.AddRange(asesorsWithoutEmailToAdd);
             return ServiceUtils.CreateResult(true, 200, null, asesorsCompleted, null, asesorsCompleted.Count);
         }
 
@@ -608,7 +602,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     var modelAttach = new OrderRecipeModel
                     {
                         Order = o.PedidoId,
-                        Recipe = x == null ? string.Empty : x.CompletePath,
+                        Recipe = ServiceShared.CalculateTernary(x == null, string.Empty, x?.CompletePath),
                     };
 
                     modelToReturn.Add(modelAttach);
@@ -793,7 +787,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 listToReturn.Add(new AssignedBatches
                 {
                     CantidadSeleccionada = x.AllocQty,
-                    NumeroLote = batch == null ? string.Empty : batch.NumeroLote,
+                    NumeroLote = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.NumeroLote),
                     SysNumber = x.SysNumber,
                 });
             });
@@ -835,9 +829,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 listToReturn.Add(new AssignedBatches
                 {
                     CantidadSeleccionada = x.AllocQty,
-                    NumeroLote = batch == null ? string.Empty : batch.NumeroLote,
+                    NumeroLote = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.NumeroLote),
                     SysNumber = x.SysNumber,
-                    ItemCode = batch == null ? string.Empty : batch.ItemCode,
+                    ItemCode = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.ItemCode),
                 });
             });
 
