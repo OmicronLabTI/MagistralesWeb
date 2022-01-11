@@ -104,8 +104,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var listUsers = await this.GetUsers(userOrders);
             orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
-            var offset = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
-            var limit = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
+            var offset = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
@@ -148,8 +148,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Qfb = $"{user.FirstName.ValidateNull()} {user.LastName.ValidateNull()}".Trim();
 
                 x.Status = userOrder.Status;
-                x.Status = ServiceUtils.CalculateTernary(x.Status.Equals(ServiceConstants.Proceso), ServiceConstants.EnProceso, x.Status);
-                x.FechaOfFin = ServiceUtils.GetDateValueOrDefault(userOrder.FinishDate, string.Empty);
+                x.Status = ServiceShared.CalculateTernary(x.Status.Equals(ServiceConstants.Proceso), ServiceConstants.EnProceso, x.Status);
+                x.FechaOfFin = ServiceShared.GetDateValueOrDefault(userOrder.FinishDate, string.Empty);
                 x.PedidoStatus = pedido == null ? ServiceConstants.Abierto : pedido.Status;
                 x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
                 x.Comments = pedido?.Comments;
@@ -255,7 +255,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
                 userOrder ??= new UserOrderModel { Comments = string.Empty };
                 var comments = userOrder.Comments;
-                var realEndDate = ServiceUtils.GetDateValueOrDefault(userOrder.CloseDate, string.Empty);
+                var realEndDate = ServiceShared.GetDateValueOrDefault(userOrder.CloseDate, string.Empty);
 
                 var formulaComponents = detailsFormula.Where(f => f.OrderFabId == o.OrdenId).Select(p => p.ItemCode).Distinct().ToList();
                 var itemsByFormula = listProducts.Where(i => formulaComponents.Contains(i.ProductoId)).ToList();
@@ -266,18 +266,18 @@ namespace Omicron.SapAdapter.Services.Sap
                     ProductionOrderId = o.OrdenId,
                     Code = o.ProductoId,
                     ProductDescription = item == null ? string.Empty : item.LargeDescription,
-                    Type = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictStatusType, o.Type, o.Type),
-                    Status = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictStatus, o.Status, o.Status),
+                    Type = ServiceShared.GetDictionaryValueString(ServiceConstants.DictStatusType, o.Type, o.Type),
+                    Status = ServiceShared.GetDictionaryValueString(ServiceConstants.DictStatus, o.Status, o.Status),
                     PlannedQuantity = o.Quantity,
                     Unit = o.Unit,
                     Warehouse = o.Wharehouse,
                     Number = o.PedidoId.Value,
                     FabDate = o.CreatedDate.Value.ToString("dd/MM/yyyy"),
-                    DueDate = ServiceUtils.GetDateValueOrDefault(o.DueDate, string.Empty),
+                    DueDate = ServiceShared.GetDateValueOrDefault(o.DueDate, string.Empty),
                     StartDate = o.StartDate.ToString("dd/MM/yyyy"),
-                    EndDate = ServiceUtils.GetDateValueOrDefault(o.PostDate, string.Empty),
+                    EndDate = ServiceShared.GetDateValueOrDefault(o.PostDate, string.Empty),
                     User = dictUser[o.User],
-                    Origin = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictStatusOrigin, o.OriginType, o.OriginType),
+                    Origin = ServiceShared.GetDictionaryValueString(ServiceConstants.DictStatusOrigin, o.OriginType, o.OriginType),
                     BaseDocument = o.PedidoId.Value,
                     Client = o.CardCode,
                     CompleteQuantity = o.CompleteQuantity,
@@ -288,7 +288,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Comments = comments,
                     HasBatches = details.Any(x => x.HasBatches),
                     HasMissingStock = returnDetails ? details.Any(y => y.Stock == 0) : itemsByFormula.Any(y => y.OnHand == 0),
-                    CatalogGroupName = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),
+                    CatalogGroupName = ServiceShared.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),
                     Details = returnDetails ? details : new List<CompleteDetalleFormulaModel>(),
                 };
 
@@ -376,7 +376,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
             chipValues = ServiceUtils.UndecodeSpecialCaracters(chipValues);
 
-            var warehouse = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, ServiceConstants.MagistralWareHouse);
+            var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, ServiceConstants.MagistralWareHouse);
 
             var firstChip = chipValues.FirstOrDefault().ToLower();
             listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip, warehouse)).ToList());
@@ -388,8 +388,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 listValues = listValues.Where(x => $"{x.ProductId} {x.Description}".ToLower().Contains(v.ToLower())).ToList();
             }
 
-            var offset = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
-            var limit = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
+            var offset = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
@@ -663,7 +663,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var listIds = value.Contains("[") && value.Contains("]") ? JsonConvert.DeserializeObject<List<int>>(value) : new List<int>();
             var index = ServiceUtils.GetKeyToLook(parameters, listIds);
 
-            var current = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Current, "0");
+            var current = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Current, "0");
             int.TryParse(current, out int currentInt);
             var id = listIds.Any() ? listIds[index] : currentInt;
 
@@ -852,8 +852,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private List<OrdenFabricacionModel> ApplyOffsetLimit(List<OrdenFabricacionModel> orders, Dictionary<string, string> parameters)
         {
-            var offset = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
-            var limit = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
+            var offset = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);

@@ -55,7 +55,7 @@ namespace Omicron.SapAdapter.Services.Sap
             redisComponents = redisComponents.OrderByDescending(x => x.Total).ToList();
             var ids = redisComponents.Skip(0).Take(10).Select(x => x.ItemCode.ToLower()).ToList();
 
-            var warehouse = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, ServiceConstants.MagistralWareHouse);
+            var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, ServiceConstants.MagistralWareHouse);
             var listComponents = await this.sapDao.GetItemsByContainsItemCode(ids, warehouse);
 
             ids.ForEach(x =>

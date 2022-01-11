@@ -30,17 +30,17 @@ namespace Omicron.SapAdapter.Services.Mapping
 
             self.ProductionOrderId = fabricationOrder.OrdenId;
             self.Code = fabricationOrder.ProductoId;
-            self.Type = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictStatusType, fabricationOrder.Type, fabricationOrder.Type);
-            self.Status = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictStatus, fabricationOrder.Status, fabricationOrder.Status);
+            self.Type = ServiceShared.GetDictionaryValueString(ServiceConstants.DictStatusType, fabricationOrder.Type, fabricationOrder.Type);
+            self.Status = ServiceShared.GetDictionaryValueString(ServiceConstants.DictStatus, fabricationOrder.Status, fabricationOrder.Status);
             self.PlannedQuantity = (int)fabricationOrder.Quantity;
             self.Unit = fabricationOrder.Unit;
             self.Warehouse = fabricationOrder.Wharehouse;
             self.Number = fabricationOrder.PedidoId.Value;
             self.FabDate = fabricationOrder.CreatedDate.Value.ToString("dd/MM/yyyy");
-            self.DueDate = ServiceUtils.GetDateValueOrDefault(fabricationOrder.DueDate, string.Empty);
+            self.DueDate = ServiceShared.GetDateValueOrDefault(fabricationOrder.DueDate, string.Empty);
             self.StartDate = fabricationOrder.StartDate.ToString("dd/MM/yyyy");
-            self.EndDate = ServiceUtils.GetDateValueOrDefault(fabricationOrder.PostDate, string.Empty);
-            self.Origin = ServiceUtils.GetDictionaryValueString(ServiceConstants.DictStatusOrigin, fabricationOrder.OriginType, fabricationOrder.OriginType);
+            self.EndDate = ServiceShared.GetDateValueOrDefault(fabricationOrder.PostDate, string.Empty);
+            self.Origin = ServiceShared.GetDictionaryValueString(ServiceConstants.DictStatusOrigin, fabricationOrder.OriginType, fabricationOrder.OriginType);
             self.BaseDocument = fabricationOrder.PedidoId.Value;
             self.Client = fabricationOrder.CardCode;
             self.CompleteQuantity = (int)fabricationOrder.CompleteQuantity;
@@ -72,7 +72,7 @@ namespace Omicron.SapAdapter.Services.Mapping
             if (userOrder != null)
             {
                 self.Status = userOrder.Status;
-                self.RealEndDate = ServiceUtils.GetDateValueOrDefault(userOrder.CloseDate, string.Empty);
+                self.RealEndDate = ServiceShared.GetDateValueOrDefault(userOrder.CloseDate, string.Empty);
                 self.Comments = userOrder.Comments;
             }
         }

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 import { PlaceOrderDialogComponent } from './place-order-dialog.component';
@@ -9,10 +9,12 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DataService } from '../../services/data.service';
 import { MODAL_NAMES } from '../../constants/const';
 import { PedidosService } from 'src/app/services/pedidos.service';
-import { IQfbWithNumberRes, QfbWithNumber } from 'src/app/model/http/users';
-import { of } from 'rxjs';
+import { QfbClassification, QfbWithNumber } from 'src/app/model/http/users';
+import { of, throwError } from 'rxjs';
 import { ObservableService } from 'src/app/services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { CountOrdersMock } from 'src/mocks/countOrdersMock';
+import { ErrorService } from 'src/app/services/error.service';
 
 describe('PlaceOrderDialogComponent', () => {
   let component: PlaceOrderDialogComponent;
@@ -21,15 +23,9 @@ describe('PlaceOrderDialogComponent', () => {
   let pedidosServiceSpy: jasmine.SpyObj<PedidosService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+  let errorServiceSpy: jasmine.SpyObj<ErrorService>;
 
-  const iQfbWithNumberRes = new IQfbWithNumberRes();
-  const qfbWithNumber: QfbWithNumber[] = [{
-    countTotalOrders: 1,
-    countTotalFabOrders: 1,
-    countTotalPieces: 1,
-    clasification: ''
-  }];
-  iQfbWithNumberRes.response = qfbWithNumber;
+  const getQfbsWithOrdersMock = CountOrdersMock;
 
   beforeEach(async(() => {
     messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
@@ -45,7 +41,7 @@ describe('PlaceOrderDialogComponent', () => {
         'getQfbsWithOrders'
       ]);
     pedidosServiceSpy.getQfbsWithOrders.and.callFake(() => {
-      return of(iQfbWithNumberRes);
+      return of(getQfbsWithOrdersMock);
     });
     // --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
@@ -58,6 +54,9 @@ describe('PlaceOrderDialogComponent', () => {
       ]
     );
     observableServiceSpy.getCallHttpService.and.returnValue(of());
+    // --- Error Service
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
+
     TestBed.configureTestingModule({
       declarations: [PlaceOrderDialogComponent],
       imports: [
@@ -81,6 +80,8 @@ describe('PlaceOrderDialogComponent', () => {
         DatePipe,
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
+        { provide: PedidosService, useValue: pedidosServiceSpy },
+        { provide: ErrorService, useValue: errorServiceSpy },
       ]
     })
       .compileComponents();
@@ -118,8 +119,26 @@ describe('PlaceOrderDialogComponent', () => {
     });
   });
 
-  it('should changeCurrentQfbs', () => {
-    component.qfbs = qfbWithNumber;
-    component.changeCurrentQfbs();
+  it('getQfbsWithOrders should be success', fakeAsync(() => {
+    pedidosServiceSpy.getQfbsWithOrders.and.returnValue(of(getQfbsWithOrdersMock));
+    component.ngOnInit();
+    expect(component.qfbs.length).toBeGreaterThanOrEqual(0);
+  }));
+  it('getQfbsWithOrders should failed', fakeAsync(() => {
+    pedidosServiceSpy.getQfbsWithOrders.and.returnValue(throwError({ status: 500 }));
+    component.ngOnInit();
+    expect(pedidosServiceSpy.getQfbsWithOrders).toHaveBeenCalled();
+  }));
+  it('should change Type Qfb -> be', () => {
+    component.changeTypeQfb(QfbClassification.be, true);
+    expect(component.currentQfbType).toBe(QfbClassification.be);
+  });
+  it('should change Type Qfb -> mg', () => {
+    component.changeTypeQfb(QfbClassification.mg, true);
+    expect(component.currentQfbType).toBe(QfbClassification.mg);
+  });
+  it('should change Type Qfb -> mn', () => {
+    component.changeTypeQfb(QfbClassification.mn, false);
+    expect(component.currentQfbType).toBe(QfbClassification.mn);
   });
 });
