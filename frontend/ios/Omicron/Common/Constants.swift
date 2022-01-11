@@ -241,7 +241,7 @@ struct URLRoot {
     static let DEBUG = "http://201.163.179.29:8000/api"
     static let QAURL = "http://201.163.179.28:8000/api"
     static let RELEASE = "https://magistralesprod.omicronlab.com.mx/api"
-    static let omicronServer = "http://172.30.5.49:5100/"
+    static let omicronServer = "http://172.31.55.11:5000/"
     static let UAT = "https://omicronlabapiuat.eastus2.cloudapp.azure.com/api"
 }
 
