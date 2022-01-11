@@ -1,9 +1,9 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {UsersService} from '../../services/users.service';
-import {IUserReq, RoleUser} from '../../model/http/users';
-import {ErrorService} from '../../services/error.service';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UsersService } from '../../services/users.service';
+import { IUserReq, RoleUser } from '../../model/http/users';
+import { ErrorService } from '../../services/error.service';
 import {
   CONST_NUMBER, CONST_STRING,
   CONST_USER_DIALOG,
@@ -11,11 +11,12 @@ import {
   HttpStatus, MODAL_FIND_ORDERS,
   MODAL_NAMES
 } from '../../constants/const';
-import {DataService} from '../../services/data.service';
-import {Messages} from '../../constants/messages';
-import {SweetAlertIcon} from 'sweetalert2';
-import {Subscription} from 'rxjs';
-import {ErrorHttpInterface} from '../../model/http/commons';
+import { DataService } from '../../services/data.service';
+import { Messages } from '../../constants/messages';
+import { SweetAlertIcon } from 'sweetalert2';
+import { Subscription } from 'rxjs';
+import { ErrorHttpInterface } from '../../model/http/commons';
+import { ObservableService } from 'src/app/services/observable.service';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -28,10 +29,14 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   isForEditModal: boolean;
   userRoles: RoleUser[] = [];
   subscription = new Subscription();
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private formBuilder: FormBuilder,
-              private usersService: UsersService, private errorService: ErrorService,
-              public dataService: DataService,
-              private dialogRef: MatDialogRef<AddUserDialogComponent>) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private formBuilder: FormBuilder,
+    private usersService: UsersService,
+    private errorService: ErrorService,
+    public dataService: DataService,
+    private dialogRef: MatDialogRef<AddUserDialogComponent>,
+    private observableService: ObservableService) {
     this.isForEditModal = this.data.modalType === MODAL_NAMES.editUser;
     this.userToEdit = this.data.userToEditM;
     this.addUserForm = this.formBuilder.group({
@@ -52,29 +57,29 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     this.subscription = this.addUserForm.valueChanges.subscribe(valueForm => {
       if (valueForm.userName) {
         this.addUserForm.get('userName').setValue(
-            this.dataService.getNormalizeString(valueForm.userName), { emitEvent: false });
+          this.dataService.getNormalizeString(valueForm.userName), { emitEvent: false });
       }
       if (valueForm.piezas) {
         this.addUserForm.get('piezas').setValue(this.getOnlyNumbers(valueForm.piezas), { emitEvent: false });
       }
       if (valueForm.userTypeR && valueForm.userTypeR !== '2') {
-        this.addUserForm.get('piezas').disable({onlySelf: true, emitEvent: false});
-        this.addUserForm.get('asignable').disable({onlySelf: true, emitEvent: false});
-        this.addUserForm.get('classificationQFB').disable({onlySelf: true, emitEvent: false});
-        this.addUserForm.updateValueAndValidity({onlySelf: true, emitEvent: false});
+        this.addUserForm.get('piezas').disable({ onlySelf: true, emitEvent: false });
+        this.addUserForm.get('asignable').disable({ onlySelf: true, emitEvent: false });
+        this.addUserForm.get('classificationQFB').disable({ onlySelf: true, emitEvent: false });
+        this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
       } else {
-        this.addUserForm.get('piezas').enable({onlySelf: true, emitEvent: false});
-        this.addUserForm.get('asignable').enable({onlySelf: true, emitEvent: false});
-        this.addUserForm.get('classificationQFB').enable({onlySelf: true, emitEvent: false});
-        this.addUserForm.updateValueAndValidity({onlySelf: true, emitEvent: false});
+        this.addUserForm.get('piezas').enable({ onlySelf: true, emitEvent: false });
+        this.addUserForm.get('asignable').enable({ onlySelf: true, emitEvent: false });
+        this.addUserForm.get('classificationQFB').enable({ onlySelf: true, emitEvent: false });
+        this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
       }
     });
     this.usersService.getRoles().subscribe(rolesRes => {
-     this.userRoles = rolesRes.response;
-     this.addUserForm.get('userTypeR').
+      this.userRoles = rolesRes.response;
+      this.addUserForm.get('userTypeR').
         setValue(!this.isForEditModal ? this.userRoles.
-        filter(user =>
-          CONST_USER_DIALOG.defaultQfb.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString() :
+          filter(user =>
+            CONST_USER_DIALOG.defaultQfb.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString() :
           this.userToEdit.role.toString());
     }, error => {
       this.errorService.httpError(error);
@@ -106,11 +111,11 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         piezas: Number(this.addUserForm.get('piezas').value),
         classification: this.addUserForm.get('classificationQFB').value
       };
-      this.usersService.createUserService(user).subscribe( () => {
-            this.createMessageOk(Messages.success, 'success', false);
-            this.dialogRef.close();
-          },
-          error => this.userExistDialog(error));
+      this.usersService.createUserService(user).subscribe(() => {
+        this.createMessageOk(Messages.success, 'success', false);
+        this.dialogRef.close();
+      },
+        error => this.userExistDialog(error));
     } else {
       const user: IUserReq = {
         ...this.addUserForm.value,
@@ -122,20 +127,20 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
         piezas: Number(this.addUserForm.get('piezas').value),
         classification: this.addUserForm.get('classificationQFB').value
       };
-      this.usersService.updateUser(user).subscribe( () => {
+      this.usersService.updateUser(user).subscribe(() => {
         this.createMessageOk(Messages.success, 'success', false);
         this.dialogRef.close();
-          },
-          error => this.userExistDialog(error));
+      },
+        error => this.userExistDialog(error));
     }
 
   }
   createMessageOk(title: string, icon: SweetAlertIcon, isButtonAccept: boolean) {
-    this.dataService.setCallHttpService(HttpServiceTOCall.USERS);
-    this.dataService.setMessageGeneralCallHttp({title, icon, isButtonAccept});
+    this.observableService.setCallHttpService(HttpServiceTOCall.USERS);
+    this.observableService.setMessageGeneralCallHttp({ title, icon, isButtonAccept });
   }
   ngOnDestroy() {
-   this.subscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
   userExistDialog(error: ErrorHttpInterface) {
     if (error.status === HttpStatus.badRequest) {
@@ -146,11 +151,11 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   }
 
   getOnlyNumbers(pieces: string) {
-    const numbers = ['0', '1', '2' , '3' , '4', '5', '6', '7', '8', '9'];
+    const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     let newNumbers = CONST_STRING.empty;
     // tslint:disable-next-line:prefer-for-of
-    for (let index = 0; index < pieces.length; index ++) {
-      newNumbers += numbers.includes(pieces.charAt(index)) ?  pieces.charAt(index).trim() : CONST_STRING.empty.trim();
+    for (let index = 0; index < pieces.length; index++) {
+      newNumbers += numbers.includes(pieces.charAt(index)) ? pieces.charAt(index).trim() : CONST_STRING.empty.trim();
     }
     return newNumbers;
   }

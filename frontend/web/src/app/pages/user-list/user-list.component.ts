@@ -1,17 +1,19 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {IUserReq, SearchUsersData} from '../../model/http/users';
-import {MatDialog} from '@angular/material/dialog';
-import {AddUserDialogComponent} from '../../dialogs/add-user-dialog/add-user-dialog.component';
-import {UsersService} from '../../services/users.service';
-import {CONST_NUMBER, CONST_STRING, HttpServiceTOCall} from '../../constants/const';
-import {DataService} from '../../services/data.service';
-import {ErrorService} from '../../services/error.service';
-import {Messages} from '../../constants/messages';
-import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {MatTableDataSource} from '@angular/material/table';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { IUserReq, SearchUsersData } from '../../model/http/users';
+import { MatDialog } from '@angular/material/dialog';
+import { AddUserDialogComponent } from '../../dialogs/add-user-dialog/add-user-dialog.component';
+import { UsersService } from '../../services/users.service';
+import { CONST_NUMBER, CONST_STRING, HttpServiceTOCall } from '../../constants/const';
+import { DataService } from '../../services/data.service';
+import { ErrorService } from '../../services/error.service';
+import { Messages } from '../../constants/messages';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { Title } from '@angular/platform-browser';
-import {Subscription} from 'rxjs';
-import {SearchUsersDialogComponent} from '../../dialogs/search-users-dialog/search-users-dialog.component';
+import { Subscription } from 'rxjs';
+import { SearchUsersDialogComponent } from '../../dialogs/search-users-dialog/search-users-dialog.component';
+import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
     selector: 'app-user-list',
@@ -24,7 +26,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     dataSource = new MatTableDataSource<IUserReq>();
     pageSize = CONST_NUMBER.ten;
     pageEvent: PageEvent;
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     lengthPaginator = CONST_NUMBER.zero;
     offset = CONST_NUMBER.zero;
     limit = CONST_NUMBER.ten;
@@ -33,15 +35,20 @@ export class UserListComponent implements OnInit, OnDestroy {
     searchUsersData = new SearchUsersData();
     fullQueryString = CONST_STRING.empty;
     pageIndex = CONST_NUMBER.zero;
-    constructor(private dialog: MatDialog, private usersService: UsersService, private dataService: DataService,
-                private errorService: ErrorService,
-                private titleService: Title) {
-        this.dataService.setUrlActive(HttpServiceTOCall.USERS);
+    constructor(
+        private dialog: MatDialog,
+        private usersService: UsersService,
+        private dataService: DataService,
+        private messagesService: MessagesService,
+        private errorService: ErrorService,
+        private titleService: Title,
+        private observableService: ObservableService) {
+        this.observableService.setUrlActive(HttpServiceTOCall.USERS);
     }
 
     ngOnInit() {
         this.getUsers();
-        this.subscriptionUsers = this.dataService.getCallHttpService().subscribe( resultCallHttp => {
+        this.subscriptionUsers = this.observableService.getCallHttpService().subscribe(resultCallHttp => {
             if (resultCallHttp === HttpServiceTOCall.USERS) {
                 this.createMessageHttpOk();
                 this.getUsers();
@@ -54,28 +61,28 @@ export class UserListComponent implements OnInit, OnDestroy {
     getUsers() {
         this.usersService.getUsers(`?${this.fullQueryString}&offset=${this.offset}&limit=${this.limit}`).subscribe(userRes => {
 
-                this.lengthPaginator = userRes.comments;
-                this.dataSource.data = userRes.response;
-                this.dataSource.data.forEach( user => {
-                    user.isChecked = false;
-                    user.piezas = this.dataService.getFormattedNumber(user.piezas);
-                    if (user.classification) {
-                        switch (user.classification) {
-                            case 'MN':
-                                user.fullClasification = 'Bioelite (MN)';
-                                break;
-                            case 'BE':
-                                user.fullClasification = 'Bioequal (BE)';
-                                break;
-                            case 'MG':
-                                user.fullClasification = 'Magistral (MG)';
-                                break;
-                        }
+            this.lengthPaginator = userRes.comments;
+            this.dataSource.data = userRes.response;
+            this.dataSource.data.forEach(user => {
+                user.isChecked = false;
+                user.piezas = this.dataService.getFormattedNumber(user.piezas);
+                if (user.classification) {
+                    switch (user.classification) {
+                        case 'MN':
+                            user.fullClasification = 'Bioelite (MN)';
+                            break;
+                        case 'BE':
+                            user.fullClasification = 'Bioequal (BE)';
+                            break;
+                        case 'MG':
+                            user.fullClasification = 'Magistral (MG)';
+                            break;
                     }
-                });
-                this.isAllComplete = false;
-                this.isOnInit = false;
-            },
+                }
+            });
+            this.isAllComplete = false;
+            this.isOnInit = false;
+        },
             error => {
                 this.errorService.httpError(error);
             });
@@ -99,7 +106,7 @@ export class UserListComponent implements OnInit, OnDestroy {
             this.dataSource.data.filter(user => user.id === idUser).forEach(user => user.isChecked = true);
         }
 
-        this.dataService.presentToastCustom(Messages.deleteUsers, 'warning', CONST_STRING.empty, true, true)
+        this.messagesService.presentToastCustom(Messages.deleteUsers, 'warning', CONST_STRING.empty, true, true)
             .then((result: any) => {
                 if (result.isConfirmed) {
                     this.usersService.deleteUsers(this.dataSource.data.filter(user => user.isChecked).map(user => user.id)).subscribe(
@@ -117,7 +124,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     }
 
     openDialog(modalTypeOpen: string, userId: string) {
-         this.dialog.open(AddUserDialogComponent, {
+        this.dialog.open(AddUserDialogComponent, {
             panelClass: 'custom-dialog-container',
             data: {
                 modalType: modalTypeOpen,
@@ -136,7 +143,7 @@ export class UserListComponent implements OnInit, OnDestroy {
         return event;
     }
     createMessageHttpOk() {
-        this.dataService.setMessageGeneralCallHttp({title: Messages.success, icon: 'success', isButtonAccept: false});
+        this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
     }
 
     ngOnDestroy() {

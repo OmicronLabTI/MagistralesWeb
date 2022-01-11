@@ -2,19 +2,24 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import {CONST_NUMBER, pathRoles, RolesType} from '../constants/const';
 import { DataService } from './data.service';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GuardService implements CanActivate {
 
-  constructor(private dataService: DataService, private router: Router) {
+  constructor(
+    private dataService: DataService,
+    private router: Router,
+    private localStorageService: LocalStorageService
+    ) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     let pass = false;
-    if (this.dataService.userIsAuthenticated()) {
-      switch (this.dataService.getUserRole()) {
+    if (this.localStorageService.userIsAuthenticated()) {
+      switch (this.localStorageService.getUserRole()) {
         case RolesType.admin:
           pass = pathRoles.admin.includes(route.url[CONST_NUMBER.zero].path);
           if (!pass) {

@@ -5,10 +5,12 @@ import { ILoginReq } from 'src/app/model/http/security.model';
 import { DataService } from 'src/app/services/data.service';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import {CONST_STRING, ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS, RolesType, RouterPaths} from '../../constants/const';
-import {ErrorService} from '../../services/error.service';
-import {ErrorHttpInterface} from '../../model/http/commons';
-import {Messages} from '../../constants/messages';
+import { ConstLogin, ConstToken, HttpStatus, MODAL_FIND_ORDERS, RolesType, RouterPaths } from '../../constants/const';
+import { ErrorService } from '../../services/error.service';
+import { ErrorHttpInterface } from '../../model/http/commons';
+import { Messages } from '../../constants/messages';
+import { ObservableService } from 'src/app/services/observable.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 @Component({
   selector: 'app-login',
@@ -24,15 +26,17 @@ export class LoginComponent implements OnInit {
     private dataService: DataService,
     private router: Router,
     private titleService: Title,
-    private errorService: ErrorService
-  ) {
-    if (this.dataService.userIsAuthenticated()) {
-        this.evaluatedGoTo();
+    private errorService: ErrorService,
+    private observableService: ObservableService,
+    private localStorageService: LocalStorageService,
+    ) {
+    if (this.localStorageService.userIsAuthenticated()) {
+      this.evaluatedGoTo();
     }
     this.formLogin = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-        rememberSession: [false, []]
+      rememberSession: [false, []]
     });
   }
 
@@ -40,43 +44,43 @@ export class LoginComponent implements OnInit {
     this.titleService.setTitle('OmicronLab - Login');
   }
 
-   login() {
+  login() {
     const userLoginReq = {
-        user: this.formLogin.get('username').value,
-        password: btoa(this.formLogin.get('password').value),
-        redirectUri: ConstLogin.defaultRedirectUri,
-        clientId2: ConstLogin.defaultClientId2,
-        origin: ConstLogin.defaultOrigin
+      user: this.formLogin.get('username').value,
+      password: btoa(this.formLogin.get('password').value),
+      redirectUri: ConstLogin.defaultRedirectUri,
+      clientId2: ConstLogin.defaultClientId2,
+      origin: ConstLogin.defaultOrigin
     } as ILoginReq;
     this.securityService.login(userLoginReq).toPromise().then(async res => {
-      this.dataService.setToken(res.access_token);
-      this.dataService.setRefreshToken(res.refresh_token);
+      this.localStorageService.setToken(res.access_token);
+      this.localStorageService.setRefreshToken(res.refresh_token);
       if (this.formLogin.get('rememberSession').value) {
-          this.dataService.setRememberSession(ConstToken.rememberSession);
+          this.localStorageService.setRememberSession(ConstToken.rememberSession);
       }
       await this.securityService.getUser(userLoginReq.user).toPromise().then(
           userRes => {
-              this.dataService.setUserId(userRes.response.id);
-              this.dataService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
-              this.dataService.setUserRole(userRes.response.role);
+              this.localStorageService.setUserId(userRes.response.id);
+              this.localStorageService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
+              this.localStorageService.setUserRole(userRes.response.role);
           }
       ).catch((error) => {
-          this.errorService.httpError(error);
-          this.dataService.setGeneralNotificationMessage('Error al obtener usuario');
+        this.errorService.httpError(error);
+        this.observableService.setGeneralNotificationMessage('Error al obtener usuario');
       });
-      this.dataService.setIsLogin(true);
+      this.observableService.setIsLogin(true);
       this.evaluatedGoTo();
-    }).catch( (error: ErrorHttpInterface) => {
-        switch (error.status) {
-            case HttpStatus.serverError:
-                this.dataService.setMessageGeneralCallHttp({title: Messages.credentialsInvalid, icon: 'warning', isButtonAccept: true});
-                break;
-            case HttpStatus.unauthorized:
-                this.dataService.setMessageGeneralCallHttp({title: error.error.userError, icon: 'warning', isButtonAccept: true});
-                break;
-            default:
-                this.errorService.httpError(error);
-        }
+    }).catch((error: ErrorHttpInterface) => {
+      switch (error.status) {
+        case HttpStatus.serverError:
+          this.observableService.setMessageGeneralCallHttp({ title: Messages.credentialsInvalid, icon: 'warning', isButtonAccept: true });
+          break;
+        case HttpStatus.unauthorized:
+          this.observableService.setMessageGeneralCallHttp({ title: error.error.userError, icon: 'warning', isButtonAccept: true });
+          break;
+        default:
+          this.errorService.httpError(error);
+      }
     });
   }
   goToPedidos() {
@@ -87,19 +91,19 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['userList']);
   }
   keyDownFunction(event: KeyboardEvent) {
-        if (event.key === MODAL_FIND_ORDERS.keyEnter && this.formLogin.valid) {
-            this.login();
-        }
+    if (event.key === MODAL_FIND_ORDERS.keyEnter && this.formLogin.valid) {
+      this.login();
+    }
   }
 
   evaluatedGoTo() {
-      if (this.dataService.getUserRole() === RolesType.logistic || this.dataService.getUserRole() === RolesType.design
-          || this.dataService.getUserRole() === RolesType.warehouse) {
-            this.goToPedidos();
-      } else if (this.dataService.getUserRole() === RolesType.incidents) {
-          this.router.navigate([RouterPaths.incidentsList]);
-      } else {
-          this.goToUsers();
-      }
+    if (this.localStorageService.getUserRole() === RolesType.logistic || this.localStorageService.getUserRole() === RolesType.design
+      || this.localStorageService.getUserRole() === RolesType.warehouse) {
+      this.goToPedidos();
+    } else if (this.localStorageService.getUserRole() === RolesType.incidents) {
+      this.router.navigate([RouterPaths.incidentsList]);
+    } else {
+      this.goToUsers();
     }
+  }
 }

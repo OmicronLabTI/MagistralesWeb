@@ -19,6 +19,10 @@ import { DataService } from 'src/app/services/data.service';
 import { Catalogs, ICreatePdfOrdersRes, ParamsPedidos } from 'src/app/model/http/pedidos';
 import { HttpServiceTOCall } from 'src/app/constants/const';
 import { CommentsConfig } from '../../model/device/incidents.model';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ObservableService } from 'src/app/services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
+import { FiltersService } from 'src/app/services/filters.service';
 
 describe('PedidoDetalleComponent', () => {
   let component: PedidoDetalleComponent;
@@ -26,7 +30,11 @@ describe('PedidoDetalleComponent', () => {
   let pedidosServiceSpy: jasmine.SpyObj<PedidosService>;
   let downloadImagesServiceSpy;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let errorServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+  let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
 
   const catalogs = new Catalogs();
   const iPedidoDetalleRes = new IPedidoDetalleListRes();
@@ -47,7 +55,10 @@ describe('PedidoDetalleComponent', () => {
   catalogs.type = 'string';
   catalogs.field = 'ProductNoLabel';
   beforeEach(async(() => {
-
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom',
+      'getMessageTitle',
+    ]);
 
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
@@ -61,38 +72,24 @@ describe('PedidoDetalleComponent', () => {
       'savedComments',
       'putOrdersToDelivered',
     ]);
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getProductNoLabel',
-      'setUrlActive',
-      'getIsThereOnData',
-      'presentToastCustom',
       'getUserId',
-      'getMessageTitle',
-      'setCancelOrders',
-      'setFinalizeOrders',
-      'setQbfToPlace',
-      'setPathUrl',
-      'setCurrentDetailOrder',
-      'setOpenCommentsDialog',
-      'setMessageGeneralCallHttp',
-      'setOpenSignatureDialog',
       'getUserRole',
+      'getFiltersActives',
+      'getCurrentDetailOrder',
+      'removeCurrentDetailOrder',
+      'setCurrentDetailOrder',
+    ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'openNewTapByUrl',
       'getItemOnDataOnlyIds',
-      'getFiltersActives',
-      'getNewDataToFilter',
       'getFullStringForCarousel',
-      'getCurrentDetailOrder',
-      'getCallHttpService',
-      'getNewDataSignature',
-      'getNewCommentsResult',
-      'removeCurrentDetailOrder',
-      'getItemOnDateWithFilter'
     ]);
-    dataServiceSpy.getProductNoLabel.and.returnValue(catalogs);
-    dataServiceSpy.getCallHttpService.and.returnValue(of(httpServiceTOCallRes));
-    dataServiceSpy.getFiltersActives.and.returnValue(JSON.stringify(parametrosPedidos));
-    dataServiceSpy.getCurrentDetailOrder.and.returnValue('');
+    localStorageServiceSpy.getProductNoLabel.and.returnValue(catalogs);
+    localStorageServiceSpy.getUserRole.and.returnValue('');
+    localStorageServiceSpy.getFiltersActives.and.returnValue(JSON.stringify(parametrosPedidos));
+    localStorageServiceSpy.getCurrentDetailOrder.and.returnValue('');
     dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
     downloadImagesServiceSpy = jasmine.createSpyObj<DownloadImagesService>('DownloadImagesService', ['downloadImageFromUrl']);
     pedidosServiceSpy.qrByEachOrder.and.callFake(() => {
@@ -100,12 +97,42 @@ describe('PedidoDetalleComponent', () => {
     });
     pedidosServiceSpy.finishLabels.and.returnValue(of(iPedidoDetalleRes));
     pedidosServiceSpy.putOrdersToDelivered.and.returnValue(of(iCreatePdfOrdersRes));
-    dataServiceSpy.getNewDataSignature.and.returnValue(of({}));
-    dataServiceSpy.getNewCommentsResult.and.returnValue(of(comentsConfig));
-    dataServiceSpy.getNewDataToFilter.and.returnValue([parametrosPedidos, '']);
-    dataServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
     pedidosServiceSpy.getDetallePedido.and.returnValue(of(DetailOrderMock));
     pedidosServiceSpy.savedComments.and.returnValue(of(iPedidoDetalleRes));
+
+    // --- ObservableService
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'setUrlActive',
+        'setCancelOrders',
+        'setFinalizeOrders',
+        'setQbfToPlace',
+        'setPathUrl',
+        'setOpenCommentsDialog',
+        'setMessageGeneralCallHttp',
+        'setOpenSignatureDialog',
+        'getCallHttpService',
+        'getNewDataSignature',
+        'getNewCommentsResult',
+      ]
+    );
+    observableServiceSpy.getNewDataSignature.and.returnValue(of({}));
+    observableServiceSpy.getNewCommentsResult.and.returnValue(of(comentsConfig));
+    observableServiceSpy.getCallHttpService.and.returnValue(of(httpServiceTOCallRes));
+
+    // --- Filter Service
+    filtersServiceSpy = jasmine.createSpyObj<FiltersService>('FiltersService', [
+      'getIsThereOnData',
+      'getItemOnDateWithFilter',
+      'getNewDataToFilter',
+      'getIsWithFilter',
+    ]);
+
+    filtersServiceSpy.getIsThereOnData.and.returnValue(true);
+    filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
+    filtersServiceSpy.getIsWithFilter.and.returnValue(true);
+    filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
+
     TestBed.configureTestingModule({
       imports: [
         MATERIAL_COMPONENTS,
@@ -119,6 +146,10 @@ describe('PedidoDetalleComponent', () => {
         { provide: DownloadImagesService, useValue: downloadImagesServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
+        { provide: FiltersService, useValue: filtersServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

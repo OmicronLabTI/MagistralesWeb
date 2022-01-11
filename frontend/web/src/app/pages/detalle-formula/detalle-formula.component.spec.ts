@@ -4,18 +4,22 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { DetalleFormulaMock } from 'src/mocks/pedidosListMock';
-import {Observable, of, Subject, throwError} from 'rxjs';
-import {DataService} from '../../services/data.service';
-import {CarouselOption, CONST_DETAIL_FORMULA} from '../../constants/const';
-import {ErrorService} from '../../services/error.service';
-import { ButtonRefreshComponent } from 'src/app/components/button-refresh/button-refresh.component';
+import { Observable, of, Subject, throwError } from 'rxjs';
+import { DataService } from '../../services/data.service';
+import { CarouselOption, CONST_DETAIL_FORMULA } from '../../constants/const';
+import { ErrorService } from '../../services/error.service';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
+import { ObservableService } from 'src/app/services/observable.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { DateService } from 'src/app/services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
+import { FiltersService } from '../../services/filters.service';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -23,35 +27,52 @@ describe('DetalleFormulaComponent', () => {
   let pedidosServiceSpy;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
   let errorServiceSpy;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
+  let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
   const paramsPedidos = new ParamsPedidos();
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+
   // let routerSpy: jasmine.SpyObj<ActivatedRoute>;
 
   beforeEach(async(() => {
-    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
-      'httpError'
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
     ]);
-    pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
-      'getFormulaDetail', 'getFormulaCarousel', 'updateFormula'
-    ]);
+
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService',
+      [
+        'httpError'
+      ]);
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+        'getUserId',
+        'getOrderIsolated',
+        'removeOrderIsolated',
+        'setFiltersActivesOrders',
+        'getFiltersActivesOrders',
+        'removeFiltersActiveOrders',
+        'getFiltersActivesAsModelOrders',
+      ]);
+    pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService',
+      [
+        'getFormulaDetail',
+        'getFormulaCarousel',
+        'updateFormula'
+      ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom', 'getCallHttpService', 'setUrlActive', 'setIsLoading',
-      'setCallHttpService', 'setMessageGeneralCallHttp', 'getOrderIsolated', 'removeOrderIsolated', 'getNewSearchOrdersModal',
-      'getCallHttpService', 'transformDate', 'setSearchComponentModal', 'getNewDataToFilter', 'setCancelOrders', 'setQbfToPlace',
-      'getItemOnDataOnlyIds', 'getIsThereOnData', 'getItemOnDateWithFilter', 'getNewFormulaComponent',
-      'setIsToSaveAnything', 'setIsToSaveAnything', 'setIsToSaveAnything', 'setFiltersActivesOrders', 'getFiltersActivesOrders',
-      'removeFiltersActiveOrders',  'getFiltersActivesAsModelOrders', 'setPathUrl', 'getFullStringForCarousel', 'getIsToSaveAnything'
+      'getItemOnDataOnlyIds',
+      'setIsToSaveAnything',
+      'setIsToSaveAnything',
+      'setIsToSaveAnything',
+      'getFullStringForCarousel',
+      'getIsToSaveAnything'
     ]);
     // routerSpy = jasmine.createSpyObj<ActivatedRoute>('ActivateRoute', [
     //   'paramMap'
     // ]);
     // routerSpy.paramMap.and.returnValue();
-    dataServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
-      return;
-    });
-    dataServiceSpy.getNewFormulaComponent.and.callFake(() => {
-      return new Observable();
-    });
-    dataServiceSpy.getFiltersActivesAsModelOrders.and.returnValue(paramsPedidos);
+    localStorageServiceSpy.getFiltersActivesAsModelOrders.and.returnValue(paramsPedidos);
     pedidosServiceSpy.getFormulaDetail.and.callFake(() => {
       return of(DetalleFormulaMock);
     });
@@ -61,7 +82,45 @@ describe('DetalleFormulaComponent', () => {
     pedidosServiceSpy.updateFormula.and.callFake(() => {
       return of();
     });
-    dataServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
+    messagesServiceSpy.presentToastCustom.and.callFake(() => Promise.resolve([]));
+
+    // --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'getCallHttpService',
+        'setUrlActive',
+        'setIsLoading',
+        'setCallHttpService',
+        'setMessageGeneralCallHttp',
+        'getNewSearchOrdersModal',
+        'setSearchComponentModal',
+        'setCancelOrders',
+        'setQbfToPlace',
+        'getNewFormulaComponent',
+        'setPathUrl',
+      ]
+    );
+    observableServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
+      return;
+    });
+    observableServiceSpy.getNewFormulaComponent.and.callFake(() => {
+      return new Observable();
+    });
+    // --- Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'transformDate',
+    ]);
+    dateServiceSpy.transformDate.and.returnValue('');
+    // --- Filter Service
+    filtersServiceSpy = jasmine.createSpyObj<FiltersService>('FiltersService', [
+      'getIsThereOnData',
+      'getItemOnDateWithFilter',
+      'getNewDataToFilter',
+    ]);
+    filtersServiceSpy.getIsThereOnData.and.returnValue(true);
+    filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
+    filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
+
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
@@ -73,17 +132,22 @@ describe('DetalleFormulaComponent', () => {
         ComponentsModule,
         RouterModule
       ],
-      declarations: [ DetalleFormulaComponent ],
+      declarations: [DetalleFormulaComponent],
       providers: [
         DatePipe, {
           provide: PedidosService, useValue: pedidosServiceSpy
         },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
-        { provide: ActivatedRoute, useValue: { paramMap: new Subject() } }
+        { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: DateService, useValue: dateServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
+        { provide: FiltersService, useValue: filtersServiceSpy },
+        { provide: ActivatedRoute, useValue: { paramMap: new Subject() } },
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -127,10 +191,10 @@ describe('DetalleFormulaComponent', () => {
 
   it('should updateAllComplete', () => {
     component.dataSource.data = DetalleFormulaMock.response.details;
-    component.dataSource.data.forEach( element => element.isChecked = false);
+    component.dataSource.data.forEach(element => element.isChecked = false);
     component.updateAllComplete();
     expect(component.allComplete).toBeFalsy();
-    component.dataSource.data.forEach( element => element.isChecked = true);
+    component.dataSource.data.forEach(element => element.isChecked = true);
     component.updateAllComplete();
     expect(component.allComplete).toBeTruthy();
 
@@ -138,10 +202,10 @@ describe('DetalleFormulaComponent', () => {
   it('should someComplete', () => {
     component.dataSource.data = [];
     component.dataSource.data = DetalleFormulaMock.response.details;
-    component.dataSource.data.forEach( element => element.isChecked = false);
+    component.dataSource.data.forEach(element => element.isChecked = false);
     component.allComplete = false;
     expect(component.someComplete()).toBeFalsy();
-    component.dataSource.data.forEach( element => element.isChecked = true);
+    component.dataSource.data.forEach(element => element.isChecked = true);
     expect(component.someComplete()).toBeTruthy();
   });
   it('should setAll', () => {
@@ -155,7 +219,7 @@ describe('DetalleFormulaComponent', () => {
   });
   it('should getOpenDialog()', () => {
     component.openDialog();
-    expect(dataServiceSpy.setSearchComponentModal).toHaveBeenCalled();
+    expect(observableServiceSpy.setSearchComponentModal).toHaveBeenCalled();
   });
   it('should onBaseQuantityChange()', () => {
     component.dataSource.data = [];
@@ -225,7 +289,7 @@ describe('DetalleFormulaComponent', () => {
     pedidosServiceSpy.updateFormula.and.callFake(() => {
       return of();
     });
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
@@ -296,7 +360,7 @@ describe('DetalleFormulaComponent', () => {
 
   it('should createfilterDataOrdersForOrderIsolated', () => {
     component.createfilterDataOrdersForOrderIsolated();
-    expect(dataServiceSpy.setFiltersActivesOrders).toHaveBeenCalled();
+    expect(localStorageServiceSpy.setFiltersActivesOrders).toHaveBeenCalled();
   });
 
   it('should changeFormulaValidate = 0', () => {
@@ -305,7 +369,7 @@ describe('DetalleFormulaComponent', () => {
 
   });
   it('should changeDetailFormula', () => {
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });

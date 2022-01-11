@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MatTableModule,
@@ -8,54 +8,62 @@ import {
   MatFormFieldModule,
   MatInputModule,
 } from '@angular/material';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { ComponentslistComponent } from './componentslist.component';
-import {RouterTestingModule} from '@angular/router/testing';
-import { DataService } from 'src/app/services/data.service';
+import { RouterTestingModule } from '@angular/router/testing';
 import { BaseComponent, Components, IMyCustomListRes } from 'src/app/model/http/listacomponentes';
 import { OrdersService } from 'src/app/services/orders.service';
 import { of } from 'rxjs';
+import { ObservableService } from 'src/app/services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('ComponentslistComponent', () => {
   let component: ComponentslistComponent;
   let fixture: ComponentFixture<ComponentslistComponent>;
-  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let ordersServiceSpy: jasmine.SpyObj<OrdersService>;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let matDialogRef;
   const iMyCustomListRes = new IMyCustomListRes();
   const baseComponent = new BaseComponent();
   baseComponent.id = 1;
-  baseComponent.name =  '';
+  baseComponent.name = '';
   baseComponent.productId = '1';
   baseComponent.components = Components[0];
 
   beforeEach(async(() => {
-    const matDialogSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
-      'presentToastCustom',
-      'setMessageGeneralCallHttp',
-      'setIsLoading'
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
     ]);
+
+    const matDialogSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
     ordersServiceSpy = jasmine.createSpyObj('OrdersService', [
       'getCustomList',
       'deleteCustomList'
     ]);
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
     });
-    dataServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
-      return;
-    });
+
 
     ordersServiceSpy.getCustomList.and.callFake(() => {
       return of(iMyCustomListRes);
     });
     ordersServiceSpy.deleteCustomList.and.callFake(() => {
       return of();
+    });
+    // --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'setMessageGeneralCallHttp',
+        'setIsLoading'
+      ]);
+    observableServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
+      return;
     });
     TestBed.configureTestingModule({
       imports: [
@@ -65,7 +73,7 @@ describe('ComponentslistComponent', () => {
         MatCheckboxModule,
         MatFormFieldModule, MatInputModule,
         BrowserAnimationsModule, RouterTestingModule],
-      declarations: [ ComponentslistComponent ],
+      declarations: [ComponentslistComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         DatePipe, {
@@ -75,10 +83,11 @@ describe('ComponentslistComponent', () => {
         {
           provide: MAT_DIALOG_DATA, useValue: {}
         },
-        { provide: DataService, useValue: dataServiceSpy}
+        { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -92,18 +101,18 @@ describe('ComponentslistComponent', () => {
     expect(component).toBeTruthy();
   });
   it('should selectComponent', () => {
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
     });
     // matDialogRef.close.and.re
     component.selectComponent(baseComponent);
-    expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
 
   it('should removeCustomList', () => {
-    dataServiceSpy.presentToastCustom.and.callFake(() => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
         isConfirmed: true
       });
