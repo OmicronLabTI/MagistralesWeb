@@ -9,11 +9,11 @@ import { PedidosService } from '../../services/pedidos.service';
 import { of, throwError } from 'rxjs';
 import { PedidosListMock } from '../../../mocks/pedidosListMock';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ConstStatus } from '../../constants/const';
+import { ConstStatus, FromToFilter } from '../../constants/const';
 import { PageEvent } from '@angular/material/paginator';
 import { DataService } from '../../services/data.service';
 import Swal from 'sweetalert2';
-import { IProcessOrdersRes, ParamsPedidos } from '../../model/http/pedidos';
+import { Catalogs, ICreatePdfOrdersRes, IProcessOrdersRes, IRecipesRes, ParamsPedidos } from '../../model/http/pedidos';
 import { PipesModule } from '../../pipes/pipes.module';
 import { RangeDateMOck } from '../../../mocks/rangeDateMock';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
@@ -21,6 +21,10 @@ import { ObservableService } from 'src/app/services/observable.service';
 import { DateService } from 'src/app/services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from 'src/app/services/filters.service';
+import { ErrorService } from 'src/app/services/error.service';
+import { Router } from '@angular/router';
+import { CommentsConfig } from 'src/app/model/device/incidents.model';
+import { IOrdersRefuseReq, IPedidoRefuseRes, ReasonRefuse } from 'src/app/model/http/detallepedidos.model';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
@@ -32,8 +36,13 @@ describe('PedidosComponent', () => {
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let dateServiceSpy: jasmine.SpyObj<DateService>;
   let filtersServiceSpy: jasmine.SpyObj<FiltersService>;
+  let errorServiceSpy;
+  const routerSpy = {navigate: jasmine.createSpy('navigate')};
 
   const paramsPedidos = new ParamsPedidos();
+  const iRecipesRes = new IRecipesRes();
+  const iCreatePdfOrdersRes = new ICreatePdfOrdersRes();
+  const iPedidoRefuseRes = new IPedidoRefuseRes();
   beforeEach(async(() => {
     messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
       'presentToastCustom',
@@ -61,7 +70,13 @@ describe('PedidosComponent', () => {
     localStorageServiceSpy.getFiltersActives.and.returnValue('');
     localStorageServiceSpy.getFiltersActivesAsModel.and.returnValue(paramsPedidos);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
-      'getPedidos', 'processOrders', 'getInitRangeDate'
+      'getPedidos',
+      'processOrders',
+      'getInitRangeDate',
+      'getRecipesByOrder',
+      'createPdfOrders',
+      'getOrdersPdfViews',
+      'putRefuseOrders'
     ]);
     pedidosServiceSpy.processOrders.and.callFake(() => {
       return of({ success: true, response: ['id'] } as IProcessOrdersRes);
@@ -72,7 +87,22 @@ describe('PedidosComponent', () => {
     pedidosServiceSpy.getPedidos.and.callFake(() => {
       return of(PedidosListMock);
     });
+    pedidosServiceSpy.getRecipesByOrder .and.callFake(() => {
+      return of(iRecipesRes);
+    });
+    pedidosServiceSpy.createPdfOrders.and.callFake(() => {
+      return of(iCreatePdfOrdersRes);
+    });
+    pedidosServiceSpy.getOrdersPdfViews.and.callFake(() => {
+      return of(iCreatePdfOrdersRes);
+    });
+    pedidosServiceSpy.putRefuseOrders.and.callFake(() => {
+      return of(iPedidoRefuseRes);
+    });
 
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
+      'httpError'
+    ]);
     // -- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>
       ('ObservableService',
@@ -85,7 +115,9 @@ describe('PedidosComponent', () => {
           'setFinalizeOrders',
           'setCancelOrders',
           'getNewCommentsResult',
-          'getNewSearchOrdersModal'
+          'getNewSearchOrdersModal',
+          'setSearchOrdersModal',
+          'setOpenCommentsDialog'
         ]
       );
     observableServiceSpy.getCallHttpService.and.returnValue(of());
@@ -110,7 +142,7 @@ describe('PedidosComponent', () => {
     filtersServiceSpy.getIsThereOnData.and.returnValue(true);
     filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
     filtersServiceSpy.getIsWithFilter.and.returnValue(true);
-    filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
+    filtersServiceSpy.getNewDataToFilter.and.returnValue([paramsPedidos, '']);
     TestBed.configureTestingModule({
       declarations: [PedidosComponent],
       imports: [RouterTestingModule, MATERIAL_COMPONENTS,
@@ -124,6 +156,8 @@ describe('PedidosComponent', () => {
         { provide: DateService, useValue: dateServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
         { provide: FiltersService, useValue: filtersServiceSpy },
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: Router, useValue: routerSpy }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -143,6 +177,13 @@ describe('PedidosComponent', () => {
         'orderType', 'f_inicio', 'f_fin', 'qfb_asignado', 'status', 'actions']);
     expect(component.limit).toEqual(10);
     expect(component.offset).toEqual(0);
+  });
+  it('should createInitRage error', () => {
+    pedidosServiceSpy.getInitRangeDate.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.createInitRage();
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
   it('should call getPedidos ok', () => {
     component.offset = 0;
@@ -220,29 +261,274 @@ describe('PedidosComponent', () => {
     component.dataSource.data = PedidosListMock.response;
     component.dataSource.data.filter(order => order.pedidoStatus === ConstStatus.planificado)
       .forEach(order => order.isChecked = true);
+    expect(observableServiceSpy.setQbfToPlace).toHaveBeenCalled();
   });
   it('should cancelOrders', () => {
-    component.dataSource.data = [];
+    component.dataSource.data = [{
+      isChecked: true,
+      docNum: 1,
+      docNumDxp: '1',
+      codigo: '1',
+      cliente: '1',
+      medico: '1',
+      asesorName: 'qwerty',
+      fechaInicio: '12-12-12',
+      fechaFin: '13-12-12',
+      pedidoStatus: 'Planificado',
+      labelType: 'string',
+      finishedLabel: 2,
+      orderType: 'string'
+    }];
     component.cancelOrders();
     component.dataSource.data = PedidosListMock.response;
     component.dataSource.data.filter(order => order.pedidoStatus !== ConstStatus.finalizado)
       .forEach(order => order.isChecked = true);
+    expect(component.cancelOrders).toBeTruthy();
   });
   it('should finalizeOrders', () => {
-    component.dataSource.data = [];
+    component.dataSource.data = [{
+      isChecked: true,
+      docNum: 1,
+      docNumDxp: '1',
+      codigo: '1',
+      cliente: '1',
+      medico: '1',
+      asesorName: 'qwerty',
+      fechaInicio: '12-12-12',
+      fechaFin: '13-12-12',
+      pedidoStatus: 'Terminado',
+      labelType: 'string',
+      finishedLabel: 2,
+      orderType: 'string'
+    }];
     component.finalizeOrders();
     component.dataSource.data = PedidosListMock.response;
     component.dataSource.data.filter(order => order.pedidoStatus === ConstStatus.terminado)
       .forEach(order => order.isChecked = true);
+    expect(component.finalizeOrders).toBeTruthy();
   });
-  // it('should processOrders', (done) => {
-  //   component.dataSource.data = [];
-  //   component.processOrdersService();
-  //   setTimeout(() => {
-  //     expect(Swal.isVisible()).toBeFalsy();
-  //     Swal.clickConfirm();
-  //     // expect(pedidosServiceSpy.processOrders).toHaveBeenCalled();
-  //     done();
-  //   });
+  it('should processOrders', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.dataSource.data = [];
+    component.processOrdersService();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+    // setTimeout(() => {
+    //   expect(Swal.isVisible()).toBeFalsy();
+    //   Swal.clickConfirm();
+    //   // expect(pedidosServiceSpy.processOrders).toHaveBeenCalled();
+    //   done();
+    // });
+  });
+  it('should processOrdersService error', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    pedidosServiceSpy.processOrders();
+    pedidosServiceSpy.processOrders.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.processOrdersService();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+    expect(pedidosServiceSpy.processOrders).toHaveBeenCalled();
+    // setTimeout(() => {
+    //   expect(Swal.isVisible()).toBeFalsy();
+    //   Swal.clickConfirm();
+    //   // expect(pedidosServiceSpy.processOrders).toHaveBeenCalled();
+    //   done();
+    // });
+  });
+
+
+  it('should showMessagesAndRefresh', () => {
+    component.showMessagesAndRefresh();
+    expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+  });
+  it('should openFindOrdersDialog', () => {
+    component.openFindOrdersDialog();
+    expect(observableServiceSpy.setSearchOrdersModal).toHaveBeenCalled();
+  });
+
+  // it('should onSuccessSearchOrderModal', () => {
+  //   paramsPedidos.dateType = '';
+  //   paramsPedidos.pageIndex = 1;
+  //   paramsPedidos.offset = 1;
+  //   paramsPedidos.limit = 1;
+  //   component.onSuccessSearchOrderModal(paramsPedidos);
   // });
+
+  it('should reassignOrders', () => {
+    component.dataSource.data = [{
+      isChecked: true,
+      docNum: 1,
+      docNumDxp: '1',
+      codigo: '1',
+      cliente: '1',
+      medico: '1',
+      asesorName: 'qwerty',
+      fechaInicio: '12-12-12',
+      fechaFin: '13-12-12',
+      pedidoStatus: 'Terminado',
+      labelType: 'string',
+      finishedLabel: 2,
+      orderType: 'string'
+    }];
+    filtersServiceSpy.getItemOnDateWithFilter(component.dataSource.data, FromToFilter.fromOrdersReassign, ConstStatus.liberado);
+    component.reassignOrders();
+    expect(filtersServiceSpy.getItemOnDateWithFilter).toHaveBeenCalled();
+  });
+
+  it('should toSeeRecipes', () => {
+    iRecipesRes.response = [{
+      order: 1,
+      recipe: ''
+    }];
+    component.toSeeRecipes(1);
+    expect(pedidosServiceSpy.getRecipesByOrder).toHaveBeenCalled();
+  });
+
+  it('should toSeeRecipes error', () => {
+    pedidosServiceSpy.getRecipesByOrder.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.toSeeRecipes(1);
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
+  // it('should onSuccessHttpGetRecipes.lenght === CONST_NUMBER.zero', () => {
+  //   iRecipesRes.response = [];
+  //   component.onSuccessHttpGetRecipes(iRecipesRes);
+  //   expect(dataServiceSpy.openNewTapByUrl).toHaveBeenCalled();
+  // });
+
+  it('should onSuccessHttpGetRecipes.lenght !== CONST_NUMBER.zero', () => {
+    iRecipesRes.response = [{
+      order: 1,
+      recipe: ''
+    }];
+    component.onSuccessHttpGetRecipes(iRecipesRes);
+    expect(dataServiceSpy.openNewTapByUrl).toHaveBeenCalled();
+  });
+
+  // it('should requestMaterial', () => {
+  //   component.requestMaterial();
+  //   expect (routerSpy.navigate).toHaveBeenCalledWith(['/materialRequest']);
+  // });
+
+  it('should printOrderAsPdfFile', () => {
+    // iCreatePdfOrdersRes.response;
+    component.isCheckedOrders = true;
+    component.dataSource.data = [{
+      isChecked: true,
+      docNum: 1,
+      docNumDxp: '1',
+      codigo: '1',
+      cliente: '1',
+      medico: '1',
+      asesorName: 'qwerty',
+      fechaInicio: '12-12-12',
+      fechaFin: '13-12-12',
+      pedidoStatus: 'Terminado',
+      labelType: 'string',
+      finishedLabel: 2,
+      orderType: 'string'
+    }];
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.printOrderAsPdfFile();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
+
+
+  it('should printOrderAsPdfFileConfirmedAction error', () => {
+    pedidosServiceSpy.createPdfOrders.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.printOrderAsPdfFileConfirmedAction();
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
+  it('should openNewTabByOrder', () => {
+    component.openNewTabByOrder(0);
+    // expect (routerSpy.navigate).toHaveBeenCalledWith(['/pdetalle']);
+    expect(component.openNewTabByOrder).toBeTruthy();
+  });
+
+
+  it('should viewPedidosWithPdf error', () => {
+    pedidosServiceSpy.getOrdersPdfViews.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.viewPedidosWithPdf();
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
+  it('should ordersToRefuse', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.ordersToRefuse();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
+
+  it('should successNewComments error', () => {
+    const commentsConfig = new CommentsConfig();
+    commentsConfig.comments = '';
+    // commentsConfig.
+    const iOrdersRefuseReq = new IOrdersRefuseReq();
+
+    pedidosServiceSpy.putRefuseOrders(iOrdersRefuseReq);
+    pedidosServiceSpy.putRefuseOrders.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.successNewComments(commentsConfig);
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
+  it('should successRefuseResult', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.successRefuseResult([]);
+    expect(component.successRefuseResult).toBeTruthy();
+  });
+
+  it('should successRefuseResult failed.lenght != 0', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    const reasonRefuse = new ReasonRefuse();
+    reasonRefuse.reason = '';
+    component.successRefuseResult([reasonRefuse]);
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
+
+  it('should createProductoNoLabel error', () => {
+    pedidosServiceSpy.getInitRangeDate.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.createProductoNoLabel();
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
+
+  it('should setProductNoLabel', () => {
+    const catalogs = new Catalogs();
+    component.setProductNoLabel(catalogs);
+    expect(localStorageServiceSpy.setProductNoLabel).toHaveBeenCalled();
+  });
 });

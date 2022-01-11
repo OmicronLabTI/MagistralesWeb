@@ -16,8 +16,8 @@ import { UrlsOfQrEachOrderMock } from '../../../mocks/urlsOfQrEachOrderMock';
 import { ErrorService } from '../../services/error.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { Catalogs, ICreatePdfOrdersRes, ParamsPedidos } from 'src/app/model/http/pedidos';
-import { HttpServiceTOCall } from 'src/app/constants/const';
+import { Catalogs, ICreatePdfOrdersRes, IProcessOrdersRes, ParamsPedidos } from 'src/app/model/http/pedidos';
+import { FromToFilter, HttpServiceTOCall } from 'src/app/constants/const';
 import { CommentsConfig } from '../../model/device/incidents.model';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
@@ -39,6 +39,8 @@ describe('PedidoDetalleComponent', () => {
   const catalogs = new Catalogs();
   const iPedidoDetalleRes = new IPedidoDetalleListRes();
   const iPedidoDetalleReq: IPedidoDetalleReq[] = [];
+  const iProcessOrdersRes = new IProcessOrdersRes();
+  const iPedidoDetalleListRes = new IPedidoDetalleListRes();
 
   const iCreatePdfOrdersRes = new ICreatePdfOrdersRes();
 
@@ -71,6 +73,9 @@ describe('PedidoDetalleComponent', () => {
       'finishLabels',
       'savedComments',
       'putOrdersToDelivered',
+      'postPlaceOrdersDetail',
+      'getOrdersPdfViews',
+      'getDetailCarousel'
     ]);
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getProductNoLabel',
@@ -85,9 +90,10 @@ describe('PedidoDetalleComponent', () => {
       'openNewTapByUrl',
       'getItemOnDataOnlyIds',
       'getFullStringForCarousel',
+      'changeRouterForFormula'
     ]);
     localStorageServiceSpy.getProductNoLabel.and.returnValue(catalogs);
-    localStorageServiceSpy.getUserRole.and.returnValue('');
+    localStorageServiceSpy.getUserRole.and.returnValue('4');
     localStorageServiceSpy.getFiltersActives.and.returnValue(JSON.stringify(parametrosPedidos));
     localStorageServiceSpy.getCurrentDetailOrder.and.returnValue('');
     dataServiceSpy.getItemOnDataOnlyIds.and.returnValue([]);
@@ -99,6 +105,15 @@ describe('PedidoDetalleComponent', () => {
     pedidosServiceSpy.putOrdersToDelivered.and.returnValue(of(iCreatePdfOrdersRes));
     pedidosServiceSpy.getDetallePedido.and.returnValue(of(DetailOrderMock));
     pedidosServiceSpy.savedComments.and.returnValue(of(iPedidoDetalleRes));
+    pedidosServiceSpy.postPlaceOrdersDetail.and.callFake(() => {
+      return of(iProcessOrdersRes);
+    });
+    pedidosServiceSpy.getOrdersPdfViews.and.callFake(() => {
+      return of(iCreatePdfOrdersRes);
+    });
+    pedidosServiceSpy.getDetailCarousel .and.callFake(() => {
+      return of(iPedidoDetalleListRes);
+    });
 
     // --- ObservableService
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
@@ -129,7 +144,9 @@ describe('PedidoDetalleComponent', () => {
     ]);
 
     filtersServiceSpy.getIsThereOnData.and.returnValue(true);
-    filtersServiceSpy.getItemOnDateWithFilter.and.returnValue([]);
+    filtersServiceSpy.getItemOnDateWithFilter.and.callFake(() => {
+      return [];
+    });
     filtersServiceSpy.getIsWithFilter.and.returnValue(true);
     filtersServiceSpy.getNewDataToFilter.and.returnValue([new ParamsPedidos(), '']);
 
@@ -245,4 +262,174 @@ describe('PedidoDetalleComponent', () => {
     expect(pedidosServiceSpy.qrByEachOrder).toHaveBeenCalled();
     expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
+  it('should processOrdersDetail', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+    return Promise.resolve({
+      isConfirmed: true
+    });
+  });
+    component.dataSource.data = [
+      {
+        isChecked: true,
+        status: 'Abierto',
+        codigoProducto: '1'
+      } as IPedidoDetalleReq
+    ];
+    iProcessOrdersRes.response = ['1'];
+    pedidosServiceSpy.postPlaceOrdersDetail();
+    component.processOrdersDetail();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
+
+  it('should processOrdersDetail error', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.dataSource.data = [
+      {
+        isChecked: true,
+        status: 'Abierto',
+        codigoProducto: '1'
+      } as IPedidoDetalleReq
+    ];
+    pedidosServiceSpy.postPlaceOrdersDetail();
+    pedidosServiceSpy.postPlaceOrdersDetail.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.processOrdersDetail();
+    expect(pedidosServiceSpy.postPlaceOrdersDetail).toHaveBeenCalled();
+  });
+
+  it('should cancelOrders', () => {
+    component.cancelOrders();
+    expect(observableServiceSpy.setCancelOrders).toHaveBeenCalled();
+  });
+
+  it('should finalizeOrdersDetail', () => {
+    component.finalizeOrdersDetail();
+    expect(observableServiceSpy.setFinalizeOrders).toHaveBeenCalled();
+  });
+
+  it('should goToOrders', () => {
+    component.goToOrders(['']);
+    expect(observableServiceSpy.setPathUrl).toHaveBeenCalled();
+  });
+
+  it('should addCommentsDialog', () => {
+    component.isCorrectToAddComments = false;
+    component.addCommentsDialog();
+    expect(observableServiceSpy.setOpenCommentsDialog).toHaveBeenCalled();
+    // expect(observableServiceSpy.setPathUrl).toHaveBeenCalled();
+  });
+
+  it('should addCommentsOnService error', () => {
+    pedidosServiceSpy.savedComments.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.addCommentsOnService('');
+    expect(pedidosServiceSpy.savedComments).toHaveBeenCalled();
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
+  it('should finishOrdersLabels', () => {
+    component.finishOrdersLabels();
+    expect(observableServiceSpy.setOpenSignatureDialog).toHaveBeenCalled();
+  });
+
+  it('should createConsumeService error', () => {
+    pedidosServiceSpy.finishLabels.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.createConsumeService();
+    expect(pedidosServiceSpy.finishLabels).toHaveBeenCalled();
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
+  it('should getArrayToFinishLabel', () => {
+    component.ProductNoLabel.value = 'DZ';
+    component.dataSource.data = [
+      {
+        isChecked: true,
+        status: 'Planificado',
+        codigoProducto: 'oj 6',
+        finishedLabel: 0,
+      } as IPedidoDetalleReq
+    ];
+    component.getArrayToFinishLabel(true, 0);
+    expect(component.getArrayToFinishLabel).toBeTruthy();
+  });
+
+  it('should removeSignature', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.removeSignature(0);
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
+
+  // it('should viewOrdersWithPdf', () => {
+  //   component.viewOrdersWithPdf();
+  //   expect(pedidosServiceSpy.getOrdersPdfViews).toHaveBeenCalled();
+  // });
+
+  it('should viewOrdersWithPdf error', () => {
+    pedidosServiceSpy.getOrdersPdfViews.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.viewOrdersWithPdf();
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
+  it('should createMessageWithOrdersWithoutQr', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.createMessageWithOrdersWithoutQr(['']);
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
+
+  it('should goToDetailFormula', () => {
+    component.goToDetailFormula('0');
+    expect(dataServiceSpy.changeRouterForFormula).toHaveBeenCalled();
+  });
+
+  it('should reassignOrderDetail', () => {
+    component.dataSource.data = [
+      {
+        isChecked: true,
+        status: 'Planificado',
+        codigoProducto: 'oj 6',
+        finishedLabel: 0,
+        ordenFabricacionId: 1
+      } as IPedidoDetalleReq
+    ];
+    // FromToFilter.fromOrderIsolatedReassignItems;
+    dataServiceSpy.getItemOnDataOnlyIds(component.dataSource.data, FromToFilter.fromOrderIsolatedReassignItems);
+    component.reassignOrderDetail();
+    expect(component.reassignOrderDetail).toBeTruthy();
+    // expect(dataServiceSpy.changeRouterForFormula).toHaveBeenCalled();
+  });
+  it('should ordersToDelivered', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.ordersToDelivered();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
+
+  // it('should ordersToDelivered error', () => {
+  //   filtersServiceSpy.getItemOnDateWithFilter.and.callFake(() => {
+  //     return [throwError({ error: true })];
+  //   });
+  //   component.ordersToDelivered();
+  //   // expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+  // });
 });

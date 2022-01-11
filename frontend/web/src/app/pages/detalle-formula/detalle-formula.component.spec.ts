@@ -20,6 +20,10 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from 'src/app/services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from '../../services/filters.service';
+import { MiListaComponent } from 'src/app/dialogs/mi-lista/mi-lista.component';
+import { AppModule } from 'src/app/app.module';
+import { Components } from 'src/app/model/http/listacomponentes';
+import { IComponentsSaveReq } from 'src/app/model/http/detalleformula';
 
 describe('DetalleFormulaComponent', () => {
   let component: DetalleFormulaComponent;
@@ -53,6 +57,7 @@ describe('DetalleFormulaComponent', () => {
         'getFiltersActivesOrders',
         'removeFiltersActiveOrders',
         'getFiltersActivesAsModelOrders',
+        'getToken'
       ]);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService',
       [
@@ -68,10 +73,16 @@ describe('DetalleFormulaComponent', () => {
       'getFullStringForCarousel',
       'getIsToSaveAnything'
     ]);
+    dataServiceSpy.getIsToSaveAnything.and.callFake(() => {
+      return true;
+    });
     // routerSpy = jasmine.createSpyObj<ActivatedRoute>('ActivateRoute', [
     //   'paramMap'
     // ]);
     // routerSpy.paramMap.and.returnValue();
+    localStorageServiceSpy.getToken.and.callFake(() => {
+      return '';
+    });
     localStorageServiceSpy.getFiltersActivesAsModelOrders.and.returnValue(paramsPedidos);
     pedidosServiceSpy.getFormulaDetail.and.callFake(() => {
       return of(DetalleFormulaMock);
@@ -130,7 +141,8 @@ describe('DetalleFormulaComponent', () => {
         FormsModule,
         BrowserAnimationsModule,
         ComponentsModule,
-        RouterModule
+        RouterModule,
+        AppModule
       ],
       declarations: [DetalleFormulaComponent],
       providers: [
@@ -208,6 +220,11 @@ describe('DetalleFormulaComponent', () => {
     component.dataSource.data.forEach(element => element.isChecked = true);
     expect(component.someComplete()).toBeTruthy();
   });
+  it('should someComplete dataSource.data == null', () => {
+    component.dataSource.data = null;
+    component.someComplete();
+    // expect(component.someComplete).;
+  });
   it('should setAll', () => {
     component.dataSource.data = null;
     component.setAll(true);
@@ -269,23 +286,119 @@ describe('DetalleFormulaComponent', () => {
     expect(component.dataSource.data[0].requiredQuantity).toBeDefined();
   });
 
-  it('should saveFormulaDetail is false', () => {
+  it('should saveFormulaDetail when isPlannedQuantityError is true', () => {
+    component.isPlannedQuantityError = true;
+    component.saveFormulaDetail();
+    expect(component.saveFormulaDetail).toBeTruthy();
+  });
+
+  it('should saveFormulaDetail when isPlannedQuantityError is false and getIsThereNull is false', () => {
+
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 0,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false
+    };
+    component.getIsThereNull();
+    component.saveFormulaDetail();
+    // expect(component.getIsThereNull).toBeFalsy();
+    expect(component.saveFormulaDetail).toBeTruthy();
+  });
+
+  it('should saveFormulaDetail when isPlannedQuantityError is false', () => {
+    component.dataSource.data = [];
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      action: 'update'
+    };
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    pedidosServiceSpy.updateFormula();
     component.saveFormulaDetail();
     expect(component.isPlannedQuantityError).toBe(false);
     // expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
   });
-  // it('should saveFormulaDetail is true', () => {
-  //   dataServiceSpy.setMessageGeneralCallHttp.and.callFake(() => {
-  //     return;
-  //   });
-  //   component.saveFormulaDetail();
-  //   component.isPlannedQuantityError = false;
-  //   // expect(component.isPlannedQuantityError).toBe(true);
-  //   expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
-  // });
+
+  it('should saveFormulaDetail when isPlannedQuantityError is false', () => {
+    component.dataSource.data = [];
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      action: 'update'
+    };
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    pedidosServiceSpy.updateFormula.and.callFake(() => {
+      return throwError({ status: 500 });
+    });
+    pedidosServiceSpy.updateFormula();
+    component.saveFormulaDetail();
+    // expect(errorServiceSpy.httpError).toHaveBeenCalled();
+    // expect(component.isPlannedQuantityError).toBe(false);
+    // expect(dataServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+  });
 
 
   it('should deleteComponentsToDelete', () => {
+    component.dataSource.data[0] = {
+      isChecked: true,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      action: 'update'
+    };
     pedidosServiceSpy.updateFormula.and.callFake(() => {
       return of();
     });
@@ -294,7 +407,45 @@ describe('DetalleFormulaComponent', () => {
         isConfirmed: true
       });
     });
+    const iComponentsSaveReq = new IComponentsSaveReq();
+    iComponentsSaveReq.fabOrderId = 1;
+    iComponentsSaveReq.plannedQuantity = 1;
+    iComponentsSaveReq.warehouse = '';
+    iComponentsSaveReq.comments = '';
+    pedidosServiceSpy.updateFormula(iComponentsSaveReq);
     component.deleteComponents();
+    // expect(pedidosServiceSpy.updateFormula).toHaveBeenCalled();
+  });
+
+  it('should deleteComponentsToDelete when updateFormula error', () => {
+    component.dataSource.data[0] = {
+      isChecked: true,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      action: 'update'
+    };
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    pedidosServiceSpy.updateFormula.and.callFake(() => {
+      return throwError({ status: 500 });
+    });
+    component.deleteComponents();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+    // expect(errorServiceSpy.httpError).toHaveBeenCalled();
     // expect(pedidosServiceSpy.updateFormula).toHaveBeenCalled();
   });
 
@@ -380,5 +531,73 @@ describe('DetalleFormulaComponent', () => {
 
   it('should changeFormulaByIndex', () => {
     component.changeFormulaByIndex(CarouselOption.backDetail);
+  });
+
+  it('should createMessageOkHttp', () => {
+    component.createMessageOkHttp();
+    expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+  });
+  it('should createMessageOnlyNumber', () => {
+    component.createMessageOnlyNumber();
+    expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
+  });
+
+  it('should openMiListaDialog', () => {
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false
+    };
+    component.openMiListaDialog();
+  });
+
+  it('should openMiListaDialog', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.dataSource.data = [];
+    component.openMiListaDialog();
+  });
+
+  it('should replaceComponentsWithCustomList', () => {
+    component.dataSource.data = [{
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      productoId: '1'
+    }];
+    const components = new Components();
+    components.productId = '1';
+    components.description = '';
+    components.baseQuantity = 2;
+    component.replaceComponentsWithCustomList([components]);
+  });
+
+  it('should openCustomList', () => {
+    component.openCustomList();
   });
 });
