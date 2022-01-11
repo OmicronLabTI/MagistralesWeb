@@ -12,7 +12,7 @@ import { IPedidoDetalleReq } from '../model/http/detallepedidos.model';
 import { INCIDENTS_GRAPHIC_MATRIX_MOCK } from 'src/mocks/incidentsGraphicsMatrixMock';
 import { Router } from '@angular/router';
 
-fdescribe('DataService', () => {
+describe('DataService', () => {
   let routerSpy: jasmine.SpyObj<Router>;
   const catalogs = new Catalogs();
   catalogs.id = 74;
