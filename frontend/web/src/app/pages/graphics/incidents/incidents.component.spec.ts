@@ -11,6 +11,7 @@ import { IIncidentsGraphicRes } from 'src/app/model/http/incidents.model';
 import { ConfigurationGraphic, ItemIndicator } from 'src/app/model/device/incidents.model';
 import { ErrorService } from 'src/app/services/error.service';
 import { ObservableService } from 'src/app/services/observable.service';
+import { INCIDENTS_GRAPHIC_MATRIX_MOCK } from 'src/mocks/incidentsGraphicsMatrixMock';
 
 describe('IncidentsComponent', () => {
   let component: IncidentsComponent;
@@ -71,18 +72,7 @@ describe('IncidentsComponent', () => {
   });
 
   it('should checkNewRange', () => {
-    const incidentsGraphicsMatrix = [[{
-      fieldKey: 'IncidentReason',
-      totalCount: 1,
-      graphType: 'IncidentReason',
-      // color?: string;
-    }],
-    [{
-      fieldKey: 'IncidentReason',
-      totalCount: 1,
-      graphType: 'IncidentReason',
-      // color?: string;
-    }]];
+    const incidentsGraphicsMatrix = INCIDENTS_GRAPHIC_MATRIX_MOCK;
     iIncidentsGraphicRes.response = [
       incidentsGraphicsMatrix[0]
     ];
