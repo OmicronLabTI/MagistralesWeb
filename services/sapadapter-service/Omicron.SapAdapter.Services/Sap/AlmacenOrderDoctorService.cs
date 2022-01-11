@@ -133,7 +133,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Pieces = detail.Quantity,
                     Container = detail.Container,
                     Status = ServiceShared.CalculateTernary(detail.CanceledOrder == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
-                    Incident = string.IsNullOrEmpty(localIncident.Status) ? null : localIncident,
+                    Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                 };
                 listDetails.Add(detailItem);
             }
