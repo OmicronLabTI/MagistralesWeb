@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Threading.Tasks;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Services.Constants;
     using Serilog;
 
@@ -79,7 +80,7 @@ namespace Omicron.SapAdapter.Services.Utils
             foreach (var order in listOrders)
             {
                 var item = items.FirstOrDefault(x => order.ProductoId == x.ProductoId);
-                order.ProdName = item == null ? order.ProdName : item.LargeDescription;
+                order.ProdName = ServiceShared.CalculateTernary(item == null, order?.ProdName, item?.LargeDescription);
 
                 var localDetails = details.Where(x => x.OrderFabId == order.OrdenId).ToList();
                 order.HasMissingStock = localDetails.Any(y => y.Stock == 0);
@@ -105,7 +106,7 @@ namespace Omicron.SapAdapter.Services.Utils
             {
                 if (componentIds.Contains($"{x.Key.DocNum}-{x.Key.ItemCode}"))
                 {
-                    var lastTransaction = x.Any() ? x.OrderBy(y => y.LogEntry).Last(z => z.DocQuantity > 0) : null;
+                    var lastTransaction = this.GetLastTransaction(x.ToList());
 
                     if (lastTransaction != null)
                     {
@@ -121,7 +122,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 componentes.Where(x => x.OrderFabId == g.Key).ToList().ForEach(i =>
                 {
                     var transactions = g.Where(item => item.ItemCode == i.ProductId).ToList();
-                    var lastTransaction = transactions.Any() ? transactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0) : null;
+                    var lastTransaction = this.GetLastTransaction(transactions);
 
                     if (lastTransaction == null)
                     {
@@ -143,6 +144,11 @@ namespace Omicron.SapAdapter.Services.Utils
             });
 
             return listToReturn;
+        }
+
+        private BatchTransacitions GetLastTransaction(List<BatchTransacitions> transactions)
+        {
+            return transactions.Any() ? transactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0) : null;
         }
     }
 }
