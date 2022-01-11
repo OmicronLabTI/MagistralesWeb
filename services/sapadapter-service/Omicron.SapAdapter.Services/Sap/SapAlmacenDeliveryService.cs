@@ -394,7 +394,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     var lineProduct = lineProducts.FirstOrDefault(x => x.SaleOrderId == order.BaseEntry && x.ItemCode == item.ProductoId);
                     lineProduct ??= new LineProductsModel();
 
-                    var batchName = string.IsNullOrEmpty(lineProduct.BatchName) ? new List<AlmacenBatchModel>() : JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
+                    var batchName = ServiceShared.DeserializeObject(lineProduct.BatchName, new List<AlmacenBatchModel>());
                     listBatches = this.GetBatchesByDelivery(order.ProductoId, batchesQty, batches, batchName);
                 }
 
@@ -405,7 +405,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var localIncident = new IncidentInfoModel
                 {
-                    Batches = !string.IsNullOrEmpty(incidentdb.Batches) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(incidentdb.Batches) : new List<AlmacenBatchModel>(),
+                    Batches = ServiceShared.DeserializeObject(incidentdb.Batches, new List<AlmacenBatchModel>()),
                     Comments = incidentdb.Comments,
                     Incidence = incidentdb.Incidence,
                     Status = incidentdb.Status,
