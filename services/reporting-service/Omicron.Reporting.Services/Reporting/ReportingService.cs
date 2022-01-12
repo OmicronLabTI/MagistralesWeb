@@ -487,17 +487,16 @@ namespace Omicron.Reporting.Services
         {
             if (ServiceConstants.ValidStatusToGetInvoiceAttachment.Contains(localPackage.Status))
             {
-                var containerInvoiceUrl = this.configuration[ServiceConstants.InvoicePdfAzureroute];
-                var url = $"{containerInvoiceUrl}F{localPackage.PackageId}.pdf";
+                var url = $"{this.configuration[ServiceConstants.InvoicePdfAzureroute]}F{localPackage.PackageId}.pdf";
                 var invoicePdf = await this.azureService.GetlementFromAzure(this.configuration[ServiceConstants.AzureAccountName], this.configuration[ServiceConstants.AzureAccountKey], url);
-                var ms = new MemoryStream();
-                invoicePdf.Content.CopyTo(ms);
 
-                var ms2 = new MemoryStream(invoicePdf.ContentHash);
-                return new Dictionary<string, MemoryStream>()
+                if (invoicePdf != null)
                 {
-                    { $"F{localPackage.PackageId}.pdf", ms },
-                };
+                    var ms = new MemoryStream();
+                    invoicePdf.Content.CopyTo(ms);
+                    ms.Position = 0;
+                    return new Dictionary<string, MemoryStream>() { { $"F{localPackage.PackageId}.pdf", ms } };
+                }
             }
 
             return null;
