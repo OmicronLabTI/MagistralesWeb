@@ -278,6 +278,26 @@ namespace Omicron.Reporting.Services.Constants
         public const string Mixto = "Mixto";
 
         /// <summary>
+        /// azure invoice route.
+        /// </summary>
+        public const string AzureAccountName = "AzureAccountName";
+
+        /// <summary>
+        /// azure invoice route.
+        /// </summary>
+        public const string AzureAccountKey = "AzureAccountKey";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Camino = "En Camino";
+
+        /// <summary>
+        /// azure invoice route.
+        /// </summary>
+        public const string InvoicePdfAzureroute = "InvoicePdfAzureroute";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -312,6 +332,18 @@ namespace Omicron.Reporting.Services.Constants
             { "ETAPA", "Stage" },
             { "ESTATUS INCIDENCIA", "Status" },
             { "COMENTARIOS", Comments },
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> ValidStatusToGetInvoiceAttachment { get; } = new List<string>
+        {
+            Entregado,
+            Camino,
         };
     }
 }

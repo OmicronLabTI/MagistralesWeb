@@ -13,8 +13,10 @@ namespace Omicron.Reporting.Services
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
     using Omicron.Reporting.Dtos.Model;
     using Omicron.Reporting.Entities.Model;
+    using Omicron.Reporting.Services.AzureServices;
     using Omicron.Reporting.Services.Clients;
     using Omicron.Reporting.Services.Constants;
     using Omicron.Reporting.Services.ReportBuilder;
@@ -26,16 +28,22 @@ namespace Omicron.Reporting.Services
     {
         private readonly ICatalogsService catalogsService;
         private readonly IOmicronMailClient omicronMailClient;
+        private readonly IConfiguration configuration;
+        private readonly IAzureService azureService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReportingService"/> class.
         /// </summary>
         /// <param name="catalogsService">The catalogs service.</param>
         /// <param name="omicronMailClient">The email service.</param>
-        public ReportingService(ICatalogsService catalogsService, IOmicronMailClient omicronMailClient)
+        /// <param name="azureService">the azure service.</param>
+        /// <param name="configuration">the configuration.</param>
+        public ReportingService(ICatalogsService catalogsService, IOmicronMailClient omicronMailClient, IConfiguration configuration, IAzureService azureService)
         {
             this.catalogsService = catalogsService;
             this.omicronMailClient = omicronMailClient;
+            this.configuration = configuration;
+            this.azureService = azureService;
         }
 
         /// <summary>
@@ -111,12 +119,14 @@ namespace Omicron.Reporting.Services
             copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
 
             var text = this.GetBodyForLocal(sendLocalPackage, logoUrl);
+            var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
                 string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
                 text.Item1,
                 text.Item2,
-                copyEmails);
+                copyEmails,
+                invoiceAttachment);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
@@ -471,6 +481,26 @@ namespace Omicron.Reporting.Services
             });
 
             return dictionaryToReturn;
+        }
+
+        private async Task<Dictionary<string, MemoryStream>> GetInvoiceAttachment(SendLocalPackageModel localPackage)
+        {
+            if (ServiceConstants.ValidStatusToGetInvoiceAttachment.Contains(localPackage.Status))
+            {
+                var containerInvoiceUrl = this.configuration[ServiceConstants.InvoicePdfAzureroute];
+                var url = $"{containerInvoiceUrl}F{localPackage.PackageId}.pdf";
+                var invoicePdf = await this.azureService.GetlementFromAzure(this.configuration[ServiceConstants.AzureAccountName], this.configuration[ServiceConstants.AzureAccountKey], url);
+                var ms = new MemoryStream();
+                invoicePdf.Content.CopyTo(ms);
+
+                var ms2 = new MemoryStream(invoicePdf.ContentHash);
+                return new Dictionary<string, MemoryStream>()
+                {
+                    { $"F{localPackage.PackageId}.pdf", ms },
+                };
+            }
+
+            return null;
         }
     }
 }
