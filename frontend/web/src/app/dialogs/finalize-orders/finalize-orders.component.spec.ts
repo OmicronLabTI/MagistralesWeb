@@ -184,7 +184,7 @@ describe('FinalizeOrdersComponent', () => {
   });
 
   it('should focusOutLote', () => {
-    component.dataSource.data = [
+    component.dataSource.data[0] =
       {
         isChecked: true,
         docNum: 1,
@@ -206,8 +206,7 @@ describe('FinalizeOrdersComponent', () => {
         isWithErrorBatch: false,
         hasMissingStock: false,
         batch: ''
-      } as IOrdersReq
-    ];
+      } as IOrdersReq;
     // component.focusOutLote(0);
     // expect(component.isCorrectData).toBeTruthy();
     // expect(orderServiceSpy.getIfExistsBatchCode).toHaveBeenCalled();

@@ -4,7 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DatePipe } from '@angular/common';
+import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { DetalleFormulaMock } from 'src/mocks/pedidosListMock';
@@ -157,6 +157,7 @@ describe('DetalleFormulaComponent', () => {
         { provide: MessagesService, useValue: messagesServiceSpy },
         { provide: FiltersService, useValue: filtersServiceSpy },
         { provide: ActivatedRoute, useValue: { paramMap: new Subject() } },
+        {provide: APP_BASE_HREF, useValue : '/' }
       ]
     })
       .compileComponents();

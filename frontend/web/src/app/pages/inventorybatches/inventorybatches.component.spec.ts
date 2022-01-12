@@ -118,64 +118,9 @@ describe('InventorybatchesComponent', () => {
     batchesServiceSpy.getInventoryBatches.and.callFake(() => {
       return of(iLotesFormulaRes);
     });
-    // expect(component.getInventoryBatches()).toBeTruthy();
     component.getInventoryBatches();
+    expect(component.getInventoryBatches).toBeTruthy();
     // expect(batchesServiceSpy.getInventoryBatches).toHaveBeenCalled();
-  });
-
-  it('should return true', () => {
-    // component.indexSelected = 0;
-    const iLotesSelectReq = [
-      {
-        numeroLote: '1',
-        cantidadSeleccionada: 1,
-        sysNumber: 1,
-        noidb: false,
-        isValid: false
-      }
-    ];
-    const iLotesReqq = component.dataSourceLotes.data = [
-      {
-        numeroLote: '1',
-        cantidadDisponible: 1,
-        cantidadAsignada: 1,
-        cantidadSeleccionada: 1,
-        sysNumber: 1,
-        fechaExp: new Date('5/09/1993'),
-        isValid: true
-      }
-    ];
-
-    iLotesAsignadosReq.numeroLote = '1';
-    iLotesAsignadosReq.sysNumber = 1;
-    iLotesAsignadosReq.cantidadSeleccionada = 1;
-    iLotesAsignadosReq.action = '';
-    iLotesAsignadosReq.isValid = false;
-
-    component.dataSourceDetails.data =
-      [{
-        codigoProducto: '1',
-        descripcionProducto: '',
-        almacen: '',
-        totalNecesario: 1,
-        totalSeleccionado: 1,
-        selected: true,
-        lotesSeleccionados: iLotesSelectReq,
-        lotes: iLotesReqq,
-        lotesAsignados: [iLotesAsignadosReq]
-      }];
-    iLotesFormulaReq.codigoProducto = '1';
-    iLotesFormulaReq.descripcionProducto = '';
-    iLotesFormulaReq.almacen = '';
-    iLotesFormulaReq.totalNecesario = 1;
-    iLotesFormulaReq.totalSeleccionado = 1;
-    iLotesFormulaReq.lotesSeleccionados = iLotesSelectReq,
-      iLotesFormulaReq.selected = true,
-      iLotesFormulaReq.lotes = iLotesReqq,
-      iLotesFormulaReq.lotesAsignados = [iLotesAsignadosReq];
-
-    // component.setSelectedTr(iLotesFormulaReq);
-    // expect(component.setSelectedTr()).toBeTruthy();
   });
 
   it('should return getBatchesFromSelected', () => {
@@ -220,6 +165,16 @@ describe('InventorybatchesComponent', () => {
         lotes: iLotesReqq,
         lotesAsignados: iLotesAsignadosReqq
       }];
+    component.dataSourceLotesAsignados.data = [
+      {
+        numeroLote: '1',
+        cantidadSeleccionada: 1,
+        sysNumber: 1,
+        action: '',
+        noidb: false,
+        isValid: true
+      }
+    ];
     component.dataSourceLotes.data = [
       {
         numeroLote: '1',
@@ -231,22 +186,62 @@ describe('InventorybatchesComponent', () => {
         isValid: true
       }
     ];
-    component.dataSourceLotesAsignados.data = [
+    component.indexSelected = 0;
+    component.getBatchesFromSelected('87987');
+    expect(component.getBatchesFromSelected).toBeTruthy();
+  });
+
+  it('should setSelectedTr !element: ILotesFormulaReq ', () => {
+
+    const iLotesSelectReq = [
+      {
+        numeroLote: '1',
+        cantidadSeleccionada: 1,
+        sysNumber: 1,
+        isValid: false
+      }
+    ];
+    const iLotesReqq = component.dataSourceLotes.data = [
+      {
+        numeroLote: '1',
+        cantidadDisponible: 1,
+        cantidadAsignada: 1,
+        cantidadSeleccionada: 1,
+        sysNumber: 1,
+        fechaExp: new Date('5/09/1993'),
+        isValid: true
+      }
+    ];
+
+    const iLotesAsignadosReqq = component.dataSourceLotesAsignados.data = [
       {
         numeroLote: '1',
         cantidadSeleccionada: 1,
         sysNumber: 1,
         action: '',
-        noidb: false,
-        isValid: true
+        isValid: false
       }
     ];
-    // component.getBatchesFromSelected(87987);
+    component.dataSourceDetails.data =
+      [{
+        codigoProducto: '87987',
+        descripcionProducto: '',
+        almacen: '',
+        totalNecesario: 1,
+        totalSeleccionado: 1,
+        selected: true,
+        lotesSeleccionados: iLotesSelectReq,
+        lotes: iLotesReqq,
+        lotesAsignados: iLotesAsignadosReqq
+      }];
+    const iLotesFormulaReqq = new ILotesFormulaReq();
+    component.setSelectedTr(iLotesFormulaReqq);
+    expect(component.setSelectedTr).toBeTruthy();
+    // component.getBatchesFromSelected(1);
     // expect(component.getBatchesFromSelected()).toBeFalsy();
   });
 
   it('should setSelectedTr return false', () => {
-
     const iLotesFormulaReqq = undefined;
     component.setSelectedTr(iLotesFormulaReqq);
     expect(component.setSelectedTr).toBeTruthy();
@@ -298,51 +293,6 @@ describe('InventorybatchesComponent', () => {
     expect(component.deleteLotes()).toBeFalsy();
   });
 
-  it('should deleteDetails tomarEnCuenta = true', () => {
-    const iLotesSelectReq = [
-      {
-        numeroLote: '1',
-        cantidadSeleccionada: 1,
-        sysNumber: 1,
-        isValid: false,
-        action: '',
-        noidb: false
-      }
-    ];
-    const iLotesReqq = component.dataSourceLotes.data = [
-      {
-        numeroLote: '1',
-        cantidadDisponible: 1,
-        cantidadAsignada: 1,
-        cantidadSeleccionada: 1,
-        sysNumber: 1,
-        fechaExp: new Date('5/09/1993'),
-        isValid: true
-      }
-    ];
-    iLotesAsignadosReq[0] = [{
-      numeroLote: '1',
-      sysNumber: 1,
-      cantidadSeleccionada: 1,
-      action: '',
-      isValid: false,
-    }];
-    component.dataSourceDetails.data =
-      [{
-        codigoProducto: '',
-        descripcionProducto: '',
-        almacen: '',
-        totalNecesario: 1,
-        totalSeleccionado: 1,
-        selected: true,
-        lotesSeleccionados: iLotesSelectReq,
-        lotes: iLotesReqq,
-        lotesAsignados: [iLotesAsignadosReq]
-      }];
-    // component.deleteDetails(iLotesAsignadosReq[0]);
-    // expect(component.deleteDetails()).toBeFalsy();
-  });
-
   it('should deleteDetails tomarEnCuenta = false', () => {
     const iLotesSelectReq = [
       {
@@ -383,12 +333,94 @@ describe('InventorybatchesComponent', () => {
         lotesAsignados: [iLotesAsignadosReq]
       }];
     component.deleteDetails(iLotesAsignadosReq);
-    // expect(component.deleteDetails()).toBeFalsy();
+    expect(component.deleteDetails).toBeTruthy();
   });
 
 
-  it('should return false', () => {
-    expect(component.setSelectedQuantity()).toBeFalsy();
+  it('should setSelectedQuantity cantidadNecesaria != undefined', () => {
+    const iLotesSelectReq = [
+      {
+        numeroLote: '1',
+        cantidadSeleccionada: 1,
+        sysNumber: 1,
+        isValid: false,
+        action: '',
+        noidb: true
+      }
+    ];
+    const iLotesReqq = component.dataSourceLotes.data = [
+      {
+        numeroLote: '1',
+        cantidadDisponible: 1,
+        cantidadAsignada: 1,
+        cantidadSeleccionada: 1,
+        sysNumber: 1,
+        fechaExp: new Date('5/09/1993'),
+        isValid: true
+      }
+    ];
+    iLotesAsignadosReq.numeroLote = '1';
+    iLotesAsignadosReq.sysNumber = 1;
+    iLotesAsignadosReq.cantidadSeleccionada = 1;
+    iLotesAsignadosReq.action = '';
+    iLotesAsignadosReq.isValid = false;
+    component.dataSourceDetails.data =
+      [{
+        codigoProducto: '',
+        descripcionProducto: '',
+        almacen: '',
+        totalNecesario: 1,
+        totalSeleccionado: 1,
+        selected: true,
+        lotesSeleccionados: iLotesSelectReq,
+        lotes: iLotesReqq,
+        lotesAsignados: [iLotesAsignadosReq]
+      }];
+    component.setSelectedQuantity(1);
+    expect(component.setSelectedQuantity).toBeTruthy();
+  });
+
+  it('should setSelectedQuantity cantidadNecesaria == undefined', () => {
+    const iLotesSelectReq = [
+      {
+        numeroLote: '1',
+        cantidadSeleccionada: 1,
+        sysNumber: 1,
+        isValid: false,
+        action: '',
+        noidb: true
+      }
+    ];
+    const iLotesReqq = component.dataSourceLotes.data = [
+      {
+        numeroLote: '1',
+        cantidadDisponible: 1,
+        cantidadAsignada: 1,
+        cantidadSeleccionada: 1,
+        sysNumber: 1,
+        fechaExp: new Date('5/09/1993'),
+        isValid: true
+      }
+    ];
+    iLotesAsignadosReq.numeroLote = '1';
+    iLotesAsignadosReq.sysNumber = 1;
+    iLotesAsignadosReq.cantidadSeleccionada = 1;
+    iLotesAsignadosReq.action = '';
+    iLotesAsignadosReq.isValid = false;
+    component.dataSourceDetails.data =
+      [{
+        codigoProducto: '',
+        descripcionProducto: '',
+        almacen: '',
+        totalNecesario: 1,
+        totalSeleccionado: 1,
+        selected: true,
+        lotesSeleccionados: iLotesSelectReq,
+        lotes: iLotesReqq,
+        lotesAsignados: [iLotesAsignadosReq]
+      }];
+    component.setSelectedQuantity(100);
+    expect(component.setSelectedQuantity).toBeTruthy();
   });
 
   it('should return false', () => {
@@ -527,5 +559,6 @@ describe('InventorybatchesComponent', () => {
       }
     ];
     component.getIsValid(iLotesReq);
+    expect(component.getIsValid).toBeTruthy();
   });
 });
