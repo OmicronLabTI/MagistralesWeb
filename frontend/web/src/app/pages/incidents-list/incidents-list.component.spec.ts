@@ -19,6 +19,7 @@ import { ParamsPedidos } from '../../model/http/pedidos';
 import { CommentsConfig } from '../../model/device/incidents.model';
 import { DateService } from 'src/app/services/date.service';
 import { FiltersService } from 'src/app/services/filters.service';
+import { ChangeStatusIncidentReq } from 'src/app/model/http/incidents.model';
 
 describe('IncidentsListComponent', () => {
   let component: IncidentsListComponent;
@@ -34,13 +35,17 @@ describe('IncidentsListComponent', () => {
   const pageEvent = new PageEvent();
   beforeEach(async(() => {
     incidentsServiceSpy = jasmine.createSpyObj<IncidentsService>('IncidentsService', [
-      'getIncidentsList'
+      'getIncidentsList',
+      'patchStatusIncidents'
     ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
     incidentsServiceSpy.getIncidentsList.and.callFake(() => {
       return of(IncidentListMock);
+    });
+    incidentsServiceSpy.patchStatusIncidents.and.callFake(() => {
+      return of();
     });
     //  --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
@@ -132,13 +137,77 @@ describe('IncidentsListComponent', () => {
 
   it('should reloadIncidentsList', () => {
     component.reloadIncidentsList();
+    expect(component.reloadIncidentsList).toBeTruthy();
   });
 
   it('should openCommentsDialog', () => {
     component.openCommentsDialog(0);
+    expect(component.openCommentsDialog).toBeTruthy();
   });
 
   it('should changeDataEvent', () => {
     component.changeDataEvent(pageEvent);
+    expect(component.changeDataEvent).toBeTruthy();
+  });
+
+  it('should changeStatusIncidentService', () => {
+    const changeStatusIncidentReq = new ChangeStatusIncidentReq();
+    changeStatusIncidentReq.saleOrderId = 1;
+    changeStatusIncidentReq.itemCode = '1';
+    changeStatusIncidentReq.comments = '';
+    changeStatusIncidentReq.status = '';
+    incidentsServiceSpy.patchStatusIncidents(changeStatusIncidentReq);
+    component.changeStatusIncidentService(changeStatusIncidentReq);
+    expect(component.changeStatusIncidentService).toBeTruthy();
+  });
+  it('should changeStatusIncidentService', () => {
+    const changeStatusIncidentReq = new ChangeStatusIncidentReq();
+    changeStatusIncidentReq.saleOrderId = 1;
+    changeStatusIncidentReq.itemCode = '1';
+    changeStatusIncidentReq.comments = '';
+    changeStatusIncidentReq.status = '';
+    incidentsServiceSpy.patchStatusIncidents.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.changeStatusIncidentService(changeStatusIncidentReq);
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
+  it('should openChangeComments', () => {
+    component.dataSource.data[0] = {
+      id: 1,
+      createDate: new Date('12/12/12'),
+      saleOrder: 1,
+      delivery: 1,
+      invoice: 1,
+      itemCode: '1234',
+      type: 'string',
+      incident: '',
+      batches: '',
+      stage: '',
+      comments: '',
+      status: 'Atendiendo',
+    };
+    component.openChangeComments(0);
+    expect(component.openChangeComments).toBeTruthy();
+  });
+
+  it('should openChangeComments', () => {
+    component.dataSource.data[0] = {
+      id: 1,
+      createDate: new Date('12/12/12'),
+      saleOrder: 1,
+      delivery: 1,
+      invoice: 1,
+      itemCode: '1234',
+      type: 'string',
+      incident: '',
+      batches: '',
+      stage: '',
+      comments: '',
+      status: 'Abierta',
+    };
+    component.openChangeComments(0);
+    expect(component.openChangeComments).toBeTruthy();
   });
 });

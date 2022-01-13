@@ -123,6 +123,15 @@ describe('ComponentslistComponent', () => {
   });
 
   it('should getCustomList', () => {
+
+    const components = new Components();
+    component.dataSource.data = [{
+      id: 19887,
+      name: '',
+      productId: '19887',
+      components: components[0]
+    }];
+    ordersServiceSpy.getCustomList('?productId=19887');
     component.getCustomList();
     expect(ordersServiceSpy.getCustomList).toBeTruthy();
   });
