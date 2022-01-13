@@ -400,11 +400,12 @@ describe('PedidosComponent', () => {
     expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
 
-  // it('should onSuccessHttpGetRecipes.lenght === CONST_NUMBER.zero', () => {
-  //   iRecipesRes.response = [];
-  //   component.onSuccessHttpGetRecipes(iRecipesRes);
-  //   expect(dataServiceSpy.openNewTapByUrl).toHaveBeenCalled();
-  // });
+  it('should onSuccessHttpGetRecipes.lenght === CONST_NUMBER.zero', () => {
+    iRecipesRes.response = [];
+    component.onSuccessHttpGetRecipes(iRecipesRes);
+    expect(component.onSuccessHttpGetRecipes).toBeTruthy();
+    // expect(dataServiceSpy.openNewTapByUrl).toHaveBeenCalled();
+  });
 
   it('should onSuccessHttpGetRecipes.lenght !== CONST_NUMBER.zero', () => {
     iRecipesRes.response = [{
@@ -530,5 +531,20 @@ describe('PedidosComponent', () => {
     const catalogs = new Catalogs();
     component.setProductNoLabel(catalogs);
     expect(localStorageServiceSpy.setProductNoLabel).toHaveBeenCalled();
+  });
+
+  it('should getClassClasification', () => {
+    component.getClassClasification('MN');
+    expect(component.getClassClasification).toBeTruthy();
+    component.getClassClasification('BE');
+    expect(component.getClassClasification).toBeTruthy();
+    component.getClassClasification('MG');
+    expect(component.getClassClasification).toBeTruthy();
+    component.getClassClasification('MX');
+    expect(component.getClassClasification).toBeTruthy();
+    component.getClassClasification('MQ');
+    expect(component.getClassClasification).toBeTruthy();
+    component.getClassClasification('MU');
+    expect(component.getClassClasification).toBeTruthy();
   });
 });

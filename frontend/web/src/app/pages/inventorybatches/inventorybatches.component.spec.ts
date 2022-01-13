@@ -118,6 +118,7 @@ describe('InventorybatchesComponent', () => {
     batchesServiceSpy.getInventoryBatches.and.callFake(() => {
       return of(iLotesFormulaRes);
     });
+    batchesServiceSpy.getInventoryBatches('88087');
     component.getInventoryBatches();
     expect(component.getInventoryBatches).toBeTruthy();
     // expect(batchesServiceSpy.getInventoryBatches).toHaveBeenCalled();
@@ -509,13 +510,14 @@ describe('InventorybatchesComponent', () => {
         lotes: iLotesReqq,
         lotesAsignados: [iLotesAsignadosReq]
       }];
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+        return Promise.resolve({
+          isConfirmed: true
+        });
+      });
     component.buildObjectToSap();
     expect(component.buildObjectToSap).toBeTruthy();
-    messagesServiceSpy.presentToastCustom.and.callFake(() => {
-      return Promise.resolve({
-        isConfirmed: true
-      });
-    });
+
     // batchesServiceSpy.updateBatches();
     // expect(batchesServiceSpy.updateBatches).toHaveBeenCalled();
   });

@@ -9,7 +9,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DatePipe } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PedidosService } from '../../services/pedidos.service';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Batches, CancelOrderReq, IExistsBachCodeRes, IGetNewBachCodeRes } from 'src/app/model/http/pedidos';
 import { ICancelOrdersRes } from '../../model/http/pedidos';
 import { ErrorService } from 'src/app/services/error.service';
@@ -132,7 +132,7 @@ describe('FinalizeOrdersComponent', () => {
         isChecked: true,
         docNum: 1,
         fabOrderId: 1,
-        itemCode: '',
+        itemCode: '1',
         description: '',
         quantity: 1,
         createDate: '',
@@ -151,7 +151,7 @@ describe('FinalizeOrdersComponent', () => {
         batch: ''
       }
     ];
-    // component.groupBy(iOrdersReq, keyGetter);
+    // component.groupBy(iOrdersReq, iOrdersReq);
   });
   // component.groupBy(iOrdersReq, '');
   it('should onBatchesChange', () => {
@@ -183,8 +183,32 @@ describe('FinalizeOrdersComponent', () => {
     // expect(component.isCorrectData).toBe(false);
   });
 
-  it('should focusOutLote', () => {
-    component.dataSource.data[0] =
+  it('should focusOutLote when dataSource.data[index].itemCode).length > 1', () => {
+    const i = 0;
+    component.dataSource.data = [];
+    component.dataSource.data =
+      [{
+        isChecked: true,
+        docNum: 1,
+        fabOrderId: 1,
+        itemCode: '1',
+        description: 'string',
+        quantity: 1,
+        createDate: '',
+        finishDate: '',
+        qfb: '',
+        status: '',
+        class: '',
+        unit: '',
+        batche: '1',
+        quantityFinish: 1,
+        endDate: new Date('22/12/12'),
+        fabDate: new Date('22/12/12'),
+        isWithError: false,
+        isWithErrorBatch: false,
+        hasMissingStock: false,
+        batch: ''
+      },
       {
         isChecked: true,
         docNum: 1,
@@ -206,11 +230,144 @@ describe('FinalizeOrdersComponent', () => {
         isWithErrorBatch: false,
         hasMissingStock: false,
         batch: ''
-      } as IOrdersReq;
-    // component.focusOutLote(0);
+      }];
+    component.ordersIsolated = [{
+        isChecked: true,
+        docNum: 1,
+        fabOrderId: 1,
+        itemCode: '1',
+        description: 'string',
+        quantity: 1,
+        createDate: '',
+        finishDate: '',
+        qfb: '',
+        status: '',
+        class: '',
+        unit: '',
+        batche: '1',
+        quantityFinish: 1,
+        endDate: new Date('22/12/12'),
+        fabDate: new Date('22/12/12'),
+        isWithError: false,
+        isWithErrorBatch: false,
+        hasMissingStock: false,
+        batch: ''
+      }];
+    // orderServiceSpy.getIfExistsBatchCode();
+    component.focusOutLote(0);
     // expect(component.isCorrectData).toBeTruthy();
     // expect(orderServiceSpy.getIfExistsBatchCode).toHaveBeenCalled();
   });
+
+  it('should focusOutLote when dataSource.data[index].itemCode).length <= 1', () => {
+    const i = 0;
+    component.dataSource.data = [];
+    component.dataSource.data =
+      [{
+        isChecked: true,
+        docNum: 1,
+        fabOrderId: 1,
+        itemCode: '1',
+        description: 'string',
+        quantity: 1,
+        createDate: '',
+        finishDate: '',
+        qfb: '',
+        status: '',
+        class: '',
+        unit: '',
+        batche: '1',
+        quantityFinish: 1,
+        endDate: new Date('22/12/12'),
+        fabDate: new Date('22/12/12'),
+        isWithError: false,
+        isWithErrorBatch: false,
+        hasMissingStock: false,
+        batch: ''
+      }];
+    component.ordersIsolated = [{
+        isChecked: true,
+        docNum: 1,
+        fabOrderId: 1,
+        itemCode: '1',
+        description: 'string',
+        quantity: 1,
+        createDate: '',
+        finishDate: '',
+        qfb: '',
+        status: '',
+        class: '',
+        unit: '',
+        batche: '1',
+        quantityFinish: 1,
+        endDate: new Date('22/12/12'),
+        fabDate: new Date('22/12/12'),
+        isWithError: false,
+        isWithErrorBatch: false,
+        hasMissingStock: false,
+        batch: ''
+      }];
+    // orderServiceSpy.getIfExistsBatchCode();
+    component.focusOutLote(0);
+    // expect(component.isCorrectData).toBeTruthy();
+    // expect(orderServiceSpy.getIfExistsBatchCode).toHaveBeenCalled();
+  });
+
+  it('should focusOutLote when orderServiceSpy error', () => {
+    const i = 0;
+    component.dataSource.data = [];
+    component.dataSource.data =
+      [{
+        isChecked: true,
+        docNum: 1,
+        fabOrderId: 1,
+        itemCode: '1',
+        description: 'string',
+        quantity: 1,
+        createDate: '',
+        finishDate: '',
+        qfb: '',
+        status: '',
+        class: '',
+        unit: '',
+        batche: '1',
+        quantityFinish: 1,
+        endDate: new Date('22/12/12'),
+        fabDate: new Date('22/12/12'),
+        isWithError: false,
+        isWithErrorBatch: false,
+        hasMissingStock: false,
+        batch: ''
+      }];
+    component.ordersIsolated = [{
+        isChecked: true,
+        docNum: 1,
+        fabOrderId: 1,
+        itemCode: '1',
+        description: 'string',
+        quantity: 1,
+        createDate: '',
+        finishDate: '',
+        qfb: '',
+        status: '',
+        class: '',
+        unit: '',
+        batche: '1',
+        quantityFinish: 1,
+        endDate: new Date('22/12/12'),
+        fabDate: new Date('22/12/12'),
+        isWithError: false,
+        isWithErrorBatch: false,
+        hasMissingStock: false,
+        batch: ''
+      }];
+    orderServiceSpy.getIfExistsBatchCode.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.focusOutLote(0);
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
   it('should onEndDateChange', () => {
     component.dataSource.data = [
       {
@@ -359,6 +516,45 @@ describe('FinalizeOrdersComponent', () => {
     ];
     component.finalizeOrderSend();
     expect(component.finalizeOrderSend).toBeTruthy();
+    // expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
+
+  it('should finalizeOrderSend when orderService.putFinalizeOrders error', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    component.dataSource.data = [
+      {
+        isChecked: true,
+        docNum: 1,
+        fabOrderId: 1,
+        itemCode: '1',
+        description: 'string',
+        quantity: 1,
+        createDate: '',
+        finishDate: '',
+        qfb: '',
+        status: '',
+        class: '',
+        unit: '',
+        batche: '',
+        quantityFinish: 1,
+        endDate: new Date('22/12/12'),
+        fabDate: new Date('22/12/12'),
+        isWithError: false,
+        isWithErrorBatch: false,
+        hasMissingStock: false,
+        batch: ''
+      } as IOrdersReq
+    ];
+    orderServiceSpy.putFinalizeOrders.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.finalizeOrderSend();
+    expect(errorServiceSpy.httpError).toHaveBeenCalled();
+    // expect(component.finalizeOrderSend).toBeTruthy();
     // expect(dataServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
 

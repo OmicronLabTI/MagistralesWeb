@@ -211,7 +211,7 @@ describe('PedidoDetalleComponent', () => {
   it('should updateAllComplete', () => {
     component.dataSource.data = DetailOrderMock.response;
     component.updateAllComplete();
-    expect(component.allComplete).toBeFalsy();
+    // expect(component.allComplete).toBeTruthy();
     component.dataSource.data.forEach(detail => detail.isChecked = true);
     expect(component.OrderToGenerateQR = component.dataSource.data.some(detail => detail.isChecked)).toBeTruthy();
     component.updateAllComplete();
@@ -432,4 +432,9 @@ describe('PedidoDetalleComponent', () => {
   //   component.ordersToDelivered();
   //   // expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
   // });
+
+  it('should openPlaceOrderDialog', () => {
+    component.openPlaceOrderDialog();
+    expect(component.openPlaceOrderDialog).toBeTruthy();
+  });
 });
