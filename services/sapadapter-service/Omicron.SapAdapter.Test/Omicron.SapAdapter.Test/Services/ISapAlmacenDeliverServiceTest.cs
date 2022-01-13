@@ -76,7 +76,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.catalogService = new Mock<ICatalogsService>();
             this.catalogService
                 .Setup(m => m.GetParams(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModel(parameters)));
+                .Returns(Task.FromResult(this.GetResultDto(parameters)));
 
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacenService = new Mock<IAlmacenService>();

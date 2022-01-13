@@ -9,6 +9,7 @@ import { CONST_STRING, HttpStatus } from '../constants/const';
 import { ErrorHttpInterface } from '../model/http/commons';
 import { SecurityService } from '../services/security.service';
 import { ILoginRes } from '../model/http/security.model';
+import { LocalStorageService } from '../services/local-storage.service';
 
 const DEFAULT_TIMEOUT = 250000;
 
@@ -16,10 +17,13 @@ const DEFAULT_TIMEOUT = 250000;
 export class TokenInterceptor implements HttpInterceptor {
   retries = 0;
 
-  constructor(private dataService: DataService, private securityService: SecurityService) { }
+  constructor(
+    private dataService: DataService,
+    private securityService: SecurityService,
+    private localStorageService: LocalStorageService) { }
 
   private applyCredentials = (req: HttpRequest<any>) => {
-    const token = this.dataService.getToken();
+    const token = this.localStorageService.getToken();
     if ((token && token !== CONST_STRING.empty) && !this.endpointExcluded(req.url)) {
       req = req.clone({
         setHeaders: {
@@ -57,15 +61,15 @@ export class TokenInterceptor implements HttpInterceptor {
             return next.handle(this.applyCredentials(req));
           }
           if ((error.status === HttpStatus.unauthorized)
-            && this.dataService.getRefreshToken() !== CONST_STRING.empty
-            && this.dataService.getRememberSession() !== null) {
+            && this.localStorageService.getRefreshToken() !== CONST_STRING.empty
+            && this.localStorageService.getRememberSession() !== null) {
             return this.securityService.refreshToken().pipe(
               catchError(err => {
                 return throwError(err);
               }),
               flatMap((resRefresh: ILoginRes) => {
-                this.dataService.setToken(resRefresh.access_token);
-                this.dataService.setRefreshToken(resRefresh.refresh_token);
+                this.localStorageService.setToken(resRefresh.access_token);
+                this.localStorageService.setRefreshToken(resRefresh.refresh_token);
                 return next.handle(this.applyCredentials(req));
               })
             );

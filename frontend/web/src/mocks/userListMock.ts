@@ -13,6 +13,7 @@ export const UserListMock = {
             lastName: 'Alvarado',
             role: 1,
             userName: 'beni',
+            classification: 'MN'
         },
         {
             activo: 1,
@@ -22,6 +23,17 @@ export const UserListMock = {
             lastName: 'cruz',
             role: 2,
             userName: 'gabox',
+            classification: 'BE',
+        },
+        {
+            activo: 0,
+            firstName: 'sergio',
+            id: '00ed2f9f-3eb2-49c4-909c-06af68f0d1f10',
+            isChecked: false,
+            lastName: 'flores',
+            role: 2,
+            userName: 'serch',
+            classification: 'MG',
         }
     ]
 };

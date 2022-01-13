@@ -896,4 +896,11 @@
 		<column name="field" value="LocalNeighborhood"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.95">
+	<insert tableName="parameters"> 
+		<column name="value" value="DZ"/>
+		<column name="type" value="string"/>
+		<column name="field" value="ProductNoLabel"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 

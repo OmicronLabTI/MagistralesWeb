@@ -35,6 +35,9 @@ import {FindOrdersDialogComponent} from './dialogs/find-orders-dialog/find-order
 import {RequestSignatureDialogComponent} from './dialogs/request-signature-dialog/request-signature-dialog.component';
 import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comments-dialog.component';
 import {CommentsConfig} from './model/device/incidents.model';
+import { LocalStorageService } from './services/local-storage.service';
+import { ObservableService } from './services/observable.service';
+import { MessagesService } from './services/messages.service';
 
 @Component({
   selector: 'app-root',
@@ -54,19 +57,21 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   constructor(private dataService: DataService, private snackBar: MatSnackBar,
               private router: Router,  private dialog: MatDialog,
               private pedidosService: PedidosService, private errorService: ErrorService,
-              private cdRef: ChangeDetectorRef
+              private cdRef: ChangeDetectorRef, private observableService: ObservableService,
+              private localStorageService: LocalStorageService,
+              private messagesService: MessagesService
               ) {
     this.getFullName();
-    this.role = this.dataService.getUserRole();
-    this.isLoading = this.dataService.getIsLoading();
-    this.isLogin = this.dataService.userIsAuthenticated();
-    this.dataService.getIsLogin().subscribe( isLoginS => {
+    this.role = this.localStorageService.getUserRole();
+    this.isLoading = this.observableService.getIsLoading();
+    this.isLogin = this.localStorageService.userIsAuthenticated();
+    this.observableService.getIsLogin().subscribe( isLoginS => {
       this.getFullName();
       this.isLogin = isLoginS;
-      this.role = this.dataService.getUserRole();
+      this.role = this.localStorageService.getUserRole();
     });
 
-    this.dataService
+    this.observableService
       .getGeneralNotificationMessage()
       .subscribe(msg => {
         this.snackBar.open(msg, 'OK', {
@@ -78,25 +83,25 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
         this.cdRef.detectChanges();
     }
   ngOnInit() {
-    this.subscriptionObservables.add(this.dataService.getUrlActive().subscribe(url => this.iconMenuActive = url));
-    this.subscriptionObservables.add(this.dataService.getQfbToPlace().subscribe(qfbToPlace =>
+    this.subscriptionObservables.add(this.observableService.getUrlActive().subscribe(url => this.iconMenuActive = url));
+    this.subscriptionObservables.add(this.observableService.getQfbToPlace().subscribe(qfbToPlace =>
       this.onSuccessPlaceOrder(qfbToPlace)));
-    this.subscriptionObservables.add(this.dataService.getMessageGeneralCalHttp()
+    this.subscriptionObservables.add(this.observableService.getMessageGeneralCalHttp()
         .subscribe(generalMessage => this.onSuccessGeneralMessage(generalMessage)));
-    this.subscriptionObservables.add(this.dataService.getCancelOrder().subscribe(resultCancel =>
+    this.subscriptionObservables.add(this.observableService.getCancelOrder().subscribe(resultCancel =>
         this.onSuccessCancelOrder(resultCancel)));
-    this.subscriptionObservables.add(this.dataService.getFinalizeOrders().subscribe(resultFinalize =>
+    this.subscriptionObservables.add(this.observableService.getFinalizeOrders().subscribe(resultFinalize =>
         this.onSuccessFinalizeOrders(resultFinalize)));
-    this.subscriptionObservables.add(this.dataService.getPathUrl().subscribe(resultPath =>
+    this.subscriptionObservables.add(this.observableService.getPathUrl().subscribe(resultPath =>
         this.goToPageEvaluate(resultPath)));
-    this.subscriptionObservables.add(this.dataService.getIsLogout().subscribe(() => this.logoutSession(false)));
-    this.subscriptionObservables.add(this.dataService.getSearchComponentModal().subscribe(resultSearchComponentModal =>
+    this.subscriptionObservables.add(this.observableService.getIsLogout().subscribe(() => this.logoutSession(false)));
+    this.subscriptionObservables.add(this.observableService.getSearchComponentModal().subscribe(resultSearchComponentModal =>
          this.onSuccessSearchComponentModal(resultSearchComponentModal)));
-    this.subscriptionObservables.add(this.dataService.getSearchOrdersModal().subscribe(resultSearchOrdersModal =>
+    this.subscriptionObservables.add(this.observableService.getSearchOrdersModal().subscribe(resultSearchOrdersModal =>
         this.onSuccessSearchOrders(resultSearchOrdersModal)));
-    this.subscriptionObservables.add(this.dataService.getOpenSignatureDialog().subscribe(dataSignature =>
+    this.subscriptionObservables.add(this.observableService.getOpenSignatureDialog().subscribe(dataSignature =>
         this.onSuccessOpenSignatureDialog(dataSignature)));
-    this.subscriptionObservables.add(this.dataService.getOpenCommentsDialog().subscribe(commentsResult =>
+    this.subscriptionObservables.add(this.observableService.getOpenCommentsDialog().subscribe(commentsResult =>
        this.onSuccessCommentsResult(commentsResult)));
   }
   endSession() {
@@ -104,16 +109,16 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
 
   }
   logoutSession(isFromEndSession: boolean) {
-      this.dataService.setIsLogin(false);
-      this.dataService.clearSession();
+      this.observableService.setIsLogin(false);
+      this.localStorageService.clearSession();
       this.onSuccessGeneralMessage({title: isFromEndSession ? Messages.endSession : Messages.expiredSession ,
       icon: isFromEndSession ? 'success' : 'info', isButtonAccept: false});
       this.router.navigate(['/login']);
   }
 
   goToPage(url: string[]) {
-      if (url[0] === 'ordenes' && this.dataService.getOrderIsolated()) {
-          this.dataService.removeOrderIsolated();
+      if (url[0] === 'ordenes' && this.localStorageService.getOrderIsolated()) {
+          this.localStorageService.removeOrderIsolated();
       }
       this.goToPageEvaluate(url);
   }
@@ -121,7 +126,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
       if (!this.dataService.getIsToSaveAnything()) {
           this.navigatePage(url);
       } else {
-          this.dataService.presentToastCustom(Messages.leftWithoutSave, 'question', '', true, true)
+          this.messagesService.presentToastCustom(Messages.leftWithoutSave, 'question', '', true, true)
               .then((savedResult: any) => {
                   if (savedResult.isConfirmed) {
                       this.navigatePage(url);
@@ -135,7 +140,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
 
   onSuccessPlaceOrder(qfbToPlace: QfbWithNumber) {
     if (qfbToPlace.userId) {
-      this.dataService.presentToastCustom(
+      this.messagesService.presentToastCustom(
           qfbToPlace.modalType === MODAL_NAMES.placeOrders ? !qfbToPlace.isFromReassign ?
               `${Messages.placeOrder} ${qfbToPlace.userName} ?` :
               `${Messages.reassignOrder} ${qfbToPlace.userName} ?` :
@@ -148,7 +153,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
           .then((result: any) => {
             if (result.isConfirmed) {
                 const placeOrder = new IPlaceOrdersReq();
-                placeOrder.userLogistic = this.dataService.getUserId();
+                placeOrder.userLogistic = this.localStorageService.getUserId();
                 placeOrder.userId = qfbToPlace.userId;
                 placeOrder.docEntry = qfbToPlace.list;
                 placeOrder.orderType = qfbToPlace.modalType;
@@ -160,7 +165,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             }
           });
     } else if (qfbToPlace.assignType === MODAL_NAMES.assignAutomatic) {
-      this.dataService.presentToastCustom(
+      this.messagesService.presentToastCustom(
           Messages.placeOrderAutomatic,
           'question',
           CONST_STRING.empty,
@@ -168,7 +173,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
           .then((result: any) => {
             if (result.isConfirmed) {
               const placeOrdersAutomaticReq = new IPlaceOrdersAutomaticReq();
-              placeOrdersAutomaticReq.userLogistic = this.dataService.getUserId();
+              placeOrdersAutomaticReq.userLogistic = this.localStorageService.getUserId();
               placeOrdersAutomaticReq.docEntry = qfbToPlace.list;
               this.pedidosService.postPlaceOrderAutomatic(placeOrdersAutomaticReq).subscribe( resultAutomatic => {
                   this.onSuccessPlaceOrdersHttp(resultAutomatic, qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated);
@@ -190,16 +195,16 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   }
   createDialogHttpOhAboutTypePlace(modalType: string, isFromOrderIsolated: boolean, error = CONST_STRING.empty) {
     if (isFromOrderIsolated) {
-        this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
+        this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
         this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
     } else {
         if (modalType === MODAL_NAMES.placeOrders) {
-            this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
+            this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS);
             this.onSuccessGeneralMessage({title: error === CONST_STRING.empty ? Messages.success : error,
                 isButtonAccept: error === CONST_STRING.empty ? false : true,
                 icon: error === CONST_STRING.empty ? 'success' : 'error' });
         } else {
-            this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+            this.observableService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
             this.onSuccessGeneralMessage({title: Messages.success, isButtonAccept: false, icon: 'success'});
         }
     }
@@ -214,25 +219,25 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   }
 
   getFullName() {
-    this.fullName = this.dataService.getUserName();
-    this.role = this.dataService.getUserRole();
+    this.fullName = this.localStorageService.getUserName();
+    this.role = this.localStorageService.getUserRole();
   }
 
   ngOnDestroy() {
     this.subscriptionObservables.unsubscribe();
-    this.dataService.removeFiltersActiveOrders();
-    this.dataService.removeFiltersActive();
+    this.localStorageService.removeFiltersActiveOrders();
+    this.localStorageService.removeFiltersActive();
   }
   onSuccessGeneralMessage(generalMessage: GeneralMessage) {
-    this.dataService.presentToastCustom(generalMessage.title,
+    this.messagesService.presentToastCustom(generalMessage.title,
         generalMessage.icon, CONST_STRING.empty, generalMessage.isButtonAccept, false);
 
   }
   onSuccessPlaceOrdersHttp(resPlaceOrders: IPlaceOrdersAutomaticRes, modalType: string, isFromOrderIsolated: boolean) {
       if (resPlaceOrders.success && resPlaceOrders.response !== null && resPlaceOrders.response.length > CONST_NUMBER.zero) {
-          const titleItemsWithError = this.dataService.getMessageTitle(resPlaceOrders.response, MessageType.placeOrder);
+          const titleItemsWithError = this.messagesService.getMessageTitle(resPlaceOrders.response, MessageType.placeOrder);
           this.callHttpAboutModalFrom(modalType, isFromOrderIsolated);
-          this.dataService.presentToastCustom(titleItemsWithError, 'error',
+          this.messagesService.presentToastCustom(titleItemsWithError, 'error',
               Messages.errorToAssignOrderAutomaticSubtitle , true, false, ClassNames.popupCustom);
       } else {
           this.createDialogHttpOhAboutTypePlace(modalType, isFromOrderIsolated);
@@ -240,13 +245,13 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
   }
 
     private onSuccessCancelOrder(resultCancel: CancelOrders) {
-        this.dataService.presentToastCustom(resultCancel.cancelType === MODAL_NAMES.placeOrders ?
+        this.messagesService.presentToastCustom(resultCancel.cancelType === MODAL_NAMES.placeOrders ?
             Messages.cancelOrders : Messages.cancelOrdersDetail,
             'question', CONST_STRING.empty, true, true)
             .then((result: any) => {
                 if (result.isConfirmed) {
                     const cancelOrders = [...resultCancel.list];
-                    cancelOrders.forEach(order => order.userId = this.dataService.getUserId());
+                    cancelOrders.forEach(order => order.userId = this.localStorageService.getUserId());
                     this.pedidosService.putCancelOrders(cancelOrders, resultCancel.cancelType === MODAL_NAMES.placeOrders)
                         .subscribe(resultCancelHttp => {
                             this.onSuccessFinalizeHttp(resultCancelHttp, resultCancel.cancelType, resultCancel.isFromCancelIsolated);
@@ -256,24 +261,24 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     }
     callHttpAboutModalFrom(modalType: string, isFromOrdersIsolated: boolean) {
        if (isFromOrdersIsolated) {
-           this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
+           this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
        } else {
            if (modalType === MODAL_NAMES.placeOrders) {
-               this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS);
+               this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS);
            } else {
-               this.dataService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
+               this.observableService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
            }
        }
     }
 
     onSuccessFinalizeOrders(resultFinalize: CancelOrders) {
-        this.dataService.presentToastCustom(resultFinalize.cancelType === MODAL_NAMES.placeOrders ?
+        this.messagesService.presentToastCustom(resultFinalize.cancelType === MODAL_NAMES.placeOrders ?
             Messages.finalizeOrders : Messages.finalizeOrdersDetail,
             'question', CONST_STRING.empty, true, true)
             .then((result: any) => {
                 if (result.isConfirmed) {
                     const finalizeOrders = [...resultFinalize.list];
-                    const userId = this.dataService.getUserId();
+                    const userId = this.localStorageService.getUserId();
                     finalizeOrders.forEach(order => order.userId = userId);
                     this.pedidosService.putFinalizeOrders(finalizeOrders, resultFinalize.cancelType === MODAL_NAMES.placeOrders)
                         .subscribe(resultFinalizeHttp => {
@@ -284,10 +289,10 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     }
     onSuccessFinalizeHttp(resultCancelHttp: ICancelOrdersRes, fromCall: string, isFromOrderIsolated: boolean) {
         if (resultCancelHttp.success && resultCancelHttp.response.failed.length > 0) {
-            const titleFinalizeWithError = this.dataService.getMessageTitle(
+            const titleFinalizeWithError = this.messagesService.getMessageTitle(
                 resultCancelHttp.response.failed, MessageType.finalizeOrder, true);
             this.callHttpAboutModalFrom(fromCall, isFromOrderIsolated);
-            this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
+            this.messagesService.presentToastCustom(titleFinalizeWithError, 'error',
                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
         } else {
             this.createDialogHttpOhAboutTypePlace(fromCall, isFromOrderIsolated);
@@ -309,13 +314,13 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             if (resultComponents && (resultSearchComponentModal.modalType === ComponentSearch.searchComponent
                 || resultSearchComponentModal.modalType === ComponentSearch.addComponent)) {
                 if (resultSearchComponentModal.modalType === ComponentSearch.searchComponent) {
-                    this.dataService.setNewFormulaComponent(resultComponents);
+                    this.observableService.setNewFormulaComponent(resultComponents);
                 }
                 if (resultSearchComponentModal.modalType === ComponentSearch.addComponent) {
-                    this.dataService.setNewMaterialComponent(resultComponents);
+                    this.observableService.setNewMaterialComponent(resultComponents);
                 }
             } else if (resultComponents) {
-                this.dataService.presentToastCustom(Messages.createIsolatedOrder + resultComponents.productoId + '?',
+                this.messagesService.presentToastCustom(Messages.createIsolatedOrder + resultComponents.productoId + '?',
                     'question', CONST_STRING.empty, true, true)
                     .then((resultCreateIsolated: any) => {
                         if (resultCreateIsolated.isConfirmed) {
@@ -335,17 +340,17 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
     onSuccessDialogClosed(resultComponents: any) {
         const createIsolatedReq = new CreateIsolatedOrderReq();
         createIsolatedReq.productCode = resultComponents.productoId;
-        createIsolatedReq.userId = this.dataService.getUserId();
+        createIsolatedReq.userId = this.localStorageService.getUserId();
         this.pedidosService.createIsolatedOrder(createIsolatedReq).subscribe( resultCreateIsolated => {
             if (resultCreateIsolated.response !== 0) {// 0 = with error
                 this.onSuccessGeneralMessage({title: Messages.success, icon: 'success', isButtonAccept: false});
-                this.filterDataOrders = this.dataService.getFiltersActivesAsModelOrders();
+                this.filterDataOrders = this.localStorageService.getFiltersActivesAsModelOrders();
                 this.filterDataOrders.isfromCreateOrderIsolate = true;
-                this.dataService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
+                this.localStorageService.setFiltersActivesOrders(JSON.stringify(this.filterDataOrders));
                 // tslint:disable-next-line:max-line-length
                 this.navigatePage(['/ordenfabricacion', resultCreateIsolated.response.toString(), resultCreateIsolated.response.toString(), CONST_NUMBER.zero]);
             } else {
-                this.dataService.presentToastCustom(resultCreateIsolated.userError, 'error',
+                this.messagesService.presentToastCustom(resultCreateIsolated.userError, 'error',
                     Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             }
         }, error => this.errorService.httpError(error));
@@ -360,7 +365,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             }
         }).afterClosed().subscribe((result: ParamsPedidos) => {
            if (result) {
-               this.dataService.setNewSearchOrderModal(result);
+               this.observableService.setNewSearchOrderModal(result);
            }
         });
     }
@@ -373,7 +378,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
             })
             .afterClosed().subscribe(result => {
             if (result) {
-                this.dataService.setNewDataSignature(result);
+                this.observableService.setNewDataSignature(result);
             }
         });
     }
@@ -384,7 +389,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy , OnInit {
           data: commentsResult
         }).afterClosed().subscribe(addCommentsResult => {
           if ( addCommentsResult) {
-            this.dataService.setNewCommentsResult(addCommentsResult);
+            this.observableService.setNewCommentsResult(addCommentsResult);
           }
         });
     }

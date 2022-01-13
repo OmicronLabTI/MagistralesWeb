@@ -399,5 +399,19 @@ namespace Omicron.SapAdapter.Test.Facade
 
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Test the get Almacen Orders By Doctor.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrderdetail()
+        {
+            var response = await this.almacenFacade.GetOrderdetail(123);
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+        }
     }
 }

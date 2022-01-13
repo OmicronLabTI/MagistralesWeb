@@ -15,6 +15,8 @@ namespace Omicron.SapAdapter.Services.User
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Services.Utils;
+    using Serilog;
 
     /// <summary>
     /// Class User Service.
@@ -27,12 +29,19 @@ namespace Omicron.SapAdapter.Services.User
         private readonly HttpClient httpClient;
 
         /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UsersService" /> class.
         /// </summary>
         /// <param name="httpClient">Client Http.</param>
-        public UsersService(HttpClient httpClient)
+        /// <param name="logger">the logger.</param>
+        public UsersService(HttpClient httpClient, ILogger logger)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -49,7 +58,7 @@ namespace Omicron.SapAdapter.Services.User
             var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
-                result = JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
+                result = await ServiceUtils.GetResponse(response, this.logger, "Error peticion usuarios");
             }
 
             return result;

@@ -136,6 +136,14 @@ namespace Omicron.Pedidos.Test
                 // orders DXP
                 new UserOrderModel { Id = 121, Productionorderid = null, Salesorderid = "204", StatusInvoice = "Enviado", Quantity = 47 },
                 new UserOrderModel { Id = 122, Productionorderid = null, Salesorderid = "205", StatusInvoice = "Entregado", Quantity = 48 },
+
+                // orders for almacen By Id
+                new UserOrderModel { Id = 123, Productionorderid = null, Salesorderid = "206", Status = "Liberado", Quantity = 47, FinishedLabel = 0 },
+                new UserOrderModel { Id = 124, Productionorderid = "2", Salesorderid = "206", Status = "Finalizado", Quantity = 48, FinishedLabel = 1 },
+                new UserOrderModel { Id = 125, Productionorderid = "3", Salesorderid = "206", Status = "Almacenado", Quantity = 47, FinishedLabel = 1 },
+                new UserOrderModel { Id = 126, Productionorderid = "4", Salesorderid = "206", Status = "Pendiente", Quantity = 48, FinishedLabel = 0 },
+                new UserOrderModel { Id = 127, Productionorderid = null, Salesorderid = "207", Status = "Finalizado", Quantity = 47, FinishedLabel = 1 },
+                new UserOrderModel { Id = 128, Productionorderid = "2", Salesorderid = "207", Status = "Finalizado", Quantity = 48, FinishedLabel = 1 },
             };
         }
 

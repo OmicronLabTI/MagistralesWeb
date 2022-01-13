@@ -18,14 +18,20 @@ import {ComponentSearchMock} from '../../../mocks/componentsMock';
 import {ErrorService} from '../../services/error.service';
 import {PageEvent} from '@angular/material/paginator';
 import {RouterTestingModule} from '@angular/router/testing';
+import { MessagesService } from 'src/app/services/messages.service';
 
 describe('ComponentSearchComponent', () => {
   let component: ComponentSearchComponent;
   let fixture: ComponentFixture<ComponentSearchComponent>;
+  let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let ordersServiceSpy;
   let errorServiceSpy;
   const catalogGroup = 'MG';
   beforeEach(async(() => {
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
+      'presentToastCustom'
+    ]);
+
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
@@ -50,7 +56,9 @@ describe('ComponentSearchComponent', () => {
                                                 chips: ['crema'],
                                                 catalogGroupName: catalogGroup } },
         { provide: PedidosService, useValue: ordersServiceSpy },
-        { provide: ErrorService, useValue: errorServiceSpy }]
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: MessagesService, useValue: messagesServiceSpy },
+      ]
     })
     .compileComponents();
   }));
@@ -120,5 +128,52 @@ describe('ComponentSearchComponent', () => {
      component.keywords = ['agua'];
      component.checkIsPrevious({componente: 'crema', chips: []});
 
+  });
+
+  it('should selectComponent', () => {
+    component.dataSource.data = [];
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      isItemSelected: false
+    };
+    // component.selectComponent({componente: 'crema', chips: []});
+    expect(component.selectComponent).toBeTruthy();
+  });
+
+  it('should selectComponent isFromSearchComponent = false', () => {
+    component.dataSource.data = [];
+    component.dataSource.data[0] = {
+      isChecked: false,
+      orderFabId: 89098,
+      productId: 'EN-075',
+      description: 'Pomadera 8 Oz c/ Tapa  R-89 Bonita',
+      baseQuantity: 210.000000,
+      requiredQuantity: 210.000000,
+      consumed: 0.000000,
+      available: 0.000000,
+      unit: 'Pieza',
+      warehouse: 'PROD',
+      pendingQuantity: 210.000000,
+      stock: 1606.000000,
+      warehouseQuantity: 0.000000,
+      hasBatches: false,
+      isItemSelected: false
+    };
+    component.isFromSearchComponent = false;
+    component.selectComponent({componente: 'crema', chips: []});
+    expect(component.selectComponent).toBeTruthy();
   });
 });

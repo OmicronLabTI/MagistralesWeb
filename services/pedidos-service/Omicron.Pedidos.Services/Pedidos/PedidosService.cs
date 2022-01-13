@@ -258,7 +258,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     {
                         userOrder.CloseUserId = orderToFinish.UserId;
                         userOrder.CloseDate = DateTime.Now;
-                        userOrder.Status = ServiceConstants.Finalizado;
+                        userOrder.Status = userOrder.Status != ServiceConstants.Almacenado ? ServiceConstants.Finalizado : userOrder.Status;
                         userOrder.FinalizedDate = DateTime.Now;
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { userOrder }));
                     }

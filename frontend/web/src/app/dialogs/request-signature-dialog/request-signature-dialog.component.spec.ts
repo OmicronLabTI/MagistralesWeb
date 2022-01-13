@@ -9,6 +9,8 @@ import { RequestSignatureDialogComponent } from './request-signature-dialog.comp
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
+import { SignaturePadModule } from 'angular2-signaturepad';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('RequestSignatureDialogComponent', () => {
   let component: RequestSignatureDialogComponent;
@@ -22,15 +24,17 @@ describe('RequestSignatureDialogComponent', () => {
         MatCheckboxModule,
         MatFormFieldModule,
         MatInputModule,
-        BrowserAnimationsModule],
-      declarations: [ RequestSignatureDialogComponent, SignaturePad ],
+        BrowserAnimationsModule,
+        SignaturePadModule,
+      HttpClientTestingModule],
+      declarations: [ RequestSignatureDialogComponent ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         {
           provide: MatDialogRef,
           useValue: {}
         },
-        { provide: MAT_DIALOG_DATA, useValue: { data: '' } } ,
+        { provide: MAT_DIALOG_DATA, useValue: ImageBase64Mock.srcWithoutPrefix } ,
       ]
     })
     .compileComponents();

@@ -115,6 +115,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets a value indicating whether gets or sets the value for missing stock.
         /// </summary>
         /// <value>the value of stock.</value>
+        public string RealLabel { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets the value for missing stock.
+        /// </summary>
+        /// <value>the value of stock.</value>
         public int FinishedLabel { get; set; }
 
         /// <summary>
