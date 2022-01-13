@@ -1,6 +1,6 @@
-import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
-import {CONST_NUMBER, CONST_STRING, TypeInitialRange} from '../../constants/const';
-import {DataService} from '../../services/data.service';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { CONST_NUMBER, CONST_STRING, TypeInitialRange } from '../../constants/const';
+import { DateService } from '../../services/date.service';
 
 @Component({
   selector: 'app-range-date',
@@ -17,8 +17,9 @@ export class RangeDateComponent implements OnInit {
   finishDate = new Date();
   minStartDate = new Date();
   maxFinishDate = new Date();
-  constructor(private dataService: DataService) {
-  }
+  constructor(
+    private dateService: DateService,
+  ) { }
 
   ngOnInit() {
     /*switch (Number(this.typeInitialRange)) {
@@ -29,15 +30,15 @@ export class RangeDateComponent implements OnInit {
         break;
     }*/
     if (Number(this.typeInitialRange) === TypeInitialRange.monthCalendar) {
-      this.initialDate = this.dataService.getDateArray(this.startDate);
+      this.initialDate = this.dateService.getDateArray(this.startDate);
       this.startDate = new Date(`${this.initialDate[1]}/01/${this.initialDate[2]}`);
       this.onDataChange();
     }
   }
 
   onDataChange() {
-    this.minStartDate = this.dataService.getMaxMinDate(this.finishDate, Number(this.maxMonthsRange), false);
-    this.maxFinishDate = this.dataService.getMaxMinDate(this.startDate, Number(this.maxMonthsRange), true);
-    this.newRangeEvent.emit(this.dataService.getDateFormatted(this.startDate, this.finishDate, false));
+    this.minStartDate = this.dateService.getMaxMinDate(this.finishDate, Number(this.maxMonthsRange), false);
+    this.maxFinishDate = this.dateService.getMaxMinDate(this.startDate, Number(this.maxMonthsRange), true);
+    this.newRangeEvent.emit(this.dateService.getDateFormatted(this.startDate, this.finishDate, false));
   }
 }

@@ -9,7 +9,7 @@
 namespace Omicron.SapAdapter.Services.Catalog
 {
     using System.Threading.Tasks;
-    using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Dtos.Models;
 
     /// <summary>
     /// interface for catalogs.
@@ -21,6 +21,6 @@ namespace Omicron.SapAdapter.Services.Catalog
         /// </summary>
         /// <param name="route">Parameter names.</param>
         /// <returns>Parameters.</returns>
-        Task<ResultModel> GetParams(string route);
+        Task<ResultDto> GetParams(string route);
     }
 }

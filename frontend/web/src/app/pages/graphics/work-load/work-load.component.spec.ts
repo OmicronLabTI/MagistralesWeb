@@ -12,6 +12,8 @@ import { ErrorService } from 'src/app/services/error.service';
 import { IWorkLoadRes, WorkLoad } from 'src/app/model/http/pedidos';
 import { of, throwError } from 'rxjs';
 import { PedidosService } from 'src/app/services/pedidos.service';
+import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from 'src/app/services/date.service';
 
 describe('WorkLoadComponent', () => {
   let component: WorkLoadComponent;
@@ -19,6 +21,9 @@ describe('WorkLoadComponent', () => {
   let dataServiceSpy: any;
   let errorServiceSpy: any;
   let pedidosServiceSpy: any;
+  let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let dateServiceSpy: jasmine.SpyObj<DateService>;
+
   const load = new WorkLoad();
   load.assigned = '1';
   load.finalized = '1';
@@ -49,10 +54,22 @@ describe('WorkLoadComponent', () => {
     response: list,
   };
   beforeEach(async(() => {
-    dataServiceSpy = jasmine.createSpyObj('DataService', ['setUrlActive', 'transformDate', 'getDateFormatted', 'getFormattedNumber',
-      'getMaxMinDate']);
-    errorServiceSpy = jasmine.createSpyObj('ErrorService', ['httpError']);
-    pedidosServiceSpy = jasmine.createSpyObj('PedidosService', ['getWorLoad']);
+    dataServiceSpy = jasmine.createSpyObj('DataService',
+    [
+      'setUrlActive',
+      'transformDate',
+      'getDateFormatted',
+      'getFormattedNumber',
+      'getMaxMinDate'
+    ]);
+    errorServiceSpy = jasmine.createSpyObj('ErrorService',
+    [
+      'httpError'
+    ]);
+    pedidosServiceSpy = jasmine.createSpyObj('PedidosService',
+    [
+      'getWorLoad'
+    ]);
 
     dataServiceSpy.transformDate.and.callFake(() => {
       return '13/10/2021';
@@ -60,6 +77,20 @@ describe('WorkLoadComponent', () => {
     pedidosServiceSpy.getWorLoad.and.callFake(() => {
       return of(workResponse);
     });
+    // --- Observable Service
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+      [
+        'setUrlActive'
+      ]);
+      // --- Date Service
+    dateServiceSpy = jasmine.createSpyObj<DateService>('DateService', [
+      'transformDate',
+      'getMaxMinDate',
+      'getDateFormatted'
+    ]);
+    dateServiceSpy.transformDate.and.returnValue('');
+    dateServiceSpy.getMaxMinDate.and.returnValue(new Date());
+    dateServiceSpy.getDateFormatted.and.returnValue('');
     TestBed.configureTestingModule({
       declarations: [WorkLoadComponent],
       imports: [
@@ -75,6 +106,8 @@ describe('WorkLoadComponent', () => {
         { provide: DataService, useValue: dataServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: PedidosService, useValue: pedidosServiceSpy },
+        { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: DateService, useValue: dateServiceSpy },
       ]
     })
       .compileComponents();

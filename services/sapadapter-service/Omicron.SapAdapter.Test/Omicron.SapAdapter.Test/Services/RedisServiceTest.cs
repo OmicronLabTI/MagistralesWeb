@@ -70,5 +70,27 @@ namespace Omicron.SapAdapter.Test.Services
             // Assert
             Assert.IsTrue(result);
         }
+
+        /// <summary>
+        /// Method to verify Get All Favoritiess.
+        /// </summary>
+        [Test]
+        public void IsConnectedRedis()
+        {
+            var redisMock = new Mock<IConnectionMultiplexer>();
+            redisMock
+                .Setup(s => s.IsConnected)
+                .Returns(true);
+            var redisDataBase = new Mock<IDatabase>();
+            redisMock.Setup(m => m.GetDatabase(It.IsAny<int>(), It.IsAny<object>())).Returns(redisDataBase.Object);
+
+            var localService = new RedisService(redisMock.Object);
+
+            // act
+            var result = localService.IsConnectedRedis();
+
+            // Assert
+            Assert.IsTrue(result);
+        }
     }
 }

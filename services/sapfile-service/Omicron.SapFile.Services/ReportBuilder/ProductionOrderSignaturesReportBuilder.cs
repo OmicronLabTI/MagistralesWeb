@@ -23,6 +23,7 @@ namespace Omicron.SapFile.Services.ReportBuilder
     {
         private const string STYLEBLACKTEXT = "BlackText";
         private const string BASEDOCUMENT = @"ReportBuilder/Templates/BASE_PO_SIGNATURES.docx";
+        private const string BASEDOCUMENTNOLABEL = @"ReportBuilder/Templates/BASE_PO_SIGNATURES_NO_LABEL.docx";
         private readonly string rootDir;
         private readonly FinalizaGeneratePdfModel order;
 
@@ -57,8 +58,9 @@ namespace Omicron.SapFile.Services.ReportBuilder
         /// <returns>Memory stream of pdf report.</returns>
         public MemoryStream BuildReport()
         {
+            var baseDocument = string.IsNullOrEmpty(this.order.DesignerName) ? BASEDOCUMENTNOLABEL : BASEDOCUMENT;
             var document = new Document();
-            document.LoadFromFile(Path.Combine(this.rootDir, BASEDOCUMENT));
+            document.LoadFromFile(Path.Combine(this.rootDir, baseDocument));
 
             this.RegisterStyles(document);
 
@@ -113,23 +115,16 @@ namespace Omicron.SapFile.Services.ReportBuilder
         /// Add request items.
         /// </summary>
         /// <param name="table">Table to add request items.</param>
-        /// <param name="productsSublist">Items to set.</param>
         private void AddSignatures(Table table)
         {
             var dataRowSignatures = table.Rows[0];
             var dataRowName = table.Rows[1];
-
-            var dataRowSecondSignatures = table.Rows[3];
-            var dataRowSecondNames = table.Rows[4];
 
             // QFB signature
             AddSignaturePicture(dataRowSignatures.Cells[0], this.order.QfbSignature);
 
             // Technical signature
             AddSignaturePicture(dataRowSignatures.Cells[2], this.order.TechnicalSignature);
-
-            // Designer signature
-            AddSignaturePicture(dataRowSecondSignatures.Cells[0], this.order.DesignerSignature);
 
             // QFB name
             dataRowName.Cells[0].ChildObjects.Clear();
@@ -140,15 +135,24 @@ namespace Omicron.SapFile.Services.ReportBuilder
             cellContent.AppendText(this.order.QfbName);
             cellContent.ApplyStyle(STYLEBLACKTEXT);
 
-            // Designer Name
-            var designerName = string.IsNullOrEmpty(this.order.DesignerName) ? string.Empty : this.order.DesignerName;
-            dataRowSecondNames.Cells[0].ChildObjects.Clear();
-            dataRowSecondNames.Cells[0].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+            if (!string.IsNullOrEmpty(this.order.DesignerName))
+            {
+                // Designer signature
+                var dataRowSecondSignatures = table.Rows[3];
+                var dataRowSecondNames = table.Rows[4];
 
-            var cellContentName = dataRowSecondNames.Cells[0].AddParagraph();
-            cellContentName.Format.HorizontalAlignment = HorizontalAlignment.Center;
-            cellContentName.AppendText(designerName);
-            cellContentName.ApplyStyle(STYLEBLACKTEXT);
+                AddSignaturePicture(dataRowSecondSignatures.Cells[0], this.order.DesignerSignature);
+
+                // Designer Name
+                var designerName = string.IsNullOrEmpty(this.order.DesignerName) ? string.Empty : this.order.DesignerName;
+                dataRowSecondNames.Cells[0].ChildObjects.Clear();
+                dataRowSecondNames.Cells[0].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+
+                var cellContentName = dataRowSecondNames.Cells[0].AddParagraph();
+                cellContentName.Format.HorizontalAlignment = HorizontalAlignment.Center;
+                cellContentName.AppendText(designerName);
+                cellContentName.ApplyStyle(STYLEBLACKTEXT);
+            }
         }
 
         /// <summary>

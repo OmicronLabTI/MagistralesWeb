@@ -12,11 +12,13 @@ namespace Omicron.SapAdapter.Test.Services
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Moq;
     using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Serilog;
 
     /// <summary>
     /// Class UsersServiceTest.
@@ -43,9 +45,12 @@ namespace Omicron.SapAdapter.Test.Services
                 },
             };
 
+            var mockLogger = new Mock<ILogger>();
+            mockLogger.Setup(x => x.Information(It.IsAny<string>()));
+
             HttpClient clientMock = new HttpClient(new MockHttpMessageHandler(responses));
             clientMock.BaseAddress = new System.Uri("http://test.com/");
-            var pedidoService = new PedidoService(clientMock);
+            var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // act
             var result = await pedidoService.PostPedidos(new List<int>(), "salesOrder");
@@ -73,9 +78,11 @@ namespace Omicron.SapAdapter.Test.Services
                 },
             };
 
+            var mockLogger = new Mock<ILogger>();
+            mockLogger.Setup(x => x.Information(It.IsAny<string>()));
             HttpClient clientMock = new HttpClient(new MockHttpMessageHandler(responses));
             clientMock.BaseAddress = new System.Uri("http://test.com/");
-            var pedidoService = new PedidoService(clientMock);
+            var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // act
             var result = await pedidoService.GetPedidosService("qfbOrders/");
@@ -94,9 +101,11 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var responses = this.GetMockResponse(HttpStatusCode.OK);
 
+            var mockLogger = new Mock<ILogger>();
+            mockLogger.Setup(x => x.Information(It.IsAny<string>()));
             HttpClient clientMock = new HttpClient(new MockHttpMessageHandler(responses));
             clientMock.BaseAddress = new System.Uri("http://test.com/");
-            var pedidoService = new PedidoService(clientMock);
+            var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // act
             var result = await pedidoService.GetUserPedidos("qfbOrders/");
@@ -114,9 +123,11 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var responses = this.GetMockResponse(HttpStatusCode.BadRequest);
 
+            var mockLogger = new Mock<ILogger>();
+            mockLogger.Setup(x => x.Information(It.IsAny<string>()));
             HttpClient clientMock = new HttpClient(new MockHttpMessageHandler(responses));
             clientMock.BaseAddress = new System.Uri("http://test.com/");
-            var pedidoService = new PedidoService(clientMock);
+            var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // assert
             Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetPedidosService("qfbOrders/"));
@@ -131,9 +142,11 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var responses = this.GetMockResponse(HttpStatusCode.BadRequest);
 
+            var mockLogger = new Mock<ILogger>();
+            mockLogger.Setup(x => x.Information(It.IsAny<string>()));
             HttpClient clientMock = new HttpClient(new MockHttpMessageHandler(responses));
             clientMock.BaseAddress = new System.Uri("http://test.com/");
-            var pedidoService = new PedidoService(clientMock);
+            var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // assert
             Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetUserPedidos("qfbOrders/"));

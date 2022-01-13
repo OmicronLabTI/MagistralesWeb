@@ -14,8 +14,6 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Threading.Tasks;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Services.Constants;
     using Serilog;
 

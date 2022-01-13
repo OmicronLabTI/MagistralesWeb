@@ -32,6 +32,7 @@ export class IPedidoDetalleReq {
     finishedLabel: number;
     pedidoId?: number;
     patientName?: string;
+    realLabel?: string;
 }
 export class IPedidoDetalleRes extends BaseResponseHttp {
     response: any;

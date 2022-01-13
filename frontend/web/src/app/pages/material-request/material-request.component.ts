@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MaterialComponent, RawRequest, RawRequestPost } from '../../model/http/materialReques';
 import { MaterialRequestService } from '../../services/material-request.service';
@@ -11,7 +11,6 @@ import {
   MessageType
 } from '../../constants/const';
 import { ErrorService } from '../../services/error.service';
-import { MatDialog } from '@angular/material';
 import { DataService } from '../../services/data.service';
 import { Messages } from '../../constants/messages';
 import { Location } from '@angular/common';
@@ -19,6 +18,9 @@ import { Subscription } from 'rxjs';
 import { FileDownloaderService } from 'src/app/services/file.downloader.service';
 import { ReportingService } from 'src/app/services/reporting.service';
 import { FileTypeContentEnum } from 'src/app/enums/FileTypeContentEnum';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 
 @Component({
@@ -41,18 +43,20 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   isThereToDelete = false;
   isToDownload = false;
   isFreeRequest = false;
-  constructor(private router: Router,
-              private dialog: MatDialog,
-              private materialReService: MaterialRequestService,
-              private errorService: ErrorService,
-              private activeRoute: ActivatedRoute,
-              private dataService: DataService,
-              private fileDownloaderServie: FileDownloaderService,
-              private reportingService: ReportingService,
-              private location: Location) {
+  constructor(
+    private materialReService: MaterialRequestService,
+    private errorService: ErrorService,
+    private activeRoute: ActivatedRoute,
+    private dataService: DataService,
+    private fileDownloaderServie: FileDownloaderService,
+    private reportingService: ReportingService,
+    private location: Location,
+    private localStorageService: LocalStorageService,
+    private observableService: ObservableService,
+    private messagesService: MessagesService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.activeRoute.paramMap.subscribe(params => {
       this.dataToRequest = params.get('requests');
       this.isOrder = Number(params.get('isOrder')) === CONST_NUMBER.one;
@@ -60,7 +64,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
       this.validateRequest();
     });
-    this.subscription.add(this.dataService.getNewMaterialComponent().subscribe(resultNewMaterialComponent => {
+    this.subscription.add(this.observableService.getNewMaterialComponent().subscribe(resultNewMaterialComponent => {
       this.dataSource.data = [...this.dataSource.data, {
         ...resultNewMaterialComponent,
         id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one
@@ -69,12 +73,12 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.checkToDownload();
       this.registerChanges();
     }));
-    this.subscription.add(this.dataService.getNewDataSignature().subscribe(newDataSignature => {
+    this.subscription.add(this.observableService.getNewDataSignature().subscribe(newDataSignature => {
       this.oldData.signature = newDataSignature;
       this.checkIsCorrectData();
     }));
   }
-  getPreMaterialRequestH() {
+  getPreMaterialRequestH(): void {
     let titleStatusOrders = CONST_STRING.empty;
     this.materialReService.getPreMaterialRequest(this.dataToRequest, this.isOrder).subscribe(resultMaterialRequest => {
       const lengthFailOrders = resultMaterialRequest.response.failedProductionOrderIds.length;
@@ -91,7 +95,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
         titleStatusOrders = `${titleStatusOrders} \n\n ${this.getIdsLit(resultMaterialRequest.response.productionOrderIds).toString()}`;
       }
 
-      this.dataService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
+      this.messagesService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
         titleStatusOrders, 'info', '', true, false, ClassNames.popupCustom);
 
       if (resultMaterialRequest.response.productionOrderIds.length !== 0) {
@@ -106,11 +110,11 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     }, error => this.errorService.httpError(error));
   }
 
-  addNewComponent() {
-    this.dataService.setSearchComponentModal({ modalType: ComponentSearch.addComponent, data: this.dataSource.data });
+  addNewComponent(): void {
+    this.observableService.setSearchComponentModal({ modalType: ComponentSearch.addComponent, data: this.dataSource.data });
   }
 
-  updateAllComplete() {
+  updateAllComplete(): void {
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
     this.checkToDelete();
   }
@@ -122,7 +126,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     return this.dataSource.data.filter(t => t.isChecked).length > CONST_NUMBER.zero && !this.allComplete;
   }
 
-  setAll(completed: boolean) {
+  setAll(completed: boolean): void {
     this.allComplete = completed;
     if (this.dataSource.data == null) {
       return;
@@ -131,29 +135,29 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.checkToDelete();
   }
 
-  signUser() {
-    this.dataService.setOpenSignatureDialog(this.oldData.signature || CONST_STRING.empty);
+  signUser(): void {
+    this.observableService.setOpenSignatureDialog(this.oldData.signature || CONST_STRING.empty);
   }
 
-  sendRequest() {
+  sendRequest(): void {
     const newComponentsToSend = new RawRequestPost();
     this.setModelData();
     newComponentsToSend.data = this.oldData;
     newComponentsToSend.data.productionOrderIds = this.oldData.productionOrderIds || [];
-    newComponentsToSend.userId = this.dataService.getUserId();
+    newComponentsToSend.userId = this.localStorageService.getUserId();
 
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe(resultMaterialPost => {
       if (resultMaterialPost.success && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {
         this.onDataError(resultMaterialPost.response.failed);
       } else {
         this.goBack();
-        this.dataService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
+        this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
       }
     }, error => this.errorService.httpError(error));
   }
 
-  cancelRequest() {
-    this.dataService.presentToastCustom(Messages.cancelMaterialRequest, 'question', '', true
+  cancelRequest(): void {
+    this.messagesService.presentToastCustom(Messages.cancelMaterialRequest, 'question', '', true
       , true).then((resultCancel: any) => {
         if (resultCancel.isConfirmed) {
           this.goBack();
@@ -162,33 +166,33 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
 
-  onRequestQuantityChange(requestQuantity: number, index: number) {
+  onRequestQuantityChange(requestQuantity: number, index: number): void {
     this.dataSource.data[index].isWithError = !Number(requestQuantity);
     this.checkIsCorrectData();
     this.registerChanges();
   }
 
-  checkIsCorrectData() {
+  checkIsCorrectData(): void {
     this.isCorrectData = this.isCorrectData = this.dataSource.data.filter(order => order.productId === CONST_STRING.empty
       || order.requestQuantity === null || order.description === CONST_STRING.empty
       || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature;
   }
 
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.dataService.setIsToSaveAnything(false);
   }
 
-  checkToDelete() {
+  checkToDelete(): void {
     this.isThereToDelete = this.dataSource.data.filter(t => t.isChecked).length > CONST_NUMBER.zero;
   }
-  checkToDownload() {
+  checkToDownload(): void {
     this.isToDownload = this.dataSource.data.length > CONST_NUMBER.zero;
   }
 
-  deleteComponents() {
-    this.dataService.presentToastCustom(Messages.deleteComponents, 'question', '', true, true)
+  deleteComponents(): void {
+    this.messagesService.presentToastCustom(Messages.deleteComponents, 'question', '', true, true)
       .then((resultDeleteMessage: any) => {
         if (resultDeleteMessage.isConfirmed) {
           this.dataSource.data = this.dataSource.data.filter(order => !order.isChecked);
@@ -198,31 +202,35 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       });
   }
 
-  private goBack() {
+  private goBack(): void {
     this.location.back();
   }
-  onDataError(errorData: any[], isOnInitError: boolean = false) {
-    this.generateMessage(this.dataService.getMessageTitle(errorData,
+
+  onDataError(errorData: any[], isOnInitError: boolean = false): void {
+    this.generateMessage(this.messagesService.getMessageTitle(errorData,
       isOnInitError ? MessageType.materialRequest : MessageType.default, !isOnInitError));
   }
-  generateMessage(title: string) {
-    this.dataService.presentToastCustom(title, 'error',
+
+  generateMessage(title: string): void {
+    this.messagesService.presentToastCustom(title, 'error',
       Messages.errorToAssignOrderAutomaticSubtitle,
       true, false, ClassNames.popupCustom);
   }
-  downloadPreview() {
+
+  downloadPreview(): void {
     this.setModelData();
     this.fileDownloaderServie.downloadFile(
       this.reportingService.downloadPreviewRawMaterialRequest(this.oldData), FileTypeContentEnum.PDF, this.getFileNamePreview());
   }
 
-  private setModelData() {
+  private setModelData(): void {
     this.oldData.observations = this.comments || '';
     this.dataSource.data.forEach(order => order.requestQuantity = Number(Number(order.requestQuantity).toFixed(CONST_NUMBER.seven)));
     this.oldData.orderedProducts = this.dataSource.data;
     this.oldData.signature = this.oldData.signature || '';
-    this.oldData.signingUserName = this.dataService.getUserName();
+    this.oldData.signingUserName = this.localStorageService.getUserName();
   }
+
   private getFileNamePreview(): string {
     const date = new Date();
     const fileName =
@@ -243,12 +251,12 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.dataService.setIsToSaveAnything(true);
   }
 
-  getIdsLit(idToMessage: number[]) {
+  getIdsLit(idToMessage: number[]): any[] {
     let newIdsStrings = [];
     idToMessage.forEach(id => newIdsStrings = [...newIdsStrings, ` ${id.toString()}`]);
     return newIdsStrings;
   }
-  validateRequest() {
+  validateRequest(): void {
     if (!this.isFreeRequest) {
       this.getPreMaterialRequestH();
     }

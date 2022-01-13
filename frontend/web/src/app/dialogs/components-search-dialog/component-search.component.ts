@@ -10,6 +10,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {ErrorService} from '../../services/error.service';
 import {DataService} from '../../services/data.service';
 import { Messages } from 'src/app/constants/messages';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   selector: 'app-component-search',
@@ -45,7 +46,8 @@ export class ComponentSearchComponent implements OnInit {
               private errorService: ErrorService,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private dataService: DataService,
-              private changeDetector: ChangeDetectorRef) {
+              private changeDetector: ChangeDetectorRef,
+              private messagesService: MessagesService) {
     this.isFromSearchComponent = this.data.modalType === ComponentSearch.searchComponent
                 || this.data.modalType === ComponentSearch.addComponent;
     this.keywords = this.data.chips && this.data.chips.length > 0 ? this.data.chips : [];
@@ -132,7 +134,7 @@ export class ComponentSearchComponent implements OnInit {
       if (this.data.data.filter(element => element.productId === row.productId).length === 0) {
         this.checkIsPrevious(row);
       } else {
-        this.dataService.presentToastCustom(
+        this.messagesService.presentToastCustom(
           `${Messages.repeatedComponent_a }  ${row.productId} ${
                this.data.modalType !== ComponentSearch.addComponent ? Messages.repeatedComponent_b :
                    Messages.repeatedComponent_b_request }`,

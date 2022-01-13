@@ -15,6 +15,10 @@ import {
 import { CancelOrderReq } from '../../model/http/pedidos';
 import { DataService } from '../../services/data.service';
 import { Messages } from '../../constants/messages';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ObservableService } from 'src/app/services/observable.service';
+import { DateService } from '../../services/date.service';
+import { MessagesService } from 'src/app/services/messages.service';
 @Component({
   selector: 'app-finalize-orders',
   templateUrl: './finalize-orders.component.html',
@@ -32,7 +36,11 @@ export class FinalizeOrdersComponent implements OnInit {
     private orderService: PedidosService,
     private errorService: ErrorService,
     private dataService: DataService,
-    private dialogRef: MatDialogRef<FinalizeOrdersComponent>) {
+    private dialogRef: MatDialogRef<FinalizeOrdersComponent>,
+    private observableService: ObservableService,
+    private localStorageService: LocalStorageService,
+    private dateService: DateService,
+    private messagesService: MessagesService) {
     this.finalizeData = finalizeData || new Array();
   }
 
@@ -140,13 +148,13 @@ export class FinalizeOrdersComponent implements OnInit {
     fullData.forEach(orderIsolated => {
       const finalizeOrder = new CancelOrderReq();
       finalizeOrder.orderId = orderIsolated.fabOrderId;
-      finalizeOrder.userId = this.dataService.getUserId();
+      finalizeOrder.userId = this.localStorageService.getUserId();
       if (orderIsolated.docNum === 0) {
         finalizeOrder.batches = [{
           batchCode: orderIsolated.batche,
           quantity: orderIsolated.quantityFinish.toString(),
-          manufacturingDate: this.dataService.transformDate(orderIsolated.fabDate, true),
-          expirationDate: this.dataService.transformDate(orderIsolated.endDate, true)
+          manufacturingDate: this.dateService.transformDate(orderIsolated.fabDate, true),
+          expirationDate: this.dateService.transformDate(orderIsolated.endDate, true)
         }];
       } else {
         finalizeOrder.batches = [];
@@ -155,16 +163,16 @@ export class FinalizeOrdersComponent implements OnInit {
     });
     this.orderService.putFinalizeOrders(finalizeOrderReq, false).subscribe(finalizeResult => {
       if (finalizeResult.success && finalizeResult.response.failed.length > 0) {
-        const titleFinalizeWithError = this.dataService.getMessageTitle(
+        const titleFinalizeWithError = this.messagesService.getMessageTitle(
           finalizeResult.response.failed, MessageType.finalizeOrder, true);
         this.dialogRef.close();
-        this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
-        this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
+        this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
+        this.messagesService.presentToastCustom(titleFinalizeWithError, 'error',
           Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
       } else {
         this.dialogRef.close();
-        this.dataService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
-        this.dataService.setMessageGeneralCallHttp({ title: Messages.success, isButtonAccept: false, icon: 'success' });
+        this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS_ISOLATED);
+        this.observableService.setMessageGeneralCallHttp({ title: Messages.success, isButtonAccept: false, icon: 'success' });
       }
     }, error => {
       this.errorService.httpError(error);

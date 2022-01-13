@@ -68,5 +68,29 @@ namespace Omicron.SapDiApi.Dtos.Models.Experience
         /// </summary>
         /// <value>The code.</value>
         public string ShippingCost { get; set; }
+
+        /// <summary>
+        /// Gets or sets FirstName.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string CfdiValue { get; set; }
+
+        /// <summary>
+        /// Gets or sets FirstName.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string PaymentMethodSapCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets FirstName.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string WayToPaySapCode { get; set; }
     }
 }

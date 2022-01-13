@@ -24,6 +24,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> GetOrdersForAlmacen();
 
         /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
+        /// <param name="idsToLook">The ids to llok.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersForAlmacen(List<int> idsToLook);
+
+        /// <summary>
         /// Updates the user orders.
         /// </summary>
         /// <param name="userOrders">The orders.</param>

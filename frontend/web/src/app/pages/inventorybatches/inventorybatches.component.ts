@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { ILotesFormulaReq, ILotesReq, ILotesSelectedReq, ILotesAsignadosReq, ILotesToSaveReq} from 'src/app/model/http/lotesformula';
-import { MatTableDataSource} from '@angular/material';
+import { ILotesFormulaReq, ILotesReq, ILotesSelectedReq, ILotesAsignadosReq, ILotesToSaveReq } from 'src/app/model/http/lotesformula';
+import { MatTableDataSource } from '@angular/material';
 import { BatchesService } from 'src/app/services/batches.service';
 import {
   CONST_NUMBER,
@@ -14,8 +14,10 @@ import {
   CONST_STRING
 } from '../../constants/const';
 import { Messages } from '../../constants/messages';
-import {DataService} from '../../services/data.service';
+import { DataService } from '../../services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
+import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
 
 @Component({
   selector: 'app-inventorybatches',
@@ -67,14 +69,16 @@ export class InventorybatchesComponent implements OnInit {
     private route: ActivatedRoute,
     private batchesService: BatchesService,
     private dataService: DataService,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private observableService: ObservableService,
+    private messagesService: MessagesService
   ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.document = Number(params.get('document'));
       this.ordenFabricacionId = params.get('ordenid');
-      this.hasMissingStock = Number(params.get('hasMissingStock'))  === CONST_NUMBER.one;
+      this.hasMissingStock = Number(params.get('hasMissingStock')) === CONST_NUMBER.one;
       this.description = params.get('description');
       this.productId = params.get('code');
       this.isFromDetail = Number(params.get('isFromDetail')) === CONST_NUMBER.one;
@@ -123,7 +127,7 @@ export class InventorybatchesComponent implements OnInit {
     let resultData: ILotesFormulaReq[];
     this.batchesService.getInventoryBatches(this.ordenFabricacionId).subscribe(
       (batchesRes) => {
-        batchesRes.response.forEach( batches => batches.descripcionProducto = batches.descripcionProducto.toUpperCase());
+        batchesRes.response.forEach(batches => batches.descripcionProducto = batches.descripcionProducto.toUpperCase());
         this.dataSourceDetails.data = batchesRes.response;
         // tslint:disable-next-line: no-shadowed-variable
         resultData = this.dataSourceDetails.data.filter(element => (
@@ -146,10 +150,10 @@ export class InventorybatchesComponent implements OnInit {
   addLotes(element: ILotesReq) {
     if ((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero) {
       if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada <= CONST_NUMBER.zero) {
-        this.dataService.setGeneralNotificationMessage(Messages.batchesCantidadSeleccionadaZero);
+        this.observableService.setGeneralNotificationMessage(Messages.batchesCantidadSeleccionadaZero);
       } else {
         if (element.cantidadDisponible - element.cantidadSeleccionada < CONST_NUMBER.zero) {
-          this.dataService.setGeneralNotificationMessage(Messages.batchesNotAvailableQty);
+          this.observableService.setGeneralNotificationMessage(Messages.batchesNotAvailableQty);
           return false;
         }
         const objetoNuevo: ILotesAsignadosReq = {
@@ -225,9 +229,9 @@ export class InventorybatchesComponent implements OnInit {
   deleteLotes(element?: ILotesAsignadosReq) {
     if (element !== undefined) {
       const indiceBorrar = this.dataSourceDetails.data[this.indexSelected].lotesAsignados.indexOf(element);
-      if ( indiceBorrar !== -1 ) {
+      if (indiceBorrar !== -1) {
         this.deleteDetails(element);
-        this.dataSourceDetails.data[this.indexSelected].lotesAsignados.splice( indiceBorrar, CONST_NUMBER.one );
+        this.dataSourceDetails.data[this.indexSelected].lotesAsignados.splice(indiceBorrar, CONST_NUMBER.one);
       }
       this.dataSourceLotesAsignados._updateChangeSubscription();
       this.dataSourceDetails.data[this.indexSelected].lotes.forEach(item => {
@@ -333,17 +337,18 @@ export class InventorybatchesComponent implements OnInit {
         });
       }
     });
-    this.dataService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then( (resultSaveMessage: any) => {
+    this.messagesService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then((resultSaveMessage: any) => {
       if (resultSaveMessage.isConfirmed) {
 
-        this.batchesService.updateBatches(objectToSave).subscribe( resultSaveBatches => {
+        this.batchesService.updateBatches(objectToSave).subscribe(resultSaveBatches => {
           if (resultSaveBatches.success && resultSaveBatches.response.length > 0) {
-            const titleFinalizeWithError = this.dataService.getMessageTitle(
+            const titleFinalizeWithError = this.messagesService.getMessageTitle(
               resultSaveBatches.response, MessageType.saveBatches);
-            this.dataService.presentToastCustom(titleFinalizeWithError, 'error',
-            Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
+            this.messagesService.presentToastCustom(titleFinalizeWithError, 'error',
+              Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
           } else {
-            this.dataService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, false).then( (resultBatchSave: any) => {
+            this.messagesService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, false).then(
+              (resultBatchSave: any) => {
               if (resultBatchSave.isConfirmed) {
                 window.location.reload();
               }
@@ -358,11 +363,11 @@ export class InventorybatchesComponent implements OnInit {
     this.setPathUrlService(urlPath);
   }
   setPathUrlService(urlPath: any[]) {
-    this.dataService.setPathUrl(urlPath);
+    this.observableService.setPathUrl(urlPath);
   }
 
   goToOrdenFab(urlPath: string[]) {
-    this.dataService.setPathUrl(urlPath);
+    this.observableService.setPathUrl(urlPath);
   }
 
   // tslint:disable-next-line: no-shadowed-variable
@@ -389,7 +394,7 @@ export class InventorybatchesComponent implements OnInit {
     return element.isValid;
   }
 
-    goToOrders(urlPath: string[]) {
-      this.dataService.setPathUrl(urlPath);
-    }
+  goToOrders(urlPath: string[]) {
+    this.observableService.setPathUrl(urlPath);
+  }
 }

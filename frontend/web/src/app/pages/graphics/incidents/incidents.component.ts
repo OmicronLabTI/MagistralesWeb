@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {CONST_NUMBER, CONST_STRING, GraphType, HttpServiceTOCall} from '../../../constants/const';
-import {DataService} from '../../../services/data.service';
 
 import {IncidentsGraphicsMatrix} from '../../../model/http/incidents.model';
 import {ConfigurationGraphic, ItemIndicator} from '../../../model/device/incidents.model';
 import {IncidentsService} from '../../../services/incidents.service';
 import {ErrorService} from '../../../services/error.service';
+import { ObservableService } from '../../../services/observable.service';
 @Component({
   selector: 'app-incidents',
   templateUrl: './incidents.component.html',
@@ -17,9 +17,11 @@ export class IncidentsComponent implements OnInit {
   newIndicators: ItemIndicator[] = [];
   isNoDataIncidentsGraph = false;
   isNoDataStatusGraph = false;
-  constructor(private dataService: DataService, private incidentsService: IncidentsService,
-              private errorService: ErrorService) {
-    this.dataService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
+  constructor(
+    private incidentsService: IncidentsService,
+    private errorService: ErrorService,
+    private observableService: ObservableService) {
+    this.observableService.setUrlActive(HttpServiceTOCall.PRODUCTIVITY);
   }
 
   ngOnInit() {

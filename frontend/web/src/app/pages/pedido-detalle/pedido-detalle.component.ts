@@ -16,16 +16,20 @@ import {
   MODAL_NAMES,
   RolesType,
   RouterPaths,
-  TypeToSeeTap
+  TypeToSeeTap,
+  constRealLabel
 } from '../../constants/const';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
-import { CancelOrderReq, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq } from '../../model/http/pedidos';
+import { CancelOrderReq, Catalogs, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq } from '../../model/http/pedidos';
 import { Messages } from '../../constants/messages';
 import { ErrorService } from '../../services/error.service';
-import { MatDialog } from '@angular/material/dialog';
 import { DownloadImagesService } from '../../services/download-images.service';
 import { CommentsConfig } from '../../model/device/incidents.model';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { ObservableService } from '../../services/observable.service';
+import { MessagesService } from 'src/app/services/messages.service';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -35,6 +39,9 @@ import { CommentsConfig } from '../../model/device/incidents.model';
 export class PedidoDetalleComponent implements OnInit, OnDestroy {
   allComplete = false;
   docStatus: string;
+  ProductNoLabel: Catalogs;
+  productCodeSplit = [];
+  realLabel: string;
   displayedColumns: string[] = [
     'seleccion',
     'ordenFabricacionId',
@@ -58,6 +65,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   isThereOrdersDetailToReassign = false;
   isOnInit = true;
   isThereOrdersToFinishLabel = false;
+  OrderToGenerateQR = false;
   signatureData = CONST_STRING.empty;
   isThereOrdersToViewPdf = false;
   isCorrectToAddComments = false;
@@ -67,40 +75,53 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   baseQueryString = CONST_STRING.empty;
   isThereOrdersDetailToDelivered = false;
   patientName = CONST_STRING.empty;
-  constructor(private pedidosService: PedidosService, private route: ActivatedRoute,
-              public dataService: DataService,
-              private titleService: Title, private errorService: ErrorService,
-              private router: Router, private dialog: MatDialog,
-              private downloadImagesService: DownloadImagesService) {
-    this.dataService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
+  constructor(
+    private pedidosService: PedidosService,
+    private route: ActivatedRoute,
+    public dataService: DataService,
+    private titleService: Title,
+    private errorService: ErrorService,
+    private router: Router,
+    private downloadImagesService: DownloadImagesService,
+    private observableService: ObservableService,
+    public localStorageService: LocalStorageService,
+    private messagesService: MessagesService,
+    private filtersService: FiltersService,
+    ) {
+    this.observableService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
   ngOnInit() {
+    this.getProductoNoLabel();
     this.route.paramMap.subscribe(params => {
       this.validateToGetCurrentDetail(params.get('id'));
       this.titleService.setTitle('Pedido ' + params.get('id'));
     });
-    this.subscriptionCallHttpDetail.add(this.dataService.getCallHttpService().subscribe(detailHttpCall => {
+    this.subscriptionCallHttpDetail.add(this.observableService.getCallHttpService().subscribe(detailHttpCall => {
       if (detailHttpCall === HttpServiceTOCall.DETAIL_ORDERS) {
-        this.getDetallePedido();
+        this.getDetallePedidoService();
       }
     }));
-    this.subscriptionCallHttpDetail.add(this.dataService.getNewDataSignature().subscribe(newDataSignature => {
+    this.subscriptionCallHttpDetail.add(this.observableService.getNewDataSignature().subscribe(newDataSignature => {
       this.signatureData = newDataSignature;
       this.sendToLabelsFinish();
     }));
-    this.subscriptionCallHttpDetail.add(this.dataService.getNewCommentsResult().subscribe(newCommentsResult =>
+    this.subscriptionCallHttpDetail.add(this.observableService.getNewCommentsResult().subscribe(newCommentsResult =>
       this.successNewComments(newCommentsResult)));
   }
 
-  getDetallePedido() {
+  getDetallePedidoService() {
     this.pedidosService.getDetallePedido(this.paramsDetailOrder.current).subscribe(
       ({ response }) => this.onSuccessDetailPedido(response), error => this.errorService.httpError(error));
   }
   onSuccessDetailPedido(response: IPedidoDetalleReq[]) {
+    this.productCodeSplit = [];
     this.paramsDetailOrder.current = response[CONST_NUMBER.zero].pedidoId.toString();
     this.dataSource.data = response;
     this.dataSource.data.forEach(element => {
+      const productCodeSplit = element.codigoProducto.split(' ');
+      this.productCodeSplit.push(productCodeSplit[0]);
+      this.realLabel = constRealLabel.impresaCliente;
       const patientName = element.patientName !== CONST_STRING.empty && element.patientName !== undefined ?
         element.patientName.split(':')[1]
         : CONST_STRING.empty;
@@ -150,6 +171,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.isThereOrdersToViewPdf = false;
     this.isThereOrdersDetailToDelivered = false;
     this.isThereOrdersToFinishLabel = false;
+    this.OrderToGenerateQR = false;
     this.isThereOrdersDetailToPlan = false;
     this.isThereOrdersDetailToPlace = false;
     this.isThereOrdersDetailToCancel = false;
@@ -163,7 +185,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   updateAllComplete() {
+    this.OrderToGenerateQR = false;
     this.allComplete = this.dataSource.data != null && this.dataSource.data.every(t => t.isChecked);
+    this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
     this.getButtonsToUnLooked();
   }
 
@@ -180,32 +204,34 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
       return;
     }
     this.dataSource.data.forEach(t => t.isChecked = completed);
+    this.OrderToGenerateQR = this.dataSource.data != null && this.dataSource.data.some(t => t.isChecked);
     this.getButtonsToUnLooked();
   }
 
   openPlaceOrderDialog() {
-    this.dataService.setQbfToPlace({
+    this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
       list: this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder)
     });
   }
 
   getButtonsToUnLooked() {
-    this.isThereOrdersDetailToDelivered = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+    this.isThereOrdersDetailToDelivered = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
       FromToFilter.fromDefault);
     this.isThereOrdersToViewPdf = this.dataSource.data.filter(order => order.isChecked).length > CONST_NUMBER.zero;
 
-    this.isThereOrdersToFinishLabel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
+    this.isThereOrdersToFinishLabel = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
       FromToFilter.fromOrderDetailLabel);
 
-    this.isThereOrdersDetailToCancel = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
+    this.isThereOrdersDetailToCancel = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.finalizado,
       FromToFilter.fromDetailOrder);
-    this.isThereOrdersDetailToPlace = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
+    this.isThereOrdersDetailToPlace = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.planificado,
       FromToFilter.fromDefault);
-    this.isThereOrdersDetailToFinalize = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado,
+    this.isThereOrdersDetailToFinalize = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.terminado,
       FromToFilter.fromDefault);
-    this.isThereOrdersDetailToPlan = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto, FromToFilter.fromDefault);
-    this.isThereOrdersDetailToReassign = this.dataService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
+    this.isThereOrdersDetailToPlan = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.abierto,
+      FromToFilter.fromDefault);
+    this.isThereOrdersDetailToReassign = this.filtersService.getIsThereOnData(this.dataSource.data, ConstStatus.reasingado,
       FromToFilter.fromOrderIsolatedReassign);
   }
   ngOnDestroy() {
@@ -213,19 +239,19 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   processOrdersDetail() {
-    this.dataService.presentToastCustom(Messages.processOrdersDetail, 'warning', CONST_STRING.empty, true, true)
+    this.messagesService.presentToastCustom(Messages.processOrdersDetail, 'warning', CONST_STRING.empty, true, true)
       .then((result: any) => {
         if (result.isConfirmed) {
           this.detailsOrderToProcess.pedidoId = Number(this.paramsDetailOrder.current);
-          this.detailsOrderToProcess.userId = this.dataService.getUserId();
+          this.detailsOrderToProcess.userId = this.localStorageService.getUserId();
           this.detailsOrderToProcess.productId =
             this.dataSource.data.filter(t => (t.isChecked && t.status === ConstStatus.abierto)).map(detail => detail.codigoProducto);
           this.pedidosService.postPlaceOrdersDetail(this.detailsOrderToProcess).subscribe(resultProcessDetail => {
             if (resultProcessDetail.success && resultProcessDetail.response.length > 0) {
-              const titleProcessDetailWithError = this.dataService.getMessageTitle(
+              const titleProcessDetailWithError = this.messagesService.getMessageTitle(
                 resultProcessDetail.response, MessageType.processDetailOrder);
-              this.getDetallePedido();
-              this.dataService.presentToastCustom(titleProcessDetailWithError, 'error',
+              this.getDetallePedidoService();
+              this.messagesService.presentToastCustom(titleProcessDetailWithError, 'error',
                 Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
             } else {
               this.reloadOrderDetail();
@@ -236,34 +262,34 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   cancelOrders() {
-    this.dataService.setCancelOrders({
+    this.observableService.setCancelOrders({
       list: this.getDataCancel(ConstStatus.finalizado),
       cancelType: MODAL_NAMES.placeOrdersDetail
     });
   }
 
   finalizeOrdersDetail() {
-    this.dataService.setFinalizeOrders({
+    this.observableService.setFinalizeOrders({
       list: this.getDataCancelFinalize(ConstStatus.terminado, true),
       cancelType: MODAL_NAMES.placeOrdersDetail
     });
   }
 
   reassignOrderDetail() {
-    this.dataService.setQbfToPlace({
+    this.observableService.setQbfToPlace({
       modalType: MODAL_NAMES.placeOrdersDetail,
-      list: this.dataService.getItemOnDateWithFilter(this.dataSource.data,
+      list: this.filtersService.getItemOnDateWithFilter(this.dataSource.data,
         FromToFilter.fromOrderIsolatedReassignItems).map(order => Number(order.ordenFabricacionId))
       , isFromReassign: true
     });
   }
 
   goToOrders(urlPath: string[]) {
-    this.dataService.setPathUrl(urlPath);
+    this.observableService.setPathUrl(urlPath);
   }
 
   materialRequestDetail() {
-    this.dataService.setCurrentDetailOrder(this.paramsDetailOrder.current);
+    this.localStorageService.setCurrentDetailOrder(this.paramsDetailOrder.current);
     this.router.navigate([RouterPaths.materialRequest,
     this.dataService.getItemOnDataOnlyIds(this.dataSource.data, FromToFilter.fromDetailOrder).toString() || CONST_NUMBER.zero,
     CONST_NUMBER.zero]);
@@ -287,7 +313,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   addCommentsDialog() {
     if (!this.isCorrectToAddComments) {
-      this.dataService.setOpenCommentsDialog({ comments: this.dataSource.data[0].comments });
+      this.observableService.setOpenCommentsDialog({ comments: this.dataSource.data[0].comments });
     }
   }
 
@@ -299,12 +325,12 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   reloadOrderDetail() {
-    this.getDetallePedido();
-    this.dataService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
+    this.getDetallePedidoService();
+    this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
   }
 
   finishOrdersLabels() {
-    this.dataService.setOpenSignatureDialog(this.signatureData);
+    this.observableService.setOpenSignatureDialog(this.signatureData);
   }
   sendToLabelsFinish() {
     this.createConsumeService();
@@ -314,7 +340,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     const labelToFinishReq = new IPedidoDetalleLabelReq();
     labelToFinishReq.details = this.getArrayToFinishLabel(isFromRemoveSignature, index);
     labelToFinishReq.designerSignature = isFromRemoveSignature ? null : this.signatureData;
-    labelToFinishReq.userId = this.dataService.getUserId();
+    labelToFinishReq.userId = this.localStorageService.getUserId();
     this.pedidosService.finishLabels(labelToFinishReq).subscribe(() => {
       this.reloadOrderDetail();
     }, error => this.errorService.httpError(error));
@@ -322,8 +348,9 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
 
   getArrayToFinishLabel(isFromRemoveSignature: boolean, index?: number) {
     if (!isFromRemoveSignature) {
-      return this.dataSource.data.filter(order => order.isChecked && (order.status !== ConstStatus.abierto &&
-        order.status !== ConstStatus.cancelado))
+      return this.dataSource.data.filter(order => order.isChecked &&
+        (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado)
+        && order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value && order.finishedLabel !== 1)
         .map(order => {
           const labelToFinish = new LabelToFinish();
           labelToFinish.orderId = order.ordenFabricacionId;
@@ -338,8 +365,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   removeSignature(index: number) {
-    if (this.dataService.getUserRole() === RolesType.design) {
-      this.dataService.presentToastCustom(`${Messages.removeLabelFinish} ${this.dataSource.data[index].label.toLowerCase()}?`,
+    if (this.localStorageService.getUserRole() === RolesType.design) {
+      this.messagesService.presentToastCustom(`${Messages.removeLabelFinish} ${this.dataSource.data[index].label.toLowerCase()}?`,
         'question', CONST_STRING.empty, true, true)
         .then((result: any) => {
           if (result.isConfirmed) {
@@ -387,8 +414,8 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     }
   }
   createMessageWithOrdersWithoutQr(ordersWithoutQr: string[]) {
-    this.dataService.presentToastCustom(
-      this.dataService.getMessageTitle(ordersWithoutQr, MessageType.ordersWithoutQr, false), 'error',
+    this.messagesService.presentToastCustom(
+      this.messagesService.getMessageTitle(ordersWithoutQr, MessageType.ordersWithoutQr, false), 'error',
       CONST_STRING.empty, true, false, ClassNames.popupCustom);
   }
 
@@ -396,10 +423,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.addCommentsOnService(newCommentsResult.comments);
   }
   generateParamsToGetDetail(order: string) {
-    this.paramsDetailOrder = JSON.parse(this.dataService.getFiltersActives());
+    this.paramsDetailOrder = JSON.parse(this.localStorageService.getFiltersActives());
     this.paramsDetailOrder = { ...this.paramsDetailOrder, current: order };
-    this.baseQueryString = this.dataService.getNewDataToFilter(this.paramsDetailOrder)[1];
-    this.getDetallePedido();
+    this.baseQueryString = this.filtersService.getNewDataToFilter(this.paramsDetailOrder)[1];
+    this.getDetallePedidoService();
 
   }
 
@@ -429,20 +456,20 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   validateToGetCurrentDetail(paramsOrder: string) {
-    if (this.dataService.getCurrentDetailOrder()) {
-      this.generateParamsToGetDetail(this.dataService.getCurrentDetailOrder());
-      this.dataService.removeCurrentDetailOrder();
+    if (this.localStorageService.getCurrentDetailOrder()) {
+      this.generateParamsToGetDetail(this.localStorageService.getCurrentDetailOrder());
+      this.localStorageService.removeCurrentDetailOrder();
     } else {
       this.generateParamsToGetDetail(paramsOrder);
     }
   }
 
   ordersToDelivered() {
-    this.dataService.presentToastCustom(Messages.deliveredOrders, 'question', CONST_STRING.empty, true, true)
+    this.messagesService.presentToastCustom(Messages.deliveredOrders, 'question', CONST_STRING.empty, true, true)
       .then((result: any) => {
         if (result.isConfirmed) {
           this.pedidosService.putOrdersToDelivered(
-            this.dataService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
+            this.filtersService.getItemOnDateWithFilter(this.dataSource.data, FromToFilter.fromDefault, ConstStatus.finalizado)
               .map(order => {
                 const orderToDelivered = new OrderToDelivered();
                 orderToDelivered.orderId = order.ordenFabricacionId;
@@ -455,6 +482,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         }
       });
 
+  }
+
+  getProductoNoLabel() {
+    this.ProductNoLabel = this.localStorageService.getProductNoLabel();
   }
 }
 
