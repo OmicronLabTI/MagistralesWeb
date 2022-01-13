@@ -12,11 +12,14 @@ namespace Omicron.Reporting.Test.Services.Request
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
+    using Azure.Storage.Blobs.Models;
+    using Microsoft.Extensions.Configuration;
     using Moq;
     using NUnit.Framework;
     using Omicron.Reporting.Dtos.Model;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services;
+    using Omicron.Reporting.Services.AzureServices;
     using Omicron.Reporting.Services.Clients;
 
     /// <summary>
@@ -64,7 +67,9 @@ namespace Omicron.Reporting.Test.Services.Request
                 .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
                 .Returns(Task.FromResult(true));
 
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+            var mockConfig = new Mock<IConfiguration>();
+            var mockAzure = new Mock<IAzureService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
 
             // act
             var result = await service.SendEmailForeignPackage(request);
@@ -113,7 +118,20 @@ namespace Omicron.Reporting.Test.Services.Request
                 .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
                 .Returns(Task.FromResult(true));
 
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+            var mockConfig = new Mock<IConfiguration>();
+            mockConfig.SetupGet(x => x[It.Is<string>(s => s == "InvoicePdfAzureroute")]).Returns("test");
+            mockConfig.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountName")]).Returns("test3");
+            mockConfig.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountKey")]).Returns("test4");
+            var mockAzure = new Mock<IAzureService>();
+
+            if (status == "Entregado")
+            {
+                mockAzure
+                    .Setup(x => x.GetlementFromAzure(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .Returns(Task.FromResult(It.IsAny<BlobDownloadInfo>()));
+            }
+
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
 
             // act
             var result = await service.SendEmailLocalPackage(request);
@@ -173,7 +191,9 @@ namespace Omicron.Reporting.Test.Services.Request
                 .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
                 .Returns(Task.FromResult(true));
 
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+            var mockConfig = new Mock<IConfiguration>();
+            var mockAzure = new Mock<IAzureService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
 
             // act
             var result = await service.SendEmailRejectedOrder(request);
@@ -249,7 +269,9 @@ namespace Omicron.Reporting.Test.Services.Request
                 .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
                 .Returns(Task.FromResult(true));
 
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+            var mockConfig = new Mock<IConfiguration>();
+            var mockAzure = new Mock<IAzureService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
 
             // act
             var result = await service.SendEmailCancelDeliveryOrders(request);
@@ -291,8 +313,9 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockCatalog = new Mock<ICatalogsService>();
             var mockEmail = new Mock<IOmicronMailClient>();
-
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+            var mockConfig = new Mock<IConfiguration>();
+            var mockAzure = new Mock<IAzureService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
 
             // act
             var result = service.CreateRawMaterialRequestPdf(request, true);
@@ -333,8 +356,9 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockCatalog = new Mock<ICatalogsService>();
             var mockEmail = new Mock<IOmicronMailClient>();
-
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+            var mockConfig = new Mock<IConfiguration>();
+            var mockAzure = new Mock<IAzureService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
 
             // act
             var result = service.CreateRawMaterialRequestPdf(request, false);
@@ -387,7 +411,9 @@ namespace Omicron.Reporting.Test.Services.Request
                 .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
                 .Returns(Task.FromResult(true));
 
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+            var mockConfig = new Mock<IConfiguration>();
+            var mockAzure = new Mock<IAzureService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
 
             // act
             var result = await service.SubmitRawMaterialRequestPdf(request);
@@ -461,7 +487,9 @@ namespace Omicron.Reporting.Test.Services.Request
                 .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
                 .Returns(Task.FromResult(true));
 
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+            var mockConfig = new Mock<IConfiguration>();
+            var mockAzure = new Mock<IAzureService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
 
             // act
             var result = await service.SubmitIncidentsExel(request);
@@ -504,7 +532,9 @@ namespace Omicron.Reporting.Test.Services.Request
                 .Setup(m => m.GetParams(It.IsAny<List<string>>()))
                 .Returns(Task.FromResult(listParams));
 
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object);
+            var mockConfig = new Mock<IConfiguration>();
+            var mockAzure = new Mock<IAzureService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
 
             // act
             var result = await service.SendEmails(listDoctor);
