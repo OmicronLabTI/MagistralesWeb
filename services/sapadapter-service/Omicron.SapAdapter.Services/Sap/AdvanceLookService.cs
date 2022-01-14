@@ -238,9 +238,7 @@ namespace Omicron.SapAdapter.Services.Sap
             almacenData.CancelationModel.AddRange(almacenDataForDelivery.CancelationModel);
 
             var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(sapInvoicesHeaders.Select(x => x.TransportCode).ToList())).ToList();
-
-            var userResponse = await this.usersService.GetUsersById(almacenData.PackageModels.Select(x => x.AssignedUser).ToList(), ServiceConstants.GetUsersById);
-            var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
+            var users = await this.GetUsers(userOrders, almacenData);
 
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
@@ -272,6 +270,15 @@ namespace Omicron.SapAdapter.Services.Sap
             });
 
             return cardToReturns;
+        }
+
+        private async Task<List<UserModel>> GetUsers(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData)
+        {
+            var userTolookFor = almacenData.PackageModels.Select(x => x.AssignedUser).ToList();
+            userTolookFor.AddRange(userOrders.Select(x => x.UserCheckIn));
+            userTolookFor.AddRange(almacenData.LineProducts.Select(x => x.UserCheckIn));
+            var userResponse = await this.usersService.GetUsersById(userTolookFor.Distinct().ToList(), ServiceConstants.GetUsersById);
+            return JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
         }
 
         private List<AlmacenSalesHeaderModel> GetIsReceptionOrders(Tuple<int, string> tuple, ParamentsCards paramentsCards)
@@ -399,6 +406,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Comments = comments.ToString(),
                 SapComments = order.Comments,
                 TypeOrder = order.OrderType,
+                StoredBy = this.GetUserWhoStored(paramentsCards.Users, userOrder, lineProductOrder),
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };
@@ -1083,6 +1091,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var user = users.FirstOrDefault(x => x.Id == package.AssignedUser);
             user ??= new UserModel();
             return $"{user.FirstName.ValidateNull()} {user.LastName.ValidateNull()}".Trim();
+        }
+
+        private string GetUserWhoStored(List<UserModel> users, UserOrderModel userOrder, LineProductsModel lineProductOrder)
+        {
+            var userIdStored = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(userOrder?.UserCheckIn), userOrder?.UserCheckIn, lineProductOrder?.UserCheckIn);
+            var userStored = users.FirstOrDefault(user => user.Id == userIdStored);
+            userStored ??= new UserModel();
+            return $"{userStored.FirstName.ValidateNull()} {userStored.LastName.ValidateNull()}".Trim();
         }
     }
 }
