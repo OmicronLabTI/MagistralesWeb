@@ -22,6 +22,10 @@ describe('FiltersService', () => {
   it('should getIsThereOnData', () => {
     const service: FiltersService = TestBed.get(FiltersService);
     expect(service.getIsThereOnData([], ConstStatus.cancelado, FromToFilter.fromOrdersIsolatedCancel)).toBeFalsy();
+    expect(service.getIsThereOnData([], ConstStatus.cancelado, FromToFilter.fromOrdersCancel)).toBeFalsy();
+    expect(service.getIsThereOnData([], ConstStatus.cancelado, FromToFilter.fromDetailOrder)).toBeFalsy();
+    expect(service.getIsThereOnData([], ConstStatus.cancelado, FromToFilter.fromOrderDetailLabel)).toBeFalsy();
+    // expect(service.getIsThereOnData([], ConstStatus.cancelado, FromToFilter.fromOrdersCancel)).toBeFalsy();
   });
   it('should getItemOnDateWithFilter', () => {
     const service: FiltersService = TestBed.get(FiltersService);

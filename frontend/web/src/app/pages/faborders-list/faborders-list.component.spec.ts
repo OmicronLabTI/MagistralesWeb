@@ -83,6 +83,7 @@ describe('FabordersListComponent', () => {
         'setSearchComponentModal',
         'setCancelOrders',
         'setQbfToPlace',
+        'setSearchOrdersModal'
       ]);
     observableServiceSpy.getCallHttpService.and.callFake(() => {
       return new Observable();
@@ -285,4 +286,23 @@ describe('FabordersListComponent', () => {
     component.goToFormulaDetail('98656');
   });
 
+  it('should getInitRange', () => {
+    component.getInitRange('28');
+    expect(component.getInitRange).toBeTruthy();
+  });
+
+  it('should openSearchOrders', () => {
+    component.openSearchOrders();
+    expect(observableServiceSpy.setSearchOrdersModal).toHaveBeenCalled();
+  });
+
+  it('should assignOrderIsolated', () => {
+    component.assignOrderIsolated();
+    expect(observableServiceSpy.setQbfToPlace).toHaveBeenCalled();
+  });
+
+  it('should reAssignOrder', () => {
+    component.reAssignOrder();
+    // expect(observableServiceSpy.setQbfToPlace).toHaveBeenCalled();
+  });
 });

@@ -69,4 +69,52 @@ describe('LocalStorageService', () => {
     service.setUserRole(3);
     expect(service.getUserRole).toBeTruthy('3');
   });
+
+  it('should get userRole', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setUserRole(3);
+    expect(service.getUserRole()).toEqual('3');
+  });
+  it('should getFiltersActives', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setFiltersActives('filters-active');
+    expect(service.getFiltersActives()).toEqual('filters-active');
+  });
+  it('should getFiltersActivesOrders', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setFiltersActivesOrders('filters-active-orders');
+    expect(service.getFiltersActivesOrders()).toEqual('filters-active-orders');
+  });
+
+  it('should getCurrentDetailOrder', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setCurrentDetailOrder('detail-current');
+    expect(service.getCurrentDetailOrder()).toEqual('detail-current');
+  });
+
+  it('should getOrderIsolated', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.getOrderIsolated();
+    expect(service.getOrderIsolated).toBeTruthy();
+  });
+  it('should removeFiltersActive', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.removeFiltersActive();
+    expect(service.removeFiltersActive).toBeTruthy();
+  });
+  it('should removeFiltersActiveOrders', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.removeFiltersActiveOrders();
+    expect(service.removeFiltersActiveOrders).toBeTruthy();
+  });
+  it('should removeCurrentDetailOrder', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.removeCurrentDetailOrder();
+    expect(service.removeCurrentDetailOrder).toBeTruthy();
+  });
+  it('should removeOrderIsolated', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.removeOrderIsolated();
+    expect(service.removeOrderIsolated).toBeTruthy();
+  });
 });
