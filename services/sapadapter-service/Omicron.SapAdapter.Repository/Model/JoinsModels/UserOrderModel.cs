@@ -133,5 +133,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// <value>
         /// String type order.
         public DateTime? DateTimeCheckIn { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        public string UserCheckIn { get; set; }
     }
 }

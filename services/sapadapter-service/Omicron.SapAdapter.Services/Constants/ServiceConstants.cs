@@ -743,5 +743,18 @@ namespace Omicron.SapAdapter.Services.Constants
             Liberado,
             Finalizado,
         };
+
+        /// <summary>
+        /// Gets the status of the order liberado.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> StatusForOrderLiberado { get; } = new List<string>
+        {
+            Almacenado,
+            Finalizado,
+            Pendiente,
+        };
     }
 }

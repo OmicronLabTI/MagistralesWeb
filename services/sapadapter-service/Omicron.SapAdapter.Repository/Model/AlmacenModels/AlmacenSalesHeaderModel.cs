@@ -118,9 +118,15 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public string ListSaleOrder { get; set; }
 
         /// <summary>
-        /// Gets or sets Code.
+        /// Gets or sets a value indicating whether has invoice.
         /// </summary>
         /// <value>The code.</value>
         public bool HasInvoice { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string StoredBy { get; set; }
     }
 }
