@@ -34,6 +34,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// Geths the QR url for the orders.
         /// </summary>
+        /// <param name="ordersId">The orders id.</param>
+        /// <returns>The urls for the QR.</returns>
+        Task<ResultDto> CreateSampleLabel(List<int> ordersId);
+
+        /// <summary>
+        /// Geths the QR url for the orders.
+        /// </summary>
         /// <param name="invoiceIds">The orders id.</param>
         /// <returns>The urls for the QR.</returns>
         Task<ResultDto> CreateInvoiceQr(List<int> invoiceIds);
