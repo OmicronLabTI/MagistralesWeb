@@ -845,6 +845,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = order.Address,
                              TypeOrder = order.OrderType,
                              Canceled = order.Canceled,
+                             IsLine = product.IsLine,
+                             IsMagistral = product.IsMagistral,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
