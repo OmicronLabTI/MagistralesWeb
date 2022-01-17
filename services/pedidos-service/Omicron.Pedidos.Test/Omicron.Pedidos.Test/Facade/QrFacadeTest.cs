@@ -104,6 +104,23 @@ namespace Omicron.Pedidos.Test.Facade
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
+        public async Task CreateSampleLabel()
+        {
+            // arrange
+            var order = new List<int>();
+
+            // act
+            var response = await this.qrsFacade.CreateSampleLabel(order);
+
+            // arrange
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processOrders.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
         public async Task CreateInvoiceQr()
         {
             // arrange

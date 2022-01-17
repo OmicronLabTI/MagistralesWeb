@@ -341,6 +341,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string AlmacenGetOrderByInvoice = "getline/invoiceId";
 
         /// <summary>
+        /// Get the line products by sale order id.
+        /// </summary>
+        public const string AlmacenGetOrderBySaleOrder = "getline/saleorder";
+
+        /// <summary>
         /// Gets the users by role from user service.
         /// </summary>
         public const string GetUsersByRole = "role/{0}";
@@ -776,9 +781,39 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrDeliveryRectyTop = "QrDeliveryRectyTop";
 
         /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryLabelRectx = "QrDeliveryLabelRectx";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryLabelRecty = "QrDeliveryLabelRecty";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryLabelSaleRectx = "QrDeliveryLabelSaleRectx";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryLabelSaleRecty = "QrDeliveryLabelSaleRecty";
+
+        /// <summary>
+        /// gets the size of text.
+        /// </summary>
+        public const string QrDeliveryLabelSaleFontSize = "QrDeliveryLabelSaleFontSize";
+
+        /// <summary>
         /// const for the bottom temxt.
         /// </summary>
         public const string QrTopTextRemision = "\n{0}";
+
+        /// <summary>
+        /// const for the bottom temxt.
+        /// </summary>
+        public const string LabelMuestraText = "{0}:\n{1}";
 
         /// <summary>
         /// Gets the delivery qr.
@@ -804,6 +839,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// impresapor cliente.
         /// </summary>
         public const string LabelImpresaPorCliente = "IMPRESA POR CLIENTE";
+
+        /// <summary>
+        /// Pedido muestra.
+        /// </summary>
+        public const string PedidoMuestra = "Pedido Muestra";
 
         /// <summary>
         /// Gets the status of the order.

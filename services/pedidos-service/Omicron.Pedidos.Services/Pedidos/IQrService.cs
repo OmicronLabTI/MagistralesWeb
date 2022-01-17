@@ -32,6 +32,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> CreateRemisionQr(List<int> ordersId);
 
         /// <summary>
+        /// Gets the orders qr.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CreateSampleLabel(List<int> ordersId);
+
+        /// <summary>
         /// Get the qr for the invoices.
         /// </summary>
         /// <param name="invoiceIds">the invoices id.</param>

@@ -85,6 +85,56 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> CreateSampleLabel(List<int> ordersId)
+        {
+            var azureAccount = this.configuration[ServiceConstants.AzureAccountName];
+            var azureKey = this.configuration[ServiceConstants.AzureAccountKey];
+            var azureqrContainer = this.configuration[ServiceConstants.DeliveryQrContainer];
+
+            var listSavedQr = await this.pedidosDao.GetQrRemisionRouteBySaleOrder(ordersId);
+
+            var savedQrSaleOrder = listSavedQr.Select(c => c.PedidoId).ToList();
+            var savedQrRoutes = listSavedQr.Select(r => r.RemisionQrRoute).ToList();
+
+            ordersId.RemoveAll(x => savedQrSaleOrder.Contains(x));
+
+            if (!ordersId.Any())
+            {
+                return ServiceUtils.CreateResult(true, 200, null, savedQrRoutes, null, null);
+            }
+
+            var idsStrings = ordersId.Select(x => x.ToString()).ToList();
+
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
+            var saleOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(idsStrings)).ToList();
+
+            if (!saleOrders.Any())
+            {
+                var lineProducts = await this.GetOrdersFromAlmacenDict(ServiceConstants.AlmacenGetOrderBySaleOrder, ordersId);
+                lineProducts.ForEach(y =>
+                {
+                    var newOrder = new UserOrderModel
+                    {
+                        DeliveryId = y.DeliveryId,
+                        RemisionQr = y.RemisionQr,
+                        Salesorderid = y.SaleOrderId.ToString(),
+                    };
+
+                    saleOrders.Add(newOrder);
+                });
+            }
+
+            saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).DistinctBy(y => y.Salesorderid).ToList();
+            var dimensionsQr = this.GetDeliveryParameters(parameters);
+
+            var urls = await this.GetUrlMuestraLabel(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
+            urls.AddRange(savedQrRoutes);
+            urls = urls.Distinct().ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, urls, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> CreateRemisionQr(List<int> ordersId)
         {
             var azureAccount = this.configuration[ServiceConstants.AzureAccountName];
@@ -127,6 +177,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).DistinctBy(y => y.DeliveryId).ToList();
             var dimensionsQr = this.GetDeliveryParameters(parameters);
             var urls = await this.GetUrlQrRemision(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
+
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
 
@@ -297,6 +348,55 @@ namespace Omicron.Pedidos.Services.Pedidos
             return listUrls;
         }
 
+        private async Task<List<string>> GetUrlMuestraLabel(List<UserOrderModel> saleOrders, QrDimensionsModel parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
+        {
+            var listUrls = new List<string>();
+            var listToSave = new List<ProductionRemisionQrModel>();
+            var memoryStrem = new MemoryStream();
+            saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).ToList();
+
+            foreach (var so in saleOrders)
+            {
+                var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
+                var bitmap = this.DrawFilledRectangle(parameters.QrWidth, parameters.QrHeight);
+
+                var topText = $"{modelQr.Ship}:";
+                parameters.IsBoldFont = true;
+                parameters.QrRectx = parameters.LabelSaleOrderRectx;
+                parameters.QrRecty = parameters.LabelSaleOrderRecty;
+                parameters.QrBottomTextSize = parameters.LabelMuestraFontSize;
+                parameters.QrRectxTop = parameters.LabelRectx;
+                parameters.QrRectyTop = parameters.LabelRecty;
+
+                bitmap = this.AddTextToQr(bitmap, false, modelQr.PedidoId.ToString(), string.Empty, parameters, topText);
+                var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"MU{modelQr.PedidoId}qr.png");
+
+                memoryStrem.Flush();
+                bitmap.Save(memoryStrem, ImageFormat.Png);
+                memoryStrem.Position = 0;
+
+                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
+
+                var modelToSave = new ProductionRemisionQrModel
+                {
+                    Id = Guid.NewGuid().ToString("D"),
+                    PedidoId = int.Parse(so.Salesorderid),
+                    RemisionId = modelQr.RemisionId,
+                    RemisionQrRoute = pathTosave,
+                };
+
+                if (!existingUrls.Contains(modelToSave.RemisionQrRoute))
+                {
+                    listToSave.Add(modelToSave);
+                }
+
+                listUrls.Add(pathTosave);
+            }
+
+            await this.pedidosDao.InsertQrRouteRemision(listToSave);
+            return listUrls;
+        }
+
         private async Task<List<string>> GetUrlQrFactura(List<UserOrderModel> saleOrders, QrDimensionsModel parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
         {
             var listUrls = new List<string>();
@@ -357,6 +457,18 @@ namespace Omicron.Pedidos.Services.Pedidos
             };
 
             return writer.Write(textToConvert);
+        }
+
+        private Bitmap DrawFilledRectangle(int width, int heigth)
+        {
+            Bitmap bmp = new Bitmap(width, heigth);
+            using (Graphics graph = Graphics.FromImage(bmp))
+            {
+                Rectangle imageSize = new Rectangle(0, 0, width, heigth);
+                graph.FillRectangle(Brushes.White, imageSize);
+            }
+
+            return bmp;
         }
 
         /// <summary>
@@ -454,6 +566,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             var rectxField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryRectx));
             var rectxTopField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryRectxTop));
             var rectyTopField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryRectyTop));
+            var rectxLabelField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryLabelRectx));
+            var rectyLabelField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryLabelRecty));
+
+            var rectxLabelSaleField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryLabelSaleRectx));
+            var rectyLabelSaleField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryLabelSaleRecty));
+            var rectyLabelSaleFontSizeField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryLabelSaleFontSize));
 
             var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryBottomTextSize));
             var heigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryHeight));
@@ -472,6 +590,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 QrHeight = heigthField != null ? int.Parse(heigthField.Value) : DefaultHeightWidth,
                 QrWidth = widthField != null ? int.Parse(widthField.Value) : DefaultHeightWidth,
                 QrMargin = marginField != null ? int.Parse(marginField.Value) : DefaultMargin,
+                LabelRectx = rectxLabelField != null ? int.Parse(rectxLabelField.Value) : DefaultHeightWidth / 2,
+                LabelRecty = rectyLabelField != null ? int.Parse(rectyLabelField.Value) : DefaultHeightWidth / 2,
+                LabelMuestraFontSize = rectyLabelSaleFontSizeField != null ? int.Parse(rectyLabelSaleFontSizeField.Value) : 24,
+                LabelSaleOrderRectx = rectxLabelSaleField != null ? int.Parse(rectxLabelSaleField.Value) : 150,
+                LabelSaleOrderRecty = rectyLabelSaleField != null ? int.Parse(rectyLabelSaleField.Value) : 250,
             };
         }
     }

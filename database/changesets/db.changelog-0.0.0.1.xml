@@ -903,4 +903,31 @@
 		<column name="field" value="ProductNoLabel"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.96">
+	<insert tableName="parameters"> 
+		<column name="value" value="75"/>
+		<column name="type" value="string"/>
+		<column name="field" value="QrDeliveryLabelRectx"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="100"/>
+		<column name="type" value="string"/>
+		<column name="field" value="QrDeliveryLabelRecty"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="150"/>
+		<column name="type" value="string"/>
+		<column name="field" value="QrDeliveryLabelSaleRectx"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="250"/>
+		<column name="type" value="string"/>
+		<column name="field" value="QrDeliveryLabelSaleRecty"/>
+	</insert>
+	<insert tableName="parameters"> 
+		<column name="value" value="27"/>
+		<column name="type" value="string"/>
+		<column name="field" value="QrDeliveryLabelSaleFontSize"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog> 
