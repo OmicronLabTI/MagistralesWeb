@@ -72,11 +72,11 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             var ordersMaquila = sapOrders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
-            listToReturn = FilterByMaquila(types, ordersMaquila, listToReturn);
+            listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Maquila.ToLower()), ordersMaquila, listToReturn);
             salesTypes = AddSalesTypeByOrders(ordersMaquila, salesTypes);
 
             var ordersSample = sapOrders.Where(x => x.PedidoMuestra == ServiceConstants.IsSampleOrder).ToList();
-            listToReturn = FilterByOrderSample(types, ordersSample, listToReturn);
+            listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Muestra.ToLower()), ordersSample, listToReturn);
             salesTypes = AddSalesTypeByOrders(ordersSample, salesTypes);
 
             return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listToReturn.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList(), salesTypes);
@@ -122,27 +122,15 @@ namespace Omicron.SapAdapter.Services.Utils
             return arrayOfSaleToProcess;
         }
 
-        private static List<CompleteAlmacenOrderModel> FilterByMaquila(List<string> types, List<CompleteAlmacenOrderModel> ordersMaquila, List<CompleteAlmacenOrderModel> listToReturn)
+        private static List<CompleteAlmacenOrderModel> FilterByContainsType(bool containsFilter, List<CompleteAlmacenOrderModel> ordersToFilter, List<CompleteAlmacenOrderModel> listToReturn)
         {
-            if (types.Contains(ServiceConstants.Maquila.ToLower()))
+            if (containsFilter)
             {
-                listToReturn.AddRange(ordersMaquila);
+                listToReturn.AddRange(ordersToFilter);
                 return listToReturn;
             }
 
-            listToReturn = listToReturn.Where(o => !ordersMaquila.Select(om => om.DocNum).Contains(o.DocNum)).ToList();
-            return listToReturn;
-        }
-
-        private static List<CompleteAlmacenOrderModel> FilterByOrderSample(List<string> types, List<CompleteAlmacenOrderModel> sapOrdersSample, List<CompleteAlmacenOrderModel> listToReturn)
-        {
-            if (types.Contains(ServiceConstants.Muestra.ToLower()))
-            {
-                listToReturn.AddRange(sapOrdersSample);
-                return listToReturn;
-            }
-
-            listToReturn = listToReturn.Where(o => !sapOrdersSample.Select(om => om.DocNum).Contains(o.DocNum)).ToList();
+            listToReturn = listToReturn.Where(o => !ordersToFilter.Select(om => om.DocNum).Contains(o.DocNum)).ToList();
             return listToReturn;
         }
 
