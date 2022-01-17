@@ -48,6 +48,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> CreateSampleLabel(List<int> ordersId)
+        {
+            return this.mapper.Map<ResultDto>(await this.qrsService.CreateSampleLabel(ordersId));
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> CreateInvoiceQr(List<int> invoiceIds)
         {
             return this.mapper.Map<ResultDto>(await this.qrsService.CreateInvoiceQr(invoiceIds));

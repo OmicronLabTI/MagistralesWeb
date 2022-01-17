@@ -373,6 +373,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             doctorSap.Addresses.Block = address.Suburb;
             doctorSap.Addresses.Street = address.Street;
             doctorSap.Addresses.StreetNo = address.Number;
+            doctorSap.Addresses.City = address.City;
             doctorSap.Addresses.GlobalLocationNumber = address.Email;
             doctorSap.Addresses.AddressType = BoAddressType.bo_BillTo;
             return doctorSap;

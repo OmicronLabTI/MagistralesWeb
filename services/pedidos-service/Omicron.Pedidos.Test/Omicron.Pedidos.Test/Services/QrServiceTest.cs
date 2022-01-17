@@ -88,6 +88,26 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task CreateSampleLabel()
+        {
+            // arrange
+            var mockAlmacen = new Mock<IAlmacenService>();
+            var mockAzure = new Mock<IAzureService>();
+
+            var service = new QrService(this.pedidosDao, this.configuration.Object, mockAzure.Object, mockAlmacen.Object);
+            var listOrdersId = new List<int> { 105 };
+
+            var response = await service.CreateSampleLabel(listOrdersId);
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test the creation of the Qr.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task CreateRemisionQr()
         {
             // arrange
