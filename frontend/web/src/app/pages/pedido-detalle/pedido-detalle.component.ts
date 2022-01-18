@@ -487,5 +487,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   getProductoNoLabel() {
     this.ProductNoLabel = this.localStorageService.getProductNoLabel();
   }
+
+  donothing() {}
 }
 
