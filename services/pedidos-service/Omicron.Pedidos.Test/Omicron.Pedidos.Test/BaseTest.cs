@@ -68,6 +68,12 @@ namespace Omicron.Pedidos.Test
                 NeedsCooling = false,
             };
 
+            var labelMuestra = new RemisionQrModel
+            {
+                PedidoId = 1,
+                Ship = "Pedido Muestra",
+            };
+
             return new List<UserOrderModel>
             {
                 new UserOrderModel { Id = 1, Productionorderid = "100", Salesorderid = "100", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1 },
@@ -144,6 +150,9 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 126, Productionorderid = "4", Salesorderid = "206", Status = "Pendiente", Quantity = 48, FinishedLabel = 0 },
                 new UserOrderModel { Id = 127, Productionorderid = null, Salesorderid = "207", Status = "Finalizado", Quantity = 47, FinishedLabel = 1 },
                 new UserOrderModel { Id = 128, Productionorderid = "2", Salesorderid = "207", Status = "Finalizado", Quantity = 48, FinishedLabel = 1 },
+
+                // orders for sample lable
+                new UserOrderModel { Id = 129, Productionorderid = "303", Salesorderid = "208", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(labelMuestra), DeliveryId = 105, Quantity = 29 },
             };
         }
 

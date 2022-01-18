@@ -50,17 +50,7 @@ namespace Omicron.Pedidos.Test.Facade
 
             var mockService = new Mock<IQrService>();
 
-            mockService
-                .Setup(m => m.CreateMagistralQr(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockService
-                .Setup(m => m.CreateRemisionQr(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockService
-                .Setup(m => m.CreateInvoiceQr(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
+            mockService.SetReturnsDefault(Task.FromResult(response));
 
             this.qrsFacade = new QrFacade(mapper, mockService.Object);
         }
