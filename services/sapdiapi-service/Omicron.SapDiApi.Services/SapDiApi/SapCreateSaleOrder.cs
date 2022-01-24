@@ -63,6 +63,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.DocDueDate = DateTime.Now.AddDays(10);
                 order.ShipToCode = saleOrderModel.ShippinAddress;
                 order.PayToCode = saleOrderModel.BillingAddress;
+                order.DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial);
                 order.UserFields.Fields.Item("U_Pedido_DXP").Value = saleOrderModel.TransactionId;
                 order.UserFields.Fields.Item("U_Comentarios_Ecommerce").Value = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}" : string.Empty;
                 order.UserFields.Fields.Item("U_DXPNEEDSSHIPCOST").Value = saleOrderModel.ShippingCost;
