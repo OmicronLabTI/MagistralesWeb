@@ -593,6 +593,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DataCheckin = initDate.Value,
                     ListSaleOrder = string.Join(", ", salesOrders),
                     TypeOrder = header.TypeOrder,
+                    IsPackage = header.IsPackage == ServiceConstants.IsPackage,
                 };
                 saleHeader.Add(saleHeaderItem);
             }
