@@ -115,105 +115,107 @@ class InboxViewController: UIViewController {
     func returnCardIsolateOrderCollectionViewCell(
         indexPath: IndexPath, element: SectionModel<String, Order>.Item,
         decimalPart: Double?) -> CardIsolatedOrderCollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ViewControllerIdentifiers.cardIsolatedOrderReuseIdentifier,
-            for: indexPath) as? CardIsolatedOrderCollectionViewCell
-        cell?.row = indexPath.row
-        cell?.order = element
-        cell?.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
-        cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: ViewControllerIdentifiers.cardIsolatedOrderReuseIdentifier,
+                for: indexPath) as? CardIsolatedOrderCollectionViewCell
+            else { return CardIsolatedOrderCollectionViewCell() }
+            cell.row = indexPath.row
+            cell.order = element
+            cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
+            cell.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
             String(format: DecimalFormat.six.rawValue,
                    NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
             "\(element.plannedQuantity ?? 0.0)"
-        cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
-        cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
-        cell?.productDescriptionLabel.text = element.descriptionProduct?.uppercased() ?? CommonStrings.empty
-        cell?.missingStockImage.isHidden = !element.hasMissingStock
-        if indexPathsSelected.contains(indexPath) {
-            cell?.isSelected = true
-        } else {
-            cell?.isSelected = false
+            cell.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
+            cell.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
+            cell.productDescriptionLabel.text = element.descriptionProduct?.uppercased() ?? CommonStrings.empty
+            cell.missingStockImage.isHidden = !element.hasMissingStock
+            if indexPathsSelected.contains(indexPath) {
+                cell.isSelected = true
+            } else {
+                cell.isSelected = false
+            }
+            cell.itemCode.text = element.itemCode
+            return cell
         }
-        cell?.itemCode.text = element.itemCode
-        return cell!
-    }
 
     func returnCardCollectionViewCell(indexPath: IndexPath, element: SectionModel<String, Order>.Item,
                                       decimalPart: Double?) -> CardCollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier, for: indexPath)
-            as? CardCollectionViewCell
-        cell?.row = indexPath.row
-        cell?.order = element
-        cell?.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
-        cell?.baseDocumentDescriptionLabel.text = element.baseDocument == 0 ?
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ViewControllerIdentifiers.cardReuseIdentifier,
+            for: indexPath) as? CardCollectionViewCell else { return CardCollectionViewCell() }
+        cell.row = indexPath.row
+        cell.order = element
+        cell.numberDescriptionLabel.text = "\(element.productionOrderId ?? 0)"
+        cell.baseDocumentDescriptionLabel.text = element.baseDocument == 0 ?
             CommonStrings.empty : "\(element.baseDocument ?? 0)"
-        cell?.tagDescriptionLabel.text = element.tag
-        cell?.containerLabel.text = element.container
+        cell.tagDescriptionLabel.text = element.tag
+        cell.containerLabel.text = element.container
         if !element.finishedLabel {
-            cell?.tagDescriptionLabel.textColor = .red
+            cell.tagDescriptionLabel.textColor = .red
         } else {
-            cell?.tagDescriptionLabel.textColor = .systemGreen
+            cell.tagDescriptionLabel.textColor = .systemGreen
         }
-        cell?.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
+        cell.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
             String(format: DecimalFormat.six.rawValue,
                    NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
             "\(element.plannedQuantity ?? 0.0)"
-        cell?.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
-        cell?.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
-        cell?.productDescriptionLabel.text = element.descriptionProduct?.uppercased() ?? CommonStrings.empty
-        cell?.missingStockImage.isHidden = !element.hasMissingStock
+        cell.startDateDescriptionLabel.text = element.startDate ?? CommonStrings.empty
+        cell.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
+        cell.productDescriptionLabel.text = element.descriptionProduct?.uppercased() ?? CommonStrings.empty
+        cell.missingStockImage.isHidden = !element.hasMissingStock
         if indexPathsSelected.contains(indexPath) {
-            cell?.isSelected = true
+            cell.isSelected = true
         } else {
-            cell?.isSelected = false
+            cell.isSelected = false
         }
-        cell?.itemCode.text = element.itemCode
-        cell?.destiny.text = element.destiny
-        return cell!
+        cell.itemCode.text = element.itemCode
+        cell.destiny.text = element.destiny
+        return cell
     }
 
     func viewModelBindingCollectionView() {
         // Pinta las cards
         let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(
             configureCell: { [weak self] (_, _, indexPath, element) in
-            let decimalPart = self?.getDecimalPartOfDouble(
-                number: NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue)
-            if element.baseDocument != 0 {
-                let cell = self?.returnCardCollectionViewCell(
-                    indexPath: indexPath, element: element, decimalPart: decimalPart)
-                cell?.delegate = self
-                return cell ?? CardCollectionViewCell()
-            } else {
-                let cell = self?.returnCardIsolateOrderCollectionViewCell(
-                    indexPath: indexPath, element: element, decimalPart: decimalPart)
-                cell?.delegate = self
-                return cell!
-            }
-        })
+                guard let self = self else { return CardCollectionViewCell ()}
+                let decimalPart = self.getDecimalPartOfDouble(
+                    number: NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue)
+                if element.baseDocument != 0 {
+                    let cell = self.returnCardCollectionViewCell(
+                        indexPath: indexPath, element: element, decimalPart: decimalPart)
+                    cell.delegate = self
+                    return cell
+                } else {
+                    let cell = self.returnCardIsolateOrderCollectionViewCell(
+                        indexPath: indexPath, element: element, decimalPart: decimalPart)
+                    cell.delegate = self
+                    return cell
+                }
+            })
         dataSource
             .configureSupplementaryView = { [weak self] (dataSource, collectionView, _, indexPath)
                 -> UICollectionReusableView in
-                let header = collectionView.dequeueReusableSupplementaryView(
+                guard let header = collectionView.dequeueReusableSupplementaryView(
                     ofKind: UICollectionView.elementKindSectionHeader,
                     withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier,
-                    for: indexPath) as? HeaderCollectionViewCell
+                    for: indexPath) as? HeaderCollectionViewCell else { return HeaderCollectionViewCell() }
                 let headerText = dataSource.sectionModels[indexPath.section].identity
-                header?.productID.text = headerText
+                header.productID.text = headerText
                 if headerText.contains(CommonStrings.orderTitile) {
                     let productId = headerText
                         .components(separatedBy: CharacterSet.decimalDigits.inverted)
                         .joined()
-                    header?.productId = Int(productId) ?? 0
-                    header?.delegate = self
-                    header?.pdfImageView.isHidden = false
+                    header.productId = Int(productId) ?? 0
+                    header.delegate = self
+                    header.pdfImageView.isHidden = false
                 } else {
-                    header?.productId = 0
-                    header?.delegate = nil
-                    header?.pdfImageView.isHidden = true
+                    header.productId = 0
+                    header.delegate = nil
+                    header.pdfImageView.isHidden = true
                 }
-                return header ?? HeaderCollectionViewCell()
-        }
+                return header
+            }
         inboxViewModel.statusDataGrouped
             .bind(to: collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
@@ -221,21 +223,25 @@ class InboxViewController: UIViewController {
 
     func viewModelBinding() {
         inboxViewModel.title.subscribe(onNext: { [weak self] title in
-            self?.title = title
-            guard let statusId = self?.inboxViewModel.getStatusId(name: title) else { return }
-            self?.hideButtons(index: statusId)
-            self?.removeOrdersSelectedView.backgroundColor = self?.updateRemoveViewColor(title: title)
+            guard let self = self else { return }
+            self.title = title
+            let statusId = self.inboxViewModel.getStatusId(name: title)
+            self.hideButtons(index: statusId)
+            self.removeOrdersSelectedView.backgroundColor = self.updateRemoveViewColor(title: title)
         }).disposed(by: disposeBag)
         inboxViewModel.refreshDataWhenChangeProcessIsSucces
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            self?.rootViewModel.getOrders()
-        }).disposed(by: self.disposeBag)
+                guard let self = self else { return }
+                self.rootViewModel.getOrders()
+            }).disposed(by: self.disposeBag)
         inboxViewModel.processButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
-            self?.processButton.isEnabled = isEnable
+            guard let self = self else { return }
+            self.processButton.isEnabled = isEnable
         }).disposed(by: self.disposeBag)
         // Habilita o deshabilita el botón para cambiar a pendiente
         inboxViewModel.pendingButtonIsEnable.subscribe(onNext: { [weak self] isEnable in
-            self?.pendingButton.isEnabled = isEnable
+            guard let self = self else { return }
+            self.pendingButton.isEnabled = isEnable
         }).self.disposed(by: self.disposeBag)
         inboxViewModel.orderURLPDF.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] urlPDF in
             guard let self = self else { return }
@@ -288,37 +294,40 @@ class InboxViewController: UIViewController {
         // retorna mensaje si no hay card para cada status
         inboxViewModel.title
             .withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, data in
-            let statusId = self?.inboxViewModel.getStatusId(name: title) ?? -1
-            var message = String()
-            if let orders = data.first {
-                if orders.items.count == 0 && statusId != -1 {
+                guard let self = self else { return }
+                let statusId = self.inboxViewModel.getStatusId(name: title)
+                var message = String()
+                if let orders = data.first {
+                    if orders.items.count == 0 && statusId != -1 {
+                        message = "No tienes órdenes \(title)"
+                    }
+                } else {
                     message = "No tienes órdenes \(title)"
                 }
-            } else {
-                message = "No tienes órdenes \(title)"
-            }
-            self?.collectionView.setEmptyMessage(message)
-        }).subscribe().disposed(by: disposeBag)
+                self.collectionView.setEmptyMessage(message)
+            }).subscribe().disposed(by: disposeBag)
     }
     func modelBindingExtension2() {
         // Muestra un alert para la confirmación de cambio de estatus de una orden
         inboxViewModel.showAlertToChangeOrderOfStatus
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
-            let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
-            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
-                self?.view.isUserInteractionEnabled = false
-                if data.typeOfStatus == StatusNameConstants.finishedStatus {
-                    self?.inboxViewModel.validOrders(indexPathOfOrdersSelected: self?.indexPathsSelected)
-                } else {
-                    self?.inboxViewModel.changeStatus(
-                        indexPath: self?.indexPathsSelected, typeOfStatus: data.typeOfStatus)
-                }
-            })
-            alert.addAction(cancelAction)
-            alert.addAction(okAction)
-            self?.present(alert, animated: true, completion: nil)
-        }).disposed(by: self.disposeBag)
+                guard let self = self else { return }
+                let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
+                let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
+                let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
+                    guard let self = self else { return }
+                    self.view.isUserInteractionEnabled = false
+                    if data.typeOfStatus == StatusNameConstants.finishedStatus {
+                        self.inboxViewModel.validOrders(indexPathOfOrdersSelected: self.indexPathsSelected)
+                    } else {
+                        self.inboxViewModel.changeStatus(
+                            indexPath: self.indexPathsSelected, typeOfStatus: data.typeOfStatus)
+                    }
+                })
+                alert.addAction(cancelAction)
+                alert.addAction(okAction)
+                self.present(alert, animated: true, completion: nil)
+            }).disposed(by: self.disposeBag)
         [
             finishedButton.rx.tap.bind(to: inboxViewModel.finishedDidTap),
             pendingButton.rx.tap.bind(to: inboxViewModel.pendingDidTap),
@@ -329,10 +338,10 @@ class InboxViewController: UIViewController {
         ].forEach({ $0.disposed(by: disposeBag) })
         order.bind(to: inboxViewModel.selectOrder).disposed(by: disposeBag)
         rootViewModel.selectedRow.subscribe(onNext: { [weak self] index in
-            guard let row = index?.row else { return }
-            self?.chageStatusName(index: row)
-            self?.hideButtons(index: row)
-            self?.goToTop()
+            guard let self = self, let row = index?.row else { return }
+            self.chageStatusName(index: row)
+            self.hideButtons(index: row)
+            self.goToTop()
         }).disposed(by: disposeBag)
         collectionView.rx.didScroll.subscribe({ [weak self] _ in
             guard let self = self else { return }
@@ -350,12 +359,13 @@ class InboxViewController: UIViewController {
     func modelBindingExtension3() {
         // Muestra o oculta el loading
         inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
-            self?.view.isUserInteractionEnabled = true
+            guard let self = self else { return }
+            self.view.isUserInteractionEnabled = true
             if showLoading {
-                self?.lottieManager.showLoading()
+                self.lottieManager.showLoading()
                 return
             }
-            self?.lottieManager.hideLoading()
+            self.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
         // Muestra un mensaje AlertViewController
         inboxViewModel.showAlert.observeOn(MainScheduler.instance)
@@ -449,8 +459,9 @@ class InboxViewController: UIViewController {
             self.collectionView.reloadData()
             if self.removeOrdersSelectedVerticalSpace.constant > 0 {
                 UIView.animate(withDuration: 0.2, animations: { [weak self] in
-                    self?.removeOrdersSelectedVerticalSpace.constant = -60
-                    self?.view.layoutIfNeeded()
+                    guard let self = self else { return }
+                    self.removeOrdersSelectedVerticalSpace.constant = -60
+                    self.view.layoutIfNeeded()
                 })
             }
             self.processButton.isEnabled = false
@@ -573,16 +584,18 @@ class InboxViewController: UIViewController {
 
         if indexPathsSelected.count > 0 {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
-                self?.removeOrdersSelectedVerticalSpace.constant = 48
-                self?.view.layoutIfNeeded()
+                guard let self = self else { return }
+                self.removeOrdersSelectedVerticalSpace.constant = 48
+                self.view.layoutIfNeeded()
             })
             processButton.isEnabled = true
             pendingButton.isEnabled = true
             finishedButton.isEnabled = true
         } else {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
-                self?.removeOrdersSelectedVerticalSpace.constant = -60
-                self?.view.layoutIfNeeded()
+                guard let self = self else { return }
+                self.removeOrdersSelectedVerticalSpace.constant = -60
+                self.view.layoutIfNeeded()
             })
             processButton.isEnabled = false
             pendingButton.isEnabled = false
@@ -601,8 +614,9 @@ class InboxViewController: UIViewController {
         }
         if self.removeOrdersSelectedVerticalSpace.constant > 0 {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
-                self?.removeOrdersSelectedVerticalSpace.constant = -60
-                self?.view.layoutIfNeeded()
+                guard let self = self else { return }
+                self.removeOrdersSelectedVerticalSpace.constant = -60
+                self.view.layoutIfNeeded()
             })
         }
     }
