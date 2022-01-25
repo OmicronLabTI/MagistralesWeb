@@ -1066,6 +1066,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 TrakingNumber = invoice.TrackingNumber,
                 DeliveryCompany = company?.TrnspName ?? string.Empty,
                 CodeClient = invoice.CardCode,
+                IsPackage = invoice.IsPackage == ServiceConstants.IsPackage,
             };
 
             return card;
