@@ -149,6 +149,13 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        [Column("")]
+        public string IsPackage { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         [NotMapped]
         public string Cliente { get; set; }
     }

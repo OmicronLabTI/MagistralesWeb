@@ -727,6 +727,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsLine = product.IsLine,
                              IsMagistral = product.IsMagistral,
                              Canceled = order.Canceled,
+                             IsPackage = order.IsPackage,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -769,6 +770,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsLine = product.IsLine,
                              IsMagistral = product.IsMagistral,
                              Canceled = order.Canceled,
+                             IsPackage = order.IsPackage,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -807,6 +809,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             DocNumDxp = order.DocNumDxp,
                             ShippingCost = order.ShippingCost,
                             ClientId = doctor.ClientId,
+                            IsPackage = order.IsPackage,
                         };
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
         }
@@ -847,6 +850,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Canceled = order.Canceled,
                              IsLine = product.IsLine,
                              IsMagistral = product.IsMagistral,
+                             IsPackage = order.IsPackage,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -1506,6 +1510,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Producto = p,
                              FabricationOrder = dpf != null ? dpf.OrdenId.ToString() : string.Empty,
                              Canceled = order.Canceled,
+                             IsPackage = order.IsPackage,
                          });
 
             return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();
