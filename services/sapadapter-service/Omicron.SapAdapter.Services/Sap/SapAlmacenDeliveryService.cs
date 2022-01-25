@@ -209,18 +209,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(listDeliveryIds)).ToList();
 
             var maquilaDeliverys = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
-            var maquilaIds = maquilaDeliverys.Select(md => md.DocNum).ToList();
-            deliveryHeaders = deliveryHeaders.Where(d => deliveryToReturn.Select(x => x.DeliveryId).Distinct().Contains(d.DocNum)).ToList();
+            var packageDeliveries = deliveryHeaders.Where(x => x.IsPackage == ServiceConstants.IsPackage).ToList();
 
-            if (types.Contains(ServiceConstants.Maquila.ToLower()))
-            {
-                deliveryHeaders.AddRange(maquilaDeliverys);
-                deliveryToReturn.AddRange(deliveryDetailDb.Where(d => maquilaIds.Contains(d.DeliveryId)));
-            }
-            else
-            {
-                deliveryHeaders = deliveryHeaders.Where(d => !maquilaIds.Contains(d.DocNum)).ToList();
-            }
+            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, maquilaDeliverys, ServiceConstants.Maquila);
+            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, packageDeliveries, ServiceConstants.Paquetes);
 
             deliveryHeaders = await this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
             deliveryHeaders = deliveryHeaders.OrderByDescending(x => x.DocNum).ToList();
@@ -231,6 +223,24 @@ namespace Omicron.SapAdapter.Services.Sap
             deliveryToReturn = deliveryToReturn.OrderByDescending(x => x.DeliveryId).ToList();
 
             return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, invoices);
+        }
+
+        private List<DeliverModel> AddSpecialTypes(List<string> types, List<DeliveryDetailModel> deliveryDetailDb, List<DeliveryDetailModel> deliveryToReturn, List<DeliverModel> deliveryHeaders, List<DeliverModel> specialDeliveries, string typeToLook)
+        {
+            var specialId = specialDeliveries.Select(md => md.DocNum).ToList();
+            deliveryHeaders = deliveryHeaders.Where(d => deliveryToReturn.Select(x => x.DeliveryId).Distinct().Contains(d.DocNum)).ToList();
+
+            if (types.Contains(typeToLook.ToLower()))
+            {
+                deliveryHeaders.AddRange(specialDeliveries);
+                deliveryToReturn.AddRange(deliveryDetailDb.Where(d => specialId.Contains(d.DeliveryId)));
+            }
+            else
+            {
+                deliveryHeaders = deliveryHeaders.Where(d => !specialId.Contains(d.DocNum)).ToList();
+            }
+
+            return deliveryHeaders;
         }
 
         /// <summary>
