@@ -407,6 +407,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 SapComments = order.Comments,
                 TypeOrder = order.OrderType,
                 StoredBy = this.GetUserWhoStored(paramentsCards.Users, userOrder, lineProductOrder),
+                IsPackage = order.IsPackage == ServiceConstants.IsPackage,
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };

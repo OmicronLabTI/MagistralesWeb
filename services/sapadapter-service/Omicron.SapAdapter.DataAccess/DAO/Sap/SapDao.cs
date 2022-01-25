@@ -1416,6 +1416,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Comments = order.Comments,
                              AsesorId = order.AsesorId,
                              Canceled = order.Canceled,
+                             IsPackage = order.IsPackage,
                          });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -1453,6 +1454,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              OrderType = order.OrderType,
                              PedidoMuestra = order.PedidoMuestra,
                              Cliente = dop.Address2 ?? string.Empty,
+                             IsPackage = order.IsPackage,
                          });
 
             return await this.RetryQuery<OrderModel>(query);
