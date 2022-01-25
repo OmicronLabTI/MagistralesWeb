@@ -195,6 +195,9 @@ namespace Omicron.SapAdapter.Test
 
                 // for almacen detail
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 46040, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 46040, Address = "direccion Oax", TypeOrder = "MQ" },
+
+                // for almacen packages
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 85001, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 85001, Address = "direccion CD MX", IsPackage = "Y" },
             };
         }
 
@@ -216,6 +219,9 @@ namespace Omicron.SapAdapter.Test
 
                 // for detail invoice
                 new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 1, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1, InvoiceId = 1 },
+
+                // for detail packages
+                new DeliveryDetailModel { BaseEntry = 85001, DeliveryId = 85001, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
             };
         }
 
@@ -578,6 +584,32 @@ namespace Omicron.SapAdapter.Test
             var listProducts = new List<LineProductsModel>
             {
                 new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(batch), DeliveryId = 46037 },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProductsRemisionPackage()
+        {
+            var batch = new List<AlmacenBatchModel>()
+            {
+                new AlmacenBatchModel { BatchNumber = "Lote1", BatchQty = 1 },
+            };
+
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 85001, StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(batch), DeliveryId = 85001 },
             };
 
             return new ResultDto

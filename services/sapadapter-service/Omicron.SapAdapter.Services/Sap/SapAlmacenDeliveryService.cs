@@ -225,19 +225,19 @@ namespace Omicron.SapAdapter.Services.Sap
             return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, invoices);
         }
 
-        private List<DeliverModel> AddSpecialTypes(List<string> types, List<DeliveryDetailModel> deliveryDetailDb, List<DeliveryDetailModel> deliveryToReturn, List<DeliverModel> deliveryHeaders, List<DeliverModel> maquilaDeliverys, string typeToLook)
+        private List<DeliverModel> AddSpecialTypes(List<string> types, List<DeliveryDetailModel> deliveryDetailDb, List<DeliveryDetailModel> deliveryToReturn, List<DeliverModel> deliveryHeaders, List<DeliverModel> specialDeliveries, string typeToLook)
         {
-            var maquilaIds = maquilaDeliverys.Select(md => md.DocNum).ToList();
+            var specialId = specialDeliveries.Select(md => md.DocNum).ToList();
             deliveryHeaders = deliveryHeaders.Where(d => deliveryToReturn.Select(x => x.DeliveryId).Distinct().Contains(d.DocNum)).ToList();
 
             if (types.Contains(typeToLook.ToLower()))
             {
-                deliveryHeaders.AddRange(maquilaDeliverys);
-                deliveryToReturn.AddRange(deliveryDetailDb.Where(d => maquilaIds.Contains(d.DeliveryId)));
+                deliveryHeaders.AddRange(specialDeliveries);
+                deliveryToReturn.AddRange(deliveryDetailDb.Where(d => specialId.Contains(d.DeliveryId)));
             }
             else
             {
-                deliveryHeaders = deliveryHeaders.Where(d => !maquilaIds.Contains(d.DocNum)).ToList();
+                deliveryHeaders = deliveryHeaders.Where(d => !specialId.Contains(d.DocNum)).ToList();
             }
 
             return deliveryHeaders;
