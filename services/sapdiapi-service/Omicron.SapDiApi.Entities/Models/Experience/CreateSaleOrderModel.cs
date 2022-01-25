@@ -100,5 +100,13 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// String FirstName.
         /// </value>
         public decimal DiscountSpecial { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets FirstName.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public bool IsPackage { get; set; }
     }
 }

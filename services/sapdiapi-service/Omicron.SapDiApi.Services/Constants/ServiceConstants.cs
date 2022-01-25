@@ -252,6 +252,16 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string ActionDelete = "d";
 
         /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string IsPackage = "Y";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string IsNotPackage = "N";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
