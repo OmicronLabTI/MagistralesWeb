@@ -26,6 +26,9 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Services.Redis;
+    using Newtonsoft.Json;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Dtos.Models;
 
     /// <summary>
     /// Class for the QR test.
@@ -224,6 +227,61 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
                 { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()}" },
+            };
+
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
+
+            // act
+            var response = await localService.GetOrders(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersPaquetes()
+        {
+            // arrange
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "10" },
+            };
+
+            var parametersResponse = this.GetResultDto(parameters);
+
+            var resultPedido = new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = JsonConvert.SerializeObject(new List<int>()),
+                Response = JsonConvert.SerializeObject(new List<UserOrderModel>()),
+                Success = true,
+                Comments = "15",
+            };
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(resultPedido));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(resultPedido))
+                .Returns(Task.FromResult(this.GetIncidents()));
+
+            var mockCatalogos = new Mock<ICatalogsService>();
+            mockCatalogos
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(parametersResponse));
+
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Type, $"{ServiceConstants.Paquetes.ToLower()}" },
             };
 
             var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
