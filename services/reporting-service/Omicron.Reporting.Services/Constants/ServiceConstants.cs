@@ -202,6 +202,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string Entregado = "Entregado";
 
         /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string Enviado = "Enviado";
+
+        /// <summary>
         /// the incidentFilename.
         /// </summary>
         public const string IncidentFileName = "IncidenciasInternasPT-";
@@ -343,7 +348,7 @@ namespace Omicron.Reporting.Services.Constants
         public static List<string> ValidStatusToGetInvoiceAttachment { get; } = new List<string>
         {
             Entregado,
-            Camino,
+            Enviado,
         };
     }
 }
