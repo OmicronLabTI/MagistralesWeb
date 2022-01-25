@@ -103,6 +103,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 InvoiceType = ServiceShared.CalculateTernary(isLocal, ServiceConstants.Local, ServiceConstants.Foraneo),
                 TypeOrder = deliveryDetails.FirstOrDefault().TypeOrder,
                 HasInvoice = deliveryDetails.FirstOrDefault().Detalles.InvoiceId.HasValue,
+                IsPackage = deliveryDetails.FirstOrDefault().IsPackage == ServiceConstants.IsPackage,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
@@ -326,6 +327,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     HasInvoice = hasInvoice,
                     TypeOrder = header.TypeOrder,
                     DeliveryTypeModel = deliveryType,
+                    IsPackage = header.IsPackage == ServiceConstants.IsPackage,
                 };
 
                 var saleModel = new SalesModel

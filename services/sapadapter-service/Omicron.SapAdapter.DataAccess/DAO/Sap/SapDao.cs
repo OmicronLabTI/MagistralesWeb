@@ -927,6 +927,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Medico = doctor.AliasName,
                              PedidoId = delivery.PedidoId,
                              TypeOrder = delivery.TypeOrder,
+                             IsPackage = delivery.IsPackage,
                          });
 
             return (await this.RetryQuery<DeliverModel>(query)).ToList();
@@ -1552,6 +1553,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              TypeOrder = order.TypeOrder,
                              Address = order.Address,
                              Producto = p,
+                             IsPackage = order.IsPackage,
                          });
 
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
