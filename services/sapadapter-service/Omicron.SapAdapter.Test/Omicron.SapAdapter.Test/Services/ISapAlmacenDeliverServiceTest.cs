@@ -158,7 +158,7 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()}" },
+                { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()},{ServiceConstants.Magistral.ToLower()}" },
             };
 
             var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
