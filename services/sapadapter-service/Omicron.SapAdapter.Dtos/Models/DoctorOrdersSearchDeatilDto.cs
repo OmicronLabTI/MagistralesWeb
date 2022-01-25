@@ -28,6 +28,12 @@ namespace Omicron.SapAdapter.Dtos.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool IsPackage { get; set; }
+
+        /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>

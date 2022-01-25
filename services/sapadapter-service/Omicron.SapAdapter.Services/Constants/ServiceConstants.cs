@@ -556,6 +556,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string LocalNeighbors = "LocalNeighbors";
 
         /// <summary>
+        /// if a order is package.
+        /// </summary>
+        public const string IsPackage = "Y";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

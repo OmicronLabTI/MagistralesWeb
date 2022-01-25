@@ -347,6 +347,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 TypeOrder = order.TypeOrder,
                 OrderMuestra = ServiceShared.CalculateTernary(string.IsNullOrEmpty(order.PedidoMuestra), ServiceConstants.IsNotSampleOrder, order.PedidoMuestra),
                 SapComments = order.Comments,
+                IsPackage = order.IsPackage == ServiceConstants.IsPackage,
             };
 
             var listToReturn = new ReceipcionPedidosDetailModel
@@ -533,6 +534,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeOrder = order.TypeOrder,
                     OrderMuestra = ServiceShared.CalculateTernary(string.IsNullOrEmpty(order.PedidoMuestra), ServiceConstants.IsNotSampleOrder, order.PedidoMuestra),
                     SaleOrderType = saleOrderType,
+                    IsPackage = orders.Any(x => x.IsPackage == ServiceConstants.IsPackage),
                 };
 
                 var saleModel = new SalesModel

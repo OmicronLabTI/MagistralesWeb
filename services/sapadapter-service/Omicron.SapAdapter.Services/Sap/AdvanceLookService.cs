@@ -407,6 +407,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 SapComments = order.Comments,
                 TypeOrder = order.OrderType,
                 StoredBy = this.GetUserWhoStored(paramentsCards.Users, userOrder, lineProductOrder),
+                IsPackage = order.IsPackage == ServiceConstants.IsPackage,
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };
@@ -592,6 +593,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DataCheckin = initDate.Value,
                     ListSaleOrder = string.Join(", ", salesOrders),
                     TypeOrder = header.TypeOrder,
+                    IsPackage = header.IsPackage == ServiceConstants.IsPackage,
                 };
                 saleHeader.Add(saleHeaderItem);
             }
@@ -747,6 +749,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsLookUpInvoices = true,
                 IsRefactura = false,
                 TypeOrder = invoiceHeader.TypeOrder,
+                IsPackage = invoiceHeader.IsPackage == ServiceConstants.IsPackage,
             };
             invoicesHeaders.Add(invoiceHeaderLookUp);
             return invoicesHeaders;
@@ -805,6 +808,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             IsLookUpInvoices = false,
                             IsRefactura = !string.IsNullOrEmpty(invoiceHeader.Refactura) && invoiceHeader.Refactura == ServiceConstants.IsRefactura,
                             TypeOrder = invoiceHeader.TypeOrder,
+                            IsPackage = invoiceHeader.IsPackage == ServiceConstants.IsPackage,
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
@@ -852,6 +856,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         IsLookUpInvoices = true,
                         IsRefactura = !string.IsNullOrEmpty(invoiceHeaders.Refactura) && invoiceHeaders.Refactura == ServiceConstants.IsRefactura,
                         TypeOrder = invoiceHeaders.TypeOrder,
+                        IsPackage = invoiceHeaders.IsPackage == ServiceConstants.IsPackage,
                     };
                     invoicesHeaders.Add(invoiceHeaderLookUp);
                 }
@@ -1061,6 +1066,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 TrakingNumber = invoice.TrackingNumber,
                 DeliveryCompany = company?.TrnspName ?? string.Empty,
                 CodeClient = invoice.CardCode,
+                IsPackage = invoice.IsPackage == ServiceConstants.IsPackage,
             };
 
             return card;
