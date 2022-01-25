@@ -749,6 +749,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsLookUpInvoices = true,
                 IsRefactura = false,
                 TypeOrder = invoiceHeader.TypeOrder,
+                IsPackage = invoiceHeader.IsPackage == ServiceConstants.IsPackage,
             };
             invoicesHeaders.Add(invoiceHeaderLookUp);
             return invoicesHeaders;
@@ -807,6 +808,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             IsLookUpInvoices = false,
                             IsRefactura = !string.IsNullOrEmpty(invoiceHeader.Refactura) && invoiceHeader.Refactura == ServiceConstants.IsRefactura,
                             TypeOrder = invoiceHeader.TypeOrder,
+                            IsPackage = invoiceHeader.IsPackage == ServiceConstants.IsPackage,
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
@@ -854,6 +856,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         IsLookUpInvoices = true,
                         IsRefactura = !string.IsNullOrEmpty(invoiceHeaders.Refactura) && invoiceHeaders.Refactura == ServiceConstants.IsRefactura,
                         TypeOrder = invoiceHeaders.TypeOrder,
+                        IsPackage = invoiceHeaders.IsPackage == ServiceConstants.IsPackage,
                     };
                     invoicesHeaders.Add(invoiceHeaderLookUp);
                 }

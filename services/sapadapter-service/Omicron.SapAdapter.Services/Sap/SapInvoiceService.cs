@@ -125,6 +125,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 TypeOrder = invoiceHeader.InvoiceHeader.TypeOrder,
                 CodeClient = invoiceHeader.InvoiceHeader.CardCode,
                 TotalPieces = invoiceDetails.Where(y => y.Detail.Quantity > 0).Sum(x => (int)x.Detail.Quantity),
+                IsPackage = invoiceHeader.InvoiceHeader.IsPackage == ServiceConstants.IsPackage,
             };
 
             var invoiceModelToAdd = new InvoicesModel
@@ -508,6 +509,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Products = invoiceDetails.Count,
                     InvoiceDocDate = invoice.FechaInicio,
                     TypeOrder = invoice.TypeOrder,
+                    IsPackage = invoice.IsPackage == ServiceConstants.IsPackage,
                 };
 
                 var invoiceModelToAdd = new InvoicesModel
