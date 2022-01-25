@@ -91,13 +91,15 @@ namespace Omicron.Reporting.Services
             var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             var payment = string.Format(ServiceConstants.FooterPayment, request.PackageId);
             var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, payment, ServiceConstants.RefundPolicy);
+            var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId });
 
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
                 request.DestinyEmail,
                 string.Format(ServiceConstants.ForeignEmailSubject, request.SalesOrders),
                 body,
-                smtpConfig.EmailCCDelivery);
+                smtpConfig.EmailCCDelivery,
+                invoiceAttachment);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
