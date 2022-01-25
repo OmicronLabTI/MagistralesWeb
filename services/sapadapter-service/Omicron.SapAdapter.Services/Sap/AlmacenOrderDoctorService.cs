@@ -89,6 +89,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Doctor = details.Name,
                 TotalItems = sapOrders.Count(y => y.Detalles != null),
                 TotalPieces = sapOrders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
+                IsPackage = details.IsPackage,
             };
 
             saleModel.Items = this.GetTotalOrdersByDoctor(sapOrders.ToList(), localNeigbors, userOrders);
