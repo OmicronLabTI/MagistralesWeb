@@ -54,5 +54,41 @@ namespace Omicron.SapDiApi.Dtos.Models.Experience
         /// </summary>
         /// <value>Zip code.</value>
         public string Email { get; set; }
+
+        /// <summary>
+        /// Gets or sets the state.
+        /// </summary>
+        /// <value>State.</value>
+        public string State { get; set; }
+
+        /// <summary>
+        /// Gets or sets the country.
+        /// </summary>
+        /// <value>CardCode.</value>
+        public string Country { get; set; }
+
+        /// <summary>
+        /// Gets or sets the suburb.
+        /// </summary>
+        /// <value>Suburb.</value>
+        public string Suburb { get; set; }
+
+        /// <summary>
+        /// Gets or sets the street.
+        /// </summary>
+        /// <value>Street.</value>
+        public string Street { get; set; }
+
+        /// <summary>
+        /// Gets or sets the street number.
+        /// </summary>
+        /// <value>Street number.</value>
+        public string Number { get; set; }
+
+        /// <summary>
+        /// Gets or sets the street number.
+        /// </summary>
+        /// <value>Street number.</value>
+        public string City { get; set; }
     }
 }

@@ -15,6 +15,7 @@ namespace Omicron.Reporting.DependencyInjection
     using Omicron.Reporting.Entities.Context;
     using Omicron.Reporting.Facade.Request;
     using Omicron.Reporting.Services;
+    using Omicron.Reporting.Services.AzureServices;
     using Omicron.Reporting.Services.Clients;
     using Omicron.Reporting.Services.Mapping;
 
@@ -38,6 +39,7 @@ namespace Omicron.Reporting.DependencyInjection
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             Services.AddTransient<IOmicronMailClient, OmicronMailClient>();
             Services.AddTransient<ISendMailWrapper, SendMailWrapper>();
+            Services.AddTransient<IAzureService, AzureServices>();
             return Services;
         }
 

@@ -368,6 +368,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             doctorSap.Addresses.UserFields.Fields.Item("U_RFC").Value = address.Rfc;
             doctorSap.Addresses.FederalTaxID = address.Rfc;
             doctorSap.Addresses.ZipCode = address.ZipCode;
+            doctorSap.Addresses.Country = "MX";
+            doctorSap.Addresses.State = address.State;
+            doctorSap.Addresses.Block = address.Suburb;
+            doctorSap.Addresses.Street = address.Street;
+            doctorSap.Addresses.StreetNo = address.Number;
+            doctorSap.Addresses.City = address.City;
             doctorSap.Addresses.GlobalLocationNumber = address.Email;
             doctorSap.Addresses.AddressType = BoAddressType.bo_BillTo;
             return doctorSap;

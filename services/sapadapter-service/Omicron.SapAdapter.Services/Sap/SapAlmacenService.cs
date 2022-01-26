@@ -504,12 +504,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orders = sapOrdersToProcess.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 
-                var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid.Equals(so.ToString()) && string.IsNullOrEmpty(x.Productionorderid));
+                var userOrder = userOrders.GetSaleOrderHeader(so.ToString());
                 var lineOrders = lineProducts.Where(x => x.SaleOrderId == so).ToList();
 
                 var totalItems = orders.Count;
                 var totalpieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
-                var doctor = order?.Medico.ValidateNull();
+                var doctor = order.Medico.ValidateNull();
 
                 var localUserOrders = userOrders.Where(x => x.Salesorderid == so.ToString() && !string.IsNullOrEmpty(x.Productionorderid)).ToList();
 
@@ -526,7 +526,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     DocNum = so,
                     Doctor = doctor,
-                    InitDate = order?.FechaInicio ?? DateTime.Now,
+                    InitDate = order.FechaInicio,
                     Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, salesStatus),
                     TotalItems = totalItems,
                     TotalPieces = totalpieces,

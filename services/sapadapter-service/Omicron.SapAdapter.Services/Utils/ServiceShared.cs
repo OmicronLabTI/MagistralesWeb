@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Newtonsoft.Json;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
@@ -90,17 +91,6 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
-        /// get item code with fabrication order.
-        /// </summary>
-        /// <param name="productoId">the productoId.</param>
-        /// <param name="orderId">the order id.</param>
-        /// <returns>complete itemcode.</returns>
-        public static string GetItemcode(string productoId, string orderId)
-        {
-            return !string.IsNullOrEmpty(orderId) ? $"{productoId} - {orderId}" : productoId;
-        }
-
-        /// <summary>
         /// get if is valid filter by type shipping.
         /// </summary>
         /// <param name="parameters">the params.</param>
@@ -130,6 +120,18 @@ namespace Omicron.SapAdapter.Services.Utils
         public static LineProductsModel GetLineProductOrderHeader(this List<LineProductsModel> lineProducts, int saleOrderId)
         {
             return lineProducts.FirstOrDefault(x => x.SaleOrderId == saleOrderId && string.IsNullOrEmpty(x.ItemCode));
+        }
+
+        /// <summary>
+        /// get the line products order header.
+        /// </summary>
+        /// <typeparam name="T">the type.</typeparam>
+        /// <param name="value">the value to deserialize.</param>
+        /// <param name="defaultList">the default list.</param>
+        /// <returns>a line product model.</returns>
+        public static List<T> DeserializeObject<T>(string value, List<T> defaultList)
+        {
+            return !string.IsNullOrEmpty(value) ? JsonConvert.DeserializeObject<List<T>>(value) : defaultList;
         }
     }
 }

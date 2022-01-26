@@ -50,17 +50,7 @@ namespace Omicron.Pedidos.Test.Facade
 
             var mockService = new Mock<IQrService>();
 
-            mockService
-                .Setup(m => m.CreateMagistralQr(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockService
-                .Setup(m => m.CreateRemisionQr(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
-
-            mockService
-                .Setup(m => m.CreateInvoiceQr(It.IsAny<List<int>>()))
-                .Returns(Task.FromResult(response));
+            mockService.SetReturnsDefault(Task.FromResult(response));
 
             this.qrsFacade = new QrFacade(mapper, mockService.Object);
         }
@@ -94,6 +84,23 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.qrsFacade.CreateRemisionQr(order);
+
+            // arrange
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processOrders.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task CreateSampleLabel()
+        {
+            // arrange
+            var order = new List<int>();
+
+            // act
+            var response = await this.qrsFacade.CreateSampleLabel(order);
 
             // arrange
             Assert.IsNotNull(response);

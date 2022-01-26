@@ -34,10 +34,18 @@ describe('PedidosService', () => {
         const service: PedidosService = TestBed.get(PedidosService);
         expect(service.getDetallePedido('anyDocumentNum') instanceof Observable).toBeTruthy();
     });
+  it('should getDetailCarousel', () => {
+      const service: PedidosService = TestBed.get(PedidosService);
+      expect(service.getDetailCarousel('anyqueryStringFull') instanceof Observable).toBeTruthy();
+  });
   it('should getFormulaDetail', () => {
         const service: PedidosService = TestBed.get(PedidosService);
         expect(service.getFormulaDetail('anyOrderNum') instanceof Observable).toBeTruthy();
     });
+  it('should getFormulaCarousel', () => {
+      const service: PedidosService = TestBed.get(PedidosService);
+      expect(service.getFormulaCarousel('queryString') instanceof Observable).toBeTruthy();
+  });
   it('should processOrders', () => {
         const service: PedidosService = TestBed.get(PedidosService);
         expect(service.processOrders('anyOrdersToProcess') instanceof Observable).toBeTruthy();
@@ -148,4 +156,8 @@ describe('PedidosService', () => {
         expect(service.finishLabels({
             designerSignature: 'sign', details: [{} as LabelToFinish], userId: ''}) instanceof Observable).toBeTruthy();
     });
+  it('should getQfbsWithgetInitRangeDateOrders', () => {
+      const service: PedidosService = TestBed.get(PedidosService);
+      expect(service.getInitRangeDate() instanceof Observable).toBeTruthy();
+  });
 });
