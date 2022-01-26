@@ -345,6 +345,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ShippingAddressName = order.ShippingAddressName,
                             ShippingCost = order.ShippingCost,
                             Medico = doctor.AliasName,
+                            IsPackage = order.IsPackage,
                         };
 
             return (await this.RetryQuery<OrderModel>(query)).ToList();
