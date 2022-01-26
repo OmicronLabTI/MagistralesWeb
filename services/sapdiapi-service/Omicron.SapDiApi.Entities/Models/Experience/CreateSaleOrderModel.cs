@@ -92,5 +92,13 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// String FirstName.
         /// </value>
         public string WayToPaySapCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets FirstName.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public decimal DiscountSpecial { get; set; }
     }
 }

@@ -85,4 +85,5 @@ describe('SearchUsersDialogComponent', () => {
     // expect(MockDialogRef.close).toHaveBeenCalled();
     expect(component.keyDownUsers).toBeTruthy();
   });
+
 });

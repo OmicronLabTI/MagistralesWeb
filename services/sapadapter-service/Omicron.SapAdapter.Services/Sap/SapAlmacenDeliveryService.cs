@@ -205,13 +205,20 @@ namespace Omicron.SapAdapter.Services.Sap
                 sapOrdersGroup.RemoveAll(x => keysLine.Contains(x.Key));
             }
 
-            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(deliveryToReturn.Select(x => x.DeliveryId).Distinct().ToList())).ToList();
+            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(listDeliveryIds)).ToList();
 
-            if (!types.Contains(ServiceConstants.Maquila.ToLower()))
+            var maquilaDeliverys = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
+            var maquilaIds = maquilaDeliverys.Select(md => md.DocNum).ToList();
+            deliveryHeaders = deliveryHeaders.Where(d => deliveryToReturn.Select(x => x.DeliveryId).Distinct().Contains(d.DocNum)).ToList();
+
+            if (types.Contains(ServiceConstants.Maquila.ToLower()))
             {
-                var listMaquila = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).Select(x => x.DocNum).ToList();
-                deliveryHeaders = deliveryHeaders.Where(x => !listMaquila.Contains(x.DocNum)).ToList();
-                deliveryToReturn = deliveryToReturn.Where(x => !listMaquila.Contains(x.DeliveryId)).ToList();
+                deliveryHeaders.AddRange(maquilaDeliverys);
+                deliveryToReturn.AddRange(deliveryDetailDb.Where(d => maquilaIds.Contains(d.DeliveryId)));
+            }
+            else
+            {
+                deliveryHeaders = deliveryHeaders.Where(d => !maquilaIds.Contains(d.DocNum)).ToList();
             }
 
             deliveryHeaders = await this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
@@ -394,7 +401,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     var lineProduct = lineProducts.FirstOrDefault(x => x.SaleOrderId == order.BaseEntry && x.ItemCode == item.ProductoId);
                     lineProduct ??= new LineProductsModel();
 
-                    var batchName = string.IsNullOrEmpty(lineProduct.BatchName) ? new List<AlmacenBatchModel>() : JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
+                    var batchName = ServiceShared.DeserializeObject(lineProduct.BatchName, new List<AlmacenBatchModel>());
                     listBatches = this.GetBatchesByDelivery(order.ProductoId, batchesQty, batches, batchName);
                 }
 
@@ -405,7 +412,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var localIncident = new IncidentInfoModel
                 {
-                    Batches = !string.IsNullOrEmpty(incidentdb.Batches) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(incidentdb.Batches) : new List<AlmacenBatchModel>(),
+                    Batches = ServiceShared.DeserializeObject(incidentdb.Batches, new List<AlmacenBatchModel>()),
                     Comments = incidentdb.Comments,
                     Incidence = incidentdb.Incidence,
                     Status = incidentdb.Status,

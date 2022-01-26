@@ -9,6 +9,7 @@ import { Messages } from 'src/app/constants/messages';
 import {MODAL_FIND_ORDERS} from '../../constants/const';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-mi-lista',
@@ -17,14 +18,15 @@ import { MessagesService } from 'src/app/services/messages.service';
 })
 export class MiListaComponent implements OnInit {
   name = new FormControl('', [Validators.required]);
-  errorService: any;
+  // errorService: any;
   constructor(
     private dialogRef: MatDialogRef<MiListaComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dataService: DataService,
     private orderService: OrdersService,
     private localStorageService: LocalStorageService,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
+    private errorService: ErrorService
   ) {}
 
   ngOnInit() {

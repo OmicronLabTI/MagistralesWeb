@@ -112,21 +112,21 @@ namespace Omicron.SapAdapter.Services.Utils
                 var allPersonalized = p.All(d => d.Detalles != null && !string.IsNullOrEmpty(d.Detalles.Label) && d.Detalles.Label.ToLower() == ServiceConstants.Personalizado.ToLower());
                 var allGeneric = p.All(d => d.Detalles != null && !string.IsNullOrEmpty(d.Detalles.Label) && d.Detalles.Label.ToLower() != ServiceConstants.Personalizado.ToLower());
 
-                var typeLabel = allPersonalized ? ServiceConstants.PersonalizadoAbr : ServiceConstants.MixtoAbr;
-                typeLabel = allGeneric ? ServiceConstants.GenericoAbr : typeLabel;
+                var typeLabel = ServiceShared.CalculateTernary(allPersonalized, ServiceConstants.PersonalizadoAbr, ServiceConstants.MixtoAbr);
+                typeLabel = ServiceShared.CalculateTernary(allGeneric, ServiceConstants.GenericoAbr, typeLabel);
 
                 var hasRecipe = p.FirstOrDefault() != null && p.FirstOrDefault().AtcEntry != null;
                 var needRecipe = p.Any(d => !string.IsNullOrEmpty(d.Detalles.HasRecipe) && d.Detalles.HasRecipe.ToLower() == ServiceConstants.HasRecipe);
 
-                var recipe = hasRecipe ? ServiceConstants.HasNeedsRecipe : ServiceConstants.DoesntHaveNeedRecipe;
-                recipe = needRecipe ? recipe : ServiceConstants.NoNeedRecipe;
+                var recipe = ServiceShared.CalculateTernary(hasRecipe, ServiceConstants.HasNeedsRecipe, ServiceConstants.DoesntHaveNeedRecipe);
+                recipe = ServiceShared.CalculateTernary(needRecipe, recipe, ServiceConstants.NoNeedRecipe);
 
                 var elementToSave = p.FirstOrDefault();
                 elementToSave.LabelType = typeLabel;
                 elementToSave.HasRecipte = recipe;
 
-                var order = userOrder.FirstOrDefault(u => u.Salesorderid == elementToSave.DocNum.ToString() && string.IsNullOrEmpty(u.Productionorderid));
-                elementToSave.Qfb = order == null ? string.Empty : order.Userid;
+                var order = userOrder.GetSaleOrderHeader(elementToSave.DocNum.ToString());
+                elementToSave.Qfb = ServiceShared.CalculateTernary(order == null, string.Empty, order?.Userid);
                 elementToSave.QfbId = elementToSave.Qfb;
 
                 if (elementToSave.PedidoStatus == ServiceConstants.AbiertoSap)
@@ -134,14 +134,14 @@ namespace Omicron.SapAdapter.Services.Utils
                     elementToSave.PedidoStatus = ServiceConstants.Abierto;
                 }
 
-                elementToSave.PedidoStatus = order == null ? elementToSave.PedidoStatus : order.Status;
-                elementToSave.FinishedLabel = order == null ? 0 : order.FinishedLabel;
+                elementToSave.PedidoStatus = ServiceShared.CalculateTernary(order == null, elementToSave?.PedidoStatus, order?.Status);
+                elementToSave.FinishedLabel = order?.FinishedLabel ?? 0;
                 elementToSave.Detalles = null;
-                elementToSave.FechaFin = order != null && order.CloseDate.HasValue ? order.CloseDate.Value.ToString("dd/MM/yyyy") : string.Empty;
-                elementToSave.OrderType = !string.IsNullOrEmpty(elementToSave.PedidoMuestra) && elementToSave.PedidoMuestra == ServiceConstants.IsSampleOrder ? ServiceConstants.OrderTypeMU : elementToSave.OrderType;
+                elementToSave.FechaFin = ServiceShared.GetDateValueOrDefault(order?.CloseDate, string.Empty);
+                elementToSave.OrderType = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(elementToSave.PedidoMuestra) && elementToSave.PedidoMuestra == ServiceConstants.IsSampleOrder, ServiceConstants.OrderTypeMU, elementToSave?.OrderType);
 
                 var user = users.FirstOrDefault(y => y.Id.Equals(elementToSave.Qfb));
-                elementToSave.Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+                elementToSave.Qfb = ServiceShared.CalculateTernary(user == null, string.Empty, $"{user?.FirstName} {user?.LastName}");
                 listToFilter.Add(elementToSave);
             });
 
@@ -248,8 +248,8 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the enxt id.</returns>
         public static int GetKeyToLook(Dictionary<string, string> dict, List<int> listIds)
         {
-            var current = dict.ContainsKey(ServiceConstants.Current) ? dict[ServiceConstants.Current] : "0";
-            var advance = dict.ContainsKey(ServiceConstants.Advance) ? dict[ServiceConstants.Advance] : "f";
+            var current = ServiceShared.GetDictionaryValueString(dict, ServiceConstants.Current, "0");
+            var advance = ServiceShared.GetDictionaryValueString(dict, ServiceConstants.Advance, "f");
             int.TryParse(current, out int currentInt);
             var index = listIds.IndexOf(currentInt);
 
@@ -258,9 +258,9 @@ namespace Omicron.SapAdapter.Services.Utils
                 return 0;
             }
 
-            index = advance == "f" ? index + 1 : index - 1;
-            index = index == -1 ? listIds.Count - 1 : index;
-            index = index == listIds.Count ? 0 : index;
+            index = ServiceShared.CalculateTernary(advance == "f", index + 1, index - 1);
+            index = ServiceShared.CalculateTernary(index == -1, listIds.Count - 1, index);
+            index = ServiceShared.CalculateTernary(index == listIds.Count, 0, index);
             return index;
         }
 

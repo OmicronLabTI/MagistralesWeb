@@ -71,18 +71,16 @@ namespace Omicron.SapAdapter.Services.Utils
                 sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
             }
 
-            if (!types.Contains(ServiceConstants.Maquila.ToLower()))
-            {
-                listToReturn = listToReturn.Where(x => x.TypeOrder != ServiceConstants.OrderTypeMQ).ToList();
-            }
+            var ordersMaquila = sapOrders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
+            listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Maquila.ToLower()), ordersMaquila, listToReturn);
+            salesTypes = AddSalesTypeByOrders(ordersMaquila, salesTypes);
 
-            if (!types.Contains(ServiceConstants.Muestra.ToLower()))
-            {
-                listToReturn = listToReturn.Where(x => string.IsNullOrEmpty(x.PedidoMuestra) || x.PedidoMuestra != ServiceConstants.IsSampleOrder).ToList();
-            }
+            var ordersSample = sapOrders.Where(x => x.PedidoMuestra == ServiceConstants.IsSampleOrder).ToList();
+            listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Muestra.ToLower()), ordersSample, listToReturn);
+            salesTypes = AddSalesTypeByOrders(ordersSample, salesTypes);
 
             return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listToReturn.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList(), salesTypes);
-    }
+        }
 
         /// <summary>
         /// Get the orders for recepcion pedidos.
@@ -122,6 +120,28 @@ namespace Omicron.SapAdapter.Services.Utils
 
             arrayOfSaleToProcess = arrayOfSaleToProcess.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
             return arrayOfSaleToProcess;
+        }
+
+        private static List<CompleteAlmacenOrderModel> FilterByContainsType(bool containsFilter, List<CompleteAlmacenOrderModel> ordersToFilter, List<CompleteAlmacenOrderModel> listToReturn)
+        {
+            if (containsFilter)
+            {
+                listToReturn.AddRange(ordersToFilter);
+                return listToReturn;
+            }
+
+            listToReturn = listToReturn.Where(o => !ordersToFilter.Select(om => om.DocNum).Contains(o.DocNum)).ToList();
+            return listToReturn;
+        }
+
+        private static SaleOrderTypeModel AddSalesTypeByOrders(List<CompleteAlmacenOrderModel> sapOrdersToGetType, SaleOrderTypeModel salesTypes)
+        {
+            var sapOrdersGroup = sapOrdersToGetType.GroupBy(x => x.DocNum).ToList();
+            salesTypes.MagistralSaleOrders.AddRange(sapOrdersGroup.Where(sapOrd => sapOrd.All(prod => prod.IsMagistral == "Y")).Select(sapOrd => sapOrd.Key));
+            salesTypes.LineSaleOrders.AddRange(sapOrdersGroup.Where(sapOrd => sapOrd.All(prod => prod.IsLine == "Y")).Select(sapOrd => sapOrd.Key));
+            salesTypes.MixedSaleOrders.AddRange(sapOrdersGroup.Where(sapOrd => sapOrd.Any(prod => prod.IsLine == "Y") && sapOrd.Any(prod => prod.IsMagistral == "Y")).Select(sapOrd => sapOrd.Key));
+
+            return salesTypes;
         }
     }
 }

@@ -88,6 +88,65 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task CreateSampleLabel()
+        {
+            var mockAlmacen = new Mock<IAlmacenService>();
+            var mockAzure = new Mock<IAzureService>();
+
+            var service = new QrService(this.pedidosDao, this.configuration.Object, mockAzure.Object, mockAlmacen.Object);
+            var listOrdersId = new List<int> { 208 };
+
+            var response = await service.CreateSampleLabel(listOrdersId);
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test the creation of the Qr.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task CreateSampleLabelLinea()
+        {
+            // arrange
+            var remisionQr = new RemisionQrModel
+            {
+                RemisionId = 100,
+                NeedsCooling = true,
+                PedidoId = 300,
+                TotalPieces = 5,
+                Ship = "Pedido Muestra",
+            };
+
+            var lineResult = new List<LineProductsModel>
+            {
+                new LineProductsModel { SaleOrderId = 106, RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 106 },
+            };
+
+            var responseAlmacen = this.GenerateResultModel(lineResult);
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.PostAlmacenData(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(responseAlmacen));
+
+            var mockAzure = new Mock<IAzureService>();
+
+            var service = new QrService(this.pedidosDao, this.configuration.Object, mockAzure.Object, mockAlmacen.Object);
+            var listOrdersId = new List<int> { 10236 };
+
+            var response = await service.CreateSampleLabel(listOrdersId);
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test the creation of the Qr.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task CreateRemisionQr()
         {
             // arrange

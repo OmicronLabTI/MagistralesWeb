@@ -17,11 +17,12 @@ import { OrdersService } from 'src/app/services/orders.service';
 import Swal from 'sweetalert2';
 import {PipesModule} from '../../pipes/pipes.module';
 import { MATERIAL_COMPONENTS } from 'src/app/app.material';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { IMyListRes } from 'src/app/model/http/listacomponentes';
 import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { ErrorService } from 'src/app/services/error.service';
 
 describe('MiListaComponent', () => {
   let component: MiListaComponent;
@@ -29,6 +30,7 @@ describe('MiListaComponent', () => {
   let ordersServiceSpy: jasmine.SpyObj<OrdersService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+  let errorServiceSpy: jasmine.SpyObj<ErrorService>;
 
   const close = () => {};
   const iMyListRes = new IMyListRes();
@@ -41,6 +43,9 @@ describe('MiListaComponent', () => {
       'presentToastCustom'
     ]);
 
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
+      'httpError'
+    ]);
     ordersServiceSpy = jasmine.createSpyObj<OrdersService>('OrdersService', [
       'saveMyListComponent'
     ]);
@@ -86,6 +91,7 @@ describe('MiListaComponent', () => {
         },
         { provide: OrdersService, useValue: ordersServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: ErrorService, useValue: errorServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
       ]
     })
@@ -110,6 +116,21 @@ describe('MiListaComponent', () => {
     component.saveMyList();
     expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
   });
+
+  it('should save My List response 0 and error', () => {
+    messagesServiceSpy.presentToastCustom.and.callFake(() => {
+      return Promise.resolve({
+        isConfirmed: true
+      });
+    });
+    ordersServiceSpy.saveMyListComponent.and.callFake(() => {
+      return throwError({ error: true });
+    });
+    component.saveMyList();
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+    // expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+
   it('should save My List response !=0', () => {
     const iMy = new IMyListRes();
     iMy.response = 1;

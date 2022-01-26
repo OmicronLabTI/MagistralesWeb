@@ -78,5 +78,35 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>Qr Height.</value>
         public bool IsBoldFont { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the font is bold.
+        /// </summary>
+        /// <value>Qr Height.</value>
+        public int LabelRectx { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the font is bold.
+        /// </summary>
+        /// <value>Qr Height.</value>
+        public int LabelRecty { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the font is bold.
+        /// </summary>
+        /// <value>Qr Height.</value>
+        public int LabelMuestraFontSize { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the font is bold.
+        /// </summary>
+        /// <value>Qr Height.</value>
+        public int LabelSaleOrderRectx { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the font is bold.
+        /// </summary>
+        /// <value>Qr Height.</value>
+        public int LabelSaleOrderRecty { get; set; }
     }
 }

@@ -21,7 +21,7 @@ eureka:
 
 keycloak:
   enabled: true
-  auth-server-url: https://omicronauthprod.azurewebsites.net/auth
+  auth-server-url: https://auth.omicronlab.com.mx/auth
   use-resource-role-mappings: true
   public-client: true
   cors: true

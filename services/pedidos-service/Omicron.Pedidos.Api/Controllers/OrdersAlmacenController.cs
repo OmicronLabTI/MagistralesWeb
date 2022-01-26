@@ -55,6 +55,19 @@ namespace Omicron.Pedidos.Api.Controllers
         /// </summary>
         /// <param name="orderIds">The orders ids.</param>
         /// <returns>the data.</returns>
+        [Route("/sample/label")]
+        [HttpPost]
+        public async Task<IActionResult> CreateSampleLabel(List<int> orderIds)
+        {
+            var response = await this.qrsFacade.CreateSampleLabel(orderIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="orderIds">The orders ids.</param>
+        /// <returns>the data.</returns>
         [Route("/qr/remision")]
         [HttpPost]
         public async Task<IActionResult> CreateQrRemision(List<int> orderIds)

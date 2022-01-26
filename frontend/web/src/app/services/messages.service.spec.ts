@@ -21,5 +21,9 @@ describe('MessagesService', () => {
         .toEqual('Hubo un error \n');
     expect(service.getMessageTitle(['1234'], MessageType.saveBatches))
         .toEqual('Error al asignar lotes a  1234 , por favor verificar \n');
+    expect(service.getMessageTitle(['1234'], MessageType.materialRequest))
+    .toEqual('Ya se ha generado una solicitud para la orden  1234 \n');
+    expect(service.getMessageTitle(['1234'], MessageType.ordersWithoutQr))
+    .toEqual('La orden de fabricación  1234 no cuenta con código qr \n');
   });
 });
