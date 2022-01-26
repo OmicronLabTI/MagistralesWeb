@@ -51,12 +51,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="kafkaConnector">The kafka conector.</param>
         public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapFileService sapFileService, IUsersService usersService, IKafkaConnector kafkaConnector)
         {
-            this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
-            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
-            this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
-            this.sapFileService = sapFileService ?? throw new ArgumentException(nameof(sapFileService));
-            this.userService = usersService ?? throw new ArgumentException(nameof(usersService));
-            this.kafkaConnector = kafkaConnector ?? throw new ArgumentNullException(nameof(kafkaConnector));
+            this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
+            this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
+            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
+            this.sapFileService = sapFileService.ThrowIfNull(nameof(sapFileService));
+            this.userService = usersService.ThrowIfNull(nameof(usersService));
+            this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             foreach (var order in userOrders)
             {
-                if (order.IsProductionOrder && !invoices.Contains(order.InvoiceId))
+                if (ServiceShared.CalculateSimpleAnd(order.IsProductionOrder, !invoices.Contains(order.InvoiceId)))
                 {
                     continue;
                 }
@@ -226,19 +226,19 @@ namespace Omicron.Pedidos.Services.Pedidos
             var statusAlmacen = string.Empty;
             var status = string.Empty;
 
-            if (areAllCancelled && !areAnyDeliveyAlive)
+            if (ServiceShared.CalculateSimpleAnd(areAllCancelled, !areAnyDeliveyAlive))
             {
                 statusAlmacen = null;
-                status = areActiveLine ? ServiceConstants.Finalizado : ServiceConstants.Cancelled;
+                status = ServiceShared.CalculateTernary(areActiveLine, ServiceConstants.Finalizado, ServiceConstants.Cancelled);
             }
 
-            if (areAllCancelled && areAnyDeliveyAlive)
+            if (ServiceShared.CalculateSimpleAnd(areAllCancelled, areAnyDeliveyAlive))
             {
                 statusAlmacen = ServiceConstants.Almacenado;
                 status = ServiceConstants.Almacenado;
             }
 
-            if (!areAllCancelled && areAnyDeliveyAlive)
+            if (ServiceShared.CalculateSimpleAnd(!areAllCancelled, areAnyDeliveyAlive))
             {
                 var totalOpenDeliveries = cancelDeliveries.Count(z => z.Status == "O" && !z.NeedsCancel);
                 var totalLocalAlmacenadas = userOrders.Count(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado) + details.Count(z => z.LineStatus == ServiceConstants.Almacenado);
@@ -254,10 +254,10 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
             }
 
-            if (!areAllCancelled && !areAnyDeliveyAlive)
+            if (ServiceShared.CalculateSimpleAnd(!areAllCancelled, !areAnyDeliveyAlive))
             {
                 statusAlmacen = null;
-                status = areAnyPending ? ServiceConstants.Liberado : ServiceConstants.Finalizado;
+                status = ServiceShared.CalculateTernary(areAnyPending, ServiceConstants.Liberado, ServiceConstants.Finalizado);
             }
 
             return new Tuple<string, string>(status, statusAlmacen);
@@ -276,32 +276,32 @@ namespace Omicron.Pedidos.Services.Pedidos
             var areAllFinalized = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Finalizado);
             var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
 
-            if (areAnyPending && areAnyDeliveyAlive)
+            if (ServiceShared.CalculateSimpleAnd(areAnyPending, areAnyDeliveyAlive))
             {
                 return new Tuple<string, string>(ServiceConstants.Liberado, ServiceConstants.BackOrder);
             }
 
-            if (!areAnyDeliveyAlive && areAnyPending)
+            if (ServiceShared.CalculateSimpleAnd(!areAnyDeliveyAlive, areAnyPending))
             {
                 return new Tuple<string, string>(ServiceConstants.Liberado, null);
             }
 
-            if (areAllFinalized && areAnyDeliveyAlive)
+            if (ServiceShared.CalculateSimpleAnd(areAllFinalized, areAnyDeliveyAlive))
             {
                 return new Tuple<string, string>(ServiceConstants.Finalizado, ServiceConstants.BackOrder);
             }
 
-            if (!areAnyDeliveyAlive && areAllFinalized)
+            if (ServiceShared.CalculateSimpleAnd(!areAnyDeliveyAlive, areAllFinalized))
             {
                 return new Tuple<string, string>(ServiceConstants.Finalizado, null);
             }
 
-            if (!areAnyDeliveyAlive && !areAllFinalized && areAnyAlmacenado)
+            if (ServiceShared.CalculateThreeAnds(!areAnyDeliveyAlive, !areAllFinalized, areAnyAlmacenado))
             {
                 return new Tuple<string, string>(ServiceConstants.Finalizado, null);
             }
 
-            if (areAnyAlmacenado && areAnyDeliveyAlive)
+            if (ServiceShared.CalculateSimpleAnd(areAnyAlmacenado, areAnyDeliveyAlive))
             {
                 return new Tuple<string, string>(ServiceConstants.Finalizado, ServiceConstants.BackOrder);
             }
@@ -383,7 +383,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 salesOrder.Status = this.CalculateStatus(salesOrder, sapMissingOrders, productionOrders, productionordersId);
 
                 var familyOrders = productionOrders.Where(y => !productionordersId.Contains(y.Productionorderid)).ToList();
-                salesOrder.FinishedLabel = familyOrders.Any() && familyOrders.All(x => x.FinishedLabel == 1) ? 1 : 0;
+                salesOrder.FinishedLabel = ServiceShared.CalculateTernary(familyOrders.Any() && familyOrders.All(x => x.FinishedLabel == 1), 1, 0);
 
                 if (ServiceConstants.ValidStatusToFillFinalizedate.Contains(salesOrder.Status))
                 {
@@ -430,12 +430,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var areAllDelivered = familyOrders.All(x => x.Status == ServiceConstants.Almacenado && x.DeliveryId != 0);
                 var areAnyDelivered = familyOrders.Any(x => x.DeliveryId != 0) && familyOrders.Any(x => x.DeliveryId == 0);
 
-                var statusLocal = areAllDelivered ? ServiceConstants.Almacenado : ServiceConstants.Finalizado;
-                statusLocal = areAnyDelivered ? ServiceConstants.BackOrder : statusLocal;
+                var statusLocal = ServiceShared.CalculateTernary(areAllDelivered, ServiceConstants.Almacenado, ServiceConstants.Finalizado);
+                statusLocal = ServiceShared.CalculateTernary(areAnyDelivered, ServiceConstants.BackOrder, statusLocal);
                 return statusLocal;
             }
 
-            return ServiceConstants.ValidStatusLiberado.Contains(minValue.Status) ? ServiceConstants.Liberado : status;
+            return ServiceShared.CalculateTernary(ServiceConstants.ValidStatusLiberado.Contains(minValue.Status), ServiceConstants.Liberado, status);
         }
 
         /// <summary>
@@ -573,14 +573,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             foreach (var order in relatedUserOrders)
             {
                 var cancelledOnSap = true;
-                var docType = ServiceConstants.OrdenVenta;
-                var orderId = int.Parse(order.Salesorderid);
 
                 if (order.IsProductionOrder)
                 {
                     cancelledOnSap = await this.CancelProductionOrderInSap(order.Productionorderid);
-                    docType = ServiceConstants.OrdenFab;
-                    orderId = int.Parse(order.Productionorderid);
                 }
 
                 if (cancelledOnSap)

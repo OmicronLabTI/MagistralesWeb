@@ -160,13 +160,13 @@ namespace Omicron.Pedidos.Services.Utils
 
             foreach (var p in orderDetail)
             {
-                if (p.Order.OrderType != ServiceConstants.Mix && !users.Any(x => x.User.Classification == p.Order.OrderType))
+                if (ServiceShared.CalculateSimpleAnd(p.Order.OrderType != ServiceConstants.Mix, !users.Any(x => x.User.Classification == p.Order.OrderType)))
                 {
                     listOrdersWithNoUser.Add(p.Order.DocNum);
                     continue;
                 }
 
-                var localUsers = p.Order.OrderType == ServiceConstants.Mix ? users : users.Where(x => x.User.Classification == p.Order.OrderType).ToList();
+                var localUsers = ServiceShared.CalculateTernary(p.Order.OrderType == ServiceConstants.Mix, users, users.Where(x => x.User.Classification == p.Order.OrderType).ToList());
                 localUsers = localUsers.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList();
 
                 if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
@@ -179,7 +179,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 users.ForEach(x =>
                 {
-                    x.TotalCount = x.User.Id.Equals(dictUserPedido[p.Order.DocNum]) ? p.Detalle.Where(z => z.QtyPlanned.HasValue).Sum(y => y.QtyPlanned.Value) + x.TotalCount : x.TotalCount;
+                    x.TotalCount = ServiceShared.CalculateTernary(x.User.Id.Equals(dictUserPedido[p.Order.DocNum]), p.Detalle.Where(z => z.QtyPlanned.HasValue).Sum(y => y.QtyPlanned.Value) + x.TotalCount, x.TotalCount);
                 });
             }
 
@@ -222,7 +222,7 @@ namespace Omicron.Pedidos.Services.Utils
                     if (!string.IsNullOrEmpty(y.Key))
                     {
                         var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == y.Key && string.IsNullOrEmpty(x.Productionorderid));
-                        pedido.Status = missing ? pedido.Status : ServiceConstants.Liberado;
+                        pedido.Status = ServiceShared.CalculateTernary(missing, pedido.Status, ServiceConstants.Liberado);
                         pedido.Userid = user;
                         listToUpdate.Add(pedido);
                         if (!missing)

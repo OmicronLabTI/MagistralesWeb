@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.User
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Utils;
     using Serilog;
 
     /// <summary>
@@ -54,15 +55,7 @@ namespace Omicron.Pedidos.Services.User
 
             using (var response = await this.httpClient.GetAsync(url))
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-
-                if ((int)response.StatusCode >= 300)
-                {
-                    this.logger.Information($"Error peticion users {jsonString}");
-                    throw new CustomServiceException(jsonString);
-                }
-
-                result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+                result = await ServiceShared.GetResponse(response, this.logger, "Error peticion users service");
             }
 
             return result;
@@ -82,7 +75,7 @@ namespace Omicron.Pedidos.Services.User
 
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
-                result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+                result = await ServiceShared.GetResponse(response, this.logger, "Error peticion users service");
             }
 
             return result;

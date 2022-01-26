@@ -30,7 +30,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="pedidosDao">pedidos dao.</param>
         public PedidosDxpService(IPedidosDao pedidosDao)
         {
-            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
+            this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
         }
 
         /// <inheritdoc/>

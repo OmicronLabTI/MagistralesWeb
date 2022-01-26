@@ -40,9 +40,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="configuration">The configuration.</param>
         public PedidosAlmacenService(IPedidosDao pedidosDao, ISapFileService sapFileService, IConfiguration configuration)
         {
-            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
-            this.sapFileService = sapFileService ?? throw new ArgumentNullException(nameof(sapFileService));
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
+            this.sapFileService = sapFileService.ThrowIfNull(nameof(sapFileService));
+            this.configuration = configuration.ThrowIfNull(nameof(configuration));
         }
 
         /// <inheritdoc/>
@@ -79,7 +79,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var productionStatus = x.Where(z => z.IsProductionOrder && (z.Status == ServiceConstants.Finalizado || z.Status == ServiceConstants.Almacenado)).ToList();
                 var saleOrde = x.FirstOrDefault(y => y.IsSalesOrder);
 
-                if (saleOrde != null && saleOrde.Status == ServiceConstants.Finalizado && saleOrde.FinishedLabel == 1)
+                if (ServiceShared.CalculateThreeAnds(saleOrde != null, saleOrde.Status == ServiceConstants.Finalizado, saleOrde.FinishedLabel == 1))
                 {
                     listToReturn.AddRange(x.ToList());
                     continue;
@@ -172,7 +172,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var dataToLook = await this.GetParametersDateToLook(ServiceConstants.SentMaxDaysToLook);
             var arrayStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status].Split(",").ToList() : ServiceConstants.StatusLocal;
-            var type = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.Local.ToLower();
+            var type = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.Local.ToLower());
 
             var userOrderByType = (await this.pedidosDao.GetUserOrderByInvoiceType(new List<string> { type })).ToList();
 
