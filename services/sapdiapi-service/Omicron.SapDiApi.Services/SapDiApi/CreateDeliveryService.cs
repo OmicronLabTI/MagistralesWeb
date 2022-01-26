@@ -63,6 +63,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
                 deliveryNote.Comments = saleOrder.Comments;
                 deliveryNote.UserFields.Fields.Item("U_comentarioremision").Value = $"Basado en pedido: {saleOrderId}";
+                deliveryNote.UserFields.Fields.Item("U_Pedido_Paquete").Value = createDelivery.Any(x => x.IsPackage == ServiceConstants.IsPackage) ? ServiceConstants.IsPackage : ServiceConstants.IsNotPackage;
 
                 for (var i = 0; i < saleOrder.Lines.Count; i++)
                 {
