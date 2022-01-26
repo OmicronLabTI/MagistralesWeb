@@ -48,11 +48,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="redisService">The redis service.</param>
         public ProcessOrdersService(ISapAdapter sapAdapter, ISapDiApi sapDiApi, IPedidosDao pedidosDao, IKafkaConnector kafkaConnector, IRedisService redisService)
         {
-            this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
-            this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
-            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
-            this.kafkaConnector = kafkaConnector ?? throw new ArgumentNullException(nameof(kafkaConnector));
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
+            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
+            this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
+            this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var previousStatus = saleOrder.Status;
                 var isOrderComplete = dataBaseOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList().Count + dataToInsert.Count == completeListOrders;
-                saleOrder.Status = isOrderComplete ? ServiceConstants.Planificado : ServiceConstants.Abierto;
+                saleOrder.Status = ServiceShared.CalculateTernary(isOrderComplete, ServiceConstants.Planificado, ServiceConstants.Abierto);
                 saleOrder.TypeOrder = orders.Order.OrderType;
                 saleOrder.FinishedLabel = productionOrders.All(x => x.FinishedLabel == 1) && isOrderComplete ? 1 : 0;
 
@@ -295,7 +295,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     TypeOrder = saleOrder.Order.OrderType,
                     PlanningDate = DateTime.Now,
                     Quantity = x.Quantity,
-                    FinishedLabel = productNoLabel.Any(y => x.ProductoId.Contains(y)) || detailByItem.Label == ServiceConstants.LabelImpresaPorCliente ? 1 : 0,
+                    FinishedLabel = ServiceShared.CalculateTernary(productNoLabel.Any(y => x.ProductoId.Contains(y)) || detailByItem.Label == ServiceConstants.LabelImpresaPorCliente, 1, 0),
                 };
                 listToReturn.Add(userOrder);
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));
@@ -361,9 +361,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var codes = order.Detalle.Select(x => x.CodigoProducto).ToList();
                 var haveErrors = errors.Any(x => codes.Any(y => x.Contains(y)));
 
-                saleOrder.Status = haveErrors ? ServiceConstants.Abierto : ServiceConstants.Planificado;
+                saleOrder.Status = ServiceShared.CalculateTernary(haveErrors, ServiceConstants.Abierto, ServiceConstants.Planificado);
                 saleOrder.TypeOrder = order.Order.OrderType;
-                saleOrder.FinishedLabel = productionOrders.All(x => x.FinishedLabel == 1) ? 1 : 0;
+                saleOrder.FinishedLabel = ServiceShared.CalculateTernary(productionOrders.All(x => x.FinishedLabel == 1), 1, 0);
 
                 if (insertUserOrdersale)
                 {

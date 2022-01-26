@@ -56,7 +56,7 @@ namespace Omicron.Pedidos.Services.Utils
             if (filterStatus)
             {
                 var status = parameters[ServiceConstants.Status].ToLower() == ServiceConstants.ProcesoStatus.ToLower() ? ServiceConstants.Proceso : parameters[ServiceConstants.Status];
-                listOrders = filterQfb ? listOrders.Where(x => x.Status.Equals(status)).ToList() : (await pedidosDao.GetUserOrderByStatus(new List<string> { status })).ToList();
+                listOrders = ServiceShared.CalculateTernary(filterQfb, listOrders.Where(x => x.Status.Equals(status)).ToList(), (await pedidosDao.GetUserOrderByStatus(new List<string> { status })).ToList());
             }
 
             if (filterFechaFin || filterFechaIni)
@@ -95,7 +95,7 @@ namespace Omicron.Pedidos.Services.Utils
                     Quantity = x.Quantity,
                     CreateDate = x.CreatedDate.ToString("dd/MM/yyyy"),
                     FinishDate = userOrder.FinishDate.HasValue ? userOrder.FinishDate.Value.ToString("dd/MM/yyyy") : string.Empty,
-                    Status = status.Equals(ServiceConstants.Proceso) ? ServiceConstants.ProcesoStatus : status,
+                    Status = ServiceShared.CalculateTernary(status.Equals(ServiceConstants.Proceso), ServiceConstants.ProcesoStatus, status),
                     Qfb = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
                     Unit = x.Unit,
                     HasMissingStock = x.HasMissingStock,
@@ -124,15 +124,17 @@ namespace Omicron.Pedidos.Services.Utils
 
             if (dataFiltered)
             {
-                return parameters.ContainsKey(ServiceConstants.FechaFin) ?
-                    listOrders.Where(y => y.FinishDate != null && y.FinishDate >= dateFilter[ServiceConstants.FechaInicio] && y.FinishDate <= endDate).ToList()
-                    : listOrders.Where(y => y.PlanningDate != null && y.PlanningDate >= dateFilter[ServiceConstants.FechaInicio] && y.PlanningDate <= endDate).ToList();
+                return ServiceShared.CalculateTernary(
+                    parameters.ContainsKey(ServiceConstants.FechaFin),
+                    listOrders.Where(y => y.FinishDate != null && y.FinishDate >= dateFilter[ServiceConstants.FechaInicio] && y.FinishDate <= endDate).ToList(),
+                    listOrders.Where(y => y.PlanningDate != null && y.PlanningDate >= dateFilter[ServiceConstants.FechaInicio] && y.PlanningDate <= endDate).ToList());
             }
             else
             {
-                return parameters.ContainsKey(ServiceConstants.FechaFin) ?
-                (await pedidosDao.GetUserOrderByFechaFin(dateFilter[ServiceConstants.FechaInicio], endDate)).ToList()
-                : (await pedidosDao.GetUserOrderByPlanningDate(dateFilter[ServiceConstants.FechaInicio], endDate)).ToList();
+                return ServiceShared.CalculateTernary(
+                    parameters.ContainsKey(ServiceConstants.FechaFin),
+                    (await pedidosDao.GetUserOrderByFechaFin(dateFilter[ServiceConstants.FechaInicio], endDate)).ToList(),
+                    (await pedidosDao.GetUserOrderByPlanningDate(dateFilter[ServiceConstants.FechaInicio], endDate)).ToList());
             }
         }
     }

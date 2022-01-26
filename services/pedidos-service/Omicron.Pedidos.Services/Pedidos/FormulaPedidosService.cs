@@ -33,7 +33,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="pedidosDao">pedidos dao.</param>
         public FormulaPedidosService(IPedidosDao pedidosDao)
         {
-            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
+            this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
         }
 
         /// <summary>
@@ -93,8 +93,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>New custom list.</returns>
         public async Task<ResultModel> DeleteCustomComponentList(Dictionary<string, string> parameters)
         {
-            var name = parameters.ContainsKey(ServiceConstants.Name) ? parameters[ServiceConstants.Name] : string.Empty;
-            var productId = parameters.ContainsKey(ServiceConstants.ProductId) ? parameters[ServiceConstants.ProductId] : string.Empty;
+            var name = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Name, string.Empty);
+            var productId = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.ProductId, string.Empty);
 
             var customComponList = await this.GetCustomComponentListByProductAndName(productId, name);
             if (customComponList.Id != 0)

@@ -36,8 +36,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="userService">The user service.</param>
         public ProductivityService(IPedidosDao pedidosDao, IUsersService userService)
         {
-            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
-            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
+            this.userService = userService.ThrowIfNull(nameof(userService));
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var currentMonth = culture.DateTimeFormat.GetMonthName(initDate.Month).ToUpper();
             var index = initDate.Month;
 
-            var finalIndex = endDate.Month == 12 ? 1 : endDate.Month + 1;
+            var finalIndex = ServiceShared.CalculateTernary(endDate.Month == 12, 1, endDate.Month + 1);
             var finalMonth = culture.DateTimeFormat.GetMonthName(finalIndex).ToUpper();
 
             while (currentMonth != finalMonth)
@@ -153,7 +153,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 listMonths.Add(culture.DateTimeFormat.GetMonthName(index).ToUpper());
                 listNumMonths.Add(index);
                 index += 1;
-                index = index == 13 ? 1 : index;
+                index = ServiceShared.CalculateTernary(index == 13, 1, index);
                 currentMonth = culture.DateTimeFormat.GetMonthName(index).ToUpper();
             }
 
@@ -178,7 +178,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             foreach (var i in months)
             {
                 decimal total = 0;
-                var monthNumber = i < 10 ? $"0{i}" : i.ToString();
+                var monthNumber = ServiceShared.CalculateTernary(i < 10, $"0{i}", i.ToString());
                 var userOrderByMonth = userOrder.Where(x => x.CloseDate.Value.ToString("dd/MM/yyyy").Contains($"/{monthNumber}/")).ToList();
 
                 if (!userOrderByMonth.Any())
@@ -246,7 +246,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private List<WorkLoadModel> GetWorkloadSpecificUser(List<UserModel> users, List<UserOrderModel> userOrders, string specificUser)
         {
             var user = users.FirstOrDefault(x => x.Id.Equals(specificUser));
-            user = user == null ? new UserModel { Id = specificUser } : user;
+            user = user ?? new UserModel { Id = specificUser };
             var ordersByUser = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid) && x.Userid.Equals(user.Id)).ToList();
             var workLoad = this.GetTotalsByUser(ordersByUser, user);
             return new List<WorkLoadModel> { workLoad };

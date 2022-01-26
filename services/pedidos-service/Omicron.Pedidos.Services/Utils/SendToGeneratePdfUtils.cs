@@ -50,7 +50,7 @@ namespace Omicron.Pedidos.Services.Utils
                 listOrdersWithDetail = await GetDetails(ordersId, sapAdapter, ServiceConstants.GetOrderWithDetail);
                 var listIdString = ordersId.Select(x => x.ToString()).ToList();
                 var userSaleOrders = (await pedidosDao.GetUserOrderBySaleOrder(listIdString)).Where(x => x.Status != ServiceConstants.Cancelled).ToList();
-                userSaleOrders = onlyFinalized ? userSaleOrders.Where(x => x.Status == ServiceConstants.Finalizado).ToList() : userSaleOrders;
+                userSaleOrders = ServiceShared.CalculateTernary(onlyFinalized, userSaleOrders.Where(x => x.Status == ServiceConstants.Finalizado).ToList(), userSaleOrders);
                 listUserOrders.AddRange(userSaleOrders);
                 recipes = await GetRecipes(ordersId, sapAdapter, ServiceConstants.GetRecipes);
             }
@@ -110,7 +110,7 @@ namespace Omicron.Pedidos.Services.Utils
                 foreach (var detail in order.Detalle.Where(x => x.OrdenFabricacionId != 0).ToList())
                 {
                     var userOrder = userOrders.Where(y => !string.IsNullOrEmpty(y.Productionorderid)).FirstOrDefault(x => x.Productionorderid.Equals(detail.OrdenFabricacionId.ToString()));
-                    userOrder = userOrder == null ? new UserOrderModel { Id = -1, Userid = "NoUser" } : userOrder;
+                    userOrder = userOrder ?? new UserOrderModel { Id = -1, Userid = "NoUser" };
 
                     if (userOrder.Id == -1)
                     {
@@ -162,7 +162,7 @@ namespace Omicron.Pedidos.Services.Utils
             foreach (var order in orders)
             {
                 var userOrder = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).FirstOrDefault(x => x.Productionorderid.Equals(order.OrdenId.ToString()));
-                userOrder = userOrder == null ? new UserOrderModel { Id = -1, Userid = "NoUser" } : userOrder;
+                userOrder = userOrder ?? new UserOrderModel { Id = -1, Userid = "NoUser" };
 
                 if (userOrder.Id == -1)
                 {
