@@ -113,5 +113,19 @@ namespace Omicron.Pedidos.Services.Utils
 
             return JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
         }
+
+        /// <summary>
+        /// counts the invices by type and status.
+        /// </summary>
+        /// <param name="list">the list od data.</param>
+        /// <param name="invoiceType">the type.</param>
+        /// <param name="status">the status.</param>
+        /// <returns>the count.</returns>
+        public static int GetInvoiceCount(this List<UserOrderModel> list, string invoiceType, string status)
+        {
+            return list.Count(x => x.InvoiceType == invoiceType && x.StatusInvoice == status);
+        }
+
+        public static int GetSaleOrderCount(this List<UserOrderModel>, )
     }
 }

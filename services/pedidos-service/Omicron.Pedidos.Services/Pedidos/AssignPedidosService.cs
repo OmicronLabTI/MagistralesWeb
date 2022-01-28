@@ -193,8 +193,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
             });
 
-            var listOrderFabId = orders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
-
             await this.pedidosDao.UpdateUserOrders(orders);
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
