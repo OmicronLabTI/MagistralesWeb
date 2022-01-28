@@ -79,7 +79,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var productionStatus = x.Where(z => z.IsProductionOrder && (z.Status == ServiceConstants.Finalizado || z.Status == ServiceConstants.Almacenado)).ToList();
                 var saleOrde = x.FirstOrDefault(y => y.IsSalesOrder);
 
-                if (ServiceShared.CalculateThreeAnds(saleOrde != null, saleOrde.Status == ServiceConstants.Finalizado, saleOrde.FinishedLabel == 1))
+                if (ServiceShared.CalculateAnd(saleOrde != null, saleOrde.Status == ServiceConstants.Finalizado, saleOrde.FinishedLabel == 1))
                 {
                     listToReturn.AddRange(x.ToList());
                     continue;

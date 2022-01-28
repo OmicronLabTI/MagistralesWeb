@@ -115,7 +115,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula)
         {
             var resultSapApi = await this.sapDiApi.PostToSapDiApi(updateFormula, ServiceConstants.UpdateFormula);
-            if (ServiceShared.CalculateSimpleAnd(resultSapApi.Success, !string.IsNullOrEmpty(updateFormula.Comments)))
+            if (ServiceShared.CalculateAnd(resultSapApi.Success, !string.IsNullOrEmpty(updateFormula.Comments)))
             {
                 await this.UpdateFabOrderComments(updateFormula.FabOrderId, updateFormula.Comments);
             }
@@ -863,7 +863,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.FinishedLabel = ServiceShared.CalculateTernary(orderToUpdate.Checked, 1, 0);
                 x.FinalizedDate = ServiceShared.CalculateTernary(orderToUpdate.Checked, DateTime.Now, x.FinalizedDate);
 
-                if (ServiceShared.CalculateSimpleAnd(orderSignatureToUpdate == null, orderToUpdate.Checked))
+                if (ServiceShared.CalculateAnd(orderSignatureToUpdate == null, orderToUpdate.Checked))
                 {
                     var newSignature = new UserOrderSignatureModel
                     {
@@ -874,7 +874,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     listNewSignatures.Add(newSignature);
                 }
-                else if (ServiceShared.CalculateSimpleAnd(orderSignatureToUpdate != null, orderToUpdate.Checked))
+                else if (ServiceShared.CalculateAnd(orderSignatureToUpdate != null, orderToUpdate.Checked))
                 {
                     orderSignatureToUpdate.DesignerSignature = signature;
                     orderSignatureToUpdate.DesignerId = updateDesignerLabels.UserId;

@@ -182,7 +182,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             foreach (var order in userOrders)
             {
-                if (ServiceShared.CalculateSimpleAnd(order.IsProductionOrder, !invoices.Contains(order.InvoiceId)))
+                if (ServiceShared.CalculateAnd(order.IsProductionOrder, !invoices.Contains(order.InvoiceId)))
                 {
                     continue;
                 }
@@ -226,19 +226,19 @@ namespace Omicron.Pedidos.Services.Pedidos
             var statusAlmacen = string.Empty;
             var status = string.Empty;
 
-            if (ServiceShared.CalculateSimpleAnd(areAllCancelled, !areAnyDeliveyAlive))
+            if (ServiceShared.CalculateAnd(areAllCancelled, !areAnyDeliveyAlive))
             {
                 statusAlmacen = null;
                 status = ServiceShared.CalculateTernary(areActiveLine, ServiceConstants.Finalizado, ServiceConstants.Cancelled);
             }
 
-            if (ServiceShared.CalculateSimpleAnd(areAllCancelled, areAnyDeliveyAlive))
+            if (ServiceShared.CalculateAnd(areAllCancelled, areAnyDeliveyAlive))
             {
                 statusAlmacen = ServiceConstants.Almacenado;
                 status = ServiceConstants.Almacenado;
             }
 
-            if (ServiceShared.CalculateSimpleAnd(!areAllCancelled, areAnyDeliveyAlive))
+            if (ServiceShared.CalculateAnd(!areAllCancelled, areAnyDeliveyAlive))
             {
                 var totalOpenDeliveries = cancelDeliveries.Count(z => z.Status == "O" && !z.NeedsCancel);
                 var totalLocalAlmacenadas = userOrders.Count(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado) + details.Count(z => z.LineStatus == ServiceConstants.Almacenado);
@@ -254,7 +254,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
             }
 
-            if (ServiceShared.CalculateSimpleAnd(!areAllCancelled, !areAnyDeliveyAlive))
+            if (ServiceShared.CalculateAnd(!areAllCancelled, !areAnyDeliveyAlive))
             {
                 statusAlmacen = null;
                 status = ServiceShared.CalculateTernary(areAnyPending, ServiceConstants.Liberado, ServiceConstants.Finalizado);
@@ -276,32 +276,32 @@ namespace Omicron.Pedidos.Services.Pedidos
             var areAllFinalized = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Finalizado);
             var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
 
-            if (ServiceShared.CalculateSimpleAnd(areAnyPending, areAnyDeliveyAlive))
+            if (ServiceShared.CalculateAnd(areAnyPending, areAnyDeliveyAlive))
             {
                 return new Tuple<string, string>(ServiceConstants.Liberado, ServiceConstants.BackOrder);
             }
 
-            if (ServiceShared.CalculateSimpleAnd(!areAnyDeliveyAlive, areAnyPending))
+            if (ServiceShared.CalculateAnd(!areAnyDeliveyAlive, areAnyPending))
             {
                 return new Tuple<string, string>(ServiceConstants.Liberado, null);
             }
 
-            if (ServiceShared.CalculateSimpleAnd(areAllFinalized, areAnyDeliveyAlive))
+            if (ServiceShared.CalculateAnd(areAllFinalized, areAnyDeliveyAlive))
             {
                 return new Tuple<string, string>(ServiceConstants.Finalizado, ServiceConstants.BackOrder);
             }
 
-            if (ServiceShared.CalculateSimpleAnd(!areAnyDeliveyAlive, areAllFinalized))
+            if (ServiceShared.CalculateAnd(!areAnyDeliveyAlive, areAllFinalized))
             {
                 return new Tuple<string, string>(ServiceConstants.Finalizado, null);
             }
 
-            if (ServiceShared.CalculateThreeAnds(!areAnyDeliveyAlive, !areAllFinalized, areAnyAlmacenado))
+            if (ServiceShared.CalculateAnd(!areAnyDeliveyAlive, !areAllFinalized, areAnyAlmacenado))
             {
                 return new Tuple<string, string>(ServiceConstants.Finalizado, null);
             }
 
-            if (ServiceShared.CalculateSimpleAnd(areAnyAlmacenado, areAnyDeliveyAlive))
+            if (ServiceShared.CalculateAnd(areAnyAlmacenado, areAnyDeliveyAlive))
             {
                 return new Tuple<string, string>(ServiceConstants.Finalizado, ServiceConstants.BackOrder);
             }
