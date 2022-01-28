@@ -160,7 +160,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             foreach (var p in orderDetail)
             {
-                if (ServiceShared.CalculateSimpleAnd(p.Order.OrderType != ServiceConstants.Mix, !users.Any(x => x.User.Classification == p.Order.OrderType)))
+                if (ServiceShared.CalculateAnd(p.Order.OrderType != ServiceConstants.Mix, !users.Any(x => x.User.Classification == p.Order.OrderType)))
                 {
                     listOrdersWithNoUser.Add(p.Order.DocNum);
                     continue;

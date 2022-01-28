@@ -123,7 +123,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, x.Status);
                     x.Userid = userSaleOrder.Item1[saleOrderInt];
 
-                    if (ServiceShared.CalculateSimpleAnd(previousStatus != x.Status, x.IsSalesOrder))
+                    if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                     {
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
                     }
@@ -180,7 +180,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var previousStatus = x.Status;
                 x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
                 x.Userid = assign.UserId;
-                if (ServiceShared.CalculateSimpleAnd(previousStatus != x.Status, x.IsSalesOrder))
+                if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                 {
                     /** add logs**/
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, new List<UserOrderModel> { x }));
