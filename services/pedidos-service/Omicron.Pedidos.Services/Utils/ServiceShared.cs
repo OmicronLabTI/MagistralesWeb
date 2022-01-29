@@ -125,7 +125,5 @@ namespace Omicron.Pedidos.Services.Utils
         {
             return list.Count(x => x.InvoiceType == invoiceType && x.StatusInvoice == status);
         }
-
-        public static int GetSaleOrderCount(this List<UserOrderModel>, )
     }
 }
