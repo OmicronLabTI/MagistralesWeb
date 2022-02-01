@@ -255,7 +255,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private bool CalculateTypeProduct(ProductoModel product, string isMagistral, string isLine)
         {
-            return product.IsWorkableProduct == "Y" && product.IsMagistral == isMagistral && product.IsLine == isLine;
+            return ServiceShared.CalculateAnd(product.IsWorkableProduct == "Y", product.IsMagistral == isMagistral, product.IsLine == isLine);
         }
 
         private async Task<List<UserOrderModel>> GetUserOrderByids(List<int> ordersId, string route)
@@ -327,8 +327,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var productType = ServiceShared.CalculateTernary(productList.All(x => x.IsMagistral), ServiceConstants.Magistral, ServiceConstants.Mixto);
             productType = ServiceShared.CalculateTernary(productList.All(x => !x.IsMagistral), ServiceConstants.Linea, productType);
 
-            var userProdOrders = pedidos.Count(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Status.Equals(ServiceConstants.Almacenado));
-            var lineProductsCount = lineOrders.Count(x => !string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.Almacenado);
+            var userProdOrders = pedidos.Count(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.Productionorderid), x.Status.Equals(ServiceConstants.Almacenado)));
+            var lineProductsCount = lineOrders.Count(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.ItemCode), x.StatusAlmacen == ServiceConstants.Almacenado));
             var totalAlmacenados = userProdOrders + lineProductsCount;
 
             var saleHeader = new AlmacenSalesHeaderModel
@@ -512,7 +512,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalpieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
                 var doctor = order.Medico.ValidateNull();
 
-                var localUserOrders = userOrders.Where(x => x.Salesorderid == so.ToString() && !string.IsNullOrEmpty(x.Productionorderid)).ToList();
+                var localUserOrders = userOrders.Where(x => ServiceShared.CalculateAnd(x.Salesorderid == so.ToString(), !string.IsNullOrEmpty(x.Productionorderid))).ToList();
 
                 var salesStatusMagistral = this.GetStatusSaleOrder(userOrder);
                 salesStatusMagistral = ServiceShared.CalculateTernary(salesStatusMagistral == ServiceConstants.PorRecibir && localUserOrders.Any(y => y.Status == ServiceConstants.Finalizado && y.FinishedLabel == 0), ServiceConstants.Pendiente, salesStatusMagistral);
@@ -599,7 +599,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     var userFabOrder = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid.Equals(order.FabricationOrder));
                     userFabOrder ??= new UserOrderModel { Status = ServiceConstants.Finalizado };
                     orderStatus = ServiceShared.CalculateTernary(userFabOrder.Status == ServiceConstants.Finalizado, ServiceConstants.PorRecibir, userFabOrder.Status);
-                    orderStatus = ServiceShared.CalculateTernary(orderStatus == ServiceConstants.PorRecibir && userFabOrder.FinishedLabel == 0, ServiceConstants.Pendiente, orderStatus);
+                    orderStatus = ServiceShared.CalculateTernary(ServiceShared.CalculateAnd(orderStatus == ServiceConstants.PorRecibir, userFabOrder.FinishedLabel == 0), ServiceConstants.Pendiente, orderStatus);
                     orderStatus = ServiceShared.CalculateTernary(userFabOrder.Status == ServiceConstants.Cancelado, ServiceConstants.Cancelado, orderStatus);
                     hasDelivery = userFabOrder.DeliveryId != 0;
                     deliveryId = userFabOrder.DeliveryId;
@@ -613,22 +613,22 @@ namespace Omicron.SapAdapter.Services.Sap
                     hasDelivery = userFabLineOrder.DeliveryId != 0;
                     deliveryId = userFabLineOrder.DeliveryId;
 
-                    var batchObject = !string.IsNullOrEmpty(userFabLineOrder.BatchName) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(userFabLineOrder.BatchName) : new List<AlmacenBatchModel>();
+                    var batchObject = ServiceShared.DeserializeObject(userFabLineOrder.BatchName, new List<AlmacenBatchModel>());
                     batchObject.ForEach(y =>
                     {
-                        var batch = batchesDataBase.FirstOrDefault(z => z.DistNumber == y.BatchNumber && z.ItemCode == order.Producto.ProductoId);
+                        var batch = batchesDataBase.FirstOrDefault(z => ServiceShared.CalculateAnd(z.DistNumber == y.BatchNumber, z.ItemCode == order.Producto.ProductoId));
                         batch ??= new Batches();
                         var expirationDate = ServiceShared.GetDateValueOrDefault(batch.ExpDate, string.Empty);
                         batches.Add($"{y.BatchNumber} | {(int)y.BatchQty} pz | Cad: {expirationDate}");
                     });
                 }
 
-                var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == order.DocNum && x.ItemCode == order.Producto.ProductoId);
+                var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.DocNum, x.ItemCode == order.Producto.ProductoId));
                 incidentdb ??= new IncidentsModel();
 
                 var localIncident = new IncidentInfoModel
                 {
-                    Batches = !string.IsNullOrEmpty(incidentdb.Batches) ? JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(incidentdb.Batches) : new List<AlmacenBatchModel>(),
+                    Batches = ServiceShared.DeserializeObject(incidentdb.Batches, new List<AlmacenBatchModel>()),
                     Comments = incidentdb.Comments,
                     Incidence = incidentdb.Incidence,
                     Status = incidentdb.Status,
