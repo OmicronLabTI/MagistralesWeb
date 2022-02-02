@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.Utils
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
@@ -23,16 +24,6 @@ namespace Omicron.Pedidos.Services.Utils
     /// </summary>
     public static class ServiceShared
     {
-        /// <summary>
-        /// creates the result.
-        /// </summary>
-        /// <param name="word">the word to split.</param>
-        /// <returns>the resultModel.</returns>
-        public static string ValidateNull(this string word)
-        {
-            return string.IsNullOrEmpty(word) ? string.Empty : word;
-        }
-
         /// <summary>
         ///    test.
         /// </summary>
@@ -96,24 +87,11 @@ namespace Omicron.Pedidos.Services.Utils
         /// <summary>
         /// Calculates the left and right with and AND.
         /// </summary>
-        /// <param name="leftPart">left part.</param>
-        /// <param name="rightPart">right part.</param>
+        /// <param name="list">List of bools..</param>
         /// <returns>the data.</returns>
-        public static bool CalculateSimpleAnd(bool leftPart, bool rightPart)
+        public static bool CalculateAnd(params bool[] list)
         {
-            return leftPart && rightPart;
-        }
-
-        /// <summary>
-        /// calculates Three ANd logic.
-        /// </summary>
-        /// <param name="firstPart">the firs.</param>
-        /// <param name="secondPart">the second.</param>
-        /// <param name="thirdPart">the thirds.</param>
-        /// <returns>the data.</returns>
-        public static bool CalculateThreeAnds(bool firstPart, bool secondPart, bool thirdPart)
-        {
-            return firstPart && secondPart && thirdPart;
+            return list.All(element => element);
         }
 
         /// <summary>
@@ -134,6 +112,18 @@ namespace Omicron.Pedidos.Services.Utils
             }
 
             return JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+        }
+
+        /// <summary>
+        /// counts the invices by type and status.
+        /// </summary>
+        /// <param name="list">the list od data.</param>
+        /// <param name="invoiceType">the type.</param>
+        /// <param name="status">the status.</param>
+        /// <returns>the count.</returns>
+        public static int GetInvoiceCount(this List<UserOrderModel> list, string invoiceType, string status)
+        {
+            return list.Count(x => x.InvoiceType == invoiceType && x.StatusInvoice == status);
         }
     }
 }

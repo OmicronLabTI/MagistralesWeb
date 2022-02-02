@@ -551,6 +551,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Local = "Local";
 
         /// <summary>
+        /// the foraneo status.
+        /// </summary>
+        public const string ForaneoDb = "Foraneo";
+
+        /// <summary>
         /// Get users by id.
         /// </summary>
         public const string Personalizado = "Personalizada";
