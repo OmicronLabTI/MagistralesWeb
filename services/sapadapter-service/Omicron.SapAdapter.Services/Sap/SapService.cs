@@ -139,7 +139,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var x in listToProcess)
             {
-                var pedido = userOrders.FirstOrDefault(y => string.IsNullOrEmpty(y.Productionorderid) && y.Salesorderid == docId.ToString());
+                var pedido = userOrders.FirstOrDefault(y => ServiceShared.CalculateAnd(string.IsNullOrEmpty(y.Productionorderid), y.Salesorderid == docId.ToString()));
                 var userOrder = userOrders.FirstOrDefault(y => y.Productionorderid == x.OrdenFabricacionId.ToString());
                 userOrder ??= new UserOrderModel { Userid = string.Empty, Status = string.Empty };
                 var userId = userOrder.Userid;
