@@ -109,14 +109,14 @@ namespace Omicron.SapAdapter.Services.Utils
             var listToFilter = new List<CompleteOrderModel>();
             orderModels.GroupBy(x => x.DocNum).ToList().ForEach(p =>
             {
-                var allPersonalized = p.All(d => d.Detalles != null && !string.IsNullOrEmpty(d.Detalles.Label) && d.Detalles.Label.ToLower() == ServiceConstants.Personalizado.ToLower());
-                var allGeneric = p.All(d => d.Detalles != null && !string.IsNullOrEmpty(d.Detalles.Label) && d.Detalles.Label.ToLower() != ServiceConstants.Personalizado.ToLower());
+                var allPersonalized = p.All(d => ServiceShared.CalculateAnd(d.Detalles != null, d.Detalles?.Label.ValidateNull().ToLower() == ServiceConstants.Personalizado.ToLower()));
+                var allGeneric = p.All(d => ServiceShared.CalculateAnd(d.Detalles != null, d.Detalles?.Label.ValidateNull().ToLower() != ServiceConstants.Personalizado.ToLower()));
 
                 var typeLabel = ServiceShared.CalculateTernary(allPersonalized, ServiceConstants.PersonalizadoAbr, ServiceConstants.MixtoAbr);
                 typeLabel = ServiceShared.CalculateTernary(allGeneric, ServiceConstants.GenericoAbr, typeLabel);
 
-                var hasRecipe = p.FirstOrDefault() != null && p.FirstOrDefault().AtcEntry != null;
-                var needRecipe = p.Any(d => !string.IsNullOrEmpty(d.Detalles.HasRecipe) && d.Detalles.HasRecipe.ToLower() == ServiceConstants.HasRecipe);
+                var hasRecipe = p.FirstOrDefault()?.AtcEntry != null;
+                var needRecipe = p.Any(d => d.Detalles.HasRecipe.ValidateNull().ToLower() == ServiceConstants.HasRecipe);
 
                 var recipe = ServiceShared.CalculateTernary(hasRecipe, ServiceConstants.HasNeedsRecipe, ServiceConstants.DoesntHaveNeedRecipe);
                 recipe = ServiceShared.CalculateTernary(needRecipe, recipe, ServiceConstants.NoNeedRecipe);
@@ -153,7 +153,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
                 int.TryParse(valueSplit[0], out int docNumInit);
                 int.TryParse(valueSplit[1], out int docNumEnd);
-                var ordersById = orderModels.Where(x => x.DocNum >= docNumInit && x.DocNum <= docNumEnd).ToList();
+                var ordersById = orderModels.Where(x => ServiceShared.CalculateAnd(x.DocNum >= docNumInit, x.DocNum <= docNumEnd)).ToList();
 
                 if (!ordersById.Any())
                 {
@@ -170,7 +170,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.Qfb))
             {
-                orderModels = orderModels.Where(x => !string.IsNullOrEmpty(x.QfbId) && x.QfbId.Equals(parameters[ServiceConstants.Qfb])).ToList();
+                orderModels = orderModels.Where(x => x.QfbId.ValidateNull().Equals(parameters[ServiceConstants.Qfb])).ToList();
             }
 
             if (parameters.ContainsKey(ServiceConstants.Cliente))
@@ -181,7 +181,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.Label))
             {
-                orderModels = orderModels.Where(x => x.LabelType == ServiceConstants.MixtoAbr || x.LabelType == parameters[ServiceConstants.Label]).ToList();
+                orderModels = orderModels.Where(x => ServiceShared.CalculateOr(x.LabelType == ServiceConstants.MixtoAbr, x.LabelType == parameters[ServiceConstants.Label])).ToList();
             }
 
             if (parameters.ContainsKey(ServiceConstants.FinishedLabel))
@@ -279,7 +279,7 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             var redisResponse = await redis.GetRedisKey(ServiceConstants.LocalNeighbors);
-            var redisProducts = string.IsNullOrEmpty(redisResponse) ? new List<string>() : JsonConvert.DeserializeObject<List<string>>(redisResponse);
+            var redisProducts = ServiceShared.DeserializeObject(redisResponse, new List<string>());
 
             if (redisProducts.Any())
             {
@@ -328,7 +328,7 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             var redisResponse = await redis.GetRedisKey(ServiceConstants.AlmacenLineProducts);
-            var redisProducts = string.IsNullOrEmpty(redisResponse) ? new List<string>() : JsonConvert.DeserializeObject<List<string>>(redisResponse);
+            var redisProducts = ServiceShared.DeserializeObject(redisResponse, new List<string>());
 
             if (redisProducts.Any())
             {

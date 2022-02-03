@@ -150,19 +150,19 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var match = false;
 
-                if (userOrders.Any(x => x.Salesorderid == id.ToString()) || adnvaceLookUp.LineProducts.Any(x => x.SaleOrderId == id))
+                if (ServiceShared.CalculateOr(userOrders.Any(x => x.Salesorderid == id.ToString()), adnvaceLookUp.LineProducts.Any(x => x.SaleOrderId == id)))
                 {
                     tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.SaleOrder));
                     match = true;
                 }
 
-                if (userOrders.Any(x => x.DeliveryId == id) || adnvaceLookUp.LineProducts.Any(x => x.DeliveryId == id))
+                if (ServiceShared.CalculateOr(userOrders.Any(x => x.DeliveryId == id), adnvaceLookUp.LineProducts.Any(x => x.DeliveryId == id)))
                 {
                     tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.Delivery));
                     match = true;
                 }
 
-                if (userOrders.Any(x => x.InvoiceId == id) || adnvaceLookUp.LineProducts.Any(x => x.InvoiceId == id))
+                if (ServiceShared.CalculateOr(userOrders.Any(x => x.InvoiceId == id), adnvaceLookUp.LineProducts.Any(x => x.InvoiceId == id)))
                 {
                     tupleIds.Add(new Tuple<int, string>(id, ServiceConstants.Invoice));
                     match = true;
@@ -187,13 +187,13 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData, List<Tuple<int, string>> tupleIds)
         {
-            var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIdsJoinProduct(tupleIds.Where(x => x.Item2 == ServiceConstants.SaleOrder || x.Item2 == ServiceConstants.DontExistsTable).Select(y => y.Item1).ToList())).ToList();
+            var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIdsJoinProduct(tupleIds.Where(x => ServiceShared.CalculateOr(x.Item2 == ServiceConstants.SaleOrder, x.Item2 == ServiceConstants.DontExistsTable)).Select(y => y.Item1).ToList())).ToList();
             var sapDeliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(tupleIds.Where(x => x.Item2 == ServiceConstants.Delivery).Select(y => y.Item1).ToList())).ToList();
             sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailBySaleOrderJoinProduct(sapSaleOrder.Select(x => x.DocNum).ToList()));
             sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(sapDeliveryDetails.Select(x => x.DeliveryId).ToList()));
             var sapDelivery = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(sapDeliveryDetails.Select(y => y.DeliveryId).ToList())).ToList();
 
-            var sapInvoicesHeaders = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(tupleIds.Where(x => x.Item2 == ServiceConstants.Invoice || x.Item2 == ServiceConstants.DontExistsTable).Select(y => y.Item1).ToList())).ToList();
+            var sapInvoicesHeaders = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(tupleIds.Where(x => ServiceShared.CalculateOr(x.Item2 == ServiceConstants.Invoice, x.Item2 == ServiceConstants.DontExistsTable)).Select(y => y.Item1).ToList())).ToList();
             var sapInvoicesDeatils = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(sapInvoicesHeaders.Select(x => x.InvoiceId).ToList())).ToList();
             sapInvoicesDeatils.AddRange(await this.sapDao.GetInvoiceDetailByBaseEntryJoinProduct(sapDelivery.Select(x => x.DocNum).ToList()));
             sapInvoicesHeaders.AddRange(await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(sapInvoicesDeatils.Select(x => x.InvoiceId).ToList()));
@@ -284,9 +284,9 @@ namespace Omicron.SapAdapter.Services.Sap
         private List<AlmacenSalesHeaderModel> GetIsReceptionOrders(Tuple<int, string> tuple, ParamentsCards paramentsCards)
         {
             var listItemCode = paramentsCards.ProductModel;
-            var orderbyDocNum = paramentsCards.OrderDetail.Where(x => x.DocNum == tuple.Item1 && (x.PedidoStatus == "O" || x.Canceled == "Y") && x.Detalles != null).ToList();
-            var isLineSale = tuple.Item2 == ServiceConstants.DontExistsTable && orderbyDocNum.Any() && orderbyDocNum.All(x => listItemCode.Contains(x.Detalles.ProductoId));
-            if (tuple.Item2 != ServiceConstants.SaleOrder && !isLineSale)
+            var orderbyDocNum = paramentsCards.OrderDetail.Where(x => ServiceShared.CalculateAnd(x.DocNum == tuple.Item1, x.PedidoStatus == "O" || x.Canceled == "Y", x.Detalles != null)).ToList();
+            var isLineSale = ServiceShared.CalculateAnd(tuple.Item2 == ServiceConstants.DontExistsTable, orderbyDocNum.Any(), orderbyDocNum.All(x => listItemCode.Contains(x.Detalles.ProductoId)));
+            if (ServiceShared.CalculateAnd(tuple.Item2 != ServiceConstants.SaleOrder, !isLineSale))
             {
                 return new List<AlmacenSalesHeaderModel>();
             }
@@ -296,13 +296,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var existanceLin = paramentsCards.LineProducts.GetLineProductOrderHeader(tuple.Item1);
             existanceLin ??= new LineProductsModel { StatusAlmacen = string.Empty };
 
-            if (ServiceConstants.StatusToIgnoreUserOrderAdvancedLook.Contains(existanceMag.Status) || ServiceConstants.StatusToIgnoreLineOrderAdvancedLook.Contains(existanceLin.StatusAlmacen))
+            if (ServiceShared.CalculateOr(ServiceConstants.StatusToIgnoreUserOrderAdvancedLook.Contains(existanceMag.Status), ServiceConstants.StatusToIgnoreLineOrderAdvancedLook.Contains(existanceLin.StatusAlmacen)))
             {
                 return new List<AlmacenSalesHeaderModel>();
             }
 
             var userOrder = paramentsCards.UserOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && ServiceConstants.StatusReceptionOrders.Contains(x.Status) && (ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen) || string.IsNullOrEmpty(x.StatusAlmacen)));
-            var lineProductOrder = paramentsCards.LineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen));
+            var lineProductOrder = paramentsCards.LineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.ItemCode), x.SaleOrderId == tuple.Item1, ServiceConstants.StatusAlmacenReceptionOrders.Contains(x.StatusAlmacen)));
             paramentsCards.UserOrder = userOrder;
             paramentsCards.LineProductOrder = lineProductOrder;
 
@@ -321,13 +321,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var existanceLin = paramentsCards.LineProducts.GetLineProductOrderHeader(tuple.Item1);
             existanceLin ??= new LineProductsModel { StatusAlmacen = ServiceConstants.Almacenado };
 
-            if (existanceMag.Status != ServiceConstants.Almacenado || existanceLin.StatusAlmacen != ServiceConstants.Almacenado)
+            if (ServiceShared.CalculateOr(existanceMag.Status != ServiceConstants.Almacenado, existanceLin.StatusAlmacen != ServiceConstants.Almacenado))
             {
                 return new List<AlmacenSalesHeaderModel>();
             }
 
-            var userOrder = paramentsCards.UserOrders.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid) && x.Salesorderid == tuple.Item1.ToString() && x.Status == ServiceConstants.Almacenado && x.StatusAlmacen == ServiceConstants.Almacenado);
-            var lineProductOrder = paramentsCards.LineProducts.FirstOrDefault(x => string.IsNullOrEmpty(x.ItemCode) && x.SaleOrderId == tuple.Item1 && x.StatusAlmacen == ServiceConstants.Almacenado);
+            var userOrder = paramentsCards.UserOrders.FirstOrDefault(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.Productionorderid), x.Salesorderid == tuple.Item1.ToString(), x.Status == ServiceConstants.Almacenado, x.StatusAlmacen == ServiceConstants.Almacenado));
+            var lineProductOrder = paramentsCards.LineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.ItemCode), x.SaleOrderId == tuple.Item1, x.StatusAlmacen == ServiceConstants.Almacenado));
             paramentsCards.UserOrder = userOrder;
             paramentsCards.LineProductOrder = lineProductOrder;
 
@@ -367,7 +367,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var hasDeliveries = paramentsCards.DeliveryDetails.Where(x => x.BaseEntry == tuple.Item1).Select(x => x.DeliveryId).ToList();
             var hasActiveDeliveries = hasDeliveries.Any() && paramentsCards.DeliveryHeader.Where(x => hasDeliveries.Contains(x.DocNum)).Any(y => y.Canceled != "Y");
 
-            if (userOrder == null && (lineProductOrder != null || (lineProductOrder == null && !hasActiveDeliveries)))
+            if (ServiceShared.CalculateAnd(userOrder == null, lineProductOrder != null || (lineProductOrder == null && !hasActiveDeliveries)))
             {
                 saporders = paramentsCards.OrderDetail.Where(x => x.DocNum == tuple.Item1).ToList();
                 order = saporders.FirstOrDefault();
@@ -417,7 +417,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var hasCandidate = false;
 
-            if (!string.IsNullOrEmpty(saleOrder.StatusAlmacen) && saleOrder.StatusAlmacen == ServiceConstants.BackOrder)
+            if (ServiceShared.CalculateAnd(!string.IsNullOrEmpty(saleOrder.StatusAlmacen), saleOrder.StatusAlmacen == ServiceConstants.BackOrder))
             {
                 return true;
             }
@@ -425,8 +425,8 @@ namespace Omicron.SapAdapter.Services.Sap
             if (statusOrder == ServiceConstants.Finalizado)
             {
                 var localOrders = this.GetLocalOrders(userOrders);
-                hasCandidate = localOrders.All(x => (x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Almacenado) && x.FinishedLabel == 1) && !localOrders.All(x => x.Status == ServiceConstants.Almacenado && x.FinishedLabel == 1);
-                hasCandidate = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).All(y => y.Status == ServiceConstants.Cancelado) || hasCandidate;
+                hasCandidate = localOrders.All(x => (x.Status == ServiceConstants.Finalizado || x.Status == ServiceConstants.Almacenado) && x.FinishedLabel == 1) && !localOrders.All(x => ServiceShared.CalculateAnd(x.Status == ServiceConstants.Almacenado, x.FinishedLabel == 1));
+                hasCandidate = ServiceShared.CalculateOr(userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).All(y => y.Status == ServiceConstants.Cancelado), hasCandidate);
                 return hasCandidate;
             }
 
@@ -436,7 +436,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var orderWithStatusAndLabel = localOrders.Where(x => x.Status == ServiceConstants.Almacenado || x.Status == ServiceConstants.Finalizado).All(y => y.FinishedLabel == 1);
                 hasCandidate = localOrders.All(x => ServiceConstants.StatusForOrderLiberado.Contains(x.Status)) && orderWithStatusAndLabel;
                 var areAllPending = localOrders.All(x => x.Status == ServiceConstants.Pendiente);
-                hasCandidate = !areAllPending && hasCandidate;
+                hasCandidate = ServiceShared.CalculateAnd(!areAllPending, hasCandidate);
                 return hasCandidate;
             }
 
@@ -450,7 +450,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private bool ValidateMagistralOrderSample(string statusOrder, CompleteOrderModel order)
         {
-            return statusOrder == ServiceConstants.Almacenado && !string.IsNullOrEmpty(order.PedidoMuestra) && order.PedidoMuestra == ServiceConstants.IsSampleOrder;
+            return ServiceShared.CalculateAnd(statusOrder == ServiceConstants.Almacenado, !string.IsNullOrEmpty(order.PedidoMuestra), order.PedidoMuestra == ServiceConstants.IsSampleOrder);
         }
 
         private List<UserOrderModel> GetLocalOrders(List<UserOrderModel> userOrders)

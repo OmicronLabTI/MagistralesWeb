@@ -133,5 +133,25 @@ namespace Omicron.SapAdapter.Services.Utils
         {
             return !string.IsNullOrEmpty(value) ? JsonConvert.DeserializeObject<List<T>>(value) : defaultList;
         }
+
+        /// <summary>
+        /// Calculates the "and's" conditions.
+        /// </summary>
+        /// <param name="list">list of bools to evaluate.</param>
+        /// <returns>the data.</returns>
+        public static bool CalculateAnd(params bool[] list)
+        {
+            return list.All(element => element);
+        }
+
+        /// <summary>
+        /// Calculates the "or´s" conditions.
+        /// </summary>
+        /// <param name="list">list of bools to evaluate.</param>
+        /// <returns>the data.</returns>
+        public static bool CalculateOr(params bool[] list)
+        {
+            return list.Any(element => element);
+        }
     }
 }
