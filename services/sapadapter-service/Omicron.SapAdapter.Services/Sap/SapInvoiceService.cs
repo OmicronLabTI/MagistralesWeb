@@ -101,10 +101,10 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetInvoiceDetail(int invoice)
         {
             var invoiceDetails = (await this.sapDao.GetInvoiceHeaderDetailByInvoiceIdJoinDoctor(new List<int> { invoice })).ToList();
-            var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(invoiceDetails.Where(y => y.Detail.BaseEntry.HasValue).Select(x => (int)x.Detail.BaseEntry).Distinct().ToList())).ToList();
+            var deliveryDetails = (await this.sapDao.GetDeliveryDetailForDeliveryById(invoiceDetails.Where(y => y.Detail.BaseEntry.HasValue).Select(x => (int)x.Detail.BaseEntry).Distinct().ToList())).ToList();
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
-            var salesOrdersId = deliveryDetails.Where(y => y.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList();
+            var salesOrdersId = deliveryDetails.Where(y => y.Detalles != null && y.Detalles.BaseEntry.HasValue).Select(x => x.Detalles.BaseEntry.Value).ToList();
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserSalesOrder, salesOrdersId);
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, salesOrdersId);
 
@@ -530,22 +530,24 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="userOrderModels">the user order modesl.</param>
         /// <param name="lineProducts">the lines prodcuts.</param>
         /// <returns>the data.</returns>
-        private List<InvoiceDeliveryModel> GetDeliveryModel(List<DeliveryDetailModel> delivery, List<CompleteInvoiceDetailModel> invoiceDetails, List<UserOrderModel> userOrderModels, List<LineProductsModel> lineProducts)
+        private List<InvoiceDeliveryModel> GetDeliveryModel(List<CompleteDeliveryDetailModel> delivery, List<CompleteInvoiceDetailModel> invoiceDetails, List<UserOrderModel> userOrderModels, List<LineProductsModel> lineProducts)
         {
             var listToReturn = new List<InvoiceDeliveryModel>();
-            delivery.DistinctBy(x => x.DeliveryId).ToList()
+            delivery.DistinctBy(x => x.DocNum).ToList()
                 .ForEach(y =>
                 {
-                    var userOrderStatus = userOrderModels.Where(z => ServiceShared.CalculateAnd(z.DeliveryId == y.DeliveryId, !string.IsNullOrEmpty(z.Productionorderid))).Select(y => y.StatusAlmacen).ToList();
-                    userOrderStatus.AddRange(lineProducts.Where(x => ServiceShared.CalculateAnd(x.DeliveryId == y.DeliveryId, !string.IsNullOrEmpty(x.ItemCode))).Select(y => y.StatusAlmacen));
-                    var salesOrders = delivery.Where(z => z.DeliveryId == y.DeliveryId).Select(a => a.BaseEntry).ToList();
+                    var userOrderStatus = userOrderModels.Where(z => ServiceShared.CalculateAnd(z.DeliveryId == y.DocNum, !string.IsNullOrEmpty(z.Productionorderid))).Select(y => y.StatusAlmacen).ToList();
+                    userOrderStatus.AddRange(lineProducts.Where(x => ServiceShared.CalculateAnd(x.DeliveryId == y.DocNum, !string.IsNullOrEmpty(x.ItemCode))).Select(y => y.StatusAlmacen));
+                    var salesOrders = delivery.Where(z => ServiceShared.CalculateAnd(z.DocNum == y.DocNum, z.Detalles != null, z.Detalles.BaseEntry.HasValue)).Select(a => a.Detalles.BaseEntry.Value).Distinct().ToList();
+
                     var deliveryModel = new InvoiceDeliveryModel
                     {
-                        DeliveryId = y.DeliveryId,
-                        DeliveryDocDate = y.DocDate,
+                        DeliveryId = y.DocNum,
+                        DeliveryDocDate = y.Detalles.DocDate,
                         SaleOrder = salesOrders.Distinct().Count(),
                         Status = ServiceShared.CalculateTernary(userOrderStatus.Any() && userOrderStatus.All(z => z == ServiceConstants.Empaquetado), ServiceConstants.Empaquetado, ServiceConstants.Almacenado),
-                        TotalItems = invoiceDetails.Where(a => a.Detail.BaseEntry.HasValue).Count(z => z.Detail.BaseEntry == y.DeliveryId),
+                        TotalItems = invoiceDetails.Where(a => a.Detail.BaseEntry.HasValue).Count(z => z.Detail.BaseEntry == y.DocNum),
+                        IsPacakge = y.IsPackage == "Y",
                     };
 
                     listToReturn.Add(deliveryModel);
