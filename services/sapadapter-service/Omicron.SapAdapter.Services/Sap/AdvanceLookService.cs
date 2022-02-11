@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
@@ -260,7 +261,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 LocalNeighbors = localNeigbors,
             };
 
-            tupleIds.ForEach(order =>
+            tupleIds.DistinctBy(order => new { order.Item1, order.Item2 }).ToList().ForEach(order =>
             {
                 cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, objectCardOrder));
                 cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrdersSample(order, objectCardOrder));

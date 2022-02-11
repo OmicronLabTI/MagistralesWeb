@@ -1209,6 +1209,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Unit = p.Unit,
                              Groupname = g.CatalogName,
                              IsWorkableProduct = p.IsWorkableProduct,
+                             IsPackage = p.IsPackage,
                          });
 
             return await this.RetryQuery<ProductoModel>(query);

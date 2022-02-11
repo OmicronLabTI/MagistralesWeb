@@ -547,7 +547,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         SaleOrder = salesOrders.Distinct().Count(),
                         Status = ServiceShared.CalculateTernary(userOrderStatus.Any() && userOrderStatus.All(z => z == ServiceConstants.Empaquetado), ServiceConstants.Empaquetado, ServiceConstants.Almacenado),
                         TotalItems = invoiceDetails.Where(a => a.Detail.BaseEntry.HasValue).Count(z => z.Detail.BaseEntry == y.DocNum),
-                        IsPacakge = y.IsPackage == "Y",
+                        IsPackage = y.IsPackage == "Y",
                     };
 
                     listToReturn.Add(deliveryModel);
