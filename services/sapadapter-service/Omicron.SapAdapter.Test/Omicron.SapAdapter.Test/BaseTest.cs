@@ -198,6 +198,9 @@ namespace Omicron.SapAdapter.Test
 
                 // for almacen packages
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 85001, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 85001, Address = "direccion CD MX", IsPackage = "Y" },
+
+                // for detail invoice
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 1, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 1, Address = "direccion CD MX", IsPackage = "Y" },
             };
         }
 
