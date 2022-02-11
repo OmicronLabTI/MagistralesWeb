@@ -70,7 +70,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = await this.GetLineProductsToLook(ids, userResponse.Item3, parameters);
             var sapOrders = await this.GetSapLinesToLook(types, userResponse, lineProducts, parameters);
 
-            if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId) && !this.ValidateOrdersById(userResponse.Item1, sapOrders.Item1))
+            if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId) && !this.ValidateOrdersById(userResponse.Item1, sapOrders.Item1, lineProducts.Item1))
             {
                 var emptyData = new AlmacenOrdersModel { SalesOrders = new List<SalesModel>() };
                 return ServiceUtils.CreateResult(true, 200, null, emptyData, null, "0-0");
@@ -271,8 +271,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
         }
 
-        private bool ValidateOrdersById(List<UserOrderModel> userOrderModels, List<CompleteAlmacenOrderModel> sapOrders)
+        private bool ValidateOrdersById(List<UserOrderModel> userOrderModels, List<CompleteAlmacenOrderModel> sapOrders, List<LineProductsModel> lineProducts)
         {
+            if (lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).Any(x => x.StatusAlmacen == ServiceConstants.Cancelado))
+            {
+                return false;
+            }
+
             if (!sapOrders.Any(x => x.IsMagistral == "Y"))
             {
                 return true;
