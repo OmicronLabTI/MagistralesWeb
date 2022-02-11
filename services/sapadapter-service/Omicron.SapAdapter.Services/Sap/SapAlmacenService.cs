@@ -237,7 +237,7 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetDeliveries(List<int> deliveryIds)
         {
             var deliveries = await this.sapDao.GetDeliveryDetailByDocEntry(deliveryIds);
-            var allDeliveries = await this.sapDao.GetDeliveryDetailBySaleOrder(deliveries.Where(y => y.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList());
+            var allDeliveries = await this.sapDao.GetDeliveryDetailBySaleOrderJoinProduct(deliveries.Where(y => y.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList());
             var detailsSale = (await this.sapDao.GetDetailByDocNum(deliveries.Where(y => y.BaseEntry.HasValue).Select(x => x.BaseEntry.Value).ToList())).ToList();
             var products = (await this.sapDao.GetProductByIds(detailsSale.Select(x => x.ProductoId).ToList())).ToList();
 
@@ -247,9 +247,10 @@ namespace Omicron.SapAdapter.Services.Sap
                 var type = ServiceShared.CalculateTernary(this.CalculateTypeProduct(product, "Y", "N"), "mg", "extra");
                 type = ServiceShared.CalculateTernary(this.CalculateTypeProduct(product, "N", "Y"), "ln", type);
                 x.Label = type;
+                x.IsPackage = product.IsPackage;
             });
 
-            var objectToReturn = new { DeliveryDetail = allDeliveries, DetallePedido = detailsSale };
+            var objectToReturn = new { DeliveryDetail = allDeliveries, DetallePedido = detailsSale.Where(d => d.IsPackage != ServiceConstants.IsPackage) };
             return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
         }
 
