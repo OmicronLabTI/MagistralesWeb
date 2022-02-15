@@ -153,6 +153,11 @@ namespace Omicron.Pedidos.Test
 
                 // orders for sample lable
                 new UserOrderModel { Id = 129, Productionorderid = "303", Salesorderid = "208", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(labelMuestra), DeliveryId = 105, Quantity = 29 },
+
+                // order for manual assign Sale order
+                new UserOrderModel { Id = 130, Productionorderid = "100", Salesorderid = "1502", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1 },
+                new UserOrderModel { Id = 131, Productionorderid = "101", Salesorderid = "1502", Status = "Planificado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+                new UserOrderModel { Id = 132, Productionorderid = null, Salesorderid = "1502", Status = "Planificado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 3, },
             };
         }
 
@@ -182,23 +187,6 @@ namespace Omicron.Pedidos.Test
             };
 
             return listOrders;
-        }
-
-        /// <summary>
-        /// Gets user Dto.
-        /// </summary>
-        /// <returns>the user.</returns>
-        public OrderLogModel GetOrderLogModel()
-        {
-            return new OrderLogModel
-            {
-                Userid = "111",
-                Id = 1,
-                Description = "description",
-                Logdatetime = DateTime.Now,
-                Noid = "112",
-                Type = "OF",
-            };
         }
 
         /// <summary>

@@ -46,7 +46,6 @@ namespace Omicron.Pedidos.Test.Entities
             new UserModel(),
             new WorkLoadModel(),
             new UserOrderSignatureModel(),
-            new OrderLogModel(),
             new UpdateFormulaModel(),
             new CompleteFormulaWithDetalle(),
             new CompleteOrderModel(),
