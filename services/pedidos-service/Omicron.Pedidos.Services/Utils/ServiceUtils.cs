@@ -246,34 +246,6 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// Gets the orders to update.
-        /// </summary>
-        /// <param name="docEntry">the list of pedidos.</param>
-        /// <param name="sapAdapter">the sap adapter.</param>
-        /// <returns>the list to update.</returns>
-        public static async Task<List<UpdateFabOrderModel>> GetOrdersToAssign(List<int> docEntry, ISapAdapter sapAdapter)
-        {
-            var orders = new List<CompleteDetailOrderModel>();
-            var listToUpdate = new List<UpdateFabOrderModel>();
-            foreach (var de in docEntry)
-            {
-                var sapResponse = await sapAdapter.GetSapAdapter(string.Format(ServiceConstants.GetFabOrdersByPedidoId, de));
-                orders.AddRange(JsonConvert.DeserializeObject<List<CompleteDetailOrderModel>>(sapResponse.Response.ToString()));
-            }
-
-            orders.Where(x => x.Status.Equals(ServiceConstants.Planificado)).ToList().ForEach(o =>
-            {
-                listToUpdate.Add(new UpdateFabOrderModel
-                {
-                    OrderFabId = o.OrdenFabricacionId,
-                    Status = ServiceConstants.StatusSapLiberado,
-                });
-            });
-
-            return listToUpdate;
-        }
-
-        /// <summary>
         /// gets the updatefaborder model from the list of orders.
         /// </summary>
         /// <param name="ordersWithDetail">the details.</param>

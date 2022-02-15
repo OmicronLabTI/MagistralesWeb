@@ -38,8 +38,12 @@ namespace Omicron.Pedidos.Services.Utils
         public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi, IKafkaConnector kafkaConnector)
         {
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
+            var userOrders = (await pedidosDao.GetUserOrderBySaleOrder(listSalesOrders)).ToList();
 
-            var listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
+            var listToUpdate = userOrders
+                .Where(x => ServiceShared.CalculateAnd(x.IsProductionOrder, x.Status == ServiceConstants.Planificado))
+                .Select(y => new UpdateFabOrderModel { Status = ServiceConstants.StatusSapLiberado, OrderFabId = int.Parse(y.Productionorderid) })
+                .ToList();
 
             var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
@@ -47,7 +51,6 @@ namespace Omicron.Pedidos.Services.Utils
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
-            var userOrders = (await pedidosDao.GetUserOrderBySaleOrder(listSalesOrders)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
             userOrders.ForEach(x =>
             {
