@@ -67,10 +67,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var ids = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
             var lineProductsTuple = await this.GetLineProducts(ids, userOrdersTuple.Item3);
             var sapOrders = await this.GetSapOrders(userOrdersTuple, lineProductsTuple, types);
-            var ordersByFilter = await this.GetSapOrdersToLookByDoctor(sapOrders, parameters);
+            var ordersByFilter = await this.GetSapOrdersToLookByDoctor(sapOrders.Item1, parameters);
             var totalFilter = ordersByFilter.Select(x => x.Medico).Distinct().ToList().Count;
 
-            var listToReturn = this.GetCardOrdersToReturn(ordersByFilter, parameters);
+            var listToReturn = this.GetCardOrdersToReturn(ordersByFilter, parameters, sapOrders.Item2);
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
 
@@ -89,6 +89,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Doctor = details.Name,
                 TotalItems = sapOrders.Count(y => y.Detalles != null),
                 TotalPieces = sapOrders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
+                IsPackage = details.IsPackage,
             };
 
             saleModel.Items = this.GetTotalOrdersByDoctor(sapOrders.ToList(), localNeigbors, userOrders);
@@ -173,11 +174,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the sap orders.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<List<CompleteAlmacenOrderModel>> GetSapOrders(Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, List<string> types)
+        private async Task<Tuple<List<CompleteAlmacenOrderModel>, List<string>>> GetSapOrders(Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, List<string> types)
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple);
+            var doctorWithPackages = sapOrders.Where(x => x.IsPackage == ServiceConstants.IsPackage).Select(p => p.Medico).Distinct().ToList();
+            sapOrders = sapOrders.Where(x => x.IsPackage != ServiceConstants.IsPackage).ToList();
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
 
@@ -188,7 +191,7 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = this.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductTuple.Item1, sapOrders);
             sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
             sapOrders.AddRange(sapCancelled);
-            return ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1;
+            return new Tuple<List<CompleteAlmacenOrderModel>, List<string>>(ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1, doctorWithPackages);
         }
 
         private async Task<List<CompleteAlmacenOrderModel>> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
@@ -212,7 +215,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets card for doctor.
         /// </summary>
         /// <returns>the data.</returns>
-        private AlmacenOrdersByDoctorModel GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
+        private AlmacenOrdersByDoctorModel GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters, List<string> doctorWithPackages)
         {
             var doctors = sapOrders.Select(x => x.Medico).Distinct().OrderBy(x => x).ToList();
             doctors = this.GetDoctorsToProcess(doctors, parameters);
@@ -238,6 +241,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalOrders = totalOrders,
                     TotalItems = totalItems,
                     SaleOrderId = orders.Select(x => x.DocNum).Distinct().ToList(),
+                    IsPackage = doctorWithPackages.Any(dwp => dwp == doctor),
                 };
 
                 var saleModel = new SalesByDoctorModel

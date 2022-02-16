@@ -67,15 +67,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="kafkaConnector">The kafka conector.</param>
         public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector)
         {
-            this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
-            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
-            this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
-            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
-            this.sapFileService = sapFileService ?? throw new ArgumentNullException(nameof(sapFileService));
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            this.reportingService = reporting ?? throw new ArgumentNullException(nameof(reporting));
-            this.redis = redisService ?? throw new ArgumentNullException(nameof(redisService));
-            this.kafkaConnector = kafkaConnector ?? throw new ArgumentNullException(nameof(kafkaConnector));
+            this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
+            this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
+            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
+            this.userService = userService.ThrowIfNull(nameof(userService));
+            this.sapFileService = sapFileService.ThrowIfNull(nameof(sapFileService));
+            this.configuration = configuration.ThrowIfNull(nameof(configuration));
+            this.reportingService = reporting.ThrowIfNull(nameof(reporting));
+            this.redis = redisService.ThrowIfNull(nameof(redisService));
+            this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
         }
 
         /// <inheritdoc/>
@@ -115,7 +115,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula)
         {
             var resultSapApi = await this.sapDiApi.PostToSapDiApi(updateFormula, ServiceConstants.UpdateFormula);
-            if (resultSapApi.Success && !string.IsNullOrEmpty(updateFormula.Comments))
+            if (ServiceShared.CalculateAnd(resultSapApi.Success, !string.IsNullOrEmpty(updateFormula.Comments)))
             {
                 await this.UpdateFabOrderComments(updateFormula.FabOrderId, updateFormula.Comments);
             }
@@ -151,7 +151,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 ordersList = (await this.pedidosDao.GetUserOrderBySaleOrder(new List<string> { saleOrderId })).ToList();
                 var allDelivered = ordersList.Where(x => x.IsProductionOrder && x.Status != ServiceConstants.Cancelled).All(y => y.Status == ServiceConstants.Entregado);
                 var saleOrder = ordersList.FirstOrDefault(x => x.IsSalesOrder);
-                saleOrder.Status = allDelivered ? ServiceConstants.Entregado : saleOrder.Status;
+                saleOrder.Status = ServiceShared.CalculateTernary(allDelivered, ServiceConstants.Entregado, saleOrder.Status);
                 var userId = ordersList.FirstOrDefault().Userid;
                 if (allDelivered)
                 {
@@ -258,7 +258,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     {
                         userOrder.CloseUserId = orderToFinish.UserId;
                         userOrder.CloseDate = DateTime.Now;
-                        userOrder.Status = userOrder.Status != ServiceConstants.Almacenado ? ServiceConstants.Finalizado : userOrder.Status;
+                        userOrder.Status = ServiceShared.CalculateTernary(userOrder.Status != ServiceConstants.Almacenado, ServiceConstants.Finalizado, userOrder.Status);
                         userOrder.FinalizedDate = DateTime.Now;
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { userOrder }));
                     }
@@ -645,7 +645,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                     var tupleValues = preProdOrderSap.FirstOrDefault(x => x.Order.DocNum == int.Parse(sale.Salesorderid));
                     tupleValues ??= new OrderWithDetailModel { Detalle = new List<CompleteDetailOrderModel>() };
                     var previousStatus = sale.Status;
-                    sale.Status = areInvalidOrders || tupleValues.Detalle.Any(x => string.IsNullOrEmpty(x.Status)) ? sale.Status : ServiceConstants.Terminado;
+                    sale.Status = ServiceShared.CalculateTernary(areInvalidOrders || tupleValues.Detalle.Any(x => string.IsNullOrEmpty(x.Status)), sale.Status, ServiceConstants.Terminado);
+
                     /** add logs**/
                     if (previousStatus != sale.Status)
                     {
@@ -764,8 +765,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreatePdf);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
-            var userError = listWithError.Any() ? ServiceConstants.ErrorCrearPdf : null;
-            listErrorId = listErrorId.Any() ? listErrorId : listRoutes;
+            var userError = ServiceShared.CalculateTernary(listWithError.Any(), ServiceConstants.ErrorCrearPdf, null);
+            listErrorId = ServiceShared.CalculateTernary(listErrorId.Any(), listErrorId, listRoutes);
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
@@ -800,8 +801,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var saleOrder = orders.FirstOrDefault(x => x.IsSalesOrder);
             var allChecked = orders.Where(x => x.IsProductionOrder && x.Status != ServiceConstants.Cancelled).All(y => y.FinishedLabel == 1);
-            saleOrder.FinishedLabel = allChecked ? 1 : 0;
-            saleOrder.FinalizedDate = allChecked ? DateTime.Now : saleOrder.FinalizedDate;
+            saleOrder.FinishedLabel = ServiceShared.CalculateTernary(allChecked, 1, 0);
+            saleOrder.FinalizedDate = ServiceShared.CalculateTernary(allChecked, DateTime.Now, saleOrder.FinalizedDate);
 
             await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
 
@@ -859,10 +860,10 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var orderToUpdate = updateDesignerLabels.Details.FirstOrDefault(y => y.OrderId.ToString() == x.Productionorderid);
                 var orderSignatureToUpdate = signatureOrders.FirstOrDefault(y => y.UserOrderId == x.Id);
-                x.FinishedLabel = orderToUpdate.Checked ? 1 : 0;
-                x.FinalizedDate = orderToUpdate.Checked ? DateTime.Now : x.FinalizedDate;
+                x.FinishedLabel = ServiceShared.CalculateTernary(orderToUpdate.Checked, 1, 0);
+                x.FinalizedDate = ServiceShared.CalculateTernary(orderToUpdate.Checked, DateTime.Now, x.FinalizedDate);
 
-                if (orderSignatureToUpdate == null && orderToUpdate.Checked)
+                if (ServiceShared.CalculateAnd(orderSignatureToUpdate == null, orderToUpdate.Checked))
                 {
                     var newSignature = new UserOrderSignatureModel
                     {
@@ -873,7 +874,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                     listNewSignatures.Add(newSignature);
                 }
-                else if (orderSignatureToUpdate != null && orderToUpdate.Checked)
+                else if (ServiceShared.CalculateAnd(orderSignatureToUpdate != null, orderToUpdate.Checked))
                 {
                     orderSignatureToUpdate.DesignerSignature = signature;
                     orderSignatureToUpdate.DesignerId = updateDesignerLabels.UserId;

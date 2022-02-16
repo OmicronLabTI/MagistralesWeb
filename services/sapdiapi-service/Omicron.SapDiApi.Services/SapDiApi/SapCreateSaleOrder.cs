@@ -21,6 +21,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     using Newtonsoft.Json;
     using System.Linq;
     using System.IO;
+    using Omicron.SapDiApi.Services.Constants;
 
     /// <summary>
     /// class create order.
@@ -72,6 +73,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.UserFields.Fields.Item("U_CFDI_Provisional").Value = saleOrderModel.CfdiValue;
                 order.UserFields.Fields.Item("U_BXP_METPAGO33").Value = saleOrderModel.PaymentMethodSapCode;
                 order.UserFields.Fields.Item("U_BXP_FORMAPAGO33").Value = saleOrderModel.WayToPaySapCode;
+                order.UserFields.Fields.Item("U_Pedido_Paquete").Value = saleOrderModel.IsPackage ? ServiceConstants.IsPackage : ServiceConstants.IsNotPackage;
 
                 if (!string.IsNullOrEmpty(attachment))
                 {

@@ -38,5 +38,11 @@ namespace Omicron.SapDiApi.Dtos.Models
         /// </summary>
         /// <value>The user that is assigning.</value>
         public List<AlmacenBatchDto> Batches { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
+        public string IsPackage { get; set; }
     }
 }

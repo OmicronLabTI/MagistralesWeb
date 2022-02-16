@@ -38,14 +38,6 @@ namespace Omicron.Pedidos.Entities.Context
         public virtual DbSet<UserOrderModel> UserOrderModel { get; set; }
 
         /// <summary>
-        /// Gets or sets CatUser.
-        /// </summary>
-        /// <value>
-        /// Object UserModel CatUser.
-        /// </value>
-        public virtual DbSet<OrderLogModel> OrderLogModel { get; set; }
-
-        /// <summary>
         /// Gets or sets UserOrderSignature.
         /// </summary>
         /// <value>

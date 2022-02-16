@@ -38,5 +38,11 @@ namespace Omicron.SapDiApi.Entities.Models
         /// </summary>
         /// <value>The user that is assigning.</value>
         public List<AlmacenBatchesModel> Batches { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
+        public string IsPackage { get; set; }
     }
 }

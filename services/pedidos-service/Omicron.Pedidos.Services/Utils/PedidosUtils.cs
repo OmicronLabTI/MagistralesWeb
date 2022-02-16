@@ -30,7 +30,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="redisService">The redis Service.</param>
         public PedidosUtils(IRedisService redisService)
         {
-            this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <summary>

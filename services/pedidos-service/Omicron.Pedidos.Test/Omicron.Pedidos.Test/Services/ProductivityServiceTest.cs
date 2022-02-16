@@ -45,7 +45,6 @@ namespace Omicron.Pedidos.Test.Services
 
             this.context = new DatabaseContext(options);
             this.context.UserOrderModel.AddRange(this.GetUserOrderModel());
-            this.context.OrderLogModel.Add(this.GetOrderLogModel());
             this.context.UserOrderSignatureModel.AddRange(this.GetSignature());
             this.context.SaveChanges();
 
