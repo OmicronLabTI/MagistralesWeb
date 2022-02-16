@@ -50,7 +50,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
-            var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
+            var userError = ServiceShared.CalculateTernary(listErrorId.Any(), ServiceConstants.ErroAlAsignar, null);
             var listOrderLogToInsert = new List<SalesLogs>();
             userOrders.ForEach(x =>
             {

@@ -95,6 +95,16 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Calculates the left and right with and OR.
+        /// </summary>
+        /// <param name="list">List of bools..</param>
+        /// <returns>the data.</returns>
+        public static bool CalculateOr(params bool[] list)
+        {
+            return list.Any(element => element);
+        }
+
+        /// <summary>
         /// Gets the response from a http response.
         /// </summary>
         /// <param name="response">the response.</param>
