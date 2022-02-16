@@ -464,8 +464,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var statusToValidate = ServiceShared.CalculateTernary(lineProduct == null, statusOrder, lineProduct?.StatusAlmacen);
             return statusToValidate switch
             {
-                ServiceConstants.Almacenado => !string.IsNullOrEmpty(order.PedidoMuestra) && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(),
-                ServiceConstants.Almacenado => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(order.PedidoMuestra), order.PedidoMuestra == ServiceConstants.IsSampleOrder),
+                ServiceConstants.Almacenado => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(order.PedidoMuestra), order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower()),
                 _ => true,
             };
         }
