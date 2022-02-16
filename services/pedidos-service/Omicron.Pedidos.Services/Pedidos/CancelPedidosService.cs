@@ -672,7 +672,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             var payload = new { OrderId = productionOrderId };
             var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CancelFabOrder);
             var resultResponse = result.Response.ToString();
-            return result.Success && (resultResponse.Equals(ServiceConstants.Ok) || resultResponse.Equals(ServiceConstants.ErrorProductionOrderCancelled));
+            var anyOkOrWithError = ServiceShared.CalculateOr(resultResponse.Equals(ServiceConstants.Ok), resultResponse.Equals(ServiceConstants.ErrorProductionOrderCancelled));
+            return ServiceShared.CalculateAnd(result.Success, anyOkOrWithError);
         }
 
         /// <summary>
