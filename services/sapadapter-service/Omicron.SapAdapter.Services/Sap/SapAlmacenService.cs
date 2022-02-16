@@ -91,7 +91,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesBySaleOrder, new List<int> { orderId });
             var lineOrders = JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
 
-            var incidences = almacenResponse.Comments == null || string.IsNullOrEmpty(almacenResponse.Comments.ToString()) ? new List<IncidentsModel>() : JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Comments.ToString());
+            var comments = ServiceShared.CalculateTernary(almacenResponse.Comments == null, string.Empty, almacenResponse.Comments?.ToString());
+            var incidences = ServiceShared.DeserializeObject(comments, new List<IncidentsModel>());
 
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
@@ -157,14 +158,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 if (fechaExp >= DateTime.Today)
                 {
-                    var batch = new LineProductBatchesModel
+                    listBatchesModel.Add(new LineProductBatchesModel
                     {
                         Batch = b.DistNumber,
                         ExpDate = b.FechaExp,
                         AvailableQuantity = Math.Round(b.Quantity - b.CommitQty, 6),
-                    };
-
-                    listBatchesModel.Add(batch);
+                    });
                 }
             });
 
@@ -217,7 +216,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     idsToReturnLine.Add(x.Key.Value);
                 }
 
-                if (x.Any(y => lineProducts.Contains(y.ProductoId)) && !x.All(y => lineProducts.Contains(y.ProductoId)))
+                if (ServiceShared.CalculateAnd(x.Any(y => lineProducts.Contains(y.ProductoId)), !x.All(y => lineProducts.Contains(y.ProductoId))))
                 {
                     idsToReturnMix.Add(x.Key.Value);
                 }
@@ -452,8 +451,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (parameters.Contains(ServiceConstants.BackOrder))
             {
-                var idsBackOrder = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.StatusAlmacen == ServiceConstants.BackOrder).Select(y => int.Parse(y.Salesorderid)).ToList();
-                idsBackOrder.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.BackOrder).Select(y => y.SaleOrderId));
+                var idsBackOrder = userModels.Where(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.Productionorderid), x.StatusAlmacen == ServiceConstants.BackOrder)).Select(y => int.Parse(y.Salesorderid)).ToList();
+                idsBackOrder.AddRange(lineProducts.Where(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.ItemCode), x.StatusAlmacen == ServiceConstants.BackOrder)).Select(y => y.SaleOrderId));
                 listToReturn.AddRange(sapOrders.Where(x => idsBackOrder.Contains(x.DocNum)));
             }
 
