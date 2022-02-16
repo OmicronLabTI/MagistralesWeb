@@ -358,7 +358,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 order = saporders.FirstOrDefault();
                 status = ServiceShared.CalculateTernary(ServiceConstants.StatusForBackOrder.Contains(userOrder.Status) && userOrder.StatusAlmacen == ServiceConstants.BackOrder, ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
                 status = ServiceShared.CalculateTernary(userOrder.Status != ServiceConstants.Finalizado && userOrder.Status != ServiceConstants.Almacenado && status != ServiceConstants.BackOrder, ServiceConstants.Pendiente, status);
-                status = ServiceShared.CalculateTernary(userOrder.Status == ServiceConstants.Almacenado && order.PedidoMuestra == ServiceConstants.IsSampleOrder, ServiceConstants.Almacenado, status);
+                status = ServiceShared.CalculateTernary(userOrder.Status == ServiceConstants.Almacenado && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(), ServiceConstants.Almacenado, status);
                 productType = ServiceShared.CalculateTernary(saporders.Any(x => x.Detalles != null && paramentsCards.ProductModel.Any(p => p == x.Detalles.ProductoId)), ServiceConstants.Mixto, ServiceConstants.Magistral);
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
                 comments.Append($"{userOrder.Comments}&");
@@ -374,7 +374,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 order = saporders.FirstOrDefault();
                 status = ServiceShared.CalculateTernary(lineProductOrder == null, ServiceConstants.PorRecibir, lineProductOrder?.StatusAlmacen);
                 status = ServiceShared.CalculateTernary(lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Recibir, ServiceConstants.PorRecibir, status);
-                status = ServiceShared.CalculateTernary(lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Almacenado && order.PedidoMuestra == ServiceConstants.IsSampleOrder, ServiceConstants.Almacenado, status);
+                status = ServiceShared.CalculateTernary(lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Almacenado && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(), ServiceConstants.Almacenado, status);
                 productType = ServiceConstants.Linea;
                 porRecibirDate = ServiceShared.ParseExactDateOrDefault(order.FechaInicio, porRecibirDate);
                 hasCandidate = this.CalculateIfLineOrderIsCandidate(lineProductOrder, status, order);
@@ -451,7 +451,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private bool ValidateMagistralOrderSample(string statusOrder, CompleteOrderModel order)
         {
-            return ServiceShared.CalculateAnd(statusOrder == ServiceConstants.Almacenado, !string.IsNullOrEmpty(order.PedidoMuestra), order.PedidoMuestra == ServiceConstants.IsSampleOrder);
+            return ServiceShared.CalculateAnd(statusOrder == ServiceConstants.Almacenado, !string.IsNullOrEmpty(order.PedidoMuestra), order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower());
         }
 
         private List<UserOrderModel> GetLocalOrders(List<UserOrderModel> userOrders)
@@ -464,7 +464,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var statusToValidate = ServiceShared.CalculateTernary(lineProduct == null, statusOrder, lineProduct?.StatusAlmacen);
             return statusToValidate switch
             {
-                ServiceConstants.Almacenado => !string.IsNullOrEmpty(order.PedidoMuestra) && order.PedidoMuestra == ServiceConstants.IsSampleOrder,
+                ServiceConstants.Almacenado => !string.IsNullOrEmpty(order.PedidoMuestra) && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(),
                 _ => true,
             };
         }
