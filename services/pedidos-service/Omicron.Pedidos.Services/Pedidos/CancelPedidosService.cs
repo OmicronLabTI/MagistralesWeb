@@ -218,49 +218,33 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private Tuple<string, string> GetstatusForTotal(List<UserOrderModel> userOrders, List<DetallePedidoModel> details, List<CancelDeliveryPedidoModel> cancelDeliveries)
         {
-            var areAnyPending = userOrders.Any(y => y.IsProductionOrder && y.Status == ServiceConstants.Pendiente);
+            var areAnyPending = userOrders.Any(y => ServiceShared.CalculateAnd(y.IsProductionOrder, y.Status == ServiceConstants.Pendiente));
             var areAllCancelled = userOrders.Where(z => z.IsProductionOrder).All(y => y.Status == ServiceConstants.Cancelled);
-            var areAnyDeliveyAlive = cancelDeliveries.Any(z => z.Status == "O" && !z.NeedsCancel);
-            var areActiveLine = details.Any(x => x.LineStatus == ServiceConstants.Recibir || x.LineStatus == ServiceConstants.Almacenado);
+            var areAnyDeliveyAlive = cancelDeliveries.Any(z => ServiceShared.CalculateAnd(z.Status == "O", !z.NeedsCancel));
+            var areActiveLine = details.Any(x => ServiceShared.CalculateOr(x.LineStatus == ServiceConstants.Recibir, x.LineStatus == ServiceConstants.Almacenado));
 
-            var statusAlmacen = string.Empty;
-            var status = string.Empty;
-
-            if (ServiceShared.CalculateAnd(areAllCancelled, !areAnyDeliveyAlive))
-            {
-                statusAlmacen = null;
-                status = ServiceShared.CalculateTernary(areActiveLine, ServiceConstants.Finalizado, ServiceConstants.Cancelled);
-            }
-
-            if (ServiceShared.CalculateAnd(areAllCancelled, areAnyDeliveyAlive))
-            {
-                statusAlmacen = ServiceConstants.Almacenado;
-                status = ServiceConstants.Almacenado;
-            }
+            var assignStatus = this.AssignStatus(ServiceShared.CalculateAnd(areAllCancelled, !areAnyDeliveyAlive), null, ServiceShared.CalculateTernary(areActiveLine, ServiceConstants.Finalizado, ServiceConstants.Cancelled), string.Empty, string.Empty);
+            assignStatus = this.AssignStatus(ServiceShared.CalculateAnd(areAllCancelled, areAnyDeliveyAlive), ServiceConstants.Almacenado, ServiceConstants.Almacenado, assignStatus.Item1, assignStatus.Item2);
 
             if (ServiceShared.CalculateAnd(!areAllCancelled, areAnyDeliveyAlive))
             {
                 var totalOpenDeliveries = cancelDeliveries.Count(z => z.Status == "O" && !z.NeedsCancel);
                 var totalLocalAlmacenadas = userOrders.Count(y => y.IsProductionOrder && y.Status == ServiceConstants.Almacenado) + details.Count(z => z.LineStatus == ServiceConstants.Almacenado);
-                if (totalOpenDeliveries == totalLocalAlmacenadas)
-                {
-                    statusAlmacen = ServiceConstants.Almacenado;
-                    status = ServiceConstants.Almacenado;
-                }
-                else
-                {
-                    statusAlmacen = ServiceConstants.BackOrder;
-                    status = areAnyPending ? ServiceConstants.Liberado : ServiceConstants.Finalizado;
-                }
+
+                assignStatus = this.AssignStatus(totalOpenDeliveries == totalLocalAlmacenadas, ServiceConstants.Almacenado, ServiceConstants.Almacenado, ServiceConstants.BackOrder, ServiceShared.CalculateTernary(areAnyPending, ServiceConstants.Liberado, ServiceConstants.Finalizado));
             }
 
-            if (ServiceShared.CalculateAnd(!areAllCancelled, !areAnyDeliveyAlive))
-            {
-                statusAlmacen = null;
-                status = ServiceShared.CalculateTernary(areAnyPending, ServiceConstants.Liberado, ServiceConstants.Finalizado);
-            }
+            assignStatus = this.AssignStatus(ServiceShared.CalculateAnd(!areAllCancelled, !areAnyDeliveyAlive), null, ServiceShared.CalculateTernary(areAnyPending, ServiceConstants.Liberado, ServiceConstants.Finalizado), assignStatus.Item1, assignStatus.Item2);
 
-            return new Tuple<string, string>(status, statusAlmacen);
+            return assignStatus;
+        }
+
+        private Tuple<string, string> AssignStatus(bool validation, string statusAlmacen, string status, string statusAlmacenDefault, string statusDefault)
+        {
+            var finalStatusAlmacen = ServiceShared.CalculateTernary(validation, statusAlmacen, statusAlmacenDefault);
+            var finalStatus = ServiceShared.CalculateTernary(validation, status, statusDefault);
+
+            return new Tuple<string, string>(finalStatusAlmacen, finalStatus);
         }
 
         /// <summary>
