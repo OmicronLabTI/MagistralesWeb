@@ -438,7 +438,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypes = "magistral,mixto,linea,maquila,muestra";
+        public const string AllTypes = "magistral,mixto,linea,maquila,muestra,paquetes";
 
         /// <summary>
         /// all types.
@@ -523,6 +523,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// the insert value.
         /// </summary>
+        public const string Paquetes = "Paquetes";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
         public const string DontExistsTable = "DontExistsTable";
 
         /// <summary>
@@ -554,6 +559,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the line products.
         /// </summary>
         public const string LocalNeighbors = "LocalNeighbors";
+
+        /// <summary>
+        /// if a order is package.
+        /// </summary>
+        public const string IsPackage = "Y";
 
         /// <summary>
         /// Gets the status of the order.

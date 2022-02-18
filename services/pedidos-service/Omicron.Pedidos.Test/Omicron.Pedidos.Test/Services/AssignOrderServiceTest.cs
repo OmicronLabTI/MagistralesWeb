@@ -53,7 +53,6 @@ namespace Omicron.Pedidos.Test.Services
 
             this.context = new DatabaseContext(options);
             this.context.UserOrderModel.AddRange(this.GetUserOrderModel());
-            this.context.OrderLogModel.Add(this.GetOrderLogModel());
             this.context.UserOrderSignatureModel.AddRange(this.GetSignature());
             this.context.SaveChanges();
 
@@ -100,7 +99,7 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var assign = new ManualAssignModel
             {
-                DocEntry = new List<int> { 100 },
+                DocEntry = new List<int> { 1502 },
                 OrderType = "Pedido",
                 UserId = "abc",
                 UserLogistic = "abd",
@@ -223,7 +222,7 @@ namespace Omicron.Pedidos.Test.Services
         {
             var reassign = new ManualAssignModel
             {
-                DocEntry = new List<int> { 100 },
+                DocEntry = new List<int> { 1502 },
                 OrderType = "Orden",
                 UserId = "abc",
                 UserLogistic = "abc",

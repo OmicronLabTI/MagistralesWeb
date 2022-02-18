@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Utils;
     using Serilog;
 
     /// <summary>
@@ -56,15 +57,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
             var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-
-                if ((int)response.StatusCode > 200)
-                {
-                    this.logger.Information($"Error peticion sapdiapi {jsonString}");
-                    throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.BadRequest);
-                }
-
-                result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+                result = await ServiceShared.GetResponse(response, this.logger, "Error peticion sapdiapi service");
             }
 
             return result;
@@ -82,15 +75,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
 
             using (var response = await this.httpClient.GetAsync(url))
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-
-                if ((int)response.StatusCode >= 300)
-                {
-                    this.logger.Information($"Error peticion sapdiapi {jsonString}");
-                    throw new CustomServiceException(jsonString);
-                }
-
-                result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+                result = await ServiceShared.GetResponse(response, this.logger, "Error peticion sapdiapi service");
             }
 
             return result;

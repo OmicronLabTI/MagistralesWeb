@@ -54,10 +54,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="almacenService">The almacen service.</param>
         public QrService(IPedidosDao pedidosDao, IConfiguration configuration, IAzureService azureService, IAlmacenService almacenService)
         {
-            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            this.azureService = azureService ?? throw new ArgumentNullException(nameof(azureService));
-            this.almacenService = almacenService ?? throw new ArgumentNullException(nameof(almacenService));
+            this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
+            this.configuration = configuration.ThrowIfNull(nameof(configuration));
+            this.azureService = azureService.ThrowIfNull(nameof(azureService));
+            this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
         }
 
         /// <inheritdoc/>
@@ -314,7 +314,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 if (!string.IsNullOrEmpty(modelQr.Ship))
                 {
-                    modelQr.Ship = modelQr.Ship == ServiceConstants.LocalShipAbr ? ServiceConstants.LocalShip : ServiceConstants.ForeignShip;
+                    modelQr.Ship = ServiceShared.CalculateTernary(modelQr.Ship == ServiceConstants.LocalShipAbr, ServiceConstants.LocalShip, ServiceConstants.ForeignShip);
                 }
 
                 var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
@@ -545,16 +545,16 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             return new QrDimensionsModel
             {
-                QrRectHeight = rectHeigthField != null ? int.Parse(rectHeigthField.Value) : 250,
-                QrRectWidth = rectWidthField != null ? int.Parse(rectWidthField.Value) : 100,
-                QrRecty = rectyField != null ? int.Parse(rectyField.Value) : DefaultHeightWidth - 25,
-                QrRectx = rectxField != null ? int.Parse(rectxField.Value) : DefaultHeightWidth / 2,
-                QrRectxTop = rectxTopField != null ? int.Parse(rectxTopField.Value) : 130,
-                QrRectyTop = rectyTopField != null ? int.Parse(rectyTopField.Value) : 25,
-                QrBottomTextSize = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24,
-                QrHeight = heigthField != null ? int.Parse(heigthField.Value) : DefaultHeightWidth,
-                QrWidth = widthField != null ? int.Parse(widthField.Value) : DefaultHeightWidth,
-                QrMargin = marginField != null ? int.Parse(marginField.Value) : DefaultMargin,
+                QrRectHeight = ServiceShared.GetValueFromParamterIntParse(rectHeigthField, 250),
+                QrRectWidth = ServiceShared.GetValueFromParamterIntParse(rectWidthField, 100),
+                QrRecty = ServiceShared.GetValueFromParamterIntParse(rectyField, DefaultHeightWidth - 25),
+                QrRectx = ServiceShared.GetValueFromParamterIntParse(rectxField, DefaultHeightWidth / 2),
+                QrRectxTop = ServiceShared.GetValueFromParamterIntParse(rectxTopField, 130),
+                QrRectyTop = ServiceShared.GetValueFromParamterIntParse(rectyTopField, 25),
+                QrBottomTextSize = ServiceShared.GetValueFromParamterIntParse(sizeTextField, 24),
+                QrHeight = ServiceShared.GetValueFromParamterIntParse(heigthField, DefaultHeightWidth),
+                QrWidth = ServiceShared.GetValueFromParamterIntParse(widthField, DefaultHeightWidth),
+                QrMargin = ServiceShared.GetValueFromParamterIntParse(marginField, DefaultMargin),
             };
         }
 
@@ -580,21 +580,21 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             return new QrDimensionsModel
             {
-                QrRectHeight = rectHeigthField != null ? int.Parse(rectHeigthField.Value) : 250,
-                QrRectWidth = rectWidthField != null ? int.Parse(rectWidthField.Value) : 100,
-                QrRecty = rectyField != null ? int.Parse(rectyField.Value) : DefaultHeightWidth - 25,
-                QrRectx = rectxField != null ? int.Parse(rectxField.Value) : DefaultHeightWidth / 2,
-                QrRectxTop = rectxTopField != null ? int.Parse(rectxTopField.Value) : 130,
-                QrRectyTop = rectyTopField != null ? int.Parse(rectyTopField.Value) : 25,
-                QrBottomTextSize = sizeTextField != null ? int.Parse(sizeTextField.Value) : 24,
-                QrHeight = heigthField != null ? int.Parse(heigthField.Value) : DefaultHeightWidth,
-                QrWidth = widthField != null ? int.Parse(widthField.Value) : DefaultHeightWidth,
-                QrMargin = marginField != null ? int.Parse(marginField.Value) : DefaultMargin,
-                LabelRectx = rectxLabelField != null ? int.Parse(rectxLabelField.Value) : DefaultHeightWidth / 2,
-                LabelRecty = rectyLabelField != null ? int.Parse(rectyLabelField.Value) : DefaultHeightWidth / 2,
-                LabelMuestraFontSize = rectyLabelSaleFontSizeField != null ? int.Parse(rectyLabelSaleFontSizeField.Value) : 24,
-                LabelSaleOrderRectx = rectxLabelSaleField != null ? int.Parse(rectxLabelSaleField.Value) : 150,
-                LabelSaleOrderRecty = rectyLabelSaleField != null ? int.Parse(rectyLabelSaleField.Value) : 250,
+                QrRectHeight = ServiceShared.GetValueFromParamterIntParse(rectHeigthField, 250),
+                QrRectWidth = ServiceShared.GetValueFromParamterIntParse(rectWidthField, 100),
+                QrRecty = ServiceShared.GetValueFromParamterIntParse(rectyField, DefaultHeightWidth - 25),
+                QrRectx = ServiceShared.GetValueFromParamterIntParse(rectxField, DefaultHeightWidth / 2),
+                QrRectxTop = ServiceShared.GetValueFromParamterIntParse(rectxTopField, 130),
+                QrRectyTop = ServiceShared.GetValueFromParamterIntParse(rectyTopField, 25),
+                QrBottomTextSize = ServiceShared.GetValueFromParamterIntParse(sizeTextField, 24),
+                QrHeight = ServiceShared.GetValueFromParamterIntParse(heigthField, DefaultHeightWidth),
+                QrWidth = ServiceShared.GetValueFromParamterIntParse(widthField, DefaultHeightWidth),
+                QrMargin = ServiceShared.GetValueFromParamterIntParse(marginField, DefaultMargin),
+                LabelRectx = ServiceShared.GetValueFromParamterIntParse(rectxLabelField, DefaultHeightWidth / 2),
+                LabelRecty = ServiceShared.GetValueFromParamterIntParse(rectyLabelField, DefaultHeightWidth / 2),
+                LabelMuestraFontSize = ServiceShared.GetValueFromParamterIntParse(rectyLabelSaleFontSizeField, 24),
+                LabelSaleOrderRectx = ServiceShared.GetValueFromParamterIntParse(rectxLabelSaleField, 150),
+                LabelSaleOrderRecty = ServiceShared.GetValueFromParamterIntParse(rectyLabelSaleField, 250),
             };
         }
     }

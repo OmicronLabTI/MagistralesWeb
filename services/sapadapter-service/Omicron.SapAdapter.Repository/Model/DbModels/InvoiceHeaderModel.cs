@@ -140,6 +140,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string Refactura { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_Pedido_Paquete")]
+        public string IsPackage { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>

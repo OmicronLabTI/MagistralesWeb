@@ -38,16 +38,19 @@ namespace Omicron.Pedidos.Services.Utils
         public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi, IKafkaConnector kafkaConnector)
         {
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
+            var userOrders = (await pedidosDao.GetUserOrderBySaleOrder(listSalesOrders)).ToList();
 
-            var listToUpdate = await ServiceUtils.GetOrdersToAssign(assignModel.DocEntry, sapAdapter);
+            var listToUpdate = userOrders
+                .Where(x => ServiceShared.CalculateAnd(x.IsProductionOrder, x.Status == ServiceConstants.Planificado))
+                .Select(y => new UpdateFabOrderModel { Status = ServiceConstants.StatusSapLiberado, OrderFabId = int.Parse(y.Productionorderid) })
+                .ToList();
 
             var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
-            var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
-            var userOrders = (await pedidosDao.GetUserOrderBySaleOrder(listSalesOrders)).ToList();
+            var userError = ServiceShared.CalculateTernary(listErrorId.Any(), ServiceConstants.ErroAlAsignar, null);
             var listOrderLogToInsert = new List<SalesLogs>();
             userOrders.ForEach(x =>
             {
@@ -160,13 +163,13 @@ namespace Omicron.Pedidos.Services.Utils
 
             foreach (var p in orderDetail)
             {
-                if (p.Order.OrderType != ServiceConstants.Mix && !users.Any(x => x.User.Classification == p.Order.OrderType))
+                if (ServiceShared.CalculateAnd(p.Order.OrderType != ServiceConstants.Mix, !users.Any(x => x.User.Classification == p.Order.OrderType)))
                 {
                     listOrdersWithNoUser.Add(p.Order.DocNum);
                     continue;
                 }
 
-                var localUsers = p.Order.OrderType == ServiceConstants.Mix ? users : users.Where(x => x.User.Classification == p.Order.OrderType).ToList();
+                var localUsers = ServiceShared.CalculateTernary(p.Order.OrderType == ServiceConstants.Mix, users, users.Where(x => x.User.Classification == p.Order.OrderType).ToList());
                 localUsers = localUsers.OrderBy(x => x.TotalCount).ThenBy(x => x.User.FirstName).ToList();
 
                 if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
@@ -179,7 +182,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 users.ForEach(x =>
                 {
-                    x.TotalCount = x.User.Id.Equals(dictUserPedido[p.Order.DocNum]) ? p.Detalle.Where(z => z.QtyPlanned.HasValue).Sum(y => y.QtyPlanned.Value) + x.TotalCount : x.TotalCount;
+                    x.TotalCount = ServiceShared.CalculateTernary(x.User.Id.Equals(dictUserPedido[p.Order.DocNum]), p.Detalle.Where(z => z.QtyPlanned.HasValue).Sum(y => y.QtyPlanned.Value) + x.TotalCount, x.TotalCount);
                 });
             }
 
@@ -222,7 +225,7 @@ namespace Omicron.Pedidos.Services.Utils
                     if (!string.IsNullOrEmpty(y.Key))
                     {
                         var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == y.Key && string.IsNullOrEmpty(x.Productionorderid));
-                        pedido.Status = missing ? pedido.Status : ServiceConstants.Liberado;
+                        pedido.Status = ServiceShared.CalculateTernary(missing, pedido.Status, ServiceConstants.Liberado);
                         pedido.Userid = user;
                         listToUpdate.Add(pedido);
                         if (!missing)

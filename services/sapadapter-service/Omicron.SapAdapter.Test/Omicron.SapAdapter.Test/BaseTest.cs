@@ -52,6 +52,9 @@ namespace Omicron.SapAdapter.Test
                 new OrderModel { PedidoId = 75001, DocNum = 75001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo León", Canceled = "N" },
                 new OrderModel { PedidoId = 75002, DocNum = 75002, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null, Canceled = "N" },
                 new OrderModel { PedidoId = 85000, DocNum = 85000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N" },
+
+                // for packages
+                new OrderModel { PedidoId = 85001, DocNum = 85001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MX", Canceled = "N", IsPackage = "Y" },
             };
         }
 
@@ -91,6 +94,9 @@ namespace Omicron.SapAdapter.Test
                 // for graphs
                 new DetallePedidoModel { Description = "Linea1", DetalleId = 0, PedidoId = 75002, ProductoId = "Linea1", Container = "NA", Quantity = 10, DocDate = DateTime.Today },
                 new DetallePedidoModel { Description = "Linea1", DetalleId = 1, PedidoId = 75002, ProductoId = "Linea1", Container = "NA", Quantity = 10, DocDate = DateTime.Today },
+
+                // for almacen packages
+                new DetallePedidoModel { Description = "Linea1", DetalleId = 1, PedidoId = 85001, ProductoId = "Linea1", Container = "NA", Quantity = 10, DocDate = DateTime.Today },
             };
         }
 
@@ -189,6 +195,12 @@ namespace Omicron.SapAdapter.Test
 
                 // for almacen detail
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 46040, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 46040, Address = "direccion Oax", TypeOrder = "MQ" },
+
+                // for almacen packages
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 85001, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 85001, Address = "direccion CD MX", IsPackage = "Y" },
+
+                // for detail invoice
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 1, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 1, Address = "direccion CD MX", IsPackage = "Y" },
             };
         }
 
@@ -210,6 +222,9 @@ namespace Omicron.SapAdapter.Test
 
                 // for detail invoice
                 new DeliveryDetailModel { BaseEntry = 75000, DeliveryId = 1, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Magistral1", Quantity = 1, InvoiceId = 1 },
+
+                // for detail packages
+                new DeliveryDetailModel { BaseEntry = 85001, DeliveryId = 85001, Description = "Dsc", DocDate = DateTime.Now, ProductoId = "Linea1", Quantity = 1, InvoiceId = 1 },
             };
         }
 
@@ -572,6 +587,32 @@ namespace Omicron.SapAdapter.Test
             var listProducts = new List<LineProductsModel>
             {
                 new LineProductsModel { Id = 1, SaleOrderId = 75001, StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(batch), DeliveryId = 46037 },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listProducts),
+                Success = true,
+                Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// the linse products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetLineProductsRemisionPackage()
+        {
+            var batch = new List<AlmacenBatchModel>()
+            {
+                new AlmacenBatchModel { BatchNumber = "Lote1", BatchQty = 1 },
+            };
+
+            var listProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 1, SaleOrderId = 85001, StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(batch), DeliveryId = 85001 },
             };
 
             return new ResultDto

@@ -21,6 +21,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
     using Newtonsoft.Json;
     using System.Linq;
     using System.IO;
+    using Omicron.SapDiApi.Services.Constants;
 
     /// <summary>
     /// class create order.
@@ -63,6 +64,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.DocDueDate = DateTime.Now.AddDays(10);
                 order.ShipToCode = saleOrderModel.ShippinAddress;
                 order.PayToCode = saleOrderModel.BillingAddress;
+                order.FederalTaxID = saleOrderModel.UserRfc;
                 order.DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial);
                 order.UserFields.Fields.Item("U_Pedido_DXP").Value = saleOrderModel.TransactionId;
                 order.UserFields.Fields.Item("U_Comentarios_Ecommerce").Value = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}" : string.Empty;
@@ -72,6 +74,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.UserFields.Fields.Item("U_CFDI_Provisional").Value = saleOrderModel.CfdiValue;
                 order.UserFields.Fields.Item("U_BXP_METPAGO33").Value = saleOrderModel.PaymentMethodSapCode;
                 order.UserFields.Fields.Item("U_BXP_FORMAPAGO33").Value = saleOrderModel.WayToPaySapCode;
+                order.UserFields.Fields.Item("U_Pedido_Paquete").Value = saleOrderModel.IsPackage ? ServiceConstants.IsPackage : ServiceConstants.IsNotPackage;
 
                 if (!string.IsNullOrEmpty(attachment))
                 {

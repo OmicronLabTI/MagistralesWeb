@@ -103,5 +103,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The code.</value>
         public string Canceled { get; set; }
+
+        /// <summary>
+        /// Gets or sets if is a canceled order.
+        /// </summary>
+        /// <value>The code.</value>
+        public string IsPackage { get; set; }
     }
 }

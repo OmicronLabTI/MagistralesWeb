@@ -40,9 +40,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="configuration">The configuration.</param>
         public PedidosAlmacenService(IPedidosDao pedidosDao, ISapFileService sapFileService, IConfiguration configuration)
         {
-            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
-            this.sapFileService = sapFileService ?? throw new ArgumentNullException(nameof(sapFileService));
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
+            this.sapFileService = sapFileService.ThrowIfNull(nameof(sapFileService));
+            this.configuration = configuration.ThrowIfNull(nameof(configuration));
         }
 
         /// <inheritdoc/>
@@ -79,7 +79,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var productionStatus = x.Where(z => z.IsProductionOrder && (z.Status == ServiceConstants.Finalizado || z.Status == ServiceConstants.Almacenado)).ToList();
                 var saleOrde = x.FirstOrDefault(y => y.IsSalesOrder);
 
-                if (saleOrde != null && saleOrde.Status == ServiceConstants.Finalizado && saleOrde.FinishedLabel == 1)
+                if (ServiceShared.CalculateAnd(saleOrde != null, saleOrde.Status == ServiceConstants.Finalizado, saleOrde.FinishedLabel == 1))
                 {
                     listToReturn.AddRange(x.ToList());
                     continue;
@@ -172,7 +172,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var dataToLook = await this.GetParametersDateToLook(ServiceConstants.SentMaxDaysToLook);
             var arrayStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status].Split(",").ToList() : ServiceConstants.StatusLocal;
-            var type = parameters.ContainsKey(ServiceConstants.Type) ? parameters[ServiceConstants.Type] : ServiceConstants.Local.ToLower();
+            var type = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.Local.ToLower());
 
             var userOrderByType = (await this.pedidosDao.GetUserOrderByInvoiceType(new List<string> { type })).ToList();
 
@@ -244,13 +244,13 @@ namespace Omicron.Pedidos.Services.Pedidos
                 AlmacenadosTotal = ordersByDates.Count(x => x.IsSalesOrder && x.Status == ServiceConstants.Almacenado),
                 BackOrderTotal = ordersByDates.Count(x => x.IsSalesOrder && x.StatusAlmacen == ServiceConstants.BackOrder),
                 PendienteTotal = ordersPending.Count(x => x.Any(y => y.IsProductionOrder && (y.Status == ServiceConstants.Finalizado || y.Status == ServiceConstants.Almacenado) && y.FinishedLabel == 1) && x.Where(z => z.IsProductionOrder).All(y => ServiceConstants.StatuPendingAlmacen.Contains(y.Status))),
-                LocalPackageTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Empaquetado),
-                LocalNotDeliveredTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.NoEntregado),
-                LocalAsignedTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Asignado),
-                LocalInWayTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Camino),
-                LocalDeliveredTotal = packagedOrders.Count(x => x.InvoiceType == ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Entregado),
-                ForeignPackageTotal = packagedOrders.Count(x => x.InvoiceType != ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Empaquetado),
-                ForeignSentTotal = packagedOrders.Count(x => x.InvoiceType != ServiceConstants.Local.ToLower() && x.StatusInvoice == ServiceConstants.Enviado),
+                LocalPackageTotal = packagedOrders.GetInvoiceCount(ServiceConstants.Local.ToLower(), ServiceConstants.Empaquetado),
+                LocalNotDeliveredTotal = packagedOrders.GetInvoiceCount(ServiceConstants.Local.ToLower(), ServiceConstants.NoEntregado),
+                LocalAsignedTotal = packagedOrders.GetInvoiceCount(ServiceConstants.Local.ToLower(), ServiceConstants.Asignado),
+                LocalInWayTotal = packagedOrders.GetInvoiceCount(ServiceConstants.Local.ToLower(), ServiceConstants.Camino),
+                LocalDeliveredTotal = packagedOrders.GetInvoiceCount(ServiceConstants.Local.ToLower(), ServiceConstants.Entregado),
+                ForeignPackageTotal = packagedOrders.GetInvoiceCount(ServiceConstants.ForaneoDb.ToLower(), ServiceConstants.Empaquetado),
+                ForeignSentTotal = packagedOrders.GetInvoiceCount(ServiceConstants.ForaneoDb.ToLower(), ServiceConstants.Enviado),
                 InvoiceIds = packagedOrders.Where(x => x.StatusInvoice == ServiceConstants.NoEntregado).DistinctBy(y => y.InvoiceId).Select(z => z.InvoiceId).ToList(),
                 PackagesId = packagedOrders.Select(x => x.InvoiceId).ToList(),
             };

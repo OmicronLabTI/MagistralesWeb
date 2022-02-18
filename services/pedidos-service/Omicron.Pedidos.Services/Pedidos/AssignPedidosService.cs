@@ -8,7 +8,6 @@
 
 namespace Omicron.Pedidos.Services.Pedidos
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -49,11 +48,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="kafkaConnector">The kafka conector.</param>
         public AssignPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, IKafkaConnector kafkaConnector)
         {
-            this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
-            this.pedidosDao = pedidosDao ?? throw new ArgumentNullException(nameof(pedidosDao));
-            this.sapDiApi = sapDiApi ?? throw new ArgumentNullException(nameof(sapDiApi));
-            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
-            this.kafkaConnector = kafkaConnector ?? throw new ArgumentNullException(nameof(kafkaConnector));
+            this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
+            this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
+            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
+            this.userService = userService.ThrowIfNull(nameof(userService));
+            this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
         }
 
         /// <summary>
@@ -86,7 +85,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var sapOrderTypes = ordersSap.Select(x => x.Order.OrderType).Distinct().ToList();
 
             var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
-            users = sapOrderTypes.Contains(ServiceConstants.Mix) ? users : users.Where(x => sapOrderTypes.Contains(x.Classification)).ToList();
+            users = ServiceShared.CalculateTernary(sapOrderTypes.Contains(ServiceConstants.Mix), users, users.Where(x => sapOrderTypes.Contains(x.Classification)).ToList());
             var userOrders = (await this.pedidosDao.GetUserOrderByUserId(users.Select(x => x.Id).ToList())).ToList();
             userOrders = userOrders.Where(x => !invalidStatus.Contains(x.Status)).ToList();
             var validUsers = await AsignarLogic.GetValidUsersByLoad(users, userOrders, this.sapAdapter);
@@ -120,14 +119,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 {
                     var previousStatus = x.Status;
                     var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdate.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
-                    x.Status = asignable ? ServiceConstants.Asignado : x.Status;
-                    x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : x.Status;
+                    x.Status = ServiceShared.CalculateTernary(asignable, ServiceConstants.Asignado, x.Status);
+                    x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, x.Status);
                     x.Userid = userSaleOrder.Item1[saleOrderInt];
 
-                    var orderId = string.IsNullOrEmpty(x.Productionorderid) ? saleOrderInt : productionId;
-                    var ordenType = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.OrdenVenta : ServiceConstants.OrdenFab;
-                    var textAction = string.IsNullOrEmpty(x.Productionorderid) ? string.Format(ServiceConstants.AsignarVenta, userSaleOrder.Item1[saleOrderInt]) : string.Format(ServiceConstants.AsignarOrden, userSaleOrder.Item1[saleOrderInt]);
-                    if (previousStatus != x.Status && x.IsSalesOrder)
+                    if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                     {
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
                     }
@@ -182,9 +178,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             orders.ForEach(x =>
             {
                 var previousStatus = x.Status;
-                x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Reasignado;
+                x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
                 x.Userid = assign.UserId;
-                if (previousStatus != x.Status && x.IsSalesOrder)
+                if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                 {
                     /** add logs**/
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, new List<UserOrderModel> { x }));
@@ -196,8 +192,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assign.UserLogistic, new List<UserOrderModel> { x }));
                 }
             });
-
-            var listOrderFabId = orders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
 
             await this.pedidosDao.UpdateUserOrders(orders);
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
@@ -218,7 +212,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrdersBySale = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
 
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
-            var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(this.sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
+            var sapOrders = ServiceShared.CalculateTernary(listSalesNumber.Any(), await ServiceUtils.GetOrdersWithFabOrders(this.sapAdapter, listSalesNumber), new List<OrderWithDetailModel>());
 
             var getUpdateUserOrderModel = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic);
             var ordersToUpdate = getUpdateUserOrderModel.Item1;

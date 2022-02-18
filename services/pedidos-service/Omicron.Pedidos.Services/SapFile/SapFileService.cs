@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.SapFile
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Services.Utils;
     using Serilog;
 
     /// <summary>
@@ -56,14 +57,7 @@ namespace Omicron.Pedidos.Services.SapFile
 
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-                if ((int)response.StatusCode >= 300)
-                {
-                    this.logger.Information($"Error peticion sapfile {jsonString}");
-                    throw new CustomServiceException(jsonString);
-                }
-
-                result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+                result = await ServiceShared.GetResponse(response, this.logger, "Error peticion sapfile service");
             }
 
             return result;

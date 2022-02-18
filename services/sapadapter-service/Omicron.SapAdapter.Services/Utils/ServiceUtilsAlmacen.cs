@@ -71,13 +71,17 @@ namespace Omicron.SapAdapter.Services.Utils
                 sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
             }
 
-            var ordersMaquila = sapOrders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
+            var ordersMaquila = sapOrders.Where(x => x.TypeOrder.ValidateNull().ToLower() == ServiceConstants.OrderTypeMQ.ToLower()).ToList();
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Maquila.ToLower()), ordersMaquila, listToReturn);
             salesTypes = AddSalesTypeByOrders(ordersMaquila, salesTypes);
 
-            var ordersSample = sapOrders.Where(x => x.PedidoMuestra == ServiceConstants.IsSampleOrder).ToList();
+            var ordersSample = sapOrders.Where(x => x.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower()).ToList();
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Muestra.ToLower()), ordersSample, listToReturn);
             salesTypes = AddSalesTypeByOrders(ordersSample, salesTypes);
+
+            var orderPackages = sapOrders.Where(x => x.IsPackage.ValidateNull().ToLower() == ServiceConstants.IsPackage.ToLower()).ToList();
+            listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Paquetes.ToLower()), orderPackages, listToReturn);
+            salesTypes = AddSalesTypeByOrders(orderPackages, salesTypes);
 
             return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listToReturn.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList(), salesTypes);
         }
