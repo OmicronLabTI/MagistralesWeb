@@ -73,7 +73,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial);
                 order.UserFields.Fields.Item("U_Pedido_DXP").Value = saleOrderModel.TransactionId;
                 order.UserFields.Fields.Item("U_Comentarios_Ecommerce").Value = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}" : string.Empty;
-                order.UserFields.Fields.Item("U_DXPNEEDSSHIPCOST").Value = saleOrderModel.ShippingCost;
                 order.UserFields.Fields.Item("U_BXP_USOCFDI").Value = saleOrderModel.CfdiValue;
                 order.UserFields.Fields.Item("U_BXP_METPAGO33").Value = saleOrderModel.PaymentMethodSapCode;
                 order.UserFields.Fields.Item("U_BXP_FORMAPAGO33").Value = saleOrderModel.WayToPaySapCode;
@@ -84,7 +83,9 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     order.AttachmentEntry = int.Parse(attachment);
                 }
 
-                for(var i = 0; i < saleOrderModel.Items.Count; i++)
+                order.UserFields.Fields.Item("U_dxpneedsshipcost").Value = saleOrderModel.ShippingCost;
+
+                for (var i = 0; i < saleOrderModel.Items.Count; i++)
                 {
                     order.Lines.SetCurrentLine(i);
                     order.Lines.ItemCode = saleOrderModel.Items[i].ItemCode;
