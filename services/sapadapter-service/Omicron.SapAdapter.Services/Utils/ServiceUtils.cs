@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
@@ -302,6 +303,35 @@ namespace Omicron.SapAdapter.Services.Utils
         public static bool CalculateTypeLocal(string state, List<string> neigborhood, string address)
         {
             return address.ToLower().Contains(state.ToLower()) && neigborhood.Any(x => address.ToLower().Contains(x.ToLower()));
+        }
+
+        /// <summary>
+        /// Calculates if an address is local.
+        /// </summary>
+        /// <param name="state">the state.</param>
+        /// <param name="neigborhood">the municipios.</param>
+        /// <param name="address">the address to validta.</param>
+        /// <param name="payment">the payment.</param>
+        /// <returns>the desition.</returns>
+        public static bool IsTypeLocal(string state, List<string> neigborhood, string address, PaymentsDto payment)
+        {
+            var isLocal = address.ToLower().Contains(state.ToLower()) && neigborhood.Any(x => address.ToLower().Contains(x.ToLower()));
+            isLocal = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, isLocal, true);
+            return isLocal;
+        }
+
+        /// <summary>
+        /// Calculates if an address is local.
+        /// </summary>
+        /// <param name="state">the state.</param>
+        /// <param name="neigborhood">the municipios.</param>
+        /// <param name="address">the address to validta.</param>
+        /// <param name="payment">the payment.</param>
+        /// <returns>the desition.</returns>
+        public static string CalculateTypeShip(string state, List<string> neigborhood, string address, PaymentsDto payment)
+        {
+            var isLocal = IsTypeLocal(state, neigborhood, address, payment);
+            return ServiceShared.CalculateTernary(isLocal, ServiceConstants.Local, ServiceConstants.Foraneo);
         }
 
         /// <summary>

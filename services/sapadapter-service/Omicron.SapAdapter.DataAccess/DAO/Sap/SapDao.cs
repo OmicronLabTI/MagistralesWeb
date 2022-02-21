@@ -1095,6 +1095,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              UpdateDate = invoice.UpdateDate,
                              ClientEmail = doctor.Email,
                              IsPackage = invoice.IsPackage,
+                             DocNumDxp = invoice.DocNumDxp,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -1518,6 +1519,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              FabricationOrder = dpf != null ? dpf.OrdenId.ToString() : string.Empty,
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();
@@ -1558,6 +1560,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = order.Address,
                              Producto = p,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();

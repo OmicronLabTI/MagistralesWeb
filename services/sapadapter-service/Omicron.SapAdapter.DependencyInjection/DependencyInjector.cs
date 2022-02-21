@@ -21,6 +21,7 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
+    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
@@ -55,6 +56,7 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<IAdvanceLookService, AdvanceLookService>();
             Services.AddTransient<IAlmacenOrderDoctorService, AlmacenOrderDoctorService>();
             Services.AddTransient<ISapDxpService, SapDxpService>();
+            Services.AddTransient<IProccessPayments, ProccessPayments>();
             return Services;
         }
 

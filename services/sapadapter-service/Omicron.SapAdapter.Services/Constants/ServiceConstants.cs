@@ -566,6 +566,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string IsPackage = "Y";
 
         /// <summary>
+        /// the abierto status.
+        /// </summary>
+        public const string EndPointToGetPayments = "orders/subtransactions";
+
+        /// <summary>
+        /// the nvo leon state.
+        /// </summary>
+        public const int ShippingCostAccepted = 1;
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
@@ -22,6 +23,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
 
@@ -40,6 +42,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IRedisService redisService;
 
+        private readonly IProccessPayments proccessPayments;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapInvoiceService"/> class.
         /// </summary>
@@ -48,13 +52,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="almacenService">The almacen service.</param>
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">The redis service.</param>
-        public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
+        /// <param name="proccessPayments">the proccess payments.</param>
+        public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
             this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
+            this.proccessPayments = proccessPayments.ThrowIfNull(nameof(proccessPayments));
         }
 
         /// <inheritdoc/>
@@ -108,8 +114,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserSalesOrder, salesOrdersId);
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, salesOrdersId);
 
+            var transactionsIds = invoiceDetails.Where(i => !string.IsNullOrEmpty(i.InvoiceHeader.DocNumDxp)).Select(o => o.InvoiceHeader.DocNumDxp).Distinct().ToList();
+            var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == deliveryDetails.First().DocNumDxp);
+            payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
+
             var invoiceHeader = invoiceDetails.FirstOrDefault();
-            var isLocal = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, invoiceHeader.InvoiceHeader.Address);
             var invoiceToReturn = new InvoiceSaleHeaderModel
             {
                 Address = invoiceHeader.InvoiceHeader.Address.Replace("\r", string.Empty).ToUpper(),
@@ -118,7 +127,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Invoice = invoiceHeader.InvoiceHeader.DocNum,
                 DocEntry = invoiceHeader.InvoiceHeader.InvoiceId,
                 InvoiceDocDate = invoiceHeader.InvoiceHeader.FechaInicio,
-                ProductType = ServiceShared.CalculateTernary(isLocal, ServiceConstants.Local, ServiceConstants.Foraneo),
+                ProductType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, invoiceHeader.InvoiceHeader.Address, payment),
                 TotalDeliveries = invoiceDetails.Select(x => x.Detail.BaseEntry).Distinct().Count(),
                 TotalProducts = invoiceDetails.Count,
                 Comments = invoiceHeader.InvoiceHeader.Comments,
@@ -250,11 +259,12 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(dataToLook.InvoiceDocNums)).ToList();
             var localNeighbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-
+            var transactionsIds = invoiceHeader.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+            var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
             invoiceHeader = ServiceShared.CalculateTernary(
                 dataToLook.Type.Equals(ServiceConstants.Local.ToLower()),
-                invoiceHeader.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, x.Address) || dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList(),
-                invoiceHeader.Where(x => !ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, x.Address) && !dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList());
+                invoiceHeader.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, x.Address, payments.GetPaymentBydocNumDxp(x.DocNumDxp)) || dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList(),
+                invoiceHeader.Where(x => !ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, x.Address, payments.GetPaymentBydocNumDxp(x.DocNumDxp)) && !dataToLook.ExclusivePartnersIds.Any(y => y == x.CardCode)).ToList());
 
             var dictParams = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(dataToLook.Chip))
