@@ -448,6 +448,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
+        public const string AllTypesByDxp = "magistral,mixto,linea,maquila";
+
+        /// <summary>
+        /// all types.
+        /// </summary>
         public const string AllStatus = "Recibir,Pendiente,Back Order,Cancelado";
 
         /// <summary>
