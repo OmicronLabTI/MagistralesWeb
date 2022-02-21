@@ -55,6 +55,7 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<IAdvanceLookService, AdvanceLookService>();
             Services.AddTransient<IAlmacenOrderDoctorService, AlmacenOrderDoctorService>();
             Services.AddTransient<ISapDxpService, SapDxpService>();
+            Services.AddTransient<IAlmacenOrderDxpService, AlmacenOrderDxpService>();
             return Services;
         }
 
