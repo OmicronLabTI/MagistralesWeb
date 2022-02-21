@@ -101,7 +101,7 @@ namespace Omicron.SapAdapter.Services.Utils
         {
             var idsMagistrales = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
 
-            var sapOrders = ServiceShared.CalculateTernary(needOnlyDxp, (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList(), (await sapDao.GetAllOrdersForAlmacenDxp(userOrdersTuple.Item3)).ToList());
+            var sapOrders = ServiceShared.CalculateTernary(needOnlyDxp, (await sapDao.GetAllOrdersForAlmacenDxp(userOrdersTuple.Item3)).ToList(), (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList());
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
@@ -123,7 +123,9 @@ namespace Omicron.SapAdapter.Services.Utils
 
             arrayOfSaleToProcess.AddRange(sapOrders.Where(o => o.Canceled == "Y"));
             var orderToAppear = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).ToList();
+
             var ordersSapMaquila = (await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ, orderToAppear)).ToList();
+            ordersSapMaquila = ServiceShared.CalculateTernary(needOnlyDxp, ordersSapMaquila.Where(x => !string.IsNullOrEmpty(x.DocNumDxp)).ToList(), ordersSapMaquila);
             arrayOfSaleToProcess.AddRange(ordersSapMaquila.Where(x => x.Detalles != null));
 
             arrayOfSaleToProcess = arrayOfSaleToProcess.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
@@ -208,6 +210,50 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             return ordersToReturn;
+        }
+
+        /// <summary>
+        /// get total order for doctor.
+        /// </summary>
+        /// <param name="sapOrders">the saporders.</param>
+        /// <param name="localNeighbors">the local neighboors.</param>
+        /// <param name="usersOrders">user order.</param>
+        /// <returns>the data.</returns>
+        public static List<OrderListByDoctorModel> GetTotalOrdersForDoctorAndDxp(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<string> localNeighbors, List<UserOrderModel> usersOrders)
+        {
+            var listOrders = new List<OrderListByDoctorModel>();
+            var salesIds = sapOrders.Select(x => x.DocNum).Distinct().OrderByDescending(x => x);
+
+            foreach (var so in salesIds)
+            {
+                var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
+                var order = orders.FirstOrDefault();
+
+                var productType = ServiceShared.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
+                productType = ServiceShared.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
+
+                var isLocal = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, order.Address);
+                var orderType = ServiceShared.CalculateTernary(isLocal, ServiceConstants.Local, ServiceConstants.Foraneo);
+
+                var userOrder = usersOrders.GetSaleOrderHeader(so.ToString());
+
+                var saleItem = new OrderListByDoctorModel
+                {
+                    DocNum = so,
+                    InitDate = order?.FechaInicio ?? DateTime.Now,
+                    Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
+                    TotalItems = orders.Count,
+                    TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
+                    TypeSaleOrder = $"Pedido {productType}",
+                    InvoiceType = orderType,
+                    Comments = userOrder?.Comments ?? string.Empty,
+                    OrderType = order.TypeOrder,
+                    Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
+                };
+                listOrders.Add(saleItem);
+            }
+
+            return listOrders;
         }
 
         private static List<LineProductsModel> GetFamilyLineProducts(List<LineProductsModel> lineProductsModel, int saleorderId)

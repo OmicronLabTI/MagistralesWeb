@@ -57,7 +57,7 @@ namespace Omicron.SapAdapter.Test.Facade
             mockInvoice.SetReturnsDefault(Task.FromResult(response));
             mockAdvance.SetReturnsDefault(Task.FromResult(response));
             mockOrdersdDoctor.SetReturnsDefault(Task.FromResult(response));
-            mockOrderDxp = new Mock<IAlmacenOrderDxpService>();
+            mockOrderDxp.SetReturnsDefault(Task.FromResult(response));
 
             this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object, mockAdvance.Object, mockOrdersdDoctor.Object, mockOrderDxp.Object);
         }

@@ -324,7 +324,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// </summary>
         /// <param name="details">The sales id separated by commas.</param>
         /// <returns>the data.</returns>
-        [Route("/almacen/orders/doctor/detail")]
+        [Route("/almacen/orders/dxp/detail")]
         [HttpPost]
         public async Task<IActionResult> SearchAlmacenOrdersDetailsByDxpId(DoctorOrdersSearchDeatilDto details)
         {

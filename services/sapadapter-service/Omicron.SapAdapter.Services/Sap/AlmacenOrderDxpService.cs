@@ -74,9 +74,29 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
 
+        /// <inheritdoc/>
         public async Task<ResultModel> SearchAlmacenOrdersDetailsByDxpId(DoctorOrdersSearchDeatilDto details)
         {
+            var sapOrders = await this.sapDao.GetSapOrderDetailForAlmacenRecepcionById(details.SaleOrders);
+            var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+            var userOrdersResponse = await this.pedidosService.PostPedidos(details.SaleOrders, ServiceConstants.GetUserSalesOrder);
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
+            var saleModel = new SalesByDoctorModel
+            {
+                AlmacenHeaderByDoctor = new AlmacenSalesByDoctorHeaderModel
+                {
+                    Address = details.Address,
+                    Doctor = details.Name,
+                    TotalItems = sapOrders.Count(y => y.Detalles != null),
+                    TotalPieces = sapOrders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
+                    IsPackage = details.IsPackage,
+                    DxpId = details.DxpId,
+                },
 
+                Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders.ToList(), localNeigbors, userOrders),
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, saleModel, null, null);
         }
 
         /// <summary>

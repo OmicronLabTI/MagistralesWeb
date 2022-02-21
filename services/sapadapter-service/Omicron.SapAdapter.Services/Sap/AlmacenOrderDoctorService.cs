@@ -92,7 +92,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsPackage = details.IsPackage,
             };
 
-            saleModel.Items = this.GetTotalOrdersByDoctor(sapOrders.ToList(), localNeigbors, userOrders);
+            saleModel.Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders.ToList(), localNeigbors, userOrders);
 
             return ServiceUtils.CreateResult(true, 200, null, saleModel, null, null);
         }
