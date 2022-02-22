@@ -107,7 +107,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(true);
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object, this.catalogService.Object, mockRedis.Object);
+            ////this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object, this.catalogService.Object, mockRedis.Object);
         }
 
         /// <summary>
