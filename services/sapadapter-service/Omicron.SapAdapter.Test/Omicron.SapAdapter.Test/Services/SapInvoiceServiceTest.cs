@@ -419,6 +419,11 @@ namespace Omicron.SapAdapter.Test.Services
             var clients = new List<ExclusivePartnersModel>();
             var clientResponse = this.GetResultDto(clients);
 
+            var processPayments = new List<PaymentsDto>()
+            {
+                new PaymentsDto { TransactionId = "123456", ShippingCostAccepted = 1 },
+            };
+
             var mockPedidos = new Mock<IPedidosService>();
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
@@ -430,6 +435,11 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(clientResponse));
 
             var mockProccessPayments = new Mock<IProccessPayments>();
+
+            mockProccessPayments
+                .Setup(m => m.PostProccessPayments(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(processPayments)));
+
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act

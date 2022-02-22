@@ -60,5 +60,13 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// String FirstName.
         /// </value>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets FirstName.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public bool NeedsDelivery { get; set; }
     }
 }

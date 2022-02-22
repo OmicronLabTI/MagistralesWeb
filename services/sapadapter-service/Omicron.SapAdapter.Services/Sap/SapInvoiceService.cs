@@ -331,6 +331,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var status = !packages.Any() ? ServiceConstants.Empaquetado : packages.OrderByDescending(x => x.AssignedDate.Value).FirstOrDefault().Status;
 
+            var dxpTransaction = ServiceShared.CalculateTernary(string.IsNullOrEmpty(invoiceHeader.DocNumDxp), string.Empty, invoiceHeader.DocNumDxp);
+            var dxpTransactions = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, new List<string> { dxpTransaction })).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == invoiceHeader.DocNumDxp);
+            dxpTransactions ??= new PaymentsDto { ShippingCostAccepted = 1 };
+
             var model = new InvoiceDeliverModel
             {
                 Address = invoiceHeader.Address,
@@ -339,6 +343,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Doctor = invoiceHeader.Medico,
                 PackageNumber = invoiceHeader.DocNum,
                 Status = status,
+                NeedsDelivery = dxpTransactions.ShippingCostAccepted == 1,
             };
 
             var comments = ServiceShared.CalculateTernary(model.Address.Contains(ServiceConstants.NuevoLeon) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode), string.Empty, ServiceConstants.ForeingPackage);
