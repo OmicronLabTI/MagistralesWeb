@@ -929,6 +929,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              PedidoId = delivery.PedidoId,
                              TypeOrder = delivery.TypeOrder,
                              IsPackage = delivery.IsPackage,
+                             DocNumDxp = delivery.DocNumDxp,
                          });
 
             return (await this.RetryQuery<DeliverModel>(query)).ToList();
@@ -985,6 +986,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              TypeOrder = invoice.TypeOrder,
                              UpdateDate = invoice.UpdateDate,
                              IsPackage = invoice.IsPackage,
+                             DocNumDxp = invoice.DocNumDxp,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -1423,6 +1425,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              AsesorId = order.AsesorId,
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
