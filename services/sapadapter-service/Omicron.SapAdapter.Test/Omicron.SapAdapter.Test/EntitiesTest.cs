@@ -92,6 +92,7 @@ namespace Omicron.SapAdapter.Test
             new SalesPersonModel(),
             new AssignedBatches(),
             new PaymentsDto(),
+            new GetDoctorAddressModel(),
         };
 
         /// <summary>

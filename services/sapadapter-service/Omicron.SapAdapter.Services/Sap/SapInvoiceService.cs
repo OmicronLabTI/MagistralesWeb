@@ -22,6 +22,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
@@ -44,6 +45,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IProccessPayments proccessPayments;
 
+        private readonly IDoctorService doctorService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapInvoiceService"/> class.
         /// </summary>
@@ -53,7 +56,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">The redis service.</param>
         /// <param name="proccessPayments">the proccess payments.</param>
-        public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments)
+        /// <param name="doctorService">The doctor service.</param>
+        public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments, IDoctorService doctorService)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
@@ -61,6 +65,7 @@ namespace Omicron.SapAdapter.Services.Sap
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
             this.proccessPayments = proccessPayments.ThrowIfNull(nameof(proccessPayments));
+            this.doctorService = doctorService.ThrowIfNull(nameof(doctorService));
         }
 
         /// <inheritdoc/>
@@ -334,6 +339,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var dxpTransaction = ServiceShared.CalculateTernary(string.IsNullOrEmpty(invoiceHeader.DocNumDxp), string.Empty, invoiceHeader.DocNumDxp);
             var dxpTransactions = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, new List<string> { dxpTransaction })).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == invoiceHeader.DocNumDxp);
             dxpTransactions ??= new PaymentsDto { ShippingCostAccepted = 1 };
+
+
 
             var model = new InvoiceDeliverModel
             {
