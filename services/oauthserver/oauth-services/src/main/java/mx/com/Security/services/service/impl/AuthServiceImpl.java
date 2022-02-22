@@ -43,7 +43,7 @@ public class AuthServiceImpl implements IAuthService {
 
         boolean isAbleToApp = securityDO.getRole() == 2;
         boolean isAbleToAppAlmacen = securityDO.getRole() == 5;
-        boolean isAbleToWebDelivery = securityDO.getRole() == 6;
+        boolean isAbleToWebDelivery = securityDO.getRole() == 6 || securityDO.getRole() == 8;
         boolean isAbleToWebMagistral = securityDO.getRole() == 1 || securityDO.getRole() == 3 || securityDO.getRole() == 4 || securityDO.getRole() == 5 || securityDO.getRole() == 7;
 
         boolean needsThrowError = isAbleToApp && !origin.toLowerCase().equals("app");

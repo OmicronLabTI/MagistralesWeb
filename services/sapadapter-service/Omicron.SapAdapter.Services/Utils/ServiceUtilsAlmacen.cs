@@ -249,6 +249,7 @@ namespace Omicron.SapAdapter.Services.Utils
                     Comments = userOrder?.Comments ?? string.Empty,
                     OrderType = order.TypeOrder,
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
+                    DxpId = order.DxpId,
                 };
                 listOrders.Add(saleItem);
             }
