@@ -115,7 +115,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, salesOrdersId);
 
             var transactionsIds = invoiceDetails.Where(i => !string.IsNullOrEmpty(i.InvoiceHeader.DocNumDxp)).Select(o => o.InvoiceHeader.DocNumDxp).Distinct().ToList();
-            var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == deliveryDetails.First().DocNumDxp);
+            var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == invoiceDetails.First().InvoiceHeader.DocNumDxp);
             payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
 
             var invoiceHeader = invoiceDetails.FirstOrDefault();
