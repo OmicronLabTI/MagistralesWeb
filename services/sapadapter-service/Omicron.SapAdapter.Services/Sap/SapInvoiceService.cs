@@ -115,13 +115,12 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, salesOrdersId);
 
             var transactionsIds = invoiceDetails.Where(i => !string.IsNullOrEmpty(i.InvoiceHeader.DocNumDxp)).Select(o => o.InvoiceHeader.DocNumDxp).Distinct().ToList();
-            var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == invoiceDetails.First().InvoiceHeader.DocNumDxp);
-            payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
+            var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).GetPaymentBydocNumDxp(invoiceDetails.First().InvoiceHeader.DocNumDxp);
 
             var invoiceHeader = invoiceDetails.FirstOrDefault();
             var invoiceToReturn = new InvoiceSaleHeaderModel
             {
-                Address = invoiceHeader.InvoiceHeader.Address.Replace("\r", string.Empty).ToUpper(),
+                Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoiceHeader.InvoiceHeader.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
                 Client = invoiceHeader.Cliente,
                 Doctor = invoiceHeader.Medico ?? string.Empty,
                 Invoice = invoiceHeader.InvoiceHeader.DocNum,
@@ -300,6 +299,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var company = deliveryCompanies.FirstOrDefault(y => y.TrnspCode == x.TransportCode);
                 company ??= new Repartidores { TrnspName = string.Empty };
 
+                var payment = payments.GetPaymentBydocNumDxp(x.DocNumDxp);
                 var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
 
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
@@ -311,6 +311,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.TotalSaleOrder = saleOrders.Select(y => y.PedidoId).Distinct().Count();
                 x.SalesPrsonEmail = salePerson.Email.ValidateNull();
                 x.SalesPrsonName = $"{salePerson.FirstName.ValidateNull()} {salePerson.LastName.ValidateNull()}".Trim();
+                x.Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, x.Address, ServiceConstants.OnSiteDelivery);
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);

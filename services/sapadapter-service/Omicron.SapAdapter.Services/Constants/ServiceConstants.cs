@@ -581,6 +581,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const int ShippingCostAccepted = 1;
 
         /// <summary>
+        /// the nvo leon state.
+        /// </summary>
+        public const string OnSiteDelivery = "Entrega en las instalaciones";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
