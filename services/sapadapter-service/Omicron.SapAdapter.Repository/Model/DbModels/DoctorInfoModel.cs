@@ -45,5 +45,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>Street.</value>
         [Column("AdresType")]
         public string AdressType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the email for invoice andphone number for address.
+        /// </summary>
+        /// <value>GlblLocNum.</value>
+        [Column("GlblLocNum")]
+        public string GlblLocNum { get; set; }
     }
 }

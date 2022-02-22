@@ -337,7 +337,7 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<InvoiceHeaderModel>
             {
-                new InvoiceHeaderModel { Address = "address", Cliente = "cliente", CardCode = "C1", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico", DocNumDxp = "123456" },
+                new InvoiceHeaderModel { Address = "address", Cliente = "cliente", CardCode = "C1", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico", DocNumDxp = "123456", ShippingAddressName = "Address1" },
 
                 // for packages
                 new InvoiceHeaderModel { Address = "address, Nuevo León", Cliente = "cliente", CardCode = "C1", DocNum = 2, FechaInicio = DateTime.Now, InvoiceId = 2, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 1 },

@@ -1541,6 +1541,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
         }
 
+        /// <inheritdoc/>
+        public async Task<List<DoctorInfoModel>> GetDoctorDetailDataById(List<string> carCodes)
+        {
+            return await this.databaseContext.DoctorInfoModel.Where(x => carCodes.Contains(x.CardCode)).ToListAsync();
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

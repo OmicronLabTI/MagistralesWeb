@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
@@ -340,7 +341,12 @@ namespace Omicron.SapAdapter.Services.Sap
             var dxpTransactions = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, new List<string> { dxpTransaction })).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == invoiceHeader.DocNumDxp);
             dxpTransactions ??= new PaymentsDto { ShippingCostAccepted = 1 };
 
+            var addressesResponse = await this.doctorService.PostDoctors(new GetDoctorAddressModel { CardCode = invoiceHeader.CardCode, AddressId = invoiceHeader.ShippingAddressName }, ServiceConstants.GetDoctorAddress);
+            var address = JsonConvert.DeserializeObject<List<DoctorAddressModel>>(addressesResponse.Response.ToString()).FirstOrDefault();
+            address ??= new DoctorAddressModel();
 
+            var doctorData = (await this.sapDao.GetDoctorDetailDataById(new List<string> { invoiceHeader.CardCode })).FirstOrDefault(x => x.NickName == invoiceHeader.ShippingAddressName);
+            doctorData ??= new DoctorInfoModel { GlblLocNum = string.Empty };
 
             var model = new InvoiceDeliverModel
             {
@@ -351,6 +357,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 PackageNumber = invoiceHeader.DocNum,
                 Status = status,
                 NeedsDelivery = dxpTransactions.ShippingCostAccepted == 1,
+                BetweenStreets = address.BetweenStreets,
+                References = address.References,
+                Telephone = doctorData.GlblLocNum,
+                EtablishmentName = address.EstablishmentName,
+                ResponsibleDoctor = address.ResponsibleDoctor,
             };
 
             var comments = ServiceShared.CalculateTernary(model.Address.Contains(ServiceConstants.NuevoLeon) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode), string.Empty, ServiceConstants.ForeingPackage);
