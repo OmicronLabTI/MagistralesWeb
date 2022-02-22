@@ -23,6 +23,7 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Utils;
+    using Omicron.SapAdapter.Services.Doctors;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -58,6 +59,7 @@ namespace Omicron.SapAdapter.DependencyInjection
             Services.AddTransient<ISapDxpService, SapDxpService>();
             Services.AddTransient<IAlmacenOrderDxpService, AlmacenOrderDxpService>();
             Services.AddTransient<IProccessPayments, ProccessPayments>();
+            Services.AddTransient<IDoctorService, DoctorService>();
             return Services;
         }
 

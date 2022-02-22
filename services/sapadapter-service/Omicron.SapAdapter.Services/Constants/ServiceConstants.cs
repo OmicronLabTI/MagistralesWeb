@@ -256,6 +256,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string SpecialClients = "special/clients";
 
         /// <summary>
+        /// gets the address.
+        /// </summary>
+        public const string GetDoctorAddress = "doctor/specific/deliveryaddress";
+
+        /// <summary>
         /// route to look for user orders.
         /// </summary>
         public const string GetOrderByQuery = "userorders";

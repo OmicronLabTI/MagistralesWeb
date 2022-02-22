@@ -23,6 +23,7 @@ namespace Omicron.SapAdapter.Api
     using Omicron.SapAdapter.DependencyInjection;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.User;
@@ -45,6 +46,7 @@ namespace Omicron.SapAdapter.Api
 
         private const string CatalogService = "http://catalogosservice/";
         private const string ProccessPaymentsService = "http://processpaymentservice/";
+        private const string DoctorsServiceUrl = "http://doctorservice/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
@@ -154,6 +156,13 @@ namespace Omicron.SapAdapter.Api
             })
             .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IProccessPayments, ProccessPayments>();
+
+            services.AddHttpClient("doctors", c =>
+            {
+                c.BaseAddress = new Uri(DoctorsServiceUrl);
+            })
+            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
+            .AddTypedClient<IDoctorService, DoctorService>();
 
             this.AddRedis(services, Log.Logger);
             this.AddCorsSvc(services);

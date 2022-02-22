@@ -17,11 +17,13 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
@@ -44,6 +46,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IProccessPayments proccessPayments;
 
+        private readonly IDoctorService doctorService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapInvoiceService"/> class.
         /// </summary>
@@ -53,7 +57,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">The redis service.</param>
         /// <param name="proccessPayments">the proccess payments.</param>
-        public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments)
+        /// <param name="doctorService">The doctor service.</param>
+        public SapInvoiceService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments, IDoctorService doctorService)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
@@ -61,6 +66,7 @@ namespace Omicron.SapAdapter.Services.Sap
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
             this.proccessPayments = proccessPayments.ThrowIfNull(nameof(proccessPayments));
+            this.doctorService = doctorService.ThrowIfNull(nameof(doctorService));
         }
 
         /// <inheritdoc/>
@@ -336,6 +342,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var dxpTransactions = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, new List<string> { dxpTransaction })).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == invoiceHeader.DocNumDxp);
             dxpTransactions ??= new PaymentsDto { ShippingCostAccepted = 1 };
 
+            var addressesResponse = await this.doctorService.PostDoctors(new GetDoctorAddressModel { CardCode = invoiceHeader.CardCode, AddressId = invoiceHeader.ShippingAddressName }, ServiceConstants.GetDoctorAddress);
+            var address = JsonConvert.DeserializeObject<List<DoctorAddressModel>>(addressesResponse.Response.ToString()).FirstOrDefault();
+            address ??= new DoctorAddressModel();
+
+            var doctorData = (await this.sapDao.GetDoctorDetailDataById(new List<string> { invoiceHeader.CardCode })).FirstOrDefault(x => x.NickName == invoiceHeader.ShippingAddressName);
+            doctorData ??= new DoctorInfoModel { GlblLocNum = string.Empty };
+
             var model = new InvoiceDeliverModel
             {
                 Address = invoiceHeader.Address,
@@ -345,6 +358,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 PackageNumber = invoiceHeader.DocNum,
                 Status = status,
                 NeedsDelivery = dxpTransactions.ShippingCostAccepted == 1,
+                BetweenStreets = address.BetweenStreets,
+                References = address.References,
+                Telephone = doctorData.GlblLocNum,
+                EtablishmentName = address.EstablishmentName,
+                ResponsibleDoctor = address.ResponsibleDoctor,
             };
 
             var comments = ServiceShared.CalculateTernary(model.Address.Contains(ServiceConstants.NuevoLeon) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode), string.Empty, ServiceConstants.ForeingPackage);
