@@ -178,7 +178,6 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
 
-            var mockProccessPayments = new Mock<IProccessPayments>();
             var dictionary = new Dictionary<string, string>
             {
                 { ServiceConstants.Offset, "0" },
@@ -187,6 +186,14 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Shipping, "Foraneo" },
             };
 
+            var payments = new List<PaymentsDto>()
+            {
+                new PaymentsDto { CardCode = "C00007", ShippingCostAccepted = 1, TransactionId = "ac901443-c548-4860-9fdc-fa5674847822" },
+            };
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            mockProccessPayments
+                .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(payments)));
             var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act

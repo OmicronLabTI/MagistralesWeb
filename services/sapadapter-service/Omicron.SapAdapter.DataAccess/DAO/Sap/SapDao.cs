@@ -742,6 +742,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsMagistral = product.IsMagistral,
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -822,6 +823,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsLine = product.IsLine,
                              IsMagistral = product.IsMagistral,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);

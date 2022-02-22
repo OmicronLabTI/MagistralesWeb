@@ -22,6 +22,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
 
@@ -40,6 +41,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IRedisService redisService;
 
+        private readonly IProccessPayments proccessPayments;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AlmacenOrderDoctorService"/> class.
         /// </summary>
@@ -48,13 +51,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="almacenService">The almacen service.</param>
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">thre redis service.</param>
-        public AlmacenOrderDoctorService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
+        /// <param name="proccessPayments">the proccess payments.</param>
+        public AlmacenOrderDoctorService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
             this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
+            this.proccessPayments = proccessPayments.ThrowIfNull(nameof(proccessPayments));
         }
 
         /// <inheritdoc/>
@@ -81,6 +86,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
             var userOrdersResponse = await this.pedidosService.PostPedidos(details.SaleOrders, ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
+            var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+            var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
             var saleModel = new SalesByDoctorModel();
 
             saleModel.AlmacenHeaderByDoctor = new AlmacenSalesByDoctorHeaderModel
@@ -92,7 +99,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsPackage = details.IsPackage,
             };
 
-            saleModel.Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders.ToList(), localNeigbors, userOrders);
+            saleModel.Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders.ToList(), localNeigbors, userOrders, payments);
 
             return ServiceUtils.CreateResult(true, 200, null, saleModel, null, null);
         }
@@ -170,8 +177,10 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             if (ServiceShared.IsValidFilterByTypeShipping(parameters))
             {
+                var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+                var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
                 var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-                sapOrders = sapOrders.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+                sapOrders = sapOrders.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull(), payments.GetPaymentBydocNumDxp(x.DocNumDxp)) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
             }
 
             if (!parameters.ContainsKey(ServiceConstants.Chips))
@@ -227,43 +236,6 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return listToReturn;
-        }
-
-        private List<OrderListByDoctorModel> GetTotalOrdersByDoctor(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<string> localNeighbors, List<UserOrderModel> usersOrders)
-        {
-            var listOrders = new List<OrderListByDoctorModel>();
-            var salesIds = sapOrders.Select(x => x.DocNum).Distinct().OrderByDescending(x => x);
-
-            foreach (var so in salesIds)
-            {
-                var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
-                var order = orders.FirstOrDefault();
-
-                var productType = ServiceShared.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
-                productType = ServiceShared.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
-
-                var isLocal = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, order.Address);
-                var orderType = ServiceShared.CalculateTernary(isLocal, ServiceConstants.Local, ServiceConstants.Foraneo);
-
-                var userOrder = usersOrders.GetSaleOrderHeader(so.ToString());
-
-                var saleItem = new OrderListByDoctorModel
-                {
-                    DocNum = so,
-                    InitDate = order?.FechaInicio ?? DateTime.Now,
-                    Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
-                    TotalItems = orders.Count,
-                    TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
-                    TypeSaleOrder = $"Pedido {productType}",
-                    InvoiceType = orderType,
-                    Comments = userOrder?.Comments ?? string.Empty,
-                    OrderType = order.TypeOrder,
-                    Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
-                };
-                listOrders.Add(saleItem);
-            }
-
-            return listOrders;
         }
     }
 }

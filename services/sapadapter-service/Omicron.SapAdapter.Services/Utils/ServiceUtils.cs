@@ -299,18 +299,6 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="state">the state.</param>
         /// <param name="neigborhood">the municipios.</param>
         /// <param name="address">the address to validta.</param>
-        /// <returns>the desition.</returns>
-        public static bool CalculateTypeLocal(string state, List<string> neigborhood, string address)
-        {
-            return address.ToLower().Contains(state.ToLower()) && neigborhood.Any(x => address.ToLower().Contains(x.ToLower()));
-        }
-
-        /// <summary>
-        /// Calculates if an address is local.
-        /// </summary>
-        /// <param name="state">the state.</param>
-        /// <param name="neigborhood">the municipios.</param>
-        /// <param name="address">the address to validta.</param>
         /// <param name="payment">the payment.</param>
         /// <returns>the desition.</returns>
         public static bool IsTypeLocal(string state, List<string> neigborhood, string address, PaymentsDto payment)

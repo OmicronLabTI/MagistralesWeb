@@ -291,7 +291,7 @@ namespace Omicron.SapAdapter.Test.Services
             };
             var mockProccessPayments = new Mock<IProccessPayments>();
             mockProccessPayments
-                .SetupSequence(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(payments)));
             var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
 

@@ -472,8 +472,10 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             if (ServiceShared.IsValidFilterByTypeShipping(parameters))
             {
+                var transactionsIds = invoices.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+                var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
                 var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-                invoices = invoices.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+                invoices = invoices.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull(), payments.GetPaymentBydocNumDxp(x.DocNumDxp)) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
             }
 
             if (!parameters.ContainsKey(ServiceConstants.Chips))
