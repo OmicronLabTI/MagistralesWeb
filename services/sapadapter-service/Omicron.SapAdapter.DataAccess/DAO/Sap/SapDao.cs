@@ -742,6 +742,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsMagistral = product.IsMagistral,
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -822,6 +823,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsLine = product.IsLine,
                              IsMagistral = product.IsMagistral,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -899,6 +901,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              PedidoId = delivery.PedidoId,
                              TypeOrder = delivery.TypeOrder,
                              IsPackage = delivery.IsPackage,
+                             DocNumDxp = delivery.DocNumDxp,
                          });
 
             return (await this.RetryQuery<DeliverModel>(query)).ToList();
@@ -955,6 +958,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              TypeOrder = invoice.TypeOrder,
                              UpdateDate = invoice.UpdateDate,
                              IsPackage = invoice.IsPackage,
+                             DocNumDxp = invoice.DocNumDxp,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -1065,6 +1069,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              UpdateDate = invoice.UpdateDate,
                              ClientEmail = doctor.Email,
                              IsPackage = invoice.IsPackage,
+                             DocNumDxp = invoice.DocNumDxp,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -1392,6 +1397,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              AsesorId = order.AsesorId,
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return await this.RetryQuery<CompleteOrderModel>(query);
@@ -1488,7 +1494,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              FabricationOrder = dpf != null ? dpf.OrdenId.ToString() : string.Empty,
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
-                             DxpId = order.DocNumDxp,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();
@@ -1529,9 +1535,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = order.Address,
                              Producto = p,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<DoctorInfoModel>> GetDoctorDetailDataById(List<string> carCodes)
+        {
+            return await this.databaseContext.DoctorInfoModel.Where(x => carCodes.Contains(x.CardCode)).ToListAsync();
         }
 
         /// <summary>

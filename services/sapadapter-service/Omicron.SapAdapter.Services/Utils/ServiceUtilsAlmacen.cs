@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
@@ -218,8 +219,9 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="sapOrders">the saporders.</param>
         /// <param name="localNeighbors">the local neighboors.</param>
         /// <param name="usersOrders">user order.</param>
+        /// <param name="payments">the payments.</param>
         /// <returns>the data.</returns>
-        public static List<OrderListByDoctorModel> GetTotalOrdersForDoctorAndDxp(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<string> localNeighbors, List<UserOrderModel> usersOrders)
+        public static List<OrderListByDoctorModel> GetTotalOrdersForDoctorAndDxp(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<string> localNeighbors, List<UserOrderModel> usersOrders, List<PaymentsDto> payments)
         {
             var listOrders = new List<OrderListByDoctorModel>();
             var salesIds = sapOrders.Select(x => x.DocNum).Distinct().OrderByDescending(x => x);
@@ -232,9 +234,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 var productType = ServiceShared.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
                 productType = ServiceShared.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
 
-                var isLocal = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, order.Address);
-                var orderType = ServiceShared.CalculateTernary(isLocal, ServiceConstants.Local, ServiceConstants.Foraneo);
-
+                var payment = payments.GetPaymentBydocNumDxp(order.DocNumDxp);
                 var userOrder = usersOrders.GetSaleOrderHeader(so.ToString());
 
                 var saleItem = new OrderListByDoctorModel
@@ -245,11 +245,11 @@ namespace Omicron.SapAdapter.Services.Utils
                     TotalItems = orders.Count,
                     TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
                     TypeSaleOrder = $"Pedido {productType}",
-                    InvoiceType = orderType,
+                    InvoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeighbors, order.Address, payment),
                     Comments = userOrder?.Comments ?? string.Empty,
                     OrderType = order.TypeOrder,
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
-                    DxpId = order.DxpId,
+                    DxpId = order.DocNumDxp,
                 };
                 listOrders.Add(saleItem);
             }

@@ -147,6 +147,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string IsPackage { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_Pedido_DXP")]
+        public string DocNumDxp { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>

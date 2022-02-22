@@ -21,6 +21,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Sap;
     using Serilog;
     using Omicron.SapAdapter.Entities.Model;
@@ -29,6 +30,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Dtos.DxpModels;
 
     /// <summary>
     /// Class for the QR test.
@@ -71,6 +73,7 @@ namespace Omicron.SapAdapter.Test.Services
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacenService = new Mock<IAlmacenService>();
             var mockCatalogs = new Mock<ICatalogsService>();
+            var mockProccessPayments = new Mock<IProccessPayments>();
 
             this.mockRedis = new Mock<IRedisService>();
 
@@ -83,7 +86,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(true);
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object, this.mockRedis.Object);
+            this.sapService = new SapAlmacenService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object, this.mockRedis.Object, mockProccessPayments.Object);
         }
 
         /// <summary>
@@ -121,13 +124,14 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
 
+            var mockProccessPayments = new Mock<IProccessPayments>();
             var dictionary = new Dictionary<string, string>
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -182,7 +186,15 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Shipping, "Foraneo" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
+            var payments = new List<PaymentsDto>()
+            {
+                new PaymentsDto { CardCode = "C00007", ShippingCostAccepted = 1, TransactionId = "ac901443-c548-4860-9fdc-fa5674847822" },
+            };
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            mockProccessPayments
+                .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(payments)));
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -229,7 +241,8 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()}" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -277,6 +290,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
 
+            var mockProccessPayments = new Mock<IProccessPayments>();
             var dictionary = new Dictionary<string, string>
             {
                 { ServiceConstants.Offset, "0" },
@@ -284,7 +298,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Type, $"{ServiceConstants.Paquetes.ToLower()}" },
             };
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await localService.GetOrders(dictionary);
@@ -325,7 +339,16 @@ namespace Omicron.SapAdapter.Test.Services
 
             var ids = 75000;
 
-            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object);
+            var payments = new List<PaymentsDto>()
+            {
+                new PaymentsDto { CardCode = "C00007", ShippingCostAccepted = 1, TransactionId = "ac901443-c548-4860-9fdc-fa5674847822" },
+            };
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            mockProccessPayments
+                .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(payments)));
+
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await localService.GetOrdersDetails(ids);

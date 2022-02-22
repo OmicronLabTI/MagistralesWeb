@@ -537,5 +537,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="delveryId">the ids to look.</param>
         /// <returns>the data.</returns>
         Task<List<CompleteDeliveryDetailModel>> GetDeliveryDetailForDeliveryById(List<int> delveryId);
+
+        /// <summary>
+        /// Gets the details for a doctor by id.
+        /// </summary>
+        /// <param name="carCodes">the ids.</param>
+        /// <returns>the data.</returns>
+        Task<List<DoctorInfoModel>> GetDoctorDetailDataById(List<string> carCodes);
     }
 }

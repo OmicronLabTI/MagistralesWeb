@@ -22,6 +22,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
 
@@ -40,6 +41,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IRedisService redisService;
 
+        private readonly IProccessPayments proccessPayments;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AlmacenOrderDxpService"/> class.
         /// </summary>
@@ -48,13 +51,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="almacenService">The almacen service.</param>
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">thre redis service.</param>
-        public AlmacenOrderDxpService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
+        /// <param name="proccessPayments">the proccess payments.</param>
+        public AlmacenOrderDxpService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
             this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
+            this.proccessPayments = proccessPayments.ThrowIfNull(nameof(proccessPayments));
         }
 
         /// <inheritdoc/>
@@ -81,6 +86,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
             var userOrdersResponse = await this.pedidosService.PostPedidos(details.SaleOrders, ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
+            var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+            var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
+
             var saleModel = new SalesByDoctorModel
             {
                 AlmacenHeaderByDoctor = new AlmacenSalesByDoctorHeaderModel
@@ -93,7 +101,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DxpId = details.DxpId,
                 },
 
-                Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders.ToList(), localNeigbors, userOrders),
+                Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders.ToList(), localNeigbors, userOrders, payments),
             };
 
             return ServiceUtils.CreateResult(true, 200, null, saleModel, null, null);
@@ -127,8 +135,10 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             if (ServiceShared.IsValidFilterByTypeShipping(parameters))
             {
+                var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+                var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
                 var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-                sapOrders = sapOrders.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+                sapOrders = sapOrders.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull(), payments.GetPaymentBydocNumDxp(x.DocNumDxp)) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
             }
 
             if (!parameters.ContainsKey(ServiceConstants.Chips))

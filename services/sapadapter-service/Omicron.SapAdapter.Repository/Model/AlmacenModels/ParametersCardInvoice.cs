@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
 {
     using System.Collections.Generic;
+    using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
@@ -58,5 +59,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public List<string> LocalNeighbors { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>s
+        /// <value>The code.</value>
+        public List<PaymentsDto> Payments { get; set; }
     }
 }

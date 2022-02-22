@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
@@ -21,6 +22,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
 
@@ -39,6 +41,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IRedisService redisService;
 
+        private readonly IProccessPayments proccessPayments;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAlmacenService"/> class.
         /// </summary>
@@ -47,13 +51,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="almacenService">The almacen service.</param>
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">thre redis service.</param>
-        public SapAlmacenService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
+        /// <param name="proccessPayments">the proccesPayments.</param>
+        public SapAlmacenService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
             this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
+            this.proccessPayments = proccessPayments.ThrowIfNull(nameof(proccessPayments));
         }
 
         /// <inheritdoc/>
@@ -98,7 +104,9 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var sapOrders = await this.sapDao.GetSapOrderDetailForAlmacenRecepcionById(new List<int> { orderId });
             var batches = (await this.sapDao.GetBatchesByProdcuts(lineOrders.Select(x => x.ItemCode).ToList())).ToList();
-            var listToReturn = this.GetDetailRecpcionToReturn(orderId, pedidos, lineOrders, incidences, localNeigbors, sapOrders, batches);
+            var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+            var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
+            var listToReturn = this.GetDetailRecpcionToReturn(orderId, pedidos, lineOrders, incidences, localNeigbors, sapOrders, batches, payments);
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
@@ -313,12 +321,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, new List<int>(), dateToLook);
         }
 
-        private ReceipcionPedidosDetailModel GetDetailRecpcionToReturn(int orderId, List<UserOrderModel> pedidos, List<LineProductsModel> lineOrders, List<IncidentsModel> incidences, List<string> localNeigbors, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<Batches> batches)
+        private ReceipcionPedidosDetailModel GetDetailRecpcionToReturn(int orderId, List<UserOrderModel> pedidos, List<LineProductsModel> lineOrders, List<IncidentsModel> incidences, List<string> localNeigbors, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<Batches> batches, List<PaymentsDto> payments)
         {
             var userOrder = pedidos.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             var order = sapOrders.FirstOrDefault();
-            var isLocal = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, order.Address);
-            var invoiceType = ServiceShared.CalculateTernary(isLocal, ServiceConstants.Local, ServiceConstants.Foraneo);
+            var payment = payments.FirstOrDefault(p => p.TransactionId.GetSubtransaction() == order.DocNumDxp);
+            payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
+            var invoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, order.Address, payment);
 
             var productList = this.GetProductListModel(pedidos, sapOrders, lineOrders, incidences, batches);
 
@@ -469,8 +478,10 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             if (ServiceShared.IsValidFilterByTypeShipping(parameters))
             {
+                var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+                var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
                 var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-                sapOrders = sapOrders.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+                sapOrders = sapOrders.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull(), payments.GetPaymentBydocNumDxp(x.DocNumDxp)) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
             }
 
             if (!parameters.ContainsKey(ServiceConstants.Chips))

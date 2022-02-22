@@ -94,9 +94,9 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         public string IsPackage { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether order is cancelled.
+        /// Gets or sets Code.
         /// </summary>
-        /// <value>The IsChecked.</value>
-        public string DxpId { get; set; }
+        /// <value>The code.</value>
+        public string DocNumDxp { get; set; }
     }
 }
