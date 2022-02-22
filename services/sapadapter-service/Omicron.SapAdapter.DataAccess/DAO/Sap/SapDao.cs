@@ -1488,6 +1488,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              FabricationOrder = dpf != null ? dpf.OrdenId.ToString() : string.Empty,
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
+                             DxpId = order.DocNumDxp,
                          });
 
             return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();
