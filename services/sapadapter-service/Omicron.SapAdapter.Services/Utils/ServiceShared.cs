@@ -158,6 +158,23 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// Applies the offset and limit.
+        /// </summary>
+        /// <typeparam name="T">the list.</typeparam>
+        /// <param name="listToApply">the list to apply.</param>
+        /// <param name="parameters">the data.</param>
+        /// <returns>the values.</returns>
+        public static List<T> GetOffsetLimit<T>(List<T> listToApply, Dictionary<string, string> parameters)
+        {
+            var offset = GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
+
+            int.TryParse(offset, out int offsetNumber);
+            int.TryParse(limit, out int limitNumber);
+            return listToApply.Skip(offsetNumber).Take(limitNumber).ToList();
+        }
+
+        /// <summary>
         /// Calculates the "or´s" conditions.
         /// </summary>
         /// <param name="transactionId">the transactionid.</param>

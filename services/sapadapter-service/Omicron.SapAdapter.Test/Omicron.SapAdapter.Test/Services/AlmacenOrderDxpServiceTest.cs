@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="AlmacenOrderDoctorServiceTest.cs" company="Axity">
+// <copyright file="AlmacenOrderDxpServiceTest.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -30,9 +30,9 @@ namespace Omicron.SapAdapter.Test.Services
     /// Class UsersServiceTest.
     /// </summary>
     [TestFixture]
-    public class AlmacenOrderDoctorServiceTest : BaseTest
+    public class AlmacenOrderDxpServiceTest : BaseTest
     {
-        private IAlmacenOrderDoctorService almacenOrderDoctorService;
+        private IAlmacenOrderDxpService almacenOrderDxpService;
 
         private ISapDao sapDao;
 
@@ -47,7 +47,7 @@ namespace Omicron.SapAdapter.Test.Services
         public void Init()
         {
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: "TemporalAlmacenOrdersService")
+                .UseInMemoryDatabase(databaseName: "TemporalAlmacenDxpService")
                 .Options;
 
             this.context = new DatabaseContext(options);
@@ -98,7 +98,7 @@ namespace Omicron.SapAdapter.Test.Services
             mockRedis
                 .Setup(x => x.IsConnectedRedis())
                 .Returns(true);
-            this.almacenOrderDoctorService = new AlmacenOrderDoctorService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, this.catalogService.Object, mockRedis.Object);
+            this.almacenOrderDxpService = new AlmacenOrderDxpService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, this.catalogService.Object, mockRedis.Object);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace Omicron.SapAdapter.Test.Services
             };
 
             // act
-            var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersByDoctor(dictionary);
+            var response = await this.almacenOrderDxpService.SearchAlmacenOrdersByDxpId(dictionary);
 
             // assert
             Assert.IsNotNull(response);
@@ -144,7 +144,7 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Chips, "alias" },
+                { ServiceConstants.Chips, "A2" },
                 { ServiceConstants.Shipping, "Foraneo" },
             };
 
@@ -158,7 +158,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultDto(localNeighBors)));
 
             // act
-            var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersByDoctor(dictionary);
+            var response = await this.almacenOrderDxpService.SearchAlmacenOrdersByDxpId(dictionary);
 
             // assert
             Assert.IsNotNull(response);
@@ -200,7 +200,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultDto(localNeighBors)));
 
             // act
-            var response = await this.almacenOrderDoctorService.SearchAlmacenOrdersDetailsByDoctor(request);
+            var response = await this.almacenOrderDxpService.SearchAlmacenOrdersDetailsByDxpId(request);
 
             // assert
             Assert.IsNotNull(response);
@@ -211,41 +211,6 @@ namespace Omicron.SapAdapter.Test.Services
             var data = (SalesByDoctorModel)response.Response;
             Assert.IsNotNull(data.AlmacenHeaderByDoctor);
             Assert.IsTrue(data.Items.Any());
-        }
-
-        /// <summary>
-        /// Test the method to get the orders for almacen.
-        /// </summary>
-        /// <returns>the data.</returns>
-        [Test]
-        public async Task GetOrderdetail()
-        {
-            // arrange
-            var salesOrderId = 84515;
-
-            var mockPedido = new Mock<IPedidosService>();
-            mockPedido
-                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultGetUserPedidosForDoctorOrders()));
-
-            var mockAlmacen = new Mock<IAlmacenService>();
-            mockAlmacen
-                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
-                .Returns(Task.FromResult(this.GetIncidents()));
-
-            var mockRedis = new Mock<IRedisService>();
-
-            mockRedis
-                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
-                .Returns(Task.FromResult(string.Empty));
-
-            var localService = new AlmacenOrderDoctorService(this.sapDao, mockPedido.Object, mockAlmacen.Object, this.catalogService.Object, mockRedis.Object);
-
-            // act
-            var response = await localService.GetOrderdetail(salesOrderId);
-
-            // assert
-            Assert.IsNotNull(response);
         }
     }
 }
