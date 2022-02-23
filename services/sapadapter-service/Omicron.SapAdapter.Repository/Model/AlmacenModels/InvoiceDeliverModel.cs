@@ -97,6 +97,6 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets the establishment name.
         /// </summary>
         /// <value>Establishment name.</value>
-        public string EtablishmentName { get; set; }
+        public string EstablishmentName { get; set; }
     }
 }
