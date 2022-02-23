@@ -11,10 +11,13 @@ namespace Omicron.SapAdapter.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.ProccessPayments;
 
     /// <summary>
     /// The class for the services.
@@ -152,6 +155,58 @@ namespace Omicron.SapAdapter.Services.Utils
         public static bool CalculateOr(params bool[] list)
         {
             return list.Any(element => element);
+        }
+
+        /// <summary>
+        /// Applies the offset and limit.
+        /// </summary>
+        /// <typeparam name="T">the list.</typeparam>
+        /// <param name="listToApply">the list to apply.</param>
+        /// <param name="parameters">the data.</param>
+        /// <returns>the values.</returns>
+        public static List<T> GetOffsetLimit<T>(List<T> listToApply, Dictionary<string, string> parameters)
+        {
+            var offset = GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
+            var limit = GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
+
+            int.TryParse(offset, out int offsetNumber);
+            int.TryParse(limit, out int limitNumber);
+            return listToApply.Skip(offsetNumber).Take(limitNumber).ToList();
+        }
+
+        /// <summary>
+        /// Calculates the "or´s" conditions.
+        /// </summary>
+        /// <param name="transactionId">the transactionid.</param>
+        /// <returns>the data.</returns>
+        public static string GetSubtransaction(this string transactionId)
+        {
+            return transactionId.Substring(transactionId.Length - 6, 6);
+        }
+
+        /// <summary>
+        /// Gets the response from a http response.
+        /// </summary>
+        /// <param name="proccessPayments">the proccess payments.</param>
+        /// <param name="transactionsIds">th transactions ids.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<PaymentsDto>> GetPaymentsByTransactionsIds(IProccessPayments proccessPayments, List<string> transactionsIds)
+        {
+            var paymentsResponse = await proccessPayments.PostProccessPayments(transactionsIds, ServiceConstants.EndPointToGetPayments);
+            return JsonConvert.DeserializeObject<List<PaymentsDto>>(paymentsResponse.Response.ToString());
+        }
+
+        /// <summary>
+        /// get payments from a list.
+        /// </summary>
+        /// <param name="payments">the payments.</param>
+        /// <param name="docNumDxp">the docnumdxp.</param>
+        /// <returns>data.</returns>
+        public static PaymentsDto GetPaymentBydocNumDxp(this List<PaymentsDto> payments, string docNumDxp)
+        {
+            var payment = payments.FirstOrDefault(p => p.TransactionId.GetSubtransaction() == docNumDxp);
+            payment ??= new PaymentsDto { ShippingCostAccepted = ServiceConstants.ShippingCostAccepted };
+            return payment;
         }
     }
 }

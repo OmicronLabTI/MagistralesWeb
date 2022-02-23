@@ -117,8 +117,8 @@ namespace Omicron.SapAdapter.Test
 
                 new OrderModel { PedidoId = 84458, DocNum = 84458, FechaInicio = new DateTime(2021, 04, 01), Medico = "Medico A", Codigo = "MA", PedidoStatus = "O", Address = "Guadalajara", OrderType = "BE", AsesorId = 125 },
 
-                new OrderModel { PedidoId = 84473, DocNum = 84473, FechaInicio = new DateTime(2021, 03, 06), Medico = "Medico A", Codigo = "MA", PedidoStatus = "C", Address = "Puebla", OrderType = "BE", AsesorId = 125 },
-                new OrderModel { PedidoId = 84508, DocNum = 84508, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", Codigo = "MA", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125 },
+                new OrderModel { PedidoId = 84473, DocNum = 84473, FechaInicio = new DateTime(2021, 03, 06), Medico = "Medico A", Codigo = "MA", PedidoStatus = "C", Address = "Puebla", OrderType = "BE", AsesorId = 125, DocNumDxp = "847822" },
+                new OrderModel { PedidoId = 84508, DocNum = 84508, FechaInicio = new DateTime(2021, 04, 08), Medico = "Medico A", Codigo = "MA", PedidoStatus = "O", Address = "Monterrey,Nuevo León", OrderType = "MX", AsesorId = 125, DocNumDxp = "847822" },
             };
         }
 
@@ -236,7 +236,7 @@ namespace Omicron.SapAdapter.Test
                 new InvoiceHeaderModel { Address = "TECAMACHALCO Puebla", Cliente = "cliente F", CardCode = "C03911", DocNum = 115025, FechaInicio = new DateTime(2021, 04, 06), InvoiceId = 38522, InvoiceStatus = "C", Medico = "Medico A", Canceled = "Y" },
                 new InvoiceHeaderModel { Address = "MONTERREY ,\rNuevo León, Mexico", Cliente = "cliente S", CardCode = "C00005", DocNum = 114966, FechaInicio = new DateTime(2021, 02, 10), InvoiceId = 38463, InvoiceStatus = "O", Medico = "Medico A", Canceled = "N" },
 
-                new InvoiceHeaderModel { Address = "Jalisco,  Mexico", Cliente = "cliente S", CardCode = "C00214", DocNum = 84508, FechaInicio = new DateTime(2019, 05, 15), InvoiceId = 6819, InvoiceStatus = "C", Medico = "Medico B", Canceled = "N" },
+                new InvoiceHeaderModel { Address = "Jalisco,  Mexico", Cliente = "cliente S", CardCode = "C00214", DocNum = 84508, FechaInicio = new DateTime(2019, 05, 15), InvoiceId = 6819, InvoiceStatus = "C", Medico = "Medico B", Canceled = "N", DocNumDxp = "847822" },
             };
         }
 

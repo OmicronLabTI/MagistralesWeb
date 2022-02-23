@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
@@ -23,6 +24,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Serilog;
@@ -83,6 +85,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacenService = new Mock<IAlmacenService>();
+            var mockProccessPayments = new Mock<IProccessPayments>();
 
             this.mockRedis = new Mock<IRedisService>();
 
@@ -95,7 +98,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(true);
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapService = new SapAlmacenDeliveryService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object, this.catalogService.Object, this.mockRedis.Object);
+            this.sapService = new SapAlmacenDeliveryService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
         }
 
         /// <summary>
@@ -120,13 +123,14 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetIncidents()));
 
+            var mockProccessPayments = new Mock<IProccessPayments>();
             var dictionary = new Dictionary<string, string>
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
             };
 
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await service.GetDelivery(dictionary);
@@ -157,6 +161,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetIncidents()));
 
+            var mockProccessPayments = new Mock<IProccessPayments>();
             var dictionary = new Dictionary<string, string>
             {
                 { ServiceConstants.Offset, "0" },
@@ -164,7 +169,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()},{ServiceConstants.Magistral.ToLower()}" },
             };
 
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await service.GetDelivery(dictionary);
@@ -197,6 +202,7 @@ namespace Omicron.SapAdapter.Test.Services
             mockAlmacen
                 .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetIncidents()));
+            var mockProccessPayments = new Mock<IProccessPayments>();
 
             var dictionary = new Dictionary<string, string>
             {
@@ -205,7 +211,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { "chips", chip },
             };
 
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await service.GetDelivery(dictionary);
@@ -245,6 +251,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetIncidents()));
 
+            var mockProccessPayments = new Mock<IProccessPayments>();
             var dictionary = new Dictionary<string, string>
             {
                 { ServiceConstants.Offset, "0" },
@@ -252,7 +259,7 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Type, ServiceConstants.Paquetes.ToLower() },
             };
 
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await service.GetDelivery(dictionary);
@@ -278,7 +285,15 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockAlmacen = new Mock<IAlmacenService>();
 
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
+            var payments = new List<PaymentsDto>()
+            {
+                new PaymentsDto { CardCode = "C00007", ShippingCostAccepted = 1, TransactionId = "ac901443-c548-4860-9fdc-fa5674847822" },
+            };
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            mockProccessPayments
+                .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(payments)));
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await service.GetOrdersDeliveryDetail(chip);
@@ -314,7 +329,8 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetIncidents()));
 
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object);
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
 
             // act
             var response = await service.GetProductsDelivery(chip);

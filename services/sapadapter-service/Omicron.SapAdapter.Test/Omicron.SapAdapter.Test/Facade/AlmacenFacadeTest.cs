@@ -50,14 +50,16 @@ namespace Omicron.SapAdapter.Test.Facade
             var mockInvoice = new Mock<ISapInvoiceService>();
             var mockAdvance = new Mock<IAdvanceLookService>();
             var mockOrdersdDoctor = new Mock<IAlmacenOrderDoctorService>();
+            var mockOrderDxp = new Mock<IAlmacenOrderDxpService>();
 
             mockService.SetReturnsDefault(Task.FromResult(response));
             mockDelivery.SetReturnsDefault(Task.FromResult(response));
             mockInvoice.SetReturnsDefault(Task.FromResult(response));
             mockAdvance.SetReturnsDefault(Task.FromResult(response));
             mockOrdersdDoctor.SetReturnsDefault(Task.FromResult(response));
+            mockOrderDxp.SetReturnsDefault(Task.FromResult(response));
 
-            this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object, mockAdvance.Object, mockOrdersdDoctor.Object);
+            this.almacenFacade = new SapAlmacenFacade(mapper, mockService.Object, mockDelivery.Object, mockInvoice.Object, mockAdvance.Object, mockOrdersdDoctor.Object, mockOrderDxp.Object);
         }
 
         /// <summary>
@@ -408,6 +410,34 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetOrderdetail()
         {
             var response = await this.almacenFacade.GetOrderdetail(123);
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+        }
+
+        /// <summary>
+        /// Test the get Almacen Orders By Doctor.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task SearchAlmacenOrdersByDxpId()
+        {
+            var response = await this.almacenFacade.SearchAlmacenOrdersByDxpId(new Dictionary<string, string>());
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+        }
+
+        /// <summary>
+        /// Test the get Almacen Orders By Doctor.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task SearchAlmacenOrdersDetailsByDxpId()
+        {
+            var response = await this.almacenFacade.SearchAlmacenOrdersDetailsByDxpId(new DoctorOrdersSearchDeatilDto());
 
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
