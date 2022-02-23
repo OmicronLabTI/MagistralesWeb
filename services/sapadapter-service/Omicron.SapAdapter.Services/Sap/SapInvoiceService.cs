@@ -361,7 +361,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 BetweenStreets = address.BetweenStreets,
                 References = address.References,
                 Telephone = doctorData.GlblLocNum,
-                EtablishmentName = address.EstablishmentName,
+                EstablishmentName = address.EtablishmentName,
                 ResponsibleDoctor = address.ResponsibleDoctor,
             };
 

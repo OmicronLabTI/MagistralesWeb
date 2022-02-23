@@ -29,7 +29,7 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
         /// Gets or sets the establishment name.
         /// </summary>
         /// <value>Establishment name.</value>
-        public string EstablishmentName { get; set; }
+        public string EtablishmentName { get; set; }
 
         /// <summary>
         /// Gets or sets the card code.
