@@ -10,11 +10,9 @@ namespace Omicron.SapAdapter.Test.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
-    using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Dtos.DxpModels;
