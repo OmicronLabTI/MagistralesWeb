@@ -346,5 +346,27 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.IsEmpty(cards.CardDistribution);
             Assert.IsEmpty(cards.CardOrder);
         }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <param name="docNumDxp">the docNum.</param>
+        /// <returns>the orders.</returns>
+        [Test]
+        [TestCase("#847822")]
+        public async Task GetCardsByDxpId(string docNumDxp)
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.DocNum, docNumDxp },
+            };
+
+            // act
+            var result = await this.advanceLookService.AdvanceLookUp(dicParams);
+            var cards = (CardsAdvancedLook)result.Response;
+            Assert.IsNotNull(result);
+            Assert.IsNotEmpty(cards.CardOrder);
+        }
     }
 }

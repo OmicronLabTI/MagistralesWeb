@@ -364,9 +364,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 EstablishmentName = address.EtablishmentName,
                 ResponsibleDoctor = address.ResponsibleDoctor,
                 DestinyEmail = invoiceHeader.ClientEmail,
-                SalesPrsonEmail = salesPerson.Email.ValidateNull(),
+                SalesPersonEmail = salesPerson.Email.ValidateNull(),
                 SalesPrsonName = $"{salesPerson.FirstName.ValidateNull()} {salesPerson.LastName.ValidateNull()}".Trim(),
-                SaleOrders = JsonConvert.SerializeObject(new List<string> { invoiceHeader.DocNumDxp }),
+                SalesOrders = JsonConvert.SerializeObject(new List<string> { invoiceHeader.DocNumDxp }),
             };
 
             var comments = ServiceShared.CalculateTernary(model.Address.Contains(ServiceConstants.NuevoLeon) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode), string.Empty, ServiceConstants.ForeingPackage);

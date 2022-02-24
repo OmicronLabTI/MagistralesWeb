@@ -111,7 +111,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>
         /// Bool is production order.
-        public string SalesPrsonEmail { get; set; }
+        public string SalesPersonEmail { get; set; }
 
         /// <summary>
         /// Gets or sets a value person names.
@@ -125,6 +125,6 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>
         /// Bool is production order.
-        public string SaleOrders { get; set; }
+        public string SalesOrders { get; set; }
     }
 }

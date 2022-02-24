@@ -591,6 +591,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string OnSiteDelivery = "Entrega en las instalaciones";
 
         /// <summary>
+        /// the nvo leon state.
+        /// </summary>
+        public const string WildcardDocNumDxp = "#";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
