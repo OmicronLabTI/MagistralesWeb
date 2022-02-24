@@ -90,7 +90,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             int.TryParse(docNum, out int intDocNum);
             var isDxpId = docNum.StartsWith(ServiceConstants.WildcardDocNumDxp);
-            if (intDocNum == 0 && !isDxpId)
+            if (ServiceShared.CalculateAnd(intDocNum == 0, !isDxpId))
             {
                 var cards = new CardsAdvancedLook
                 {
@@ -106,8 +106,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var listDocs = new List<int> { intDocNum };
             if (isDxpId)
             {
-                var dxpToLookUp = docNum.Remove(0, 1);
-                var ordersdxp = (await this.sapDao.GetAllOrdersWIthDetailByDocNumDxpJoinProduct(new List<string> { docNum.Remove(0, 1) })).ToList();
+                var dxpToLookUp = docNum.ToLower().Remove(0, 1);
+                var ordersdxp = (await this.sapDao.GetAllOrdersWIthDetailByDocNumDxpJoinProduct(new List<string> { dxpToLookUp })).ToList();
                 var salesId = ordersdxp.Select(o => o.DocNum).Distinct().ToList();
                 listDocs.AddRange(salesId);
             }
@@ -120,7 +120,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenData = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
 
             var tupleList = this.KindLookUp(userOrders, almacenData, listDocs);
-            var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList);
+            var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList, docNum);
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
@@ -141,7 +141,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenData = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
 
             var tupleList = this.KindLookUp(userOrders, almacenData, listDocs);
-            var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList);
+            var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList, string.Empty);
 
             response.CardOrder = response.CardOrder.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
             response.CardDelivery = response.CardDelivery.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
@@ -201,7 +201,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return tupleIds;
         }
 
-        private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData, List<Tuple<int, string>> tupleIds)
+        private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData, List<Tuple<int, string>> tupleIds, string initialDocNum)
         {
             var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIdsJoinProduct(tupleIds.Where(x => ServiceShared.CalculateOr(x.Item2 == ServiceConstants.SaleOrder, x.Item2 == ServiceConstants.DontExistsTable)).Select(y => y.Item1).ToList())).ToList();
             var sapDeliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(tupleIds.Where(x => x.Item2 == ServiceConstants.Delivery).Select(y => y.Item1).ToList())).ToList();
@@ -258,7 +258,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var users = await this.GetUsers(userOrders, almacenData);
 
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-            var payments = new List<PaymentsDto>(); // await this.GetPayments(sapSaleOrder, sapDelivery, sapInvoicesHeaders);
+            var payments = await this.GetPayments(sapSaleOrder, sapDelivery, sapInvoicesHeaders);
 
             var objectCardOrder = new ParamentsCards
             {
@@ -278,6 +278,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 LocalNeighbors = localNeigbors,
                 Payments = payments,
                 Boxes = almacenData.Boxes,
+                IsFromDxpId = initialDocNum.StartsWith(ServiceConstants.WildcardDocNumDxp),
+                DocNum = initialDocNum,
             };
 
             tupleIds.DistinctBy(order => new { order.Item1, order.Item2 }).ToList().ForEach(order =>
@@ -303,9 +305,9 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private List<AlmacenSalesHeaderModel> GetIsReceptionOrders(Tuple<int, string> tuple, ParamentsCards paramentsCards)
         {
-            var listItemCode = paramentsCards.ProductModel;
+            var lineProducts = paramentsCards.ProductModel;
             var orderbyDocNum = paramentsCards.OrderDetail.Where(x => ServiceShared.CalculateAnd(x.DocNum == tuple.Item1, x.PedidoStatus == "O" || x.Canceled == "Y", x.Detalles != null)).ToList();
-            var isLineSale = ServiceShared.CalculateAnd(tuple.Item2 == ServiceConstants.DontExistsTable, orderbyDocNum.Any(), orderbyDocNum.All(x => listItemCode.Contains(x.Detalles.ProductoId)));
+            var isLineSale = ServiceShared.CalculateAnd(tuple.Item2 == ServiceConstants.DontExistsTable, orderbyDocNum.Any(), orderbyDocNum.All(x => lineProducts.Contains(x.Detalles.ProductoId)));
             if (ServiceShared.CalculateAnd(tuple.Item2 != ServiceConstants.SaleOrder, !isLineSale))
             {
                 return new List<AlmacenSalesHeaderModel>();
@@ -388,8 +390,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 saporders = paramentsCards.OrderDetail.Where(x => x.DocNum == tuple.Item1).ToList();
                 order = saporders.FirstOrDefault();
                 status = ServiceShared.CalculateTernary(lineProductOrder == null, ServiceConstants.PorRecibir, lineProductOrder?.StatusAlmacen);
-                status = ServiceShared.CalculateTernary(lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Recibir, ServiceConstants.PorRecibir, status);
-                status = ServiceShared.CalculateTernary(lineProductOrder != null && lineProductOrder.StatusAlmacen == ServiceConstants.Almacenado && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(), ServiceConstants.Almacenado, status);
+                status = ServiceShared.CalculateTernary(lineProductOrder?.StatusAlmacen == ServiceConstants.Recibir, ServiceConstants.PorRecibir, status);
+                status = ServiceShared.CalculateTernary(lineProductOrder?.StatusAlmacen == ServiceConstants.Almacenado && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(), ServiceConstants.Almacenado, status);
                 productType = ServiceConstants.Linea;
                 porRecibirDate = ServiceShared.ParseExactDateOrDefault(order.FechaInicio, porRecibirDate);
                 hasCandidate = this.CalculateIfLineOrderIsCandidate(lineProductOrder, status, order);
@@ -424,6 +426,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 TypeOrder = order.OrderType,
                 StoredBy = this.GetUserWhoStored(paramentsCards.Users, userOrder, lineProductOrder),
                 IsPackage = order.IsPackage == ServiceConstants.IsPackage,
+                IsFromDxpId = paramentsCards.IsFromDxpId,
+                DxpId = ServiceShared.CalculateTernary(paramentsCards.IsFromDxpId, paramentsCards.DocNum.ToLower().Remove(0, 1), string.Empty),
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };
