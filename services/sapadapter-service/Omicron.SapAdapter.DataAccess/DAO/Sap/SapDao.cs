@@ -1070,6 +1070,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              ClientEmail = doctor.Email,
                              IsPackage = invoice.IsPackage,
                              DocNumDxp = invoice.DocNumDxp,
+                             DoctorPhoneNumber = dop.GlblLocNum,
+                             ShippingAddressName = invoice.ShippingAddressName,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();

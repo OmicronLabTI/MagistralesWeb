@@ -437,7 +437,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             var doctorsData = new List<DoctorAddressModel>
             {
-                new DoctorAddressModel { AddressId = "Address1", BetweenStreets = "steets", References = "reference", EstablishmentName = "stabblishment" },
+                new DoctorAddressModel { AddressId = "Address1", BetweenStreets = "steets", References = "reference", EtablishmentName = "stabblishment" },
             };
 
             var mockPedidos = new Mock<IPedidosService>();

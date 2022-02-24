@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Gets the almacen invoice header.
@@ -152,5 +153,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public bool IsPackage { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<BoxModel> Boxes { get; set; }
     }
 }

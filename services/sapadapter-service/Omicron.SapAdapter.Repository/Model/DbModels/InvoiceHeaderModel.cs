@@ -207,5 +207,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [NotMapped]
         public string Cliente { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [NotMapped]
+        public string DoctorPhoneNumber { get; set; }
     }
 }

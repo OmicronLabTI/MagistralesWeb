@@ -86,11 +86,18 @@ namespace Omicron.SapAdapter.Test
                 new CancellationResourceModel { Id = 7, CancelDate = new DateTime(2021, 04, 08), CancelledId = 74746, TypeCancellation = "delivery" },
             };
 
+            var boxes = new List<BoxModel>()
+            {
+                new BoxModel { InvoiceId = 115010, Dimensions = "10x10x10", Weight = 2.3 },
+                new BoxModel { InvoiceId = 115010, Dimensions = "13x13x13", Weight = 4.3 },
+            };
+
             var adnvaceLookUpModel = new AdnvaceLookUpModel
             {
                 LineProducts = lineProducts,
                 PackageModels = packageModels,
                 CancelationModel = cancelationModel,
+                Boxes = boxes,
             };
 
             return new ResultDto
