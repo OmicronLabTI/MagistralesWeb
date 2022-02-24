@@ -98,5 +98,33 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>Establishment name.</value>
         public string EstablishmentName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        public string DestinyEmail { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value sales person email.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        public string SalesPrsonEmail { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value person names.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        public string SalesPrsonName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value person names.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        public string SaleOrders { get; set; }
     }
 }
