@@ -82,7 +82,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(listIds)).ToList();
             var invoicesId = deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
-            var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(invoicesId)).Where(x => x.InvoiceStatus != "C").ToList();
+            var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(invoicesId)).ToList();
             invoiceHeaders = invoiceHeaders.Where(x => ServiceShared.CalculateOr(string.IsNullOrEmpty(x.Refactura), x.Refactura != ServiceConstants.IsRefactura)).ToList();
             invoiceHeaders = await this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
             var totalByFilters = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
@@ -327,7 +327,7 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetInvoiceData(string code)
         {
             int.TryParse(code, out var intDocNum);
-            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { intDocNum })).FirstOrDefault();
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(new List<int> { intDocNum })).FirstOrDefault();
             invoiceHeader ??= new InvoiceHeaderModel();
 
             var packagesResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetPackagesByInvoice, new List<int> { intDocNum });
@@ -346,8 +346,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var address = JsonConvert.DeserializeObject<List<DoctorAddressModel>>(addressesResponse.Response.ToString()).FirstOrDefault();
             address ??= new DoctorAddressModel();
 
-            var doctorData = (await this.sapDao.GetDoctorDetailDataById(new List<string> { invoiceHeader.CardCode })).FirstOrDefault(x => x.NickName == invoiceHeader.ShippingAddressName);
-            doctorData ??= new DoctorInfoModel { GlblLocNum = string.Empty };
+            var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(new List<int> { invoiceHeader.SalesPrsonId })).FirstOrDefault();
+            salesPerson ??= new SalesPersonModel();
 
             var model = new InvoiceDeliverModel
             {
@@ -360,9 +360,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 NeedsDelivery = dxpTransactions.ShippingCostAccepted == 1,
                 BetweenStreets = address.BetweenStreets,
                 References = address.References,
-                Telephone = doctorData.GlblLocNum,
+                Telephone = invoiceHeader.DoctorPhoneNumber,
                 EstablishmentName = address.EtablishmentName,
                 ResponsibleDoctor = address.ResponsibleDoctor,
+                DestinyEmail = invoiceHeader.ClientEmail,
+                SalesPrsonEmail = salesPerson.Email.ValidateNull(),
+                SalesPrsonName = $"{salesPerson.FirstName.ValidateNull()} {salesPerson.LastName.ValidateNull()}".Trim(),
+                SaleOrders = JsonConvert.SerializeObject(new List<string> { invoiceHeader.DocNumDxp }),
             };
 
             var comments = ServiceShared.CalculateTernary(model.Address.Contains(ServiceConstants.NuevoLeon) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode), string.Empty, ServiceConstants.ForeingPackage);
