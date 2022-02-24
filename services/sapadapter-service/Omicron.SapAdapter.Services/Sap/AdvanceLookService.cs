@@ -89,8 +89,8 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<ResultModel> GetElementsById(string docNum)
         {
             int.TryParse(docNum, out int intDocNum);
-
-            if (intDocNum == 0)
+            var isDxpId = docNum.StartsWith(ServiceConstants.WildcardDocNumDxp);
+            if (intDocNum == 0 && !isDxpId)
             {
                 var cards = new CardsAdvancedLook
                 {
@@ -104,6 +104,15 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var listDocs = new List<int> { intDocNum };
+            if (isDxpId)
+            {
+                var dxpToLookUp = docNum.Remove(0, 1);
+                var ordersdxp = (await this.sapDao.GetAllOrdersWIthDetailByDocNumDxpJoinProduct(new List<string> { docNum.Remove(0, 1) })).ToList();
+                var salesId = ordersdxp.Select(o => o.DocNum).Distinct().ToList();
+                listDocs.AddRange(salesId);
+            }
+
+            listDocs = listDocs.Where(id => id != 0).ToList();
             var userOrdersResponse = await this.pedidosService.PostPedidos(listDocs, ServiceConstants.AdvanceLookId);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
 
@@ -249,7 +258,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var users = await this.GetUsers(userOrders, almacenData);
 
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-            var payments = await this.GetPayments(sapSaleOrder, sapDelivery, sapInvoicesHeaders);
+            var payments = new List<PaymentsDto>(); // await this.GetPayments(sapSaleOrder, sapDelivery, sapInvoicesHeaders);
 
             var objectCardOrder = new ParamentsCards
             {
@@ -1050,7 +1059,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var localInvoiceDetails = parametersDistribution.InvoiceDetails.Where(x => x.InvoiceId == invoice.InvoiceId).ToList();
             var totalSales = parametersDistribution.DeliveryDetails.Where(y => y.InvoiceId.HasValue && y.InvoiceId == invoice.InvoiceId).Select(x => x.BaseEntry).Distinct().ToList();
             var package = parametersDistribution.Packages.FirstOrDefault(x => x.InvoiceId == invoiceId);
-            package ??= new PackageModel { AssignedUser = string.Empty, Status = userOrder.StatusInvoice };
+            package ??= new PackageModel { AssignedUser = string.Empty, Status = userOrder.StatusInvoice, AssignedDate = DateTime.Now, InWayDate = DateTime.Now, DeliveredDate = DateTime.Now };
 
             var company = parametersDistribution.Repatridores.FirstOrDefault(x => x.TrnspCode == invoice.TransportCode);
             var payment = parametersDistribution.Payments.GetPaymentBydocNumDxp(invoice.DocNumDxp);
