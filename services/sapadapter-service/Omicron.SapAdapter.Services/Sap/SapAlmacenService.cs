@@ -494,6 +494,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 return sapOrders.Where(x => x.DocNum == pedidoId).ToList();
             }
 
+            if (parameters[ServiceConstants.Chips].StartsWith(ServiceConstants.WildcardDocNumDxp))
+            {
+                return sapOrders.Where(x => x.DocNumDxp == parameters[ServiceConstants.Chips].ToLower().Remove(0, 1)).ToList();
+            }
+
             var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
             return sapOrders.Where(x => listNames.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower()))).ToList();
         }

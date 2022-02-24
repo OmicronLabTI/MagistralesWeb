@@ -54,7 +54,7 @@ namespace Omicron.SapAdapter.Test
                 new OrderModel { PedidoId = 85000, DocNum = 85000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N" },
 
                 // for packages
-                new OrderModel { PedidoId = 85001, DocNum = 85001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MX", Canceled = "N", IsPackage = "Y" },
+                new OrderModel { PedidoId = 85001, DocNum = 85001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MX", Canceled = "N", IsPackage = "Y", DocNumDxp = "xse123" },
             };
         }
 

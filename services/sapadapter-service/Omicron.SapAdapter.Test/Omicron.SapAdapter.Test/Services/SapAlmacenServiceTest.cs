@@ -206,6 +206,70 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test the method to get the orders for almacen.
         /// </summary>
+        /// <param name="chip">the chips.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("#xse123")]
+        public async Task GetOrdersbyDocNumDxp(string chip)
+        {
+            // arrange
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "Apodaca" },
+            };
+
+            var parametersResponse = this.GetResultDto(parameters);
+
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
+
+            mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetLineProducts()))
+                .Returns(Task.FromResult(this.GetIncidents()));
+
+            var mockCatalogos = new Mock<ICatalogsService>();
+            mockCatalogos
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(parametersResponse));
+
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { "chips", chip },
+            };
+
+            var payments = new List<PaymentsDto>()
+            {
+                new PaymentsDto { CardCode = "C00007", ShippingCostAccepted = 1, TransactionId = "ac901443-c548-4860-9fdc-fa5674847822" },
+            };
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            mockProccessPayments
+                .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(payments)));
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object, mockProccessPayments.Object);
+
+            // act
+            var response = await localService.GetOrders(dictionary);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Response);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(response.Code == 200);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
         /// <returns>the data.</returns>
         [Test]
         public async Task GetOrdersWithoutMaquila()
