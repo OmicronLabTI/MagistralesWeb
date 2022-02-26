@@ -439,7 +439,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = incidentdb.Status,
                 };
 
-                var productModel = new ProductListModel
+                listToReturn.Add(new ProductListModel
                 {
                     Container = order.Container,
                     Description = item.LargeDescription.ToUpper(),
@@ -453,9 +453,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     DeliveryId = order.DeliveryId,
                     SaleOrderId = order.BaseEntry.Value,
-                };
-
-                listToReturn.Add(productModel);
+                });
             }
 
             return listToReturn;
