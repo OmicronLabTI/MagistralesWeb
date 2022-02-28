@@ -117,7 +117,6 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple, true);
             var orderWithPackages = sapOrders.Where(x => x.IsPackage == ServiceConstants.IsPackage).Select(p => p.DocNumDxp).Distinct().ToList();
-            sapOrders = sapOrders.Where(x => x.IsPackage != ServiceConstants.IsPackage).ToList();
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
 
