@@ -453,7 +453,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypesByDxp = "magistral,mixto,linea,maquila";
+        public const string AllTypesByDxp = "magistral,mixto,linea,maquila,paquetes";
 
         /// <summary>
         /// all types.
