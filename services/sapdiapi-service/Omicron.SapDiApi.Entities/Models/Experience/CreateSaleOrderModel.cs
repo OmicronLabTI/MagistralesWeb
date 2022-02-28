@@ -116,5 +116,13 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// String FirstName.
         /// </value>
         public string UserRfc { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets FirstName.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string ProfecionalLicense { get; set; }
     }
 }

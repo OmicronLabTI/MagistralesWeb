@@ -731,11 +731,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 return this.GenerateCardForPackageInvoiceCancelled(paramsCard.InvoiceHeaders, paramsCard.InvoiceDetailsToLook, paramsCard.DeliveryDetails, cancelation, paramsCard.LocalNeighbors, paramsCard.Payments);
             }
 
-            if (ServiceShared.CalculateAnd(tuple.Item2 == ServiceConstants.DontExistsTable, userOrders.Any() || lineProducts.Any(), !isCancelled))
+            var invoiceLocal = paramsCard.InvoiceHeaders.FirstOrDefault(x => x.DocNum == tuple.Item1);
+            invoiceLocal ??= new InvoiceHeaderModel();
+            var deliverys = paramsCard.DeliveryDetails.Where(d => d.InvoiceId == invoiceLocal.InvoiceId).Select(d => d.DeliveryId).ToList();
+            if (ServiceShared.CalculateAnd(tuple.Item2 == ServiceConstants.DontExistsTable, userOrders.Any(uo => deliverys.Contains(uo.DeliveryId)) || lineProducts.Any(lp => deliverys.Contains(lp.DeliveryId)), !isCancelled))
             {
-                var invoice = paramsCard.InvoiceHeaders.FirstOrDefault(x => x.DocNum == tuple.Item1);
-                invoice ??= new InvoiceHeaderModel();
-                return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoice, paramsCard.InvoiceDetailsToLook, paramsCard.DeliveryDetails, paramsCard.LocalNeighbors, paramsCard.Payments);
+                return this.GenerateCardForPackageInvoice(userOrders, lineProducts, invoiceLocal, paramsCard.InvoiceDetailsToLook, paramsCard.DeliveryDetails, paramsCard.LocalNeighbors, paramsCard.Payments);
             }
 
             return new List<InvoiceHeaderAdvancedLookUp>();
@@ -1148,7 +1149,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             return status switch
             {
-                ServiceConstants.Enviado => boxes.Where(b => b.InvoiceId == invoiceid).ToList(),
+                ServiceConstants.Enviado => boxes.Where(b => b.InvoiceId == invoiceid).DistinctBy(b => new { b.Dimensions, b.Weight }).ToList(),
                 _ => new List<BoxModel>(),
             };
         }

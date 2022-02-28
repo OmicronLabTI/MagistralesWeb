@@ -108,15 +108,15 @@ namespace Omicron.SapAdapter.Services.Utils
 
             sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList().ForEach(x =>
             {
-                if (x.All(y => y.IsMagistral == "Y") && idsMagistrales.Contains(x.Key))
+                if (ServiceShared.CalculateAnd(x.All(y => y.IsMagistral == "Y"), idsMagistrales.Contains(x.Key)))
                 {
                     arrayOfSaleToProcess.AddRange(x.ToList());
                 }
-                else if (x.All(y => y.IsLine == "Y") && !lineProductTuple.Item2.Contains(x.Key))
+                else if (ServiceShared.CalculateAnd(x.All(y => y.IsLine == "Y"), !lineProductTuple.Item2.Contains(x.Key)))
                 {
                     arrayOfSaleToProcess.AddRange(x.ToList());
                 }
-                else if (x.Any(y => y.IsLine == "Y") && x.Any(y => y.IsMagistral == "Y") && idsMagistrales.Contains(x.Key))
+                else if (ServiceShared.CalculateAnd(x.Any(y => y.IsLine == "Y"), x.Any(y => y.IsMagistral == "Y"), idsMagistrales.Contains(x.Key)))
                 {
                     arrayOfSaleToProcess.AddRange(x.ToList());
                 }
@@ -162,9 +162,9 @@ namespace Omicron.SapAdapter.Services.Utils
             var lineProductsResponse = await almacenService.PostAlmacenOrders(ServiceConstants.GetLineProductPedidos, new AlmacenGetRecepcionModel { MagistralIds = magistralIds, MaxDateToLook = maxDate });
             var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
 
-            var listProductToReturn = lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Almacenado).ToList();
+            var listProductToReturn = lineProducts.Where(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.ItemCode), x.StatusAlmacen != ServiceConstants.Almacenado)).ToList();
             listProductToReturn.AddRange(lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)).ToList());
-            var listIdToIgnore = lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && ServiceConstants.StatusToIgnoreLineProducts.Contains(x.StatusAlmacen)).Select(y => y.SaleOrderId).ToList();
+            var listIdToIgnore = lineProducts.Where(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.ItemCode), ServiceConstants.StatusToIgnoreLineProducts.Contains(x.StatusAlmacen))).Select(y => y.SaleOrderId).ToList();
 
             return new Tuple<List<LineProductsModel>, List<int>>(lineProducts, listIdToIgnore);
         }
@@ -207,7 +207,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
                 var userFabMixLineOrder = GetFamilyLineProducts(lineProductsModel, p.Key);
                 var isValidLn = userFabMixLineOrder.All(x => x.StatusAlmacen != ServiceConstants.Almacenado);
-                ordersToReturn.AddRange(GetOrdersToAdd(isValidMg && isValidLn, p.ToList()));
+                ordersToReturn.AddRange(GetOrdersToAdd(ServiceShared.CalculateAnd(isValidMg, isValidLn), p.ToList()));
             }
 
             return ordersToReturn;
@@ -231,13 +231,13 @@ namespace Omicron.SapAdapter.Services.Utils
                 var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 
-                var productType = ServiceShared.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
-                productType = ServiceShared.CalculateTernary(orders.All(x => x.Detalles != null && x.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
+                var productType = ServiceShared.CalculateTernary(orders.All(x => ServiceShared.CalculateAnd(x.Detalles != null, x.Producto.IsMagistral == "Y")), ServiceConstants.Magistral, ServiceConstants.Mixto);
+                productType = ServiceShared.CalculateTernary(orders.All(x => ServiceShared.CalculateAnd(x.Detalles != null, x.Producto.IsLine == "Y")), ServiceConstants.Linea, productType);
 
                 var payment = payments.GetPaymentBydocNumDxp(order.DocNumDxp);
                 var userOrder = usersOrders.GetSaleOrderHeader(so.ToString());
 
-                var saleItem = new OrderListByDoctorModel
+                listOrders.Add(new OrderListByDoctorModel
                 {
                     DocNum = so,
                     InitDate = order?.FechaInicio ?? DateTime.Now,
@@ -250,8 +250,7 @@ namespace Omicron.SapAdapter.Services.Utils
                     OrderType = order.TypeOrder,
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
                     DxpId = order.DocNumDxp,
-                };
-                listOrders.Add(saleItem);
+                });
             }
 
             return listOrders;
@@ -259,17 +258,17 @@ namespace Omicron.SapAdapter.Services.Utils
 
         private static List<LineProductsModel> GetFamilyLineProducts(List<LineProductsModel> lineProductsModel, int saleorderId)
         {
-            return lineProductsModel.Where(x => x.SaleOrderId == saleorderId && !string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen != ServiceConstants.Cancelado).ToList();
+            return lineProductsModel.Where(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleorderId, !string.IsNullOrEmpty(x.ItemCode), x.StatusAlmacen != ServiceConstants.Cancelado)).ToList();
         }
 
         private static List<UserOrderModel> GetFamilyUserOrders(List<UserOrderModel> userOrders, string saleOrderId)
         {
-            return userOrders.Where(x => x.Salesorderid == saleOrderId && !string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Cancelado).ToList();
+            return userOrders.Where(x => ServiceShared.CalculateAnd(x.Salesorderid == saleOrderId, !string.IsNullOrEmpty(x.Productionorderid), x.Status != ServiceConstants.Cancelado)).ToList();
         }
 
         private static bool IsValidUserOrdersToReceive(UserOrderModel saleOrder, List<UserOrderModel> familyByOrder)
         {
-            return saleOrder != null && saleOrder.Status == ServiceConstants.Finalizado && !ServiceConstants.StatusToIgnorePorRecibir.Contains(saleOrder.StatusAlmacen) && familyByOrder.All(x => x.Status == ServiceConstants.Finalizado && x.FinishedLabel == 1);
+            return saleOrder != null && saleOrder.Status == ServiceConstants.Finalizado && !ServiceConstants.StatusToIgnorePorRecibir.Contains(saleOrder.StatusAlmacen) && familyByOrder.All(x => ServiceShared.CalculateAnd(x.Status == ServiceConstants.Finalizado, x.FinishedLabel == 1));
         }
 
         private static List<CompleteAlmacenOrderModel> GetOrdersToAdd(bool isValid, List<CompleteAlmacenOrderModel> listToAdd)
@@ -294,8 +293,7 @@ namespace Omicron.SapAdapter.Services.Utils
             var sapOrdersGroup = sapOrdersToGetType.GroupBy(x => x.DocNum).ToList();
             salesTypes.MagistralSaleOrders.AddRange(sapOrdersGroup.Where(sapOrd => sapOrd.All(prod => prod.IsMagistral == "Y")).Select(sapOrd => sapOrd.Key));
             salesTypes.LineSaleOrders.AddRange(sapOrdersGroup.Where(sapOrd => sapOrd.All(prod => prod.IsLine == "Y")).Select(sapOrd => sapOrd.Key));
-            salesTypes.MixedSaleOrders.AddRange(sapOrdersGroup.Where(sapOrd => sapOrd.Any(prod => prod.IsLine == "Y") && sapOrd.Any(prod => prod.IsMagistral == "Y")).Select(sapOrd => sapOrd.Key));
-
+            salesTypes.MixedSaleOrders.AddRange(sapOrdersGroup.Where(sapOrd => ServiceShared.CalculateAnd(sapOrd.Any(prod => prod.IsLine == "Y"), sapOrd.Any(prod => prod.IsMagistral == "Y"))).Select(sapOrd => sapOrd.Key));
             return salesTypes;
         }
     }

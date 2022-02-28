@@ -177,8 +177,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var deliveryDetailDb = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(listDeliveryIds)).ToList();
             var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(deliveryDetailDb.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList())).ToList();
-            var invoiceRefactura = invoices.Where(x => !string.IsNullOrEmpty(x.Refactura) && x.Refactura == ServiceConstants.IsRefactura).Select(y => y.InvoiceId).ToList();
-            invoices = invoices.Where(x => string.IsNullOrEmpty(x.Refactura) || x.Refactura != ServiceConstants.IsRefactura).ToList();
+            var invoiceRefactura = invoices.Where(x => x.Refactura == ServiceConstants.IsRefactura).Select(y => y.InvoiceId).ToList();
+            invoices = invoices.Where(x => x.Refactura != ServiceConstants.IsRefactura).ToList();
             deliveryDetailDb = deliveryDetailDb.Where(x => !x.InvoiceId.HasValue || !invoiceRefactura.Contains(x.InvoiceId.Value)).ToList();
             var sapOrdersGroup = deliveryDetailDb.GroupBy(x => x.DeliveryId).ToList();
 
@@ -253,31 +253,31 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Gets the order by the chips criteria.
         /// </summary>
-        /// <param name="sapOrders">the orders.</param>
+        /// <param name="sapDeliveries">the orders.</param>
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        private async Task<List<DeliverModel>> GetSapDeliveriesToLookByPedidoDoctor(List<DeliverModel> sapOrders, Dictionary<string, string> parameters)
+        private async Task<List<DeliverModel>> GetSapDeliveriesToLookByPedidoDoctor(List<DeliverModel> sapDeliveries, Dictionary<string, string> parameters)
         {
             if (ServiceShared.IsValidFilterByTypeShipping(parameters))
             {
-                var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+                var transactionsIds = sapDeliveries.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
                 var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
                 var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-                sapOrders = sapOrders.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull(), payments.GetPaymentBydocNumDxp(x.DocNumDxp)) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+                sapDeliveries = sapDeliveries.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull(), payments.GetPaymentBydocNumDxp(x.DocNumDxp)) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
             }
 
             if (!parameters.ContainsKey(ServiceConstants.Chips))
             {
-                return sapOrders;
+                return sapDeliveries;
             }
 
             if (int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
             {
-                return sapOrders.Where(x => x.DocNum == pedidoId).ToList();
+                return sapDeliveries.Where(x => x.DocNum == pedidoId).ToList();
             }
 
             var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
-            return sapOrders.Where(x => listNames.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower()))).ToList();
+            return sapDeliveries.Where(x => listNames.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower()))).ToList();
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var deliveryWithInvoice = deliveryDetail.FirstOrDefault(x => x.InvoiceId.HasValue && x.InvoiceId.Value != 0);
                 deliveryWithInvoice ??= new DeliveryDetailModel { InvoiceId = 0 };
                 var invoice = invoices.FirstOrDefault(x => x.InvoiceId == deliveryWithInvoice.InvoiceId.Value);
-                var hasInvoice = invoice != null && invoice.InvoiceStatus != "C";
+                var hasInvoice = ServiceShared.CalculateAnd(invoice != null, invoice?.InvoiceStatus != "C");
 
                 var salesOrderModel = new AlmacenSalesModel
                 {
@@ -419,7 +419,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 if (item.IsMagistral.Equals("N"))
                 {
-                    var lineProduct = lineProducts.FirstOrDefault(x => x.SaleOrderId == order.BaseEntry && x.ItemCode == item.ProductoId);
+                    var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.BaseEntry, x.ItemCode == item.ProductoId));
                     lineProduct ??= new LineProductsModel();
 
                     var batchName = ServiceShared.DeserializeObject(lineProduct.BatchName, new List<AlmacenBatchModel>());
@@ -428,7 +428,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var orderNum = string.IsNullOrEmpty(orderId) ? 0 : int.Parse(orderId);
 
-                var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == order.BaseEntry && x.ItemCode == item.ProductoId);
+                var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.BaseEntry, x.ItemCode == item.ProductoId));
                 incidentdb ??= new IncidentsModel();
 
                 var localIncident = new IncidentInfoModel
@@ -439,7 +439,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = incidentdb.Status,
                 };
 
-                var productModel = new ProductListModel
+                listToReturn.Add(new ProductListModel
                 {
                     Container = order.Container,
                     Description = item.LargeDescription.ToUpper(),
@@ -453,9 +453,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     DeliveryId = order.DeliveryId,
                     SaleOrderId = order.BaseEntry.Value,
-                };
-
-                listToReturn.Add(productModel);
+                });
             }
 
             return listToReturn;
@@ -472,7 +470,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listLastTransactions = new List<BatchTransacitions>();
             var batchesBySale = (await this.sapDao.GetBatchesTransactionByOrderItem(new List<int> { deliveryId })).ToList();
-            batchesBySale = batchesBySale.Where(x => itemCode.Contains(x.ItemCode) && x.BaseEntry == saleId).ToList();
+            batchesBySale = batchesBySale.Where(x => ServiceShared.CalculateAnd(itemCode.Contains(x.ItemCode), x.BaseEntry == saleId)).ToList();
             batchesBySale.GroupBy(x => x.ItemCode).Where(a => a.Any()).ToList().ForEach(y =>
             {
                 var logs = y.OrderBy(z => z.LogEntry).ToList();
@@ -513,7 +511,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listToReturn = new List<string>();
             var batchTransLocal = batchTrans.Where(x => x.ItemCode == itemCode).ToList();
-            var batchesToLoop = validBatches.Where(x => batchTransLocal.Any(y => y.SysNumber == x.SysNumber) && x.ItemCode == itemCode).ToList();
+            var batchesToLoop = validBatches.Where(x => ServiceShared.CalculateAnd(batchTransLocal.Any(y => y.SysNumber == x.SysNumber), x.ItemCode == itemCode)).ToList();
             batchesToLoop.ForEach(z =>
             {
                 var batch = batchName.FirstOrDefault(a => a.BatchNumber == z.DistNumber);
@@ -528,11 +526,11 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             if (isMagistral.Equals("Y"))
             {
-                var userOrder = userOrders.FirstOrDefault(x => x.Salesorderid == saleOrder.ToString() && x.Productionorderid == orderId.ToString());
+                var userOrder = userOrders.FirstOrDefault(x => ServiceShared.CalculateAnd(x.Salesorderid == saleOrder.ToString(), x.Productionorderid == orderId.ToString()));
                 return ServiceShared.CalculateTernary(userOrder == null, ServiceConstants.Almacenado, userOrder?.StatusAlmacen);
             }
 
-            var lineProduct = lineProducts.FirstOrDefault(x => x.SaleOrderId == saleOrder && x.ItemCode == itemCode);
+            var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleOrder, x.ItemCode == itemCode));
             return ServiceShared.CalculateTernary(lineProduct == null, ServiceConstants.Almacenado, lineProduct?.StatusAlmacen);
         }
     }
