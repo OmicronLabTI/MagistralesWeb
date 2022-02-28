@@ -64,6 +64,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.DocDueDate = DateTime.Now.AddDays(10);
                 order.ShipToCode = saleOrderModel.ShippinAddress;
                 order.PayToCode = saleOrderModel.BillingAddress;
+                order.NumAtCard = saleOrderModel.ProfecionalLicense;
 
                 if (!string.IsNullOrEmpty(saleOrderModel.UserRfc))
                 {
