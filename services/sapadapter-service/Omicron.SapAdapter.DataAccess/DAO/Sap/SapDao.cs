@@ -384,18 +384,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByCreateDate(DateTime fechaInit, DateTime endDate)
-        {
-            return await this.RetryQuery<OrdenFabricacionModel>(this.databaseContext.OrdenFabricacionModel.Where(x => x.CreatedDate != null && x.CreatedDate >= fechaInit && x.CreatedDate <= endDate));
-        }
-
-        /// <inheritdoc/>
-        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByItemCode(string itemCode)
-        {
-            return await this.RetryQuery<OrdenFabricacionModel>(this.databaseContext.OrdenFabricacionModel.Where(x => x.ProductoId.ToLower().Contains(itemCode)));            
-        }
-
-        /// <inheritdoc/>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(int orderId)
         {
             var query = (from w in this.databaseContext.DetalleFormulaModel
@@ -1549,7 +1537,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             products.ForEach(p =>
             {
                 var datoAlmacen = almacen.FirstOrDefault(y => y.ItemCode == p.ProductoId);
-                var datoToAssign = datoAlmacen == null ? new ItemWarehouseModel() : datoAlmacen;
+                var datoToAssign = datoAlmacen ?? new ItemWarehouseModel();
                 listToReturn.Add(new CompleteDetalleFormulaModel
                 {
                     ProductId = p.ProductoId,

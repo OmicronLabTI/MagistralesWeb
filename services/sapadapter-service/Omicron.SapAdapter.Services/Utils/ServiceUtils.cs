@@ -130,12 +130,8 @@ namespace Omicron.SapAdapter.Services.Utils
                 elementToSave.Qfb = ServiceShared.CalculateTernary(order == null, string.Empty, order?.Userid);
                 elementToSave.QfbId = elementToSave.Qfb;
 
-                if (elementToSave.PedidoStatus == ServiceConstants.AbiertoSap)
-                {
-                    elementToSave.PedidoStatus = ServiceConstants.Abierto;
-                }
-
-                elementToSave.PedidoStatus = ServiceShared.CalculateTernary(order == null, elementToSave?.PedidoStatus, order?.Status);
+                elementToSave.PedidoStatus = ServiceShared.CalculateTernary(elementToSave.PedidoStatus == ServiceConstants.AbiertoSap, ServiceConstants.Abierto, elementToSave.PedidoStatus);
+                elementToSave.PedidoStatus = ServiceShared.CalculateTernary(order == null, elementToSave.PedidoStatus, order?.Status);
                 elementToSave.FinishedLabel = order?.FinishedLabel ?? 0;
                 elementToSave.Detalles = null;
                 elementToSave.FechaFin = ServiceShared.GetDateValueOrDefault(order?.CloseDate, string.Empty);
