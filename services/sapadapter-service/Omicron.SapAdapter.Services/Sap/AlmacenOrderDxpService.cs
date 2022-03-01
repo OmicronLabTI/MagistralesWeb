@@ -145,8 +145,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 return sapOrders;
             }
 
-            var dxpOrder = parameters[ServiceConstants.Chips].Split(",").ToList();
-            return sapOrders.Where(x => dxpOrder.All(y => x.DocNumDxp.ValidateNull().ToLower().Contains(y.ToLower()))).ToList();
+            return sapOrders.Where(x => x.DocNumDxp == parameters[ServiceConstants.Chips].ToLower().Remove(0, 1)).ToList();
         }
 
         private AlmacenOrdersByDoctorModel GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters, List<string> orderWithPackages)
