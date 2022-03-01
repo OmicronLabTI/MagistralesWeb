@@ -291,6 +291,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, objectCardOrder));
             });
 
+            cardToReturns.CardDelivery = cardToReturns.CardDelivery.DistinctBy(cd => new { cd.Remision, cd.ListSaleOrder }).ToList();
             return cardToReturns;
         }
 
