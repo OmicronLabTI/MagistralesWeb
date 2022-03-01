@@ -408,6 +408,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var totalItems = saporders.Count;
             var totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
             var initDate = ServiceShared.ParseExactDateOrDefault(order.FechaInicio, DateTime.Now);
+            var lettersToRemoveDxpId = ServiceShared.CalculateTernary(paramentsCards.DocNum.Length > 1, 1, 0);
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
@@ -428,7 +429,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 StoredBy = this.GetUserWhoStored(paramentsCards.Users, userOrder, lineProductOrder),
                 IsPackage = order.IsPackage == ServiceConstants.IsPackage,
                 IsFromDxpId = paramentsCards.IsFromDxpId,
-                DxpId = ServiceShared.CalculateTernary(paramentsCards.IsFromDxpId, paramentsCards.DocNum.ToLower().Remove(0, 1), string.Empty),
+                DxpId = ServiceShared.CalculateTernary(paramentsCards.IsFromDxpId, paramentsCards.DocNum.ToLower().Remove(0, lettersToRemoveDxpId), string.Empty),
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };
