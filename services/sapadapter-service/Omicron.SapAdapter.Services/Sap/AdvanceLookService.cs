@@ -601,7 +601,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var initDate = ServiceShared.CalculateTernary(userOrderByDelivery != null, userOrderByDelivery?.DateTimeCheckIn, lineProductByDelivery?.DateCheckIn);
                 var status = ServiceShared.CalculateTernary(userOrderByDelivery != null, userOrderByDelivery?.StatusAlmacen, lineProductByDelivery?.StatusAlmacen);
 
-                var saleHeaderItem = new AlmacenSalesHeaderModel
+                saleHeader.Add(new AlmacenSalesHeaderModel
                 {
                     Client = header.Cliente,
                     DocNum = salesOrders.Count,
@@ -617,8 +617,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ListSaleOrder = string.Join(", ", salesOrders),
                     TypeOrder = header.TypeOrder,
                     IsPackage = header.IsPackage == ServiceConstants.IsPackage,
-                };
-                saleHeader.Add(saleHeaderItem);
+                });
             }
 
             return saleHeader;

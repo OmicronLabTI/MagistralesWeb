@@ -155,7 +155,7 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Chips, "A2" },
+                { ServiceConstants.Chips, "#A2" },
                 { ServiceConstants.Shipping, "Foraneo" },
             };
 
