@@ -695,6 +695,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     InvoiceDetailsToLook = paramsCard.InvoiceDetailsToLook,
                     LocalNeighbors = paramsCard.LocalNeighbors,
                     Payments = paramsCard.Payments,
+                    LookUpTuple = tuple,
                 };
                 return this.GenerateCardForPackageInvoiceTheSalesOrder(paramsCardInvoice);
             }
@@ -714,6 +715,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     InvoiceDetailsToLook = paramsCard.InvoiceDetailsToLook,
                     LocalNeighbors = paramsCard.LocalNeighbors,
                     Payments = paramsCard.Payments,
+                    LookUpTuple = tuple,
                 };
                 return this.GenerateCardForPackageInvoiceTheSalesOrder(paramsCardInvoice);
             }
@@ -808,6 +810,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                     var deliverys = this.GetDeliveryModel(deliveryDetails, invoiceDetail, userOrders, lineProducts);
                     var deliveryHeader = deliverys.FirstOrDefault(x => x.DeliveryId == delivery);
+                    var saleOrders = ServiceShared.CalculateTernary(paramsCardInvoice.LookUpTuple.Item2 == ServiceConstants.SaleOrder, paramsCardInvoice.LookUpTuple.Item1, deliveryHeader.SaleOrder);
                     var totalProducts = invoiceDetail.Count;
 
                     var userOrderByDate = userOrders.FirstOrDefault(x => x.DeliveryId == delivery);
@@ -829,7 +832,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             TotalDeliveries = deliverys.Count,
                             TotalProducts = totalProducts,
                             DeliverId = delivery,
-                            SalesOrder = deliveryHeader.SaleOrder,
+                            SalesOrder = saleOrders,
                             StatusDelivery = deliveryHeader.Status,
                             DataCheckin = initDate,
                             IsLookUpInvoices = false,
@@ -879,7 +882,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         TotalProducts = totalProducts,
                         StatusDelivery = ServiceConstants.Almacenado,
                         DataCheckin = initDate.Value,
-                        SalesOrder = deliverys.DistinctBy(x => x.SaleOrder).Count(),
+                        SalesOrder = deliveryDetails.DistinctBy(x => x.BaseEntry).Count(),
                         IsLookUpInvoices = true,
                         IsRefactura = ServiceShared.CalculateAnd(!string.IsNullOrEmpty(invoiceHeaders.Refactura), invoiceHeaders.Refactura == ServiceConstants.IsRefactura),
                         TypeOrder = invoiceHeaders.TypeOrder,
