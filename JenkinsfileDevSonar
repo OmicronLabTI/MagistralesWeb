@@ -30,6 +30,18 @@ pipeline {
     SONAR_EXCLUSIONS_NODEJS = 'src/config/**,src/to/**'
   }
   stages {
+  stage('Sonar Reporting') {
+      steps {
+        dir('services/reporting-service/') {
+		  sh 'dotnet clean'		
+          sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_reporting_${ENVIRONMENT}' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Reporting.Test/Omicron.Reporting.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Reporting.Api/**'"
+          sh 'dotnet build Omicron.Reporting.Microservice.sln'
+          sh 'dotnet test Omicron.Reporting.Test/Omicron.Reporting.Test/Omicron.Reporting.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
+          sh 'dotnet build-server shutdown'
+          sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
+        }
+      }
+    }
     stage('Sonar Frontend Web') {
       steps {
         dir('frontend/web/') {
@@ -128,18 +140,6 @@ pipeline {
           sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_warehouses_${ENVIRONMENT}' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Warehouses.Test/Omicron.Warehouses.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Warehouses.Api/**'"
           sh 'dotnet build Omicron.Warehouses.Microservice.sln'
           sh 'dotnet test Omicron.Warehouses.Test/Omicron.Warehouses.Test/Omicron.Warehouses.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
-          sh 'dotnet build-server shutdown'
-          sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
-        }
-      }
-    }
-    stage('Sonar Reporting') {
-      steps {
-        dir('services/reporting-service/') {
-		  sh 'dotnet clean'		
-          sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll begin /k:'20_${COMPANY}_${PROJECT_NAME}_reporting_${ENVIRONMENT}' /d:sonar.host.url='${SONAR_SERVER}' /d:sonar.login='${SONAR_TOKEN}' /d:sonar.cs.opencover.reportsPaths='Omicron.Reporting.Test/Omicron.Reporting.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.Reporting.Api/**'"
-          sh 'dotnet build Omicron.Reporting.Microservice.sln'
-          sh 'dotnet test Omicron.Reporting.Test/Omicron.Reporting.Test/Omicron.Reporting.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="TestResults/"'
           sh 'dotnet build-server shutdown'
           sh "dotnet /opt/sonar-scanner-ms/SonarScanner.MSBuild.dll end /d:sonar.login='${SONAR_TOKEN}'"
         }
