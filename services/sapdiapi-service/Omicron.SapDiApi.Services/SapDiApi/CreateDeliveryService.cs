@@ -260,7 +260,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 }
 
                 var areAllSame = listOrderType.All(o => o == listOrderType.FirstOrDefault());
-                deliveryNote.UserFields.Fields.Item("U_TipoPedido").Value = areAllSame ? listOrderType.FirstOrDefault() : "MX";
+                var tipoPedidos = areAllSame ? listOrderType.FirstOrDefault() : "MX";
+                deliveryNote.UserFields.Fields.Item("U_TipoPedido").Value = tipoPedidos == "UN" ? "LN" : tipoPedidos;
                 deliveryNote.Comments = commentMultiple.Length > 253 ? commentMultiple.ToString().Substring(0, 253) : commentMultiple.ToString();
 
                 var update = deliveryNote.Add();
