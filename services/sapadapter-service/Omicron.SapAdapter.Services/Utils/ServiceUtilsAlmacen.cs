@@ -18,8 +18,11 @@ namespace Omicron.SapAdapter.Services.Utils
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.ProccessPayments;
+    using Omicron.SapAdapter.Services.Redis;
 
     /// <summary>
     /// The class for the services.
@@ -254,6 +257,28 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             return listOrders;
+        }
+
+        /// <summary>
+        /// get sap orders by type shipping.
+        /// </summary>
+        /// <param name="sapOrders">the sap orders.</param>
+        /// <param name="parameters">parameters.</param>
+        /// <param name="proccessPayments">the procces payments.</param>
+        /// <param name="redisService">the redis service.</param>
+        /// <param name="catalogsService">the catalog service.</param>
+        /// <returns>sap orders.</returns>
+        public static async Task<List<CompleteAlmacenOrderModel>> FilterSapOrdersByTypeShipping(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters, IProccessPayments proccessPayments, IRedisService redisService, ICatalogsService catalogsService)
+        {
+            if (ServiceShared.IsValidFilterByTypeShipping(parameters))
+            {
+                var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+                var payments = await ServiceShared.GetPaymentsByTransactionsIds(proccessPayments, transactionsIds);
+                var localNeigbors = await ServiceUtils.GetLocalNeighbors(catalogsService, redisService);
+                sapOrders = sapOrders.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull(), payments.GetPaymentBydocNumDxp(x.DocNumDxp)) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+            }
+
+            return sapOrders;
         }
 
         private static List<LineProductsModel> GetFamilyLineProducts(List<LineProductsModel> lineProductsModel, int saleorderId)
