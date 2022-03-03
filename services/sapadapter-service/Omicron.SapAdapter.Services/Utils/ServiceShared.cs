@@ -111,7 +111,7 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>a user order model.</returns>
         public static UserOrderModel GetSaleOrderHeader(this List<UserOrderModel> userOrders, string saleOrderId)
         {
-            return userOrders.FirstOrDefault(x => x.Salesorderid == saleOrderId && string.IsNullOrEmpty(x.Productionorderid));
+            return userOrders.FirstOrDefault(x => CalculateAnd(x.Salesorderid == saleOrderId, string.IsNullOrEmpty(x.Productionorderid)));
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>a line product model.</returns>
         public static LineProductsModel GetLineProductOrderHeader(this List<LineProductsModel> lineProducts, int saleOrderId)
         {
-            return lineProducts.FirstOrDefault(x => x.SaleOrderId == saleOrderId && string.IsNullOrEmpty(x.ItemCode));
+            return lineProducts.FirstOrDefault(x => CalculateAnd(x.SaleOrderId == saleOrderId, string.IsNullOrEmpty(x.ItemCode)));
         }
 
         /// <summary>

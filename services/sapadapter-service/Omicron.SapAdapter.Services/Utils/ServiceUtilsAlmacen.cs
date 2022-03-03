@@ -50,7 +50,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (types.Contains(ServiceConstants.Magistral.ToLower()))
             {
-                var listMagistral = sapOrdersGroup.Where(x => !x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)) && !x.All(y => lineProducts.Contains(y.Detalles.ProductoId)));
+                var listMagistral = sapOrdersGroup.Where(x => ServiceShared.CalculateAnd(!x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)), !x.All(y => lineProducts.Contains(y.Detalles.ProductoId))));
                 var keys = listMagistral.Select(x => x.Key).ToList();
 
                 listToReturn.AddRange(sapOrders.Where(x => keys.Contains(x.DocNum)));
@@ -60,7 +60,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (types.Contains(ServiceConstants.Mixto.ToLower()))
             {
-                var listMixta = sapOrdersGroup.Where(x => x.Any(y => lineProducts.Contains(y.Detalles.ProductoId) && !x.All(y => lineProducts.Contains(y.Detalles.ProductoId))));
+                var listMixta = sapOrdersGroup.Where(x => ServiceShared.CalculateAnd(x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)), !x.All(y => lineProducts.Contains(y.Detalles.ProductoId))));
                 var keysMixta = listMixta.Select(x => x.Key).ToList();
 
                 listToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
@@ -199,7 +199,8 @@ namespace Omicron.SapAdapter.Services.Utils
                 {
                     var saleOrderLn = lineProductsModel.GetLineProductOrderHeader(p.Key);
                     var userFabLineOrder = GetFamilyLineProducts(lineProductsModel, p.Key);
-                    var isValid = (saleOrderLn == null || saleOrderLn.StatusAlmacen != ServiceConstants.Almacenado) && userFabLineOrder.All(x => x.StatusAlmacen != ServiceConstants.Almacenado);
+                    var isValidLineOrder = saleOrderLn == null || saleOrderLn.StatusAlmacen != ServiceConstants.Almacenado;
+                    var isValid = ServiceShared.CalculateAnd(isValidLineOrder, userFabLineOrder.All(x => x.StatusAlmacen != ServiceConstants.Almacenado));
                     ordersToReturn.AddRange(GetOrdersToAdd(isValid, p.ToList()));
                     continue;
                 }
@@ -293,12 +294,12 @@ namespace Omicron.SapAdapter.Services.Utils
 
         private static bool IsValidUserOrdersToReceive(UserOrderModel saleOrder, List<UserOrderModel> familyByOrder)
         {
-            return saleOrder != null && saleOrder.Status == ServiceConstants.Finalizado && !ServiceConstants.StatusToIgnorePorRecibir.Contains(saleOrder.StatusAlmacen) && familyByOrder.All(x => ServiceShared.CalculateAnd(x.Status == ServiceConstants.Finalizado, x.FinishedLabel == 1));
+            return ServiceShared.CalculateAnd(saleOrder?.Status == ServiceConstants.Finalizado, !ServiceConstants.StatusToIgnorePorRecibir.Contains(saleOrder?.StatusAlmacen), familyByOrder.All(x => ServiceShared.CalculateAnd(x.Status == ServiceConstants.Finalizado, x.FinishedLabel == 1)));
         }
 
         private static List<CompleteAlmacenOrderModel> GetOrdersToAdd(bool isValid, List<CompleteAlmacenOrderModel> listToAdd)
         {
-            return isValid ? listToAdd : new List<CompleteAlmacenOrderModel>();
+            return ServiceShared.CalculateTernary(isValid, listToAdd, new List<CompleteAlmacenOrderModel>());
         }
 
         private static List<CompleteAlmacenOrderModel> FilterByContainsType(bool containsFilter, List<CompleteAlmacenOrderModel> ordersToFilter, List<CompleteAlmacenOrderModel> listToReturn)
