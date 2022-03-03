@@ -188,6 +188,15 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetProductsWithCodeBars()
+        {
+            var lineproducts = (await this.sapDao.GetAllLineProducts()).ToList();
+
+            var codebars = lineproducts.Where(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.BarCode), x.ProductoId != x.BarCode)).Select(x => new LineProductWithCodeBarsModel { CodeBar = x.BarCode, ItemCode = x.ProductoId }).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, codebars, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> GetCompleteDetail(int orderId)
         {
             var data = (await this.sapDao.GetAllOrdersForAlmacenById(orderId)).ToList();
@@ -476,13 +485,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<List<CompleteAlmacenOrderModel>> GetSapLinesToLookByChips(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
         {
-            if (ServiceShared.IsValidFilterByTypeShipping(parameters))
-            {
-                var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
-                var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
-                var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-                sapOrders = sapOrders.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull(), payments.GetPaymentBydocNumDxp(x.DocNumDxp)) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
-            }
+            sapOrders = await ServiceUtilsAlmacen.FilterSapOrdersByTypeShipping(sapOrders, parameters, this.proccessPayments, this.redisService, this.catalogsService);
 
             if (!parameters.ContainsKey(ServiceConstants.Chips))
             {

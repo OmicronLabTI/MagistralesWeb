@@ -98,6 +98,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetProductsWithCodeBars()
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetProductsWithCodeBars());
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> GetCompleteDetail(int orderId)
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.GetCompleteDetail(orderId));

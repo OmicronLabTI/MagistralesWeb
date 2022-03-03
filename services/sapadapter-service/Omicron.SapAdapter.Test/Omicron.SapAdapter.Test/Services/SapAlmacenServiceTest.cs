@@ -14,23 +14,23 @@ namespace Omicron.SapAdapter.Test.Services
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
+    using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.DxpModels;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Context;
+    using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
+    using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Serilog;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
-    using Omicron.SapAdapter.Services.Redis;
-    using Newtonsoft.Json;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Dtos.DxpModels;
 
     /// <summary>
     /// Class for the QR test.
@@ -484,6 +484,20 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var response = await this.sapService.GetCompleteDetail(order);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetProductsWithCodeBars()
+        {
+            // act
+            var response = await this.sapService.GetProductsWithCodeBars();
 
             // assert
             Assert.IsNotNull(response);

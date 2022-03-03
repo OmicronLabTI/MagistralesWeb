@@ -18,8 +18,11 @@ namespace Omicron.SapAdapter.Services.Utils
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.ProccessPayments;
+    using Omicron.SapAdapter.Services.Redis;
 
     /// <summary>
     /// The class for the services.
@@ -47,7 +50,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (types.Contains(ServiceConstants.Magistral.ToLower()))
             {
-                var listMagistral = sapOrdersGroup.Where(x => !x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)) && !x.All(y => lineProducts.Contains(y.Detalles.ProductoId)));
+                var listMagistral = sapOrdersGroup.Where(x => ServiceShared.CalculateAnd(!x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)), !x.All(y => lineProducts.Contains(y.Detalles.ProductoId))));
                 var keys = listMagistral.Select(x => x.Key).ToList();
 
                 listToReturn.AddRange(sapOrders.Where(x => keys.Contains(x.DocNum)));
@@ -57,7 +60,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (types.Contains(ServiceConstants.Mixto.ToLower()))
             {
-                var listMixta = sapOrdersGroup.Where(x => x.Any(y => lineProducts.Contains(y.Detalles.ProductoId) && !x.All(y => lineProducts.Contains(y.Detalles.ProductoId))));
+                var listMixta = sapOrdersGroup.Where(x => ServiceShared.CalculateAnd(x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)), !x.All(y => lineProducts.Contains(y.Detalles.ProductoId))));
                 var keysMixta = listMixta.Select(x => x.Key).ToList();
 
                 listToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
@@ -196,7 +199,8 @@ namespace Omicron.SapAdapter.Services.Utils
                 {
                     var saleOrderLn = lineProductsModel.GetLineProductOrderHeader(p.Key);
                     var userFabLineOrder = GetFamilyLineProducts(lineProductsModel, p.Key);
-                    var isValid = (saleOrderLn == null || saleOrderLn.StatusAlmacen != ServiceConstants.Almacenado) && userFabLineOrder.All(x => x.StatusAlmacen != ServiceConstants.Almacenado);
+                    var isValidLineOrder = saleOrderLn == null || saleOrderLn.StatusAlmacen != ServiceConstants.Almacenado;
+                    var isValid = ServiceShared.CalculateAnd(isValidLineOrder, userFabLineOrder.All(x => x.StatusAlmacen != ServiceConstants.Almacenado));
                     ordersToReturn.AddRange(GetOrdersToAdd(isValid, p.ToList()));
                     continue;
                 }
@@ -250,10 +254,33 @@ namespace Omicron.SapAdapter.Services.Utils
                     OrderType = order.TypeOrder,
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
                     DxpId = order.DocNumDxp,
+                    IsPackage = order.IsPackage == "Y",
                 });
             }
 
             return listOrders;
+        }
+
+        /// <summary>
+        /// get sap orders by type shipping.
+        /// </summary>
+        /// <param name="sapOrders">the sap orders.</param>
+        /// <param name="parameters">parameters.</param>
+        /// <param name="proccessPayments">the procces payments.</param>
+        /// <param name="redisService">the redis service.</param>
+        /// <param name="catalogsService">the catalog service.</param>
+        /// <returns>sap orders.</returns>
+        public static async Task<List<CompleteAlmacenOrderModel>> FilterSapOrdersByTypeShipping(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters, IProccessPayments proccessPayments, IRedisService redisService, ICatalogsService catalogsService)
+        {
+            if (ServiceShared.IsValidFilterByTypeShipping(parameters))
+            {
+                var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+                var payments = await ServiceShared.GetPaymentsByTransactionsIds(proccessPayments, transactionsIds);
+                var localNeigbors = await ServiceUtils.GetLocalNeighbors(catalogsService, redisService);
+                sapOrders = sapOrders.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull(), payments.GetPaymentBydocNumDxp(x.DocNumDxp)) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+            }
+
+            return sapOrders;
         }
 
         private static List<LineProductsModel> GetFamilyLineProducts(List<LineProductsModel> lineProductsModel, int saleorderId)
@@ -268,12 +295,12 @@ namespace Omicron.SapAdapter.Services.Utils
 
         private static bool IsValidUserOrdersToReceive(UserOrderModel saleOrder, List<UserOrderModel> familyByOrder)
         {
-            return saleOrder != null && saleOrder.Status == ServiceConstants.Finalizado && !ServiceConstants.StatusToIgnorePorRecibir.Contains(saleOrder.StatusAlmacen) && familyByOrder.All(x => ServiceShared.CalculateAnd(x.Status == ServiceConstants.Finalizado, x.FinishedLabel == 1));
+            return ServiceShared.CalculateAnd(saleOrder?.Status == ServiceConstants.Finalizado, !ServiceConstants.StatusToIgnorePorRecibir.Contains(saleOrder?.StatusAlmacen), familyByOrder.All(x => ServiceShared.CalculateAnd(x.Status == ServiceConstants.Finalizado, x.FinishedLabel == 1)));
         }
 
         private static List<CompleteAlmacenOrderModel> GetOrdersToAdd(bool isValid, List<CompleteAlmacenOrderModel> listToAdd)
         {
-            return isValid ? listToAdd : new List<CompleteAlmacenOrderModel>();
+            return ServiceShared.CalculateTernary(isValid, listToAdd, new List<CompleteAlmacenOrderModel>());
         }
 
         private static List<CompleteAlmacenOrderModel> FilterByContainsType(bool containsFilter, List<CompleteAlmacenOrderModel> ordersToFilter, List<CompleteAlmacenOrderModel> listToReturn)

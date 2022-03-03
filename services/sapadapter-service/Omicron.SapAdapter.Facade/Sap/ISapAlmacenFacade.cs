@@ -40,6 +40,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetScannedData(string type, string code);
 
         /// <summary>
+        /// Gets the products with codebars.
+        /// </summary>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetProductsWithCodeBars();
+
+        /// <summary>
         /// Gets all the details.
         /// </summary>
         /// <param name="orderId">the order id.</param>
