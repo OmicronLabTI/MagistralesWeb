@@ -76,6 +76,18 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Gets the orders.
         /// </summary>
+        /// <returns>the data.</returns>
+        [Route("/products/codebars")]
+        [HttpGet]
+        public async Task<IActionResult> GetProductsWithCodeBars()
+        {
+            var response = await this.sapAlmacenFacade.GetProductsWithCodeBars();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
         /// <param name="saleorderid">The type of scanned item.</param>
         /// <returns>the data.</returns>
         [Route("/complete/detail/{saleorderid}")]

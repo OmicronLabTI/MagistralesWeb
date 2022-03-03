@@ -121,6 +121,18 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetProductsWithCodeBars()
+        {
+            var response = await this.almacenFacade.GetProductsWithCodeBars();
+
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetCompleteDetail()
         {
             var order = 1000;

@@ -95,6 +95,7 @@ namespace Omicron.SapAdapter.Test
             new GetDoctorAddressModel(),
             new DoctorAddressModel(),
             new BoxModel(),
+            new LineProductWithCodeBarsModel(),
         };
 
         /// <summary>

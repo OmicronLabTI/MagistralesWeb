@@ -250,6 +250,7 @@ namespace Omicron.SapAdapter.Services.Utils
                     OrderType = order.TypeOrder,
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
                     DxpId = order.DocNumDxp,
+                    IsPackage = order.IsPackage == "Y",
                 });
             }
 
