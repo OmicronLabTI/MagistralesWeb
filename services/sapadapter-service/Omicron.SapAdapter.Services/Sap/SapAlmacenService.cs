@@ -188,6 +188,15 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetProductsWithCodeBars()
+        {
+            var lineproducts = (await this.sapDao.GetAllLineProducts()).ToList();
+
+            var codebars = lineproducts.Where(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.BarCode), x.ProductoId != x.BarCode)).Select(x => new LineProductWithCodeBarsModel { CodeBar = x.BarCode, ItemCode = x.ProductoId }).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, codebars, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> GetCompleteDetail(int orderId)
         {
             var data = (await this.sapDao.GetAllOrdersForAlmacenById(orderId)).ToList();
