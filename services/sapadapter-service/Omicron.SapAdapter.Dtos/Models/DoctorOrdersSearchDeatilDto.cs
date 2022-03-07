@@ -38,5 +38,11 @@ namespace Omicron.SapAdapter.Dtos.Models
         /// </summary>
         /// <value>The code.</value>
         public List<int> SaleOrders { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string DxpId { get; set; }
     }
 }

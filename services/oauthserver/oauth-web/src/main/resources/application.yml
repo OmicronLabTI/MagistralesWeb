@@ -33,5 +33,5 @@ eureka:
 security:
     values:
       secret: Prueba
-      ttl: 3600
+      ttl: 28800
       ttl-refresh: 604800

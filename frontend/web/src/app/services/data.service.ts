@@ -57,11 +57,12 @@ export class DataService {
     //     + '<embed width="100%" height="100%" name="plugin" src="' + url + '" '
     //     + 'type="application/pdf" internalinstanceid="21" /></body></html>');
     // prntWin.document.close();
-    const link = document.createElement('a');
-    link.target = '_blank';
-    link.href = url;
-    link.click();
-    link.remove();
+    // const link = document.createElement('a');
+    // link.target = '_blank';
+    // link.href = url;
+    // link.click();
+    // link.remove();
+    window.open(url, '_blank');
   }
 
   getItemOnDataOnlyIds(dataToSearch: any[], type: FromToFilter) {

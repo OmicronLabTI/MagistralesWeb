@@ -108,21 +108,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderBySalesOrderId(List<int> salesOrderIds);
         
         /// <summary>
-        /// gets the orders by orderid.
-        /// </summary>
-        /// <param name="fechaInit">initial date.</param>
-        /// <param name="endDate">The end date.</param>
-        /// <returns>the data.</returns>
-        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByCreateDate(DateTime fechaInit, DateTime endDate);
-
-        /// <summary>
-        /// Gets the prod by itemcode.
-        /// </summary>
-        /// <param name="itemCode">the item code.</param>
-        /// <returns>the data.</returns>
-        Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByItemCode(string itemCode);
-
-        /// <summary>
         /// gets the realtion between WOR1, OITM ans OITW.
         /// </summary>
         /// <param name="orderId">the order id.</param>
@@ -289,6 +274,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <returns>get the orders.</returns>
         Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate);
+
+        /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenDxp(DateTime initDate);
 
         /// <summary>
         /// Get the orders.
@@ -514,6 +505,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByIdsJoinProduct(List<int> ids);
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByDocNumDxpJoinProduct(List<string> DocNumDxp);
+
+        /// <summary>
         /// Gets the order by init date.
         /// </summary>
         Task<IEnumerable<OrderModel>> GetOrderModelByDocDateJoinDoctor(DateTime initDate, DateTime endDate);
@@ -531,5 +528,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="delveryId">the ids to look.</param>
         /// <returns>the data.</returns>
         Task<List<CompleteDeliveryDetailModel>> GetDeliveryDetailForDeliveryById(List<int> delveryId);
+
+        /// <summary>
+        /// Gets the details for a doctor by id.
+        /// </summary>
+        /// <param name="carCodes">the ids.</param>
+        /// <returns>the data.</returns>
+        Task<List<DoctorInfoModel>> GetDoctorDetailDataById(List<string> carCodes);
     }
 }

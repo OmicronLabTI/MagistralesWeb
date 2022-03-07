@@ -54,7 +54,7 @@ namespace Omicron.SapAdapter.Test
                 new OrderModel { PedidoId = 85000, DocNum = 85000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N" },
 
                 // for packages
-                new OrderModel { PedidoId = 85001, DocNum = 85001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MX", Canceled = "N", IsPackage = "Y" },
+                new OrderModel { PedidoId = 85001, DocNum = 85001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MX", Canceled = "N", IsPackage = "Y", DocNumDxp = "xse123" },
             };
         }
 
@@ -337,7 +337,7 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<InvoiceHeaderModel>
             {
-                new InvoiceHeaderModel { Address = "address", Cliente = "cliente", CardCode = "C1", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico" },
+                new InvoiceHeaderModel { Address = "address", Cliente = "cliente", CardCode = "C1", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico", DocNumDxp = "123456", ShippingAddressName = "Address1" },
 
                 // for packages
                 new InvoiceHeaderModel { Address = "address, Nuevo León", Cliente = "cliente", CardCode = "C1", DocNum = 2, FechaInicio = DateTime.Now, InvoiceId = 2, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 1 },
@@ -825,9 +825,9 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 84503, AsesorId = 1, Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = DateTime.Today.AddDays(-1), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ", Canceled = "N", Address = "CDMX" },
-                new OrderModel { PedidoId = 84517, AsesorId = 1, Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX" },
-                new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX" },
+                new OrderModel { PedidoId = 84503, AsesorId = 1, Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = DateTime.Today.AddDays(-1), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ", Canceled = "N", Address = "CDMX", DocNumDxp = "A1" },
+                new OrderModel { PedidoId = 84517, AsesorId = 1, Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX", DocNumDxp = "A2" },
+                new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX", DocNumDxp = "A3" },
             };
         }
 
