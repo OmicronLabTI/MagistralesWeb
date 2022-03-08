@@ -119,7 +119,7 @@ zuul:
       serviceId: discountsservice
     dxp-reportdxp:
       path: /dxp/report/**
-      serviceId: reportdxpservice 
+      serviceId: reportdxpservice
     dxp-credit:
       path: /dxp/credit/**
       serviceId: creditservice
