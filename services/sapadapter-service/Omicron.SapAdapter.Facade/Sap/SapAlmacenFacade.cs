@@ -34,6 +34,8 @@ namespace Omicron.SapAdapter.Facade.Sap
 
         private readonly IAlmacenOrderDoctorService almacenOrderDoctorService;
 
+        private readonly IAlmacenOrderDxpService almacenOrderDxpService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAlmacenFacade"/> class.
         /// </summary>
@@ -43,7 +45,8 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="sapInvoiceService">The sap invoice service.</param>
         /// <param name="advanceLookService">the advance service.</param>
         /// <param name="almacenOrderDoctorService">the almacen doctor service.</param>
-        public SapAlmacenFacade(IMapper mapper, ISapAlmacenService sapAlmacenService, ISapAlmacenDeliveryService sapAlmacenDelivery, ISapInvoiceService sapInvoiceService, IAdvanceLookService advanceLookService, IAlmacenOrderDoctorService almacenOrderDoctorService)
+        /// <param name="almacenOrderDxpService">The dxp service.</param>
+        public SapAlmacenFacade(IMapper mapper, ISapAlmacenService sapAlmacenService, ISapAlmacenDeliveryService sapAlmacenDelivery, ISapInvoiceService sapInvoiceService, IAdvanceLookService advanceLookService, IAlmacenOrderDoctorService almacenOrderDoctorService, IAlmacenOrderDxpService almacenOrderDxpService)
         {
             this.mapper = mapper;
             this.almacenService = sapAlmacenService ?? throw new ArgumentNullException(nameof(sapAlmacenService));
@@ -51,6 +54,7 @@ namespace Omicron.SapAdapter.Facade.Sap
             this.sapInvoiceService = sapInvoiceService ?? throw new ArgumentException(nameof(sapInvoiceService));
             this.advanceLookService = advanceLookService ?? throw new ArgumentNullException(nameof(advanceLookService));
             this.almacenOrderDoctorService = almacenOrderDoctorService ?? throw new ArgumentNullException(nameof(almacenOrderDoctorService));
+            this.almacenOrderDxpService = almacenOrderDxpService ?? throw new ArgumentNullException(nameof(almacenOrderDxpService));
         }
 
         /// <inheritdoc/>
@@ -91,6 +95,12 @@ namespace Omicron.SapAdapter.Facade.Sap
                 default:
                     return new ResultDto { Code = 400, Success = false, ExceptionMessage = "Not found" };
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetProductsWithCodeBars()
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetProductsWithCodeBars());
         }
 
         /// <inheritdoc/>
@@ -199,6 +209,18 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details)
         {
             return this.mapper.Map<ResultDto>(await this.almacenOrderDoctorService.SearchAlmacenOrdersDetailsByDoctor(details));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SearchAlmacenOrdersByDxpId(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenOrderDxpService.SearchAlmacenOrdersByDxpId(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SearchAlmacenOrdersDetailsByDxpId(DoctorOrdersSearchDeatilDto details)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenOrderDxpService.SearchAlmacenOrdersDetailsByDxpId(details));
         }
 
         /// <inheritdoc/>

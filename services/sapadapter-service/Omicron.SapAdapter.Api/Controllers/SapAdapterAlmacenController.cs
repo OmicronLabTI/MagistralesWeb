@@ -76,6 +76,18 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Gets the orders.
         /// </summary>
+        /// <returns>the data.</returns>
+        [Route("/products/codebars")]
+        [HttpGet]
+        public async Task<IActionResult> GetProductsWithCodeBars()
+        {
+            var response = await this.sapAlmacenFacade.GetProductsWithCodeBars();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
         /// <param name="saleorderid">The type of scanned item.</param>
         /// <returns>the data.</returns>
         [Route("/complete/detail/{saleorderid}")]
@@ -303,6 +315,32 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details)
         {
             var response = await this.sapAlmacenFacade.SearchAlmacenOrdersDetailsByDoctor(details);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/almacen/orders/dxp")]
+        [HttpGet]
+        public async Task<IActionResult> SearchAlmacenOrdersByDxpId([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapAlmacenFacade.SearchAlmacenOrdersByDxpId(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the delivery and invoice id by sale order..
+        /// </summary>
+        /// <param name="details">The sales id separated by commas.</param>
+        /// <returns>the data.</returns>
+        [Route("/almacen/orders/dxp/detail")]
+        [HttpPost]
+        public async Task<IActionResult> SearchAlmacenOrdersDetailsByDxpId(DoctorOrdersSearchDeatilDto details)
+        {
+            var response = await this.sapAlmacenFacade.SearchAlmacenOrdersDetailsByDxpId(details);
             return this.Ok(response);
         }
 

@@ -256,6 +256,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string SpecialClients = "special/clients";
 
         /// <summary>
+        /// gets the address.
+        /// </summary>
+        public const string GetDoctorAddress = "doctor/specific/deliveryaddress";
+
+        /// <summary>
         /// route to look for user orders.
         /// </summary>
         public const string GetOrderByQuery = "userorders";
@@ -448,6 +453,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
+        public const string AllTypesByDxp = "magistral,mixto,linea,maquila,paquetes";
+
+        /// <summary>
+        /// all types.
+        /// </summary>
         public const string AllStatus = "Recibir,Pendiente,Back Order,Cancelado";
 
         /// <summary>
@@ -564,6 +574,26 @@ namespace Omicron.SapAdapter.Services.Constants
         /// if a order is package.
         /// </summary>
         public const string IsPackage = "Y";
+
+        /// <summary>
+        /// the abierto status.
+        /// </summary>
+        public const string EndPointToGetPayments = "orders/subtransactions";
+
+        /// <summary>
+        /// the nvo leon state.
+        /// </summary>
+        public const int ShippingCostAccepted = 1;
+
+        /// <summary>
+        /// the nvo leon state.
+        /// </summary>
+        public const string OnSiteDelivery = "Entrega en las instalaciones";
+
+        /// <summary>
+        /// the nvo leon state.
+        /// </summary>
+        public const string WildcardDocNumDxp = "#";
 
         /// <summary>
         /// Gets the status of the order.

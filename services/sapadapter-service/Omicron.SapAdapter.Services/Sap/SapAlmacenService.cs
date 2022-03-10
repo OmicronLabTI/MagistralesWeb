@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
@@ -21,6 +22,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Pedidos;
+    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
 
@@ -39,6 +41,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IRedisService redisService;
 
+        private readonly IProccessPayments proccessPayments;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SapAlmacenService"/> class.
         /// </summary>
@@ -47,13 +51,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="almacenService">The almacen service.</param>
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">thre redis service.</param>
-        public SapAlmacenService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService)
+        /// <param name="proccessPayments">the proccesPayments.</param>
+        public SapAlmacenService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
             this.almacenService = almacenService.ThrowIfNull(nameof(almacenService));
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
+            this.proccessPayments = proccessPayments.ThrowIfNull(nameof(proccessPayments));
         }
 
         /// <inheritdoc/>
@@ -91,13 +97,16 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesBySaleOrder, new List<int> { orderId });
             var lineOrders = JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
 
-            var incidences = almacenResponse.Comments == null || string.IsNullOrEmpty(almacenResponse.Comments.ToString()) ? new List<IncidentsModel>() : JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Comments.ToString());
+            var comments = ServiceShared.CalculateTernary(almacenResponse.Comments == null, string.Empty, almacenResponse.Comments?.ToString());
+            var incidences = ServiceShared.DeserializeObject(comments, new List<IncidentsModel>());
 
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var sapOrders = await this.sapDao.GetSapOrderDetailForAlmacenRecepcionById(new List<int> { orderId });
             var batches = (await this.sapDao.GetBatchesByProdcuts(lineOrders.Select(x => x.ItemCode).ToList())).ToList();
-            var listToReturn = this.GetDetailRecpcionToReturn(orderId, pedidos, lineOrders, incidences, localNeigbors, sapOrders, batches);
+            var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+            var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
+            var listToReturn = this.GetDetailRecpcionToReturn(orderId, pedidos, lineOrders, incidences, localNeigbors, sapOrders, batches, payments);
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
@@ -157,14 +166,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 if (fechaExp >= DateTime.Today)
                 {
-                    var batch = new LineProductBatchesModel
+                    listBatchesModel.Add(new LineProductBatchesModel
                     {
                         Batch = b.DistNumber,
                         ExpDate = b.FechaExp,
                         AvailableQuantity = Math.Round(b.Quantity - b.CommitQty, 6),
-                    };
-
-                    listBatchesModel.Add(batch);
+                    });
                 }
             });
 
@@ -178,6 +185,15 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetProductsWithCodeBars()
+        {
+            var lineproducts = (await this.sapDao.GetAllLineProducts()).ToList();
+
+            var codebars = lineproducts.Where(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.BarCode), x.ProductoId != x.BarCode)).Select(x => new LineProductWithCodeBarsModel { CodeBar = x.BarCode, ItemCode = x.ProductoId }).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, codebars, null, null);
         }
 
         /// <inheritdoc/>
@@ -217,7 +233,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     idsToReturnLine.Add(x.Key.Value);
                 }
 
-                if (x.Any(y => lineProducts.Contains(y.ProductoId)) && !x.All(y => lineProducts.Contains(y.ProductoId)))
+                if (ServiceShared.CalculateAnd(x.Any(y => lineProducts.Contains(y.ProductoId)), !x.All(y => lineProducts.Contains(y.ProductoId))))
                 {
                     idsToReturnMix.Add(x.Key.Value);
                 }
@@ -314,12 +330,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, new List<int>(), dateToLook);
         }
 
-        private ReceipcionPedidosDetailModel GetDetailRecpcionToReturn(int orderId, List<UserOrderModel> pedidos, List<LineProductsModel> lineOrders, List<IncidentsModel> incidences, List<string> localNeigbors, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<Batches> batches)
+        private ReceipcionPedidosDetailModel GetDetailRecpcionToReturn(int orderId, List<UserOrderModel> pedidos, List<LineProductsModel> lineOrders, List<IncidentsModel> incidences, List<string> localNeigbors, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<Batches> batches, List<PaymentsDto> payments)
         {
             var userOrder = pedidos.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             var order = sapOrders.FirstOrDefault();
-            var isLocal = ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, order.Address);
-            var invoiceType = ServiceShared.CalculateTernary(isLocal, ServiceConstants.Local, ServiceConstants.Foraneo);
+            var payment = payments.FirstOrDefault(p => p.TransactionId.GetSubtransaction() == order.DocNumDxp);
+            payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
+            var invoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, order.Address, payment);
 
             var productList = this.GetProductListModel(pedidos, sapOrders, lineOrders, incidences, batches);
 
@@ -402,7 +419,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 return new Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>(listHeaders.Item1, 0, listHeaders.Item2);
             }
 
-            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple);
+            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple, false);
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
 
@@ -452,8 +469,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (parameters.Contains(ServiceConstants.BackOrder))
             {
-                var idsBackOrder = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.StatusAlmacen == ServiceConstants.BackOrder).Select(y => int.Parse(y.Salesorderid)).ToList();
-                idsBackOrder.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && x.StatusAlmacen == ServiceConstants.BackOrder).Select(y => y.SaleOrderId));
+                var idsBackOrder = userModels.Where(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.Productionorderid), x.StatusAlmacen == ServiceConstants.BackOrder)).Select(y => int.Parse(y.Salesorderid)).ToList();
+                idsBackOrder.AddRange(lineProducts.Where(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.ItemCode), x.StatusAlmacen == ServiceConstants.BackOrder)).Select(y => y.SaleOrderId));
                 listToReturn.AddRange(sapOrders.Where(x => idsBackOrder.Contains(x.DocNum)));
             }
 
@@ -468,11 +485,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<List<CompleteAlmacenOrderModel>> GetSapLinesToLookByChips(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
         {
-            if (ServiceShared.IsValidFilterByTypeShipping(parameters))
-            {
-                var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-                sapOrders = sapOrders.Where(x => ServiceUtils.CalculateTypeLocal(ServiceConstants.NuevoLeon, localNeigbors, x.Address.ValidateNull()) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
-            }
+            sapOrders = await ServiceUtilsAlmacen.FilterSapOrdersByTypeShipping(sapOrders, parameters, this.proccessPayments, this.redisService, this.catalogsService);
 
             if (!parameters.ContainsKey(ServiceConstants.Chips))
             {
@@ -482,6 +495,11 @@ namespace Omicron.SapAdapter.Services.Sap
             if (int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
             {
                 return sapOrders.Where(x => x.DocNum == pedidoId).ToList();
+            }
+
+            if (parameters[ServiceConstants.Chips].StartsWith(ServiceConstants.WildcardDocNumDxp))
+            {
+                return sapOrders.Where(x => x.DocNumDxp == parameters[ServiceConstants.Chips].ToLower().Remove(0, 1)).ToList();
             }
 
             var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();

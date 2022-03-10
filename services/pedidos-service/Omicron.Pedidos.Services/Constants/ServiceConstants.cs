@@ -882,6 +882,7 @@ namespace Omicron.Pedidos.Services.Constants
         public static List<string> StatusAvoidReasignar { get; } = new List<string>
         {
             Finalizado,
+            Almacenado,
         };
 
         /// <summary>

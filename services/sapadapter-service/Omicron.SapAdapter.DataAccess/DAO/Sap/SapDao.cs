@@ -384,18 +384,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByCreateDate(DateTime fechaInit, DateTime endDate)
-        {
-            return await this.RetryQuery<OrdenFabricacionModel>(this.databaseContext.OrdenFabricacionModel.Where(x => x.CreatedDate != null && x.CreatedDate >= fechaInit && x.CreatedDate <= endDate));
-        }
-
-        /// <inheritdoc/>
-        public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderByItemCode(string itemCode)
-        {
-            return await this.RetryQuery<OrdenFabricacionModel>(this.databaseContext.OrdenFabricacionModel.Where(x => x.ProductoId.ToLower().Contains(itemCode)));            
-        }
-
-        /// <inheritdoc/>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(int orderId)
         {
             var query = (from w in this.databaseContext.DetalleFormulaModel
@@ -693,44 +681,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate)
         {
-            var query = (from order in this.databaseContext.OrderModel
-                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                         into DetalleOrden
-                         from dp in DetalleOrden.DefaultIfEmpty()
-                         join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
-                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                         new
-                         {
-                             DoctorId = order.Codigo,
-                             Address = order.ShippingAddressName
-                         }
-                         equals
-                         new
-                         {
-                             DoctorId = doctordet.CardCode,
-                             Address = doctordet.NickName
-                         }
-                         into detalleDireccion
-                         from dop in detalleDireccion.DefaultIfEmpty()
-                         where order.FechaInicio >= initDate && (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y"
-                         select new CompleteAlmacenOrderModel
-                         {
-                             DocNum = order.DocNum,
-                             Cliente = dop.Address2 ?? string.Empty,
-                             Medico = doctor.AliasName,                             
-                             FechaInicio = order.FechaInicio,
-                             Detalles = dp,
-                             Address = order.Address,
-                             TypeOrder = order.OrderType,
-                             PedidoMuestra = order.PedidoMuestra,
-                             Comments = order.Comments,
-                             IsLine = product.IsLine,
-                             IsMagistral = product.IsMagistral,
-                             Canceled = order.Canceled,
-                             IsPackage = order.IsPackage,
-                         });
+            var query = this.GetAllOrdersForAlmacenQuery(initDate);
+            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
+        }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenDxp(DateTime initDate)
+        {
+            var query = this.GetAllOrdersForAlmacenQuery(initDate).Where(x => !string.IsNullOrEmpty(x.DocNumDxp));
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
         }
 
@@ -772,6 +730,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsMagistral = product.IsMagistral,
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -852,6 +811,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsLine = product.IsLine,
                              IsMagistral = product.IsMagistral,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -929,6 +889,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              PedidoId = delivery.PedidoId,
                              TypeOrder = delivery.TypeOrder,
                              IsPackage = delivery.IsPackage,
+                             DocNumDxp = delivery.DocNumDxp,
                          });
 
             return (await this.RetryQuery<DeliverModel>(query)).ToList();
@@ -985,6 +946,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              TypeOrder = invoice.TypeOrder,
                              UpdateDate = invoice.UpdateDate,
                              IsPackage = invoice.IsPackage,
+                             DocNumDxp = invoice.DocNumDxp,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -1095,6 +1057,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              UpdateDate = invoice.UpdateDate,
                              ClientEmail = doctor.Email,
                              IsPackage = invoice.IsPackage,
+                             DocNumDxp = invoice.DocNumDxp,
+                             DoctorPhoneNumber = dop.GlblLocNum,
+                             ShippingAddressName = invoice.ShippingAddressName,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -1383,47 +1348,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByIdsJoinProduct(List<int> ids)
         {
-            var query = (from order in this.databaseContext.OrderModel.Where(x => ids.Contains(x.DocNum))
-                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                         into DetalleOrden
-                         from dp in DetalleOrden.DefaultIfEmpty()
-                         join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
-                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                         new
-                         {
-                             DoctorId = order.Codigo,
-                             Address = order.ShippingAddressName
-                         }
-                         equals
-                         new
-                         {
-                             DoctorId = doctordet.CardCode,
-                             Address = doctordet.NickName
-                         }
-                         into detalleDireccion
-                         from dop in detalleDireccion.DefaultIfEmpty()
-                         where product.IsWorkableProduct == "Y"
-                         select new CompleteOrderModel
-                         {
-                             DocNum = order.DocNum,
-                             Cliente = dop.Address2 ?? string.Empty,
-                             Codigo = order.Codigo,
-                             Medico = doctor.AliasName,
-                             FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
-                             FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
-                             PedidoStatus = order.PedidoStatus,
-                             IsChecked = false,
-                             Detalles = dp,
-                             OrderType = order.OrderType,
-                             Address = order.Address,
-                             PedidoMuestra = order.PedidoMuestra,
-                             Comments = order.Comments,
-                             AsesorId = order.AsesorId,
-                             Canceled = order.Canceled,
-                             IsPackage = order.IsPackage,
-                         });
+            var query = this.GetAllOrdersWithDetailQuery().Where(x => ids.Contains(x.DocNum));
+            return await this.RetryQuery<CompleteOrderModel>(query);
+        }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByDocNumDxpJoinProduct(List<string> DocNumDxp)
+        {
+            var query = this.GetAllOrdersWithDetailQuery().Where(o => DocNumDxp.Contains(o.DocNumDxp));
             return await this.RetryQuery<CompleteOrderModel>(query);
         }
 
@@ -1518,6 +1450,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              FabricationOrder = dpf != null ? dpf.OrdenId.ToString() : string.Empty,
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();
@@ -1558,9 +1491,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = order.Address,
                              Producto = p,
                              IsPackage = order.IsPackage,
+                             DocNumDxp = order.DocNumDxp,
                          });
 
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<DoctorInfoModel>> GetDoctorDetailDataById(List<string> carCodes)
+        {
+            return await this.databaseContext.DoctorInfoModel.Where(x => carCodes.Contains(x.CardCode)).ToListAsync();
         }
 
         /// <summary>
@@ -1597,7 +1537,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             products.ForEach(p =>
             {
                 var datoAlmacen = almacen.FirstOrDefault(y => y.ItemCode == p.ProductoId);
-                var datoToAssign = datoAlmacen == null ? new ItemWarehouseModel() : datoAlmacen;
+                var datoToAssign = datoAlmacen ?? new ItemWarehouseModel();
                 listToReturn.Add(new CompleteDetalleFormulaModel
                 {
                     ProductId = p.ProductoId,
@@ -1612,6 +1552,94 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             });
 
             return listToReturn;
+        }
+
+        private IQueryable<CompleteAlmacenOrderModel> GetAllOrdersForAlmacenQuery(DateTime initDate)
+        {
+            return (from order in this.databaseContext.OrderModel
+                    join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                    into DetalleOrden
+                    from dp in DetalleOrden.DefaultIfEmpty()
+                    join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
+                    join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                    join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                    new
+                    {
+                        DoctorId = order.Codigo,
+                        Address = order.ShippingAddressName
+                    }
+                    equals
+                    new
+                    {
+                        DoctorId = doctordet.CardCode,
+                        Address = doctordet.NickName
+                    }
+                    into detalleDireccion
+                    from dop in detalleDireccion.DefaultIfEmpty()
+                    where order.FechaInicio >= initDate && (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y"
+                    select new CompleteAlmacenOrderModel
+                    {
+                        DocNum = order.DocNum,
+                        Cliente = dop.Address2 ?? string.Empty,
+                        Medico = doctor.AliasName,
+                        FechaInicio = order.FechaInicio,
+                        Detalles = dp,
+                        Address = order.Address,
+                        TypeOrder = order.OrderType,
+                        PedidoMuestra = order.PedidoMuestra,
+                        Comments = order.Comments,
+                        IsLine = product.IsLine,
+                        IsMagistral = product.IsMagistral,
+                        Canceled = order.Canceled,
+                        IsPackage = order.IsPackage,
+                        DocNumDxp = order.DocNumDxp,
+                    });
+        }
+
+        /// <inheritdoc/>
+        private IQueryable<CompleteOrderModel> GetAllOrdersWithDetailQuery()
+        {
+            return (from order in this.databaseContext.OrderModel
+                    join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                    into DetalleOrden
+                    from dp in DetalleOrden.DefaultIfEmpty()
+                    join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
+                    join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                    join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                    new
+                    {
+                        DoctorId = order.Codigo,
+                        Address = order.ShippingAddressName
+                    }
+                    equals
+                    new
+                    {
+                        DoctorId = doctordet.CardCode,
+                        Address = doctordet.NickName
+                    }
+                    into detalleDireccion
+                    from dop in detalleDireccion.DefaultIfEmpty()
+                    where product.IsWorkableProduct == "Y"
+                    select new CompleteOrderModel
+                    {
+                        DocNum = order.DocNum,
+                        Cliente = dop.Address2 ?? string.Empty,
+                        Codigo = order.Codigo,
+                        Medico = doctor.AliasName,
+                        FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
+                        FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
+                        PedidoStatus = order.PedidoStatus,
+                        IsChecked = false,
+                        Detalles = dp,
+                        OrderType = order.OrderType,
+                        Address = order.Address,
+                        PedidoMuestra = order.PedidoMuestra,
+                        Comments = order.Comments,
+                        AsesorId = order.AsesorId,
+                        Canceled = order.Canceled,
+                        IsPackage = order.IsPackage,
+                        DocNumDxp = order.DocNumDxp,
+                    });
         }
     }
 }

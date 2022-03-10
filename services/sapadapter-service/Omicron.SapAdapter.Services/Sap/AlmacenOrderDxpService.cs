@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="AlmacenOrderDoctorService.cs" company="Axity">
+// <copyright file="AlmacenOrderDxpService.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -29,7 +29,7 @@ namespace Omicron.SapAdapter.Services.Sap
     /// <summary>
     /// Class for almacen order doctor service.
     /// </summary>
-    public class AlmacenOrderDoctorService : IAlmacenOrderDoctorService
+    public class AlmacenOrderDxpService : IAlmacenOrderDxpService
     {
         private readonly ISapDao sapDao;
 
@@ -44,7 +44,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private readonly IProccessPayments proccessPayments;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlmacenOrderDoctorService"/> class.
+        /// Initializes a new instance of the <see cref="AlmacenOrderDxpService"/> class.
         /// </summary>
         /// <param name="sapDao">the sap dao.</param>
         /// <param name="pedidosService">the pedidos service.</param>
@@ -52,7 +52,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">thre redis service.</param>
         /// <param name="proccessPayments">the proccess payments.</param>
-        public AlmacenOrderDoctorService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments)
+        public AlmacenOrderDxpService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
@@ -63,9 +63,9 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters)
+        public async Task<ResultModel> SearchAlmacenOrdersByDxpId(Dictionary<string, string> parameters)
         {
-            var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypesByDoctor);
+            var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypesByDxp);
             var types = typesString.Split(",").ToList();
 
             var userOrdersTuple = await ServiceUtilsAlmacen.GetUserOrdersAlmacenLeftList(this.pedidosService);
@@ -73,14 +73,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProductsTuple = await ServiceUtilsAlmacen.GetLineProductsAlmacenLeftList(this.almacenService, ids, userOrdersTuple.Item3);
             var sapOrders = await this.GetSapOrders(userOrdersTuple, lineProductsTuple, types);
             var ordersByFilter = await this.GetSapOrdersToLookByDoctor(sapOrders.Item1, parameters);
-            var totalFilter = ordersByFilter.Select(x => x.Medico).Distinct().ToList().Count;
+            var totalFilter = ordersByFilter.Select(x => x.DocNumDxp).Distinct().ToList().Count;
 
             var listToReturn = this.GetCardOrdersToReturn(ordersByFilter, parameters, sapOrders.Item2);
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details)
+        public async Task<ResultModel> SearchAlmacenOrdersDetailsByDxpId(DoctorOrdersSearchDeatilDto details)
         {
             var sapOrders = await this.sapDao.GetSapOrderDetailForAlmacenRecepcionById(details.SaleOrders);
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
@@ -88,65 +88,23 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
             var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
             var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
-            var saleModel = new SalesByDoctorModel();
 
-            saleModel.AlmacenHeaderByDoctor = new AlmacenSalesByDoctorHeaderModel
+            var saleModel = new SalesByDoctorModel
             {
-                Address = details.Address,
-                Doctor = details.Name,
-                TotalItems = sapOrders.Count(y => y.Detalles != null),
-                TotalPieces = sapOrders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
-                IsPackage = details.IsPackage,
+                AlmacenHeaderByDoctor = new AlmacenSalesByDoctorHeaderModel
+                {
+                    Address = details.Address,
+                    Doctor = details.Name,
+                    TotalItems = sapOrders.Count(y => y.Detalles != null),
+                    TotalPieces = sapOrders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
+                    IsPackage = details.IsPackage,
+                    DxpId = details.DxpId,
+                },
+
+                Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders.ToList(), localNeigbors, userOrders, payments),
             };
 
-            saleModel.Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders.ToList(), localNeigbors, userOrders, payments);
-
             return ServiceUtils.CreateResult(true, 200, null, saleModel, null, null);
-        }
-
-        /// <inheritdoc/>
-        public async Task<ResultModel> GetOrderdetail(int saleorderid)
-        {
-            var details = await this.sapDao.GetPedidoByIdJoinProduct(saleorderid);
-            var productItems = await this.sapDao.GetProductByIds(details.Select(x => x.ProductoId).ToList());
-            var saleDetails = (await this.sapDao.GetAllDetails(new List<int?> { saleorderid })).ToList();
-            var listDetails = new List<AlmacenDetailsOrder>();
-            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { saleorderid });
-            var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
-            foreach (var detail in details)
-            {
-                var item = productItems.FirstOrDefault(x => x.ProductoId == detail.ProductoId);
-                item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
-                var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
-                var saleDetail = saleDetails.FirstOrDefault(x => x.CodigoProducto == detail.ProductoId);
-                var orderId = saleDetail?.OrdenFabricacionId.ToString() ?? string.Empty;
-                var itemcode = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(orderId), $"{item.ProductoId} - {orderId}", item.ProductoId);
-
-                var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == saleorderid && x.ItemCode == item.ProductoId);
-                incidentdb ??= new IncidentsModel();
-
-                var localIncident = new IncidentInfoModel
-                {
-                    Batches = ServiceShared.DeserializeObject(incidentdb.Batches, new List<AlmacenBatchModel>()),
-                    Comments = incidentdb.Comments,
-                    Incidence = incidentdb.Incidence,
-                    Status = incidentdb.Status,
-                };
-                var detailItem = new AlmacenDetailsOrder
-                {
-                    ItemCode = itemcode,
-                    Description = item.LargeDescription.ToUpper(),
-                    NeedsCooling = item.NeedsCooling,
-                    ProductType = $"Producto {productType}",
-                    Pieces = detail.Quantity,
-                    Container = detail.Container,
-                    Status = ServiceShared.CalculateTernary(detail.CanceledOrder == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
-                    Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
-                };
-                listDetails.Add(detailItem);
-            }
-
-            return ServiceUtils.CreateResult(true, 200, null, listDetails, null, null);
         }
 
         /// <summary>
@@ -157,8 +115,8 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
-            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple, false);
-            var doctorWithPackages = sapOrders.Where(x => x.IsPackage == ServiceConstants.IsPackage).Select(p => p.Medico).Distinct().ToList();
+            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple, true);
+            var orderWithPackages = sapOrders.Where(x => x.IsPackage == ServiceConstants.IsPackage).Select(p => p.DocNumDxp).Distinct().ToList();
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
 
@@ -169,7 +127,7 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = ServiceUtilsAlmacen.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductTuple.Item1, sapOrders);
             sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
             sapOrders.AddRange(sapCancelled);
-            return new Tuple<List<CompleteAlmacenOrderModel>, List<string>>(ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1, doctorWithPackages);
+            return new Tuple<List<CompleteAlmacenOrderModel>, List<string>>(ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1, orderWithPackages);
         }
 
         private async Task<List<CompleteAlmacenOrderModel>> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
@@ -181,18 +139,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 return sapOrders;
             }
 
-            var doctorName = parameters[ServiceConstants.Chips].Split(",").ToList();
-            return sapOrders.Where(x => doctorName.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower()))).ToList();
+            return sapOrders.Where(x => x.DocNumDxp.ValidateNull().ToLower() == parameters[ServiceConstants.Chips].ToLower().Remove(0, 1)).ToList();
         }
 
-        /// <summary>
-        /// Gets card for doctor.
-        /// </summary>
-        /// <returns>the data.</returns>
-        private AlmacenOrdersByDoctorModel GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters, List<string> doctorWithPackages)
+        private AlmacenOrdersByDoctorModel GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters, List<string> orderWithPackages)
         {
-            var doctors = sapOrders.Select(x => x.Medico).Distinct().OrderBy(x => x).ToList();
-            doctors = ServiceShared.GetOffsetLimit(doctors, parameters);
+            var dxpIds = sapOrders.Select(x => x.DocNumDxp).Distinct().OrderBy(x => x).ToList();
+            dxpIds = ServiceShared.GetOffsetLimit(dxpIds, parameters);
 
             var listToReturn = new AlmacenOrdersByDoctorModel
             {
@@ -200,22 +153,23 @@ namespace Omicron.SapAdapter.Services.Sap
                 TotalSalesOrders = 0,
             };
 
-            foreach (var doctor in doctors)
+            foreach (var dxpId in dxpIds)
             {
-                var orders = sapOrders.Where(x => x.Medico == doctor).ToList();
+                var orders = sapOrders.Where(x => x.DocNumDxp == dxpId).ToList();
                 var totalOrders = orders.DistinctBy(x => x.DocNum).Count();
                 var totalItems = orders.DistinctBy(y => new { y.DocNum, y.Detalles.ProductoId }).Count();
-                var doctorAddress = sapOrders.FirstOrDefault(x => x.Medico == doctor);
+                var doctorAddress = sapOrders.FirstOrDefault(x => x.DocNumDxp == dxpId);
                 var address = doctorAddress?.Address?.Replace("\r", " ").Replace("  ", " ").ToUpper() ?? string.Empty;
 
                 var sale = new AlmacenSalesByDoctorModel
                 {
-                    Doctor = doctor,
+                    Doctor = orders.FirstOrDefault().Medico,
+                    DxpId = dxpId,
                     Address = address,
                     TotalOrders = totalOrders,
                     TotalItems = totalItems,
                     SaleOrderId = orders.Select(x => x.DocNum).Distinct().ToList(),
-                    IsPackage = doctorWithPackages.Any(dwp => dwp == doctor),
+                    IsPackage = orderWithPackages.Any(dwp => dwp == dxpId),
                 };
 
                 var saleModel = new SalesByDoctorModel
