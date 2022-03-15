@@ -580,7 +580,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     userOrderStatus.AddRange(lineProducts.Where(x => ServiceShared.CalculateAnd(x.DeliveryId == y.DocNum, !string.IsNullOrEmpty(x.ItemCode))).Select(y => y.StatusAlmacen));
                     var salesOrders = delivery.Where(z => ServiceShared.CalculateAnd(z.DocNum == y.DocNum, z.Detalles != null, z.Detalles.BaseEntry.HasValue)).Select(a => a.Detalles.BaseEntry.Value).Distinct().ToList();
 
-                    var deliveryModel = new InvoiceDeliveryModel
+                    listToReturn.Add(new InvoiceDeliveryModel
                     {
                         DeliveryId = y.DocNum,
                         DeliveryDocDate = y.Detalles.DocDate,
@@ -588,9 +588,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         Status = ServiceShared.CalculateTernary(userOrderStatus.Any() && userOrderStatus.All(z => z == ServiceConstants.Empaquetado), ServiceConstants.Empaquetado, ServiceConstants.Almacenado),
                         TotalItems = invoiceDetails.Where(a => a.Detail.BaseEntry.HasValue).Count(z => z.Detail.BaseEntry == y.DocNum),
                         IsPackage = y.IsPackage == "Y",
-                    };
-
-                    listToReturn.Add(deliveryModel);
+                    });
                 });
 
             return listToReturn;
@@ -648,7 +646,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = incidentdb.Status,
                 };
 
-                var productModel = new InvoiceProductModel
+                listToReturn.Add(new InvoiceProductModel
                 {
                     Batches = listBatches,
                     Container = invoice.Container,
@@ -663,9 +661,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     OrderId = product.Item2,
                     SaleOrderId = product.Item3,
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
-                };
-
-                listToReturn.Add(productModel);
+                });
             }
 
             return listToReturn;
@@ -722,13 +718,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var validBatches = (await this.sapDao.GetValidBatches(listComponents)).ToList();
 
-            var listToReturn = new List<string>();
-            validBatches.Where(x => batchTrans.Any(y => y.SysNumber == x.SysNumber)).ToList().ForEach(z =>
-            {
-                var batch = batchName.FirstOrDefault(a => a.BatchNumber == z.DistNumber);
-                batch ??= new AlmacenBatchModel() { BatchQty = 0 };
-                listToReturn.Add($"{z.DistNumber} | {(int)batch.BatchQty} pz | Cad: {z.FechaExp}");
-            });
+            var listToReturn = validBatches
+                .Where(x => batchTrans.Any(y => y.SysNumber == x.SysNumber))
+                .Select(z => $"{z.DistNumber} | {(int)batchName.GetBatch(z.DistNumber).BatchQty} pz | Cad: {z.FechaExp}")
+                .ToList();
 
             return listToReturn;
         }
@@ -755,7 +748,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 TotalPieces = invoices.Sum(x => x.Quantity),
                 Products = products,
                 TotalItems = products.Count,
-                Status = ServiceShared.CalculateTernary(products.Any() && products.All(x => x.Status.Equals(ServiceConstants.Empaquetado)), ServiceConstants.Empaquetado, ServiceConstants.Almacenado),
+                Status = ServiceShared.CalculateTernary(ServiceShared.CalculateAnd(products.Any(), products.All(x => x.Status.Equals(ServiceConstants.Empaquetado))), ServiceConstants.Empaquetado, ServiceConstants.Almacenado),
                 ListSalesOrder = string.Join(", ", listSales),
             };
 
