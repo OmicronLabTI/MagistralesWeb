@@ -468,14 +468,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<List<BatchesTransactionQtyModel>> GetBatchesBySale(int deliveryId, int saleId, List<string> itemCode)
         {
-            var listLastTransactions = new List<BatchTransacitions>();
             var batchesBySale = (await this.sapDao.GetBatchesTransactionByOrderItem(new List<int> { deliveryId })).ToList();
             batchesBySale = batchesBySale.Where(x => ServiceShared.CalculateAnd(itemCode.Contains(x.ItemCode), x.BaseEntry == saleId)).ToList();
-            batchesBySale.GroupBy(x => x.ItemCode).Where(a => a.Any()).ToList().ForEach(y =>
-            {
-                var logs = y.OrderBy(z => z.LogEntry).ToList();
-                listLastTransactions.Add(logs.Any() ? logs.Last() : null);
-            });
+
+            var listLastTransactions = batchesBySale
+                .GroupBy(x => x.ItemCode)
+                .Where(a => a.Any())
+                .Select(y => y.OrderBy(z => z.LogEntry).LastOrDefault()).ToList();
 
             listLastTransactions = listLastTransactions.Where(x => x != null).ToList();
             var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(listLastTransactions.Select(x => x.LogEntry).ToList())).ToList();
@@ -509,16 +508,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private List<string> GetBatchesByDelivery(string itemCode, List<BatchesTransactionQtyModel> batchTrans, List<CompleteBatchesJoinModel> validBatches,  List<AlmacenBatchModel> batchName)
         {
-            var listToReturn = new List<string>();
             var batchTransLocal = batchTrans.Where(x => x.ItemCode == itemCode).ToList();
             var batchesToLoop = validBatches.Where(x => ServiceShared.CalculateAnd(batchTransLocal.Any(y => y.SysNumber == x.SysNumber), x.ItemCode == itemCode)).ToList();
-            batchesToLoop.ForEach(z =>
-            {
-                var batch = batchName.FirstOrDefault(a => a.BatchNumber == z.DistNumber);
-                batch ??= new AlmacenBatchModel() { BatchQty = 0 };
-                listToReturn.Add($"{z.DistNumber} | {(int)batch.BatchQty} pz | Cad: {z.FechaExp}");
-            });
 
+            var listToReturn = batchesToLoop
+                .Select(z => $"{z.DistNumber} | {(int)batchName.GetBatch(z.DistNumber).BatchQty} pz | Cad: {z.FechaExp}")
+                .ToList();
             return listToReturn;
         }
 

@@ -619,25 +619,19 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         public async Task<ResultModel> ValidateOrder(List<int> orderId)
         {
-            var listErrors = new List<OrderValidationResponse>();
-            var listErrorsBatches = new OrderValidationResponse { Type = ServiceConstants.BatchesAreMissingError, ListItems = new List<string>() };
-            var listErrorStock = new OrderValidationResponse { Type = ServiceConstants.MissingWarehouseStock, ListItems = new List<string>() };
-
             var componentes = (await this.sapDao.GetDetalleFormula(orderId)).ToList();
-            componentes.ForEach(x =>
-            {
-                if (ServiceShared.CalculateOr(x.WarehouseQuantity <= 0, x.RequiredQuantity > x.WarehouseQuantity))
-                {
-                    listErrorStock.ListItems.Add($"{x.OrderFabId} {x.ProductId}");
-                }
-            });
-
-            var resultBatches = await this.getProductionOrderUtils.GetIncompleteProducts(orderId);
-            resultBatches.ForEach(x => listErrorsBatches.ListItems.Add(x));
-
-            listErrorsBatches.ListItems = listErrorsBatches.ListItems.OrderBy(x => x).ToList();
+            var listErrorStock = new OrderValidationResponse { Type = ServiceConstants.MissingWarehouseStock, ListItems = new List<string>() };
+            listErrorStock.ListItems.AddRange(from x in componentes
+                            where ServiceShared.CalculateOr(x.WarehouseQuantity <= 0, x.RequiredQuantity > x.WarehouseQuantity)
+                            select $"{x.OrderFabId} {x.ProductId}");
             listErrorStock.ListItems = listErrorStock.ListItems.OrderBy(x => x).ToList();
 
+            var resultBatches = await this.getProductionOrderUtils.GetIncompleteProducts(orderId);
+            var listErrorsBatches = new OrderValidationResponse { Type = ServiceConstants.BatchesAreMissingError, ListItems = new List<string>() };
+            listErrorsBatches.ListItems.AddRange(resultBatches.Select(b => b));
+            listErrorsBatches.ListItems = listErrorsBatches.ListItems.OrderBy(x => x).ToList();
+
+            var listErrors = new List<OrderValidationResponse>();
             if (ServiceShared.CalculateOr(listErrorsBatches.ListItems.Any(), listErrorStock.ListItems.Any()))
             {
                 listErrors.Add(listErrorsBatches);
@@ -763,7 +757,6 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the batches.</returns>
         private async Task<List<AssignedBatches>> GetTransacitionBatches(int orderId, string itemCode, List<ValidBatches> validBatches)
         {
-            var listToReturn = new List<AssignedBatches>();
             var batchTransactions = (await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, orderId)).ToList();
             var lastTransaction = batchTransactions.Any() ? batchTransactions.OrderBy(x => x.LogEntry).Last(y => y.DocQuantity > 0) : null;
 
@@ -773,17 +766,14 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(new List<int> { lastTransaction.LogEntry })).ToList();
-
-            batchesQty.ForEach(x =>
-            {
-                var batch = validBatches.FirstOrDefault(y => y.SysNumber == x.SysNumber);
-                listToReturn.Add(new AssignedBatches
-                {
-                    CantidadSeleccionada = x.AllocQty,
-                    NumeroLote = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.NumeroLote),
-                    SysNumber = x.SysNumber,
-                });
-            });
+            var listToReturn = (from x in batchesQty
+                                  let batch = validBatches.FirstOrDefault(y => y.SysNumber == x.SysNumber)
+                                  select new AssignedBatches
+                                  {
+                                      CantidadSeleccionada = x.AllocQty,
+                                      NumeroLote = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.NumeroLote),
+                                      SysNumber = x.SysNumber,
+                                  }).ToList();
 
             return listToReturn;
         }
@@ -796,7 +786,6 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<List<AssignedBatches>> GetTransacitionBatches(List<CompleteDetalleFormulaModel> components, List<ValidBatches> validBatches)
         {
-            var listToReturn = new List<AssignedBatches>();
             var batchTransactions = (await this.sapDao.GetBatchesTransactionByOrderItem(new List<int> { components.FirstOrDefault().OrderFabId })).ToList();
 
             var listLastTransacionts = new List<BatchTransacitions>();
@@ -815,19 +804,15 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(listLastTransacionts.Select(x => x.LogEntry).ToList())).ToList();
-
-            batchesQty.ForEach(x =>
-            {
-                var batch = validBatches.FirstOrDefault(y => ServiceShared.CalculateAnd(y.SysNumber == x.SysNumber, x.ItemCode == y.ItemCode));
-                listToReturn.Add(new AssignedBatches
-                {
-                    CantidadSeleccionada = x.AllocQty,
-                    NumeroLote = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.NumeroLote),
-                    SysNumber = x.SysNumber,
-                    ItemCode = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.ItemCode),
-                });
-            });
-
+            var listToReturn = (from x in batchesQty
+                                  let batch = validBatches.FirstOrDefault(y => ServiceShared.CalculateAnd(y.SysNumber == x.SysNumber, x.ItemCode == y.ItemCode))
+                                  select new AssignedBatches
+                                  {
+                                      CantidadSeleccionada = x.AllocQty,
+                                      NumeroLote = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.NumeroLote),
+                                      SysNumber = x.SysNumber,
+                                      ItemCode = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.ItemCode),
+                                  }).ToList();
             return listToReturn;
         }
 
