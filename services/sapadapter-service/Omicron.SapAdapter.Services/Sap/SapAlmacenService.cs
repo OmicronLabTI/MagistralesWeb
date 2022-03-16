@@ -141,10 +141,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetLineScannedData(string code)
         {
-            var listBatchesModel = new List<LineProductBatchesModel>();
-
             var itemCode = (await this.sapDao.GetProductByCodeBar(code)).FirstOrDefault();
-
             if (itemCode == null)
             {
                 return ServiceUtils.CreateResult(true, 404, null, new LineScannerModel(), null, null);
@@ -158,22 +155,16 @@ namespace Omicron.SapAdapter.Services.Sap
             var validBatches = (await this.sapDao.GetValidBatches(listComponents)).ToList();
             var productType = ServiceShared.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
-            validBatches.ForEach(b =>
-            {
-                var batchDate = b.FechaExp ?? DateTime.Now.ToString("dd/MM/yyyy");
-                var dateSplit = batchDate.Split("/");
-                var fechaExp = new DateTime(int.Parse(dateSplit[2]), int.Parse(dateSplit[1]), int.Parse(dateSplit[0]));
-
-                if (fechaExp >= DateTime.Today)
-                {
-                    listBatchesModel.Add(new LineProductBatchesModel
+            var listBatchesModel = validBatches
+                .Where(vb => this.GetDateFromString(vb.FechaExp) >= DateTime.Today)
+                .Select(b =>
+                    new LineProductBatchesModel
                     {
                         Batch = b.DistNumber,
                         ExpDate = b.FechaExp,
                         AvailableQuantity = Math.Round(b.Quantity - b.CommitQty, 6),
-                    });
-                }
-            });
+                    })
+                .ToList();
 
             var lineData = new LineScannerModel
             {
@@ -455,15 +446,15 @@ namespace Omicron.SapAdapter.Services.Sap
                 var allIds = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Salesorderid)).ToList();
                 allIds.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).Select(y => y.SaleOrderId));
 
-                var idsToLook = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status == ServiceConstants.Finalizado && !ServiceConstants.StatusToIgnorePorRecibir.Contains(x.StatusAlmacen)).Select(y => int.Parse(y.Salesorderid)).ToList();
-                idsToLook.AddRange(lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode) && !ServiceConstants.StatusToIgnorePorRecibir.Contains(x.StatusAlmacen)).Select(y => y.SaleOrderId));
+                var idsToLook = userModels.Where(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.Productionorderid), x.Status == ServiceConstants.Finalizado, !ServiceConstants.StatusToIgnorePorRecibir.Contains(x.StatusAlmacen))).Select(y => int.Parse(y.Salesorderid)).ToList();
+                idsToLook.AddRange(lineProducts.Where(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.ItemCode), !ServiceConstants.StatusToIgnorePorRecibir.Contains(x.StatusAlmacen))).Select(y => y.SaleOrderId));
                 idsToLook.AddRange(sapOrders.Where(x => !allIds.Contains(x.DocNum)).Select(y => y.DocNum));
                 listToReturn.AddRange(sapOrders.Where(x => idsToLook.Contains(x.DocNum)));
             }
 
             if (parameters.Contains(ServiceConstants.Pendiente))
             {
-                var idsPendiente = userModels.Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status != ServiceConstants.Finalizado && !ServiceConstants.StatusToIgnorePorRecibir.Contains(x.StatusAlmacen)).Select(y => int.Parse(y.Salesorderid)).ToList();
+                var idsPendiente = userModels.Where(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.Productionorderid), x.Status != ServiceConstants.Finalizado, !ServiceConstants.StatusToIgnorePorRecibir.Contains(x.StatusAlmacen))).Select(y => int.Parse(y.Salesorderid)).ToList();
                 listToReturn.AddRange(sapOrders.Where(x => idsPendiente.Contains(x.DocNum)));
             }
 
@@ -539,7 +530,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var localUserOrders = userOrders.Where(x => ServiceShared.CalculateAnd(x.Salesorderid == so.ToString(), !string.IsNullOrEmpty(x.Productionorderid))).ToList();
 
                 var salesStatusMagistral = this.GetStatusSaleOrder(userOrder);
-                salesStatusMagistral = ServiceShared.CalculateTernary(salesStatusMagistral == ServiceConstants.PorRecibir && localUserOrders.Any(y => y.Status == ServiceConstants.Finalizado && y.FinishedLabel == 0), ServiceConstants.Pendiente, salesStatusMagistral);
+                salesStatusMagistral = ServiceShared.CalculateTernary(ServiceShared.CalculateAnd(salesStatusMagistral == ServiceConstants.PorRecibir, localUserOrders.Any(y => ServiceShared.CalculateAnd(y.Status == ServiceConstants.Finalizado, y.FinishedLabel == 0))), ServiceConstants.Pendiente, salesStatusMagistral);
 
                 var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
                 var salesStatus = ServiceShared.CalculateTernary(userOrder != null, salesStatusMagistral, salesStatusLinea);
@@ -638,13 +629,9 @@ namespace Omicron.SapAdapter.Services.Sap
                     deliveryId = userFabLineOrder.DeliveryId;
 
                     var batchObject = ServiceShared.DeserializeObject(userFabLineOrder.BatchName, new List<AlmacenBatchModel>());
-                    batchObject.ForEach(y =>
-                    {
-                        var batch = batchesDataBase.FirstOrDefault(z => ServiceShared.CalculateAnd(z.DistNumber == y.BatchNumber, z.ItemCode == order.Producto.ProductoId));
-                        batch ??= new Batches();
-                        var expirationDate = ServiceShared.GetDateValueOrDefault(batch.ExpDate, string.Empty);
-                        batches.Add($"{y.BatchNumber} | {(int)y.BatchQty} pz | Cad: {expirationDate}");
-                    });
+                    batches = batchObject
+                        .Select(y => $"{y.BatchNumber} | {(int)y.BatchQty} pz | Cad: {this.GetExpirationDate(batchesDataBase, y.BatchNumber, order.Producto.ProductoId)}")
+                        .ToList();
                 }
 
                 var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.DocNum, x.ItemCode == order.Producto.ProductoId));
@@ -658,7 +645,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = incidentdb.Status,
                 };
 
-                var productModel = new ProductListModel
+                listToReturn.Add(new ProductListModel
                 {
                     Container = order.Detalles.Container,
                     Description = order.Producto.LargeDescription.ToUpper(),
@@ -672,9 +659,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     HasDelivery = hasDelivery,
                     DeliveryId = deliveryId,
-                };
-
-                listToReturn.Add(productModel);
+                });
             }
 
             return listToReturn;
@@ -686,6 +671,20 @@ namespace Omicron.SapAdapter.Services.Sap
             salesStatusMagistral = ServiceShared.CalculateTernary(userOrder != null && !string.IsNullOrEmpty(userOrder.StatusAlmacen) && userOrder.StatusAlmacen != ServiceConstants.Recibir, userOrder?.StatusAlmacen, salesStatusMagistral);
             salesStatusMagistral = ServiceShared.CalculateTernary(salesStatusMagistral == ServiceConstants.Recibir, ServiceConstants.PorRecibir, salesStatusMagistral);
             return salesStatusMagistral;
+        }
+
+        private DateTime GetDateFromString(string date)
+        {
+            var dateText = date ?? DateTime.Now.ToString("dd/MM/yyyy");
+            var dateSplit = dateText.Split("/");
+            return new DateTime(int.Parse(dateSplit[2]), int.Parse(dateSplit[1]), int.Parse(dateSplit[0]));
+        }
+
+        private string GetExpirationDate(List<Batches> batchesDataBase, string batchNumber, string productoId)
+        {
+            var batch = batchesDataBase.FirstOrDefault(z => ServiceShared.CalculateAnd(z.DistNumber == batchNumber, z.ItemCode == productoId));
+            batch ??= new Batches();
+            return ServiceShared.GetDateValueOrDefault(batch.ExpDate, string.Empty);
         }
     }
 }

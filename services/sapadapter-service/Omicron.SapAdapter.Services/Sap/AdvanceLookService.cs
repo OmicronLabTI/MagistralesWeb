@@ -720,7 +720,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 return this.GenerateCardForPackageInvoiceTheSalesOrder(paramsCardInvoice);
             }
 
-            if (ServiceShared.CalculateAnd(tuple.Item2 == ServiceConstants.Invoice && !isCancelled))
+            if (ServiceShared.CalculateAnd(tuple.Item2 == ServiceConstants.Invoice, !isCancelled))
             {
                 var invoice = paramsCard.InvoiceHeaders.FirstOrDefault(x => x.DocNum == tuple.Item1);
                 invoice ??= new InvoiceHeaderModel();
