@@ -335,6 +335,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var clientesResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.SpecialClients);
             var clients = JsonConvert.DeserializeObject<List<ExclusivePartnersModel>>(clientesResponse.Response.ToString());
+            var localNeighbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var status = !packages.Any() ? ServiceConstants.Empaquetado : packages.OrderByDescending(x => x.AssignedDate.Value).FirstOrDefault().Status;
 
@@ -369,7 +370,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 SalesOrders = JsonConvert.SerializeObject(new List<string> { invoiceHeader.DocNumDxp }),
             };
 
-            var comments = ServiceShared.CalculateTernary(model.Address.Contains(ServiceConstants.NuevoLeon) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode), string.Empty, ServiceConstants.ForeingPackage);
+            var isinvoiceLocal = ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, model.Address, dxpTransactions) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode);
+
+            var comments = ServiceShared.CalculateTernary(isinvoiceLocal, string.Empty, ServiceConstants.ForeingPackage);
             comments = ServiceShared.CalculateTernary(!status.Equals(ServiceConstants.Empaquetado) && !status.Equals(ServiceConstants.NoEntregado), $"{ServiceConstants.PackageNotAvailable} {status}", comments);
 
             return ServiceUtils.CreateResult(true, 200, null, model, null, comments);
