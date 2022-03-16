@@ -860,38 +860,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<List<DeliverModel>> GetDeliveryModelByDocNumJoinDoctor(List<int> docuNums)
         {
-            var query = (from delivery in this.databaseContext.DeliverModel.Where(x => docuNums.Contains(x.DocNum))
-                         join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
-                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                         new
-                         {
-                            DoctorId = delivery.CardCode,
-                            Address = delivery.ShippingAddressName
-                         }
-                         equals
-                         new
-                         {
-                            DoctorId = doctordet.CardCode,
-                            Address = doctordet.NickName
-                         }
-                        into detalleDireccion
-                         from dop in detalleDireccion.DefaultIfEmpty()
-                         select new DeliverModel
-                         {
-                             Address = delivery.Address,
-                             Canceled = delivery.Canceled,
-                             CardCode = delivery.CardCode,
-                             Cliente = dop.Address2 ?? string.Empty,
-                             DeliveryStatus = delivery.DeliveryStatus,
-                             DocNum = delivery.DocNum,
-                             FechaInicio = delivery.FechaInicio,
-                             Medico = doctor.AliasName,
-                             PedidoId = delivery.PedidoId,
-                             TypeOrder = delivery.TypeOrder,
-                             IsPackage = delivery.IsPackage,
-                             DocNumDxp = delivery.DocNumDxp,
-                         });
-
+            var query = this.GetDeliveryJoinDoctorQuery().Where(x => docuNums.Contains(x.DocNum));
             return (await this.RetryQuery<DeliverModel>(query)).ToList();
         }
 
@@ -1115,12 +1084,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<ClientCatalogModel>> GetClientsById(List<string> clientId)
-        {
-            return await this.RetryQuery<ClientCatalogModel>(this.databaseContext.ClientCatalogModel.Where(x => clientId.Contains(x.ClientId)));
-        }
-
-        /// <inheritdoc/>
         public async Task<IEnumerable<Repartidores>> GetDeliveryCompanyById(List<short> ids)
         {
             return await this.RetryQuery<Repartidores>(this.databaseContext.Repartidores.Where(x => ids.Contains(x.TrnspCode)));
@@ -1201,35 +1164,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DeliverModel>> GetDeliveryByDocDateJoinDoctor(DateTime initDate, DateTime endDate)
         {
-            var query = (from delivery in this.databaseContext.DeliverModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate)
-                         join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
-                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                         new
-                         {
-                             DoctorId = delivery.CardCode,
-                             Address = delivery.ShippingAddressName
-                         }
-                         equals
-                         new
-                         {
-                             DoctorId = doctordet.CardCode,
-                             Address = doctordet.NickName
-                         }
-                         into detalleDireccion
-                         from dop in detalleDireccion.DefaultIfEmpty()
-                         select new DeliverModel
-                         {
-                             Address = delivery.Address,
-                             Canceled = delivery.Canceled,
-                             CardCode = delivery.CardCode,
-                             Cliente = dop.Address2 ?? string.Empty,
-                             DeliveryStatus = delivery.DeliveryStatus,
-                             DocNum = delivery.DocNum,
-                             FechaInicio = delivery.FechaInicio,
-                             Medico = doctor.AliasName,
-                             PedidoId = delivery.PedidoId,
-                             TypeOrder = delivery.TypeOrder,
-                         });
+            var query = this.GetDeliveryJoinDoctorQuery()
+                            .Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate);
 
             return (await this.RetryQuery<DeliverModel>(query)).ToList();
         }
@@ -1275,12 +1211,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
-        }
-
-        /// <inheritdoc/>
-        public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntry(List<int> baseEntry)
-        {
-            return await this.RetryQuery<InvoiceDetailModel>(this.databaseContext.InvoiceDetailModel.Where(x => x.BaseEntry != null && baseEntry.Contains(x.BaseEntry.Value)));
         }
 
         public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntryJoinProduct(List<int> baseEntry)
@@ -1497,12 +1427,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
         }
 
-        /// <inheritdoc/>
-        public async Task<List<DoctorInfoModel>> GetDoctorDetailDataById(List<string> carCodes)
-        {
-            return await this.databaseContext.DoctorInfoModel.Where(x => carCodes.Contains(x.CardCode)).ToListAsync();
-        }
-
         /// <summary>
         /// Gets the retry.
         /// </summary>
@@ -1640,6 +1564,42 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         IsPackage = order.IsPackage,
                         DocNumDxp = order.DocNumDxp,
                     });
+        }
+
+        /// <inheritdoc/>
+        private IQueryable<DeliverModel> GetDeliveryJoinDoctorQuery()
+        {
+            return (from delivery in this.databaseContext.DeliverModel
+                         join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
+                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                         new
+                         {
+                             DoctorId = delivery.CardCode,
+                             Address = delivery.ShippingAddressName
+                         }
+                         equals
+                         new
+                         {
+                             DoctorId = doctordet.CardCode,
+                             Address = doctordet.NickName
+                         }
+                         into detalleDireccion
+                         from dop in detalleDireccion.DefaultIfEmpty()
+                         select new DeliverModel
+                         {
+                             Address = delivery.Address,
+                             Canceled = delivery.Canceled,
+                             CardCode = delivery.CardCode,
+                             Cliente = dop.Address2 ?? string.Empty,
+                             DeliveryStatus = delivery.DeliveryStatus,
+                             DocNum = delivery.DocNum,
+                             FechaInicio = delivery.FechaInicio,
+                             Medico = doctor.AliasName,
+                             PedidoId = delivery.PedidoId,
+                             TypeOrder = delivery.TypeOrder,
+                             IsPackage = delivery.IsPackage,
+                             DocNumDxp = delivery.DocNumDxp,
+                         });
         }
     }
 }
