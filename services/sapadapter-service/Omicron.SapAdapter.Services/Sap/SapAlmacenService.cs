@@ -598,8 +598,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the products.</returns>
         private List<ProductListModel> GetProductListModel(List<UserOrderModel> userOrders, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<LineProductsModel> lineProductsModel, List<IncidentsModel> incidents, List<Batches> batchesDataBase)
         {
-            var listToReturn = new List<ProductListModel>();
-            foreach (var order in sapOrders)
+            var listToReturn = sapOrders.Select(order =>
             {
                 var itemcode = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(order.FabricationOrder), $"{order.Producto.ProductoId} - {order.FabricationOrder}", order.Producto.ProductoId);
                 var productType = ServiceShared.CalculateTernary(order.Producto.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
@@ -645,7 +644,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = incidentdb.Status,
                 };
 
-                listToReturn.Add(new ProductListModel
+                return new ProductListModel
                 {
                     Container = order.Detalles.Container,
                     Description = order.Producto.LargeDescription.ToUpper(),
@@ -659,8 +658,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     HasDelivery = hasDelivery,
                     DeliveryId = deliveryId,
-                });
-            }
+                };
+            }).ToList();
 
             return listToReturn;
         }
