@@ -401,13 +401,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailByDocEntryJoinProduct(List<int> ordersId);
 
         /// <summary>
-        /// Gets te clients by the id.
-        /// </summary>
-        /// <param name="clientId">the client id.</param>
-        /// <returns>the data.</returns>
-        Task<IEnumerable<ClientCatalogModel>> GetClientsById(List<string> clientId);
-
-        /// <summary>
         /// Gets the ids.
         /// </summary>
         /// <param name="ids">the ids.</param>
@@ -483,13 +476,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="baseEntry">the base entry.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntry(List<int> baseEntry);
-
-        /// <summary>
-        /// gets the invoice details by delivery id.
-        /// </summary>
-        /// <param name="baseEntry">the base entry.</param>
-        /// <returns>the data.</returns>
         Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntryJoinProduct(List<int> baseEntry);
 
         /// <summary>
@@ -528,12 +514,5 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="delveryId">the ids to look.</param>
         /// <returns>the data.</returns>
         Task<List<CompleteDeliveryDetailModel>> GetDeliveryDetailForDeliveryById(List<int> delveryId);
-
-        /// <summary>
-        /// Gets the details for a doctor by id.
-        /// </summary>
-        /// <param name="carCodes">the ids.</param>
-        /// <returns>the data.</returns>
-        Task<List<DoctorInfoModel>> GetDoctorDetailDataById(List<string> carCodes);
     }
 }
