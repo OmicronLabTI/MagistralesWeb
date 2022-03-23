@@ -37,7 +37,7 @@ extension User: Mappable {
         self.firstName <- map["firstName"]
         self.lastName <- map["lastName"]
         self.role <- map["role"]
-        self.password <- map ["password"]
+        self.password <- map["password"]
         self.activo <- map["activo"]
     }
 }

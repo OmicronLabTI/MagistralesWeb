@@ -67,7 +67,7 @@ class LotsViewController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //Selecciona el primer elemento de productos cuando termina la carga de datos
+        // Selecciona el primer elemento de productos cuando termina la carga de datos
         Observable.combineLatest(self.lotsViewModel.dataOfLots,
                                  self.lotsViewModel.indexProductSelected,
                                  resultSelector: { [weak self] data, indexPath in
@@ -90,7 +90,7 @@ class LotsViewController: UIViewController {
         self.modelViewBindingEstension2()
         self.modelViewBindingExtension3()
         self.modelViewBindingExtension4()
-        //Muestra los datos en la tabla de Lotes Selecionados
+        // Muestra los datos en la tabla de Lotes Selecionados
         self.lotsViewModel.dataLotsSelected.bind(to: lotsSelectedTable.rx.items(
             cellIdentifier: ViewControllerIdentifiers.lotsSelectedTableViewCell,
             cellType: LotsSelectedTableViewCell.self)) { [weak self] _, data, cell in
@@ -123,7 +123,7 @@ class LotsViewController: UIViewController {
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] item in
             self?.lotsViewModel.itemLotSelected = item
         }).disposed(by: self.disposeBag)
-        //Detecta el item de la tabla linea de documentos que fué seleccionado
+        // Detecta el item de la tabla linea de documentos que fué seleccionado
         self.lineDocTable.rx.itemSelected.bind(to: lotsViewModel.indexProductSelected).disposed(by: disposeBag)
         // Muestra u oculta el loading
         self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in

@@ -88,7 +88,7 @@ class OrderDetailTest: XCTestCase {
             warehouse: "MP", components: [components])
         // Then
         self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).subscribe(onNext: { res1 in
-            //When
+            // When
             XCTAssertNotNil(res1.response)
             XCTAssertTrue(res1.response == "{\"89838-89838\":\"Ok\"}")
         }).disposed(by: self.disposeBag!)
@@ -104,7 +104,7 @@ class OrderDetailTest: XCTestCase {
             warehouse: "MP", components: [components])
         // Then
         self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).subscribe(onNext: { res1 in
-            //When
+            // When
             XCTAssertNotNil(res1.response)
             XCTAssertTrue(res1.response == "{\"89838-89838\":\"Ok\"}")
         }).disposed(by: self.disposeBag!)
