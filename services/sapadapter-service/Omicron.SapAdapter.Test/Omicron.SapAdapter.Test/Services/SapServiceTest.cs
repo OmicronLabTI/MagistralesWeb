@@ -24,6 +24,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
@@ -104,9 +105,14 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(x => x.IsConnectedRedis())
                 .Returns(true);
 
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
             this.sapDao = new SapDao(this.context, mockLog.Object);
             IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
-            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object);
         }
 
         /// <summary>
@@ -175,8 +181,13 @@ namespace Omicron.SapAdapter.Test.Services
             mockRedis
                 .Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
 
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
             IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
-            var localSap = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object);
+            var localSap = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object);
 
             // act
             var result = await localSap.GetOrders(dicParams);
@@ -966,8 +977,14 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult("[100]"));
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
+
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
             IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
-            var sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object);
+            var sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object);
 
             var dict = new Dictionary<string, string>();
 

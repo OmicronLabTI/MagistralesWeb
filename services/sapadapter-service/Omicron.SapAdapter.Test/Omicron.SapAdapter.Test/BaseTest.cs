@@ -14,6 +14,7 @@ namespace Omicron.SapAdapter.Test
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
@@ -428,6 +429,28 @@ namespace Omicron.SapAdapter.Test
             return new ResultDto
             {
                 Response = JsonConvert.SerializeObject(users),
+                Code = 200,
+                Comments = string.Empty,
+                ExceptionMessage = string.Empty,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetDoctorsInfo()
+        {
+            var doctors = new List<DoctorPrescriptionInfoModel>
+            {
+                new DoctorPrescriptionInfoModel { CardCode = "A1", DoctorName = "Doctor" },
+            };
+
+            return new ResultDto
+            {
+                Response = JsonConvert.SerializeObject(doctors),
                 Code = 200,
                 Comments = string.Empty,
                 ExceptionMessage = string.Empty,
