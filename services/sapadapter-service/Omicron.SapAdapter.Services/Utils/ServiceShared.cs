@@ -208,5 +208,16 @@ namespace Omicron.SapAdapter.Services.Utils
             payment ??= new PaymentsDto { ShippingCostAccepted = ServiceConstants.ShippingCostAccepted };
             return payment;
         }
+
+        /// <summary>
+        /// get batch by dist number.
+        /// </summary>
+        /// <param name="batchName">the batch list.</param>
+        /// <param name="distNumber">the dist number.</param>
+        /// <returns>a batch.</returns>
+        public static AlmacenBatchModel GetBatch(this List<AlmacenBatchModel> batchName, string distNumber)
+        {
+            return batchName.FirstOrDefault(a => a.BatchNumber == distNumber) ?? new AlmacenBatchModel() { BatchQty = 0 };
+        }
     }
 }

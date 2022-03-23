@@ -86,54 +86,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        PedidoMuestra = order.PedidoMuestra,
                                        DocNumDxp = order.DocNumDxp,
                                    });
-
             return await this.RetryQuery<CompleteOrderModel>(query);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByIds(List<int> ids)
         {
-            var query = (from order in this.databaseContext.OrderModel.Where(x => ids.Contains(x.DocNum))
-                               join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                               into DetalleOrden
-                               from dp in DetalleOrden.DefaultIfEmpty()
-                               join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
-                               join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                               join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                               join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                               new
-                               {
-                                   DoctorId = order.Codigo,
-                                   Address = order.ShippingAddressName
-                               }
-                               equals
-                               new
-                               {
-                                   DoctorId = doctordet.CardCode,
-                                   Address = doctordet.NickName
-                               }
-                               into detalleDireccion
-                               from dop in detalleDireccion.DefaultIfEmpty()
-                               where producto.IsMagistral == "Y"
-                               select new CompleteOrderModel
-                               {
-                                   DocNum = order.DocNum,
-                                   Cliente = doctor.AliasName,
-                                   Codigo = order.Codigo,
-                                   Medico = dop.Address2 ?? doctor.AliasName,
-                                   AsesorName = asesor.AsesorName,
-                                   FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
-                                   FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
-                                   PedidoStatus = order.PedidoStatus,
-                                   AtcEntry = order.AtcEntry,
-                                   IsChecked = false,
-                                   Detalles = dp,
-                                   OrderType = order.OrderType,
-                                   Canceled = order.Canceled,
-                                   PedidoMuestra = order.PedidoMuestra,
-                                   DocNumDxp = order.DocNumDxp,
-                               });
-
+            var query = this.GetCompleteOrderyJoinDoctorQuery().Where(x => ids.Contains(x.DocNum));
             return await this.RetryQuery<CompleteOrderModel>(query);
         }
 
@@ -143,45 +102,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>get the orders.</returns>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int init, int end)
         {
-            var query = (from order in this.databaseContext.OrderModel
-                              join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                              join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
-                              join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                              join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                              join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                              new
-                              {
-                                  DoctorId = order.Codigo,
-                                  Address = order.ShippingAddressName
-                              }
-                              equals
-                              new
-                              {
-                                  DoctorId = doctordet.CardCode,
-                                  Address = doctordet.NickName
-                              }
-                              into detalleDireccion
-                              from dp in detalleDireccion.DefaultIfEmpty()
-                              where order.PedidoId >= init && order.PedidoId <= end && producto.IsMagistral == "Y"
-                              select new CompleteOrderModel
-                              {
-                                  DocNum = order.DocNum,
-                                  Cliente = doctor.AliasName,
-                                  Codigo = order.Codigo,
-                                  Medico = dp.Address2 ?? doctor.AliasName,
-                                  AsesorName = asesor.AsesorName,
-                                  FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
-                                  FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
-                                  PedidoStatus = order.PedidoStatus,
-                                  AtcEntry = order.AtcEntry,
-                                  IsChecked = false,
-                                  Detalles = detalle,
-                                  OrderType = order.OrderType,
-                                  Canceled = order.Canceled,
-                                  PedidoMuestra = order.PedidoMuestra,
-                                  DocNumDxp = order.DocNumDxp,
-                              });
-
+            var query = this.GetCompleteOrderyJoinDoctorQuery().Where(order => order.DocNum >= init && order.DocNum <= end);
             return await this.RetryQuery<CompleteOrderModel>(query);
         }
 
@@ -860,38 +781,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<List<DeliverModel>> GetDeliveryModelByDocNumJoinDoctor(List<int> docuNums)
         {
-            var query = (from delivery in this.databaseContext.DeliverModel.Where(x => docuNums.Contains(x.DocNum))
-                         join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
-                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                         new
-                         {
-                            DoctorId = delivery.CardCode,
-                            Address = delivery.ShippingAddressName
-                         }
-                         equals
-                         new
-                         {
-                            DoctorId = doctordet.CardCode,
-                            Address = doctordet.NickName
-                         }
-                        into detalleDireccion
-                         from dop in detalleDireccion.DefaultIfEmpty()
-                         select new DeliverModel
-                         {
-                             Address = delivery.Address,
-                             Canceled = delivery.Canceled,
-                             CardCode = delivery.CardCode,
-                             Cliente = dop.Address2 ?? string.Empty,
-                             DeliveryStatus = delivery.DeliveryStatus,
-                             DocNum = delivery.DocNum,
-                             FechaInicio = delivery.FechaInicio,
-                             Medico = doctor.AliasName,
-                             PedidoId = delivery.PedidoId,
-                             TypeOrder = delivery.TypeOrder,
-                             IsPackage = delivery.IsPackage,
-                             DocNumDxp = delivery.DocNumDxp,
-                         });
-
+            var query = this.GetDeliveryJoinDoctorQuery().Where(x => docuNums.Contains(x.DocNum));
             return (await this.RetryQuery<DeliverModel>(query)).ToList();
         }
 
@@ -1115,12 +1005,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<ClientCatalogModel>> GetClientsById(List<string> clientId)
-        {
-            return await this.RetryQuery<ClientCatalogModel>(this.databaseContext.ClientCatalogModel.Where(x => clientId.Contains(x.ClientId)));
-        }
-
-        /// <inheritdoc/>
         public async Task<IEnumerable<Repartidores>> GetDeliveryCompanyById(List<short> ids)
         {
             return await this.RetryQuery<Repartidores>(this.databaseContext.Repartidores.Where(x => ids.Contains(x.TrnspCode)));
@@ -1201,35 +1085,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DeliverModel>> GetDeliveryByDocDateJoinDoctor(DateTime initDate, DateTime endDate)
         {
-            var query = (from delivery in this.databaseContext.DeliverModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate)
-                         join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
-                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                         new
-                         {
-                             DoctorId = delivery.CardCode,
-                             Address = delivery.ShippingAddressName
-                         }
-                         equals
-                         new
-                         {
-                             DoctorId = doctordet.CardCode,
-                             Address = doctordet.NickName
-                         }
-                         into detalleDireccion
-                         from dop in detalleDireccion.DefaultIfEmpty()
-                         select new DeliverModel
-                         {
-                             Address = delivery.Address,
-                             Canceled = delivery.Canceled,
-                             CardCode = delivery.CardCode,
-                             Cliente = dop.Address2 ?? string.Empty,
-                             DeliveryStatus = delivery.DeliveryStatus,
-                             DocNum = delivery.DocNum,
-                             FechaInicio = delivery.FechaInicio,
-                             Medico = doctor.AliasName,
-                             PedidoId = delivery.PedidoId,
-                             TypeOrder = delivery.TypeOrder,
-                         });
+            var query = this.GetDeliveryJoinDoctorQuery()
+                            .Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate);
 
             return (await this.RetryQuery<DeliverModel>(query)).ToList();
         }
@@ -1275,12 +1132,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
-        }
-
-        /// <inheritdoc/>
-        public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntry(List<int> baseEntry)
-        {
-            return await this.RetryQuery<InvoiceDetailModel>(this.databaseContext.InvoiceDetailModel.Where(x => x.BaseEntry != null && baseEntry.Contains(x.BaseEntry.Value)));
         }
 
         public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntryJoinProduct(List<int> baseEntry)
@@ -1497,12 +1348,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
         }
 
-        /// <inheritdoc/>
-        public async Task<List<DoctorInfoModel>> GetDoctorDetailDataById(List<string> carCodes)
-        {
-            return await this.databaseContext.DoctorInfoModel.Where(x => carCodes.Contains(x.CardCode)).ToListAsync();
-        }
-
         /// <summary>
         /// Gets the retry.
         /// </summary>
@@ -1640,6 +1485,89 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         IsPackage = order.IsPackage,
                         DocNumDxp = order.DocNumDxp,
                     });
+        }
+
+        /// <inheritdoc/>
+        private IQueryable<DeliverModel> GetDeliveryJoinDoctorQuery()
+        {
+            return (from delivery in this.databaseContext.DeliverModel
+                         join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
+                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                         new
+                         {
+                             DoctorId = delivery.CardCode,
+                             Address = delivery.ShippingAddressName
+                         }
+                         equals
+                         new
+                         {
+                             DoctorId = doctordet.CardCode,
+                             Address = doctordet.NickName
+                         }
+                         into detalleDireccion
+                         from dop in detalleDireccion.DefaultIfEmpty()
+                         select new DeliverModel
+                         {
+                             Address = delivery.Address,
+                             Canceled = delivery.Canceled,
+                             CardCode = delivery.CardCode,
+                             Cliente = dop.Address2 ?? string.Empty,
+                             DeliveryStatus = delivery.DeliveryStatus,
+                             DocNum = delivery.DocNum,
+                             FechaInicio = delivery.FechaInicio,
+                             Medico = doctor.AliasName,
+                             PedidoId = delivery.PedidoId,
+                             TypeOrder = delivery.TypeOrder,
+                             IsPackage = delivery.IsPackage,
+                             DocNumDxp = delivery.DocNumDxp,
+                         });
+        }
+
+
+        /// <inheritdoc/>
+        private IQueryable<CompleteOrderModel> GetCompleteOrderyJoinDoctorQuery()
+        {
+            var query = (from order in this.databaseContext.OrderModel
+                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                         into DetalleOrden
+                         from dp in DetalleOrden.DefaultIfEmpty()
+                         join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
+                         join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                         new
+                         {
+                             DoctorId = order.Codigo,
+                             Address = order.ShippingAddressName
+                         }
+                         equals
+                         new
+                         {
+                             DoctorId = doctordet.CardCode,
+                             Address = doctordet.NickName
+                         }
+                         into detalleDireccion
+                         from dop in detalleDireccion.DefaultIfEmpty()
+                         where producto.IsMagistral == "Y"
+                         select new CompleteOrderModel
+                         {
+                             DocNum = order.DocNum,
+                             Cliente = doctor.AliasName,
+                             Codigo = order.Codigo,
+                             Medico = dop.Address2 ?? doctor.AliasName,
+                             AsesorName = asesor.AsesorName,
+                             FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
+                             FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
+                             PedidoStatus = order.PedidoStatus,
+                             AtcEntry = order.AtcEntry,
+                             IsChecked = false,
+                             Detalles = dp,
+                             OrderType = order.OrderType,
+                             Canceled = order.Canceled,
+                             PedidoMuestra = order.PedidoMuestra,
+                             DocNumDxp = order.DocNumDxp,
+                         });
+            return query;
         }
     }
 }
