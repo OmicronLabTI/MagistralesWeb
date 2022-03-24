@@ -23,6 +23,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
@@ -86,6 +87,7 @@ namespace Omicron.SapAdapter.Test.Services
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacenService = new Mock<IAlmacenService>();
             var mockProccessPayments = new Mock<IProccessPayments>();
+            var mockDoctor = new Mock<IDoctorService>();
 
             this.mockRedis = new Mock<IRedisService>();
 
@@ -98,7 +100,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(true);
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.sapService = new SapAlmacenDeliveryService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
+            this.sapService = new SapAlmacenDeliveryService(this.sapDao, mockPedidoService.Object, mockAlmacenService.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
         }
 
         /// <summary>
@@ -130,7 +132,9 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Limit, "10" },
             };
 
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
 
             // act
             var response = await service.GetDelivery(dictionary);
@@ -169,7 +173,9 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()},{ServiceConstants.Magistral.ToLower()}" },
             };
 
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
 
             // act
             var response = await service.GetDelivery(dictionary);
@@ -211,7 +217,9 @@ namespace Omicron.SapAdapter.Test.Services
                 { "chips", chip },
             };
 
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
 
             // act
             var response = await service.GetDelivery(dictionary);
@@ -259,7 +267,9 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Type, ServiceConstants.Paquetes.ToLower() },
             };
 
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
 
             // act
             var response = await service.GetDelivery(dictionary);
@@ -293,7 +303,13 @@ namespace Omicron.SapAdapter.Test.Services
             mockProccessPayments
                 .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(payments)));
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
+
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
 
             // act
             var response = await service.GetOrdersDeliveryDetail(chip);
@@ -330,7 +346,13 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetIncidents()));
 
             var mockProccessPayments = new Mock<IProccessPayments>();
-            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object);
+
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
 
             // act
             var response = await service.GetProductsDelivery(chip);
