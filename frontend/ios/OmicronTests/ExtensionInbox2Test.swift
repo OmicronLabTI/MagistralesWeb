@@ -128,7 +128,6 @@ class ExtensionInbox2Test: XCTestCase {
             statusId: 1, statusName: "Asignadas", numberTask: 2, imageIndicatorStatus: "assignedStatus", orders: orders)
 
         self.inboxViewModel!.statusDataGrouped.subscribe(onNext: { res in
-            //XCTAssertTrue(res.count > 0)
             if res.count > 0 {
                 XCTAssertEqual(res[0].model, "Sin similitud")
             }

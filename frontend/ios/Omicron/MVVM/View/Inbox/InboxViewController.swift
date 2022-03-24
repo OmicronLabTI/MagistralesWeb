@@ -178,7 +178,7 @@ class InboxViewController: UIViewController {
         // Pinta las cards
         let dataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<String, Order>>(
             configureCell: { [weak self] (_, _, indexPath, element) in
-                guard let self = self else { return CardCollectionViewCell ()}
+                guard let self = self else { return CardCollectionViewCell()}
                 let decimalPart = self.getDecimalPartOfDouble(
                     number: NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue)
                 if element.baseDocument != 0 {
@@ -519,7 +519,7 @@ class InboxViewController: UIViewController {
             self.changePropertyIsHiddenStatusButtons(
                 processButtonIsHidden: true,
                 finishedButtonIsHidden: true,
-                pendingButtonIsHidden: true)
+                pendingButtonIsHidden: false)
             showContainersButtons.isHidden = true
         default:
             self.changePropertyIsHiddenStatusButtons(

@@ -331,7 +331,7 @@ class InboxViewModel {
         normalViewButtonIsEnable.onNext(true)
         groupedByOrderNumberIsEnable.onNext(true)
     }
-    
+
     func proccessGroupShort() {
         processButtonIsEnable.onNext(false)
         let ordersGroupedAndSorted = sortOrderWithBatchesByOrderNumberView()
