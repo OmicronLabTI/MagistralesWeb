@@ -109,7 +109,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var sapOrders = await this.sapDao.GetSapOrderDetailForAlmacenRecepcionById(new List<int> { orderId });
-            var doctorPrescriptionData = ServiceUtils.GetDoctorPrescriptionData(this.doctorService, new List<string> { sapOrders.FirstOrDefault().CardCode });
+            var doctorPrescriptionData = await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, new List<string> { sapOrders.FirstOrDefault().CardCode });
 
             var batches = (await this.sapDao.GetBatchesByProdcuts(lineOrders.Select(x => x.ItemCode).ToList())).ToList();
             var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();

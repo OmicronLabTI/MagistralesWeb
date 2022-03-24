@@ -79,6 +79,9 @@ namespace Omicron.SapAdapter.Test.Services
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacenService = new Mock<IAlmacenService>();
             var mockDoctors = new Mock<IDoctorService>();
+            mockDoctors
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
 
             var parameters = new List<ParametersModel>
             {
@@ -236,11 +239,16 @@ namespace Omicron.SapAdapter.Test.Services
                 new PaymentsDto { CardCode = "C00007", ShippingCostAccepted = 1, TransactionId = "ac901443-c548-4860-9fdc-fa5674847822" },
             };
             var mockProccessPayments = new Mock<IProccessPayments>();
-            var mockDoctors = new Mock<IDoctorService>();
             mockProccessPayments
                 .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(payments)));
-            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
+
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
 
             // act
             var response = await service.GetInvoiceDetail(invoice);
