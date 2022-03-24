@@ -145,6 +145,10 @@
 		494EA4FA273A67840077BB5B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 494EA4F9273A67840077BB5B /* GoogleService-Info.plist */; };
 		4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
 		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
+		49720ECA27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
+		49720ECB27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
+		49720ECC27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
+		49720ECD27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
 		49928125272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
 		49928126272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
 		49928127272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
@@ -498,6 +502,7 @@
 		494EA4F9273A67840077BB5B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
 		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
+		49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewModelExtension.swift; sourceTree = "<group>"; };
 		49928124272A3F21001962D4 /* Omicron-UAT.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Omicron-UAT.plist"; sourceTree = "<group>"; };
 		49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SendBatchToServerNoEmptyResponse.json; sourceTree = "<group>"; };
 		49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest3.swift; sourceTree = "<group>"; };
@@ -819,6 +824,7 @@
 			children = (
 				7CE216D324CB9576005A7FED /* InboxViewModel.swift */,
 				4989CCEE25ED971A00257CA2 /* RootView */,
+				49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */,
 			);
 			path = Inbox;
 			sourceTree = "<group>";
@@ -1953,6 +1959,7 @@
 				490B6991268E98ED00DBE9F1 /* OrderDetailViewModel.swift in Sources */,
 				490B6992268E98ED00DBE9F1 /* LotsSelectedTableViewCell.swift in Sources */,
 				490B6993268E98ED00DBE9F1 /* ComponentsViewModel.swift in Sources */,
+				49720ECD27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				490B6994268E98ED00DBE9F1 /* LotsViewController.swift in Sources */,
 				490B6995268E98ED00DBE9F1 /* ContainerTableViewCell.swift in Sources */,
 				490B6996268E98ED00DBE9F1 /* ExtensionsUI.swift in Sources */,
@@ -2026,6 +2033,7 @@
 				49CF65D225F2D4AB002CD598 /* OrderDetailViewModel.swift in Sources */,
 				49CF65D325F2D4AB002CD598 /* LotsSelectedTableViewCell.swift in Sources */,
 				49CF65D425F2D4AB002CD598 /* ComponentsViewModel.swift in Sources */,
+				49720ECB27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				49CF65D525F2D4AB002CD598 /* LotsViewController.swift in Sources */,
 				49CF65D625F2D4AB002CD598 /* ContainerTableViewCell.swift in Sources */,
 				49CF65D725F2D4AB002CD598 /* ExtensionsUI.swift in Sources */,
@@ -2099,6 +2107,7 @@
 				49CF665525F2D821002CD598 /* OrderDetailViewModel.swift in Sources */,
 				49CF665625F2D821002CD598 /* LotsSelectedTableViewCell.swift in Sources */,
 				49CF665725F2D821002CD598 /* ComponentsViewModel.swift in Sources */,
+				49720ECC27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				49CF665825F2D821002CD598 /* LotsViewController.swift in Sources */,
 				49CF665925F2D821002CD598 /* ContainerTableViewCell.swift in Sources */,
 				49CF665A25F2D821002CD598 /* ExtensionsUI.swift in Sources */,
@@ -2172,6 +2181,7 @@
 				7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */,
 				7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */,
 				987BDFE22509869F00D9C6E4 /* ComponentsViewModel.swift in Sources */,
+				49720ECA27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */,
 				381B3BF225E034B80077F764 /* ContainerTableViewCell.swift in Sources */,
 				986EA24725083BF200ACE26A /* ExtensionsUI.swift in Sources */,

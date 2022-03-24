@@ -37,40 +37,53 @@ class LoginViewModel {
                 Login(
                     username: $0, password: self.passwordToBase64($1),
                     redirectUri: String(), clientId2: String(), origin: "app")
-            })
-            .subscribe(onNext: { [unowned self] data in
+            }).subscribe(onNext: { [unowned self] data in
                 self.loading.onNext(true)
-                self.networkManager.login(data: data, needsError: isTest, statusCode: statusCode, testData: testData)
-                    .flatMap({ res -> Observable<UserInfoResponse> in
-                        Persistence.shared.saveLoginData(data: res)
-                        return self.networkManager.getInfoUser(
-                            username: data.user, isTest: self.isTest, statusCode: self.statusCode, testData: self.testData)
-                    }).subscribe(onNext: { [weak self] info  in
-                        self?.loading.onNext(false)
-                        if let user = info.response {
-                            Persistence.shared.saveUserData(user: user)
-                            Persistence.shared.saveIsLogged(isLogged: true)
-                            self?.finishedLogin.onNext(())
-                        } else {
-                            self?.error.onNext(Constants.Errors.serverError.rawValue)
-                        }
-                        }, onError: { [weak self] err in
-                            self?.loading.onNext(false)
-                            switch err {
-                            case RequestError.serverError(let httpError), RequestError.invalidRequest(let httpError):
-                                self?.error.onNext(httpError?.userError ?? Constants.Errors.serverError.rawValue)
-                            case RequestError.unauthorized(let httpError):
-                                self?.error.onNext(httpError?.userError ?? Constants.Errors.unauthorized.rawValue)
-                            default:
-                                self?.error.onNext(Constants.Errors.serverError.rawValue)
-                            }
-                    }).disposed(by: self.disposeBag)
+                self.loginService(data, isTest, statusCode, testData)
             }).disposed(by: disposeBag)
+    }
+
+    func loginService(_ data: Login, _ needsError: Bool, _ statusCode: Int, _ testData: Data) {
+        networkManager.login(data: data, needsError: isTest, statusCode: statusCode, testData: testData)
+            .flatMap({ res -> Observable<UserInfoResponse> in
+                Persistence.shared.saveLoginData(data: res)
+                return self.networkManager.getInfoUser(
+                    username: data.user, isTest: self.isTest,
+                    statusCode: self.statusCode, testData: self.testData)
+            }).subscribe(onNext: { [weak self] info  in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.onSuccessLogin(info)
+            }, onError: { [weak self] err in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.onErrorLogin(err)
+            }).disposed(by: self.disposeBag)
+    }
+
+    func onSuccessLogin(_ info: UserInfoResponse) {
+        if let user = info.response {
+            Persistence.shared.saveUserData(user: user)
+            Persistence.shared.saveIsLogged(isLogged: true)
+            self.finishedLogin.onNext(())
+        } else {
+            self.error.onNext(Constants.Errors.serverError.rawValue)
+        }
+    }
+
+    func onErrorLogin(_ err: Error) {
+        switch err {
+        case RequestError.serverError(let httpError), RequestError.invalidRequest(let httpError):
+            self.error.onNext(httpError?.userError ?? Constants.Errors.serverError.rawValue)
+        case RequestError.unauthorized(let httpError):
+            self.error.onNext(httpError?.userError ?? Constants.Errors.unauthorized.rawValue)
+        default:
+            self.error.onNext(Constants.Errors.serverError.rawValue)
+        }
     }
 
     private func passwordToBase64(_ password: String) -> String {
         let utf8str = password.data(using: .utf8)
-
         if let base64Encoded = utf8str?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)) {
             print("Encoded: \(base64Encoded)")
             return base64Encoded
