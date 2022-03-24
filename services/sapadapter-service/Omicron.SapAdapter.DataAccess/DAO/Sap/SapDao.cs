@@ -820,27 +820,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var query = (from invoice in this.databaseContext.InvoiceHeaderModel.Where(x => docNums.Contains(x.DocNum))
                          join detail in this.databaseContext.InvoiceDetailModel on invoice.InvoiceId equals detail.InvoiceId
                          join doctor in this.databaseContext.ClientCatalogModel on invoice.CardCode equals doctor.ClientId
-                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                         new
-                         {
-                             DoctorId = invoice.CardCode,
-                             Address = invoice.ShippingAddressName
-                         }
-                         equals
-                         new
-                         {
-                             DoctorId = doctordet.CardCode,
-                             Address = doctordet.NickName
-                         }
-                         into detalleDireccion
-                         from dop in detalleDireccion.DefaultIfEmpty()
                          join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
                          where product.IsWorkableProduct == "Y"
                          select new CompleteInvoiceDetailModel
                          {
                              InvoiceHeader = invoice,
                              Detail = detail,
-                             Cliente = dop.Address2 ?? string.Empty,
+                             Cliente = doctor.AliasName ?? string.Empty,
                              Medico = doctor.AliasName ?? string.Empty,
                          });
 
@@ -1228,20 +1214,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          into DetalleOrden
                          from dp in DetalleOrden.DefaultIfEmpty()
                          join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                         new
-                         {
-                             DoctorId = order.Codigo,
-                             Address = order.ShippingAddressName
-                         }
-                         equals
-                         new
-                         {
-                             DoctorId = doctordet.CardCode,
-                             Address = doctordet.NickName
-                         }
-                         into detalleDireccion
-                         from dop in detalleDireccion.DefaultIfEmpty()
                          join o in this.databaseContext.OrdenFabricacionModel on
                          new
                          {
@@ -1261,7 +1233,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          select new CompleteRecepcionPedidoDetailModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = dop.Address2 ?? string.Empty,
+                             Cliente = doctor.AliasName,
                              Medico = doctor.AliasName,
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
@@ -1274,6 +1246,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
                              DocNumDxp = order.DocNumDxp,
+                             CardCode = order.Codigo,
                          });
 
             return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();
@@ -1287,26 +1260,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          into DetalleOrden
                          from dp in DetalleOrden.DefaultIfEmpty()
                          join doctor in this.databaseContext.ClientCatalogModel on order.CardCode equals doctor.ClientId
-                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                         new
-                         {
-                             DoctorId = order.CardCode,
-                             Address = order.ShippingAddressName
-                         }
-                         equals
-                         new
-                         {
-                             DoctorId = doctordet.CardCode,
-                             Address = doctordet.NickName
-                         }
-                         into detalleDireccion
-                         from dop in detalleDireccion.DefaultIfEmpty()
                          join p in this.databaseContext.ProductoModel on dp.ProductoId equals p.ProductoId
                          where p.IsWorkableProduct == "Y"
                          select new CompleteDeliveryDetailModel
                          {
                              DocNum = order.DocNum,
-                             Cliente = dop.Address2 ?? string.Empty,
+                             Cliente = doctor.AliasName,
                              Medico = doctor.AliasName,
                              FechaInicio = order.FechaInicio,
                              Detalles = dp,
@@ -1315,6 +1274,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Producto = p,
                              IsPackage = order.IsPackage,
                              DocNumDxp = order.DocNumDxp,
+                             CardCode = order.CardCode,
                          });
 
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();

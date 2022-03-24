@@ -124,10 +124,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).GetPaymentBydocNumDxp(invoiceDetails.First().InvoiceHeader.DocNumDxp);
 
             var invoiceHeader = invoiceDetails.FirstOrDefault();
+
+            var doctorData = (await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, new List<string> { invoiceHeader.InvoiceHeader.CardCode })).FirstOrDefault(x => x.CardCode == invoiceHeader.InvoiceHeader.CardCode);
+            doctorData ??= new DoctorPrescriptionInfoModel { DoctorName = invoiceHeader.Medico };
+
             var invoiceToReturn = new InvoiceSaleHeaderModel
             {
                 Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoiceHeader.InvoiceHeader.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
-                Client = invoiceHeader.Cliente,
+                Client = doctorData.DoctorName,
                 Doctor = invoiceHeader.Medico ?? string.Empty,
                 Invoice = invoiceHeader.InvoiceHeader.DocNum,
                 DocEntry = invoiceHeader.InvoiceHeader.InvoiceId,
