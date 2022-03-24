@@ -77,9 +77,9 @@ class ComponentsViewModel {
             self?.saveComponent(req: orderDetailReq)
         }).subscribe().disposed(by: disposeBag)
     }
-    func saveComponent(req: OrderDetailRequest, needsError: Bool = false) {
+    func saveComponent(req: OrderDetailRequest) {
         loading.onNext(true)
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: req, needsError: needsError)
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(req)
             .subscribe(onNext: { [weak self] _ in
             self?.loading.onNext(false)
             self?.saveSuccess.onNext(())
@@ -89,7 +89,7 @@ class ComponentsViewModel {
             self?.dataError.onNext(Constants.Errors.errorSave.rawValue)
         }).disposed(by: disposeBag)
     }
-    func getComponents(chips: [String], needsError: Bool = false) {
+    func getComponents(chips: [String]) {
         let catalogGroup = orderDetailViewModel.getCatalogGroup()
         let request = ComponentRequest(
             offset: Constants.Components.offset.rawValue,
@@ -97,7 +97,7 @@ class ComponentsViewModel {
             chips: chips,
             catalogGroup: catalogGroup)
         loading.onNext(true)
-        self.networkManager.getComponents(data: request, needsError: needsError).subscribe(onNext: { [weak self] res in
+        self.networkManager.getComponents(request).subscribe(onNext: { [weak self] res in
             self?.dataResults.onNext(res.response ?? [])
             self?.loading.onNext(false)
         }, onError: { [weak self] _ in
@@ -106,12 +106,11 @@ class ComponentsViewModel {
         }).disposed(by: disposeBag)
     }
 
-    func getMostCommonComponentsService(needsError: Bool = false) {
+    func getMostCommonComponentsService() {
         loading.onNext(true)
         let catalogGroup = orderDetailViewModel.getCatalogGroup()
         let reqParams = CommonComponentRequest(catalogGroup: catalogGroup)
-        networkManager.getMostCommonComponents(
-            data: reqParams, needsError: needsError).subscribe(onNext: { [weak self] res in
+        networkManager.getMostCommonComponents(reqParams).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)
             if let components = res.response {

@@ -170,20 +170,19 @@ class LotsViewModel {
             }
         }).disposed(by: self.disposeBag)
     }
-    func getLots(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func getLots() {
         self.loading.onNext(true)
-        self.networkManager.getLots(
-            orderId: orderId, needsError: needsError, statusCode: statusCode, testData: testData)
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
-            self?.loading.onNext(false)
+        self.networkManager.getLots(orderId).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
+            guard let self = self else { return }
+            self.loading.onNext(false)
             if let lotsData = data.response {
                 if lotsData.count > 0 {
-                    self?.documentLines = lotsData
-                    self?.selectedBatches = lotsData.map({ batch in
+                    self.documentLines = lotsData
+                    self.selectedBatches = lotsData.map({ batch in
                         let selected: [BatchSelected] = batch.lotesSelecionados != nil ?
                             batch.lotesSelecionados!.compactMap({ sel in
                             return BatchSelected(
-                                orderId: self?.orderId, assignedQty: sel.cantidadSeleccionada,
+                                orderId: self.orderId, assignedQty: sel.cantidadSeleccionada,
                                 batchNumber: sel.numeroLote, itemCode: batch.codigoProducto,
                                 action: nil, sysNumber: sel.sysNumber,
                                 expiredBatch: sel.expiredBatch, areBatchesComplete: 0)
@@ -195,15 +194,16 @@ class LotsViewModel {
                             lot.cantidadSeleccionada = min(lotData.totalNecesario ?? 0, lot.cantidadDisponible ?? 0)
                         }
                     }
-                    self?.dataOfLots.onNext(lotsData)
+                    self.dataOfLots.onNext(lotsData)
                 } else {
-                    self?.showMessage.onNext(CommonStrings.noBatchesAssigned)
+                    self.showMessage.onNext(CommonStrings.noBatchesAssigned)
                 }
-                self?.changeColorLabels.onNext(())
+                self.changeColorLabels.onNext(())
             }
             }, onError: { [weak self] error in
-                self?.loading.onNext(false)
-                self?.showMessage.onNext(Constants.Errors.loadBatches.rawValue)
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showMessage.onNext(Constants.Errors.loadBatches.rawValue)
                 print(error.localizedDescription)
         }).disposed(by: self.disposeBag)
     }
@@ -283,13 +283,9 @@ class LotsViewModel {
         }
         self.sendToServerAssignedLots(lotsToSend: batchesToSend)
     }
-    func sendToServerAssignedLots(
-        lotsToSend: [BatchSelected], needsError: Bool = false,
-        statusCode: Int = 500, testData: Data = Data()) {
+    func sendToServerAssignedLots(lotsToSend: [BatchSelected]) {
         self.loading.onNext(true)
-        self.networkManager.assignLots(
-            lotsRequest: lotsToSend, needsError: needsError,
-            statusCode: statusCode, testData: testData)
+        self.networkManager.assignLots(lotsToSend)
             .subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)
@@ -323,12 +319,10 @@ class LotsViewModel {
             .map({ $0.toLotsSelected() })
     }
     // Pregunta al server si la orden puede ser finaliada o no
-    func validIfOrderCanBeFinalized(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func validIfOrderCanBeFinalized() {
         self.loading.onNext(true)
 
-        networkManager.validateOrders(
-            orderIDs: [orderId], needsError: needsError, statusCode: statusCode,
-            testData: testData)
+        networkManager.validateOrders([orderId])
             .subscribe(onNext: { [weak self] response in
                 guard let self = self else { return }
                 self.loading.onNext(false)
@@ -356,18 +350,18 @@ class LotsViewModel {
             }).disposed(by: disposeBag)
     }
     // Valida si el usuario obtuvo las firmas y finaliza la orden 
-    func callFinishOrderService(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func callFinishOrderService() {
         if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
             self.loading.onNext(true)
             let finishOrder = FinishOrder(
                 userId: Persistence.shared.getUserData()?.id ?? String(), fabricationOrderId: [self.orderId],
                 qfbSignature: self.sqfbSignature, technicalSignature: technicalSignature)
-            self.networkManager.finishOrder(
-                order: finishOrder, needsError: needsError, statusCode: statusCode, testData: testData)
+            self.networkManager.finishOrder(finishOrder)
                 .subscribe(onNext: { [weak self] _ in
-                self?.loading.onNext(false)
-                self?.backToInboxView.onNext(())
-                self?.rootViewModel.needsRefresh = true
+                    guard let self = self else { return }
+                    self.loading.onNext(false)
+                    self.backToInboxView.onNext(())
+                    self.rootViewModel.needsRefresh = true
                 }, onError: {[weak self] error in
                     self?.loading.onNext(false)
                     self?.showMessage.onNext(CommonStrings.errorFinishOrder)
@@ -376,39 +370,39 @@ class LotsViewModel {
         }
     }
     // Se actualiza order detail para obtener los comentarios
-    func updateOrderDetail(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func updateOrderDetail() {
         loading.onNext(true)
-        self.networkManager.getOrdenDetail(
-            orderId: self.orderId, needsError: needsError, statusCode: statusCode, testData: testData)
+        self.networkManager.getOrdenDetail(self.orderId)
             .subscribe(onNext: {[weak self] res in
-            self?.loading.onNext(false)
-            if res.response != nil {
-                self?.updateComments.onNext(res.response!)
-            }
-            self?.orderDetail.needsRefresh = true
-        }, onError: { [weak self] error in
-            self?.loading.onNext(false)
-            self?.showMessage.onNext(Constants.Errors.loadOrdersDetail.rawValue)
-            print(error.localizedDescription)
-        }).disposed(by: self.disposeBag)
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                if res.response != nil {
+                    self.updateComments.onNext(res.response!)
+                }
+                self.orderDetail.needsRefresh = true
+            }, onError: { [weak self] error in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showMessage.onNext(Constants.Errors.loadOrdersDetail.rawValue)
+                print(error.localizedDescription)
+            }).disposed(by: self.disposeBag)
     }
-    func changeOrderToPendingStatus(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func changeOrderToPendingStatus() {
         self.loading.onNext(true)
         let orderToChageStatus = ChangeStatusRequest(
             userId: Persistence.shared.getUserData()?.id ?? String(),
             orderId: self.orderId, status: CommonStrings.pending)
-        self.networkManager.changeStatusOrder(
-            changeStatusRequest: [orderToChageStatus], needsError: needsError,
-            statusCode: statusCode, testData: testData)
+        self.networkManager.changeStatusOrder([orderToChageStatus])
             .subscribe(onNext: { [weak self] _ in
-            self?.loading.onNext(false)
-            self?.backToInboxView.onNext(())
-            self?.rootViewModel.needsRefresh = true
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.backToInboxView.onNext(())
+                self.rootViewModel.needsRefresh = true
             }, onError: { [weak self] error in
-                self?.loading.onNext(false)
-                self?.showMessage.onNext(CommonStrings.errorToChangeStatus)
-                print(error.localizedDescription)
-        }).disposed(by: self.disposeBag)
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showMessage.onNext(CommonStrings.errorToChangeStatus)
+            }).disposed(by: self.disposeBag)
     }
     // MARK: - Function Helpers
     func calculateExpiredBatch(date: String?) -> Bool {

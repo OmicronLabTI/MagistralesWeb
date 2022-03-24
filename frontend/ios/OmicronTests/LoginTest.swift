@@ -17,16 +17,31 @@ class LoginTest: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?
     var loginViewModel: LoginViewModel?
+    var provider: MoyaProvider<ApiService>!
+    var statusCode = 200
+    var testData = Data()
     @Injected var networkManager: NetworkManager
+    
     override func setUp() {
         print("XXXX setUp LoginTest")
         self.disposeBag = DisposeBag()
         self.loginViewModel = LoginViewModel()
+        provider = MoyaProvider<ApiService>(
+            endpointClosure: customEndpointClosure,
+            stubClosure: MoyaProvider.immediatelyStub)
     }
     override func tearDown() {
         print("XXXX tearDown LoginTest")
         self.disposeBag = nil
         self.loginViewModel = nil
+    }
+
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
     }
     // MARK: - TEST FUNCTIONS
     func testLoginValid() {
@@ -89,14 +104,14 @@ class LoginTest: XCTestCase {
         // Given
         self.loginViewModel?.username.onNext("sflores")
         self.loginViewModel?.password.onNext("Sergio123")
-        self.loginViewModel?.isTest = true
-        self.loginViewModel?.statusCode = 401
-        self.loginViewModel?.testData = Data()
         self.loginViewModel?.error.subscribe(onNext: { res in
             // When
             XCTAssertEqual(res, Constants.Errors.unauthorized.rawValue)
         }).disposed(by: self.disposeBag!)
         // Then
+        self.statusCode = 401
+        self.testData = Data()
+        self.loginViewModel?.networkManager = NetworkManager(provider: provider)
         self.loginViewModel?.loginDidTap.onNext(())
     }
 
@@ -104,14 +119,14 @@ class LoginTest: XCTestCase {
         // Given
         self.loginViewModel?.username.onNext("sflores")
         self.loginViewModel?.password.onNext("Sergio123")
-        self.loginViewModel?.isTest = true
-        self.loginViewModel?.statusCode = 500
-        self.loginViewModel?.testData = Data()
         self.loginViewModel?.error.subscribe(onNext: { res in
             // When
             XCTAssertEqual(res, Constants.Errors.serverError.rawValue)
         }).disposed(by: self.disposeBag!)
         // Then
+        self.statusCode = 500
+        self.testData = Data()
+        self.loginViewModel?.networkManager = NetworkManager(provider: provider)
         self.loginViewModel?.loginDidTap.onNext(())
     }
 }

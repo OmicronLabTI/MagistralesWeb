@@ -64,11 +64,9 @@ class OrderDetailViewModel {
     }
 
     // MARK: - Functions
-    func getOrdenDetail(
-        isRefresh: Bool = false, needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func getOrdenDetail(isRefresh: Bool = false) {
         if needsRefresh { loading.onNext(true) }
-        self.networkManager.getOrdenDetail(
-            orderId: self.orderId, needsError: needsError, statusCode: statusCode, testData: testData)
+        self.networkManager.getOrdenDetail(self.orderId)
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: {[weak self] res in
             guard let self = self else { return }
@@ -135,15 +133,13 @@ class OrderDetailViewModel {
         }
         return sum
     }
-    func changeStatus(actionType: String, needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func changeStatus(actionType: String) {
         self.loading.onNext(true)
         let status = actionType == StatusNameConstants.inProcessStatus ? CommonStrings.process : CommonStrings.pending
         let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id) ?? String(),
                                                orderId: (self.tempOrderDetailData?.productionOrderID) ?? 0,
                                                status: status)
-        self.networkManager.changeStatusOrder(
-            changeStatusRequest: [changeStatus], needsError: needsError,
-            statusCode: statusCode, testData: testData)
+        self.networkManager.changeStatusOrder([changeStatus])
             .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
             self?.rootViewModel.needsRefresh = true
             self?.loading.onNext(false)
@@ -155,7 +151,7 @@ class OrderDetailViewModel {
             }).disposed(by: self.disposeBag)
     }
 
-    func deleteItemFromTable(index: Int, needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func deleteItemFromTable(index: Int) {
         self.loading.onNext(true)
         let itemToDelete = auxTabledata[index]
         let componets = [Component(
@@ -176,9 +172,7 @@ class OrderDetailViewModel {
             plannedQuantity: tempOrderDetailData?.plannedQuantity ?? Decimal(0),
             fechaFin: fechaFinFormated ?? String(), comments: String(),
             warehouse: tempOrderDetailData?.warehouse ?? String(), components: componets)
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(
-            orderDetailRequest: order, needsError: needsError,
-            statusCode: statusCode, testData: testData)
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             if self?.tempOrderDetailData != nil {
                 self?.loading.onNext(false)
@@ -197,16 +191,14 @@ class OrderDetailViewModel {
         return self.tempOrderDetailData!
     }
     // Valida si el usuario obtuvo las firmas y finaliza la orden
-    func validSignatures(needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func validSignatures() {
         if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
             self.loading.onNext(true)
             let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()?.id ?? String(),
                                           fabricationOrderId: [self.orderId],
                                           qfbSignature: self.sqfbSignature,
                                           technicalSignature: self.technicalSignature)
-            self.networkManager.finishOrder(
-                order: finishOrder, needsError: needsError,
-                statusCode: statusCode, testData: testData)
+            self.networkManager.finishOrder(finishOrder)
                 .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
                     guard let self = self else { return }
                     self.loading.onNext(false)
@@ -218,11 +210,9 @@ class OrderDetailViewModel {
                 }).disposed(by: self.disposeBag)
         }
     }
-    func validIfOrderCanBeFinalized(
-        orderId: Int, needsError: Bool = false, statusCode: Int = 500, testData: Data = Data()) {
+    func validIfOrderCanBeFinalized(orderId: Int) {
         self.loading.onNext(true)
-        networkManager.validateOrders(
-            orderIDs: [orderId], needsError: needsError, statusCode: statusCode, testData: testData)
+        networkManager.validateOrders([orderId])
             .subscribe(onNext: { [weak self] response in
                 guard let self = self else { return }
                 self.loading.onNext(false)

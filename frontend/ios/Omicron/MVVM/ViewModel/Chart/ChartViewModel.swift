@@ -56,14 +56,14 @@ class ChartViewModel {
     func processWorkloadData(initToday: String, userId: String,
                              numberFormatter: NumberFormatter, week: String?, finiMonth: String) {
         var workloads: [Workload?] = []
-        self.networkManager.getWordLoad(data: WorkloadRequest(fini: initToday, qfb: userId))
+        self.networkManager.getWordLoad(WorkloadRequest(fini: initToday, qfb: userId))
             .subscribe(onNext: { [weak self] workloadResponse in
                 guard let self = self else { return }
                 workloads.append(workloadResponse.response?.first)
                 self.capacity[0] = numberFormatter
                     .string(
                         from: NSNumber(value: workloadResponse.response?.first?.totalPossibleAssign ?? 0)) ?? String()
-                self.networkManager.getWordLoad(data: WorkloadRequest(fini: week ?? String(), qfb: userId))
+                self.networkManager.getWordLoad(WorkloadRequest(fini: week ?? String(), qfb: userId))
                     .subscribe(onNext: { [weak self] workloadResponse in
                         guard let self = self else { return }
                         workloads.append(workloadResponse.response?.first)
@@ -71,7 +71,7 @@ class ChartViewModel {
                             .string(
                                 from: NSNumber(value: workloadResponse.response?
                                                 .first?.totalPossibleAssign ?? 0)) ?? String()
-                        self.networkManager.getWordLoad(data: WorkloadRequest(fini: finiMonth, qfb: userId))
+                        self.networkManager.getWordLoad(WorkloadRequest(fini: finiMonth, qfb: userId))
                             .subscribe(onNext: { [weak self] workloadResponse in
                                 guard let self = self else { return }
                                 workloads.append(workloadResponse.response?.first)
