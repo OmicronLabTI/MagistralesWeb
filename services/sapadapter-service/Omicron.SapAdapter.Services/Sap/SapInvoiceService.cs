@@ -295,6 +295,9 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeaderOrdered.Select(x => x.TransportCode).ToList())).ToList();
             var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(invoiceHeaderOrdered.Select(x => x.SalesPrsonId).ToList())).ToList();
+
+            var doctorData = await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, invoiceHeaderOrdered.Select(x => x.CardCode).ToList());
+
             invoiceHeaderOrdered.ForEach(x =>
             {
                 var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
@@ -307,11 +310,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 var payment = payments.GetPaymentBydocNumDxp(x.DocNumDxp);
                 var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
 
+                var doctor = doctorData.FirstOrDefault(y => y.CardCode == x.CardCode);
+                doctor ??= new DoctorPrescriptionInfoModel { DoctorName = x.Cliente };
+
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.TransportName = company.TrnspName;
 
-                //// ToDo descomentar linea siguiente si hay deploy magis a prod antes que dxp
-                //// x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoId).Distinct().ToList());
+                x.Cliente = doctor.DoctorName;
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoDxpId?.ToUpper()).Distinct().ToList());
                 x.TotalSaleOrder = saleOrders.Select(y => y.PedidoId).Distinct().Count();
                 x.SalesPrsonEmail = salePerson.Email.ValidateNull();

@@ -889,7 +889,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Address = invoice.Address,
                              Canceled = invoice.Canceled,
                              CardCode = invoice.CardCode,
-                             Cliente = dop.Address2 ?? string.Empty,
+                             Cliente = doctor.AliasName,
                              Comments = invoice.Comments,
                              CommentsInvoice = invoice.CommentsInvoice,
                              DocNum = invoice.DocNum,
