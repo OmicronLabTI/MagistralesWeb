@@ -149,6 +149,10 @@
 		49720ECB27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
 		49720ECC27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
 		49720ECD27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
+		49720ECF27EE7F0400A8A2DB /* HideButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720ECE27EE7F0400A8A2DB /* HideButtons.swift */; };
+		49720ED027EE7F0400A8A2DB /* HideButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720ECE27EE7F0400A8A2DB /* HideButtons.swift */; };
+		49720ED127EE7F0400A8A2DB /* HideButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720ECE27EE7F0400A8A2DB /* HideButtons.swift */; };
+		49720ED227EE7F0400A8A2DB /* HideButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720ECE27EE7F0400A8A2DB /* HideButtons.swift */; };
 		49928125272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
 		49928126272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
 		49928127272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
@@ -503,6 +507,7 @@
 		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
 		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
 		49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewModelExtension.swift; sourceTree = "<group>"; };
+		49720ECE27EE7F0400A8A2DB /* HideButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideButtons.swift; sourceTree = "<group>"; };
 		49928124272A3F21001962D4 /* Omicron-UAT.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Omicron-UAT.plist"; sourceTree = "<group>"; };
 		49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SendBatchToServerNoEmptyResponse.json; sourceTree = "<group>"; };
 		49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest3.swift; sourceTree = "<group>"; };
@@ -724,6 +729,7 @@
 				1EC2920C254B4D90002FD4E3 /* ConnectModel.swift */,
 				1E2A75FF255362780014F38D /* ValidateOrderModel.swift */,
 				1E9674AE254338A40004344C /* OrderPDF.swift */,
+				49720ECE27EE7F0400A8A2DB /* HideButtons.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1974,6 +1980,7 @@
 				490B699F268E98ED00DBE9F1 /* ContainerViewController.swift in Sources */,
 				490B69A0268E98ED00DBE9F1 /* Persistence.swift in Sources */,
 				490B69A1268E98ED00DBE9F1 /* SignaturePadViewController.swift in Sources */,
+				49720ED227EE7F0400A8A2DB /* HideButtons.swift in Sources */,
 				490B69A2268E98ED00DBE9F1 /* ContainerModel.swift in Sources */,
 				490B69A3268E98ED00DBE9F1 /* RootViewController.swift in Sources */,
 				490B69A4268E98ED00DBE9F1 /* CommentsViewController.swift in Sources */,
@@ -2048,6 +2055,7 @@
 				49CF65E025F2D4AB002CD598 /* ContainerViewController.swift in Sources */,
 				49CF65E125F2D4AB002CD598 /* Persistence.swift in Sources */,
 				49CF65E225F2D4AB002CD598 /* SignaturePadViewController.swift in Sources */,
+				49720ED027EE7F0400A8A2DB /* HideButtons.swift in Sources */,
 				49CF65E325F2D4AB002CD598 /* ContainerModel.swift in Sources */,
 				49CF65E425F2D4AB002CD598 /* RootViewController.swift in Sources */,
 				49CF65E525F2D4AB002CD598 /* CommentsViewController.swift in Sources */,
@@ -2122,6 +2130,7 @@
 				49CF666325F2D821002CD598 /* ContainerViewController.swift in Sources */,
 				49CF666425F2D821002CD598 /* Persistence.swift in Sources */,
 				49CF666525F2D821002CD598 /* SignaturePadViewController.swift in Sources */,
+				49720ED127EE7F0400A8A2DB /* HideButtons.swift in Sources */,
 				49CF666625F2D821002CD598 /* ContainerModel.swift in Sources */,
 				49CF666725F2D821002CD598 /* RootViewController.swift in Sources */,
 				49CF666825F2D821002CD598 /* CommentsViewController.swift in Sources */,
@@ -2196,6 +2205,7 @@
 				381B3BCA25E0315E0077F764 /* ContainerViewController.swift in Sources */,
 				98B7845A24DA228A005A38FC /* Persistence.swift in Sources */,
 				7CF2EA3824F6C6330005602F /* SignaturePadViewController.swift in Sources */,
+				49720ECF27EE7F0400A8A2DB /* HideButtons.swift in Sources */,
 				381B3BE725E032B40077F764 /* ContainerModel.swift in Sources */,
 				7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */,
 				7C3A55CC24E76E0C001B627E /* CommentsViewController.swift in Sources */,

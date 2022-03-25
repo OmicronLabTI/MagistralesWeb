@@ -31,7 +31,7 @@ class ChartTest: XCTestCase {
         chartViewModel = nil
         disposeBag = nil
     }
-    
+
     fileprivate let fini =
             UtilsManager.shared.formattedDateToString(date: Date().startOfMonth)
             + "-"

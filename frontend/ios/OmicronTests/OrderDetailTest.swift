@@ -12,7 +12,7 @@ import Resolver
 import Moya
 
 @testable import OmicronLab
-// swiftlint:disable type_body_length
+
 class OrderDetailTest: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?

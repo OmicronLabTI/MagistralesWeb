@@ -7,3 +7,12 @@
 //
 
 import Foundation
+
+struct HideButtons {
+    var hideProcessBtn: Bool
+    var hideFinishedBtn: Bool
+    var hidePendinBtn: Bool
+    var hideAddCompBtn: Bool
+    var hideSaveBtn: Bool
+    var hideSeeLotsBtn: Bool
+}

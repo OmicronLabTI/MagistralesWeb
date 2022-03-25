@@ -390,33 +390,37 @@ class OrderDetailViewController: UIViewController {
     func showButtonsByStatusType(statusType: String) {
         switch statusType {
         case StatusNameConstants.assignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: false,
-                                             hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
+            self.changeHidePropertyOfButtons(
+                HideButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: false,
+                            hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true))
         case StatusNameConstants.inProcessStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: false,
-                                             hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(
+                HideButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: false,
+                            hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false))
         case StatusNameConstants.penddingStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true,
-                                             hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(
+                HideButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true,
+                            hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false))
         case StatusNameConstants.finishedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true,
-                                             hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(
+                HideButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true,
+                            hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false))
         case StatusNameConstants.reassignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true,
-                                             hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
+            self.changeHidePropertyOfButtons(
+                HideButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true,
+                            hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false))
         default:
             break
         }
     }
-    // swiftlint:disable function_parameter_count
-    func changeHidePropertyOfButtons(hideProcessBtn: Bool, hideFinishedBtn: Bool, hidePendinBtn: Bool,
-                                     hideAddCompBtn: Bool, hideSaveBtn: Bool, hideSeeLotsBtn: Bool) {
-        self.processButton.isHidden = hideProcessBtn
-        self.finishedButton.isHidden = hideFinishedBtn
-        self.penddingButton.isHidden = hidePendinBtn
-        self.addComponentButton.isHidden = hideAddCompBtn
-        self.saveButton.isHidden = hideSaveBtn
-        self.seeLotsButton.isHidden = hideSeeLotsBtn
+
+    func changeHidePropertyOfButtons(_ hideBtns: HideButtons) {
+        self.processButton.isHidden = hideBtns.hideProcessBtn
+        self.finishedButton.isHidden = hideBtns.hideFinishedBtn
+        self.penddingButton.isHidden = hideBtns.hidePendinBtn
+        self.addComponentButton.isHidden = hideBtns.hideAddCompBtn
+        self.saveButton.isHidden = hideBtns.hideSaveBtn
+        self.seeLotsButton.isHidden = hideBtns.hideSeeLotsBtn
     }
     func sendIndexToDelete(index: Int) {
         orderDetailViewModel.deleteItemFromTable(index: index)

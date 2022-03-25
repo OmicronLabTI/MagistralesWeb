@@ -12,7 +12,7 @@ import Moya
 import Resolver
 
 @testable import OmicronLab
-// swiftlint:disable type_body_length
+
 class BatchesTest: XCTestCase {
     // MARK: - VARIABLES
     var lotsViewModel: LotsViewModel?

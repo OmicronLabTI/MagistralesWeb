@@ -28,12 +28,12 @@ class ComponentsViewModel {
     @Injected var inboxViewModel: InboxViewModel
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var networkManager: NetworkManager
-    // swiftlint:disable function_body_length
+
     init() {
         searchDidTap.withLatestFrom(Observable.combineLatest(searchFilter, dataChips))
             .subscribe(onNext: { [weak self] text, chips in
                 guard text.count >= 2 else { return }
-                // swiftlint:disable unused_optional_binding
+
                 if let _ = chips.first(where: { $0 == text }) {
                     return
                 }

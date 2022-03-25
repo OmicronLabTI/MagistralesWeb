@@ -110,7 +110,8 @@ class NetworkManager: SessionProtocol {
         return res
     }
     // Actualiza, elimina un elemento de la tabla en detalle de la formula
-    func updateDeleteItemOfTableInOrderDetail(_ orderDetailRequest: OrderDetailRequest) -> Observable<DeleteOrUpdateItemOfTableResponse> {
+    func updateDeleteItemOfTableInOrderDetail(_ orderDetailRequest: OrderDetailRequest) ->
+    Observable<DeleteOrUpdateItemOfTableResponse> {
         let req: ApiService = ApiService.deleteItemOfOrdenDetail(orderDetailRequest: orderDetailRequest)
         let res: Observable<DeleteOrUpdateItemOfTableResponse> = makeRequest(request: req)
         return res

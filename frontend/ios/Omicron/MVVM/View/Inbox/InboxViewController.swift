@@ -130,11 +130,7 @@ class InboxViewController: UIViewController {
             cell.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
             cell.productDescriptionLabel.text = element.descriptionProduct?.uppercased() ?? CommonStrings.empty
             cell.missingStockImage.isHidden = !element.hasMissingStock
-            if indexPathsSelected.contains(indexPath) {
-                cell.isSelected = true
-            } else {
-                cell.isSelected = false
-            }
+            cell.isSelected = indexPathsSelected.contains(indexPath)
             cell.itemCode.text = element.itemCode
             return cell
         }
@@ -151,11 +147,7 @@ class InboxViewController: UIViewController {
             CommonStrings.empty : "\(element.baseDocument ?? 0)"
         cell.tagDescriptionLabel.text = element.tag
         cell.containerLabel.text = element.container
-        if !element.finishedLabel {
-            cell.tagDescriptionLabel.textColor = .red
-        } else {
-            cell.tagDescriptionLabel.textColor = .systemGreen
-        }
+        cell.tagDescriptionLabel.textColor = !element.finishedLabel ? .red : .systemGreen
         cell.plannedQuantityDescriptionLabel.text = decimalPart  ?? 0.0 > 0.0 ?
             String(format: DecimalFormat.six.rawValue,
                    NSDecimalNumber(decimal: element.plannedQuantity ?? 0.0).doubleValue) :
@@ -164,11 +156,7 @@ class InboxViewController: UIViewController {
         cell.finishDateDescriptionLabel.text = element.finishDate ?? CommonStrings.empty
         cell.productDescriptionLabel.text = element.descriptionProduct?.uppercased() ?? CommonStrings.empty
         cell.missingStockImage.isHidden = !element.hasMissingStock
-        if indexPathsSelected.contains(indexPath) {
-            cell.isSelected = true
-        } else {
-            cell.isSelected = false
-        }
+        cell.isSelected = indexPathsSelected.contains(indexPath)
         cell.itemCode.text = element.itemCode
         cell.destiny.text = element.destiny
         return cell
@@ -245,7 +233,6 @@ class InboxViewController: UIViewController {
         }).self.disposed(by: self.disposeBag)
         inboxViewModel.orderURLPDF.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] urlPDF in
             guard let self = self else { return }
-            print(urlPDF)
             DispatchQueue.main.async {
                 let pdfViewController = PDFViewController()
                 pdfViewController.pdfURL = URL(string: urlPDF)
@@ -490,49 +477,22 @@ class InboxViewController: UIViewController {
         collectionView.setContentOffset(.zero, animated: false)
     }
     private func hideButtons(index: Int) {
+        showContainersButtons.isHidden = true
         switch index {
         case 0:
-            self.changePropertyIsHiddenStatusButtons(
-                processButtonIsHidden: false,
-                finishedButtonIsHidden: true,
-                pendingButtonIsHidden: false)
+            self.changePropertyIsHiddenStatusButtons(false, true, false)
             showContainersButtons.isHidden = false
-        case 1:
-            self.changePropertyIsHiddenStatusButtons(
-                processButtonIsHidden: true,
-                finishedButtonIsHidden: false,
-                pendingButtonIsHidden: false)
-            showContainersButtons.isHidden = true
-        case 2:
-            self.changePropertyIsHiddenStatusButtons(
-                processButtonIsHidden: false,
-                finishedButtonIsHidden: true,
-                pendingButtonIsHidden: true)
-            showContainersButtons.isHidden = true
-        case 3:
-            self.changePropertyIsHiddenStatusButtons(
-                processButtonIsHidden: true,
-                finishedButtonIsHidden: true,
-                pendingButtonIsHidden: true)
-            showContainersButtons.isHidden = true
-        case 4:
-            self.changePropertyIsHiddenStatusButtons(
-                processButtonIsHidden: true,
-                finishedButtonIsHidden: true,
-                pendingButtonIsHidden: false)
-            showContainersButtons.isHidden = true
-        default:
-            self.changePropertyIsHiddenStatusButtons(
-                processButtonIsHidden: true,
-                finishedButtonIsHidden: true,
-                pendingButtonIsHidden: true)
-            showContainersButtons.isHidden = true
+        case 1: self.changePropertyIsHiddenStatusButtons(true, false, false)
+        case 2: self.changePropertyIsHiddenStatusButtons(false, true, true)
+        case 3: self.changePropertyIsHiddenStatusButtons(true, true, true)
+        case 4: self.changePropertyIsHiddenStatusButtons(true, true, false)
+        default: self.changePropertyIsHiddenStatusButtons(true, true, true)
         }
     }
     private func changePropertyIsHiddenStatusButtons(
-        processButtonIsHidden: Bool,
-        finishedButtonIsHidden: Bool,
-        pendingButtonIsHidden: Bool) {
+        _ processButtonIsHidden: Bool,
+        _ finishedButtonIsHidden: Bool,
+        _ pendingButtonIsHidden: Bool) {
         self.processButton.isHidden = processButtonIsHidden
         self.finishedButton.isHidden = finishedButtonIsHidden
         self.pendingButton.isHidden = pendingButtonIsHidden
@@ -568,15 +528,11 @@ class InboxViewController: UIViewController {
     }
 
     func updateCellWithIndexPath(_ indexPath: IndexPath) {
-
-        if indexPathsSelected.contains(indexPath) {
-            collectionView.deselectItem(at: indexPath, animated: true)
-        } else {
+        indexPathsSelected.contains(indexPath) ?
+            collectionView.deselectItem(at: indexPath, animated: true) :
             collectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
-        }
 
-        let indexOptional = indexPathsSelected.firstIndex(of: indexPath)
-        if let index = indexOptional {
+        if let index = indexPathsSelected.firstIndex(of: indexPath) {
             indexPathsSelected.remove(at: index)
         } else {
             indexPathsSelected.append(indexPath)

@@ -9,7 +9,7 @@
 import RxCocoa
 import RxSwift
 import Resolver
-// swiftlint:disable type_body_length
+
 class LotsViewModel {
     // MARK: Variables
     var loading = PublishSubject<Bool>()
@@ -69,7 +69,6 @@ class LotsViewModel {
         }).self.disposed(by: self.disposeBag)
     }
     // MARK: - Functions
-    // swiftlint:disable function_body_length
     func addLotDidTapAction() {
         let inputs = Observable.combineLatest(productSelected, availableSelected)
         self.addLotDidTap.withLatestFrom(inputs).subscribe(onNext: { [weak self] productSelected, availableSelected in
@@ -398,7 +397,7 @@ class LotsViewModel {
                 self.loading.onNext(false)
                 self.backToInboxView.onNext(())
                 self.rootViewModel.needsRefresh = true
-            }, onError: { [weak self] error in
+            }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)
                 self.showMessage.onNext(CommonStrings.errorToChangeStatus)
