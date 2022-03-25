@@ -29,7 +29,7 @@ class RootViewTest: XCTestCase {
     }
     // MARK: - TEST FUNCTIONS
     func testGetStatusListServiceValid() {
-        self.networkManager.getStatusList(userId: "dd4b9bab-e2e8-44a2-af87-8eda8cb510cb").subscribe(onNext: { res in
+        self.networkManager.getStatusList("dd4b9bab-e2e8-44a2-af87-8eda8cb510cb").subscribe(onNext: { res in
             XCTAssertNotNil(res)
             XCTAssertNotNil(res.response)
             XCTAssertTrue(res.code == 200)

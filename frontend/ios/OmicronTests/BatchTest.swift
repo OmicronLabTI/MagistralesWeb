@@ -18,17 +18,33 @@ class BatchesTest: XCTestCase {
     var lotsViewModel: LotsViewModel?
     var disposeBag: DisposeBag?
     var orderId: Int?
+    var provider: MoyaProvider<ApiService>!
+    var statusCode = 200
+    var testData = Data()
     @Injected var networkManager: NetworkManager
     override func setUp() {
+        statusCode = 200
+        testData = Data()
         lotsViewModel = LotsViewModel()
         disposeBag = DisposeBag()
         orderId = 0
+        provider = MoyaProvider<ApiService>(
+            endpointClosure: customEndpointClosure,
+            stubClosure: MoyaProvider.immediatelyStub)
     }
     override func tearDown() {
         lotsViewModel = nil
         disposeBag = nil
         orderId = nil
     }
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
+    }
+
     // MARK: - TEST FUNCTIONS
     func testGetLotsSuccess() {
         // When
@@ -39,15 +55,8 @@ class BatchesTest: XCTestCase {
                 XCTAssertEqual(res.count, 5)
             }
         }).disposed(by: disposeBag!)
-//        self.networkManager.getLots(orderId: self.orderId!).subscribe(onNext: { res in
-//            // Then
-//            XCTAssertNotNil(res)
-//            XCTAssertTrue(res.response!.count > 0)
-//            self.lotsViewModel?.updateInfoSelectedBatch(lot: (res.response?.first)!)
-//        }).disposed(by: self.disposeBag!)
-//        lotsViewModel?.updateOrderDetail()
-//        lotsViewModel?.changeOrderToPendingStatus()
     }
+
     func testAssingBatchesWhenResponseIsEmpty() {
         // Given
         var batchesToSend: [BatchSelected] = []
@@ -66,16 +75,13 @@ class BatchesTest: XCTestCase {
             itemCode: "MP-109", action: "insert", sysNumber: 54,
             expiredBatch: false, areBatchesComplete: 0)
         batchesToSend.append(batch)
-        guard let url = Bundle.main.url(forResource: "SendBatchToServerNoEmptyResponse", withExtension: "json"),
-            let data = try? Data(contentsOf: url) else {
-            return
-        }
+        testData = UtilsManager.shared.getDataFor(resourse: "SendBatchToServerNoEmptyResponse", withExtension: "json")
         let batchStr = "\n7J3WM91-2"
         lotsViewModel?.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, "\(Constants.Errors.assignedBatches.rawValue) \(batchStr)")
         }).disposed(by: disposeBag!)
-        lotsViewModel?.sendToServerAssignedLots(
-            lotsToSend: batchesToSend, needsError: true, statusCode: 200, testData: data)
+        lotsViewModel?.networkManager = NetworkManager(provider: provider)
+        lotsViewModel?.sendToServerAssignedLots(lotsToSend: batchesToSend)
     }
     func testCalculateExpiredBatchShoudBeFalse() {
         // Given
@@ -193,11 +199,11 @@ class BatchesTest: XCTestCase {
         self.lotsViewModel!.saveLotsDidTap.onNext(())
     }
     func testValidIfOrderCanBeFinalizedNotNull() {
-        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { res in
+        self.networkManager.askIfOrderCanBeFinalized(self.orderId!).subscribe(onNext: { res in
             XCTAssertNotNil(res)
         }).disposed(by: self.disposeBag!)    }
     func testValidIfOrderCanBeFinalizedValidCode() {
-        self.networkManager.askIfOrderCanBeFinalized(orderId: self.orderId!).subscribe(onNext: { res in
+        self.networkManager.askIfOrderCanBeFinalized(self.orderId!).subscribe(onNext: { res in
             XCTAssertTrue(res.code == 200)
         }).disposed(by: self.disposeBag!)
     }
@@ -205,19 +211,25 @@ class BatchesTest: XCTestCase {
         lotsViewModel?.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, Constants.Errors.loadBatches.rawValue)
         }).disposed(by: disposeBag!)
-        lotsViewModel?.getLots(needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        lotsViewModel?.networkManager = NetworkManager(provider: provider)
+        lotsViewModel?.getLots()
     }
     func testSendToServerAssignedLotsWhenCodeIs500() {
         lotsViewModel?.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, Constants.Errors.assignedBatchesTryAgain.rawValue)
         }).disposed(by: disposeBag!)
-        lotsViewModel?.sendToServerAssignedLots(lotsToSend: [], needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        lotsViewModel?.networkManager = NetworkManager(provider: provider)
+        lotsViewModel?.sendToServerAssignedLots(lotsToSend: [])
     }
     func testValidIfOrderCanBeFinalizedWhenCodeIs500() {
         lotsViewModel?.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, Constants.Errors.errorData.rawValue)
         }).disposed(by: disposeBag!)
-        lotsViewModel?.validIfOrderCanBeFinalized(needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        lotsViewModel?.networkManager = NetworkManager(provider: provider)
+        lotsViewModel?.validIfOrderCanBeFinalized()
     }
     func testValidIfOrderCanBeFinalizedWhithCode400() {
         // swiftlint:disable line_length
@@ -225,12 +237,8 @@ class BatchesTest: XCTestCase {
         lotsViewModel?.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, expectedResult)
         }).disposed(by: disposeBag!)
-        guard let url = Bundle.main.url(forResource: "FinishOrdersErrorResponse", withExtension: "json"),
-            let data = try? Data(contentsOf: url) else {
-            return
-        }
-
-        lotsViewModel?.validIfOrderCanBeFinalized(needsError: true, statusCode: 200, testData: data)
+        testData = UtilsManager.shared.getDataFor(resourse: "FinishOrdersErrorResponse", withExtension: "json")
+        lotsViewModel?.validIfOrderCanBeFinalized()
     }
     func testCallFinishOrderServiceWhenCodeIs500() {
         lotsViewModel?.technicalSignatureIsGet = true
@@ -238,7 +246,9 @@ class BatchesTest: XCTestCase {
         lotsViewModel?.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.errorFinishOrder)
         }).disposed(by: disposeBag!)
-        lotsViewModel?.callFinishOrderService(needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        lotsViewModel?.networkManager = NetworkManager(provider: provider)
+        lotsViewModel?.callFinishOrderService()
     }
     func testCallFinishOrderServiceSuccess() {
         lotsViewModel?.technicalSignatureIsGet = true
@@ -259,7 +269,9 @@ class BatchesTest: XCTestCase {
         lotsViewModel?.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, Constants.Errors.loadOrdersDetail.rawValue)
         }).disposed(by: disposeBag!)
-        lotsViewModel?.updateOrderDetail(needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        lotsViewModel?.networkManager = NetworkManager(provider: provider)
+        lotsViewModel?.updateOrderDetail()
     }
     func testChangeOrderToPendingStatusSuccess() {
         lotsViewModel?.backToInboxView.subscribe(onNext: { _ in
@@ -271,7 +283,9 @@ class BatchesTest: XCTestCase {
         lotsViewModel?.showMessage.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.errorToChangeStatus)
         }).disposed(by: disposeBag!)
-        lotsViewModel?.changeOrderToPendingStatus(needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        lotsViewModel?.networkManager = NetworkManager(provider: provider)
+        lotsViewModel?.changeOrderToPendingStatus()
     }
 
     func testGetFilteredSelectedSuccess() {

@@ -9,11 +9,16 @@
 import XCTest
 import RxSwift
 import Resolver
+import Moya
 @testable import OmicronLab
 class ComponetsTest: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?
     var componentsViewModel: ComponentsViewModel?
+    var provider: MoyaProvider<ApiService>!
+    var statusCode = 200
+    var testData = Data()
+
     @Injected var networkManager: NetworkManager
     @Injected var inboxViewModel: InboxViewModel
     var order1: Order?
@@ -29,11 +34,22 @@ class ComponetsTest: XCTestCase {
             "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
             hasMissingStock: false, finishedLabel: false)
+        provider = MoyaProvider<ApiService>(
+            endpointClosure: customEndpointClosure,
+            stubClosure: MoyaProvider.immediatelyStub)
     }
     override func tearDown() {
         disposeBag = nil
         componentsViewModel = nil
         order1 = nil
+    }
+
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
     }
     // MARK: - TEST FUNCTIONS
     func testValidResponse() {
@@ -44,7 +60,7 @@ class ComponetsTest: XCTestCase {
                 limit: Constants.Components.limit.rawValue,
                 chips: chips,
                 catalogGroup: "MG")
-            self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
+            self?.networkManager.getComponents(request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
             }).disposed(by: (self?.disposeBag)!)
         }).disposed(by: disposeBag!)
@@ -53,7 +69,9 @@ class ComponetsTest: XCTestCase {
         componentsViewModel?.dataError.subscribe(onNext: { res in
             XCTAssertEqual(res, Constants.Errors.errorData.rawValue)
         }).disposed(by: disposeBag!)
-        componentsViewModel?.getComponents(chips: ["Base"], needsError: true)
+        statusCode = 500
+        componentsViewModel?.networkManager = NetworkManager(provider: provider)
+        componentsViewModel?.getComponents(chips: ["Base"])
     }
     func testValidCodeNotNull() {
         componentsViewModel!.dataChips.onNext(["Base"])
@@ -63,7 +81,7 @@ class ComponetsTest: XCTestCase {
                 limit: Constants.Components.limit.rawValue,
                 chips: chips,
                 catalogGroup: "MG")
-            self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
+            self?.networkManager.getComponents(request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.code)
             }).disposed(by: (self?.disposeBag)!)
         }).disposed(by: disposeBag!)
@@ -76,7 +94,7 @@ class ComponetsTest: XCTestCase {
                 limit: Constants.Components.limit.rawValue,
                 chips: chips,
                 catalogGroup: "MG")
-            self?.networkManager.getComponents(data: request).subscribe(onNext: { res in
+            self?.networkManager.getComponents(request).subscribe(onNext: { res in
                 XCTAssert(res.code == 200)
             }).disposed(by: (self?.disposeBag)!)
         }).disposed(by: disposeBag!)
@@ -90,9 +108,9 @@ class ComponetsTest: XCTestCase {
                 limit: Constants.Components.limit.rawValue,
                 chips: chips,
                 catalogGroup: "MG")
-            self?.networkManager.getComponents(data: request).subscribe(onNext: { [weak self] res in
+            self?.networkManager.getComponents(request).subscribe(onNext: { [weak self] res in
                 orderDetailRequest = self?.returnOrderDetailRequest(componentO: res.response)
-                self?.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: orderDetailRequest!)
+                self?.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest!)
                     .subscribe(onNext: { res in
                     XCTAssertNotNil(res.response)
                 }).disposed(by: (self?.disposeBag)!)
@@ -106,7 +124,9 @@ class ComponetsTest: XCTestCase {
         componentsViewModel?.dataError.subscribe(onNext: { res in
             XCTAssertEqual(res, Constants.Errors.errorSave.rawValue)
         }).disposed(by: disposeBag!)
-        componentsViewModel?.saveComponent(req: req, needsError: true)
+        statusCode = 500
+        componentsViewModel?.networkManager = NetworkManager(provider: provider)
+        componentsViewModel?.saveComponent(req: req)
     }
     func returnOrderDetailRequest(componentO: [ComponentO]?) -> OrderDetailRequest? {
         guard let componentO = componentO else { return nil }
@@ -240,6 +260,8 @@ class ComponetsTest: XCTestCase {
         componentsViewModel?.dataError.subscribe(onNext: { res in
             XCTAssertEqual(res, Constants.Errors.errorData.rawValue)
         }).disposed(by: disposeBag!)
-        componentsViewModel?.getMostCommonComponentsService(needsError: true)
+        statusCode = 500
+        componentsViewModel?.networkManager = NetworkManager(provider: provider)
+        componentsViewModel?.getMostCommonComponentsService()
     }
 }

@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import Resolver
+import Moya
 
 @testable import OmicronLab
 
@@ -16,11 +17,19 @@ class ContainerTest: XCTestCase {
 
     var containerViewModel: ContainerViewModel?
     var disposeBag: DisposeBag?
+    var provider: MoyaProvider<ApiService>!
+    var statusCode = 200
+    var testData = Data()
     @Injected var networkManager: NetworkManager
 
     override func setUpWithError() throws {
+        statusCode = 200
+        testData = Data()
         containerViewModel = ContainerViewModel()
         disposeBag = DisposeBag()
+        provider = MoyaProvider<ApiService>(
+            endpointClosure: customEndpointClosure,
+            stubClosure: MoyaProvider.immediatelyStub)
     }
 
     override func tearDownWithError() throws {
@@ -28,11 +37,19 @@ class ContainerTest: XCTestCase {
         disposeBag = nil
     }
 
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
+    }
+
     func testGetContainerData() {
         containerViewModel!.getContainerData()
         guard let userData = Persistence.shared.getUserData(), let userId = userData.id else { return }
         networkManager
-            .getContainer(userId: userId)
+            .getContainer(userId)
             .subscribe(onNext: { containerResponse in
                 XCTAssertNotNil(containerResponse)
             })
@@ -40,7 +57,9 @@ class ContainerTest: XCTestCase {
     }
 
     func testGetContainerDataWhenCodeIs500() {
-        containerViewModel?.getContainerData(needsErrorRes: true, statusCode: 500, testdata: Data())
+        statusCode = 500
+        containerViewModel?.networkManager = NetworkManager(provider: provider)
+        containerViewModel?.getContainerData()
         containerViewModel?.loading.subscribe(onNext: { res in
             XCTAssertFalse(res)
         }).disposed(by: disposeBag!)

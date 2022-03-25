@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import Resolver
+import Moya
 
 @testable import OmicronLab
 // swiftlint:disable type_body_length
@@ -18,6 +19,9 @@ class OrderDetailTest: XCTestCase {
     var viewModel: LoginViewModel?
     var orderId: Int?
     var orderDetailViewModel: OrderDetailViewModel?
+    var provider: MoyaProvider<ApiService>!
+    var statusCode = 200
+    var testData = Data()
     @Injected var networkManager: NetworkManager
     override func setUp() {
         print("XXXX setUp OrderDetailTest")
@@ -25,6 +29,9 @@ class OrderDetailTest: XCTestCase {
         viewModel = LoginViewModel()
         orderId = 89026
         orderDetailViewModel = OrderDetailViewModel()
+        provider = MoyaProvider<ApiService>(
+            endpointClosure: customEndpointClosure,
+            stubClosure: MoyaProvider.immediatelyStub)
     }
     override func tearDown() {
         print("XXXX tearDown OrderDetailTest")
@@ -33,29 +40,37 @@ class OrderDetailTest: XCTestCase {
         orderId = nil
         orderDetailViewModel = nil
     }
+
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
+    }
     // MARK: - TEST FUNCTIONS
     func testGetOrderDetailNoNull() {
-        self.networkManager.getOrdenDetail(orderId: orderId!, needsError: false).subscribe(onNext: { res in
+        self.networkManager.getOrdenDetail(orderId!).subscribe(onNext: { res in
             XCTAssertNotNil(res)
         }).disposed(by: self.disposeBag!)
     }
     func testGetOrderDetailValidCode() {
-        self.networkManager.getOrdenDetail(orderId: orderId!, needsError: false).subscribe(onNext: { res in
+        self.networkManager.getOrdenDetail(orderId!).subscribe(onNext: { res in
             XCTAssertTrue(res.code == 200)
         }).disposed(by: self.disposeBag!)
     }
     func testGetOrderDetailResponseNotNull() {
-        self.networkManager.getOrdenDetail(orderId: orderId!, needsError: false).subscribe(onNext: { res in
+        self.networkManager.getOrdenDetail(orderId!).subscribe(onNext: { res in
             XCTAssertNotNil(res.response)
         }).disposed(by: self.disposeBag!)
     }
     func testGetOrderDetailValidProductID() {
-        self.networkManager.getOrdenDetail(orderId: orderId!, needsError: false).subscribe(onNext: { res in
+        self.networkManager.getOrdenDetail(orderId!).subscribe(onNext: { res in
             XCTAssertTrue(res.response?.productionOrderID == 89026)
         }).disposed(by: self.disposeBag!)
     }
     func testGetOrderDetailValidContainsDetails() {
-        self.networkManager.getOrdenDetail(orderId: orderId!, needsError: false).subscribe(onNext: { res in
+        self.networkManager.getOrdenDetail(orderId!).subscribe(onNext: { res in
             XCTAssertTrue((res.response?.details?.count)! > 0)
         }).disposed(by: self.disposeBag!)
     }
@@ -69,7 +84,7 @@ class OrderDetailTest: XCTestCase {
             userId: userId, fabricationOrderId: [fabricationOrderId],
             qfbSignature: qfbSignature, technicalSignature: technicalSignature)
         // When
-        self.networkManager.finishOrder(order: finishOrder).subscribe(onNext: { res in
+        self.networkManager.finishOrder(finishOrder).subscribe(onNext: { res in
             // Then
             XCTAssertNotNil(res)
             XCTAssertTrue(res.response!.userId! == userId )
@@ -87,7 +102,7 @@ class OrderDetailTest: XCTestCase {
             fabOrderID: 89838, plannedQuantity: 1, fechaFin: "2020-09-13", comments: "",
             warehouse: "MP", components: [components])
         // Then
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).subscribe(onNext: { res1 in
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(order).subscribe(onNext: { res1 in
             // When
             XCTAssertNotNil(res1.response)
             XCTAssertTrue(res1.response == "{\"89838-89838\":\"Ok\"}")
@@ -103,7 +118,7 @@ class OrderDetailTest: XCTestCase {
             fabOrderID: 89838, plannedQuantity: 1, fechaFin: "2020-09-13", comments: "",
             warehouse: "MP", components: [components])
         // Then
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order).subscribe(onNext: { res1 in
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(order).subscribe(onNext: { res1 in
             // When
             XCTAssertNotNil(res1.response)
             XCTAssertTrue(res1.response == "{\"89838-89838\":\"Ok\"}")
@@ -113,7 +128,7 @@ class OrderDetailTest: XCTestCase {
         // Given
         let orderId = 89026
         // Then
-        self.networkManager.getOrdenDetail(orderId: orderId, needsError: false).subscribe(onNext: { res in
+        self.networkManager.getOrdenDetail(orderId).subscribe(onNext: { res in
         let resOfSum = self.orderDetailViewModel!.sum(tableDetails: (res.response?.details)!)
             // When
             XCTAssertTrue(resOfSum == 27.5)
@@ -125,14 +140,15 @@ class OrderDetailTest: XCTestCase {
         orderDetailViewModel?.showSignatureView.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.signatureViewTitleQFB)
         }).disposed(by: disposeBag!)
-        orderDetailViewModel?.validIfOrderCanBeFinalized(orderId: orderId, needsError: false)
+        orderDetailViewModel?.validIfOrderCanBeFinalized(orderId: orderId)
     }
     func testValidIfOrderCanBeFinalizedWhenCodeIs500() {
         orderDetailViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, Constants.Errors.errorData.rawValue)
         }).disposed(by: disposeBag!)
-        orderDetailViewModel?.validIfOrderCanBeFinalized(
-            orderId: 12345, needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        orderDetailViewModel?.networkManager = NetworkManager(provider: provider)
+        orderDetailViewModel?.validIfOrderCanBeFinalized(orderId: 12345)
     }
 
     func testValidIfOrderCanBeFinalizedSuccessWhenCodeIs400() {
@@ -141,12 +157,9 @@ class OrderDetailTest: XCTestCase {
         orderDetailViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, expectedResult)
         }).disposed(by: disposeBag!)
-        guard let url = Bundle.main.url(forResource: "FinishOrdersErrorResponse", withExtension: "json"),
-            let data = try? Data(contentsOf: url) else {
-            return
-        }
-        orderDetailViewModel?.validIfOrderCanBeFinalized(
-            orderId: 12345, needsError: true, statusCode: 200, testData: data)
+        testData = UtilsManager.shared.getDataFor(resourse: "FinishOrdersErrorResponse", withExtension: "json")
+        statusCode = 200
+        orderDetailViewModel?.validIfOrderCanBeFinalized(orderId: 12345)
     }
     func testChangeStatusOrderPendingSuccess() {
         // Given
@@ -158,7 +171,7 @@ class OrderDetailTest: XCTestCase {
         "\"IsProductionOrder\":true,\"StatusOrder\":5}]"
         let changeStatus = ChangeStatusRequest(userId: "", orderId: 89026, status: status)
         // When
-        networkManager.changeStatusOrder(changeStatusRequest: [changeStatus]).subscribe(onNext: { res in
+        networkManager.changeStatusOrder([changeStatus]).subscribe(onNext: { res in
             // Then
             XCTAssertNotNil(res)
             XCTAssertTrue(res.response == response)
@@ -202,7 +215,7 @@ class OrderDetailTest: XCTestCase {
             }
         }).disposed(by: self.disposeBag!)
         // Then
-        self.orderDetailViewModel?.getOrdenDetail(isRefresh: false, needsError: false, statusCode: 200, testData: Data())
+        self.orderDetailViewModel?.getOrdenDetail(isRefresh: false)
     }
     func testGetOrdendetailSucessIsRefresh() {
         // Given
@@ -217,14 +230,16 @@ class OrderDetailTest: XCTestCase {
             }
         }).disposed(by: self.disposeBag!)
         // Then
-        self.orderDetailViewModel?.getOrdenDetail(isRefresh: isRefresh, needsError: false)
+        self.orderDetailViewModel?.getOrdenDetail(isRefresh: isRefresh)
     }
 
     func testGetOrderDetailWhenStatusCodeIS500() {
         orderDetailViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.formulaDetailCouldNotBeLoaded)
         }).disposed(by: disposeBag!)
-        self.orderDetailViewModel?.getOrdenDetail(isRefresh: true, needsError: true)
+        statusCode = 500
+        orderDetailViewModel?.networkManager = NetworkManager(provider: provider)
+        self.orderDetailViewModel?.getOrdenDetail(isRefresh: true)
     }
     func testShoulReturnZero() {
         // Given
@@ -247,7 +262,7 @@ class OrderDetailTest: XCTestCase {
     func testTerminateOrChangeStatusOfAnOrderInProcessStatus() {
         // Given
         let actionType = StatusNameConstants.inProcessStatus
-        networkManager.getOrdenDetail(orderId: 89076, needsError: false).subscribe(onNext: { [weak self] res in
+        networkManager.getOrdenDetail(89076).subscribe(onNext: { [weak self] res in
             let orderDetail = res.response
             self?.orderDetailViewModel?.tempOrderDetailData = orderDetail
             self?.orderDetailViewModel?.backToInboxView.subscribe(onNext: { _ in
@@ -261,7 +276,7 @@ class OrderDetailTest: XCTestCase {
     func testTerminateOrChangeStatusOfAnOrderPenddingStatus() {
         // Given
         let actionType = StatusNameConstants.penddingStatus
-        networkManager.getOrdenDetail(orderId: 89076, needsError: false).subscribe(onNext: { [weak self] res in
+        networkManager.getOrdenDetail(89076).subscribe(onNext: { [weak self] res in
             let orderDetail = res.response
             self?.orderDetailViewModel?.tempOrderDetailData = orderDetail
             self?.orderDetailViewModel?.backToInboxView.subscribe(onNext: { _ in
@@ -274,7 +289,7 @@ class OrderDetailTest: XCTestCase {
     }
     func testDeleteItemFromTable() {
         let index = 0
-        networkManager.getOrdenDetail(orderId: 89025, needsError: false).subscribe(onNext: { [weak self] res in
+        networkManager.getOrdenDetail(89025).subscribe(onNext: { [weak self] res in
             self?.orderDetailViewModel?.auxTabledata = res.response!.details!
             self?.orderDetailViewModel?.tempOrderDetailData = res.response
             self?.orderDetailViewModel?.tableData.subscribe(onNext: { res in
@@ -282,12 +297,12 @@ class OrderDetailTest: XCTestCase {
                      XCTAssertEqual(res.count, 4)
                 }
             }).disposed(by: (self?.disposeBag)!)
-            self?.orderDetailViewModel?.deleteItemFromTable(index: index, needsError: false)
+            self?.orderDetailViewModel?.deleteItemFromTable(index: index)
         }).disposed(by: self.disposeBag!)
     }
     func testDeleteItemFromTableWhenCodeIs500() {
         let index = 0
-        networkManager.getOrdenDetail(orderId: 89025, needsError: false).subscribe(onNext: { [weak self] res in
+        networkManager.getOrdenDetail(89025).subscribe(onNext: { [weak self] res in
             self?.orderDetailViewModel?.auxTabledata = res.response!.details!
             self?.orderDetailViewModel?.tempOrderDetailData = res.response
             self?.orderDetailViewModel?.tableData.subscribe(onNext: { res in
@@ -295,17 +310,21 @@ class OrderDetailTest: XCTestCase {
                      XCTAssertEqual(res.count, 4)
                 }
             }).disposed(by: (self?.disposeBag)!)
-            self?.orderDetailViewModel?.deleteItemFromTable(index: index, needsError: true)
+            self?.statusCode = 500
+            self?.orderDetailViewModel?.networkManager = NetworkManager(provider: (self?.provider)!)
+            self?.orderDetailViewModel?.deleteItemFromTable(index: index)
         }).disposed(by: self.disposeBag!)
 
         orderDetailViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.couldNotDeleteItem)
         }).disposed(by: disposeBag!)
-        orderDetailViewModel?.deleteItemFromTable(index: index, needsError: true, statusCode: 500)
+        statusCode = 500
+        orderDetailViewModel?.networkManager = NetworkManager(provider: provider)
+        orderDetailViewModel?.deleteItemFromTable(index: index)
     }
 
     func testGetDataTableToEditSuccess() {
-        networkManager.getOrdenDetail(orderId: 89025, needsError: false).subscribe(onNext: { [weak self] res in
+        networkManager.getOrdenDetail(89025).subscribe(onNext: { [weak self] res in
             self?.orderDetailViewModel?.tempOrderDetailData = res.response
             let data = self?.orderDetailViewModel?.getDataTableToEdit()
             XCTAssertEqual(data?.baseDocument, 56701)
@@ -319,7 +338,7 @@ class OrderDetailTest: XCTestCase {
         self.orderDetailViewModel?.backToInboxView.subscribe(onNext: { _ in
             XCTAssert(true)
         }).disposed(by: self.disposeBag!)
-        self.orderDetailViewModel?.validSignatures(needsError: false, statusCode: 200, testData: Data())
+        self.orderDetailViewModel?.validSignatures()
     }
 
     func testValidSignaturesWhenCodeIs500() {
@@ -329,7 +348,9 @@ class OrderDetailTest: XCTestCase {
         self.orderDetailViewModel?.backToInboxView.subscribe(onNext: { _ in
             XCTAssert(true)
         }).disposed(by: self.disposeBag!)
-        self.orderDetailViewModel?.validSignatures(needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        orderDetailViewModel?.networkManager = NetworkManager(provider: provider)
+        self.orderDetailViewModel?.validSignatures()
         orderDetailViewModel?.loading.subscribe(onNext: { _ in
             XCTAssertFalse(false)
         }).disposed(by: disposeBag!)
@@ -339,14 +360,16 @@ class OrderDetailTest: XCTestCase {
         orderDetailViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.errorToChangeStatus)
         }).disposed(by: disposeBag!)
-        orderDetailViewModel?.changeStatus(actionType: StatusNameConstants.inProcessStatus, needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        orderDetailViewModel?.networkManager = NetworkManager(provider: provider)
+        orderDetailViewModel?.changeStatus(actionType: StatusNameConstants.inProcessStatus)
     }
 
     func testChangeStatusSuccess() {
-        networkManager.getOrdenDetail(orderId: 353435).subscribe(onNext: { [weak self] res in
+        networkManager.getOrdenDetail(353435).subscribe(onNext: { [weak self] res in
             let orderDetail = res.response
             self?.orderDetailViewModel?.tempOrderDetailData = orderDetail
-            self?.orderDetailViewModel?.changeStatus(actionType: StatusNameConstants.inProcessStatus, needsError: false)
+            self?.orderDetailViewModel?.changeStatus(actionType: StatusNameConstants.inProcessStatus)
             self?.orderDetailViewModel?.loading.subscribe(onNext: { _ in
                 XCTAssertFalse(false)
             }).disposed(by: (self?.disposeBag!)!)

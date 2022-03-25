@@ -21,7 +21,7 @@ class LoginTest: XCTestCase {
     var statusCode = 200
     var testData = Data()
     @Injected var networkManager: NetworkManager
-    
+
     override func setUp() {
         print("XXXX setUp LoginTest")
         self.disposeBag = DisposeBag()
@@ -68,7 +68,7 @@ class LoginTest: XCTestCase {
         let data = Login(username: "serch", password: "Password", redirectUri: "", clientId2: "", origin: "")
         let testToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9maWxlIjoiYWRtaW4iLCJleHAiOjE1OTY3MzM1NTgsInVzZXIiOiJzZXJnaW8ifQ.W9kstVRF9qm_s2diVt-Ki0xb4FwkXIA0QtEFSDAlXCM"
         // Then
-        self.networkManager.login(data: (data)).subscribe(onNext: { res in
+        self.networkManager.login(data).subscribe(onNext: { res in
             // When
             XCTAssertNotNil(res.accessToken)
             XCTAssertEqual(res.accessToken, testToken)
@@ -78,7 +78,7 @@ class LoginTest: XCTestCase {
         // Given
         let username = "sflores"
         // Then
-        self.networkManager.getInfoUser(username: username).subscribe(onNext: { res in
+        self.networkManager.getInfoUser(username).subscribe(onNext: { res in
             // When
             XCTAssertNotNil(res)
             XCTAssertTrue(res.code == 200)

@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import Resolver
+import Moya
 
 @testable import OmicronLab
 
@@ -21,8 +22,13 @@ class CommentsTest: XCTestCase {
     var fechaFin: String?
     var message: String?
     var order: OrderDetailRequest?
+    var provider: MoyaProvider<ApiService>!
+    var statusCode = 200
+    var testData = Data()
     @Injected var networkmanager: NetworkManager
     override func setUp() {
+        statusCode = 200
+        testData = Data()
         sut = CommentsViewModel()
         disposeBag = DisposeBag()
         productionOrderID = 89623
@@ -35,6 +41,9 @@ class CommentsTest: XCTestCase {
             fechaFin: fechaFin!,
             comments: message!, warehouse: "MP",
             components: [])
+        provider = MoyaProvider<ApiService>(
+            endpointClosure: customEndpointClosure,
+            stubClosure: MoyaProvider.immediatelyStub)
     }
     override func tearDown() {
         sut = nil
@@ -45,10 +54,18 @@ class CommentsTest: XCTestCase {
         message = nil
         order = nil
     }
+
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
+    }
     // MARK: - Test Functions
     func testValidResponse() {
         self.networkmanager
-            .updateDeleteItemOfTableInOrderDetail(orderDetailRequest: self.order!)
+            .updateDeleteItemOfTableInOrderDetail(self.order!)
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
@@ -58,7 +75,7 @@ class CommentsTest: XCTestCase {
         // Given
         sut?.textView.onNext("Texto de Prueba")
         sut?.originView = ViewControllerIdentifiers.orderDetailViewController
-        networkmanager.getOrdenDetail(orderId: 90876).subscribe(onNext: { [weak self] res in
+        networkmanager.getOrdenDetail(90876).subscribe(onNext: { [weak self] res in
             self?.sut?.orderDetail = [res.response!]
             self?.sut?.backToOrderDetail.subscribe(onNext: { _ in
                 // When
@@ -72,7 +89,7 @@ class CommentsTest: XCTestCase {
         // Given
         sut?.textView.onNext("Texto de Prueba")
         sut?.originView = ViewControllerIdentifiers.lotsViewController
-        networkmanager.getOrdenDetail(orderId: 90876).subscribe(onNext: { [weak self] res in
+        networkmanager.getOrdenDetail(90876).subscribe(onNext: { [weak self] res in
             self?.sut?.orderDetail = [res.response!]
             self?.sut?.backToLots.subscribe(onNext: { _ in
                 // When
@@ -86,9 +103,10 @@ class CommentsTest: XCTestCase {
     func testAceptDidTapSuccessFromLotsViewControllerWhenCodeIs500() {
         // Given
         sut?.textView.onNext("Texto de Prueba")
-        sut?.needsError = true
+        statusCode = 500
+        sut?.networkmanager = NetworkManager(provider: provider)
         sut?.originView = ViewControllerIdentifiers.lotsViewController
-        networkmanager.getOrdenDetail(orderId: 90876).subscribe(onNext: { [weak self] res in
+        networkmanager.getOrdenDetail(90876).subscribe(onNext: { [weak self] res in
             self?.sut?.orderDetail = [res.response!]
             self?.sut?.showAlert.subscribe(onNext: { res in
                 XCTAssertEqual(res, CommonStrings.errorInComments)
