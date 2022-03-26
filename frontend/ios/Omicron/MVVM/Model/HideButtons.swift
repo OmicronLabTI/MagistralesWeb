@@ -8,11 +8,21 @@
 
 import Foundation
 
-struct HideButtons {
+class HideButtons {
     var hideProcessBtn: Bool
     var hideFinishedBtn: Bool
     var hidePendinBtn: Bool
     var hideAddCompBtn: Bool
     var hideSaveBtn: Bool
     var hideSeeLotsBtn: Bool
+    
+    init(_ hideProcessBtn: Bool, _ hideFinishedBtn: Bool, _ hidePendinBtn: Bool,
+         _ hideAddCompBtn: Bool, _ hideSaveBtn: Bool, _ hideSeeLotsBtn: Bool) {
+        self.hideProcessBtn = hideProcessBtn
+        self.hideFinishedBtn = hideFinishedBtn
+        self.hidePendinBtn = hidePendinBtn
+        self.hideAddCompBtn = hideAddCompBtn
+        self.hideSaveBtn = hideSaveBtn
+        self.hideSeeLotsBtn = hideSeeLotsBtn
+    }
 }
