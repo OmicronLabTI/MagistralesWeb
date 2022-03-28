@@ -70,6 +70,9 @@ class LoginViewController: UIViewController {
                         .instantiateViewController(withIdentifier: ViewControllerIdentifiers.splitViewController)
                     window.rootViewController = initialViewController
                     window.makeKeyAndVisible()
+                    let options: UIView.AnimationOptions = .transitionCrossDissolve
+                    let duration: TimeInterval = 0.5
+                    UIView.transition(with: window, duration: duration, options: options, animations: {})
                 }
             })
             .disposed(by: disposeBag)
