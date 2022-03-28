@@ -157,6 +157,10 @@
 		49928126272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
 		49928127272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
 		49928128272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
+		4993350427F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */; };
+		4993350527F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */; };
+		4993350627F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */; };
+		4993350727F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */; };
 		49A8A42E25F022C600600829 /* SendBatchToServerNoEmptyResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */; };
 		49C082BE25E5B834000ED4FA /* ExtensionInboxTest3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */; };
 		49C082C425E5C193000ED4FA /* PostOrderPDF.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C082C325E5C193000ED4FA /* PostOrderPDF.json */; };
@@ -509,6 +513,7 @@
 		49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewModelExtension.swift; sourceTree = "<group>"; };
 		49720ECE27EE7F0400A8A2DB /* HideButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideButtons.swift; sourceTree = "<group>"; };
 		49928124272A3F21001962D4 /* Omicron-UAT.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Omicron-UAT.plist"; sourceTree = "<group>"; };
+		4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotsViewModelExtension.swift; sourceTree = "<group>"; };
 		49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SendBatchToServerNoEmptyResponse.json; sourceTree = "<group>"; };
 		49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest3.swift; sourceTree = "<group>"; };
 		49C082C325E5C193000ED4FA /* PostOrderPDF.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostOrderPDF.json; sourceTree = "<group>"; };
@@ -797,6 +802,7 @@
 			isa = PBXGroup;
 			children = (
 				7C9118FC24EF1CD900E2571A /* LotsViewModel.swift */,
+				4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */,
 			);
 			path = Lots;
 			sourceTree = "<group>";
@@ -2002,6 +2008,7 @@
 				490B69B4268E98ED00DBE9F1 /* LoginViewModel.swift in Sources */,
 				490B69B5268E98ED00DBE9F1 /* HeaderCollectionViewCell.swift in Sources */,
 				490B69B6268E98ED00DBE9F1 /* CardCollectionViewCell.swift in Sources */,
+				4993350727F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
 				490B69B7268E98ED00DBE9F1 /* RootTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2077,6 +2084,7 @@
 				49CF65F425F2D4AB002CD598 /* LoginViewModel.swift in Sources */,
 				49CF65F525F2D4AB002CD598 /* HeaderCollectionViewCell.swift in Sources */,
 				49CF65F625F2D4AB002CD598 /* CardCollectionViewCell.swift in Sources */,
+				4993350527F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
 				49CF65F725F2D4AB002CD598 /* RootTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2152,6 +2160,7 @@
 				49CF667725F2D821002CD598 /* LoginViewModel.swift in Sources */,
 				49CF667825F2D821002CD598 /* HeaderCollectionViewCell.swift in Sources */,
 				49CF667925F2D821002CD598 /* CardCollectionViewCell.swift in Sources */,
+				4993350627F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
 				49CF667A25F2D821002CD598 /* RootTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2227,6 +2236,7 @@
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
 				1E1C01A0250EA53A00CA6263 /* HeaderCollectionViewCell.swift in Sources */,
 				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
+				4993350427F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
 				7C844BAE24D28B4F00D26B96 /* RootTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
