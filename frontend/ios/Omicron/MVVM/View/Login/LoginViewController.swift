@@ -73,6 +73,8 @@ class LoginViewController: UIViewController {
                 }
             })
             .disposed(by: disposeBag)
+        passwordTextField.delegate = self
+        usernameTextField.delegate = self
     }
     func getViewController(storyBoardName: String, viewControllerName: String) -> UIViewController {
         let storyBoard = UIStoryboard(name: storyBoardName, bundle: nil)
@@ -108,13 +110,14 @@ class LoginViewController: UIViewController {
         self.passwordLabel.textColor = UIColor.black
         self.passwordLabel.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 12)
         self.passwordTextField.rightViewMode = .unlessEditing
-        self.button.setImage(UIImage(named: ImagesNames.openEye), for: .normal)
         self.button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -24, bottom: 0, right: 10)
         self.button.frame = CGRect(x: CGFloat(passwordTextField.frame.size.width - 25), y: 5, width: 15, height: 25)
         self.button.addTarget(self, action: #selector(self.btnPasswordVisibilityClicked), for: .touchUpInside)
         self.passwordTextField.rightView = button
         self.passwordTextField.rightViewMode = .always
-        button.setImage(UIImage(named: ImagesNames.closeEye), for: .normal)
+        let eyeImage = UIImage(systemName: "eye.slash")
+        button.setImage(eyeImage, for: .normal)
+        button.tintColor = .black
         self.versionLabel.attributedText = UtilsManager.shared.boldSubstring(
             text: "Versión: \(CommonStrings.version) (\(CommonStrings.build))", textToBold: "Versión: ")
         self.versionLabel.textColor = OmicronColors.blue
@@ -143,14 +146,34 @@ class LoginViewController: UIViewController {
             self, selector: #selector(keyBoardActions(notification:)),
             name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
+
     @IBAction func btnPasswordVisibilityClicked( sender: Any) {
         (sender as? UIButton)?.isSelected = !(sender as? UIButton)!.isSelected
-        if (sender as? UIButton)!.isSelected {
-            passwordTextField.isSecureTextEntry = false
-            button.setImage(UIImage(named: ImagesNames.openEye), for: .normal)
-        } else {
-            passwordTextField.isSecureTextEntry = true
-            button.setImage(UIImage(named: ImagesNames.closeEye), for: .normal)
+        let isSelected = (sender as? UIButton)!.isSelected
+        let shouldHaveSecurity = !isSelected
+        let imageTxt = isSelected ? "eye" : "eye.slash"
+        button.setImage(UIImage(systemName: imageTxt), for: .normal)
+        button.tintColor = .black
+        passwordTextField.isSecureTextEntry = shouldHaveSecurity
+    }
+}
+
+extension LoginViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+        case usernameTextField:
+            passwordTextField.becomeFirstResponder()
+        case passwordTextField:
+            let passwordIsEmpty = passwordTextField.text?.isEmpty ?? true
+            let userNameIsEmpty = usernameTextField.text?.isEmpty ?? true
+            if userNameIsEmpty || passwordIsEmpty {
+                return true
+            }
+            passwordTextField.resignFirstResponder()
+            viewModel.loginDidTap.onNext(())
+        default:
+            textField.resignFirstResponder()
         }
+        return true
     }
 }
