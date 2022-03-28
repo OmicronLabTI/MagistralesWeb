@@ -70,8 +70,7 @@ class InboxTest: XCTestCase {
             productCode: nil, destiny: "Local", hasMissingStock: false, finishedLabel: false)
 
         provider = MoyaProvider<ApiService>(
-            endpointClosure: customEndpointClosure,
-            stubClosure: MoyaProvider.immediatelyStub)
+            endpointClosure: customEndpointClosure, stubClosure: MoyaProvider.immediatelyStub)
         statusCode = 200
         testData = Data()
     }

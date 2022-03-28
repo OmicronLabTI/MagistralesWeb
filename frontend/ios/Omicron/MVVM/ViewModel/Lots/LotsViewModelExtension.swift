@@ -163,6 +163,18 @@ extension LotsViewModel {
             }).disposed(by: self.disposeBag)
     }
 
+    func getFilteredSelected(itemCode: String?) -> [LotsSelected] {
+        return self.selectedBatches
+            .filter({ $0.itemCode == itemCode && $0.action != Actions.delete.rawValue })
+            .map({ $0.toLotsSelected() })
+    }
+    func getFilteredSelected(itemCode: String?, batchNumber: String?) -> [LotsSelected] {
+        return self.selectedBatches
+            .filter({ $0.itemCode == itemCode
+                        && $0.batchNumber == batchNumber && $0.action != Actions.delete.rawValue })
+            .map({ $0.toLotsSelected() })
+    }
+
     // MARK: - Function Helpers
     func calculateExpiredBatch(date: String?) -> Bool {
         let date = date?.replacingOccurrences(

@@ -261,16 +261,4 @@ class LotsViewModel {
         }
         self.sendToServerAssignedLots(lotsToSend: batchesToSend)
     }
-
-    func getFilteredSelected(itemCode: String?) -> [LotsSelected] {
-        return self.selectedBatches
-            .filter({ $0.itemCode == itemCode && $0.action != Actions.delete.rawValue })
-            .map({ $0.toLotsSelected() })
-    }
-    func getFilteredSelected(itemCode: String?, batchNumber: String?) -> [LotsSelected] {
-        return self.selectedBatches
-            .filter({ $0.itemCode == itemCode
-                        && $0.batchNumber == batchNumber && $0.action != Actions.delete.rawValue })
-            .map({ $0.toLotsSelected() })
-    }
 }

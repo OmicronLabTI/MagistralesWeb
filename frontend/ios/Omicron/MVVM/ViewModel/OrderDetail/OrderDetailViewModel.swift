@@ -121,17 +121,10 @@ class OrderDetailViewModel {
         }
     }
     func sum(tableDetails: [Detail]) -> Double {
-        var sum = 0.0
-        if tableDetails.count > 0 {
-            for detail in tableDetails {
-                if detail.unit != CommonStrings.piece {
-                    sum += detail.requiredQuantity ?? 0.0
-                }
-            }
-            return sum
-        }
-        return sum
+        guard tableDetails.count > 0 else { return 0.0 }
+        return tableDetails.filter({ $0.unit != CommonStrings.piece}).map({$0.requiredQuantity ?? 0.0}).reduce(0.0, +)
     }
+
     func changeStatus(actionType: String) {
         self.loading.onNext(true)
         let status = actionType == StatusNameConstants.inProcessStatus ? CommonStrings.process : CommonStrings.pending

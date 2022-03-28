@@ -228,40 +228,4 @@ class ComponetsTest: XCTestCase {
         componentsViewModel?.selectedComponent.onNext(componentSelected)
         componentsViewModel?.saveDidTap.onNext(values)
     }
-
-    func testSaveDidTapOrderIsNil() {
-        let values = ComponentFormValues(baseQuantity: 2,
-                                         requiredQuantity: 1,
-                                         warehouse: "MG")
-        let componentSelected = ComponentO()
-        componentsViewModel?.saveSuccess.subscribe(onNext: { _ in
-            XCTAssertTrue(true)
-        }).disposed(by: disposeBag!)
-        order1?.productionOrderId = nil
-        inboxViewModel.selectedOrder = order1
-        componentsViewModel?.selectedComponent.onNext(componentSelected)
-        componentsViewModel?.saveDidTap.onNext(values)
-    }
-
-    func testGetMostComponetService() {
-        componentsViewModel?.bindingData.subscribe(onNext: { res in
-            if res.count == 2 {
-                XCTAssertEqual(res.count, 2)
-                XCTAssertEqual(res[0].productId, "EN-002")
-                XCTAssertEqual(res[0].description, "Airless AcrÝlico con Tapa y Base Plateada 30 ml")
-                XCTAssertEqual(res[1].productId, "EN-006")
-                XCTAssertEqual(res[1].description, "Airless Pump Star 150 ml Blanco")
-            }
-        }).disposed(by: disposeBag!)
-        componentsViewModel?.getMostCommonComponentsService()
-    }
-
-    func testGetMostComponetServiceWhenCodeIs500() {
-        componentsViewModel?.dataError.subscribe(onNext: { res in
-            XCTAssertEqual(res, Constants.Errors.errorData.rawValue)
-        }).disposed(by: disposeBag!)
-        statusCode = 500
-        componentsViewModel?.networkManager = NetworkManager(provider: provider)
-        componentsViewModel?.getMostCommonComponentsService()
-    }
 }

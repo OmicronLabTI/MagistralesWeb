@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxDataSources
 
 extension InboxViewModel {
 
@@ -196,6 +197,120 @@ extension InboxViewModel {
             orders.append(order)
         }
         changeStatusService(orders)
+    }
+
+    func proccessGroupShort() {
+        processButtonIsEnable.onNext(false)
+        let ordersGroupedAndSorted = sortOrderWithBatchesByOrderNumberView()
+        sectionOrders = ordersGroupedAndSorted
+        statusDataGrouped.onNext(ordersGroupedAndSorted)
+        normalViewButtonIsEnable.onNext(true)
+        similarityViewButtonIsEnable.onNext(true)
+        groupedByOrderNumberIsEnable.onNext(false)
+    }
+
+    func orderingOrders(section: SectionOrder) -> [Order] {
+        var ordering: [Order] = []
+        if section.statusName == StatusNameConstants.inProcessStatus ||
+            section.statusName == StatusNameConstants.reassignedStatus {
+            let ordersReadyToFinish =
+                sortByBaseBocumentAscending(orders: section.orders.filter({ $0.areBatchesComplete == true }))
+            let ordersNotReadyToFinish =
+                sortByBaseBocumentAscending(orders: section.orders.filter({ $0.areBatchesComplete == false }))
+            ordering.append(contentsOf: ordersReadyToFinish)
+            ordering.append(contentsOf: ordersNotReadyToFinish)
+        } else {
+            ordering = sortByBaseBocumentAscending(orders: section.orders)
+        }
+        return ordering
+    }
+
+    func setFilter(orders: [Order]) {
+        let ordering = self.sortByBaseBocumentAscending(orders: orders)
+        self.statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
+        self.sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
+        self.title.onNext(CommonStrings.search)
+        self.ordersTemp = ordering
+    }
+    func sortByBaseBocumentAscending(orders: [Order]) -> [Order] {
+        orders.sorted {
+            switch ($0, $1) {
+            case let (aCode, bCode):
+                if aCode.baseDocument ?? 0 != bCode.baseDocument ?? 0 {
+                    return aCode.baseDocument ?? 0 < bCode.baseDocument ?? 0
+                } else {
+                    return aCode.productionOrderId ?? 0 < bCode.productionOrderId ?? 0
+                }
+            }
+        }
+    }
+
+    func processNormalSort() {
+        let ordering = self.sortOrderWithOrderBatchesCompleteByNormalView()
+        statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
+        sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
+        similarityViewButtonIsEnable.onNext(true)
+        groupedByOrderNumberIsEnable.onNext(true)
+        normalViewButtonIsEnable.onNext(false)
+        processButtonIsEnable.onNext(false)
+        pendingButtonIsEnable.onNext(false)
+    }
+
+    func processSimilaritySort() {
+        for order in ordersTemp {
+            let itemCodeInArray = order.itemCode?.components(separatedBy: CommonStrings.separationSpaces)
+            if let codeProduct = itemCodeInArray?.first {
+                order.productCode = codeProduct
+            } else {
+                order.productCode = CommonStrings.empty
+            }
+        }
+        // Se agrupa las ordenes por código de producto
+        let dataGroupedByProductCode = Dictionary(grouping: ordersTemp, by: {$0.productCode})
+        let sectionModels = groupedWithSimilarityOrWithoutSimilarity(
+            data: dataGroupedByProductCode, titleForOrdersWithoutSimilarity: CommonStrings.noSimilarity,
+            titleForOrdersWithSimilarity: CommonStrings.product)
+        sectionOrders = sectionModels
+        statusDataGrouped.onNext(sectionModels)
+        similarityViewButtonIsEnable.onNext(false)
+        normalViewButtonIsEnable.onNext(true)
+        groupedByOrderNumberIsEnable.onNext(true)
+    }
+
+    func groupedByOrderNumber(data: [String?: [Order]]) -> [SectionModel<String, Order>] {
+        var data1 = data
+        var sectionModels: [SectionModel<String, Order>] = []
+        resetData.onNext(())
+        if let cero = data1[CommonStrings.zero] {
+            sectionModels.append(SectionModel(model: "\(CommonStrings.ordersWithoutOrder)", items: cero))
+            data1.removeValue(forKey: CommonStrings.zero)
+        }
+        let sections = data1.map({ [unowned self] (orders) -> SectionModel<String, Order> in
+            return SectionModel(
+                model: "\(CommonStrings.order) \(orders.key ?? CommonStrings.empty)",
+                items: self.sortByBaseBocumentAscending(orders: orders.value))
+        })
+        let sortedSections = sections.sorted { $0.model < $1.model }
+        sectionModels.append(contentsOf: sortedSections)
+        return sectionModels
+    }
+    func setSelection(section: SectionOrder, removeSelecteds: Bool = false) {
+        currentSection = section
+        let ordering = orderingOrders(section: section)
+        ordersTemp = ordering
+        if removeSelecteds {
+            resetData.onNext(())
+        }
+        if normalSort {
+            processNormalSort()
+        } else if similaritySort {
+            processSimilaritySort()
+        } else {
+            proccessGroupShort()
+        }
+        title.onNext(section.statusName)
+        showKPIView.onNext(false)
+        reloadData.onNext(())
     }
 
 }

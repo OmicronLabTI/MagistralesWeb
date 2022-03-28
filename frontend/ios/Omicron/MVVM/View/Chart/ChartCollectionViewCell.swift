@@ -26,44 +26,46 @@ class ChartCollectionViewCell: UICollectionViewCell, ChartViewDelegate {
     private func setDataToChart(_ workload: Workload) {
         var entries: [PieChartDataEntry] = []
         var colors: [UIColor] = []
+
+        var config: (entry: [PieChartDataEntry], color: [UIColor]) = ( entry: [], color: [])
         for index in 0...5 {
             switch index {
-            case 0: guard workload.assigned ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                        value: Double(workload.assigned ?? 0),
-                        label: StatusNameConstants.assignedStatus))
-                colors.append(OmicronColors.assignedStatus)
-            case 1: guard workload.processed ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                        value: Double(workload.processed ?? 0),
-                        label: StatusNameConstants.inProcessStatus))
-                colors.append(OmicronColors.processStatus)
-            case 2: guard workload.pending ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                        value: Double(workload.pending ?? 0),
-                        label: StatusNameConstants.penddingStatus))
-                colors.append(OmicronColors.pendingStatus)
-            case 3: guard workload.finished ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                        value: Double(workload.finished ?? 0),
-                        label: StatusNameConstants.finishedStatus))
-                colors.append(OmicronColors.finishedStatus)
-            case 4: guard workload.reassigned ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                        value: Double(workload.reassigned ?? 0),
-                        label: StatusNameConstants.reassignedStatus))
-                colors.append(OmicronColors.reassignedStatus)
-            case 5: guard workload.finalized ?? 0 > 0 else { break }
-                entries.append(PieChartDataEntry(
-                    value: Double(workload.finalized ?? 0),
-                    label: StatusNameConstants.finalizedStatus))
-                colors.append(UIColor.init(named: "finalized") ?? .black)
+            case 0:
+                config = getConfigPieChartDataEntry(
+                    workload.assigned ?? 0, StatusNameConstants.assignedStatus, OmicronColors.assignedStatus)
+            case 1:
+                config = getConfigPieChartDataEntry(
+                    workload.processed ?? 0, StatusNameConstants.inProcessStatus, OmicronColors.processStatus)
+            case 2:
+                config = getConfigPieChartDataEntry(
+                    workload.pending ?? 0, StatusNameConstants.penddingStatus, OmicronColors.pendingStatus)
+            case 3:
+                config = getConfigPieChartDataEntry(
+                    workload.finished ?? 0, StatusNameConstants.finishedStatus, OmicronColors.finishedStatus)
+            case 4:
+                config = getConfigPieChartDataEntry(
+                    workload.reassigned ?? 0, StatusNameConstants.reassignedStatus, OmicronColors.reassignedStatus)
+            case 5:
+                config = getConfigPieChartDataEntry(
+                    workload.finalized ?? 0, StatusNameConstants.finalizedStatus,
+                    UIColor.init(named: "finalized") ?? .black)
             default: break
             }
+            entries += config.entry
+            colors += config.color
         }
         setDataToChart2(workload, colors: colors, entries: entries)
 
     }
+
+    func getConfigPieChartDataEntry(
+        _ workloadQty: Int, _ labelValue: String,
+        _ color: UIColor) -> (entry: [PieChartDataEntry], color: [UIColor]) {
+            if workloadQty > 0 {
+                return (entry: [PieChartDataEntry(value: Double(workloadQty), label: labelValue)], color: [color])
+            }
+            return (entry: [], color: [])
+        }
 
     private func setDataToChart2(_ workload: Workload, colors: [UIColor], entries: [PieChartDataEntry]) {
 

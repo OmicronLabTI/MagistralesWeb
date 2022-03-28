@@ -324,16 +324,28 @@ class InboxViewController: UIViewController {
             groupByOrderNumberButton.rx.tap.bind(to: inboxViewModel.groupByOrderNumberButtonDidTap)
         ].forEach({ $0.disposed(by: disposeBag) })
         order.bind(to: inboxViewModel.selectOrder).disposed(by: disposeBag)
+        selectedRowBinding()
+        didScrollBinding()
+        showKPIViewBinding()
+    }
+
+    func selectedRowBinding() {
         rootViewModel.selectedRow.subscribe(onNext: { [weak self] index in
             guard let self = self, let row = index?.row else { return }
             self.chageStatusName(index: row)
             self.hideButtons(index: row)
             self.goToTop()
         }).disposed(by: disposeBag)
+    }
+
+    func didScrollBinding() {
         collectionView.rx.didScroll.subscribe({ [weak self] _ in
             guard let self = self else { return }
             self.collectionView.removeMoreIndicator()
         }).disposed(by: disposeBag)
+    }
+
+    func showKPIViewBinding() {
         inboxViewModel.showKPIView.observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] show in
             guard let self = self else { return }

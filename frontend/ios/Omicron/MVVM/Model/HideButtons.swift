@@ -15,7 +15,7 @@ class HideButtons {
     var hideAddCompBtn: Bool
     var hideSaveBtn: Bool
     var hideSeeLotsBtn: Bool
-    
+
     init(_ hideProcessBtn: Bool, _ hideFinishedBtn: Bool, _ hidePendinBtn: Bool,
          _ hideAddCompBtn: Bool, _ hideSaveBtn: Bool, _ hideSeeLotsBtn: Bool) {
         self.hideProcessBtn = hideProcessBtn
