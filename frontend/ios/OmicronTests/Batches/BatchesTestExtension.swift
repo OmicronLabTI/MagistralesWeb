@@ -15,6 +15,7 @@ class BatchesTestExtension: XCTestCase {
 
     var lotsViewModel: LotsViewModel?
     var provider: MoyaProvider<ApiService>!
+    var disposeBag: DisposeBag?
     var statusCode = 200
     var testData = Data()
 
@@ -29,6 +30,14 @@ class BatchesTestExtension: XCTestCase {
     override func tearDownWithError() throws {
         lotsViewModel = nil
         disposeBag = nil
+    }
+
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
     }
 
     func testAssignLots() {

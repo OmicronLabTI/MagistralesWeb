@@ -10,7 +10,7 @@ import XCTest
 import RxSwift
 import Resolver
 import Moya
-
+@testable import OmicronLab
 class OrderDetailTestExtension: XCTestCase {
     var disposeBag: DisposeBag?
     var viewModel: LoginViewModel?
@@ -33,7 +33,6 @@ class OrderDetailTestExtension: XCTestCase {
     override func tearDownWithError() throws {
         disposeBag = nil
         viewModel = nil
-        orderId = nil
         orderDetailViewModel = nil
     }
 
