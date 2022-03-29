@@ -117,12 +117,17 @@ class RootViewController: UIViewController {
     func rootViewModelBinding() {
         // Cuando se presiona el botón de cerrar sesión  se redirije a Login
         self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
-            let loginViewController = storyboard.instantiateViewController(
-                identifier: ViewControllerIdentifiers.loginViewController) as? LoginViewController
-            UIApplication.shared.windows.first?.rootViewController = loginViewController
-            UIApplication.shared.windows.first?.makeKeyAndVisible()
-            Resolver.cached.reset()
+            if let window = UIApplication.shared.windows.first {
+                let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+                let loginViewController = storyboard.instantiateViewController(
+                    identifier: ViewControllerIdentifiers.loginViewController) as? LoginViewController
+                UIApplication.shared.windows.first?.rootViewController = loginViewController
+                UIApplication.shared.windows.first?.makeKeyAndVisible()
+                Resolver.cached.reset()
+                let options: UIView.AnimationOptions = .transitionCrossDissolve
+                let duration: TimeInterval = 0.5
+                UIView.transition(with: window, duration: duration, options: options, animations: {})
+            }
         }).disposed(by: self.disposeBag)
         // Muestra los datos de la sección "Mis ordenes"
         rootViewModel.dataStatus.bind(to: viewTable.rx.items(
