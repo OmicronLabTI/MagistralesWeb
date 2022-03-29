@@ -1247,6 +1247,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsPackage = order.IsPackage,
                              DocNumDxp = order.DocNumDxp,
                              CardCode = order.Codigo,
+                             DeliveryAddressId = order.ShippingAddressName,
                          });
 
             return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();
@@ -1275,6 +1276,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsPackage = order.IsPackage,
                              DocNumDxp = order.DocNumDxp,
                              CardCode = order.CardCode,
+                             DeliveryAddressId = order.ShippingAddressName,
                          });
 
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
