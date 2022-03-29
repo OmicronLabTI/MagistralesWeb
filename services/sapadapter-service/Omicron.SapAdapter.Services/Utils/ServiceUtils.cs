@@ -21,9 +21,11 @@ namespace Omicron.SapAdapter.Services.Utils
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Redis;
     using Serilog;
 
@@ -372,6 +374,18 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             return JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
+        }
+
+        /// <summary>
+        /// Gets the doctors prescriotion data.
+        /// </summary>
+        /// <param name="doctorService">the doctors service data.</param>
+        /// <param name="cardcodes">the cardcodes.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<DoctorPrescriptionInfoModel>> GetDoctorPrescriptionData(IDoctorService doctorService, List<string> cardcodes)
+        {
+            var doctorsResponse = await doctorService.PostDoctors(cardcodes, ServiceConstants.GetResponsibleDoctors);
+            return JsonConvert.DeserializeObject<List<DoctorPrescriptionInfoModel>>(doctorsResponse.Response.ToString());
         }
 
         /// <summary>

@@ -98,7 +98,7 @@ class RootViewModel {
             if needsRefresh { self.loading.onNext(true) }
             chartViewModel.getWorkloads()
             removeSelecteds = needsRefresh
-            self.networkManager.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
+            self.networkManager.getStatusList(userId).subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
                 let sections = res.response?.status.map({ status in
                     return status.map({ detail -> SectionOrder? in

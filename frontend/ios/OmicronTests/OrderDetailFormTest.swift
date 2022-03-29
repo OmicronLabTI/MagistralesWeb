@@ -28,7 +28,7 @@ class OrderDetailFormTest: XCTestCase {
     // MARCK: - FUNCTION TEST
     func testEditTableSuccessValueSuccess() {
         // Given
-        self.networkManager.getOrdenDetail(orderId: 89900).subscribe(onNext: { res in
+        self.networkManager.getOrdenDetail(89900).subscribe(onNext: { res in
             XCTAssertNotNil(res.response?.details)
         }).disposed(by: self.disposeBag!)
     }

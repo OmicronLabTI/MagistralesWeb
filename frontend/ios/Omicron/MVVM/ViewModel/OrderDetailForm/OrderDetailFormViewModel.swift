@@ -44,7 +44,7 @@ class  OrderDetailFormViewModel {
             plannedQuantity: data.plannedQuantity ?? 0.0,
             fechaFin: fechaFinFormated ?? CommonStrings.empty, comments: CommonStrings.empty,
             warehouse: data.warehouse ?? CommonStrings.empty, components: componets)
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
                 self?.loading.onNext(false)
                 self?.showAlert.onNext(CommonStrings.changesSuccess)

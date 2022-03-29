@@ -19,11 +19,11 @@ class ContainerViewModel {
     var loading: BehaviorSubject<Bool> = BehaviorSubject(value: false)
     var disposeBag = DisposeBag()
 
-    func getContainerData(needsErrorRes: Bool = false, statusCode: Int = 500, testdata: Data = Data()) {
+    func getContainerData() {
         guard let userData = Persistence.shared.getUserData(), let userId = userData.id else { return }
         loading.onNext(true)
         networkManager
-            .getContainer(userId: userId, needsError: needsErrorRes, statusCode: statusCode, testData: testdata)
+            .getContainer(userId)
             .subscribe(onNext: { [weak self] containerResponse in
                 guard let self = self else { return }
                 self.loading.onNext(false)

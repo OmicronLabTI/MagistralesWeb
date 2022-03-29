@@ -145,10 +145,25 @@
 		494EA4FA273A67840077BB5B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 494EA4F9273A67840077BB5B /* GoogleService-Info.plist */; };
 		4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */; };
 		4951104125E556E2007BE4DF /* ValidateOrders.json in Resources */ = {isa = PBXBuildFile; fileRef = 4951104025E556E2007BE4DF /* ValidateOrders.json */; };
+		49720ECA27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
+		49720ECB27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
+		49720ECC27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
+		49720ECD27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */; };
+		49720ECF27EE7F0400A8A2DB /* HideButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720ECE27EE7F0400A8A2DB /* HideButtons.swift */; };
+		49720ED027EE7F0400A8A2DB /* HideButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720ECE27EE7F0400A8A2DB /* HideButtons.swift */; };
+		49720ED127EE7F0400A8A2DB /* HideButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720ECE27EE7F0400A8A2DB /* HideButtons.swift */; };
+		49720ED227EE7F0400A8A2DB /* HideButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49720ECE27EE7F0400A8A2DB /* HideButtons.swift */; };
 		49928125272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
 		49928126272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
 		49928127272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
 		49928128272A3F21001962D4 /* Omicron-UAT.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49928124272A3F21001962D4 /* Omicron-UAT.plist */; };
+		4993350427F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */; };
+		4993350527F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */; };
+		4993350627F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */; };
+		4993350727F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */; };
+		4993350927F22DAA00CEBDC2 /* ComponentsTestExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350827F22DAA00CEBDC2 /* ComponentsTestExtension.swift */; };
+		4993350D27F2338A00CEBDC2 /* BatchesTestExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350C27F2338A00CEBDC2 /* BatchesTestExtension.swift */; };
+		4993350F27F234CE00CEBDC2 /* OrderDetailTestExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4993350E27F234CE00CEBDC2 /* OrderDetailTestExtension.swift */; };
 		49A8A42E25F022C600600829 /* SendBatchToServerNoEmptyResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = 49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */; };
 		49C082BE25E5B834000ED4FA /* ExtensionInboxTest3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */; };
 		49C082C425E5C193000ED4FA /* PostOrderPDF.json in Resources */ = {isa = PBXBuildFile; fileRef = 49C082C325E5C193000ED4FA /* PostOrderPDF.json */; };
@@ -498,7 +513,13 @@
 		494EA4F9273A67840077BB5B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		49510FFF25E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionOrderDetailFormViewController.swift; sourceTree = "<group>"; };
 		4951104025E556E2007BE4DF /* ValidateOrders.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValidateOrders.json; sourceTree = "<group>"; };
+		49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewModelExtension.swift; sourceTree = "<group>"; };
+		49720ECE27EE7F0400A8A2DB /* HideButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideButtons.swift; sourceTree = "<group>"; };
 		49928124272A3F21001962D4 /* Omicron-UAT.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Omicron-UAT.plist"; sourceTree = "<group>"; };
+		4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LotsViewModelExtension.swift; sourceTree = "<group>"; };
+		4993350827F22DAA00CEBDC2 /* ComponentsTestExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentsTestExtension.swift; sourceTree = "<group>"; };
+		4993350C27F2338A00CEBDC2 /* BatchesTestExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchesTestExtension.swift; sourceTree = "<group>"; };
+		4993350E27F234CE00CEBDC2 /* OrderDetailTestExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailTestExtension.swift; sourceTree = "<group>"; };
 		49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SendBatchToServerNoEmptyResponse.json; sourceTree = "<group>"; };
 		49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInboxTest3.swift; sourceTree = "<group>"; };
 		49C082C325E5C193000ED4FA /* PostOrderPDF.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostOrderPDF.json; sourceTree = "<group>"; };
@@ -719,6 +740,7 @@
 				1EC2920C254B4D90002FD4E3 /* ConnectModel.swift */,
 				1E2A75FF255362780014F38D /* ValidateOrderModel.swift */,
 				1E9674AE254338A40004344C /* OrderPDF.swift */,
+				49720ECE27EE7F0400A8A2DB /* HideButtons.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -786,6 +808,7 @@
 			isa = PBXGroup;
 			children = (
 				7C9118FC24EF1CD900E2571A /* LotsViewModel.swift */,
+				4993350327F2202200CEBDC2 /* LotsViewModelExtension.swift */,
 			);
 			path = Lots;
 			sourceTree = "<group>";
@@ -818,6 +841,7 @@
 			isa = PBXGroup;
 			children = (
 				7CE216D324CB9576005A7FED /* InboxViewModel.swift */,
+				49720EC927ED1F5300A8A2DB /* InboxViewModelExtension.swift */,
 				4989CCEE25ED971A00257CA2 /* RootView */,
 			);
 			path = Inbox;
@@ -845,6 +869,44 @@
 				1E83B0722534F34C00755026 /* PDFViewController.swift */,
 			);
 			path = PDF;
+			sourceTree = "<group>";
+		};
+		4993350A27F22DB000CEBDC2 /* OrderDetail */ = {
+			isa = PBXGroup;
+			children = (
+				7C56BDF924EDCF6D0039B2E7 /* OrderDetailTest.swift */,
+				4993350E27F234CE00CEBDC2 /* OrderDetailTestExtension.swift */,
+			);
+			path = OrderDetail;
+			sourceTree = "<group>";
+		};
+		4993350B27F22FDA00CEBDC2 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				1E72B27D251B9C33009F56FC /* ComponetsTest.swift */,
+				4993350827F22DAA00CEBDC2 /* ComponentsTestExtension.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4993351027F25D9700CEBDC2 /* Inbox */ = {
+			isa = PBXGroup;
+			children = (
+				7C75C32D24DC6B4900CBA3C3 /* InboxTest.swift */,
+				49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */,
+				49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */,
+				49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */,
+			);
+			path = Inbox;
+			sourceTree = "<group>";
+		};
+		4993351127F25DBD00CEBDC2 /* Batches */ = {
+			isa = PBXGroup;
+			children = (
+				7C5DFB15251C82740041B2AC /* BatchTest.swift */,
+				4993350C27F2338A00CEBDC2 /* BatchesTestExtension.swift */,
+			);
+			path = Batches;
 			sourceTree = "<group>";
 		};
 		49E4D86825F1549500E196F9 /* QA */ = {
@@ -1052,21 +1114,18 @@
 		98015CC524AFBC6D00E7772F /* OmicronTests */ = {
 			isa = PBXGroup;
 			children = (
+				4993351127F25DBD00CEBDC2 /* Batches */,
+				4993351027F25D9700CEBDC2 /* Inbox */,
+				4993350B27F22FDA00CEBDC2 /* Components */,
+				4993350A27F22DB000CEBDC2 /* OrderDetail */,
 				98015CC624AFBC6D00E7772F /* LoginTest.swift */,
-				7C75C32D24DC6B4900CBA3C3 /* InboxTest.swift */,
-				49005EB725DF1AC700EA4206 /* ExtensionInboxTest.swift */,
-				49C2F71025DF1C8B00673471 /* ExtensionInbox2Test.swift */,
 				7C75C32F24DC77C800CBA3C3 /* RootView.swift */,
 				98015CC824AFBC6D00E7772F /* Info.plist */,
-				7C56BDF924EDCF6D0039B2E7 /* OrderDetailTest.swift */,
 				7C56BDFB24EDD6720039B2E7 /* UtilsTest.swift */,
 				1E72B277251B9BEC009F56FC /* ChartTest.swift */,
 				1E72B27B251B9C20009F56FC /* SignaturePadTest.swift */,
-				1E72B27D251B9C33009F56FC /* ComponetsTest.swift */,
 				1E72B27F251B9C46009F56FC /* CommentsTest.swift */,
-				7C5DFB15251C82740041B2AC /* BatchTest.swift */,
 				7C5DFB19251D50920041B2AC /* OrderDetailFormTest.swift */,
-				49C082BD25E5B834000ED4FA /* ExtensionInboxTest3.swift */,
 				38A4296825EEA1B800309B8F /* ContainerTest.swift */,
 			);
 			path = OmicronTests;
@@ -1953,6 +2012,7 @@
 				490B6991268E98ED00DBE9F1 /* OrderDetailViewModel.swift in Sources */,
 				490B6992268E98ED00DBE9F1 /* LotsSelectedTableViewCell.swift in Sources */,
 				490B6993268E98ED00DBE9F1 /* ComponentsViewModel.swift in Sources */,
+				49720ECD27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				490B6994268E98ED00DBE9F1 /* LotsViewController.swift in Sources */,
 				490B6995268E98ED00DBE9F1 /* ContainerTableViewCell.swift in Sources */,
 				490B6996268E98ED00DBE9F1 /* ExtensionsUI.swift in Sources */,
@@ -1967,6 +2027,7 @@
 				490B699F268E98ED00DBE9F1 /* ContainerViewController.swift in Sources */,
 				490B69A0268E98ED00DBE9F1 /* Persistence.swift in Sources */,
 				490B69A1268E98ED00DBE9F1 /* SignaturePadViewController.swift in Sources */,
+				49720ED227EE7F0400A8A2DB /* HideButtons.swift in Sources */,
 				490B69A2268E98ED00DBE9F1 /* ContainerModel.swift in Sources */,
 				490B69A3268E98ED00DBE9F1 /* RootViewController.swift in Sources */,
 				490B69A4268E98ED00DBE9F1 /* CommentsViewController.swift in Sources */,
@@ -1988,6 +2049,7 @@
 				490B69B4268E98ED00DBE9F1 /* LoginViewModel.swift in Sources */,
 				490B69B5268E98ED00DBE9F1 /* HeaderCollectionViewCell.swift in Sources */,
 				490B69B6268E98ED00DBE9F1 /* CardCollectionViewCell.swift in Sources */,
+				4993350727F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
 				490B69B7268E98ED00DBE9F1 /* RootTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2026,6 +2088,7 @@
 				49CF65D225F2D4AB002CD598 /* OrderDetailViewModel.swift in Sources */,
 				49CF65D325F2D4AB002CD598 /* LotsSelectedTableViewCell.swift in Sources */,
 				49CF65D425F2D4AB002CD598 /* ComponentsViewModel.swift in Sources */,
+				49720ECB27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				49CF65D525F2D4AB002CD598 /* LotsViewController.swift in Sources */,
 				49CF65D625F2D4AB002CD598 /* ContainerTableViewCell.swift in Sources */,
 				49CF65D725F2D4AB002CD598 /* ExtensionsUI.swift in Sources */,
@@ -2040,6 +2103,7 @@
 				49CF65E025F2D4AB002CD598 /* ContainerViewController.swift in Sources */,
 				49CF65E125F2D4AB002CD598 /* Persistence.swift in Sources */,
 				49CF65E225F2D4AB002CD598 /* SignaturePadViewController.swift in Sources */,
+				49720ED027EE7F0400A8A2DB /* HideButtons.swift in Sources */,
 				49CF65E325F2D4AB002CD598 /* ContainerModel.swift in Sources */,
 				49CF65E425F2D4AB002CD598 /* RootViewController.swift in Sources */,
 				49CF65E525F2D4AB002CD598 /* CommentsViewController.swift in Sources */,
@@ -2061,6 +2125,7 @@
 				49CF65F425F2D4AB002CD598 /* LoginViewModel.swift in Sources */,
 				49CF65F525F2D4AB002CD598 /* HeaderCollectionViewCell.swift in Sources */,
 				49CF65F625F2D4AB002CD598 /* CardCollectionViewCell.swift in Sources */,
+				4993350527F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
 				49CF65F725F2D4AB002CD598 /* RootTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2099,6 +2164,7 @@
 				49CF665525F2D821002CD598 /* OrderDetailViewModel.swift in Sources */,
 				49CF665625F2D821002CD598 /* LotsSelectedTableViewCell.swift in Sources */,
 				49CF665725F2D821002CD598 /* ComponentsViewModel.swift in Sources */,
+				49720ECC27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				49CF665825F2D821002CD598 /* LotsViewController.swift in Sources */,
 				49CF665925F2D821002CD598 /* ContainerTableViewCell.swift in Sources */,
 				49CF665A25F2D821002CD598 /* ExtensionsUI.swift in Sources */,
@@ -2113,6 +2179,7 @@
 				49CF666325F2D821002CD598 /* ContainerViewController.swift in Sources */,
 				49CF666425F2D821002CD598 /* Persistence.swift in Sources */,
 				49CF666525F2D821002CD598 /* SignaturePadViewController.swift in Sources */,
+				49720ED127EE7F0400A8A2DB /* HideButtons.swift in Sources */,
 				49CF666625F2D821002CD598 /* ContainerModel.swift in Sources */,
 				49CF666725F2D821002CD598 /* RootViewController.swift in Sources */,
 				49CF666825F2D821002CD598 /* CommentsViewController.swift in Sources */,
@@ -2134,6 +2201,7 @@
 				49CF667725F2D821002CD598 /* LoginViewModel.swift in Sources */,
 				49CF667825F2D821002CD598 /* HeaderCollectionViewCell.swift in Sources */,
 				49CF667925F2D821002CD598 /* CardCollectionViewCell.swift in Sources */,
+				4993350627F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
 				49CF667A25F2D821002CD598 /* RootTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2172,6 +2240,7 @@
 				7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */,
 				7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */,
 				987BDFE22509869F00D9C6E4 /* ComponentsViewModel.swift in Sources */,
+				49720ECA27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */,
 				381B3BF225E034B80077F764 /* ContainerTableViewCell.swift in Sources */,
 				986EA24725083BF200ACE26A /* ExtensionsUI.swift in Sources */,
@@ -2186,6 +2255,7 @@
 				381B3BCA25E0315E0077F764 /* ContainerViewController.swift in Sources */,
 				98B7845A24DA228A005A38FC /* Persistence.swift in Sources */,
 				7CF2EA3824F6C6330005602F /* SignaturePadViewController.swift in Sources */,
+				49720ECF27EE7F0400A8A2DB /* HideButtons.swift in Sources */,
 				381B3BE725E032B40077F764 /* ContainerModel.swift in Sources */,
 				7C844BAA24D27E5800D26B96 /* RootViewController.swift in Sources */,
 				7C3A55CC24E76E0C001B627E /* CommentsViewController.swift in Sources */,
@@ -2207,6 +2277,7 @@
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
 				1E1C01A0250EA53A00CA6263 /* HeaderCollectionViewCell.swift in Sources */,
 				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
+				4993350427F2202200CEBDC2 /* LotsViewModelExtension.swift in Sources */,
 				7C844BAE24D28B4F00D26B96 /* RootTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2220,7 +2291,9 @@
 				7C5DFB1A251D50920041B2AC /* OrderDetailFormTest.swift in Sources */,
 				49C2F71125DF1C8B00673471 /* ExtensionInbox2Test.swift in Sources */,
 				38A4296925EEA1B800309B8F /* ContainerTest.swift in Sources */,
+				4993350927F22DAA00CEBDC2 /* ComponentsTestExtension.swift in Sources */,
 				1E72B280251B9C46009F56FC /* CommentsTest.swift in Sources */,
+				4993350F27F234CE00CEBDC2 /* OrderDetailTestExtension.swift in Sources */,
 				1E72B27C251B9C20009F56FC /* SignaturePadTest.swift in Sources */,
 				7C75C32E24DC6B4900CBA3C3 /* InboxTest.swift in Sources */,
 				98015CC724AFBC6D00E7772F /* LoginTest.swift in Sources */,
@@ -2229,6 +2302,7 @@
 				7C75C33024DC77C800CBA3C3 /* RootView.swift in Sources */,
 				1E72B27E251B9C33009F56FC /* ComponetsTest.swift in Sources */,
 				49C082BE25E5B834000ED4FA /* ExtensionInboxTest3.swift in Sources */,
+				4993350D27F2338A00CEBDC2 /* BatchesTestExtension.swift in Sources */,
 				7C56BDFA24EDCF6D0039B2E7 /* OrderDetailTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

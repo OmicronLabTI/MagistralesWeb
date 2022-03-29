@@ -24,6 +24,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Mapping;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.Redis;
@@ -46,6 +47,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IGetProductionOrderUtils getProductionOrderUtils;
 
+        private readonly IDoctorService doctorService;
+
         /// <summary>
         /// The logger.
         /// </summary>
@@ -63,7 +66,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="logger">the logger.</param>
         /// <param name="getProductionOrderUtils">the getproduction order utisl.</param>
         /// <param name="redisService">The reddis service.</param>
-        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration, ILogger logger, IGetProductionOrderUtils getProductionOrderUtils, IRedisService redisService)
+        /// <param name="doctorService">The doctor service.</param>
+        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration, ILogger logger, IGetProductionOrderUtils getProductionOrderUtils, IRedisService redisService, IDoctorService doctorService)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
@@ -72,6 +76,7 @@ namespace Omicron.SapAdapter.Services.Sap
             this.logger = logger;
             this.getProductionOrderUtils = getProductionOrderUtils;
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
+            this.doctorService = doctorService.ThrowIfNull(nameof(doctorService));
         }
 
         /// <summary>
@@ -101,7 +106,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
             }
 
-            var listUsers = await this.GetUsers(userOrders);
+            ////var listUsers = await this.GetUsers(userOrders);
+            var listUsers = new List<UserModel>();
             orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
             var offset = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
@@ -116,6 +122,16 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
+
+            var listDoctors = await this.GetDoctors(orderToReturn.Select(x => x.Codigo).Distinct().ToList());
+
+            orderToReturn.ForEach(o =>
+            {
+                var doctor = listDoctors.FirstOrDefault(x => x.CardCode == o.Codigo);
+                doctor ??= new DoctorPrescriptionInfoModel { DoctorName = o.Medico };
+                o.Medico = doctor.DoctorName;
+            });
+
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);
         }
 
@@ -723,6 +739,12 @@ namespace Omicron.SapAdapter.Services.Sap
             var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
             var users = await this.usersService.GetUsersById(userIDs, ServiceConstants.GetUsersById);
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+        }
+
+        private async Task<List<DoctorPrescriptionInfoModel>> GetDoctors(List<string> cardCodes)
+        {
+            var doctorsResponse = await this.doctorService.PostDoctors(cardCodes, ServiceConstants.GetResponsibleDoctors);
+            return JsonConvert.DeserializeObject<List<DoctorPrescriptionInfoModel>>(doctorsResponse.Response.ToString());
         }
 
         /// <summary>
