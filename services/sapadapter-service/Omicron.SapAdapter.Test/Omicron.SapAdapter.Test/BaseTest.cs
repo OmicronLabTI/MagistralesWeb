@@ -50,7 +50,7 @@ namespace Omicron.SapAdapter.Test
 
                 // For Almacen
                 new OrderModel { PedidoId = 75000, DocNum = 75000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N" },
-                new OrderModel { PedidoId = 75001, DocNum = 75001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo León", Canceled = "N" },
+                new OrderModel { PedidoId = 75001, DocNum = 75001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo Le?n", Canceled = "N" },
                 new OrderModel { PedidoId = 75002, DocNum = 75002, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null, Canceled = "N" },
                 new OrderModel { PedidoId = 85000, DocNum = 85000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N" },
 
@@ -190,7 +190,7 @@ namespace Omicron.SapAdapter.Test
             return new List<DeliverModel>
             {
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000, Address = "direccion CD MX" },
-                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001, Address = "direccion Nuevo León" },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001, Address = "direccion Nuevo Le?n" },
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46038, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75002, Address = "direccion CD MX" },
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46039, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75003, Address = "direccion Oax", TypeOrder = "MQ" },
 
@@ -272,10 +272,10 @@ namespace Omicron.SapAdapter.Test
             return new List<ProductoModel>
             {
                 new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Aspirina con 2%", ProductGroupId = 1, IsWorkableProduct = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "Ungüento 1", ProductoName = "Ungüento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ungüento 10 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "Cápsula 12ML", ProductoName = "Cápsula 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "Buscapina", ProductoName = "Buscapina 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
-                new ProductoModel { IsMagistral = "N", ProductoId = "Magistral4", ProductoName = "Magistral 4 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Cápsula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Ung?ento 1", ProductoName = "Ung?ento 10 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "Ung?ento 10 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "C?psula 12ML", ProductoName = "C?psula 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "C?psula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Buscapina", ProductoName = "Buscapina 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "C?psula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
+                new ProductoModel { IsMagistral = "N", ProductoId = "Magistral4", ProductoName = "Magistral 4 12 GR", ManagedBatches = "Y", OnHand = 10, Unit = "PZ", LargeDescription = "C?psula 12 GR", ProductGroupId = 1, IsWorkableProduct = "Y" },
 
                 // For almacen
                 new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral1", ProductoName = "MagistralSolo1",  Unit = "PZ", LargeDescription = "MAAAAgistral1", NeedsCooling = "Y", ProductGroupId = 1, IsWorkableProduct = "Y" },
@@ -341,9 +341,9 @@ namespace Omicron.SapAdapter.Test
                 new InvoiceHeaderModel { Address = "address", Cliente = "cliente", CardCode = "C1", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico", DocNumDxp = "123456", ShippingAddressName = "Address1" },
 
                 // for packages
-                new InvoiceHeaderModel { Address = "address, Nuevo León", Cliente = "cliente", CardCode = "C1", DocNum = 2, FechaInicio = DateTime.Now, InvoiceId = 2, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 1 },
+                new InvoiceHeaderModel { Address = "address, Nuevo Le?n", Cliente = "cliente", CardCode = "C1", DocNum = 2, FechaInicio = DateTime.Now, InvoiceId = 2, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 1 },
                 new InvoiceHeaderModel { Address = "address, Aguascalientes", Cliente = "cliente", CardCode = "C8", DocNum = 3, FechaInicio = DateTime.Now, InvoiceId = 3, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 2 },
-                new InvoiceHeaderModel { Address = "address, Nuevo León", Cliente = "cliente", CardCode = "C1", DocNum = 4, FechaInicio = DateTime.Now, InvoiceId = 4, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 3 },
+                new InvoiceHeaderModel { Address = "address, Nuevo Le?n", Cliente = "cliente", CardCode = "C1", DocNum = 4, FechaInicio = DateTime.Now, InvoiceId = 4, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 3 },
             };
         }
 
@@ -443,9 +443,9 @@ namespace Omicron.SapAdapter.Test
         /// <returns>the data.</returns>
         public ResultDto GetDoctorsInfo()
         {
-            var doctors = new List<DoctorPrescriptionInfoModel>
+            var doctors = new List<DoctorDeliveryAddressModel>
             {
-                new DoctorPrescriptionInfoModel { CardCode = "A1", DoctorName = "Doctor" },
+                new DoctorDeliveryAddressModel { AddressId = "A1", DoctorId = "A1" },
             };
 
             return new ResultDto

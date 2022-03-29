@@ -382,10 +382,10 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="doctorService">the doctors service data.</param>
         /// <param name="cardcodes">the cardcodes.</param>
         /// <returns>the data.</returns>
-        public static async Task<List<DoctorPrescriptionInfoModel>> GetDoctorPrescriptionData(IDoctorService doctorService, List<string> cardcodes)
+        public static async Task<List<DoctorDeliveryAddressModel>> GetDoctorPrescriptionData(IDoctorService doctorService, List<GetDoctorAddressModel> cardcodes)
         {
-            var doctorsResponse = await doctorService.PostDoctors(cardcodes, ServiceConstants.GetResponsibleDoctors);
-            return JsonConvert.DeserializeObject<List<DoctorPrescriptionInfoModel>>(doctorsResponse.Response.ToString());
+            var doctorsResponse = await doctorService.PostDoctors(cardcodes, ServiceConstants.GetSpecificDelieryAddress);
+            return JsonConvert.DeserializeObject<List<DoctorDeliveryAddressModel>>(doctorsResponse.Response.ToString());
         }
 
         /// <summary>

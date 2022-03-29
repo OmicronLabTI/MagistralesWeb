@@ -125,13 +125,14 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var invoiceHeader = invoiceDetails.FirstOrDefault();
 
-            var doctorData = (await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, new List<string> { invoiceHeader.InvoiceHeader.CardCode })).FirstOrDefault(x => x.CardCode == invoiceHeader.InvoiceHeader.CardCode);
-            doctorData ??= new DoctorPrescriptionInfoModel { DoctorName = invoiceHeader.Medico };
+            var addressesToFind = new List<GetDoctorAddressModel> { new GetDoctorAddressModel { CardCode = invoiceHeader.InvoiceHeader.CardCode, AddressId = invoiceHeader.InvoiceHeader.ShippingAddressName } };
+            var doctorData = (await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == invoiceHeader.InvoiceHeader.ShippingAddressName);
+            doctorData ??= new DoctorDeliveryAddressModel { Contact = invoiceHeader.Medico };
 
             var invoiceToReturn = new InvoiceSaleHeaderModel
             {
                 Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoiceHeader.InvoiceHeader.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
-                Client = doctorData.DoctorName,
+                Client = doctorData.Contact,
                 Doctor = invoiceHeader.Medico ?? string.Empty,
                 Invoice = invoiceHeader.InvoiceHeader.DocNum,
                 DocEntry = invoiceHeader.InvoiceHeader.InvoiceId,
@@ -296,7 +297,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeaderOrdered.Select(x => x.TransportCode).ToList())).ToList();
             var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(invoiceHeaderOrdered.Select(x => x.SalesPrsonId).ToList())).ToList();
 
-            var doctorData = await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, invoiceHeaderOrdered.Select(x => x.CardCode).ToList());
+            var addressesToFind = invoiceHeaderOrdered.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.ShippingAddressName }).ToList();
+            var doctorData = await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind);
 
             invoiceHeaderOrdered.ForEach(x =>
             {
@@ -310,13 +312,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 var payment = payments.GetPaymentBydocNumDxp(x.DocNumDxp);
                 var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
 
-                var doctor = doctorData.FirstOrDefault(y => y.CardCode == x.CardCode);
-                doctor ??= new DoctorPrescriptionInfoModel { DoctorName = x.Cliente };
+                var doctor = doctorData.FirstOrDefault(y => y.DoctorId == x.CardCode && y.AddressId == x.ShippingAddressName);
+                doctor ??= new DoctorDeliveryAddressModel { Contact = x.Cliente };
 
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.TransportName = company.TrnspName;
 
-                x.Cliente = doctor.DoctorName;
+                x.Cliente = doctor.Contact;
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoDxpId?.ToUpper()).Distinct().ToList());
                 x.TotalSaleOrder = saleOrders.Select(y => y.PedidoId).Distinct().Count();
                 x.SalesPrsonEmail = salePerson.Email.ValidateNull();
