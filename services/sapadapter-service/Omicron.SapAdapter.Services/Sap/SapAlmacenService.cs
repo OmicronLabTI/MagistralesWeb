@@ -358,7 +358,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
-                Client = doctor.Contact.ValidateNull(),
+                Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctor.Contact), order.Medico, doctor.Contact),
                 DocNum = orderId,
                 Comments = userOrder?.Comments ?? string.Empty,
                 Doctor = order.Medico,

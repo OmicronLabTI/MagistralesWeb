@@ -109,7 +109,7 @@ namespace Omicron.SapAdapter.Services.Sap
             dataToReturn.SalesOrders = this.CreateSaleCard(deliveryDetails, pedidos, sapSaleOrders);
             dataToReturn.AlmacenHeader = new AlmacenSalesHeaderModel
             {
-                Client = doctorsData.Contact,
+                Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctorsData.Contact), deliveryDetails.FirstOrDefault().Medico, doctorsData.Contact),
                 DocNum = saleOrders.Count,
                 Doctor = deliveryDetails.FirstOrDefault().Medico,
                 InitDate = deliveryDetails.FirstOrDefault().FechaInicio,
