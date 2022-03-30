@@ -9,20 +9,20 @@
 import Foundation
 
 class HideButtons {
-    var hideProcessBtn: Bool
-    var hideFinishedBtn: Bool
-    var hidePendinBtn: Bool
-    var hideAddCompBtn: Bool
-    var hideSaveBtn: Bool
-    var hideSeeLotsBtn: Bool
+    var process: Bool
+    var finished: Bool
+    var pending: Bool
+    var addComp: Bool
+    var save: Bool
+    var seeBatches: Bool
 
-    init(_ hideProcessBtn: Bool, _ hideFinishedBtn: Bool, _ hidePendinBtn: Bool,
-         _ hideAddCompBtn: Bool, _ hideSaveBtn: Bool, _ hideSeeLotsBtn: Bool) {
-        self.hideProcessBtn = hideProcessBtn
-        self.hideFinishedBtn = hideFinishedBtn
-        self.hidePendinBtn = hidePendinBtn
-        self.hideAddCompBtn = hideAddCompBtn
-        self.hideSaveBtn = hideSaveBtn
-        self.hideSeeLotsBtn = hideSeeLotsBtn
+    init( process: Bool, finished: Bool, pending: Bool,
+         addComp: Bool, save: Bool, seeBatches: Bool) {
+        self.process = process
+        self.finished = finished
+        self.pending = pending
+        self.addComp = addComp
+        self.save = save
+        self.seeBatches = seeBatches
     }
 }
