@@ -376,25 +376,36 @@ class OrderDetailViewController: UIViewController {
         self.titleLabel.textColor = color
     }
     func showButtonsByStatusType(statusType: String) {
-        var hideBtn = HideButtons(true, true, true, true, true, true)
+        var hideBtn = HideButtons(
+            process: true, finished: true, pending: true, addComp: true, save: true, seeBatches: true)
         switch statusType {
-        case StatusNameConstants.assignedStatus: hideBtn = HideButtons(false, true, false, true, true, true)
-        case StatusNameConstants.inProcessStatus: hideBtn = HideButtons(true, false, false, false, true, false)
-        case StatusNameConstants.penddingStatus: hideBtn = HideButtons(false, true, true, true, true, false)
-        case StatusNameConstants.finishedStatus: hideBtn = HideButtons(true, true, true, true, true, false)
-        case StatusNameConstants.reassignedStatus: hideBtn = HideButtons(true, false, true, false, true, false)
+        case StatusNameConstants.assignedStatus:
+            hideBtn = HideButtons(process: false, finished: true, pending: false,
+                                  addComp: true, save: true, seeBatches: true)
+        case StatusNameConstants.inProcessStatus:
+            hideBtn = HideButtons(process: true, finished: false, pending: false,
+                                  addComp: false, save: true, seeBatches: false)
+        case StatusNameConstants.penddingStatus:
+            hideBtn = HideButtons(process: false, finished: true, pending: true,
+                                  addComp: true, save: true, seeBatches: false)
+        case StatusNameConstants.finishedStatus:
+            hideBtn = HideButtons(process: true, finished: true, pending: true,
+                                  addComp: true, save: true, seeBatches: false)
+        case StatusNameConstants.reassignedStatus:
+            hideBtn = HideButtons(process: true, finished: false, pending: false,
+                                  addComp: false, save: true, seeBatches: false)
         default: break
         }
         self.changeHidePropertyOfButtons(hideBtn)
     }
 
     func changeHidePropertyOfButtons(_ hideBtns: HideButtons) {
-        self.processButton.isHidden = hideBtns.hideProcessBtn
-        self.finishedButton.isHidden = hideBtns.hideFinishedBtn
-        self.penddingButton.isHidden = hideBtns.hidePendinBtn
-        self.addComponentButton.isHidden = hideBtns.hideAddCompBtn
-        self.saveButton.isHidden = hideBtns.hideSaveBtn
-        self.seeLotsButton.isHidden = hideBtns.hideSeeLotsBtn
+        self.processButton.isHidden = hideBtns.process
+        self.finishedButton.isHidden = hideBtns.finished
+        self.penddingButton.isHidden = hideBtns.pending
+        self.addComponentButton.isHidden = hideBtns.addComp
+        self.saveButton.isHidden = hideBtns.save
+        self.seeLotsButton.isHidden = hideBtns.seeBatches
     }
     func sendIndexToDelete(index: Int) {
         orderDetailViewModel.deleteItemFromTable(index: index)
