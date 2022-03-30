@@ -497,7 +497,7 @@ class InboxViewController: UIViewController {
         case 1: self.changePropertyIsHiddenStatusButtons(true, false, false)
         case 2: self.changePropertyIsHiddenStatusButtons(false, true, true)
         case 3: self.changePropertyIsHiddenStatusButtons(true, true, true)
-        case 4: self.changePropertyIsHiddenStatusButtons(true, true, false)
+        case 4: self.changePropertyIsHiddenStatusButtons(true, false, false)
         default: self.changePropertyIsHiddenStatusButtons(true, true, true)
         }
     }
