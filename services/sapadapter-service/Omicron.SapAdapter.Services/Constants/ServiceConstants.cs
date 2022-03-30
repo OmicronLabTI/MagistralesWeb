@@ -266,6 +266,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetResponsibleDoctors = "doctor/responsibledoctorinfo";
 
         /// <summary>
+        /// gets the address.
+        /// </summary>
+        public const string GetSpecificDelieryAddress = "doctor/specific/deliveryaddress/list";
+
+        /// <summary>
         /// route to look for user orders.
         /// </summary>
         public const string GetOrderByQuery = "userorders";

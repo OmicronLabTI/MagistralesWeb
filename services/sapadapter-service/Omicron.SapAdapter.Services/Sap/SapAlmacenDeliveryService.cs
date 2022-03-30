@@ -101,14 +101,15 @@ namespace Omicron.SapAdapter.Services.Sap
             var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == deliveryDetails.First().DocNumDxp);
             payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
 
-            var doctorsData = (await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, new List<string> { deliveryDetails.FirstOrDefault().CardCode })).FirstOrDefault(x => x.CardCode == deliveryDetails.FirstOrDefault().CardCode);
-            doctorsData ??= new DoctorPrescriptionInfoModel { DoctorName = deliveryDetails.FirstOrDefault().Medico };
+            var addressesToFind = deliveryDetails.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.DeliveryAddressId }).DistinctBy(x => x.CardCode).ToList();
+            var doctorsData = (await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == deliveryDetails.FirstOrDefault().DeliveryAddressId);
+            doctorsData ??= new DoctorDeliveryAddressModel { Contact = deliveryDetails.FirstOrDefault().Medico };
 
             var dataToReturn = new SalesModel();
             dataToReturn.SalesOrders = this.CreateSaleCard(deliveryDetails, pedidos, sapSaleOrders);
             dataToReturn.AlmacenHeader = new AlmacenSalesHeaderModel
             {
-                Client = doctorsData.DoctorName,
+                Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctorsData.Contact), deliveryDetails.FirstOrDefault().Medico, doctorsData.Contact),
                 DocNum = saleOrders.Count,
                 Doctor = deliveryDetails.FirstOrDefault().Medico,
                 InitDate = deliveryDetails.FirstOrDefault().FechaInicio,

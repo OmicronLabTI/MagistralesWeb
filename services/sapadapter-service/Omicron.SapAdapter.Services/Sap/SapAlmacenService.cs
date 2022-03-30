@@ -109,7 +109,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var sapOrders = await this.sapDao.GetSapOrderDetailForAlmacenRecepcionById(new List<int> { orderId });
-            var doctorPrescriptionData = await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, new List<string> { sapOrders.FirstOrDefault().CardCode });
+            var adressesToFind = sapOrders.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.DeliveryAddressId }).DistinctBy(y => y.CardCode).ToList();
+            var doctorPrescriptionData = await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, adressesToFind);
 
             var batches = (await this.sapDao.GetBatchesByProdcuts(lineOrders.Select(x => x.ItemCode).ToList())).ToList();
             var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
@@ -329,7 +330,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, new List<int>(), dateToLook);
         }
 
-        private ReceipcionPedidosDetailModel GetDetailRecpcionToReturn(int orderId, List<UserOrderModel> pedidos, List<LineProductsModel> lineOrders, List<IncidentsModel> incidences, List<string> localNeigbors, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<Batches> batches, List<PaymentsDto> payments, List<DoctorPrescriptionInfoModel> doctorData)
+        private ReceipcionPedidosDetailModel GetDetailRecpcionToReturn(int orderId, List<UserOrderModel> pedidos, List<LineProductsModel> lineOrders, List<IncidentsModel> incidences, List<string> localNeigbors, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<Batches> batches, List<PaymentsDto> payments, List<DoctorDeliveryAddressModel> doctorData)
         {
             var userOrder = pedidos.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             var order = sapOrders.FirstOrDefault();
@@ -352,12 +353,12 @@ namespace Omicron.SapAdapter.Services.Sap
             var userProdOrders = pedidos.Count(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.Productionorderid), x.Status.Equals(ServiceConstants.Almacenado)));
             var lineProductsCount = lineOrders.Count(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.ItemCode), x.StatusAlmacen == ServiceConstants.Almacenado));
             var totalAlmacenados = userProdOrders + lineProductsCount;
-            var doctor = doctorData.FirstOrDefault(x => x.CardCode == order.CardCode);
-            doctor ??= new DoctorPrescriptionInfoModel { DoctorName = order.Medico };
+            var doctor = doctorData.FirstOrDefault(x => x.AddressId == order.DeliveryAddressId);
+            doctor ??= new DoctorDeliveryAddressModel { Contact = order.Cliente };
 
             var saleHeader = new AlmacenSalesHeaderModel
             {
-                Client = doctor.DoctorName.ValidateNull(),
+                Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctor.Contact), order.Medico, doctor.Contact),
                 DocNum = orderId,
                 Comments = userOrder?.Comments ?? string.Empty,
                 Doctor = order.Medico,
