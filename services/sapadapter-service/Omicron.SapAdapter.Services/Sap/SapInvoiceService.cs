@@ -132,7 +132,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceToReturn = new InvoiceSaleHeaderModel
             {
                 Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoiceHeader.InvoiceHeader.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
-                Client = doctorData.Contact,
+                Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctorData.Contact), invoiceHeader.InvoiceHeader.Medico, doctorData.Contact),
                 Doctor = invoiceHeader.Medico ?? string.Empty,
                 Invoice = invoiceHeader.InvoiceHeader.DocNum,
                 DocEntry = invoiceHeader.InvoiceHeader.InvoiceId,
@@ -318,7 +318,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.TransportName = company.TrnspName;
 
-                x.Cliente = doctor.Contact;
+                x.Cliente = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctor.Contact), x.Medico, doctor.Contact);
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoDxpId?.ToUpper()).Distinct().ToList());
                 x.TotalSaleOrder = saleOrders.Select(y => y.PedidoId).Distinct().Count();
                 x.SalesPrsonEmail = salePerson.Email.ValidateNull();
