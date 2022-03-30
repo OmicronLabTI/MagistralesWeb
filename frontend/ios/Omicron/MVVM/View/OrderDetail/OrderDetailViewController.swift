@@ -382,7 +382,7 @@ class OrderDetailViewController: UIViewController {
         case StatusNameConstants.inProcessStatus: hideBtn = HideButtons(true, false, false, false, true, false)
         case StatusNameConstants.penddingStatus: hideBtn = HideButtons(false, true, true, true, true, false)
         case StatusNameConstants.finishedStatus: hideBtn = HideButtons(true, true, true, true, true, false)
-        case StatusNameConstants.reassignedStatus: hideBtn = HideButtons(true, false, true, false, true, false)
+        case StatusNameConstants.reassignedStatus: hideBtn = HideButtons(true, false, false, false, true, false)
         default: break
         }
         self.changeHidePropertyOfButtons(hideBtn)
