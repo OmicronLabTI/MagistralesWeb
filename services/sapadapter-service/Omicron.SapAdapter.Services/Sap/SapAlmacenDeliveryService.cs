@@ -93,6 +93,9 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var saleOrders = deliveryDetails.Where(y => y.Detalles.BaseEntry.HasValue).Select(x => x.Detalles.BaseEntry.Value).Distinct().ToList();
 
+            var invoicesId = deliveryDetails.Where(x => x.Detalles.InvoiceId.HasValue).Select(y => y.Detalles.InvoiceId.Value).ToList();
+            var invoices = ServiceShared.CalculateTernary(invoicesId.Any(), (await this.sapDao.GetInvoiceHeaderByInvoiceId(invoicesId)).ToList(), new List<InvoiceHeaderModel>());
+
             var sapSaleOrders = await this.sapDao.GetOrdersById(saleOrders);
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
             var pedidosResponse = await this.pedidosService.PostPedidos(saleOrders, ServiceConstants.GetUserSalesOrder);
@@ -119,7 +122,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Remision = deliveryId,
                 InvoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, deliveryDetails.FirstOrDefault().Address, payment),
                 TypeOrder = deliveryDetails.FirstOrDefault().TypeOrder,
-                HasInvoice = deliveryDetails.FirstOrDefault().Detalles.InvoiceId.HasValue,
+                HasInvoice = invoices.Any() && invoices.FirstOrDefault().Canceled == "N",
                 IsPackage = deliveryDetails.FirstOrDefault().IsPackage == ServiceConstants.IsPackage,
             };
 
