@@ -34,23 +34,27 @@ class ChartViewModel {
     func getWorkloads() {
 
         guard let userData = Persistence.shared.getUserData(), let userId = userData.id else { return }
-        let initToday = UtilsManager.shared.formattedDateToString(date: Date().todayInZero)
+        let initialDay = UtilsManager.shared.formattedDateToString(date: Date().todayInZero)
+        let byDay = initialDay
             + "-"
-            + UtilsManager.shared.formattedDateToString(date: Date().todayInZero)
-        let today = Date.getDayOfWeek(today: "\(Date.today())")
-        let week = Date.getRangeOfDateByWeek(dayOfWeek: today ?? 0)
-        let finiMonth =
+        + UtilsManager.shared.formattedDateToString(date: Date().nextDay(dateString: initialDay))
+
+        let numberDay = Date.getDayOfWeek(today: "\(Date.today())")
+
+        let byWeek = Date.getRangeOfDateByWeek(dayOfWeek: numberDay ?? 0)
+
+        let byMonth =
             UtilsManager.shared.formattedDateToString(date: Date().startOfMonth)
                 + "-"
                 + UtilsManager.shared.formattedDateToString(date: Date().endOfMonth)
         let daysRange = [UtilsManager.shared.formattedDateToString(date: Date().todayInZero),
-                         week ?? String(), finiMonth]
+                         byWeek ?? String(), byMonth]
         self.daysRange = daysRange.map({ $0.replacingOccurrences(of: "-", with: " al ") })
 
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
-        processWorkloadData(initToday: initToday, userId: userId,
-                            numberFormatter: numberFormatter, week: week, finiMonth: finiMonth)
+        processWorkloadData(initToday: byDay, userId: userId,
+                            numberFormatter: numberFormatter, week: byWeek, finiMonth: byMonth)
     }
 
     func processWorkloadData(initToday: String, userId: String,

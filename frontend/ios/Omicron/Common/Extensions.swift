@@ -41,6 +41,15 @@ extension Date {
         return date
     }
 
+    func nextDay(dateString: String) -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM/yyyy"
+        var tomorrow: Date = Date()
+        if let myDate = dateFormatter.date(from: dateString) {
+            tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: myDate) ?? Date()
+        }
+        return tomorrow
+    }
 }
 
 // MARK: - Array
