@@ -16,7 +16,7 @@ class HideButtons {
     var save: Bool
     var seeBatches: Bool
 
-    init( process: Bool, finished: Bool, pending: Bool,
+    init(process: Bool, finished: Bool, pending: Bool,
          addComp: Bool, save: Bool, seeBatches: Bool) {
         self.process = process
         self.finished = finished

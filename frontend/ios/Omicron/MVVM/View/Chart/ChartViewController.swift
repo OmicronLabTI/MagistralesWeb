@@ -53,8 +53,6 @@ class ChartViewController: UIViewController {
             })
             .disposed(by: disposeBag)
 
-        chartViewModel.getWorkloads()
-
         collectionView
             .rx
             .didScroll
