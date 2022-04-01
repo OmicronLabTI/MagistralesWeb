@@ -191,14 +191,16 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetCompleteDetail(int orderId)
         {
             var data = (await this.sapDao.GetAllOrdersForAlmacenById(orderId)).ToList();
-            return ServiceUtils.CreateResult(true, 200, null, data, null, null);
+            var countDxpOrders = (await this.sapDao.GetCountDxpOrdersByIds(data.Where(d => !string.IsNullOrEmpty(d.DocNumDxp)).Select(x => x.DocNumDxp).Distinct().ToList())).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, data, null, countDxpOrders.GroupBy(o => o.DocNumDxp).Select(o => new CountDxpOrders { DocNumDxp = o.Key, NumOrders = o.Select(o => o.DocNum).Distinct().ToList(), }));
         }
 
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersByIds(List<int> ordersId)
         {
             var data = (await this.sapDao.GetOrdersByIdJoinDoctor(ordersId)).ToList();
-            return ServiceUtils.CreateResult(true, 200, null, data, null, null);
+            var countDxpOrders = (await this.sapDao.GetCountDxpOrdersByIds(data.Where(d => !string.IsNullOrEmpty(d.DocNumDxp)).Select(x => x.DocNumDxp).Distinct().ToList())).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, data, null, countDxpOrders.GroupBy(o => o.DocNumDxp).Select(o => new CountDxpOrders { DocNumDxp = o.Key, NumOrders = o.Select(o => o.DocNum).Distinct().ToList(), }));
         }
 
         /// <inheritdoc/>

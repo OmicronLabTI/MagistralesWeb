@@ -695,6 +695,23 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
         }
 
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetCountDxpOrdersByIds(List<string> dxpIds)
+        {
+            var query = (from order in this.databaseContext.OrderModel
+                         join detail in this.databaseContext.DetallePedido on order.DocNum equals detail.PedidoId
+                         join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
+                         where dxpIds.Contains(order.DocNumDxp) && product.IsWorkableProduct == "Y"
+                         select new CompleteAlmacenOrderModel
+                         {
+                             DocNumDxp = order.DocNumDxp,
+                             DocNum = order.DocNum,
+                         });
+
+            return await this.RetryQuery(query);
+        }
+
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder, List<int> orderToLook)
         {

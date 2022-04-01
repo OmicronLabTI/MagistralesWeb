@@ -96,6 +96,7 @@ namespace Omicron.SapAdapter.Test
             new DoctorAddressModel(),
             new BoxModel(),
             new LineProductWithCodeBarsModel(),
+            new CountDxpOrders(),
         };
 
         /// <summary>
