@@ -129,4 +129,32 @@ class LoginTest: XCTestCase {
         self.loginViewModel?.networkManager = NetworkManager(provider: provider)
         self.loginViewModel?.loginDidTap.onNext(())
     }
+
+    func testRenewModel() {
+        let model = Renew(refresh_token: "some token")
+        XCTAssertNotNil(model)
+        XCTAssertEqual(model.refresh_token, "some token")
+    }
+
+    func testOnSuccessLoginResponseIsNil() {
+        loginViewModel?.error.subscribe(onNext: { res in
+            XCTAssertEqual(res, Constants.Errors.serverError.rawValue)
+        }).disposed(by: disposeBag!)
+        let info = UserInfoResponse(JSON: [:])!
+        loginViewModel?.onSuccessLogin(info)
+    }
+
+    func testOnErrorLogin() {
+        loginViewModel?.error.subscribe(onNext: { res in
+            XCTAssertEqual(res, Constants.Errors.serverError.rawValue)
+        }).disposed(by: disposeBag!)
+
+        let error = RequestError.unknownError
+        loginViewModel?.onErrorLogin(error)
+    }
+
+    func testPasswordToBase64Success() {
+        let result = loginViewModel?.passwordToBase64("Sergio")
+        XCTAssertEqual(result, "U2VyZ2lv")
+    }
 }

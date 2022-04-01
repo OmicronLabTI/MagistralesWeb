@@ -77,7 +77,7 @@ class LoginViewModel {
         }
     }
 
-    private func passwordToBase64(_ password: String) -> String {
+    func passwordToBase64(_ password: String) -> String {
         let utf8str = password.data(using: .utf8)
         if let base64Encoded = utf8str?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)) {
             print("Encoded: \(base64Encoded)")

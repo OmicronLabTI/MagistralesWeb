@@ -40,15 +40,16 @@ class ComponentsViewModel {
         searchDidTap.withLatestFrom(Observable.combineLatest(searchFilter, dataChips))
             .subscribe(onNext: { [weak self] text, chips in
                 guard let self = self, text.count >= 2 else { return }
-                if chips.first(where: { $0 == text }) == nil {
-                    return
-                }
-//                if let _ = chips.first(where: { $0 == text }) {
-//                    return
-//                }
-                let newChips = chips + [text]
-                self.dataChips.onNext(newChips)
+                self.onSuccessChips(text: text, chips: chips)
             }).disposed(by: disposeBag)
+    }
+
+    func onSuccessChips(text: String, chips: [String]) {
+        if chips.first(where: { $0 == text }) == nil {
+            return
+        }
+        let newChips = chips + [text]
+        dataChips.onNext(newChips)
     }
 
     func removeChipBinding() {
