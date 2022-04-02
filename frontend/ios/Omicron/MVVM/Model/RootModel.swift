@@ -20,7 +20,7 @@ class UserInfoResponse: HttpResponse {
     }
 }
 class User: Codable {
-    // swiftlint:disable identifier_name
+
     var id: String?
     var userName: String?
     var firstName: String?
@@ -37,7 +37,7 @@ extension User: Mappable {
         self.firstName <- map["firstName"]
         self.lastName <- map["lastName"]
         self.role <- map["role"]
-        self.password <- map ["password"]
+        self.password <- map["password"]
         self.activo <- map["activo"]
     }
 }

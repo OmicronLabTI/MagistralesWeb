@@ -40,7 +40,7 @@ class CardCollectionViewCell: UICollectionViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        //Initialization code
+        // Initialization code
         assignedStyleCard(color: OmicronColors.assignedStatus.cgColor)
         makeRoundedMissingStockImage()
     }
