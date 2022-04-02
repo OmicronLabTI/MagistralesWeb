@@ -97,6 +97,7 @@ namespace Omicron.SapAdapter.Test
             new BoxModel(),
             new LineProductWithCodeBarsModel(),
             new DoctorPrescriptionInfoModel(),
+            new CountDxpOrders(),
         };
 
         /// <summary>

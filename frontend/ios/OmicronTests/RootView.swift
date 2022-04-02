@@ -63,4 +63,19 @@ class RootViewTest: XCTestCase {
         }).disposed(by: self.disposeBag!)
         self.rootViewModel!.resetFilter()
     }
+
+    func testNeedIsUpdate() {
+        rootViewModel?.showRefreshControl.subscribe(onNext: { _ in
+            XCTAssertTrue(true)
+        }).disposed(by: disposeBag!)
+        rootViewModel?.needIsUpdate(isUpdate: true)
+    }
+
+    func testNeedSearchAction() {
+        rootViewModel?.refreshSearch.subscribe(onNext: { res in
+            XCTAssertEqual(res, "")
+        }).disposed(by: disposeBag!)
+        rootViewModel?.needSearchAction(true, "")
+    }
+
 }
