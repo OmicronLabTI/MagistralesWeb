@@ -103,16 +103,7 @@ extension LotsSelected: Mappable {
         self.sysNumber <- map["sysNumber"]
     }
 }
-class LotsAvailableInfo {
-    var productSelected: Lots?
-    var availableSelected: LotsAvailable?
-    var quantitySelected: String
-    init(productSelected: Lots?, availableSelected: LotsAvailable?, quantitySelected: String) {
-        self.productSelected = productSelected
-        self.availableSelected = availableSelected
-        self.quantitySelected = quantitySelected
-    }
-}
+
 class BatchSelected: Codable {
     var orderId: Int?
     var assignedQty: Decimal?
@@ -136,27 +127,5 @@ class BatchSelected: Codable {
     func toLotsSelected() -> LotsSelected {
         return LotsSelected(numeroLote: self.batchNumber!, cantidadSeleccionada: self.assignedQty!,
                             sysNumber: self.sysNumber!, expiredBatch: self.expiredBatch)
-    }
-}
-class LotsRequest: Codable {
-    var orderId: Int?
-    var assignedQty: Decimal?
-    var batchNumber: String?
-    var itemCode: String?
-    var action: String?
-    init(orderId: Int?, assignedQty: Decimal?, batchNumber: String?, itemCode: String?, action: String?) {
-        self.orderId = orderId
-        self.assignedQty = assignedQty
-        self.batchNumber = batchNumber
-        self.itemCode = itemCode
-        self.action = action
-    }
-}
-class CacheLotsSelected {
-    var indexOdLineDocumentsTableSelected: Int
-    var lotsSelected: [LotsSelected]
-    init (indexOdLineDocumentsTableSelected: Int, lotsSelected: [LotsSelected]) {
-        self.indexOdLineDocumentsTableSelected = indexOdLineDocumentsTableSelected
-        self.lotsSelected = lotsSelected
     }
 }

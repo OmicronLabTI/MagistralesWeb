@@ -149,4 +149,11 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.networkManager = NetworkManager(provider: provider)
         inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected])
     }
+
+    func testGetConnectModel() {
+        let model = ConnectModel(code: 200, success: "", response: [""])
+        XCTAssertNotNil(model)
+        XCTAssertEqual(model.code, 200)
+        XCTAssertEqual(model.response, [""])
+    }
 }

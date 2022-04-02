@@ -273,4 +273,12 @@ class OrderDetailTest: XCTestCase {
             self?.orderDetailViewModel?.terminateOrChangeStatusOfAnOrder(actionType: actionType)
         }).disposed(by: self.disposeBag!)
     }
+    
+    func testHideButtonsModel() {
+        let model = HideButtons(process: true, finished: false, pending: false,
+                                addComp: false, save: false, seeBatches: false)
+        XCTAssertNotNil(model)
+        XCTAssertTrue(model.process)
+        XCTAssertFalse(model.finished)
+    }
 }

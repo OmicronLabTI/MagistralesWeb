@@ -9,23 +9,40 @@
 import XCTest
 import RxSwift
 import Resolver
+import Moya
 
 @testable import OmicronLab
 class OrderDetailFormTest: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?
     var orderDetailFormViewModel: OrderDetailFormViewModel?
+    var provider: MoyaProvider<ApiService>!
+    var statusCode = 200
+    var testData = Data()
+
     @Injected var networkManager: NetworkManager
     override func setUp() {
         print("XXXX setUp OrderDetailFormTest")
         orderDetailFormViewModel = OrderDetailFormViewModel()
         disposeBag = DisposeBag()
+        provider = MoyaProvider<ApiService>(
+            endpointClosure: customEndpointClosure,
+            stubClosure: MoyaProvider.immediatelyStub)
     }
     override func tearDown() {
         print("XXXX tearDown OrderDetailFormTest")
         orderDetailFormViewModel = nil
     }
-    // MARCK: - FUNCTION TEST
+
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
+    }
+    
+    // MARK: - FUNCTION TEST
     func testEditTableSuccessValueSuccess() {
         // Given
         self.networkManager.getOrdenDetail(89900).subscribe(onNext: { res in
@@ -64,5 +81,20 @@ class OrderDetailFormTest: XCTestCase {
         let data = OrderDetail()
         orderDetailFormViewModel?.editItemTable(
             index: 0, data: data, baseQuantity: 0.002, requiredQuantity: 0.002, werehouse: "MG")
+    }
+
+    func testUpdateDeleteItemOfTableServiceFailed() {
+        orderDetailFormViewModel?
+            .showAlert
+            .subscribe(onNext: { res in
+                XCTAssertNotNil(res)
+                XCTAssertEqual(res, "Hubo un error al editar el elemento,  intente de nuevo")
+            }).disposed(by: disposeBag!)
+        statusCode = 500
+        orderDetailFormViewModel?.networkManager = NetworkManager(provider: provider)
+        let order = OrderDetailRequest(
+            fabOrderID: 1354, plannedQuantity: 5, fechaFin: "12/12/21", comments: "", warehouse: "", components: [])
+        let data = OrderDetail()
+        orderDetailFormViewModel?.updateDeleteItemOfTableService(order, data, 5)
     }
 }
