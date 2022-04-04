@@ -262,6 +262,11 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string IsNotPackage = "N";
 
         /// <summary>
+        /// the total values.
+        /// </summary>
+        public const int ComentariosEcommerceMaxLength = 254;
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

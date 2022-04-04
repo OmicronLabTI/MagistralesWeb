@@ -73,7 +73,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 
                 order.DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial);
                 order.UserFields.Fields.Item("U_Pedido_DXP").Value = saleOrderModel.TransactionId;
-                order.UserFields.Fields.Item("U_Comentarios_Ecommerce").Value = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}" : string.Empty;
+                order.UserFields.Fields.Item("U_Comentarios_Ecommerce").Value = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}".Truncate(ServiceConstants.ComentariosEcommerceMaxLength) : string.Empty;
                 // ToDo descomentar la siguiente linea cuando se pase a prod, porque en qa el campo no existe
                 // order.UserFields.Fields.Item("U_BXP_USOCFDI").Value = saleOrderModel.CfdiValue;
                 order.UserFields.Fields.Item("U_CFDI_Provisional").Value = saleOrderModel.CfdiValue;
