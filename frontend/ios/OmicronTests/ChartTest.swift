@@ -18,16 +18,29 @@ class ChartTest: XCTestCase {
     // MARK: - Variables
     var chartViewModel: ChartViewModel?
     var disposeBag: DisposeBag?
+    var provider: MoyaProvider<ApiService>!
+    var statusCode = 200
+    var testData = Data()
 
     @Injected var networkManager: NetworkManager
     override func setUp() {
-        print("XXXX setUp ChartTest")
         chartViewModel = ChartViewModel()
         disposeBag = DisposeBag()
+        provider = MoyaProvider<ApiService>(
+            endpointClosure: customEndpointClosure,
+            stubClosure: MoyaProvider.immediatelyStub)
 
     }
+
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
+    }
+
     override func tearDown() {
-        print("XXXX tearDown ChartTest")
         chartViewModel = nil
         disposeBag = nil
     }
@@ -37,27 +50,24 @@ class ChartTest: XCTestCase {
             + "-"
             + UtilsManager.shared.formattedDateToString(date: Date().endOfMonth)
     fileprivate let userId = "d125566b-6321-4854-9a42-10fb5c5e4cc1"
+
     // MARK: - Test Functions
-    func testValidResponse() {
-        networkManager
-        .getWordLoad(WorkloadRequest(fini: fini, qfb: userId))
-            .subscribe(onNext: { workloadResponse in
-                XCTAssertNotNil(workloadResponse.response)
-            }).disposed(by: disposeBag!)
-    }
-    func testValidCodeNotNull() {
-        networkManager
-        .getWordLoad(WorkloadRequest(fini: fini, qfb: userId))
-            .subscribe(onNext: { workloadResponse in
-                XCTAssertNotNil(workloadResponse.code)
-            }).disposed(by: disposeBag!)
-    }
-    func testValidCode() {
-        networkManager
-        .getWordLoad(WorkloadRequest(fini: fini, qfb: userId))
-            .subscribe(onNext: { workloadResponse in
-                XCTAssert(workloadResponse.code == 200)
-            }).disposed(by: disposeBag!)
+    func testGetWorkloadsSuccess() {
+        chartViewModel?.start.subscribe(onNext: { isStart in
+            XCTAssertTrue(isStart)
+        }).disposed(by: disposeBag!)
+
+        chartViewModel?.networkManager = NetworkManager(provider: provider)
+        chartViewModel?.getWorkloads()
     }
 
+    func testGetWorkloadFailed() {
+        chartViewModel?.alert.subscribe(onNext: { alert in
+            XCTAssertEqual(alert.title, Constants.Errors.errorTitle.rawValue)
+            XCTAssertEqual(alert.msg, Constants.Errors.errorData.rawValue)
+        }).disposed(by: disposeBag!)
+        statusCode = 500
+        chartViewModel?.networkManager = NetworkManager(provider: provider)
+        chartViewModel?.getWorkloads()
+    }
 }
