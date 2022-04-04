@@ -33,6 +33,7 @@ class ChartViewController: UIViewController {
         flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         collectionView.setCollectionViewLayout(flowLayout, animated: false)
         collectionView.contentInsetAdjustmentBehavior = .always
+        alertDataBinding()
     }
 
     func viewModelBingind() {
@@ -111,6 +112,12 @@ class ChartViewController: UIViewController {
         case 2: return "Mes"
         default: return ""
         }
+    }
+
+    func alertDataBinding() {
+        chartViewModel.alert.subscribe(onNext: { alert in
+            AlertManager.shared.showAlert(title: alert.title, message: alert.msg, actions: nil, view: self)
+        }).disposed(by: disposeBag)
     }
 
 }

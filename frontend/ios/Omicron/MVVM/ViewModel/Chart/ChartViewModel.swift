@@ -20,6 +20,7 @@ enum TypeOfCalendarChart: String {
 
 class ChartViewModel {
 
+    var alert: PublishSubject<(title: String, msg: String)> = PublishSubject<(title: String, msg: String)>()
     var workloadData = ReplaySubject<[Workload?]>.create(bufferSize: 1)
     var start = PublishSubject<Bool>()
     var disposeBag = DisposeBag()
@@ -41,66 +42,65 @@ class ChartViewModel {
 
         let numberDay = Date.getDayOfWeek(today: "\(Date.today())")
 
-        let byWeek = Date.getRangeOfDateByWeek(dayOfWeek: numberDay ?? 0)
+        let byWeek = Date.getRangeOfDateByWeek(dayOfWeek: numberDay ?? 0) ?? String()
 
         let byMonth =
             UtilsManager.shared.formattedDateToString(date: Date().startOfMonth)
                 + "-"
                 + UtilsManager.shared.formattedDateToString(date: Date().endOfMonth)
         let daysRange = [UtilsManager.shared.formattedDateToString(date: Date().todayInZero),
-                         byWeek ?? String(), byMonth]
+                         byWeek, byMonth]
         self.daysRange = daysRange.map({ $0.replacingOccurrences(of: "-", with: " al ") })
 
-        let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = .decimal
-        processWorkloadData(initToday: byDay, userId: userId,
-                            numberFormatter: numberFormatter, week: byWeek, finiMonth: byMonth)
+        workloadService(initToday: byDay, userId: userId, week: byWeek, finiMonth: byMonth)
     }
 
-    func processWorkloadData(initToday: String, userId: String,
-                             numberFormatter: NumberFormatter, week: String?, finiMonth: String) {
+    func workloadService(initToday: String, userId: String, week: String, finiMonth: String) {
         var workloads: [Workload?] = []
-        self.networkManager.getWordLoad(WorkloadRequest(fini: initToday, qfb: userId))
-            .subscribe(onNext: { [weak self] workloadResponse in
+        let reqByDay = WorkloadRequest(fini: initToday, qfb: userId)
+        networkManager.getWordLoad(reqByDay)
+            .flatMap({ res -> Observable<WorkloadResponse> in
+                // Get workload by day
+                self.doProcessInWorloadRes(res, 0, &workloads)
+                let reqByWeek = WorkloadRequest(fini: week, qfb: userId)
+
+                return self.networkManager.getWordLoad(reqByWeek)
+            }).flatMap({ res -> Observable<WorkloadResponse> in
+                // Get workload by week
+                self.doProcessInWorloadRes(res, 1, &workloads)
+                let reqWorloadByMonth = WorkloadRequest(fini: finiMonth, qfb: userId)
+                return self.networkManager.getWordLoad(reqWorloadByMonth)
+            }).subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
-                workloads.append(workloadResponse.response?.first)
-                self.capacity[0] = numberFormatter
-                    .string(
-                        from: NSNumber(value: workloadResponse.response?.first?.totalPossibleAssign ?? 0)) ?? String()
-                self.networkManager.getWordLoad(WorkloadRequest(fini: week ?? String(), qfb: userId))
-                    .subscribe(onNext: { [weak self] workloadResponse in
-                        guard let self = self else { return }
-                        workloads.append(workloadResponse.response?.first)
-                        self.capacity[1] = numberFormatter
-                            .string(
-                                from: NSNumber(value: workloadResponse.response?
-                                                .first?.totalPossibleAssign ?? 0)) ?? String()
-                        self.networkManager.getWordLoad(WorkloadRequest(fini: finiMonth, qfb: userId))
-                            .subscribe(onNext: { [weak self] workloadResponse in
-                                guard let self = self else { return }
-                                workloads.append(workloadResponse.response?.first)
-                                self.capacity[2] = numberFormatter
-                                    .string(
-                                        from: NSNumber(value: workloadResponse
-                                                        .response?.first?.totalPossibleAssign ?? 0)) ?? String()
-                                self.workloadData.onNext(workloads)
-                                if self.firstTime {
-                                    self.firstTime = false
-                                    self.start.onNext(true)
-                                } else {
-                                    self.start.onNext(false)
-                                }
-                                }, onError: { error in
-                                    print(error)
-                                }).disposed(by: self.disposeBag)
+                // Get workload by month
+                self.doProcessInWorloadRes(res, 2, &workloads)
+                self.workloadData.onNext(workloads)
 
-                        }, onError: { error in
-                            print(error)
-                        }).disposed(by: self.disposeBag)
-
-                }, onError: { error in
-                    print(error)
+                self.setFirsTime(isFirstTime: self.firstTime)
+                self.start.onNext(self.firstTime)
+            }, onError: { [weak self] _ in
+                guard let self = self else { return }
+                self.alert.onNext((
+                    title: Constants.Errors.errorTitle.rawValue,
+                    msg: Constants.Errors.errorData.rawValue))
             }).disposed(by: disposeBag)
     }
 
+    func doProcessInWorloadRes(_ res: WorkloadResponse, _ index: Int, _ workloads: inout [Workload?]) {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+
+        if let workload = res.response?.first {
+            workloads.append(workload)
+            let totalAssined = workload.totalPossibleAssign ?? 0
+            let totalAssinedStr = NSNumber(value: totalAssined)
+            capacity[index] = numberFormatter.string(from: totalAssinedStr) ?? String()
+        }
+    }
+
+    func setFirsTime(isFirstTime: Bool) {
+        if isFirstTime {
+            self.firstTime = false
+        }
+    }
 }
