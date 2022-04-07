@@ -15,8 +15,10 @@ namespace Omicron.SapAdapter.Services.Utils
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.ProccessPayments;
 
     /// <summary>
@@ -218,6 +220,18 @@ namespace Omicron.SapAdapter.Services.Utils
         public static AlmacenBatchModel GetBatch(this List<AlmacenBatchModel> batchName, string distNumber)
         {
             return batchName.FirstOrDefault(a => a.BatchNumber == distNumber) ?? new AlmacenBatchModel() { BatchQty = 0 };
+        }
+
+        /// <summary>
+        /// Gets the doctors precriptionData.
+        /// </summary>
+        /// <param name="doctorService">the doctor service.</param>
+        /// <param name="cardCodes">the cardcodes.</param>
+        /// <returns>the dta.</returns>
+        public static async Task<List<DoctorPrescriptionInfoModel>> GetDoctors(IDoctorService doctorService, List<string> cardCodes)
+        {
+            var doctorsResponse = await doctorService.PostDoctors(cardCodes, ServiceConstants.GetResponsibleDoctors);
+            return JsonConvert.DeserializeObject<List<DoctorPrescriptionInfoModel>>(doctorsResponse.Response.ToString());
         }
     }
 }
