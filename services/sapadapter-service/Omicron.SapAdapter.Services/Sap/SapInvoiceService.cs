@@ -330,7 +330,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.SalesPrsonName = $"{salePerson.FirstName.ValidateNull()} {salePerson.LastName.ValidateNull()}".Trim();
                 x.Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, x.Address, ServiceConstants.OnSiteDelivery);
                 x.ResponsibleMedic = prescriptionData.DoctorName;
-
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
