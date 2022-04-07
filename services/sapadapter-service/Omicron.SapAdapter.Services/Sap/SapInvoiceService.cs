@@ -300,6 +300,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var addressesToFind = invoiceHeaderOrdered.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.ShippingAddressName }).ToList();
             var doctorData = await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind);
 
+            var doctorPrescription = await ServiceShared.GetDoctors(this.doctorService, invoiceHeaderOrdered.Select(x => x.CardCode).Distinct().ToList());
+
             invoiceHeaderOrdered.ForEach(x =>
             {
                 var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
@@ -315,6 +317,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 var doctor = doctorData.FirstOrDefault(y => y.DoctorId == x.CardCode && y.AddressId == x.ShippingAddressName);
                 doctor ??= new DoctorDeliveryAddressModel { Contact = x.Cliente };
 
+                var prescriptionData = doctorPrescription.FirstOrDefault(y => y.CardCode == x.CardCode);
+                prescriptionData ??= new DoctorPrescriptionInfoModel { DoctorName = x.Medico };
+
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.TransportName = company.TrnspName;
 
@@ -324,6 +329,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.SalesPrsonEmail = salePerson.Email.ValidateNull();
                 x.SalesPrsonName = $"{salePerson.FirstName.ValidateNull()} {salePerson.LastName.ValidateNull()}".Trim();
                 x.Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, x.Address, ServiceConstants.OnSiteDelivery);
+                x.ResponsibleMedic = prescriptionData.DoctorName;
+
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
