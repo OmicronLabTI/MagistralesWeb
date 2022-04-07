@@ -48,5 +48,11 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
         /// </summary>
         /// <value>Degree Type.</value>
         public string ResponsibleDoctor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor contact.
+        /// </summary>
+        /// <value>Degree Type.</value>
+        public string Contact { get; set; }
     }
 }

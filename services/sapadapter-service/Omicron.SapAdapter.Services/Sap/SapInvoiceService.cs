@@ -374,6 +374,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 SalesPersonEmail = salesPerson.Email.ValidateNull(),
                 SalesPrsonName = $"{salesPerson.FirstName.ValidateNull()} {salesPerson.LastName.ValidateNull()}".Trim(),
                 SalesOrders = JsonConvert.SerializeObject(new List<string> { invoiceHeader.DocNumDxp }),
+                Contact = address.Contact,
             };
 
             var isinvoiceLocal = ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, model.Address, dxpTransactions) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode);
