@@ -169,6 +169,23 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>test.</returns>
         [Test]
+        public async Task GetValidationQuatitiesOrdersFormula()
+        {
+            // arrange
+            var orderIds = new List<int> { 1 };
+
+            // act
+            var response = await this.sapFacade.GetValidationQuatitiesOrdersFormula(orderIds);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
         public async Task GetComponente()
         {
             // arrange
