@@ -566,8 +566,13 @@ namespace Omicron.Pedidos.Test.Services
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
             var mockSapAdapter = new Mock<ISapAdapter>();
 
+            var componentsInvalids = new List<CompleteDetalleFormulaModel>()
+            {
+                new CompleteDetalleFormulaModel { OrderFabId = 107, Consumed = 2, RequiredQuantity = 2 },
+            };
             mockSapAdapter
                 .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GenerateResultModel(componentsInvalids)))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
                 .Returns(Task.FromResult(this.GetRecipes()));
 
@@ -682,8 +687,10 @@ namespace Omicron.Pedidos.Test.Services
             responseOrders[0].Detalle.Add(new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", OrdenFabricacionId = 102, QtyPlanned = 1, QtyPlannedDetalle = 1, Status = string.Empty });
             result.Response = responseOrders;
 
+            var componentsInvalids = new List<CompleteDetalleFormulaModel>();
             mockSapAdapter
                 .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GenerateResultModel(componentsInvalids)))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
                 .Returns(Task.FromResult(this.GetRecipes()));
 
@@ -734,9 +741,14 @@ namespace Omicron.Pedidos.Test.Services
             responseOrders[0].Detalle.Add(new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", OrdenFabricacionId = 102, QtyPlanned = 1, QtyPlannedDetalle = 1, Status = string.Empty });
             result.Response = responseOrders;
 
+            var componentsInvalids = new List<CompleteDetalleFormulaModel>()
+            {
+                new CompleteDetalleFormulaModel { OrderFabId = 107, Consumed = 2, RequiredQuantity = 2 },
+            };
             mockSapAdapter
                 .SetupSequence(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(result))
+                .Returns(Task.FromResult(this.GenerateResultModel(componentsInvalids)))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()))
                 .Returns(Task.FromResult(this.GetRecipes()));
 
