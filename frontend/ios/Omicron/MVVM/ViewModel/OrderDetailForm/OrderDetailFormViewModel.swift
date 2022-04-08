@@ -44,15 +44,23 @@ class  OrderDetailFormViewModel {
             plannedQuantity: data.plannedQuantity ?? 0.0,
             fechaFin: fechaFinFormated ?? CommonStrings.empty, comments: CommonStrings.empty,
             warehouse: data.warehouse ?? CommonStrings.empty, components: componets)
-        self.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest: order)
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
-                self?.loading.onNext(false)
-                self?.showAlert.onNext(CommonStrings.changesSuccess)
-                self?.response.onNext(res.response ?? CommonStrings.empty)
-                self?.success.onNext(data.details?[index].orderFabID ?? 0)
-                }, onError: {  [weak self] _ in
-                    self?.loading.onNext(false)
-                    self?.showAlert.onNext(Constants.Errors.editItemTable.rawValue)
+
+        updateDeleteItemOfTableService(order, data, index)
+    }
+
+    func updateDeleteItemOfTableService(_ order: OrderDetailRequest, _ data: OrderDetail, _ index: Int) {
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] res in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showAlert.onNext(CommonStrings.changesSuccess)
+                self.response.onNext(res.response ?? CommonStrings.empty)
+                self.success.onNext(data.details?[index].orderFabID ?? 0)
+            }, onError: {  [weak self] _ in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showAlert.onNext(Constants.Errors.editItemTable.rawValue)
             }).disposed(by: self.disposeBag)
     }
 }
