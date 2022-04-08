@@ -671,11 +671,19 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             for (var i = 0; i < recordSet.RecordCount; i++)
             {
+                var requiredQuantity = double.Parse(recordSet.Fields.Item("PlannedQty").Value.ToString());
+                var consumedQuantity = double.Parse(recordSet.Fields.Item("ConsumidoQty").Value.ToString());
+                if (consumedQuantity != 0)
+                {
+                    _loggerProxy.Debug($"[VALIDATE CONSUMED QUANTITY] the component already has consumed quantity: {recordSet.Fields.Item("ItemCode").Value.ToString()}, required  { requiredQuantity } , consumed: { consumedQuantity }.");
+                    throw new ValidationException($"{string.Format(ServiceConstants.FailConsumedQuantity, productionOrderId)}");
+                }
+
                 inventoryGenExit.Lines.SetCurrentLine(i);
                 inventoryGenExit.Lines.BaseType = (int)BoObjectTypes.oProductionOrders;
                 inventoryGenExit.Lines.BaseEntry = productionOrderId;
                 inventoryGenExit.Lines.BaseLine = int.Parse(recordSet.Fields.Item("LineNum").Value.ToString());
-                inventoryGenExit.Lines.Quantity = double.Parse(recordSet.Fields.Item("PlannedQty").Value.ToString());
+                inventoryGenExit.Lines.Quantity = requiredQuantity;
                 inventoryGenExit.Lines.WarehouseCode = recordSet.Fields.Item("warehouse").Value.ToString();
                 this.SetBatchNumbersToGoodIssueForProduction(ref inventoryGenExit, recordSet.Fields.Item("ItemCode").Value.ToString());
                 inventoryGenExit.Lines.Add();
@@ -825,8 +833,15 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             for (var i = 0; i < recordSet.RecordCount; i++)
             {
                 var requiredQuantity = double.Parse(recordSet.Fields.Item("PlannedQty").Value.ToString());
+                var consumedQuantity = double.Parse(recordSet.Fields.Item("ConsumidoQty").Value.ToString());
                 var warehouse = recordSet.Fields.Item("warehouse").Value.ToString();
                 var itemCode = recordSet.Fields.Item("ItemCode").Value.ToString();
+
+                if (consumedQuantity != 0)
+                {
+                    _loggerProxy.Debug($"[VALIDATE CONSUMED QUANTITY] the component already has consumed quantity: {itemCode}, required  { requiredQuantity } , consumed: { consumedQuantity }.");
+                    throw new ValidationException($"{string.Format(ServiceConstants.FailConsumedQuantity, productionOrderId)}");
+                }
 
                 if (!this.IsAvailableRequiredQuantity(itemCode, warehouse, requiredQuantity))
                 {

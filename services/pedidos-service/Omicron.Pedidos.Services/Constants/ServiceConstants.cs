@@ -851,6 +851,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string PedidoMuestra = "Pedido Muestra";
 
         /// <summary>
+        /// the order containe.
+        /// </summary>
+        public const string EndPointToValidateQuatitiesOrdersFormula = "formula/validate/quantities";
+
+        /// <summary>
+        /// the order containe.
+        /// </summary>
+        public const string FailConsumedQuantity = "No coincide la cantidad requerida con la cantidad consumida de la siguiente orden {0}";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
