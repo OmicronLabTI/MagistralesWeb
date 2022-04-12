@@ -35,5 +35,21 @@ namespace Omicron.SapDiApi.Services.Utils
                 Code = code
             };
         }
+
+        /// <summary>
+        /// Truncate string.
+        /// </summary>
+        /// <param name="value">Value.</param>
+        /// <param name="maxLength">Max Length.</param>
+        /// <returns>truncate text.</returns>
+        public static string Truncate(this string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength);
+        }
     }
 }

@@ -319,6 +319,14 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, listToReturn.Count);
         }
 
+        /// <inheritdoc />
+        public async Task<ResultModel> GetValidationQuatitiesOrdersFormula(List<int> listIds)
+        {
+            var details = (await this.sapDao.GetDetalleFormula(listIds)).ToList();
+            var detailsWithInvalidQuantities = details.Where(d => d.Consumed != d.RequiredQuantity).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, detailsWithInvalidQuantities, null, null);
+        }
+
         /// <summary>
         /// Obtiene los nombres, email de asesores dada una lista de pedidos.
         /// </summary>

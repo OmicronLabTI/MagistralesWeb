@@ -43,71 +43,104 @@ class OrderDetailViewModel {
     @Injected var networkManager: NetworkManager
     // MARK: - Init
     init() {
-        self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            let message = MessageToChangeStatus(message: CommonStrings.doYouWantToFinishTheOrder,
-                                                typeOfStatus: StatusNameConstants.finishedStatus)
-            self?.showAlertConfirmation.onNext(message)
-        }).disposed(by: self.disposeBag)
-        self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessageProcessStatus,
-                                                typeOfStatus: StatusNameConstants.inProcessStatus)
-            self?.showAlertConfirmation.onNext(message)
-        }).disposed(by: disposeBag)
-        self.pendingButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessagePendingStatus,
-                                                typeOfStatus: StatusNameConstants.penddingStatus)
-            self?.showAlertConfirmation.onNext(message)
-        }).disposed(by: self.disposeBag)
-        self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
-            self?.goToSeeLotsViewController.onNext(())
-        }).disposed(by: self.disposeBag)
+        finishBtnActionBinding()
+        processBtnBinding()
+        pendingBtnbinding()
+        seeLotsBtnBinding()
     }
 
     // MARK: - Functions
-    func getOrdenDetail(isRefresh: Bool = false) {
-        if needsRefresh { loading.onNext(true) }
-        self.networkManager.getOrdenDetail(self.orderId)
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: {[weak self] res in
+    func finishBtnActionBinding() {
+        self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
-            if res.response != nil {
-                self.orderDetailData.accept([res.response!])
-                self.tableData.onNext(res.response!.details!)
-                self.auxTabledata = res.response!.details ?? []
-                self.tempOrderDetailData = res.response!
-                if self.needsRefresh {
-                    self.loading.onNext(false)
-                    self.needsRefresh.toggle()
-                }
-                self.sumFormula.accept(self.sum(tableDetails: res.response!.details ?? []))
-                var iconName = CommonStrings.empty
-                if res.response?.comments != nil {
-                    let comments = res.response!.comments ?? String()
-                    iconName = (comments.trimmingCharacters(in: .whitespaces).isEmpty ?
-                        ImageButtonNames.message : ImageButtonNames.messsageFill)
-                } else {
-                    iconName = ImageButtonNames.message
-                }
-                self.showIconComments.onNext(iconName)
-                if isRefresh {
-                    self.endRefreshing.onNext(())
-                }
-                self.changeColorLabelsHt.onNext(())
-                self.catalogGroup = res.response?.catalogGroupName ?? String()
-            }
-        }, onError: { [weak self] error in
-            guard let self = self else { return }
-            if self.needsRefresh {
-                self.loading.onNext(false)
-                self.needsRefresh.toggle()
-                print(error.localizedDescription)
-            }
-            if isRefresh {
-                self.endRefreshing.onNext(())
-            }
-            self.showAlert.onNext(CommonStrings.formulaDetailCouldNotBeLoaded)
+            let message = MessageToChangeStatus(
+                message: CommonStrings.doYouWantToFinishTheOrder, typeOfStatus: StatusNameConstants.finishedStatus)
+            self.showAlertConfirmation.onNext(message)
         }).disposed(by: self.disposeBag)
     }
+
+    func processBtnBinding() {
+        self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            let message = MessageToChangeStatus(
+                message: CommonStrings.confirmationMessageProcessStatus,
+                typeOfStatus: StatusNameConstants.inProcessStatus)
+            self.showAlertConfirmation.onNext(message)
+        }).disposed(by: disposeBag)
+    }
+
+    func pendingBtnbinding() {
+        self.pendingButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            let message = MessageToChangeStatus(message: CommonStrings.confirmationMessagePendingStatus,
+                                                typeOfStatus: StatusNameConstants.penddingStatus)
+            self.showAlertConfirmation.onNext(message)
+        }).disposed(by: self.disposeBag)
+    }
+
+    func seeLotsBtnBinding() {
+        self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
+            guard let self = self else { return }
+            self.goToSeeLotsViewController.onNext(())
+        }).disposed(by: self.disposeBag)
+    }
+
+    func getOrdenDetail(isRefresh: Bool = false) {
+        if needsRefresh { loading.onNext(true) }
+        networkManager.getOrdenDetail(self.orderId)
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: {[weak self] res in
+                guard let self = self else { return }
+                self.onSuccessOrderDetail(response: res, isRefresh)
+            }, onError: { [weak self] _ in
+                guard let self = self else { return }
+                self.onFaliedOrderDetail(isRefresh)
+            }).disposed(by: self.disposeBag)
+    }
+
+    func onSuccessOrderDetail(response: OrderDetailResponse, _ isRefresh: Bool) {
+        if let order = response.response, let details = order.details {
+            orderDetailData.accept([order])
+            tableData.onNext(details)
+            auxTabledata = details
+            tempOrderDetailData = order
+            needsRefresh(needsRefresh)
+            sumFormula.accept(self.sum(tableDetails: details))
+            setComments(order: order)
+            endRefreshingAction(isRefresh)
+            changeColorLabelsHt.onNext(())
+            catalogGroup = order.catalogGroupName ?? String()
+        }
+    }
+
+    func onFaliedOrderDetail(_ isRefresh: Bool) {
+        self.needsRefresh(self.needsRefresh)
+        self.endRefreshingAction(isRefresh)
+        self.showAlert.onNext(CommonStrings.formulaDetailCouldNotBeLoaded)
+    }
+
+    func needsRefresh(_ needsRefresh: Bool) {
+        if needsRefresh {
+            self.loading.onNext(false)
+            self.needsRefresh.toggle()
+        }
+    }
+
+    func endRefreshingAction(_ isRefresh: Bool) {
+        if isRefresh {
+            self.endRefreshing.onNext(())
+        }
+    }
+
+    func setComments(order: OrderDetail) {
+        var iconName = ImageButtonNames.message
+        if let comments = order.comments {
+           iconName = (comments.trimmingCharacters(in: .whitespaces).isEmpty ?
+                       ImageButtonNames.message : ImageButtonNames.messsageFill)
+        }
+        showIconComments.onNext(iconName)
+    }
+
     func terminateOrChangeStatusOfAnOrder(actionType: String) {
         switch actionType {
         case StatusNameConstants.finishedStatus:        // Realiza el proceso para terminar la orden
@@ -224,11 +257,9 @@ class OrderDetailViewModel {
                 }
                 self.showAlert.onNext(messageConcat)
             }, onError: { [weak self] _ in
-
                 guard let self = self else { return }
                 self.loading.onNext(false)
                 self.showAlert.onNext(Constants.Errors.errorData.rawValue)
-
             }).disposed(by: disposeBag)
     }
 

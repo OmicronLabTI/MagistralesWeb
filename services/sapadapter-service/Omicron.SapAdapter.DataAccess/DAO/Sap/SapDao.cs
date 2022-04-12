@@ -1186,6 +1186,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<int> GetCountOrdersWIthDetailByDocNumDxpJoinProduct(string DocNumDxp)
+        {
+            var orderByDocNum = await this.RetryQuery<CompleteOrderModel>(this.GetAllOrdersWithDetailQuery().AsNoTracking().Where(x => x.DocNumDxp == DocNumDxp));
+            return orderByDocNum.GroupBy(x => x.DocNum).Count();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<OrderModel>> GetOrderModelByDocDateJoinDoctor(DateTime initDate, DateTime endDate)
         {
             var query = (from order in this.databaseContext.OrderModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate)

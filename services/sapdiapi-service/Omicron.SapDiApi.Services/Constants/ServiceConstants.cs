@@ -83,7 +83,7 @@ namespace Omicron.SapDiApi.Services.Constants
         /// <summary>
         /// Select manual exit 
         /// </summary>
-        public const string FindManualExit = "SELECT ItemCode, LineNum, PlannedQty, warehouse FROM wor1 where docentry={0} and issuetype='M'";
+        public const string FindManualExit = "SELECT ItemCode, LineNum, PlannedQty, warehouse, IssuedQty ConsumidoQty FROM wor1 where docentry={0} and issuetype='M'";
 
         /// <summary>
         /// Select batch code by item code, warehouse and quantity.
@@ -154,6 +154,11 @@ namespace Omicron.SapDiApi.Services.Constants
         /// Fail reason.
         /// </summary>
         public const string FailReasonNotGetExitCreated = "No se ha podido generar la entrega de componentes a producción para la orden de fabricación {0}.";
+        
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailConsumedQuantity = "No es posible finalizar la siguiente orden {0}, la cantidad a consumir ya cuenta con un registro";
 
         /// <summary>
         /// Fail reason.
@@ -183,7 +188,7 @@ namespace Omicron.SapDiApi.Services.Constants
         /// <summary>
         /// Select retroactive issue for production order detail.
         /// </summary>
-        public const string GetRetroactiveIssuesInProductionOrder = "SELECT ItemCode, LineNum, PlannedQty, warehouse FROM wor1 where docentry = {0} and issuetype = 'B'";
+        public const string GetRetroactiveIssuesInProductionOrder = "SELECT ItemCode, LineNum, PlannedQty, warehouse, IssuedQty ConsumidoQty FROM wor1 where docentry = {0} and issuetype = 'B'";
 
         /// <summary>
         /// Get available product quantity in warehouse.
@@ -260,6 +265,11 @@ namespace Omicron.SapDiApi.Services.Constants
         /// the total values.
         /// </summary>
         public const string IsNotPackage = "N";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const int ComentariosEcommerceMaxLength = 254;
 
         /// <summary>
         /// Gets the status of the order.
