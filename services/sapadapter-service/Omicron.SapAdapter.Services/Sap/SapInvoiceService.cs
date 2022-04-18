@@ -375,7 +375,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 References = address.References,
                 Telephone = invoiceHeader.DoctorPhoneNumber,
                 EstablishmentName = address.EtablishmentName,
-                ResponsibleDoctor = address.ResponsibleDoctor,
+                ResponsibleDoctor = ServiceShared.CalculateTernary(string.IsNullOrEmpty(address.ResponsibleDoctor), invoiceHeader.Medico, address.ResponsibleDoctor),
                 DestinyEmail = invoiceHeader.ClientEmail,
                 SalesPersonEmail = salesPerson.Email.ValidateNull(),
                 SalesPrsonName = $"{salesPerson.FirstName.ValidateNull()} {salesPerson.LastName.ValidateNull()}".Trim(),
