@@ -373,7 +373,6 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.IsNotNull(result);
         }
 
-
         /// <summary>
         /// Get the order with details.
         /// </summary>

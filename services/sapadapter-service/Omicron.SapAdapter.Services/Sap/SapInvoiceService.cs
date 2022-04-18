@@ -362,6 +362,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(new List<int> { invoiceHeader.SalesPrsonId })).FirstOrDefault();
             salesPerson ??= new SalesPersonModel();
 
+            var doctorPrescription = (await ServiceShared.GetDoctors(this.doctorService, new List<string> { invoiceHeader.CardCode })).FirstOrDefault();
+            doctorPrescription ??= new DoctorPrescriptionInfoModel();
+
             var model = new InvoiceDeliverModel
             {
                 Address = invoiceHeader.Address,
@@ -375,12 +378,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 References = address.References,
                 Telephone = invoiceHeader.DoctorPhoneNumber,
                 EstablishmentName = address.EtablishmentName,
-                ResponsibleDoctor = ServiceShared.CalculateTernary(string.IsNullOrEmpty(address.ResponsibleDoctor), invoiceHeader.Medico, address.ResponsibleDoctor),
+                ResponsibleDoctor = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctorPrescription.DoctorName), invoiceHeader.Medico, doctorPrescription.DoctorName),
                 DestinyEmail = invoiceHeader.ClientEmail,
                 SalesPersonEmail = salesPerson.Email.ValidateNull(),
                 SalesPrsonName = $"{salesPerson.FirstName.ValidateNull()} {salesPerson.LastName.ValidateNull()}".Trim(),
                 SalesOrders = JsonConvert.SerializeObject(new List<string> { invoiceHeader.DocNumDxp }),
-                Contact = address.Contact,
+                Contact = address.Contact.ValidateNull(),
             };
 
             var isinvoiceLocal = ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, model.Address, dxpTransactions) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode);
