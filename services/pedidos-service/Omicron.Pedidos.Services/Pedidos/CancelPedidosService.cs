@@ -244,7 +244,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var finalStatusAlmacen = ServiceShared.CalculateTernary(validation, statusAlmacen, statusAlmacenDefault);
             var finalStatus = ServiceShared.CalculateTernary(validation, status, statusDefault);
 
-            return new Tuple<string, string>(finalStatusAlmacen, finalStatus);
+            return new Tuple<string, string>(finalStatus, finalStatusAlmacen);
         }
 
         /// <summary>
