@@ -105,7 +105,7 @@ namespace Omicron.SapAdapter.Services.Sap
             payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
 
             var addressesToFind = deliveryDetails.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.DeliveryAddressId }).DistinctBy(x => x.CardCode).ToList();
-            var doctorsData = (await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == deliveryDetails.FirstOrDefault().DeliveryAddressId);
+            var doctorsData = (await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == deliveryDetails.FirstOrDefault().DeliveryAddressId);
             doctorsData ??= new DoctorDeliveryAddressModel { Contact = deliveryDetails.FirstOrDefault().Medico };
 
             var dataToReturn = new SalesModel();
