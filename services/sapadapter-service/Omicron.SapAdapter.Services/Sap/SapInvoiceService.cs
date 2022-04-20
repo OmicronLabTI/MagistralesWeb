@@ -83,7 +83,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoicesId = deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
 
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(invoicesId)).ToList();
-            invoiceHeaders = invoiceHeaders.Where(x => ServiceShared.CalculateOr(string.IsNullOrEmpty(x.Refactura), x.Refactura != ServiceConstants.IsRefactura)).ToList();
+            invoiceHeaders = invoiceHeaders.Where(x => ServiceShared.CalculateAnd(ServiceShared.CalculateOr(string.IsNullOrEmpty(x.Refactura), x.Refactura != ServiceConstants.IsRefactura), x.Canceled == "N")).ToList();
             invoiceHeaders = await this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
             var totalByFilters = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(invoiceHeaders.Select(x => x.InvoiceId).ToList())).ToList();
@@ -124,10 +124,15 @@ namespace Omicron.SapAdapter.Services.Sap
             var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).GetPaymentBydocNumDxp(invoiceDetails.First().InvoiceHeader.DocNumDxp);
 
             var invoiceHeader = invoiceDetails.FirstOrDefault();
+
+            var addressesToFind = new List<GetDoctorAddressModel> { new GetDoctorAddressModel { CardCode = invoiceHeader.InvoiceHeader.CardCode, AddressId = invoiceHeader.InvoiceHeader.ShippingAddressName } };
+            var doctorData = (await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == invoiceHeader.InvoiceHeader.ShippingAddressName);
+            doctorData ??= new DoctorDeliveryAddressModel { Contact = invoiceHeader.Medico };
+
             var invoiceToReturn = new InvoiceSaleHeaderModel
             {
                 Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoiceHeader.InvoiceHeader.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
-                Client = invoiceHeader.Cliente,
+                Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctorData.Contact), invoiceHeader.InvoiceHeader.Medico, doctorData.Contact),
                 Doctor = invoiceHeader.Medico ?? string.Empty,
                 Invoice = invoiceHeader.InvoiceHeader.DocNum,
                 DocEntry = invoiceHeader.InvoiceHeader.InvoiceId,
@@ -291,6 +296,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var deliveryCompanies = (await this.sapDao.GetDeliveryCompanyById(invoiceHeaderOrdered.Select(x => x.TransportCode).ToList())).ToList();
             var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(invoiceHeaderOrdered.Select(x => x.SalesPrsonId).ToList())).ToList();
+
+            var addressesToFind = invoiceHeaderOrdered.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.ShippingAddressName }).ToList();
+            var doctorData = await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind);
+
             invoiceHeaderOrdered.ForEach(x =>
             {
                 var details = invoicesDetails.Where(y => y.InvoiceId == x.InvoiceId).ToList();
@@ -303,11 +312,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 var payment = payments.GetPaymentBydocNumDxp(x.DocNumDxp);
                 var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
 
+                var doctor = doctorData.FirstOrDefault(y => y.DoctorId == x.CardCode && y.AddressId == x.ShippingAddressName);
+                doctor ??= new DoctorDeliveryAddressModel { Contact = x.Cliente };
+
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.TransportName = company.TrnspName;
 
-                //// ToDo descomentar linea siguiente si hay deploy magis a prod antes que dxp
-                //// x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoId).Distinct().ToList());
+                x.Cliente = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctor.Contact), x.Medico, doctor.Contact);
                 x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoDxpId?.ToUpper()).Distinct().ToList());
                 x.TotalSaleOrder = saleOrders.Select(y => y.PedidoId).Distinct().Count();
                 x.SalesPrsonEmail = salePerson.Email.ValidateNull();

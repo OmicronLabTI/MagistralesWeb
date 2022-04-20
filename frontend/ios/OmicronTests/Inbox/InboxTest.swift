@@ -10,6 +10,7 @@ import XCTest
 import RxSwift
 import Resolver
 import RxDataSources
+import Moya
 
 @testable import OmicronLab
 
@@ -23,6 +24,10 @@ class InboxTest: XCTestCase {
     var orderItemCodeEmpty: Order?
     var orderTest1: Order?
     var orderTest2: Order?
+
+    var provider: MoyaProvider<ApiService>!
+    var statusCode = 200
+    var testData = Data()
     @Injected var networkManager: NetworkManager
     @Injected var inboxVM: InboxViewModel
 
@@ -63,6 +68,11 @@ class InboxTest: XCTestCase {
             tag: "PERSONALIZADA", plannedQuantity: 1, startDate: "22/09/2020", finishDate: "30/09/2020",
             descriptionProduct: "Aceite de Lima 20%, Vaselina", statusId: 1, itemCode: "2573   30 ML",
             productCode: nil, destiny: "Local", hasMissingStock: false, finishedLabel: false)
+
+        provider = MoyaProvider<ApiService>(
+            endpointClosure: customEndpointClosure, stubClosure: MoyaProvider.immediatelyStub)
+        statusCode = 200
+        testData = Data()
     }
     override func tearDown() {
         print("XXXX tearDown InboxTest")
@@ -73,6 +83,13 @@ class InboxTest: XCTestCase {
         order2 = nil
         orderTest1 = nil
         orderTest2 = nil
+    }
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
     }
     // MARK: - TEST FUNCTIONS
     func testChangingAnOrderToStatusProcessSuccess() {
@@ -86,7 +103,7 @@ class InboxTest: XCTestCase {
         let orderToChangeToChangeStatus = ChangeStatusRequest(userId: userId, orderId: orderId, status: statusToChange)
         arrayOfOrdersToChangeStatusToProgress.append(orderToChangeToChangeStatus)
         // When
-        networkManager.changeStatusOrder(changeStatusRequest: arrayOfOrdersToChangeStatusToProgress).subscribe(onNext: { res in
+        networkManager.changeStatusOrder(arrayOfOrdersToChangeStatusToProgress).subscribe(onNext: { res in
             // Then
             XCTAssertNotNil(res)
             XCTAssertNotNil(res.response)
@@ -170,13 +187,17 @@ class InboxTest: XCTestCase {
         inboxViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.errorToChangeStatus)
         }).disposed(by: disposeBag!)
-        inboxViewModel!.changeStatus(indexPath: [indexPath], typeOfStatus: typeStatus, needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        inboxViewModel?.networkManager = NetworkManager(provider: provider)
+        inboxViewModel!.changeStatus(indexPath: [indexPath], typeOfStatus: typeStatus)
     }
 
     func testGetConectWhenCodeIs500() {
         inboxViewModel?.hasConnection.subscribe(onNext: { res in
             XCTAssertFalse(res)
         }).disposed(by: disposeBag!)
-        inboxViewModel?.getConnection(needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        inboxViewModel?.networkManager = NetworkManager(provider: provider)
+        inboxViewModel?.getConnection()
     }
 }

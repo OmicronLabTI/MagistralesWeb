@@ -33,33 +33,47 @@ class RootViewModel {
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
     init() {
+        logoutDidTapBinding()
+        searchFilterBinding()
+    }
+    // MARK: - Functions
+    func logoutDidTapBinding() {
         self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
-            self?.loading.onNext(true)
+            guard let self = self else { return }
+            self.loading.onNext(true)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 Persistence.shared.removePersistenceData()
-                self?.goToLoginViewController.onNext(())
-                self?.loading.onNext(false)
+                self.goToLoginViewController.onNext(())
+                self.loading.onNext(false)
             }
         }).disposed(by: self.disposeBag)
+    }
+
+    func searchFilterBinding() {
         self.searchFilter.subscribe(onNext: { [weak self] text in
-            self?.searchStore = text
+            guard let self = self else { return }
+            self.searchStore = text
             if text.count == 0 {
-                self?.needSearch = false
-                self?.dataFilter.onNext(nil)
+                self.needSearch = false
+                self.dataFilter.onNext(nil)
                 return
             }
-            self?.needSearch = true
-            let orders = self?.sections.map({ $0.orders }).reduce([], +)
-            let filter = orders?.filter({ order in
-                guard let orderId = order.productionOrderId else { return false }
-                guard let baseDocument = order.baseDocument else { return false }
-                return String(orderId).contains(text) || String(baseDocument).contains(text)
-            })
-            self?.dataFilter.onNext(filter ?? [])
+            self.needSearch = true
+            let orders = self.sections.map({ $0.orders }).reduce([], +)
+            let filter = self.getOrdersFilters(orders: orders, text: text)
+            self.dataFilter.onNext(filter)
         }).disposed(by: disposeBag)
     }
-    // MARK: - Functions
+
+    func getOrdersFilters(orders: [Order], text: String) -> [Order] {
+        return orders.filter({ order in
+            guard let orderId = order.productionOrderId else { return false }
+            guard let baseDocument = order.baseDocument else { return false }
+            return String(orderId).contains(text) || String(baseDocument).contains(text)
+        })
+    }
+
     func sectionOrderSwitched(statusId: Int, orders: [Order]) -> SectionOrder? {
         switch statusId {
         case 1:
@@ -98,45 +112,62 @@ class RootViewModel {
             if needsRefresh { self.loading.onNext(true) }
             chartViewModel.getWorkloads()
             removeSelecteds = needsRefresh
-            self.networkManager.getStatusList(userId: userId).subscribe(onNext: { [weak self] res in
-                guard let self = self else { return }
-                let sections = res.response?.status.map({ status in
-                    return status.map({ detail -> SectionOrder? in
-                        let orders = detail.orders ?? []
-                        if let statusId = detail.statusId {
-                            return self.sectionOrderSwitched(statusId: statusId, orders: orders)
-                        }
-                        return nil
-                    })
-                })?.compactMap({ $0 }) ?? []
-                self.sections = sections
-                self.dataStatus.onNext(sections)
-                self.refreshSelection.onNext(sections.count)
-                if self.needsRefresh {
-                    self.loading.onNext(false)
-                    self.needsRefresh.toggle()
-                }
-                if isUpdate {
-                    self.showRefreshControl.onNext(())
-                }
-                if self.needSearch {
-                    self.refreshSearch.onNext(self.searchStore)
-                }
-                }, onError: { [weak self] err in
-                    guard let self = self else { return }
-                    print(err)
-                    self.showRefreshControl.onNext(())
-                    self.error.onNext(CommonStrings.errorLoadingOrders)
-                    if self.needsRefresh {
-                        self.loading.onNext(false)
-                        self.needsRefresh.toggle()
-                    }
-            }).disposed(by: disposeBag)
+            getOrdersService(userId: userId, isUpdate: isUpdate)
         } else {
             self.error.onNext(CommonStrings.errorLoadingOrders)
             self.showRefreshControl.onNext(())
         }
     }
+
+    func getOrdersService(userId: String, isUpdate: Bool) {
+        self.networkManager.getStatusList(userId).subscribe(onNext: { [weak self] res in
+            guard let self = self else { return }
+            let sections = self.getSections(res: res)
+            self.sections = sections
+            self.dataStatus.onNext(sections)
+            self.refreshSelection.onNext(sections.count)
+            self.needRefreshAction()
+            self.needIsUpdate(isUpdate: isUpdate)
+            self.needSearchAction(self.needSearch, self.searchStore)
+        }, onError: { [weak self] _ in
+            guard let self = self else { return }
+            self.showRefreshControl.onNext(())
+            self.error.onNext(CommonStrings.errorLoadingOrders)
+            self.needRefreshAction()
+        }).disposed(by: disposeBag)
+    }
+
+    func needRefreshAction() {
+        if self.needsRefresh {
+            self.loading.onNext(false)
+            self.needsRefresh.toggle()
+        }
+    }
+
+    func needIsUpdate(isUpdate: Bool) {
+        if isUpdate {
+            self.showRefreshControl.onNext(())
+        }
+    }
+
+    func needSearchAction(_ needSearch: Bool, _ searchStore: String) {
+        if needSearch {
+            self.refreshSearch.onNext(searchStore)
+        }
+    }
+
+    func getSections(res: StatusResponse) -> [SectionOrder] {
+        return res.response?.status.map({ status in
+            return status.map({ detail -> SectionOrder? in
+                let orders = detail.orders ?? []
+                if let statusId = detail.statusId {
+                    return self.sectionOrderSwitched(statusId: statusId, orders: orders)
+                }
+                return nil
+            })
+        })?.compactMap({ $0 }) ?? []
+    }
+
     func resetFilter() {
         self.dataFilter.onNext(nil)
     }

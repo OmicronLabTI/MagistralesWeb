@@ -13,6 +13,12 @@ class ConnectModel {
     var success: String?
     var response: [String]?
     required init?(map: Map) {}
+
+    init(code: Int, success: String, response: [String]) {
+        self.code = code
+        self.success = success
+        self.response = response
+    }
 }
 
 extension ConnectModel: Mappable {

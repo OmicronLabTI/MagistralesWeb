@@ -117,12 +117,17 @@ class RootViewController: UIViewController {
     func rootViewModelBinding() {
         // Cuando se presiona el botón de cerrar sesión  se redirije a Login
         self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
-            let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
-            let loginViewController = storyboard.instantiateViewController(
-                identifier: ViewControllerIdentifiers.loginViewController) as? LoginViewController
-            UIApplication.shared.windows.first?.rootViewController = loginViewController
-            UIApplication.shared.windows.first?.makeKeyAndVisible()
-            Resolver.cached.reset()
+            if let window = UIApplication.shared.windows.first {
+                let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+                let loginViewController = storyboard.instantiateViewController(
+                    identifier: ViewControllerIdentifiers.loginViewController) as? LoginViewController
+                UIApplication.shared.windows.first?.rootViewController = loginViewController
+                UIApplication.shared.windows.first?.makeKeyAndVisible()
+                Resolver.cached.reset()
+                let options: UIView.AnimationOptions = .transitionCrossDissolve
+                let duration: TimeInterval = 0.5
+                UIView.transition(with: window, duration: duration, options: options, animations: {})
+            }
         }).disposed(by: self.disposeBag)
         // Muestra los datos de la sección "Mis ordenes"
         rootViewModel.dataStatus.bind(to: viewTable.rx.items(
@@ -147,7 +152,7 @@ class RootViewController: UIViewController {
     func rootViewModelBinding2() {
         logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: disposeBag)
         kpiButton.rx.tap.bind(to: inboxViewModel.viewKPIDidPressed).disposed(by: disposeBag)
-        //Selecciona el primer elemento de estatus cuando termina la carga de datos
+        // Selecciona el primer elemento de estatus cuando termina la carga de datos
         self.rootViewModel.refreshSelection.withLatestFrom(self.rootViewModel.selectedRow)
             .subscribe(onNext: { [weak self] row in
                 guard let self = self else { return }

@@ -18,7 +18,7 @@ class FileManagerApp {
         let fileName = name
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         guard let data = signature.jpegData(compressionQuality: 1) else { return }
-        //Checks if file exists, removes it if so.
+        // Checks if file exists, removes it if so.
         if FileManager.default.fileExists(atPath: fileURL.path) {
             do {
                 try FileManager.default.removeItem(atPath: fileURL.path)

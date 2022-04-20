@@ -97,6 +97,14 @@ class UtilsManager {
         messageConcat += error.listItems?.joined(separator: "\n") ?? CommonStrings.empty
         return messageConcat
     }
+
+    func getDataFor(resourse: String, withExtension: String) -> Data {
+        guard let url = Bundle.main.url(forResource: resourse, withExtension: withExtension),
+              let data = try? Data(contentsOf: url) else {
+                  return Data()
+              }
+        return data
+    }
 }
 open class DecimalTransform: TransformType {
     public typealias Object = Decimal

@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import RxDataSources
+import Moya
 
 @testable import OmicronLab
 class ExtensionInboxTest3: XCTestCase {
@@ -16,6 +17,9 @@ class ExtensionInboxTest3: XCTestCase {
     var disposeBag: DisposeBag?
     var order1: Order?
     var expectedResult: String?
+    var provider: MoyaProvider<ApiService>!
+    var statusCode = 200
+    var testData = Data()
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         inboxViewModel = InboxViewModel()
@@ -30,6 +34,9 @@ class ExtensionInboxTest3: XCTestCase {
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
             hasMissingStock: false, finishedLabel: false)
         expectedResult = "http://172.30.5.49:5002/Pruebas_ArchivosOmicronTemp/SaleOrders/Order76260.pdf"
+        provider = MoyaProvider<ApiService>(
+            endpointClosure: customEndpointClosure,
+            stubClosure: MoyaProvider.immediatelyStub)
     }
 
     override func tearDownWithError() throws {
@@ -38,6 +45,14 @@ class ExtensionInboxTest3: XCTestCase {
         disposeBag = nil
         order1 = nil
         expectedResult = nil
+    }
+
+    func customEndpointClosure(_ target: ApiService) -> Endpoint {
+        return Endpoint(url: URL(target: target).absoluteString,
+                        sampleResponseClosure: { .networkResponse(self.statusCode, self.testData) },
+                        method: target.method,
+                        task: target.task,
+                        httpHeaderFields: target.headers)
     }
 
     func testFinishedDidTapBinding() {
@@ -68,7 +83,7 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.orderURLPDF.subscribe(onNext: { [weak self] res in
             XCTAssertEqual(res, self?.expectedResult)
         }).disposed(by: disposeBag!)
-        inboxViewModel?.postOrderPDf(orders: [orderID], needsError: false)
+        inboxViewModel?.postOrderPDf(orders: [orderID])
     }
 
     func testPostPDFWhenCodeIs500() {
@@ -76,7 +91,9 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.errorPDF)
         }).disposed(by: disposeBag!)
-        inboxViewModel?.postOrderPDf(orders: [orderID], needsError: true)
+        statusCode = 500
+        inboxViewModel?.networkManager = NetworkManager(provider: provider)
+        inboxViewModel?.postOrderPDf(orders: [orderID])
     }
 
     func testCallFinishOrderService() {
@@ -87,7 +104,7 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.isUserInteractionEnabled.subscribe(onNext: { res in
             XCTAssertTrue(res)
         }).disposed(by: disposeBag!)
-        inboxViewModel?.callFinishOrderService(needsError: false, statusCode: 200, testData: Data())
+        inboxViewModel?.callFinishOrderService()
     }
 
     func testCallFinishOrderServiceWhenCodeIs500() {
@@ -98,14 +115,14 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, CommonStrings.errorFinishOrders)
         }).disposed(by: disposeBag!)
-        inboxViewModel?.callFinishOrderService(needsError: true, statusCode: 200, testData: Data())
+        inboxViewModel?.callFinishOrderService()
     }
 
     func testValidOrders() {
         let ordersSelelected = IndexPath(row: 0, section: 0)
         inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
 
-        inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected], needsError: false)
+        inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected])
     }
 
     func testValidOrderWhenCodeIs400() {
@@ -116,11 +133,10 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, expectedResult)
         }).disposed(by: disposeBag!)
-        guard let url = Bundle.main.url(forResource: "FinishOrdersErrorResponse", withExtension: "json"),
-            let data = try? Data(contentsOf: url) else {
-            return
-        }
-        inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected], needsError: true, statusCode: 200, testData: data)
+
+        testData = UtilsManager.shared.getDataFor(resourse: "FinishOrdersErrorResponse", withExtension: "json")
+        inboxViewModel?.networkManager = NetworkManager(provider: provider)
+        inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected])
     }
 
     func testValidOrderWhenCodeIs500() {
@@ -129,6 +145,15 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.showAlert.subscribe(onNext: { res in
             XCTAssertEqual(res, Constants.Errors.errorData.rawValue)
         }).disposed(by: disposeBag!)
-        inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected], needsError: true, statusCode: 500, testData: Data())
+        statusCode = 500
+        inboxViewModel?.networkManager = NetworkManager(provider: provider)
+        inboxViewModel?.validOrders(indexPathOfOrdersSelected: [ordersSelelected])
+    }
+
+    func testGetConnectModel() {
+        let model = ConnectModel(code: 200, success: "", response: [""])
+        XCTAssertNotNil(model)
+        XCTAssertEqual(model.code, 200)
+        XCTAssertEqual(model.response, [""])
     }
 }

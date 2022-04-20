@@ -81,5 +81,17 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The IsChecked.</value>
         public string DocNumDxp { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderDxpId.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public string CardCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderDxpId.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public string DeliveryAddressId { get; set; }
     }
 }

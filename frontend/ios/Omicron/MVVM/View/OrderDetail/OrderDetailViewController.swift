@@ -344,7 +344,7 @@ class OrderDetailViewController: UIViewController {
                                         typeFont: CommonStrings.bold)
         UtilsManager.shared.labelsStyle(label: self.htDescription, text: CommonStrings.description, fontSize: 19,
                                         typeFont: CommonStrings.bold)
-        self.initLabels()
+        self.productDescritionLabel.textColor = .white
         // Se cambian de color los Labels
         self.changeTextColorLabel(color: OmicronColors.ligthGray)
         self.productDescritionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
@@ -353,19 +353,7 @@ class OrderDetailViewController: UIViewController {
         self.infoView.backgroundColor = OmicronColors.ligthGray
         self.changeTextColorHtLabels(color: .white)
     }
-    func initLabels() {
-        self.codeDescriptionLabel.text = "Label"
-        self.containerDescriptionLabel.text = "Label"
-        self.tagDescriptionLabel.text = "Label"
-        self.documentBaseDescriptionLabel.text = "Label"
-        self.sumFormulaDescriptionLabel.text = "Label"
-        self.quantityPlannedDescriptionLabel.text = "Label"
-        self.startDateDescriptionLabel.text = "Label"
-        self.finishedDateDescriptionLabel.text = "Label"
-        self.destinyLabel.text = "Label"
-        self.productDescritionLabel.text = "Label"
-        self.productDescritionLabel.textColor = .white
-    }
+
     func changeTextColorLabel(color: UIColor) {
         self.codeDescriptionLabel.textColor = color
         self.containerDescriptionLabel.textColor = color
@@ -388,35 +376,36 @@ class OrderDetailViewController: UIViewController {
         self.titleLabel.textColor = color
     }
     func showButtonsByStatusType(statusType: String) {
+        var hideBtn = HideButtons(
+            process: true, finished: true, pending: true, addComp: true, save: true, seeBatches: true)
         switch statusType {
         case StatusNameConstants.assignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: false,
-                                             hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: true)
+            hideBtn = HideButtons(process: false, finished: true, pending: false,
+                                  addComp: true, save: true, seeBatches: true)
         case StatusNameConstants.inProcessStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: false,
-                                             hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
+            hideBtn = HideButtons(process: true, finished: false, pending: false,
+                                  addComp: false, save: true, seeBatches: false)
         case StatusNameConstants.penddingStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: false, hideFinishedBtn: true, hidePendinBtn: true,
-                                             hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            hideBtn = HideButtons(process: false, finished: true, pending: true,
+                                  addComp: true, save: true, seeBatches: false)
         case StatusNameConstants.finishedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: true, hidePendinBtn: true,
-                                             hideAddCompBtn: true, hideSaveBtn: true, hideSeeLotsBtn: false)
+            hideBtn = HideButtons(process: true, finished: true, pending: true,
+                                  addComp: true, save: true, seeBatches: false)
         case StatusNameConstants.reassignedStatus:
-            self.changeHidePropertyOfButtons(hideProcessBtn: true, hideFinishedBtn: false, hidePendinBtn: true,
-                                             hideAddCompBtn: false, hideSaveBtn: true, hideSeeLotsBtn: false)
-        default:
-            break
+            hideBtn = HideButtons(process: true, finished: false, pending: false,
+                                  addComp: false, save: true, seeBatches: false)
+        default: break
         }
+        self.changeHidePropertyOfButtons(hideBtn)
     }
-    // swiftlint:disable function_parameter_count
-    func changeHidePropertyOfButtons(hideProcessBtn: Bool, hideFinishedBtn: Bool, hidePendinBtn: Bool,
-                                     hideAddCompBtn: Bool, hideSaveBtn: Bool, hideSeeLotsBtn: Bool) {
-        self.processButton.isHidden = hideProcessBtn
-        self.finishedButton.isHidden = hideFinishedBtn
-        self.penddingButton.isHidden = hidePendinBtn
-        self.addComponentButton.isHidden = hideAddCompBtn
-        self.saveButton.isHidden = hideSaveBtn
-        self.seeLotsButton.isHidden = hideSeeLotsBtn
+
+    func changeHidePropertyOfButtons(_ hideBtns: HideButtons) {
+        self.processButton.isHidden = hideBtns.process
+        self.finishedButton.isHidden = hideBtns.finished
+        self.penddingButton.isHidden = hideBtns.pending
+        self.addComponentButton.isHidden = hideBtns.addComp
+        self.saveButton.isHidden = hideBtns.save
+        self.seeLotsButton.isHidden = hideBtns.seeBatches
     }
     func sendIndexToDelete(index: Int) {
         orderDetailViewModel.deleteItemFromTable(index: index)
@@ -435,11 +424,7 @@ class OrderDetailViewController: UIViewController {
 extension OrderDetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.selectionStyle = .none
-        if indexPath.row%2 == 0 {
-            cell.backgroundColor = OmicronColors.tableColorRow
-        } else {
-            cell.backgroundColor = .white
-        }
+        cell.backgroundColor  = indexPath.row%2 == 0 ? OmicronColors.tableColorRow : .white
     }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
         -> UISwipeActionsConfiguration? {

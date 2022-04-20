@@ -52,6 +52,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<List<OrderModel>> GetOrdersByIdJoinDoctor(List<int> pedidoID);
 
         /// <summary>
+        /// Get the orders.
+        /// </summary>
+        /// <returns>get the orders.</returns>
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetCountDxpOrdersByIds(List<string> dxpIds);
+
+        /// <summary>
         /// gets the details.
         /// </summary>
         /// <param name="pedidoId">PedidoID</param>
