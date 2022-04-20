@@ -18,9 +18,11 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
@@ -115,7 +117,13 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModel(payments)));
             this.sapDao = new SapDao(this.context, mockLog.Object);
-            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object, this.catalogService.Object, mockRedis.Object, mockProccessPayments.Object);
+
+            var doctorAddresses = new List<GetDoctorAddressModel>();
+            var doctorMock = new Mock<IDoctorService>();
+            doctorMock
+                .Setup(s => s.PostDoctors(It.IsAny<List<GetDoctorAddressModel>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModel(doctorAddresses)));
+            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object, this.catalogService.Object, mockRedis.Object, mockProccessPayments.Object, doctorMock.Object);
         }
 
         /// <summary>

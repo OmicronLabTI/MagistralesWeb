@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     using System.Collections.Generic;
     using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
 
@@ -72,5 +73,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public List<PaymentsDto> Payments { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public List<DoctorDeliveryAddressModel> DeliveryAddress { get; set; }
     }
 }
