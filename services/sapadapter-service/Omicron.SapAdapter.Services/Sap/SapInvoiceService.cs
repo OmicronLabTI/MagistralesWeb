@@ -126,7 +126,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceHeader = invoiceDetails.FirstOrDefault();
 
             var addressesToFind = new List<GetDoctorAddressModel> { new GetDoctorAddressModel { CardCode = invoiceHeader.InvoiceHeader.CardCode, AddressId = invoiceHeader.InvoiceHeader.ShippingAddressName } };
-            var doctorData = (await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == invoiceHeader.InvoiceHeader.ShippingAddressName);
+            var doctorData = (await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == invoiceHeader.InvoiceHeader.ShippingAddressName);
             doctorData ??= new DoctorDeliveryAddressModel { Contact = invoiceHeader.Medico };
 
             var invoiceToReturn = new InvoiceSaleHeaderModel
@@ -298,7 +298,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(invoiceHeaderOrdered.Select(x => x.SalesPrsonId).ToList())).ToList();
 
             var addressesToFind = invoiceHeaderOrdered.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.ShippingAddressName }).ToList();
-            var doctorData = await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind);
+            var doctorData = await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind);
 
             var doctorPrescription = await ServiceShared.GetDoctors(this.doctorService, invoiceHeaderOrdered.Select(x => x.CardCode).Distinct().ToList());
 

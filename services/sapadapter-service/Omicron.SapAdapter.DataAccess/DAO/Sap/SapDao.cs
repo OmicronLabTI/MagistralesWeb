@@ -826,6 +826,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              UpdateDate = invoice.UpdateDate,
                              IsPackage = invoice.IsPackage,
                              DocNumDxp = invoice.DocNumDxp,
+                             ShippingAddressName = invoice.ShippingAddressName,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -1442,6 +1443,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         Canceled = order.Canceled,
                         IsPackage = order.IsPackage,
                         DocNumDxp = order.DocNumDxp,
+                        ShippingAddressName = order.ShippingAddressName,
                     });
         }
 
@@ -1467,6 +1469,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          select new DeliverModel
                          {
                              Address = delivery.Address,
+                             ShippingAddressName = delivery.ShippingAddressName,
                              Canceled = delivery.Canceled,
                              CardCode = delivery.CardCode,
                              Cliente = dop.Address2 ?? string.Empty,
