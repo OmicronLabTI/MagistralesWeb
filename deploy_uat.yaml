@@ -27,11 +27,11 @@ spec:
             - containerPort: 8000
           resources:
             limits:
-              cpu: 500m
-              memory: 1Gi
+              cpu: 1243m
+              memory: 548Mi
             requests:
-              cpu: 25m
-              memory: 128Mi
+              cpu: 311m
+              memory: 137Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -69,11 +69,11 @@ spec:
             - containerPort: 8090
           resources:
             limits:
-              cpu: 128m
-              memory: 512Mi
+              cpu: 1413m
+              memory: 403Mi
             requests:
-              cpu: 25m
-              memory: 128Mi
+              cpu: 354m
+              memory: 101Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -111,11 +111,11 @@ spec:
             - containerPort: 9010
           resources:
             limits:
-              cpu: 100m
-              memory: 512Mi
+              cpu: 99m
+              memory: 218Mi
             requests:
-              cpu: 25m
-              memory: 128Mi
+              cpu: 23m
+              memory: 55Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -153,11 +153,11 @@ spec:
             - containerPort: 5101
           resources:
             limits:
-              cpu: 100m
-              memory: 512Mi
+              cpu: 168m
+              memory: 330Mi
             requests:
-              cpu: 25m
-              memory: 128Mi
+              cpu: 42m
+              memory: 83Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -200,11 +200,11 @@ spec:
             - containerPort: 5102
           resources:
             limits:
-              cpu: 100m
-              memory: 512Mi
+              cpu: 308m
+              memory: 1145Mi
             requests:
-              cpu: 25m
-              memory: 128Mi
+              cpu: 77m
+              memory: 287Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -252,11 +252,11 @@ spec:
             - containerPort: 5103
           resources:
             limits:
-              cpu: 100m
-              memory: 512Mi
+              cpu: 183m
+              memory: 2675Mi
             requests:
-              cpu: 25m
-              memory: 128Mi
+              cpu: 46m
+              memory: 669Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -294,11 +294,11 @@ spec:
             - containerPort: 5104
           resources:
             limits:
-              cpu: 100m
-              memory: 512Mi
+              cpu: 124m
+              memory: 97Mi
             requests:
-              cpu: 25m
-              memory: 128Mi
+              cpu: 31m
+              memory: 25Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -331,10 +331,10 @@ spec:
             - containerPort: 5105
           resources:
             limits:
-              cpu: 100m
-              memory: 512Mi
+              cpu: 45m
+              memory: 178Mi
             requests:
-              cpu: 25m
-              memory: 128Mi
+              cpu: 12m
+              memory: 45Mi
       imagePullSecrets:
         - name: pullsecret

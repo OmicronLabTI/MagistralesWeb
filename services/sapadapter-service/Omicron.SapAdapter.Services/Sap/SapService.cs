@@ -106,8 +106,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
             }
 
-            ////var listUsers = await this.GetUsers(userOrders);
-            var listUsers = new List<UserModel>();
+            var listUsers = await this.GetUsers(userOrders);
             orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
             var offset = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
