@@ -70,7 +70,7 @@ spec:
               cpu: 1413m
               memory: 409Mi
             requests:
-              cpu: 1130m
+              cpu: 300m
               memory: 327Mi
       imagePullSecrets:
         - name: pullsecret
