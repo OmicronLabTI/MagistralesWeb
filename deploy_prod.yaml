@@ -29,7 +29,7 @@ spec:
               cpu: 859m
               memory: 563Mi
             requests:
-              cpu: 687m
+              cpu: 430m
               memory: 450Mi
       imagePullSecrets:
         - name: pullsecret
@@ -70,7 +70,7 @@ spec:
               cpu: 1413m
               memory: 409Mi
             requests:
-              cpu: 300m
+              cpu: 707m
               memory: 327Mi
       imagePullSecrets:
         - name: pullsecret
@@ -111,7 +111,7 @@ spec:
               cpu: 170m
               memory: 185Mi
             requests:
-              cpu: 136m
+              cpu: 85m
               memory: 148Mi
       imagePullSecrets:
         - name: pullsecret
@@ -152,7 +152,7 @@ spec:
               cpu: 168m
               memory: 460Mi
             requests:
-              cpu: 134m
+              cpu: 84m
               memory: 368Mi
       imagePullSecrets:
         - name: pullsecret
@@ -203,7 +203,7 @@ spec:
               cpu: 1233m
               memory: 1396Mi
             requests:
-              cpu: 400m
+              cpu: 617m
               memory: 1116Mi
       imagePullSecrets:
         - name: pullsecret
@@ -279,7 +279,7 @@ spec:
               cpu: 368m
               memory: 3546Mi
             requests:
-              cpu: 294m
+              cpu: 184m
               memory: 2837Mi
       imagePullSecrets:
         - name: pullsecret
@@ -320,7 +320,7 @@ spec:
               cpu: 102m
               memory: 102Mi
             requests:
-              cpu: 81m
+              cpu: 51m
               memory: 81Mi
       imagePullSecrets:
         - name: pullsecret
@@ -356,7 +356,7 @@ spec:
               cpu: 30m
               memory: 198Mi
             requests:
-              cpu: 24m
+              cpu: 15m
               memory: 158Mi
       imagePullSecrets:
         - name: pullsecret
