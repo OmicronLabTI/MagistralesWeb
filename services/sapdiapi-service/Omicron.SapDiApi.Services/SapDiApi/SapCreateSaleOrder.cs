@@ -149,7 +149,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             attachment.Lines.FileName = Path.GetFileNameWithoutExtension(pathfile);
             attachment.Lines.FileExtension = Path.GetExtension(pathfile).Substring(1);
             attachment.Lines.SourcePath = Path.GetDirectoryName(pathfile);
-            attachment.Lines.Override = BoYesNoEnum.tYES;            
+            attachment.Lines.Override = BoYesNoEnum.tYES;
 
             if (attachment.Add() != 0)
             {
