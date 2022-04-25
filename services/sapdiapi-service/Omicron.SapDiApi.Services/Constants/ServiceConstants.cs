@@ -272,6 +272,11 @@ namespace Omicron.SapDiApi.Services.Constants
         public const int ComentariosEcommerceMaxLength = 254;
 
         /// <summary>
+        /// constant to get prescription id.
+        /// </summary>
+        public const string QueryToGetPrescriptionId = "SELECT AbsEntry as PrescriptionId, FileName from  atc1 where FileName = {0} and FileExt = 'pdf';";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
