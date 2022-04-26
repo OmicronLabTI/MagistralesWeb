@@ -125,7 +125,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             await Task.WhenAll(users.Select(async user =>
             {
-                var pedidosId = userOrders.Where(x => x.Userid.Equals(user.Id) && !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).Distinct().ToList();
+                var pedidosId = userOrders.Where(x => x.Userid.Equals(user.Id) && x.IsProductionOrder).Select(y => int.Parse(y.Productionorderid)).Distinct().ToList();
                 var orders = await sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetUsersByOrdersById);
                 var ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(JsonConvert.SerializeObject(orders.Response));
 
@@ -155,14 +155,31 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="users">the ussers with item codes.</param>
         /// <param name="orderDetail">the order with details.</param>
         /// <param name="userOrders">The user orders.</param>
+        /// <param name="listRelation">list relation.</param>
         /// <returns>the data to return.</returns>
-        public static Tuple<Dictionary<int, string>, List<int>> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders)
+        public static Tuple<Dictionary<int, string>, List<int>> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders, List<RelationDxpDocEntryModel> listRelation)
         {
             var dictUserPedido = new Dictionary<int, string>();
             var listOrdersWithNoUser = new List<int>();
 
             foreach (var p in orderDetail)
             {
+                var ordersByDxp = listRelation.FirstOrDefault(x => x.DxpDocNum == p.Order.DocNumDxp);
+                ordersByDxp ??= new RelationDxpDocEntryModel { DocNum = new List<RelationOrderAndTypeModel>() };
+                var pedidoIds = ordersByDxp.DocNum.Select(x => x.DocNum.ToString()).ToList();
+
+                var ordersByUser = userOrders.Where(y => pedidoIds.Contains(y.Salesorderid)).ToList();
+
+                if (ordersByDxp.DocNum.Any() && ordersByUser.Any() && ordersByDxp.DocNum.Any(x => x.OrderType == p.Order.OrderType))
+                {
+                    dictUserPedido.Add(p.Order.DocNum, ordersByUser.FirstOrDefault().Userid);
+                    users.ForEach(x =>
+                    {
+                        x.TotalCount = ServiceShared.CalculateTernary(x.User.Id.Equals(dictUserPedido[p.Order.DocNum]), p.Detalle.Where(z => z.QtyPlanned.HasValue).Sum(y => y.QtyPlanned.Value) + x.TotalCount, x.TotalCount);
+                    });
+                    continue;
+                }
+
                 if (ServiceShared.CalculateAnd(p.Order.OrderType != ServiceConstants.Mix, !users.Any(x => x.User.Classification == p.Order.OrderType)))
                 {
                     listOrdersWithNoUser.Add(p.Order.DocNum);

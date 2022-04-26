@@ -79,15 +79,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> AutomaticAssign(AutomaticAssingModel assignModel)
         {
-            var invalidStatus = new List<string> { ServiceConstants.Finalizado, ServiceConstants.Pendiente, ServiceConstants.Cancelled, ServiceConstants.Entregado, ServiceConstants.Almacenado };
-            var orders = await this.sapAdapter.PostSapAdapter(assignModel.DocEntry, ServiceConstants.GetOrderWithDetail);
+            var validStatus = new List<string> { ServiceConstants.Asignado, ServiceConstants.Reasignado, ServiceConstants.Proceso, ServiceConstants.Terminado };
+            var orders = await this.sapAdapter.PostSapAdapter(assignModel.DocEntry, ServiceConstants.GetOrderWithDetailDxp);
             var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var relationships = JsonConvert.DeserializeObject<List<RelationDxpDocEntryModel>>(JsonConvert.SerializeObject(orders.Comments));
             var sapOrderTypes = ordersSap.Select(x => x.Order.OrderType).Distinct().ToList();
 
             var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
             users = ServiceShared.CalculateTernary(sapOrderTypes.Contains(ServiceConstants.Mix), users, users.Where(x => sapOrderTypes.Contains(x.Classification)).ToList());
-            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(users.Select(x => x.Id).ToList())).ToList();
-            userOrders = userOrders.Where(x => !invalidStatus.Contains(x.Status)).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderByUserIdAndStatus(users.Select(x => x.Id).ToList(), validStatus)).ToList();
             var validUsers = await AsignarLogic.GetValidUsersByLoad(users, userOrders, this.sapAdapter);
 
             if (!validUsers.Any())
@@ -95,7 +95,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 throw new CustomServiceException(ServiceConstants.ErrorQfbAutomatico, System.Net.HttpStatusCode.BadRequest);
             }
 
-            var userSaleOrder = AsignarLogic.GetValidUsersByFormula(validUsers, ordersSap, userOrders);
+            var userSaleOrder = AsignarLogic.GetValidUsersByFormula(validUsers, ordersSap, userOrders, relationships);
 
             var ordersToUpdate = ordersSap.Where(x => !userSaleOrder.Item2.Contains(x.Order.DocNum)).ToList();
             var pedidosString = ordersToUpdate.Select(x => x.Order.DocNum.ToString()).ToList();
