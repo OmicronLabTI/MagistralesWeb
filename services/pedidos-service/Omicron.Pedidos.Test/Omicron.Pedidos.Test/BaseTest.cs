@@ -158,6 +158,12 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 130, Productionorderid = "100", Salesorderid = "1502", Status = "Asignado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1 },
                 new UserOrderModel { Id = 131, Productionorderid = "101", Salesorderid = "1502", Status = "Planificado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
                 new UserOrderModel { Id = 132, Productionorderid = null, Salesorderid = "1502", Status = "Planificado", Userid = "abc", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 3, },
+
+                // order for autmatic DXP
+                new UserOrderModel { Id = 133, Productionorderid = "900", Salesorderid = "900", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1 },
+                new UserOrderModel { Id = 134, Productionorderid = null, Salesorderid = "900", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+                new UserOrderModel { Id = 135, Productionorderid = "901", Salesorderid = "901", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1 },
+                new UserOrderModel { Id = 136, Productionorderid = null, Salesorderid = "901", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
             };
         }
 
@@ -466,7 +472,7 @@ namespace Omicron.Pedidos.Test
         /// <returns>the data.</returns>
         public ResultModel GetFormulaDetalle()
         {
-            var listFormula = new CompleteFormulaWithDetalle { BaseDocument = 100, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 10, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 100, ProductDescription = "orden", ProductionOrderId = 100, ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo León, Mexico, CP. 54715", Comments = "Cooments" };
+            var listFormula = new CompleteFormulaWithDetalle { BaseDocument = 100, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 10, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 100, ProductDescription = "orden", ProductionOrderId = 100, ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments" };
 
             return new ResultModel
             {
@@ -486,7 +492,7 @@ namespace Omicron.Pedidos.Test
         {
             var listFormula = new List<CompleteFormulaWithDetalle>
             {
-                new CompleteFormulaWithDetalle { BaseDocument = 100, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 10, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 100, ProductDescription = "orden", ProductionOrderId = 100, ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo León, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false },
+                new CompleteFormulaWithDetalle { BaseDocument = 100, Client = "C001", Code = "Aspirina", Container = "container", CompleteQuantity = 10, Details = new List<CompleteDetalleFormulaModel>(), DueDate = "01/01/2020", EndDate = "01/01/2020", FabDate = "01/01/2020", IsChecked = false, Number = 100, Origin = "PT", PlannedQuantity = 100, ProductDescription = "orden", ProductionOrderId = 100, ProductLabel = "label", RealEndDate = "01/01/2020", StartDate = "01/01/2020", Status = "L", Type = "type", Unit = "KG", User = "manager", Warehouse = "MN", DestinyAddress = "Nuevo Le?n, Mexico, CP. 54715", Comments = "Cooments", HasMissingStock = false },
             };
 
             return new ResultModel

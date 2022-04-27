@@ -148,6 +148,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Obtiene las ordenes de fabricacion con su pedido.
+        /// </summary>
+        /// <param name="pedidosId">the ids.</param>
+        /// <returns>the result.</returns>
+        [Route("/getDetails/dxpDetails")]
+        [HttpPost]
+        public async Task<IActionResult> GetPedidoWithDetailAndDxp(List<int> pedidosId)
+        {
+            var result = await this.sapFacade.GetPedidoWithDetailAndDxp(pedidosId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Obtiene la orden de fabricacion en base al orderitem-productid para el insert de ordenes de fabricacion.
         /// </summary>
         /// <param name="pedidosId">the ids.</param>
