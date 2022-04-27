@@ -126,7 +126,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceHeader = invoiceDetails.FirstOrDefault();
 
             var addressesToFind = new List<GetDoctorAddressModel> { new GetDoctorAddressModel { CardCode = invoiceHeader.InvoiceHeader.CardCode, AddressId = invoiceHeader.InvoiceHeader.ShippingAddressName } };
-            var doctorData = (await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == invoiceHeader.InvoiceHeader.ShippingAddressName);
+            var doctorData = (await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == invoiceHeader.InvoiceHeader.ShippingAddressName);
             doctorData ??= new DoctorDeliveryAddressModel { Contact = invoiceHeader.Medico };
 
             var invoiceToReturn = new InvoiceSaleHeaderModel
@@ -298,7 +298,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(invoiceHeaderOrdered.Select(x => x.SalesPrsonId).ToList())).ToList();
 
             var addressesToFind = invoiceHeaderOrdered.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.ShippingAddressName }).ToList();
-            var doctorData = await ServiceUtils.GetDoctorPrescriptionData(this.doctorService, addressesToFind);
+            var doctorData = await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind);
+
+            var doctorPrescription = await ServiceShared.GetDoctors(this.doctorService, invoiceHeaderOrdered.Select(x => x.CardCode).Distinct().ToList());
 
             invoiceHeaderOrdered.ForEach(x =>
             {
@@ -313,7 +315,10 @@ namespace Omicron.SapAdapter.Services.Sap
                 var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
 
                 var doctor = doctorData.FirstOrDefault(y => y.DoctorId == x.CardCode && y.AddressId == x.ShippingAddressName);
-                doctor ??= new DoctorDeliveryAddressModel { Contact = x.Cliente };
+                doctor ??= new DoctorDeliveryAddressModel { Contact = x.Medico };
+
+                var prescriptionData = doctorPrescription.FirstOrDefault(y => y.CardCode == x.CardCode);
+                prescriptionData ??= new DoctorPrescriptionInfoModel { DoctorName = x.Medico };
 
                 x.Comments = $"{details.Where(y => y.BaseEntry.HasValue).DistinctBy(x => x.BaseEntry.Value).Count()}-{details.Count}";
                 x.TransportName = company.TrnspName;
@@ -324,6 +329,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.SalesPrsonEmail = salePerson.Email.ValidateNull();
                 x.SalesPrsonName = $"{salePerson.FirstName.ValidateNull()} {salePerson.LastName.ValidateNull()}".Trim();
                 x.Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, x.Address, ServiceConstants.OnSiteDelivery);
+                x.ResponsibleMedic = prescriptionData.DoctorName;
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
@@ -356,6 +362,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(new List<int> { invoiceHeader.SalesPrsonId })).FirstOrDefault();
             salesPerson ??= new SalesPersonModel();
 
+            var doctorPrescription = (await ServiceShared.GetDoctors(this.doctorService, new List<string> { invoiceHeader.CardCode })).FirstOrDefault();
+            doctorPrescription ??= new DoctorPrescriptionInfoModel();
+
             var model = new InvoiceDeliverModel
             {
                 Address = invoiceHeader.Address,
@@ -369,11 +378,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 References = address.References,
                 Telephone = invoiceHeader.DoctorPhoneNumber,
                 EstablishmentName = address.EtablishmentName,
-                ResponsibleDoctor = address.ResponsibleDoctor,
+                ResponsibleDoctor = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctorPrescription.DoctorName), invoiceHeader.Medico, doctorPrescription.DoctorName),
                 DestinyEmail = invoiceHeader.ClientEmail,
                 SalesPersonEmail = salesPerson.Email.ValidateNull(),
                 SalesPrsonName = $"{salesPerson.FirstName.ValidateNull()} {salesPerson.LastName.ValidateNull()}".Trim(),
                 SalesOrders = JsonConvert.SerializeObject(new List<string> { invoiceHeader.DocNumDxp }),
+                Contact = address.Contact.ValidateNull(),
             };
 
             var isinvoiceLocal = ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, model.Address, dxpTransactions) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode);

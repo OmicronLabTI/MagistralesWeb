@@ -826,6 +826,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              UpdateDate = invoice.UpdateDate,
                              IsPackage = invoice.IsPackage,
                              DocNumDxp = invoice.DocNumDxp,
+                             ShippingAddressName = invoice.ShippingAddressName,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -1186,6 +1187,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<int> GetCountOrdersWIthDetailByDocNumDxpJoinProduct(string DocNumDxp)
+        {
+            var orderByDocNum = await this.RetryQuery<CompleteOrderModel>(this.GetAllOrdersWithDetailQuery().AsNoTracking().Where(x => x.DocNumDxp == DocNumDxp));
+            return orderByDocNum.GroupBy(x => x.DocNum).Count();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<OrderModel>> GetOrderModelByDocDateJoinDoctor(DateTime initDate, DateTime endDate)
         {
             var query = (from order in this.databaseContext.OrderModel.Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate)
@@ -1435,6 +1443,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         Canceled = order.Canceled,
                         IsPackage = order.IsPackage,
                         DocNumDxp = order.DocNumDxp,
+                        ShippingAddressName = order.ShippingAddressName,
                     });
         }
 
@@ -1460,6 +1469,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          select new DeliverModel
                          {
                              Address = delivery.Address,
+                             ShippingAddressName = delivery.ShippingAddressName,
                              Canceled = delivery.Canceled,
                              CardCode = delivery.CardCode,
                              Cliente = dop.Address2 ?? string.Empty,

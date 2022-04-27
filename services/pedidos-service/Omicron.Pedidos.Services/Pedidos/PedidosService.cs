@@ -226,7 +226,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listSaleOrdersToFinish = finishOrders.Select(x => x.OrderId).ToList();
 
             var (saleOrders, productionOrders) = await this.GetRelatedOrdersToSalesOrder(listSaleOrdersToFinish, ServiceConstants.Cancelled, ServiceConstants.Finalizado);
-
+            var orderFabSuccesfullFinalized = new List<int>();
             foreach (var orderToFinish in finishOrders)
             {
                 var localSalesOrder = saleOrders.FirstOrDefault(x => x.Salesorderid == orderToFinish.OrderId.ToString());
@@ -261,6 +261,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                         userOrder.Status = ServiceShared.CalculateTernary(userOrder.Status != ServiceConstants.Almacenado, ServiceConstants.Finalizado, userOrder.Status);
                         userOrder.FinalizedDate = DateTime.Now;
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { userOrder }));
+                        orderFabSuccesfullFinalized.Add(prodOrderId);
                     }
                 }
 
@@ -289,6 +290,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
+            // validate that the quantity consumed and required is equal in orders finished, if not is equal send a warning message.
+            failed.AddRange(await this.ValidateQuantityConsumedFinishOrders(finishOrders.Select(x => new CloseProductionOrderModel { OrderId = x.OrderId, UserId = x.UserId }).ToList(), orderFabSuccesfullFinalized));
             var results = new
             {
                 success = successfuly.Distinct(),
@@ -391,12 +394,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listSalesOrder = new List<int>();
             var listOrderLogToInsert = new List<SalesLogs>();
 
+            var productionsOrderList = (await this.pedidosDao.GetUserOrderByProducionOrder(finishOrders.Select(fo => fo.OrderId.ToString()).Distinct().ToList())).ToList();
             foreach (var orderToFinish in finishOrders)
             {
                 var orderIdModel = new OrderIdModel { UserId = orderToFinish.UserId, OrderId = orderToFinish.OrderId };
                 var productionOrderId = orderToFinish.OrderId;
-                var ids = new List<string> { productionOrderId.ToString() };
-                var productionOrder = (await this.pedidosDao.GetUserOrderByProducionOrder(ids)).FirstOrDefault();
+                var productionOrder = productionsOrderList.FirstOrDefault(o => o.Productionorderid == productionOrderId.ToString());
 
                 if (productionOrder == null)
                 {
@@ -438,10 +441,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var resultMessages = JsonConvert.DeserializeObject<Dictionary<int, string>>(result.Response.ToString());
 
                 // Map errors
-                foreach (var error in resultMessages.Where(x => x.Key > 0))
-                {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderIdModel, error.Value));
-                }
+                var errorsDiApi = resultMessages
+                    .Where(x => x.Key > 0)
+                    .Select(error => ServiceUtils.CreateCancellationFail(orderIdModel, error.Value))
+                    .ToList();
+                failed.AddRange(errorsDiApi);
 
                 // Update production order status
                 if (!resultMessages.Keys.Any(x => x.Equals(productionOrderId)))
@@ -488,6 +492,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
             }
 
+            // validate that the quantity consumed and required is equal in orders finished, if not is equal send a warning message.
+            failed.AddRange(await this.ValidateQuantityConsumedFinishOrders(finishOrders, successfuly.Cast<OrderIdModel>().Select(x => x.OrderId).ToList()));
             await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
             this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
@@ -931,6 +937,23 @@ namespace Omicron.Pedidos.Services.Pedidos
             var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).Where(x => !ignoredProductionOrderStatus.Contains(x.Status));
 
             return (relatedOrders.Where(x => x.IsSalesOrder).ToList(), productionOrders.ToList());
+        }
+
+        private async Task<List<object>> ValidateQuantityConsumedFinishOrders(List<CloseProductionOrderModel> finishOrders, List<int> successfullyOrdersfab)
+        {
+            var sapResponse = await this.sapAdapter.PostSapAdapter(successfullyOrdersfab, ServiceConstants.EndPointToValidateQuatitiesOrdersFormula);
+            var orders = JsonConvert.DeserializeObject<List<CompleteDetalleFormulaModel>>(sapResponse.Response.ToString());
+            var ordersInvalid = orders
+                .GroupBy(o => o.OrderFabId)
+                .Select(ord =>
+                {
+                    var user = finishOrders.FirstOrDefault(fo => fo.OrderId == ord.Key);
+                    user ??= new CloseProductionOrderModel { UserId = string.Empty };
+                    var error = string.Format(ServiceConstants.FailConsumedQuantity, ord.Key);
+                    return ServiceUtils.CreateCancellationFail(new OrderIdModel { OrderId = ord.Key, UserId = user.UserId }, error);
+                })
+                .ToList();
+            return ordersInvalid;
         }
     }
 }

@@ -378,6 +378,30 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetValidationQuatitiesOrdersFormula()
+        {
+            // arrange
+            var listIds = new List<int> { 100 };
+
+            // act
+            var result = await this.sapService.GetValidationQuatitiesOrdersFormula(listIds);
+            var formulaDeatil = result.Response as List<CompleteDetalleFormulaModel>;
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Code == 200);
+            Assert.IsTrue(formulaDeatil.Any());
+            Assert.IsInstanceOf<List<CompleteDetalleFormulaModel>>(result.Response);
+            Assert.IsNotNull(result.Response);
+            Assert.IsNull(result.ExceptionMessage);
+            Assert.IsNull(result.Comments);
+        }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetComponents()
         {
             // arrange

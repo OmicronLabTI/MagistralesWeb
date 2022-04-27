@@ -56,6 +56,13 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetOrderFormula(List<int> listIds, bool returnFirst, bool returnDetails);
 
         /// <summary>
+        /// Validate que la cantidad requerida y consumida sean iguales.
+        /// </summary>
+        /// <param name="orderIds">the order id.</param>
+        /// <returns>the object.</returns>
+        Task<ResultModel> GetValidationQuatitiesOrdersFormula(List<int> orderIds);
+
+        /// <summary>
         /// Obtiene los nombres, email de asesores dada una lista de pedidos.
         /// </summary>
         /// <param name="salesOrder">the orderId list.</param>

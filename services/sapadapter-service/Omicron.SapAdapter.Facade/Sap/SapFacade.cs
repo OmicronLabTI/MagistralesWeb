@@ -97,6 +97,12 @@ namespace Omicron.SapAdapter.Facade.Sap
             return this.mapper.Map<ResultDto>(await this.sapService.GetOrderFormula(orderId, returnFirst, returnDetails));
         }
 
+        /// <inheritdoc />
+        public async Task<ResultDto> GetValidationQuatitiesOrdersFormula(List<int> orderIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetValidationQuatitiesOrdersFormula(orderIds));
+        }
+
         /// <summary>
         /// Obtiene los nombres, email de asesores dada una lista de pedidos.
         /// </summary>

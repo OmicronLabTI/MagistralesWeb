@@ -73,7 +73,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 
                 order.DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial);
                 order.UserFields.Fields.Item("U_Pedido_DXP").Value = saleOrderModel.TransactionId;
-                order.UserFields.Fields.Item("U_Comentarios_Ecommerce").Value = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}" : string.Empty;
+                order.UserFields.Fields.Item("U_Comentarios_Ecommerce").Value = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}".Truncate(ServiceConstants.ComentariosEcommerceMaxLength) : string.Empty;
                 // ToDo descomentar la siguiente linea cuando se pase a prod, porque en qa el campo no existe
                 // order.UserFields.Fields.Item("U_BXP_USOCFDI").Value = saleOrderModel.CfdiValue;
                 order.UserFields.Fields.Item("U_CFDI_Provisional").Value = saleOrderModel.CfdiValue;
@@ -150,7 +150,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             attachment.Lines.FileExtension = Path.GetExtension(pathfile).Substring(1);
             attachment.Lines.SourcePath = Path.GetDirectoryName(pathfile);
             attachment.Lines.Override = BoYesNoEnum.tYES;
-            
 
             if (attachment.Add() != 0)
             {
@@ -159,9 +158,30 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 return string.Empty;
             }
 
-            company.GetNewObjectCode(out var orderId);
-            _loggerProxy.Info($"The attachmentid is {orderId}");
-            return orderId;
+            var prescripId = string.Empty;
+            var recordSet = this.ExecuteQuery(ServiceConstants.QueryToGetPrescriptionId, Path.GetFileNameWithoutExtension(pathfile));
+            for (var i = 0; i < recordSet.RecordCount; i++)
+            {
+                var id = recordSet.Fields.Item("PrescriptionId").Value.ToString();
+                prescripId = string.IsNullOrEmpty(id) ? string.Empty : id;
+            }
+
+            _loggerProxy.Info($"The attachmentid is {prescripId}");
+            return prescripId;
+        }
+
+        /// <summary>
+        /// Execute query.
+        /// </summary>
+        /// <param name="query">Query to execute.</param>
+        /// <param name="parameters">Parameters.</param>
+        /// <returns>Recordset.</returns>
+        private Recordset ExecuteQuery(string query, params object[] parameters)
+        {
+            query = string.Format(query, parameters);
+            var recordSet = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
+            recordSet.DoQuery(query);
+            return recordSet;
         }
     }
 }
