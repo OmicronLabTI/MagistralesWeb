@@ -356,5 +356,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapAlmacenFacade.GetOrderdetail(saleorderid);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the invoices.
+        /// </summary>
+        /// <param name="invoicesIds">The invoices Ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/invoices/model")]
+        [HttpPost]
+        public async Task<IActionResult> GetInvoicesByIds(List<int> invoicesIds)
+        {
+            var response = await this.sapAlmacenFacade.GetInvoicesByIds(invoicesIds);
+            return this.Ok(response);
+        }
     }
 }
