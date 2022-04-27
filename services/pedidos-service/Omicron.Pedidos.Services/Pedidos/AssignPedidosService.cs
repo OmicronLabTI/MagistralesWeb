@@ -79,7 +79,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> AutomaticAssign(AutomaticAssingModel assignModel)
         {
-            var validStatus = new List<string> { ServiceConstants.Asignado, ServiceConstants.Reasignado, ServiceConstants.Proceso, ServiceConstants.Terminado };
+            var invalidStatus = new List<string> { ServiceConstants.Finalizado, ServiceConstants.Pendiente, ServiceConstants.Cancelled, ServiceConstants.Entregado, ServiceConstants.Almacenado };
             var orders = await this.sapAdapter.PostSapAdapter(assignModel.DocEntry, ServiceConstants.GetOrderWithDetailDxp);
             var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
             var relationships = JsonConvert.DeserializeObject<List<RelationDxpDocEntryModel>>(JsonConvert.SerializeObject(orders.Comments));
@@ -87,7 +87,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
             users = ServiceShared.CalculateTernary(sapOrderTypes.Contains(ServiceConstants.Mix), users, users.Where(x => sapOrderTypes.Contains(x.Classification)).ToList());
-            var userOrders = (await this.pedidosDao.GetUserOrderByUserIdAndStatus(users.Select(x => x.Id).ToList(), validStatus)).ToList();
+            var userOrders = (await this.pedidosDao.GetUserOrderByUserIdAndNotInStatus(users.Select(x => x.Id).ToList(), invalidStatus)).ToList();
             var validUsers = await AsignarLogic.GetValidUsersByLoad(users, userOrders, this.sapAdapter);
 
             if (!validUsers.Any())

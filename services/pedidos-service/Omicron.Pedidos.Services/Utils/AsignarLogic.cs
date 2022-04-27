@@ -161,6 +161,7 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var dictUserPedido = new Dictionary<int, string>();
             var listOrdersWithNoUser = new List<int>();
+            var localUserOrders = new List<UserOrderModel>();
 
             foreach (var p in orderDetail)
             {
@@ -169,14 +170,21 @@ namespace Omicron.Pedidos.Services.Utils
                 var pedidoIds = ordersByDxp.DocNum.Select(x => x.DocNum.ToString()).ToList();
 
                 var ordersByUser = userOrders.Where(y => pedidoIds.Contains(y.Salesorderid)).ToList();
+                ordersByUser.AddRange(localUserOrders.Where(y => pedidoIds.Contains(y.Salesorderid)));
 
-                if (ordersByDxp.DocNum.Any() && ordersByUser.Any() && ordersByDxp.DocNum.Any(x => x.OrderType == p.Order.OrderType))
+                var orderByType = ordersByDxp.DocNum.Where(x => x.OrderType == p.Order.OrderType).ToList();
+                var ordersByUserContainsType = ordersByUser.Any(x => orderByType.Any(y => x.Salesorderid == y.DocNum.ToString()));
+                if (ordersByDxp.DocNum.Any() && ordersByUser.Any() && orderByType.Any() && ordersByUserContainsType)
                 {
-                    dictUserPedido.Add(p.Order.DocNum, ordersByUser.FirstOrDefault().Userid);
+                    var ordersIdsByType = orderByType.Select(y => y.DocNum.ToString()).ToList();
+                    var userByType = ordersByUser.Where(x => ordersIdsByType.Contains(x.Salesorderid));
+                    dictUserPedido.Add(p.Order.DocNum, userByType.FirstOrDefault().Userid);
                     users.ForEach(x =>
                     {
                         x.TotalCount = ServiceShared.CalculateTernary(x.User.Id.Equals(dictUserPedido[p.Order.DocNum]), p.Detalle.Where(z => z.QtyPlanned.HasValue).Sum(y => y.QtyPlanned.Value) + x.TotalCount, x.TotalCount);
                     });
+
+                    localUserOrders.Add(new UserOrderModel { Userid = ordersByUser.FirstOrDefault().Userid, Salesorderid = p.Order.DocNum.ToString() });
                     continue;
                 }
 
@@ -192,10 +200,12 @@ namespace Omicron.Pedidos.Services.Utils
                 if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
                 {
                     dictUserPedido.Add(p.Order.DocNum, localUsers.FirstOrDefault().User.Id);
+                    localUserOrders.Add(new UserOrderModel { Userid = localUsers.FirstOrDefault().User.Id, Salesorderid = p.Order.DocNum.ToString() });
                     continue;
                 }
 
                 dictUserPedido = GetEntryUserValue(dictUserPedido, p.Detalle, localUsers, p.Order.DocNum, localUsers.FirstOrDefault().User.Id, userOrders);
+                localUserOrders.Add(new UserOrderModel { Userid = dictUserPedido[p.Order.DocNum], Salesorderid = p.Order.DocNum.ToString() });
 
                 users.ForEach(x =>
                 {
