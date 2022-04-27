@@ -83,6 +83,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var orders = await this.sapAdapter.PostSapAdapter(assignModel.DocEntry, ServiceConstants.GetOrderWithDetailDxp);
             var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
             var relationships = JsonConvert.DeserializeObject<List<RelationDxpDocEntryModel>>(JsonConvert.SerializeObject(orders.Comments));
+            relationships ??= new List<RelationDxpDocEntryModel>();
             var sapOrderTypes = ordersSap.Select(x => x.Order.OrderType).Distinct().ToList();
 
             var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
