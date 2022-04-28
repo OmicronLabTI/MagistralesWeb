@@ -39,6 +39,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetPedidoWithDetail(List<int> pedidosId);
 
         /// <summary>
+        /// Gets the details.
+        /// </summary>
+        /// <param name="pedidosId">the order ir.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetPedidoWithDetailAndDxp(List<int> pedidosId);
+
+        /// <summary>
         /// Gets the production orders bu produc and id.
         /// </summary>
         /// <param name="pedidosId">list ids each elemente is orderId-producId.</param>

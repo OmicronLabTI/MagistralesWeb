@@ -125,7 +125,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             await Task.WhenAll(users.Select(async user =>
             {
-                var pedidosId = userOrders.Where(x => x.Userid.Equals(user.Id) && !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).Distinct().ToList();
+                var pedidosId = userOrders.Where(x => x.Userid.Equals(user.Id) && x.IsProductionOrder).Select(y => int.Parse(y.Productionorderid)).Distinct().ToList();
                 var orders = await sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetUsersByOrdersById);
                 var ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(JsonConvert.SerializeObject(orders.Response));
 
@@ -155,14 +155,39 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="users">the ussers with item codes.</param>
         /// <param name="orderDetail">the order with details.</param>
         /// <param name="userOrders">The user orders.</param>
+        /// <param name="listRelation">list relation.</param>
         /// <returns>the data to return.</returns>
-        public static Tuple<Dictionary<int, string>, List<int>> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders)
+        public static Tuple<Dictionary<int, string>, List<int>> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders, List<RelationDxpDocEntryModel> listRelation)
         {
             var dictUserPedido = new Dictionary<int, string>();
             var listOrdersWithNoUser = new List<int>();
+            var localUserOrders = new List<UserOrderModel>();
 
             foreach (var p in orderDetail)
             {
+                var ordersByDxp = listRelation.FirstOrDefault(x => x.DxpDocNum == p.Order.DocNumDxp);
+                ordersByDxp ??= new RelationDxpDocEntryModel { DocNum = new List<RelationOrderAndTypeModel>() };
+                var pedidoIds = ordersByDxp.DocNum.Select(x => x.DocNum.ToString()).ToList();
+
+                var ordersByUser = userOrders.Where(y => pedidoIds.Contains(y.Salesorderid)).ToList();
+                ordersByUser.AddRange(localUserOrders.Where(y => pedidoIds.Contains(y.Salesorderid)));
+
+                var orderByType = ordersByDxp.DocNum.Where(x => x.OrderType == p.Order.OrderType).ToList();
+                var ordersByUserContainsType = ordersByUser.Any(x => orderByType.Any(y => x.Salesorderid == y.DocNum.ToString()));
+                if (ordersByDxp.DocNum.Any() && ordersByUser.Any() && orderByType.Any() && ordersByUserContainsType)
+                {
+                    var ordersIdsByType = orderByType.Select(y => y.DocNum.ToString()).ToList();
+                    var userByType = ordersByUser.Where(x => ordersIdsByType.Contains(x.Salesorderid));
+                    dictUserPedido.Add(p.Order.DocNum, userByType.FirstOrDefault().Userid);
+                    users.ForEach(x =>
+                    {
+                        x.TotalCount = ServiceShared.CalculateTernary(x.User.Id.Equals(dictUserPedido[p.Order.DocNum]), p.Detalle.Where(z => z.QtyPlanned.HasValue).Sum(y => y.QtyPlanned.Value) + x.TotalCount, x.TotalCount);
+                    });
+
+                    localUserOrders.Add(new UserOrderModel { Userid = ordersByUser.FirstOrDefault().Userid, Salesorderid = p.Order.DocNum.ToString() });
+                    continue;
+                }
+
                 if (ServiceShared.CalculateAnd(p.Order.OrderType != ServiceConstants.Mix, !users.Any(x => x.User.Classification == p.Order.OrderType)))
                 {
                     listOrdersWithNoUser.Add(p.Order.DocNum);
@@ -175,10 +200,12 @@ namespace Omicron.Pedidos.Services.Utils
                 if (!p.Detalle.Any(d => d.CodigoProducto.Contains("   ")))
                 {
                     dictUserPedido.Add(p.Order.DocNum, localUsers.FirstOrDefault().User.Id);
+                    localUserOrders.Add(new UserOrderModel { Userid = localUsers.FirstOrDefault().User.Id, Salesorderid = p.Order.DocNum.ToString() });
                     continue;
                 }
 
                 dictUserPedido = GetEntryUserValue(dictUserPedido, p.Detalle, localUsers, p.Order.DocNum, localUsers.FirstOrDefault().User.Id, userOrders);
+                localUserOrders.Add(new UserOrderModel { Userid = dictUserPedido[p.Order.DocNum], Salesorderid = p.Order.DocNum.ToString() });
 
                 users.ForEach(x =>
                 {
