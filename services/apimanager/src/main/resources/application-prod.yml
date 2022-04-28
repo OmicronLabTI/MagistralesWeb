@@ -123,6 +123,9 @@ zuul:
     dxp-credit:
       path: /dxp/credit/**
       serviceId: creditservice
+    dxp-dhladapter:
+      path: /dxp/dhladapter/**
+      serviceId: dhladapterservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000

@@ -928,6 +928,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              TypeOrder = invoice.TypeOrder,
                              UpdateDate = invoice.UpdateDate,
                              ClientEmail = doctor.Email,
+                             ClientPhone = doctor.Phone,
                              IsPackage = invoice.IsPackage,
                              DocNumDxp = invoice.DocNumDxp,
                              DoctorPhoneNumber = dop.GlblLocNum,
