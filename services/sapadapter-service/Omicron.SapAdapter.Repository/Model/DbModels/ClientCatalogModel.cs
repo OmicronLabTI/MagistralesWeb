@@ -52,5 +52,12 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>Slpcode.</value>
         [Column("SlpCode")]
         public int SlpCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the slp for advisor.
+        /// </summary>
+        /// <value>Slpcode.</value>
+        [Column("Phone1")]
+        public string Phone { get; set; }
     }
 }

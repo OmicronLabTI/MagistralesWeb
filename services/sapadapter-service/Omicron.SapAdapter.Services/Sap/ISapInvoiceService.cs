@@ -87,5 +87,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="days">the days.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetCancelledInvoices(int days);
+
+        /// <summary>
+        /// Gets all the invoices.
+        /// </summary>
+        /// <param name="invoicesIds">the invoices id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetInvoicesByIds(List<int> invoicesIds);
     }
 }

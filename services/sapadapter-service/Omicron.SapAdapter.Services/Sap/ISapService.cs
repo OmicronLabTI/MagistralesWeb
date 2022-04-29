@@ -40,6 +40,13 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetPedidoWithDetail(List<int> pedidosIds);
 
         /// <summary>
+        /// Gets the orders with their detail.
+        /// </summary>
+        /// <param name="pedidosIds">the detail.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetPedidoWithDetailAndDxp(List<int> pedidosIds);
+
+        /// <summary>
         /// Gets the production orders bu produc and id.
         /// </summary>
         /// <param name="pedidosIds">list ids each elemente is orderId-producId.</param>

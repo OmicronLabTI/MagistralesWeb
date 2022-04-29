@@ -432,6 +432,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, invoices, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetInvoicesByIds(List<int> invoicesIds)
+        {
+            var invoices = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(invoicesIds)).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, invoices, null, null);
+        }
+
         /// <summary>
         /// Gets the batches for the invoice.
         /// </summary>

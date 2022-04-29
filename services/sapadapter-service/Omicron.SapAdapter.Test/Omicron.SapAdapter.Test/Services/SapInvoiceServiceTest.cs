@@ -510,5 +510,27 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// Test the method to get the invoices by ids.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetInvoicesByIds()
+        {
+            var ids = new List<int> { 2, 3 };
+
+            // act
+            var response = await this.sapInvoiceService.GetInvoicesByIds(ids);
+            var invoices = response.Response as List<InvoiceHeaderModel>;
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.Comments);
+            Assert.IsNull(response.UserError);
+            Assert.IsTrue(response.Success);
+            Assert.IsTrue(invoices.Count > 0);
+        }
     }
 }

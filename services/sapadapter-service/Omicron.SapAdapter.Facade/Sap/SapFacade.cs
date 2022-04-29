@@ -76,6 +76,16 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <summary>
+        /// Gets the detail of orders with details.
+        /// </summary>
+        /// <param name="pedidosId">the order id.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultDto> GetPedidoWithDetailAndDxp(List<int> pedidosId)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetPedidoWithDetailAndDxp(pedidosId));
+        }
+
+        /// <summary>
         /// Gets the production orders bu produc and id.
         /// </summary>
         /// <param name="pedidosId">list ids each elemente is orderId-producId.</param>

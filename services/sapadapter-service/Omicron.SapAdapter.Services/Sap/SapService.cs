@@ -197,6 +197,38 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
+        /// Gets the orders with their detail.
+        /// </summary>
+        /// <param name="pedidosIds">the detail.</param>
+        /// <returns>the data.</returns>
+        public async Task<ResultModel> GetPedidoWithDetailAndDxp(List<int> pedidosIds)
+        {
+            var orders = (await this.sapDao.GetOrdersById(pedidosIds)).ToList();
+            var orderDetails = (await this.sapDao.GetAllDetails(pedidosIds.Cast<int?>().ToList())).ToList();
+
+            var listData = pedidosIds.Select(mj => new OrderWithDetailModel
+            {
+                Order = orders.FirstOrDefault(ts => ts.PedidoId == mj),
+                Detalle = orderDetails.Where(ts => ts.PedidoId == mj).OrderByDescending(ts => ts.OrdenFabricacionId).ToList(),
+            }).ToList();
+
+            var relationshipsDxp = new List<RelationDxpDocEntry>();
+            var orderByDxp = ServiceShared.CalculateTernary(orders.Any(x => !string.IsNullOrEmpty(x.DocNumDxp)), (await this.sapDao.GetOrdersByDocNumDxp(orders.Where(y => !string.IsNullOrEmpty(y.DocNumDxp)).Select(x => x.DocNumDxp).Distinct().ToList())).ToList(), new List<OrderModel>());
+            orderByDxp.GroupBy(x => x.DocNumDxp).ToList().ForEach(x =>
+            {
+                var dictData = x.Select(x => new { x.PedidoId, x.OrderType }).DistinctBy(y => y.PedidoId).ToDictionary(z => z.PedidoId, z => z.OrderType);
+
+                relationshipsDxp.Add(new RelationDxpDocEntry
+                {
+                    DxpDocNum = x.Key ?? string.Empty,
+                    DocNum = x.Select(y => new RelationOrderAndTypeModel { DocNum = y.DocNum, OrderType = y.OrderType }).ToList(),
+                });
+            });
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listData, null, relationshipsDxp);
+        }
+
+        /// <summary>
         /// Gets the production orders bu produc and id.
         /// </summary>
         /// <param name="pedidosIds">list ids each elemente is orderId-producId.</param>
