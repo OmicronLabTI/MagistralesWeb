@@ -216,6 +216,24 @@ namespace Omicron.Pedidos.Test.Facade
         /// </summary>
         /// <returns>returns nothing.</returns>
         [Test]
+        public async Task GetUserOrderByInvoiceId()
+        {
+            // arrange
+            var invoicesIds = new List<int>();
+
+            // act
+            var response = await this.almacenFacade.GetUserOrderByInvoiceId(invoicesIds);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// the test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
         public async Task CreateinvoicePdf()
         {
             // arrange
