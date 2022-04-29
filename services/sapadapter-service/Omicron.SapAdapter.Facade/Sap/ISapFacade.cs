@@ -55,6 +55,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetOrderFormula(List<int> orderId, bool returnFirst, bool returnDetails);
 
         /// <summary>
+        /// Validate que la cantidad requerida y consumida sean iguales.
+        /// </summary>
+        /// <param name="orderIds">the order id.</param>
+        /// <returns>the object.</returns>
+        Task<ResultDto> GetValidationQuatitiesOrdersFormula(List<int> orderIds);
+
+        /// <summary>
         /// Obtiene los nombres, email de asesores dada una lista de pedidos.
         /// </summary>
         /// <param name="salesOrder">the orderId list.</param>

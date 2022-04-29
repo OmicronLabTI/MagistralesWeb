@@ -41,7 +41,7 @@ class OrderDetailFormTest: XCTestCase {
                         task: target.task,
                         httpHeaderFields: target.headers)
     }
-    
+
     // MARK: - FUNCTION TEST
     func testEditTableSuccessValueSuccess() {
         // Given

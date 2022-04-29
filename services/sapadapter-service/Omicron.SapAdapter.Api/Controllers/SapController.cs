@@ -88,6 +88,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// Validate que la cantidad requerida y consumida sean iguales.
+        /// </summary>
+        /// <param name="orderIds">the order id.</param>
+        /// <returns>the object.</returns>
+        [Route("/formula/validate/quantities")]
+        [HttpPost]
+        public async Task<IActionResult> GetValidationQuatitiesOrdersFormula(List<int> orderIds)
+        {
+            var result = await this.sapFacade.GetValidationQuatitiesOrdersFormula(orderIds);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Obtiene las formulas de la orden de fabricacion.
         /// </summary>
         /// <param name="ordenId">the order id.</param>

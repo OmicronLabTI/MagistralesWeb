@@ -148,7 +148,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             attachment.Lines.FileExtension = Path.GetExtension(pathfile).Substring(1);
             attachment.Lines.SourcePath = Path.GetDirectoryName(pathfile);
             attachment.Lines.Override = BoYesNoEnum.tYES;
-            
 
             if (attachment.Add() != 0)
             {
@@ -157,9 +156,30 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 return string.Empty;
             }
 
-            company.GetNewObjectCode(out var orderId);
-            _loggerProxy.Info($"The attachmentid is {orderId}");
-            return orderId;
+            var prescripId = string.Empty;
+            var recordSet = this.ExecuteQuery(ServiceConstants.QueryToGetPrescriptionId, Path.GetFileNameWithoutExtension(pathfile));
+            for (var i = 0; i < recordSet.RecordCount; i++)
+            {
+                var id = recordSet.Fields.Item("PrescriptionId").Value.ToString();
+                prescripId = string.IsNullOrEmpty(id) ? string.Empty : id;
+            }
+
+            _loggerProxy.Info($"The attachmentid is {prescripId}");
+            return prescripId;
+        }
+
+        /// <summary>
+        /// Execute query.
+        /// </summary>
+        /// <param name="query">Query to execute.</param>
+        /// <param name="parameters">Parameters.</param>
+        /// <returns>Recordset.</returns>
+        private Recordset ExecuteQuery(string query, params object[] parameters)
+        {
+            query = string.Format(query, parameters);
+            var recordSet = (Recordset)company.GetBusinessObject(BoObjectTypes.BoRecordset);
+            recordSet.DoQuery(query);
+            return recordSet;
         }
     }
 }
