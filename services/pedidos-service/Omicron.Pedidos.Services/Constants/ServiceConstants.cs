@@ -1041,6 +1041,7 @@ namespace Omicron.Pedidos.Services.Constants
             Pendiente,
             Reasignado,
             Terminado,
+            Finalizado,
         };
     }
 }
