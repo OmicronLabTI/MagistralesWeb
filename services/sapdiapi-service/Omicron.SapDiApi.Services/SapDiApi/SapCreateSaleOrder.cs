@@ -160,9 +160,10 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             var prescripId = string.Empty;
             var recordSet = this.ExecuteQuery(ServiceConstants.QueryToGetPrescriptionId, Path.GetFileNameWithoutExtension(pathfile));
+
             for (var i = 0; i < recordSet.RecordCount; i++)
             {
-                var id = recordSet.Fields.Item("PrescriptionId").Value.ToString();
+                var id = recordSet.Fields.Item("AbsEntry").Value.ToString();
                 prescripId = string.IsNullOrEmpty(id) ? string.Empty : id;
             }
 
