@@ -200,7 +200,7 @@ namespace Omicron.SapAdapter.Services.Utils
                     var saleOrderLn = lineProductsModel.GetLineProductOrderHeader(p.Key);
                     var userFabLineOrder = GetFamilyLineProducts(lineProductsModel, p.Key);
                     var isValidLineOrder = saleOrderLn == null || saleOrderLn.StatusAlmacen != ServiceConstants.Almacenado;
-                    var isValid = ServiceShared.CalculateAnd(isValidLineOrder, userFabLineOrder.All(x => x.StatusAlmacen != ServiceConstants.Almacenado));
+                    var isValid = ServiceShared.CalculateAnd(isValidLineOrder, userFabLineOrder.All(x => x.StatusAlmacen != ServiceConstants.Almacenado && x.StatusAlmacen != ServiceConstants.Empaquetado));
                     ordersToReturn.AddRange(GetOrdersToAdd(isValid, p.ToList()));
                     continue;
                 }
