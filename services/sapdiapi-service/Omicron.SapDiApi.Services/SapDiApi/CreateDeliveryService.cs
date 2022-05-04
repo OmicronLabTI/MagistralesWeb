@@ -216,6 +216,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.Address = saleOrder.Address;
                 deliveryNote.Address2 = saleOrder.Address2;
                 deliveryNote.ShipToCode = saleOrder.ShipToCode;
+                _loggerProxy.Info($"insert pay to code sale order:{saleOrder.PayToCode}");
+                deliveryNote.PayToCode = saleOrder.PayToCode;
                 deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
                 deliveryNote.UserFields.Fields.Item("U_comentarioremision").Value = $"Basado en pedido: {ids}";
 
