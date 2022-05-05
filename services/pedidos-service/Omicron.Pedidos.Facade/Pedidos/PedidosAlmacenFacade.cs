@@ -95,6 +95,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetUserOrderByInvoiceId(List<int> invoices)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetUserOrderByInvoiceId(invoices));
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> CreatePdf(string type, List<int> invoiceIds)
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.CreatePdf(type, invoiceIds));

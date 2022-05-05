@@ -165,6 +165,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Get the user order by invoice id.
+        /// </summary>
+        /// <param name="invoices">the ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/getUserOrder/invoicesId")]
+        [HttpPost]
+        public async Task<IActionResult> GetUserOrderByInvoiceId(List<int> invoices)
+        {
+            var response = await this.pedidosAlmacenFacade.GetUserOrderByInvoiceId(invoices);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Gets the orders for almacen.
         /// </summary>
         /// <param name="parameters">the parameters.</param>
