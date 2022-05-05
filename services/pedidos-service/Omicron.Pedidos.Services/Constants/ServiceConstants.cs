@@ -1040,8 +1040,6 @@ namespace Omicron.Pedidos.Services.Constants
             Proceso,
             Pendiente,
             Reasignado,
-            Terminado,
-            Finalizado,
         };
     }
 }
