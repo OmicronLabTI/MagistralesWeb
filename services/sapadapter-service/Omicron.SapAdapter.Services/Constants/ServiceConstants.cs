@@ -806,5 +806,17 @@ namespace Omicron.SapAdapter.Services.Constants
             Finalizado,
             Pendiente,
         };
+
+        /// <summary>
+        /// Gets list of thw status for the orders.
+        /// </summary>
+        /// <value>
+        /// List of thw status for the orders.
+        /// </value>
+        public static List<string> ListStatusInvalidDxpDoctor { get; } = new List<string>
+        {
+            Almacenado,
+            Empaquetado,
+        };
     }
 }
