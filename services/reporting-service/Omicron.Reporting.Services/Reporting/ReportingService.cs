@@ -309,7 +309,7 @@ namespace Omicron.Reporting.Services
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackage, orders, button);
+                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.ClientName, orders, button);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
@@ -317,13 +317,13 @@ namespace Omicron.Reporting.Services
             if (package.Status == ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.DeliveryEmailSubject, orders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, orders, button);
+                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, package.ClientName, orders, button);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, payment, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
             var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
-            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, orders, button);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.ClientName, orders, button);
             var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, payment, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);
@@ -333,7 +333,8 @@ namespace Omicron.Reporting.Services
         {
             if (sendLocalPackage.Status == ServiceConstants.Entregado)
             {
-                var destinyEmail = $"{sendLocalPackage.SalesPersonEmail};{parametersModels.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value}";
+                var destinyEmail = $"{sendLocalPackage.SalesPersonEmail}";
+                var copyEmail = $"{parametersModels.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value}";
 
                 sendLocalPackage.SalesOrders = string.IsNullOrEmpty(sendLocalPackage.SalesOrders) ? string.Empty : sendLocalPackage.SalesOrders;
                 var orders = sendLocalPackage.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
@@ -347,7 +348,7 @@ namespace Omicron.Reporting.Services
                 destinyEmail,
                 subject,
                 body,
-                string.Empty);
+                copyEmail);
             }
         }
 
