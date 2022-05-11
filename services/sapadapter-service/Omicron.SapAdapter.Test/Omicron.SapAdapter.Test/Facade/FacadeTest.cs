@@ -114,6 +114,23 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>test.</returns>
         [Test]
+        public async Task GetPedidoWithDetailAndDxp()
+        {
+            // arrange
+            var listDocs = new List<int> { 1, 2, 3 };
+
+            // act
+            var response = await this.sapFacade.GetPedidoWithDetailAndDxp(listDocs);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
         public async Task GetProdOrderByOrderItem()
         {
             // arrange

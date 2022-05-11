@@ -78,6 +78,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> GetUserOrderByDeliveryOrder(List<int> deliveryIds);
 
         /// <summary>
+        /// Gets the orders by invoices id.
+        /// </summary>
+        /// <param name="invoices">the invoices ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetUserOrderByInvoiceId(List<int> invoices);
+
+        /// <summary>
         /// Gets the pdf for the invoice.
         /// </summary>
         /// <param name="type">the type.</param>

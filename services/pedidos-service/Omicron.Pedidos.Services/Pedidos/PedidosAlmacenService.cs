@@ -266,6 +266,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetUserOrderByInvoiceId(List<int> invoices)
+        {
+            var orders = (await this.pedidosDao.GetUserOrdersByInvoiceId(invoices)).ToList();
+            var userOrdersComplete = (await this.pedidosDao.GetUserOrderBySaleOrder(orders.Select(x => x.Salesorderid).Distinct().ToList())).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, userOrdersComplete, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> CreatePdf(string type, List<int> invoiceIds)
         {
             var listRoutes = new List<string>();

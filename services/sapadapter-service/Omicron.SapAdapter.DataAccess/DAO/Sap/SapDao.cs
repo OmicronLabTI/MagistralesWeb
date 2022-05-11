@@ -118,9 +118,15 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Canceled = order.Canceled,
                              PedidoMuestra = order.PedidoMuestra,
                              DocNumDxp = order.DocNumDxp,
-                         });
+                         }).AsNoTracking();
 
             return (await this.RetryQuery<CompleteOrderModel>(query)).ToList();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<OrderModel>> GetOrdersByDocNumDxp(List<string> docNumDxp)
+        {
+            return await this.databaseContext.OrderModel.Where(x => docNumDxp.Contains(x.DocNumDxp)).AsNoTracking().ToListAsync();
         }
 
         /// <summary>
@@ -196,7 +202,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Container = d.Container,
                              PatientName = ped.Patient ?? string.Empty,
                              PedidoId = d.PedidoId ?? 0,
-                         });
+                         }).AsNoTracking();
 
             return await this.RetryQuery<CompleteDetailOrderModel>(query);
         }
@@ -210,7 +216,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<List<OrderModel>> GetOrdersById(List<int> pedidoID)
         {
-            return (await this.RetryQuery<OrderModel>(this.databaseContext.OrderModel.Where(x => pedidoID.Contains(x.PedidoId)))).ToList();
+            return (await this.RetryQuery<OrderModel>(this.databaseContext.OrderModel.Where(x => pedidoID.Contains(x.PedidoId)).AsNoTracking())).ToList();
         }
 
         /// <inheritdoc/>
@@ -922,6 +928,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              TypeOrder = invoice.TypeOrder,
                              UpdateDate = invoice.UpdateDate,
                              ClientEmail = doctor.Email,
+                             ClientPhone = doctor.Phone,
                              IsPackage = invoice.IsPackage,
                              DocNumDxp = invoice.DocNumDxp,
                              DoctorPhoneNumber = dop.GlblLocNum,
@@ -1513,7 +1520,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Canceled = order.Canceled,
                              PedidoMuestra = order.PedidoMuestra,
                              DocNumDxp = order.DocNumDxp,
-                         });
+                         }).AsNoTracking();
             return query;
         }
     }

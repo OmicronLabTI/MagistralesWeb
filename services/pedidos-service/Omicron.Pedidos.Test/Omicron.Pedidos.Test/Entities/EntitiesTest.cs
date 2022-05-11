@@ -74,6 +74,8 @@ namespace Omicron.Pedidos.Test.Entities
             new DetallePedidoModel(),
             new SalesLogs(),
             new ProductionOrderQr(),
+            new RelationDxpDocEntryModel(),
+            new RelationOrderAndTypeModel(),
         };
 
         /// <summary>
