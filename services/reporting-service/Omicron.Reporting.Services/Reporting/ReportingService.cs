@@ -120,6 +120,7 @@ namespace Omicron.Reporting.Services
             var copyEmails = string.Empty;
             destinityEmailList.Where(x => x != destinityEmail).Select(x => $"{x};").ToList().ForEach(x => copyEmails += x.Trim());
             copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
+            copyEmails = CommonCall.CalculateTernary(sendLocalPackage.Status == ServiceConstants.NoEntregado, $"{copyEmails};{config.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value}", copyEmails);
 
             var text = this.GetBodyForLocal(sendLocalPackage, logoUrl);
             var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage);
