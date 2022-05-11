@@ -90,5 +90,29 @@ namespace Omicron.Reporting.Entities.Model
         /// String FirstName.
         /// </value>
         public string DxpRoute { get; set; }
+
+        /// <summary>
+        /// Gets or sets Sales Person Name.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string DeliveredComments { get; set; }
+
+        /// <summary>
+        /// Gets or sets Sales Person Name.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string DeliveryName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Sales Person Name.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string ClientName { get; set; }
     }
 }

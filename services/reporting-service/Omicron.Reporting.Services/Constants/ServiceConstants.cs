@@ -56,6 +56,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string DeliveryEmailSubject = "Su pedido {0} se entregó con éxito";
 
         /// <summary>
+        /// The local.
+        /// </summary>
+        public const string DeliveredCommentsEmailSubject = "El pedido {0} se entregó con éxito";
+
+        /// <summary>
         /// not delivered.
         /// </summary>
         public const string PackageNotDelivered = "Su pedido {0} de OmicronLab no pudo ser entregado";
@@ -111,6 +116,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string EmailLogoUrl = "EmailLogoUrl";
 
         /// <summary>
+        /// Get the email logo url.
+        /// </summary>
+        public const string EmailDeliveredNotDeliveredCopy = "DeliveryNotDeliveryCopy";
+
+        /// <summary>
         /// The local.
         /// </summary>
         public const string InRejectedEmailSubject = "Aviso de rechazo Orden de Venta {0}; {1}";
@@ -149,6 +159,11 @@ namespace Omicron.Reporting.Services.Constants
         /// not delivered body.
         /// </summary>
         public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega del pedido <b>{0}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{1}<br/>";
+
+        /// <summary>
+        /// not delivered body.
+        /// </summary>
+        public const string DelivereCommentsBody = "<p>Buen día,<br/>Se le informa que la entrega del pedido {0} fue entregada de manera satisfactoria con los siguientes comentarios del repartidor<br/>Nombre del repartidor: {1}<br/>Comentarios del repartidor: {2}<br/>Factura: {3}</p>";
 
         /// <summary>
         /// Body of email.
@@ -205,6 +220,11 @@ namespace Omicron.Reporting.Services.Constants
         /// The enviado status.
         /// </summary>
         public const string Enviado = "Enviado";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string NoEntregado = "No Entregado";
 
         /// <summary>
         /// the incidentFilename.

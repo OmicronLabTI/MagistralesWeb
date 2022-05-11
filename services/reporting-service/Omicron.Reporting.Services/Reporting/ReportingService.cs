@@ -20,6 +20,7 @@ namespace Omicron.Reporting.Services
     using Omicron.Reporting.Services.Clients;
     using Omicron.Reporting.Services.Constants;
     using Omicron.Reporting.Services.ReportBuilder;
+    using Omicron.Reporting.Services.Utils;
 
     /// <summary>
     /// Implementations for request service.
@@ -107,7 +108,7 @@ namespace Omicron.Reporting.Services
         /// <inheritdoc/>
         public async Task<ResultModel> SendEmailLocalPackage(SendLocalPackageModel sendLocalPackage)
         {
-            var listToLook = new List<string> { ServiceConstants.EmailLogoUrl };
+            var listToLook = new List<string> { ServiceConstants.EmailLogoUrl, ServiceConstants.EmailDeliveredNotDeliveredCopy };
             listToLook.AddRange(ServiceConstants.ValuesForEmail);
 
             var config = await this.catalogsService.GetParams(listToLook);
@@ -130,6 +131,7 @@ namespace Omicron.Reporting.Services
                 copyEmails,
                 invoiceAttachment);
 
+            await this.SendDeliveredNotDeliveredCommentsEmail(sendLocalPackage, smtpConfig, config, logoUrl);
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
 
@@ -301,8 +303,6 @@ namespace Omicron.Reporting.Services
             package.SalesOrders = string.IsNullOrEmpty(package.SalesOrders) ? string.Empty : package.SalesOrders;
             var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
 
-            //// ToDo descomentar el boton cuando pase dxp a prod
-            ////  var button = string.Empty;
             var button = string.Format(ServiceConstants.ButtonEmail, package.DxpRoute);
 
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
@@ -326,6 +326,28 @@ namespace Omicron.Reporting.Services
             var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, payment, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);
+        }
+
+        private async Task SendDeliveredNotDeliveredCommentsEmail(SendLocalPackageModel sendLocalPackage, SmtpConfigModel smtpConfig, List<ParametersModel> parametersModels, string logo)
+        {
+            if (sendLocalPackage.Status == ServiceConstants.Entregado)
+            {
+                var destinyEmail = $"{sendLocalPackage.SalesPersonEmail};{parametersModels.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value}";
+
+                sendLocalPackage.SalesOrders = string.IsNullOrEmpty(sendLocalPackage.SalesOrders) ? string.Empty : sendLocalPackage.SalesOrders;
+                var orders = sendLocalPackage.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
+
+                var subject = string.Format(ServiceConstants.DeliveredCommentsEmailSubject, orders);
+                var greeting = string.Format(ServiceConstants.DelivereCommentsBody, orders, sendLocalPackage.DeliveryName, sendLocalPackage.DeliveredComments, sendLocalPackage.PackageId);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBase, logo, greeting, string.Empty, string.Empty);
+
+                var mailStatus = await this.omicronMailClient.SendMail(
+                smtpConfig,
+                destinyEmail,
+                subject,
+                body,
+                string.Empty);
+            }
         }
 
         /// <summary>
