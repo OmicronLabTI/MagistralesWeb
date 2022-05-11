@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Utils\" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="ReportBuilder\Templates\arial.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -37,4 +40,7 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Utils\" />
+  </ItemGroup>
 </Project>
