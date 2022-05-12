@@ -320,6 +320,23 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetPedidoWithDetailAndDxp()
+        {
+            // arrange
+            var listIds = new List<int> { 100 };
+
+            // act
+            var result = await this.sapService.GetPedidoWithDetailAndDxp(listIds);
+
+            // assert
+            Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetProdOrderByOrderItem()
         {
             // arrange

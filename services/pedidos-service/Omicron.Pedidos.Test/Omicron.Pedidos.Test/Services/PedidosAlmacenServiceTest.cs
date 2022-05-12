@@ -225,6 +225,28 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetUserOrderByInvoiceId()
+        {
+            // arrange
+            var listIds = new List<int> { 4, 5 };
+
+            // act
+            var result = await this.pedidosAlmacen.GetUserOrderByInvoiceId(listIds);
+            var userorders = result.Response as List<UserOrderModel>;
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Response);
+            Assert.True(result.Success);
+            Assert.True(result.Code == 200);
+            Assert.True(userorders.Count > 0);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task CreateinvoicePdf()
         {
             var details = new List<int> { 100 };

@@ -190,5 +190,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="saleorderid">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetOrderdetail(int saleorderid);
+
+        /// <summary>
+        /// Gets all the invoices.
+        /// </summary>
+        /// <param name="invoicesIds">the invoices id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetInvoicesByIds(List<int> invoicesIds);
     }
 }

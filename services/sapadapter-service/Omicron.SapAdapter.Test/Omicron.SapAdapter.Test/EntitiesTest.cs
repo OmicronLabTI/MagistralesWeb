@@ -98,6 +98,8 @@ namespace Omicron.SapAdapter.Test
             new LineProductWithCodeBarsModel(),
             new DoctorPrescriptionInfoModel(),
             new CountDxpOrders(),
+            new RelationDxpDocEntry(),
+            new RelationOrderAndTypeModel(),
         };
 
         /// <summary>

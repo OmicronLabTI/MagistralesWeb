@@ -256,6 +256,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string GetOrderWithDetail = "getDetails";
 
         /// <summary>
+        /// the get with orders.
+        /// </summary>
+        public const string GetOrderWithDetailDxp = "getDetails/dxpDetails";
+
+        /// <summary>
         /// gets the order by product item and product order.
         /// </summary>
         public const string GetProdOrderByOrderItem = "getProductionOrderItem";
@@ -1035,7 +1040,6 @@ namespace Omicron.Pedidos.Services.Constants
             Proceso,
             Pendiente,
             Reasignado,
-            Terminado,
         };
     }
 }

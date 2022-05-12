@@ -162,6 +162,14 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string ClientEmail { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        [NotMapped]
+        public string ClientPhone { get; set; }
+
+        /// <summary>
         /// Gets or sets a value sales person email.
         /// </summary>
         /// <value>
