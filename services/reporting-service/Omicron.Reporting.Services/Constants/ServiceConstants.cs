@@ -56,6 +56,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string DeliveryEmailSubject = "Su pedido {0} se entregó con éxito";
 
         /// <summary>
+        /// The local.
+        /// </summary>
+        public const string DeliveredCommentsEmailSubject = "El pedido {0} se entregó con éxito";
+
+        /// <summary>
         /// not delivered.
         /// </summary>
         public const string PackageNotDelivered = "Su pedido {0} de OmicronLab no pudo ser entregado";
@@ -111,6 +116,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string EmailLogoUrl = "EmailLogoUrl";
 
         /// <summary>
+        /// Get the email logo url.
+        /// </summary>
+        public const string EmailDeliveredNotDeliveredCopy = "DeliveryNotDeliveryCopy";
+
+        /// <summary>
         /// The local.
         /// </summary>
         public const string InRejectedEmailSubject = "Aviso de rechazo Orden de Venta {0}; {1}";
@@ -138,17 +148,22 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> se encuentra en ruta para ser entregado en la dirección registrada a su nombre. Si desea consultar su pedido puede hacerlo aquí:</p>{1}<br/>";
+        public const string SentLocalPackage = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> se encuentra en ruta para ser entregado en la dirección registrada a su nombre. Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/>";
 
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackageDelivery = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> fue entregado con éxito.</p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{1}<br/>";
+        public const string SentLocalPackageDelivery = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> fue entregado con éxito.</p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/>";
 
         /// <summary>
         /// not delivered body.
         /// </summary>
-        public const string PackageNotDeliveredBody = "<p>Estimado cliente.<br/><br/>La entrega del pedido <b>{0}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{1}<br/>";
+        public const string PackageNotDeliveredBody = "<p>Estimado Dr. (a) {0}.<br/><br/>La entrega del pedido <b>{1}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/>";
+
+        /// <summary>
+        /// not delivered body.
+        /// </summary>
+        public const string DelivereCommentsBody = "<p>Buen día,<br/>Se le informa que la entrega del pedido <b>{0}</b> fue entregada de manera satisfactoria con los siguientes comentarios del repartidor:<br/><br/>Nombre del repartidor: <b>{1}</b><br/>Comentarios del repartidor: <b>{2}</b><br/>Factura: <b>{3}</b></p>";
 
         /// <summary>
         /// Body of email.
@@ -205,6 +220,11 @@ namespace Omicron.Reporting.Services.Constants
         /// The enviado status.
         /// </summary>
         public const string Enviado = "Enviado";
+
+        /// <summary>
+        /// The enviado status.
+        /// </summary>
+        public const string NoEntregado = "No Entregado";
 
         /// <summary>
         /// the incidentFilename.
