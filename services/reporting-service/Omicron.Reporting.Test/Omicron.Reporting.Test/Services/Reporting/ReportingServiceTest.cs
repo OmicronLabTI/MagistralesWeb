@@ -107,6 +107,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
                 new ParametersModel { Field = "EmailLogoUrl", Value = "string" },
                 new ParametersModel { Field = "DeliveryNotDeliveryCopy", Value = "string" },
+                new ParametersModel { Field = "EmailAtencionAClientes", Value = "string" },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();

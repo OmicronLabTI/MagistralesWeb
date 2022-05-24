@@ -108,7 +108,7 @@ namespace Omicron.Reporting.Services
         /// <inheritdoc/>
         public async Task<ResultModel> SendEmailLocalPackage(SendLocalPackageModel sendLocalPackage)
         {
-            var listToLook = new List<string> { ServiceConstants.EmailLogoUrl, ServiceConstants.EmailDeliveredNotDeliveredCopy };
+            var listToLook = new List<string> { ServiceConstants.EmailLogoUrl, ServiceConstants.EmailDeliveredNotDeliveredCopy, ServiceConstants.CustomerServiceEmail };
             listToLook.AddRange(ServiceConstants.ValuesForEmail);
 
             var config = await this.catalogsService.GetParams(listToLook);
@@ -120,7 +120,7 @@ namespace Omicron.Reporting.Services
             var copyEmails = string.Empty;
             destinityEmailList.Where(x => x != destinityEmail).Select(x => $"{x};").ToList().ForEach(x => copyEmails += x.Trim());
             copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{smtpConfig.EmailCCDelivery};{sendLocalPackage.SalesPersonEmail}" : smtpConfig.EmailCCDelivery;
-            copyEmails = CommonCall.CalculateTernary(sendLocalPackage.Status == ServiceConstants.NoEntregado, $"{copyEmails};{config.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value}", copyEmails);
+            copyEmails = CommonCall.CalculateTernary(sendLocalPackage.Status == ServiceConstants.NoEntregado, $"{copyEmails};{config.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value};{config.FirstOrDefault(x => x.Field == ServiceConstants.CustomerServiceEmail).Value}", copyEmails);
 
             var text = this.GetBodyForLocal(sendLocalPackage, logoUrl);
             var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage);
