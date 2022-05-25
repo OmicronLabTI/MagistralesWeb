@@ -163,7 +163,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// not delivered body.
         /// </summary>
-        public const string DelivereCommentsBody = "<p>Buen día,<br/>Se le informa que la entrega del pedido <b>{0}</b> fue entregada de manera satisfactoria con los siguientes comentarios del repartidor:<br/><br/>Nombre del repartidor: <b>{1}</b><br/>Comentarios del repartidor: <b>{2}</b><br/>Factura: <b>{3}</b></p>";
+        public const string DelivereCommentsBody = "<p>Buen día,<br/><br/>Se le informa que la entrega del pedido <b>{0}</b> fue entregada de manera satisfactoria con los siguientes comentarios del repartidor:<br/><br/>Nombre del repartidor: <b>{1}</b><br/>Comentarios del repartidor: <b>{2}</b><br/>Factura: <b>{3}</b></p>";
 
         /// <summary>
         /// Body of email.
