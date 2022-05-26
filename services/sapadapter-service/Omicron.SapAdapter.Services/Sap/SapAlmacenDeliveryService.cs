@@ -75,13 +75,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypes);
             var types = typesString.Split(",").ToList();
 
-            var userOrders = await this.GetUserOrders();
-            var lineProducts = await this.GetLineProducts();
+            var userResponse = await this.GetUserOrdersRemision(parameters);
+            var lineProducts = await this.GetLineProductsRemision(parameters, userResponse.Item2);
 
-            var deliveryIds = userOrders.Select(x => x.DeliveryId).Distinct().ToList();
+            var deliveryIds = userResponse.Item1.Select(x => x.DeliveryId).Distinct().ToList();
             deliveryIds.AddRange(lineProducts.Select(x => x.DeliveryId).Distinct().ToList());
 
-            var sapResponse = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
+            var sapResponse = await this.GetOrdersByType(types, userResponse.Item1, lineProducts, parameters);
             var dataToReturn = this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, sapResponse.Item4);
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{sapResponse.Item3}-{sapResponse.Item3}");
         }
@@ -136,8 +136,9 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(saleArray[0], out var orderSaleId);
             int.TryParse(saleArray[1], out var deliveryId);
 
-            var userOrders = await this.GetUserOrders();
-            var lineProducts = await this.GetLineProducts();
+            var dictionaryChip = new Dictionary<string, string> { { ServiceConstants.Chips, deliveryId.ToString() } };
+            var userOrders = (await this.GetUserOrdersRemision(dictionaryChip)).Item1;
+            var lineProducts = await this.GetLineProductsRemision(dictionaryChip, DateTime.Now);
             userOrders = userOrders.Where(x => x.Salesorderid == orderSaleId.ToString()).ToList();
             lineProducts = lineProducts.Where(x => x.SaleOrderId == orderSaleId).ToList();
 
@@ -154,24 +155,34 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, items, null, null);
         }
 
-        /// <summary>
-        /// Gets the orders from user Orders.
-        /// </summary>
-        /// <returns>the user orders.</returns>
-        private async Task<List<UserOrderModel>> GetUserOrders()
+        private async Task<Tuple<List<UserOrderModel>, DateTime>> GetUserOrdersRemision(Dictionary<string, string> parameters)
         {
+            if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int remisionId))
+            {
+                var userOrdersResponse = await this.pedidosService.PostPedidos(new List<int> { remisionId }, ServiceConstants.GetUserOrderDeliveryId);
+                return new Tuple<List<UserOrderModel>, DateTime>(JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.ToString()), DateTime.Now);
+            }
+
             var pedidosResponse = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrderDelivery);
-            return JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
+
+            var dateToLook = ServiceShared.GetDateTimeFromNumberSubstracDays(pedidosResponse.Comments.ToString());
+            return new Tuple<List<UserOrderModel>, DateTime>(JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.ToString()), dateToLook);
         }
 
         /// <summary>
         /// Gets the line products.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<List<LineProductsModel>> GetLineProducts()
+        private async Task<List<LineProductsModel>> GetLineProductsRemision(Dictionary<string, string> parameters, DateTime dateToLook)
         {
-            var lineProductsResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.GetLinesForDelivery);
-            return JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
+            if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int remisionId))
+            {
+                var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesForDeliveryId, new List<int> { remisionId });
+                return JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.ToString());
+            }
+
+            var almacenResponseDate = await this.almacenService.GetAlmacenOrders($"{ServiceConstants.GetLinesForDelivery}?{ServiceConstants.FechaInicio}={dateToLook.ToString("dd/MM/yyyy")}");
+            return JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponseDate.Response.ToString());
         }
 
         /// <summary>

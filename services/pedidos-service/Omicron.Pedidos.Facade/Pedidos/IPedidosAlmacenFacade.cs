@@ -44,6 +44,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> GetOrdersForDelivery();
 
         /// <summary>
+        /// Get the orders for delivery.
+        /// </summary>
+        /// <param name="deliveryIds">The deliveryIds.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersForDelivery(List<int> deliveryIds);
+
+        /// <summary>
         /// Gets the deliveries for the invoices.
         /// </summary>
         /// <returns>the data.</returns>

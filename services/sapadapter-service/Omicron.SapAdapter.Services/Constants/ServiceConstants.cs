@@ -216,9 +216,19 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLinesForDelivery = "delivery/orders";
 
         /// <summary>
+        /// route for the delivery values.
+        /// </summary>
+        public const string GetLinesForDeliveryId = "delivery/orders/id";
+
+        /// <summary>
         /// Get the delivery orders.
         /// </summary>
         public const string GetUserOrderDelivery = "userorders/delivery";
+
+        /// <summary>
+        /// Get the delivery orders.
+        /// </summary>
+        public const string GetUserOrderDeliveryId = "userorders/delivery/id";
 
         /// <summary>
         /// Get the user orders for invoices.

@@ -247,5 +247,17 @@ namespace Omicron.SapAdapter.Services.Utils
             var doctorsResponse = await doctorService.PostDoctors(cardCodes, ServiceConstants.GetResponsibleDoctors);
             return JsonConvert.DeserializeObject<List<DoctorPrescriptionInfoModel>>(doctorsResponse.Response.ToString());
         }
+
+        /// <summary>
+        /// Creates a datetime substractigng the min days.
+        /// </summary>
+        /// <param name="minDays">the min days.</param>
+        /// <returns>the data.</returns>
+        public static DateTime GetDateTimeFromNumberSubstracDays(string minDays)
+        {
+            int.TryParse(minDays, out var minNumberDays);
+            var minDate = DateTime.Today.AddDays(-minNumberDays).ToString("dd/MM/yyyy)").Split("/");
+            return new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
+        }
     }
 }
