@@ -128,7 +128,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersForDelivery()
         {
-            var response = await this.GetParametersDateToLook(ServiceConstants.AlmacenMaxDayToLook);
+            var response = await this.GetParametersDateToLook(ServiceConstants.RemisionMaxDayToLook);
             var userOrders = (await this.pedidosDao.GetUserOrderForDelivery(new List<string> { ServiceConstants.Almacenado }, ServiceConstants.Empaquetado, response.Item1)).ToList();
 
             var saleOrder = (await this.pedidosDao.GetOnlySaleOrderBySaleId(userOrders.Select(x => x.Salesorderid).Distinct().ToList())).ToList();
@@ -346,7 +346,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task<Tuple<DateTime, string>> GetParametersDateToLook(string fieldToLook)
         {
             var parameters = await this.pedidosDao.GetParamsByFieldContains(fieldToLook);
-            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "10";
+            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "30";
 
             int.TryParse(days, out var maxDays);
             var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");

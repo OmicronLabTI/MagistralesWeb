@@ -256,7 +256,7 @@ namespace Omicron.SapAdapter.Services.Utils
         public static DateTime GetDateTimeFromNumberSubstracDays(string minDays)
         {
             int.TryParse(minDays, out var minNumberDays);
-            var minDate = DateTime.Today.AddDays(-minNumberDays).ToString("dd/MM/yyyy)").Split("/");
+            var minDate = DateTime.Today.AddDays(-minNumberDays).ToString("dd/MM/yyyy").Split("/");
             return new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
         }
     }
