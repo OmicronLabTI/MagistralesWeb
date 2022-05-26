@@ -346,7 +346,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task<Tuple<DateTime, string>> GetParametersDateToLook(string fieldToLook)
         {
             var parameters = await this.pedidosDao.GetParamsByFieldContains(fieldToLook);
-            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "30";
+            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "15";
 
             int.TryParse(days, out var maxDays);
             var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
