@@ -320,6 +320,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 Quantity = model.Quantity,
                 NeedsCooling = prodOrder != null ? prodOrder.NeedsCooling : "N",
                 ItemCode = model.ProductoId,
+                DocNumDxp = orderModel.Order.DocNumDxp,
             };
 
             return modelQr;
