@@ -44,54 +44,6 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apimanager-deployment
-  labels:
-    app: apimanager
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: apimanager
-  template:
-    metadata:
-      labels:
-        app: apimanager
-    spec:
-      containers:
-        - name: apimanager
-          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-apimanager-repository:latest
-          imagePullPolicy: Always
-          env:
-            - name: TZ
-              value: America/Mexico_City
-            - name: SPRING_PROFILES_ACTIVE
-              value: dev
-          ports:
-            - containerPort: 8000
-      imagePullSecrets:
-        - name: pullsecret
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: apimanager-svc
-  labels:
-    app: apimanager-svc
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 8000
-      targetPort: 8000
-      protocol: TCP
-      name: apimanager
-  externalIPs:
-    - 192.168.0.101
-  selector:
-    app: apimanager
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: oauthserver-deployment
   labels:
     app: oauthserver
@@ -118,6 +70,21 @@ spec:
             - containerPort: 8090
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauthserver-svc
+  labels:
+    app: oauthserver
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8090
+  selector:
+    app: oauthserver
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -149,6 +116,21 @@ spec:
       imagePullSecrets:
         - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogos-svc
+  labels:
+    app: catalogos
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 9010
+  selector:
+    app: catalogos
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -178,6 +160,21 @@ spec:
             - containerPort: 5101
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usuarios-svc
+  labels:
+    app: usuarios
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5101
+  selector:
+    app: usuarios
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -216,6 +213,21 @@ spec:
       imagePullSecrets:
         - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sapadapter-svc
+  labels:
+    app: sapadapter
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5102
+  selector:
+    app: sapadapter
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -245,6 +257,21 @@ spec:
             - containerPort: 5103
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pedidos-svc
+  labels:
+    app: pedidos
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5103
+  selector:
+    app: pedidos
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -276,6 +303,21 @@ spec:
       imagePullSecrets:
         - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: warehouse-svc
+  labels:
+    app: warehouse
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5104
+  selector:
+    app: warehouse
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -305,6 +347,21 @@ spec:
             - containerPort: 5105
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting-svc
+  labels:
+    app: reporting
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5105
+  selector:
+    app: reporting
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
