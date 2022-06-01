@@ -25,16 +25,16 @@ spec:
             - --upstream=file:///dev/null
             - --http-address=0.0.0.0:4180
             - --cookie-secure=false
-            - --whitelist-domain=devtools.axity.com/auth
-            - --cookie-domain=devtools.axity.com/auth
-            - --redirect-url=https://devtools.axity.com/auth/oauth2/callback
+            - --whitelist-domain=devtools.axity.com
+            - --cookie-domain=devtools.axity.com
+            - --redirect-url=https://devtools.axity.com/oauth2/callback
             - --skip-provider-button=false
             - --set-xauthrequest=true
             - --skip-auth-preflight=false
             - --reverse-proxy=true
             - --skip-jwt-bearer-tokens=true
             - --set-authorization-header=true
-            - --oidc-issuer-url=https://devtools.axity.com/auth/auth/realms/master
+            - --oidc-issuer-url=https://devtools.axity.com/auth/realms/omicron
             - --email-domain=*
             - --standard-logging
             - --auth-logging
