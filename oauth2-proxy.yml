@@ -27,7 +27,7 @@ spec:
             - --cookie-secure=false
             - --whitelist-domain=devtools.axity.com
             - --cookie-domain=devtools.axity.com
-            - --redirect-url=https://devtools.axity.com/oauth2/callback
+            - --redirect-url=http://192.168.0.101/oauth2/callback
             - --skip-provider-button=false
             - --set-xauthrequest=true
             - --skip-auth-preflight=false
@@ -46,7 +46,7 @@ spec:
             - name: OAUTH2_PROXY_CLIENT_ID
               value: oauth2-proxy
             - name: OAUTH2_PROXY_CLIENT_SECRET
-              value: eac0dd1a-19ef-4e5e-b0c0-2e3bf2bba15e
+              value: FrsNYNm4yAh3G2O142Tn3BIHn66c9SAz
             - name: OAUTH2_PROXY_COOKIE_SECRET
               value: pJdWThtHznkeZsYyC4TRxg==
 ---
@@ -65,3 +65,23 @@ spec:
   selector:
     app: oauth2-proxy
   type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-oauth2-proxy
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "8k"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              service:
+                name: oauth2-proxy
+                port:
+                  number: 80
+            path: /oauth2
+            pathType: ImplementationSpecific
+  ingressClassName: nginx
