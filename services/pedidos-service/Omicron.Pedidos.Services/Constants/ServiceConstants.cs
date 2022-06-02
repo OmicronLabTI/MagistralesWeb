@@ -738,7 +738,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// const for the bottom temxt.
         /// </summary>
-        public const string QrTopTextOrden = "{0} {1}\nSKU: {2}";
+        public const string QrTopTextOrden = "{0}\nSKU: {2}";
 
         /// <summary>
         /// Inidicates the font type in the QR text.
