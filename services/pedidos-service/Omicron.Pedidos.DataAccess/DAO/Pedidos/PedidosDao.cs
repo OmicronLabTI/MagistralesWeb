@@ -94,9 +94,9 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return await this.databaseContext.UserOrderModel.Where(x => listStatus.Contains(x.Status)).ToListAsync();
         }
 
-        public async Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus, string statusToIgnore)
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus, string statusToIgnore, DateTime maxDateToLook)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && listStatus.Contains(x.Status) && x.DeliveryId != 0 && x.StatusAlmacen != statusToIgnore).ToListAsync();
+            return await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.DateTimeCheckIn.HasValue && x.DateTimeCheckIn >= maxDateToLook && x.DeliveryId != 0 && listStatus.Contains(x.Status) && x.StatusAlmacen != statusToIgnore).ToListAsync();
         }
 
         /// <summary>

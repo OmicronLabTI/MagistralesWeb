@@ -128,10 +128,35 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersForDelivery()
         {
-            var userOrders = (await this.pedidosDao.GetUserOrderForDelivery(new List<string> { ServiceConstants.Almacenado }, ServiceConstants.Empaquetado)).ToList();
+            var response = await this.GetParametersDateToLook(ServiceConstants.RemisionMaxDayToLook);
+            var userOrders = (await this.pedidosDao.GetUserOrderForDelivery(new List<string> { ServiceConstants.Almacenado }, ServiceConstants.Empaquetado, response.Item1)).ToList();
 
-            var saleOrder = (await this.pedidosDao.GetOnlySaleOrderBySaleId(userOrders.Select(x => x.Salesorderid).ToList())).ToList();
+            var saleOrder = (await this.pedidosDao.GetOnlySaleOrderBySaleId(userOrders.Select(x => x.Salesorderid).Distinct().ToList())).ToList();
             userOrders.AddRange(saleOrder);
+
+            var orderToReturn = userOrders
+                .Select(x => new
+                {
+                    x.Salesorderid,
+                    x.Productionorderid,
+                    x.Status,
+                    x.StatusAlmacen,
+                    x.Comments,
+                    x.DeliveryId,
+                }).ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, response.Item2);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersForDelivery(List<int> deliveryIds)
+        {
+            var userOrders = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
+
+            if (!userOrders.Any(x => x.IsSalesOrder))
+            {
+                userOrders.AddRange(await this.pedidosDao.GetOnlySaleOrderBySaleId(userOrders.Select(x => x.Salesorderid).Distinct().ToList()));
+            }
 
             var orderToReturn = userOrders
                 .Select(x => new
@@ -321,7 +346,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task<Tuple<DateTime, string>> GetParametersDateToLook(string fieldToLook)
         {
             var parameters = await this.pedidosDao.GetParamsByFieldContains(fieldToLook);
-            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "10";
+            var days = parameters.FirstOrDefault() != null ? parameters.FirstOrDefault().Value : "15";
 
             int.TryParse(days, out var maxDays);
             var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");

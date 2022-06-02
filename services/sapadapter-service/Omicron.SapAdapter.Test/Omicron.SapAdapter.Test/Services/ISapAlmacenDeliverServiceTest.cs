@@ -113,12 +113,21 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderRemision()));
+
+            mockPedidos
                 .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserOrderRemision()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
+
             mockAlmacen
                 .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetLineProductsRemision()));
+
+            mockAlmacen
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetLineProductsRemision()));
 
             mockAlmacen
@@ -198,6 +207,10 @@ namespace Omicron.SapAdapter.Test.Services
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
                 .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderRemision()));
+
+            mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserOrderRemision()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
@@ -333,12 +346,12 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
-                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserOrderRemision()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetLineProductsRemision()));
 
             mockAlmacen

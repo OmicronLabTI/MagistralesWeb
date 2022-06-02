@@ -268,10 +268,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<MagistralQrModel>(so.MagistralQr);
                 modelQr.Quantity = Math.Round(modelQr.Quantity, 1);
-                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
+                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(new { modelQr.SaleOrder, modelQr.ProductionOrder, modelQr.Quantity, modelQr.NeedsCooling, modelQr.ItemCode }));
 
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
-                var topText = string.Format(ServiceConstants.QrTopTextOrden, modelQr.SaleOrder, modelQr.ItemCode);
+                var dxpDocNum = string.IsNullOrEmpty(modelQr.DocNumDxp) ? string.Empty : $"S:{modelQr.DocNumDxp.ToUpper()}";
+                var saleOrder = string.IsNullOrEmpty(dxpDocNum) ? $"P:{modelQr.SaleOrder}" : $" P:{modelQr.SaleOrder}";
+                var topText = string.Format(ServiceConstants.QrTopTextOrden, dxpDocNum, saleOrder, modelQr.ItemCode);
                 parameters.IsBoldFont = false;
                 bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");

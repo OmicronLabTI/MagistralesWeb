@@ -128,6 +128,22 @@ namespace Omicron.Pedidos.Test.Facade
         /// </summary>
         /// <returns>test.</returns>
         [Test]
+        public async Task GetOrdersForDeliveryById()
+        {
+            // arrange
+            // act
+            var response = await this.almacenFacade.GetOrdersForDelivery(new List<int>());
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
         public async Task GetOrdersForInvoice()
         {
             // arrange

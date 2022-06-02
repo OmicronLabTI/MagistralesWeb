@@ -142,6 +142,19 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <summary>
         /// Gets the orders for almacen.
         /// </summary>
+        /// <param name="ids">The delivery ids.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders/delivery/id")]
+        [HttpPost]
+        public async Task<IActionResult> GetOrdersForDelivery(List<int> ids)
+        {
+            var response = await this.pedidosAlmacenFacade.GetOrdersForDelivery(ids);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders for almacen.
+        /// </summary>
         /// <returns>the data.</returns>
         [Route("/userorders/invoice")]
         [HttpGet]
