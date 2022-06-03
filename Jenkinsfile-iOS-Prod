@@ -15,6 +15,8 @@ pipeline {
     PROJECT_NAME_LOWERCASE = 'appiosformulas'
     SLACK_CHANNEL = '#omicron_notifications'
     ENVIRONMENT = 'PROD'
+    APPCENTER_API_TOKEN = credentials('appcenter-omicron-almacen-prod')
+    PUBLISH_APPCENTER = ''
 
     // General configurations
     COMMITER_EMAIL = sh(
@@ -23,6 +25,29 @@ pipeline {
     ).trim()
   }
   stages {
+    stage('Get Publish') {
+      steps {
+        script {
+          try {
+            timeout(time:30, unit:'SECONDS') {
+              PUBLISH_APPCENTER = input(
+                message: 'Publish result to AppCenter?',
+                parameters: [
+                  [$class: 'ChoiceParameterDefinition',
+                    choices: ['no', 'yes'].join('\n'),
+                    name: 'input',
+                    description: 'Select option'
+                  ]
+                ])
+              echo "Publish AppCenter: ${PUBLISH_APPCENTER}"
+            }
+          } catch (err) {
+            echo 'Response not recieved, skip publish...'
+            PUBLISH_APPCENTER = 'no'
+          }
+        }
+      }
+    }
     stage('Build Front iOS') {
       steps {
         echo 'Building Frontend iOS'
@@ -32,6 +57,22 @@ pipeline {
         dir('frontend/ios/') {
           sh 'fastlane archive_prod'
           archiveArtifacts 'output/*.*'
+        }
+      }
+    }
+    stage('Publish Front iOS App Center') {
+      steps {
+        script {
+          if ("${PUBLISH_APPCENTER}" == 'yes') {
+            echo 'Publish Frontend iOS'
+            appCenter apiToken: APPCENTER_API_TOKEN,
+              ownerName: 'ArquitecturaSWD',
+              appName: 'Omicron-Dev',
+              pathToApp: 'frontend/ios/output/Omicron-PROD.ipa',
+              distributionGroups: 'public'
+          } else {
+            echo 'Not publishing...'
+          }
         }
       }
     }
