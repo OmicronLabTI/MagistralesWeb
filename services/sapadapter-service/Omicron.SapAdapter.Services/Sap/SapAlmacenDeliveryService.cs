@@ -355,7 +355,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var deliveryWithInvoice = deliveryDetail.FirstOrDefault(x => x.InvoiceId.HasValue && x.InvoiceId.Value != 0);
                 deliveryWithInvoice ??= new DeliveryDetailModel { InvoiceId = 0 };
                 var invoice = invoices.FirstOrDefault(x => x.InvoiceId == deliveryWithInvoice.InvoiceId.Value);
-                var hasInvoice = ServiceShared.CalculateAnd(invoice != null, invoice?.InvoiceStatus != "C");
+                var hasInvoice = ServiceShared.CalculateAnd(invoice != null, invoice?.Canceled != "Y");
 
                 var salesOrderModel = new AlmacenSalesModel
                 {
