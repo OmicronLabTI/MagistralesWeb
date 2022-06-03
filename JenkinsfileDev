@@ -50,7 +50,7 @@ pipeline {
       steps {
         echo 'Building Frontend'
         dir('frontend/web/') {
-          sh "sudo sed -i \"s/buildEnv/build -- --baseHref=/magistrales/g\" Dockerfile"
+          sh "sudo sed -i \"s/buildEnv/build -- --baseHref=\"/magistrales\"/g\" Dockerfile"
           script {
             DockerBuildAndPush("web")
           }
