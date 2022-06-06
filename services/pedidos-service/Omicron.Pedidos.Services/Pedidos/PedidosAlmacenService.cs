@@ -145,7 +145,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.DeliveryId,
                 }).ToList();
 
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, response.Item2);
         }
 
         /// <inheritdoc/>
