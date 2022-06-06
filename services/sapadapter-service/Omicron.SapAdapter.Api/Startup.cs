@@ -39,14 +39,14 @@ namespace Omicron.SapAdapter.Api
     public class Startup
     {
         private const string AXITYURL = "https://www.axity.com/";
-        private const string PedidoService = "http://pedidosservice/";
-        private const string UserService = "http://usuariosservice/";
+        private const string PedidoService = "http://pedidos-svc.default.svc.cluster.local/";
+        private const string UserService = "http://usuarios-svc.default.svc.cluster.local/";
 
-        private const string AlmacenService = "http://almacenservice/";
+        private const string AlmacenService = "http://almacen-svc.default.svc.cluster.local/";
 
-        private const string CatalogService = "http://catalogosservice/";
-        private const string ProccessPaymentsService = "http://processpaymentservice/";
-        private const string DoctorsServiceUrl = "http://doctorservice/";
+        private const string CatalogService = "http://catalogos-svc.default.svc.cluster.local/";
+        private const string ProccessPaymentsService = "http://processpayment-svc.default.svc.cluster.local/";
+        private const string DoctorsServiceUrl = "http://doctor-svc.default.svc.cluster.local/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
