@@ -44,6 +44,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> GetOrdersForDelivery();
 
         /// <summary>
+        /// Gets the orders for deliveru.
+        /// </summary>
+        /// <param name="deliveryIds">The delivery ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOrdersForDelivery(List<int> deliveryIds);
+
+        /// <summary>
         /// Gets the orders for the invoice.
         /// </summary>
         /// <returns>the data.</returns>
