@@ -306,16 +306,16 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: warehouse-svc
+  name: warehouses-svc
   labels:
-    app: warehouse
+    app: warehouses
 spec:
   ports:
     - name: http
       port: 80
       targetPort: 5104
   selector:
-    app: warehouse
+    app: warehouses
   type: ClusterIP
 ---
 apiVersion: apps/v1
