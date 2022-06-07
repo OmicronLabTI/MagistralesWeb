@@ -106,6 +106,8 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailMiddleware", Value = string.Empty },
                 new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
                 new ParametersModel { Field = "EmailLogoUrl", Value = "string" },
+                new ParametersModel { Field = "DeliveryNotDeliveryCopy", Value = "string" },
+                new ParametersModel { Field = "EmailAtencionAClientes", Value = "string" },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
@@ -115,8 +117,7 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockEmail = new Mock<IOmicronMailClient>();
             mockEmail
-                .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
-                .Returns(Task.FromResult(true));
+                .SetReturnsDefault(Task.FromResult(true));
 
             var mockConfig = new Mock<IConfiguration>();
             mockConfig.SetupGet(x => x[It.Is<string>(s => s == "InvoicePdfAzureroute")]).Returns("test");
