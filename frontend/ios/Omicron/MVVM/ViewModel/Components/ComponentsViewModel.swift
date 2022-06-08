@@ -45,7 +45,7 @@ class ComponentsViewModel {
     }
 
     func onSuccessChips(text: String, chips: [String]) {
-        if chips.first(where: { $0 == text }) == nil {
+        if chips.first(where: { $0 == text }) != nil {
             return
         }
         let newChips = chips + [text]
