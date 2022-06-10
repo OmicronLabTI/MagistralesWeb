@@ -101,7 +101,7 @@ platform :ios do
     update_app_identifier(
       xcodeproj: "Omicron.xcodeproj",
       plist_path: "Omicron/Omicron-QA.plist",
-      app_identifier: "com.axity.starter"
+      app_identifier: "com.axity.Omicron-QA"
     )
     update_code_signing_settings(
       path: "Omicron.xcodeproj",
@@ -129,7 +129,7 @@ platform :ios do
     update_app_identifier(
       xcodeproj: "Omicron.xcodeproj",
       plist_path: "Omicron/Omicron-UAT.plist",
-      app_identifier: "com.axity.starter"
+      app_identifier: "com.axity.Omicron-UAT"
     )
     update_code_signing_settings(
       path: "Omicron.xcodeproj",
@@ -146,6 +146,34 @@ platform :ios do
       derived_data_path: "./build",
       archive_path: "./archive",
       output_name: "Omicron-UAT.ipa",
+      include_bitcode: true,
+      export_method: "development",
+      export_team_id: "NFYY63TQQ2"
+    )
+  end
+  desc "Archive iOS App PROD"
+  lane :archive_prod do
+    cocoapods()
+    update_app_identifier(
+      xcodeproj: "Omicron.xcodeproj",
+      plist_path: "Omicron/Info.plist",
+      app_identifier: "com.axity.Omicron"
+    )
+    update_code_signing_settings(
+      path: "Omicron.xcodeproj",
+      team_id: "NFYY63TQQ2",
+      code_sign_identity: "iPhone Developer",
+	    profile_name: "Axity Wildcard Dev"
+    )
+    gym(
+      scheme: "RELEASE",
+      workspace: "Omicron.xcworkspace",
+      clean: true,
+      output_directory: "./output",
+      build_path: "./build",
+      derived_data_path: "./build",
+      archive_path: "./archive",
+      output_name: "Omicron-PROD.ipa",
       include_bitcode: true,
       export_method: "development",
       export_team_id: "NFYY63TQQ2"
