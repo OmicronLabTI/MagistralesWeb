@@ -293,6 +293,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         public async Task<ResultModel> CloseMuestra(List<CloseSampleOrderModel> ordersId)
         {
             var dictionaryResult = new Dictionary<string, string>();
+            _loggerProxy.Info($"Closing sample with {JsonConvert.SerializeObject(ordersId)}");
             foreach (var order in ordersId)
             {
                 try
@@ -307,16 +308,17 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
 
                     inventoryGenExit.Comments = $"Pedido muestra basado en {order.SaleOrderId}";
+                    var numerationForExit = 0;
                     for (var i = 0; i < saleOrder.Lines.Count; i++)
                     {
                         saleOrder.Lines.SetCurrentLine(i);
                         var itemCode = saleOrder.Lines.ItemCode;
-                        if (saleOrder.Lines.ItemCode == ServiceConstants.ShippingCostItemCode)
+                        if (saleOrder.Lines.ItemCode == ServiceConstants.ShippingCostItemCode || itemCode.Contains("PAQUETE"))
                         {
                             continue;
                         }
 
-                        inventoryGenExit.Lines.SetCurrentLine(i);
+                        inventoryGenExit.Lines.SetCurrentLine(numerationForExit);
                         
                         inventoryGenExit.Lines.BaseType = -1;
                         inventoryGenExit.Lines.BaseLine = saleOrder.Lines.LineNum;
@@ -340,6 +342,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         }
 
                         inventoryGenExit.Lines.Add();
+                        numerationForExit++;
                     }
 
                     if (inventoryGenExit.Add() != 0)
@@ -349,7 +352,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         dictionaryResult.Add($"{order.SaleOrderId}-Inventory-Error", $"Error - {errorMessage}");
                     }
 
-                    if (saleOrder.Close() != 0)
+                    if (order.ItemsList.All(x => x.IsPackage == "N") && saleOrder.Close() != 0)
                     {
                         this.company.GetLastError(out int errorCode, out string errorMessage);
                         _loggerProxy.Debug($"An error has ocurred while closing sale order {order.SaleOrderId} { errorCode } - { errorMessage }.");
@@ -360,7 +363,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     {
                         _loggerProxy.Info($"The saleORder {order.SaleOrderId} was closed and the exit merchandise was done");
                         dictionaryResult.Add($"{order.SaleOrderId}-Ok", "Ok");
-                        
                     }
                 }
                 catch (Exception ex)
