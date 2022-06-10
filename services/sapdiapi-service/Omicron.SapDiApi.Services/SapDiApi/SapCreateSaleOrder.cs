@@ -80,9 +80,9 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.UserFields.Fields.Item("U_Pedido_Paquete").Value = saleOrderModel.IsPackage ? ServiceConstants.IsPackage : ServiceConstants.IsNotPackage;
                 order.UserFields.Fields.Item("U_DXPNEEDSSHIPCOST").Value = saleOrderModel.ShippingCost;
 
-                var isSample = saleOrderModel.IsSample ? "Si" : "No";
+                var isSample = saleOrderModel.IsSample ? "SI" : "NO";
                 _loggerProxy.Info($"valor muestra {isSample}");
-                order.UserFields.Fields.Item("U_PedidoMuestra").Value = saleOrderModel.IsSample ? "Si" : "No";
+                order.UserFields.Fields.Item("U_PedidoMuestra").Value = saleOrderModel.IsSample ? "SI" : "NO";
 
                 if (!string.IsNullOrEmpty(attachment))
                 {
