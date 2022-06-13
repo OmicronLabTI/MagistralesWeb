@@ -67,7 +67,7 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: dev
           ports:
-            - containerPort: 8090
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -81,7 +81,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 8090
+      targetPort: 80
   selector:
     app: oauthserver
   type: ClusterIP
@@ -112,7 +112,7 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 9010
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -126,7 +126,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 9010
+      targetPort: 80
   selector:
     app: catalogos
   type: ClusterIP
@@ -157,7 +157,7 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 5101
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -171,7 +171,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 5101
+      targetPort: 80
   selector:
     app: usuarios
   type: ClusterIP
@@ -202,7 +202,7 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 5102
+            - containerPort: 80
           livenessProbe:
             httpGet:
               path: /hc
@@ -223,7 +223,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 5102
+      targetPort: 80
   selector:
     app: sapadapter
   type: ClusterIP
@@ -254,7 +254,7 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 5103
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -268,7 +268,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 5103
+      targetPort: 80
   selector:
     app: pedidos
   type: ClusterIP
@@ -299,7 +299,7 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 5104
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -313,7 +313,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 5104
+      targetPort: 80
   selector:
     app: warehouses
   type: ClusterIP
@@ -344,7 +344,7 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 5105
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -358,7 +358,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 5105
+      targetPort: 80
   selector:
     app: reporting
   type: ClusterIP
