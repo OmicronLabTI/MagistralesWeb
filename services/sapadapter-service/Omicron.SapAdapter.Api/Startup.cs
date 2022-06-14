@@ -30,8 +30,6 @@ namespace Omicron.SapAdapter.Api
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
-    using Steeltoe.Common.Http.Discovery;
-    using Steeltoe.Discovery.Client;
 
     /// <summary>
     /// Class Startup.
@@ -99,8 +97,6 @@ namespace Omicron.SapAdapter.Api
 
             services.AddSingleton(Log.Logger);
 
-            services.AddDiscoveryClient(this.Configuration);
-
             var mvcBuilder = services.AddMvc();
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomActionFilterAttribute(Log.Logger)));
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomExceptionFilterAttribute()));
@@ -126,42 +122,36 @@ namespace Omicron.SapAdapter.Api
             {
                 c.BaseAddress = new Uri(PedidoService);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IPedidosService, PedidoService>();
 
             services.AddHttpClient("users", c =>
             {
                 c.BaseAddress = new Uri(UserService);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IUsersService, UsersService>();
 
             services.AddHttpClient("almacen", c =>
             {
                 c.BaseAddress = new Uri(AlmacenService);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IAlmacenService, AlmacenService>();
 
             services.AddHttpClient("catalogos", c =>
             {
                 c.BaseAddress = new Uri(CatalogService);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ICatalogsService, CatalogsService>();
 
             services.AddHttpClient("proccespayments", c =>
             {
                 c.BaseAddress = new Uri(ProccessPaymentsService);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IProccessPayments, ProccessPayments>();
 
             services.AddHttpClient("doctors", c =>
             {
                 c.BaseAddress = new Uri(DoctorsServiceUrl);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IDoctorService, DoctorService>();
 
             this.AddRedis(services, Log.Logger);
@@ -202,7 +192,6 @@ namespace Omicron.SapAdapter.Api
             });
             app.UseResponseCompression();
 
-            app.UseDiscoveryClient();
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
 
