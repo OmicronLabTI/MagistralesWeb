@@ -626,6 +626,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
 
         /// <summary>
+        /// remision max day to look.
+        /// </summary>
+        public const string RemisionMaxDayToLook = "RemisionMaxDayToLook";
+
+        /// <summary>
         /// The max days to look.
         /// </summary>
         public const string SentMaxDaysToLook = "SentMaxDays";
@@ -733,7 +738,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// const for the bottom temxt.
         /// </summary>
-        public const string QrTopTextOrden = "P: {0}\nSKU: {1}";
+        public const string QrTopTextOrden = "{0}\nSKU: {1}";
 
         /// <summary>
         /// Inidicates the font type in the QR text.

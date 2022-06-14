@@ -9,12 +9,14 @@ pipeline {
     DEPLOY_PATTERN = NewPatterName()
 
     // Projtect configurations
-    COMPANY = "Omicron"
-    COMPANY_LOWERCASE = "omicron"
-    PROJECT_NAME = "AppiOSFormulas"
-    PROJECT_NAME_LOWERCASE = "appiosformulas"
-    SLACK_CHANNEL = "#omicron_notifications"
-    ENVIRONMENT = "QA"
+    COMPANY = 'Omicron'
+    COMPANY_LOWERCASE = 'omicron'
+    PROJECT_NAME = 'AppiOSFormulas'
+    PROJECT_NAME_LOWERCASE = 'appiosformulas'
+    SLACK_CHANNEL = '#omicron_notifications'
+    ENVIRONMENT = 'QA'
+    APPCENTER_API_TOKEN = credentials('appcenter-omicron-almacen-prod')
+    PUBLISH_APPCENTER = ''
 
     // General configurations
     COMMITER_EMAIL = sh(
@@ -23,6 +25,29 @@ pipeline {
     ).trim()
   }
   stages {
+    stage('Get Publish') {
+      steps {
+        script {
+          try {
+            timeout(time:30, unit:'SECONDS') {
+              PUBLISH_APPCENTER = input(
+                message: 'Publish result to AppCenter?',
+                parameters: [
+                  [$class: 'ChoiceParameterDefinition',
+                    choices: ['no', 'yes'].join('\n'),
+                    name: 'input',
+                    description: 'Select option'
+                  ]
+                ])
+              echo "Publish AppCenter: ${PUBLISH_APPCENTER}"
+            }
+          } catch (err) {
+            echo 'Response not recieved, skip publish...'
+            PUBLISH_APPCENTER = 'no'
+          }
+        }
+      }
+    }
     stage('Build Front iOS') {
       steps {
         echo 'Building Frontend iOS'
@@ -32,6 +57,22 @@ pipeline {
         dir('frontend/ios/') {
           sh 'fastlane archive_qa'
           archiveArtifacts 'output/*.*'
+        }
+      }
+    }
+    stage('Publish Front iOS App Center') {
+      steps {
+        script {
+          if ("${PUBLISH_APPCENTER}" == 'yes') {
+            echo 'Publish Frontend iOS'
+            appCenter apiToken: APPCENTER_API_TOKEN,
+              ownerName: 'ArquitecturaSWD',
+              appName: 'Omicron-QA',
+              pathToApp: 'frontend/ios/output/Omicron-QA.ipa',
+              distributionGroups: 'public'
+          } else {
+            echo 'Not publishing...'
+          }
         }
       }
     }
@@ -58,18 +99,18 @@ pipeline {
 }
 
 def NewPatterName() {
-  return "_" + new Date().format('ddMMyyyy') + "_" + "${env.BUILD_NUMBER}";
+  return '_' + new Date().format('ddMMyyyy') + '_' + "${env.BUILD_NUMBER}"
 }
 
 def SlackMsg(String buildResult) {
   String message = "Compilation result ${env.BUILD_DISPLAY_NAME} for job  \"${env.JOB_NAME}\"  is " + buildResult + " launched by ${env.COMMITER_EMAIL}. For more details got to ${env.JOB_URL}"
   echo "${env.BUILD_DISPLAY_NAME}"
 
-  if (buildResult == "SUCCESS") {
-    slackSend channel: "${SLACK_CHANNEL}", color: "good", message: message
-  } else if (buildResult == "UNSTABLE") {
-    slackSend channel: "${SLACK_CHANNEL}", color: "warning", message: message
+  if (buildResult == 'SUCCESS') {
+    slackSend channel: "${SLACK_CHANNEL}", color: 'good', message: message
+  } else if (buildResult == 'UNSTABLE') {
+    slackSend channel: "${SLACK_CHANNEL}", color: 'warning', message: message
   } else {
-    slackSend channel: "${SLACK_CHANNEL}", color: "danger", message: message
+    slackSend channel: "${SLACK_CHANNEL}", color: 'danger', message: message
   }
 }
