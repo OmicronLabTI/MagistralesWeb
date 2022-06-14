@@ -31,7 +31,7 @@ namespace Omicron.Usuarios.Api
         /// <param name="args">List of arguments.</param>
         /// <returns>Web Host Builder.</returns>
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)()
+            WebHost.CreateDefaultBuilder(args)
             .UseStartup<Startup>();
     }
 }
