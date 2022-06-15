@@ -67,7 +67,7 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: dev
           ports:
-            - containerPort: 80
+            - containerPort: 8090
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -81,7 +81,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8090
   selector:
     app: oauthserver
   type: ClusterIP
