@@ -14,7 +14,7 @@ pipeline {
     PROJECT_NAME = 'AppiOSFormulas'
     PROJECT_NAME_LOWERCASE = 'appiosformulas'
     SLACK_CHANNEL = '#omicron_notifications'
-    ENVIRONMENT = 'Dev'
+    ENVIRONMENT = 'PROD'
     APPCENTER_API_TOKEN = credentials('appcenter-omicron-almacen-prod')
     PUBLISH_APPCENTER = ''
 
@@ -55,7 +55,7 @@ pipeline {
           sh 'fastlane run unlock_keychain password:$PASSWORD'
         }
         dir('frontend/ios/') {
-          sh 'fastlane archive_dev'
+          sh 'fastlane archive_prod'
           archiveArtifacts 'output/*.*'
         }
       }
@@ -67,8 +67,8 @@ pipeline {
             echo 'Publish Frontend iOS'
             appCenter apiToken: APPCENTER_API_TOKEN,
               ownerName: 'ArquitecturaSWD',
-              appName: 'Omicron-Internal',
-              pathToApp: 'frontend/ios/output/Omicron-DEV.ipa',
+              appName: 'Omicron-Dev',
+              pathToApp: 'frontend/ios/output/Omicron-PROD.ipa',
               distributionGroups: 'public'
           } else {
             echo 'Not publishing...'
