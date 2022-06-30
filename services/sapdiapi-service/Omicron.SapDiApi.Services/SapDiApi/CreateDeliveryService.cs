@@ -313,7 +313,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     {
                         saleOrder.Lines.SetCurrentLine(i);
                         var itemCode = saleOrder.Lines.ItemCode;
-                        if (saleOrder.Lines.ItemCode == ServiceConstants.ShippingCostItemCode || itemCode.Contains("PAQUETE"))
+                        if (saleOrder.Lines.ItemCode == ServiceConstants.ShippingCostItemCode)
                         {
                             continue;
                         }
@@ -352,7 +352,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         dictionaryResult.Add($"{order.SaleOrderId}-Inventory-Error", $"Error - {errorMessage}");
                     }
 
-                    if (order.ItemsList.All(x => x.IsPackage == "N") && saleOrder.Close() != 0)
+                    if (saleOrder.Close() != 0)
                     {
                         this.company.GetLastError(out int errorCode, out string errorMessage);
                         _loggerProxy.Debug($"An error has ocurred while closing sale order {order.SaleOrderId} { errorCode } - { errorMessage }.");
