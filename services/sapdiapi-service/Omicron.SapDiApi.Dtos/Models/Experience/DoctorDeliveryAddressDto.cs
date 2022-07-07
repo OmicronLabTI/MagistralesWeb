@@ -72,5 +72,11 @@ namespace Omicron.SapDiApi.Dtos.Models.Experience
         /// </summary>
         /// <value>The user that is assigning.</value>
         public string Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
+        public string Contact { get; set; }
     }
 }
