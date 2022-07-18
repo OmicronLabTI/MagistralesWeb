@@ -80,8 +80,9 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     double.TryParse(shippingCost.OrderType, out var price);
 
                     deliveryNote.Lines.ItemCode = shippingCost.ItemCode;
-                    deliveryNote.Lines.Quantity = 1;                    
-                    deliveryNote.Lines.BaseType = -1;
+                    deliveryNote.Lines.Quantity = 1;
+                    deliveryNote.Lines.BaseType = 17;
+                    deliveryNote.Lines.BaseEntry = shippingCost.ShippingCostOrderId;
                     deliveryNote.Lines.UnitPrice = price;
                     deliveryNote.Lines.Add();
                 }
