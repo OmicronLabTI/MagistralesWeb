@@ -254,7 +254,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                         deliveryNote.Lines.ItemCode = shippingCost.ItemCode;
                         deliveryNote.Lines.Quantity = 1;
-                        deliveryNote.Lines.BaseType = -1;
+                        deliveryNote.Lines.BaseType = 17;
+                        deliveryNote.Lines.BaseEntry = shippingCost.ShippingCostOrderId;
                         deliveryNote.Lines.UnitPrice = price;
                         deliveryNote.Lines.Add();
                         _loggerProxy.Info($"Here ends the fl 1 when its apart.");

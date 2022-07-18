@@ -201,7 +201,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var data = (await this.sapDao.GetAllOrdersForAlmacenById(orderId)).ToList();
             var countDxpOrders = (await this.sapDao.GetCountDxpOrdersByIds(data.Where(d => !string.IsNullOrEmpty(d.DocNumDxp)).Select(x => x.DocNumDxp).Distinct().ToList())).ToList();
-            return ServiceUtils.CreateResult(true, 200, null, data, null, countDxpOrders.GroupBy(o => o.DocNumDxp).Select(o => new CountDxpOrders { DocNumDxp = o.Key, NumOrders = o.Select(o => o.DocNum).Distinct().ToList(), }));
+            return ServiceUtils.CreateResult(true, 200, null, data, null, countDxpOrders.GroupBy(o => o.DocNumDxp).Select(o => new CountDxpOrders { DocNumDxp = o.Key, NumOrders = o.Where(o => o.IsWorkableProduct == "Y").Select(o => o.DocNum).Distinct().ToList(), }));
         }
 
         /// <inheritdoc/>
@@ -209,7 +209,16 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var data = (await this.sapDao.GetOrdersByIdJoinDoctor(ordersId)).ToList();
             var countDxpOrders = (await this.sapDao.GetCountDxpOrdersByIds(data.Where(d => !string.IsNullOrEmpty(d.DocNumDxp)).Select(x => x.DocNumDxp).Distinct().ToList())).ToList();
-            return ServiceUtils.CreateResult(true, 200, null, data, null, countDxpOrders.GroupBy(o => o.DocNumDxp).Select(o => new CountDxpOrders { DocNumDxp = o.Key, NumOrders = o.Select(o => o.DocNum).Distinct().ToList(), }));
+            var dxpOrdersInfo = countDxpOrders
+                .GroupBy(o => o.DocNumDxp)
+                .Select(ord =>
+                new CountDxpOrders
+                {
+                    DocNumDxp = ord.Key,
+                    NumOrders = ord.Where(o => o.IsWorkableProduct == "Y").Select(o => o.DocNum).Distinct().ToList(),
+                    ProductsDetails = ord.Select(o => new CountDxpOrdersDetail { ItemCode = o.Detalles.ProductoId, DocNum = o.DocNum }).ToList(),
+                });
+            return ServiceUtils.CreateResult(true, 200, null, data, null, dxpOrdersInfo);
         }
 
         /// <inheritdoc/>
