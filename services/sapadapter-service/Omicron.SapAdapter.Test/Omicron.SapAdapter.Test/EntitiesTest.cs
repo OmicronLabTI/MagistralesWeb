@@ -100,6 +100,7 @@ namespace Omicron.SapAdapter.Test
             new CountDxpOrders(),
             new RelationDxpDocEntry(),
             new RelationOrderAndTypeModel(),
+            new CountDxpOrdersDetail(),
         };
 
         /// <summary>
