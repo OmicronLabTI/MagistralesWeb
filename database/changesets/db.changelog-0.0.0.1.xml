@@ -959,4 +959,41 @@
         (statusalmacen) where (statusalmacen is not null);
       </sql>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.99">
+	<insert tableName="parameters">
+		<column name="value" value="C00089"/>
+		<column name="type" value="string"/>
+		<column name="field" value="CardCodeResponsibleMedic"/>
+	</insert>
+	<insert tableName="parameters">
+		<column name="value" value="C00098"/>
+		<column name="type" value="string"/>
+		<column name="field" value="CardCodeResponsibleMedic"/>
+	</insert>
+	<insert tableName="parameters">
+		<column name="value" value="C00100"/>
+		<column name="type" value="string"/>
+		<column name="field" value="CardCodeResponsibleMedic"/>
+	</insert>
+	<insert tableName="parameters">
+		<column name="value" value="C00130"/>
+		<column name="type" value="string"/>
+		<column name="field" value="CardCodeResponsibleMedic"/>
+	</insert>
+	<insert tableName="parameters">
+		<column name="value" value="C00721"/>
+		<column name="type" value="string"/>
+		<column name="field" value="CardCodeResponsibleMedic"/>
+	</insert>
+	<insert tableName="parameters">
+		<column name="value" value="C01817"/>
+		<column name="type" value="string"/>
+		<column name="field" value="CardCodeResponsibleMedic"/>
+	</insert>
+	<insert tableName="parameters">
+		<column name="value" value="C05298"/>
+		<column name="type" value="string"/>
+		<column name="field" value="CardCodeResponsibleMedic"/>
+	</insert>
+  </changeSet>
 </databaseChangeLog>

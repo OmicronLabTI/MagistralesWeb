@@ -496,6 +496,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string LocalNeighborhood = "LocalNeighborhood";
 
         /// <summary>
+        /// the max days.
+        /// </summary>
+        public const string CardCodeResponsibleMedic = "CardCodeResponsibleMedic";
+
+        /// <summary>
         /// error when batche are missing.
         /// </summary>
         public const string Pedido = "ped";

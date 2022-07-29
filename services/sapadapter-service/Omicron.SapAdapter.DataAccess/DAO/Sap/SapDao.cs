@@ -71,6 +71,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        Canceled = order.Canceled,
                                        PedidoMuestra = order.PedidoMuestra,
                                        DocNumDxp = order.DocNumDxp,
+                                       ShippingAddressName = order.ShippingAddressName,
                                    });
             return await this.RetryQuery<CompleteOrderModel>(query);
         }
@@ -118,6 +119,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Canceled = order.Canceled,
                              PedidoMuestra = order.PedidoMuestra,
                              DocNumDxp = order.DocNumDxp,
+                             ShippingAddressName = order.ShippingAddressName,
                          }).AsNoTracking();
 
             return (await this.RetryQuery<CompleteOrderModel>(query)).ToList();
@@ -1522,6 +1524,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Canceled = order.Canceled,
                              PedidoMuestra = order.PedidoMuestra,
                              DocNumDxp = order.DocNumDxp,
+                             ShippingAddressName = order.ShippingAddressName,
                          }).AsNoTracking();
             return query;
         }
