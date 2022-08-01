@@ -320,7 +320,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
                 parameters.IsBoldFont = true;
-                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters, topText);
+                var remisionType = ServiceShared.CalculateTernary(string.IsNullOrEmpty(modelQr.Omi) || modelQr.Omi == "N", ServiceConstants.RemisionType, ServiceConstants.RemisionOmiType);
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, $"{remisionType}{ServiceConstants.QrBottomTextRemision}", modelQr.RemisionId.ToString(), parameters, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
 
                 memoryStrem.Flush();
