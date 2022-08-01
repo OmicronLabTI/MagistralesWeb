@@ -601,6 +601,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string IsPackage = "Y";
 
         /// <summary>
+        /// if a order is package.
+        /// </summary>
+        public const string IsOmigenomics = "Y";
+
+        /// <summary>
         /// the abierto status.
         /// </summary>
         public const string EndPointToGetPayments = "orders/subtransactions";
