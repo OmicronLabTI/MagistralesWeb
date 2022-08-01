@@ -121,6 +121,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 TypeOrder = deliveryDetails.FirstOrDefault().TypeOrder,
                 HasInvoice = invoices.Any() && invoices.FirstOrDefault().Canceled == "N",
                 IsPackage = deliveryDetails.FirstOrDefault().IsPackage == ServiceConstants.IsPackage,
+                IsOmigenomics = deliveryDetails.FirstOrDefault().IsOmigenomics == ServiceConstants.IsOmigenomics,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
@@ -369,6 +370,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeOrder = header.TypeOrder,
                     DeliveryTypeModel = deliveryType,
                     IsPackage = header.IsPackage == ServiceConstants.IsPackage,
+                    IsOmigenomics = header.IsOmigenomics == ServiceConstants.IsOmigenomics,
                 };
 
                 var saleModel = new SalesModel

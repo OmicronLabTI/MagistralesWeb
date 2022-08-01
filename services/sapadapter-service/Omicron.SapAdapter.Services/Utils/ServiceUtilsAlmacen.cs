@@ -105,7 +105,7 @@ namespace Omicron.SapAdapter.Services.Utils
         {
             var idsMagistrales = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
 
-            var sapOrders = ServiceShared.CalculateTernary(needOnlyDxp, (await sapDao.GetAllOrdersForAlmacenDxp(userOrdersTuple.Item3)).ToList(), (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList());
+            var sapOrders = needOnlyDxp ? (await sapDao.GetAllOrdersForAlmacenDxp(userOrdersTuple.Item3)).ToList() : (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
@@ -254,7 +254,8 @@ namespace Omicron.SapAdapter.Services.Utils
                     OrderType = order.TypeOrder,
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
                     DxpId = order.DocNumDxp,
-                    IsPackage = order.IsPackage == "Y",
+                    IsPackage = order.IsPackage == ServiceConstants.IsPackage,
+                    IsOmigenomics = order.IsOmigenomics == ServiceConstants.IsOmigenomics,
                 });
             }
 
