@@ -156,7 +156,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
             var saleOrders = (await this.pedidosDao.GetUserOrderByDeliveryId(ordersId)).ToList();
 
-            if (!saleOrders.Any())
+            if (ServiceShared.CalculateOr(!saleOrders.Any(), saleOrders.Select(x => x.DeliveryId).Distinct().Count() < ordersId.Count))
             {
                 var dictParam = $"?{ServiceConstants.Delivery}={JsonConvert.SerializeObject(ordersId)}";
                 var route = $"{ServiceConstants.AlmacenGetOrders}{dictParam}";
