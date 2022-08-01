@@ -156,6 +156,13 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        [Column("U_Omigenomicstp")]
+        public string IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         [NotMapped]
         public string Cliente { get; set; }
     }

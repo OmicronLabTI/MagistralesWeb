@@ -71,6 +71,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                                        Canceled = order.Canceled,
                                        PedidoMuestra = order.PedidoMuestra,
                                        DocNumDxp = order.DocNumDxp,
+                                       ShippingAddressName = order.ShippingAddressName,
                                    });
             return await this.RetryQuery<CompleteOrderModel>(query);
         }
@@ -118,6 +119,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Canceled = order.Canceled,
                              PedidoMuestra = order.PedidoMuestra,
                              DocNumDxp = order.DocNumDxp,
+                             ShippingAddressName = order.ShippingAddressName,
                          }).AsNoTracking();
 
             return (await this.RetryQuery<CompleteOrderModel>(query)).ToList();
@@ -630,6 +632,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Canceled = order.Canceled,
                              IsPackage = order.IsPackage,
                              DocNumDxp = order.DocNumDxp,
+                             IsOmigenomics = order.IsOmigenomics,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -730,6 +733,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsMagistral = product.IsMagistral,
                              IsPackage = order.IsPackage,
                              DocNumDxp = order.DocNumDxp,
+                             IsOmigenomics = order.IsOmigenomics,
                          });
 
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
@@ -835,6 +839,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsPackage = invoice.IsPackage,
                              DocNumDxp = invoice.DocNumDxp,
                              ShippingAddressName = invoice.ShippingAddressName,
+                             IsOmigenomics = invoice.IsOmigenomics,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -935,6 +940,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = invoice.DocNumDxp,
                              DoctorPhoneNumber = dop.GlblLocNum,
                              ShippingAddressName = invoice.ShippingAddressName,
+                             IsOmigenomics = invoice.IsOmigenomics,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
@@ -1282,6 +1288,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = order.DocNumDxp,
                              CardCode = order.Codigo,
                              DeliveryAddressId = order.ShippingAddressName,
+                             IsOmigenomics = order.IsOmigenomics,
                          });
 
             return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();
@@ -1311,6 +1318,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = order.DocNumDxp,
                              CardCode = order.CardCode,
                              DeliveryAddressId = order.ShippingAddressName,
+                             IsOmigenomics = order.IsOmigenomics,
                          });
 
             return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
@@ -1406,6 +1414,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         Canceled = order.Canceled,
                         IsPackage = order.IsPackage,
                         DocNumDxp = order.DocNumDxp,
+                        IsOmigenomics = order.IsOmigenomics,
                     });
         }
 
@@ -1453,6 +1462,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         IsPackage = order.IsPackage,
                         DocNumDxp = order.DocNumDxp,
                         ShippingAddressName = order.ShippingAddressName,
+                        IsOmigenomics = order.IsOmigenomics,
                     });
         }
 
@@ -1490,6 +1500,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              TypeOrder = delivery.TypeOrder,
                              IsPackage = delivery.IsPackage,
                              DocNumDxp = delivery.DocNumDxp,
+                             IsOmigenomics = delivery.IsOmigenomics,
                          });
         }
 
@@ -1522,6 +1533,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Canceled = order.Canceled,
                              PedidoMuestra = order.PedidoMuestra,
                              DocNumDxp = order.DocNumDxp,
+                             ShippingAddressName = order.ShippingAddressName,
                          }).AsNoTracking();
             return query;
         }

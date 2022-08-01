@@ -496,6 +496,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string LocalNeighborhood = "LocalNeighborhood";
 
         /// <summary>
+        /// the max days.
+        /// </summary>
+        public const string CardCodeResponsibleMedic = "CardCodeResponsibleMedic";
+
+        /// <summary>
         /// error when batche are missing.
         /// </summary>
         public const string Pedido = "ped";
@@ -594,6 +599,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// if a order is package.
         /// </summary>
         public const string IsPackage = "Y";
+
+        /// <summary>
+        /// if a order is package.
+        /// </summary>
+        public const string IsOmigenomics = "Y";
 
         /// <summary>
         /// the abierto status.

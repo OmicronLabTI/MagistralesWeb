@@ -118,15 +118,9 @@ namespace Omicron.SapAdapter.Services.Utils
                 var typeLabel = ServiceShared.CalculateTernary(allPersonalized, ServiceConstants.PersonalizadoAbr, ServiceConstants.MixtoAbr);
                 typeLabel = ServiceShared.CalculateTernary(allGeneric, ServiceConstants.GenericoAbr, typeLabel);
 
-                var hasRecipe = p.FirstOrDefault()?.AtcEntry != null;
-                var needRecipe = p.Any(d => d.Detalles.HasRecipe.ValidateNull().ToLower() == ServiceConstants.HasRecipe);
-
-                var recipe = ServiceShared.CalculateTernary(hasRecipe, ServiceConstants.HasNeedsRecipe, ServiceConstants.DoesntHaveNeedRecipe);
-                recipe = ServiceShared.CalculateTernary(needRecipe, recipe, ServiceConstants.NoNeedRecipe);
-
                 var elementToSave = p.FirstOrDefault();
                 elementToSave.LabelType = typeLabel;
-                elementToSave.HasRecipte = recipe;
+                elementToSave.HasRecipte = ServiceConstants.HasNeedsRecipe;
 
                 var order = userOrder.GetSaleOrderHeader(elementToSave.DocNum.ToString());
                 elementToSave.Qfb = ServiceShared.CalculateTernary(order == null, string.Empty, order?.Userid);
