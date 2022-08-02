@@ -327,6 +327,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="ordersId">the orders id.</param>
         /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetCompleteDeliveryWithDetailBySaleOrder(List<int> ordersId);
+
+        /// <summary>
+        /// Gets the deliveries by the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
         Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailBySaleOrderJoinProduct(List<int> ordersId);
 
         /// <summary>
