@@ -680,11 +680,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var query = (from order in this.databaseContext.OrderModel
                          join detail in this.databaseContext.DetallePedido on order.DocNum equals detail.PedidoId
                          join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
-                         where dxpIds.Contains(order.DocNumDxp) && product.IsWorkableProduct == "Y"
+                         where dxpIds.Contains(order.DocNumDxp)
                          select new CompleteAlmacenOrderModel
                          {
                              DocNumDxp = order.DocNumDxp,
                              DocNum = order.DocNum,
+                             Detalles = detail,
+                             IsWorkableProduct = product.IsWorkableProduct
                          });
 
             return await this.RetryQuery(query);

@@ -548,12 +548,15 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var response = await this.sapService.GetOrdersByIds(ordersToLook);
             var orders = response.Response as List<OrderModel>;
+            var countDxpOrders = response.Comments as IEnumerable<CountDxpOrders>;
 
             // asserts
             Assert.IsTrue(response.Success);
             Assert.IsTrue(response.Code == 200);
             Assert.IsInstanceOf<List<OrderModel>>(response.Response);
+            Assert.IsInstanceOf<IEnumerable<CountDxpOrders>>(response.Comments);
             Assert.IsTrue(orders.Any());
+            Assert.IsTrue(countDxpOrders.Any());
         }
 
         /// <summary>
