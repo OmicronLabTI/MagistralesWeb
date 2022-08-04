@@ -27,7 +27,7 @@ spec:
           resources:
             limits:
               cpu: 1052m
-              memory: 572Mi
+              memory: 715Mi
             requests:
               cpu: 526m
               memory: 446Mi
@@ -68,7 +68,7 @@ spec:
           resources:
             limits:
               cpu: 1413m
-              memory: 414Mi
+              memory: 477Mi
             requests:
               cpu: 707m
               memory: 323Mi
@@ -109,7 +109,7 @@ spec:
           resources:
             limits:
               cpu: 170m
-              memory: 144Mi
+              memory: 166Mi
             requests:
               cpu: 85m
               memory: 95Mi
