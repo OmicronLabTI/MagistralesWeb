@@ -91,7 +91,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userResponse.Item1, lineProducts.Item1, status);
             orders = await this.GetSapLinesToLookByChips(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
-            var listToReturn = this.GetOrdersToReturn(userResponse.Item1, orders, lineProducts.Item1, parameters, sapOrders.Item3);
+            var listToReturn = this.GetOrdersToReturn(userResponse.Item1, orders, lineProducts.Item1, parameters, sapOrders.Item2);
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
@@ -415,7 +415,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="userOrdersTuple">the user order tuple.</param>
         /// <param name="lineProductTuple">the line product tuple.</param>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>> GetSapLinesToLook(List<string> types, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, Dictionary<string, string> parameters)
+        private async Task<Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>> GetSapLinesToLook(List<string> types, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, Dictionary<string, string> parameters)
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
@@ -423,7 +423,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var sapOrdersById = (await this.sapDao.GetAllOrdersForAlmacenByListIds(new List<int> { pedidoId })).ToList();
                 var listHeaders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrdersById, lineProducts);
-                return new Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>(listHeaders.Item1, 0, listHeaders.Item2);
+                return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listHeaders.Item1, listHeaders.Item2);
             }
 
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple, false);
@@ -436,7 +436,7 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders.AddRange(sapCancelled);
             var listHeaderToReturn = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts);
 
-            return new Tuple<List<CompleteAlmacenOrderModel>, int, SaleOrderTypeModel>(listHeaderToReturn.Item1, 0, listHeaderToReturn.Item2);
+            return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listHeaderToReturn.Item1, listHeaderToReturn.Item2);
         }
 
         /// <summary>
