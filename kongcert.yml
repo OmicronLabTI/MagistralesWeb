@@ -1,4 +1,4 @@
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt
@@ -9,9 +9,9 @@ spec:
       name: letsencrypt
     server: https://acme-v02.api.letsencrypt.org/directory
     solvers:
-    - http01:
-        ingress:
-          class: nginx-api
-    - http01:
-        ingress:
-          class: nginx-log
+      - http01:
+          ingress:
+            class: nginx-api
+      - http01:
+          ingress:
+            class: nginx-log
