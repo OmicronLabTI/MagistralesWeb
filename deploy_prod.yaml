@@ -34,6 +34,22 @@ spec:
       imagePullSecrets:
         - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: apimanager
+  name: apimanager-svc
+spec:
+  ports:
+    - name: apimanager
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+  selector:
+    app: apimanager
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
