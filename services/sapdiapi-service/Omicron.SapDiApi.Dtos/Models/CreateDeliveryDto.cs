@@ -25,6 +25,12 @@ namespace Omicron.SapDiApi.Dtos.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The user that is assigning.</value>
+        public int ShippingCostOrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
         public string ItemCode { get; set; }
 
         /// <summary>

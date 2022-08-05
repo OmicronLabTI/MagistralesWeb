@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="CountDxpOrders.cs" company="Axity">
+// <copyright file="CountDxpOrdersDetail.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -8,29 +8,21 @@
 
 namespace Omicron.SapAdapter.Entities.Model.JoinsModels
 {
-    using System.Collections.Generic;
-
     /// <summary>
     /// Class for the order model.
     /// </summary>
-    public class CountDxpOrders
+    public class CountDxpOrdersDetail
     {
         /// <summary>
         /// Gets or sets OrderDxpId.
         /// </summary>
         /// <value>The IsChecked.</value>
-        public string DocNumDxp { get; set; }
+        public string ItemCode { get; set; }
 
         /// <summary>
         /// Gets or sets OrderDxpId.
         /// </summary>
         /// <value>The IsChecked.</value>
-        public List<int> NumOrders { get; set; }
-
-        /// <summary>
-        /// Gets or sets OrderDxpId.
-        /// </summary>
-        /// <value>The IsChecked.</value>
-        public List<CountDxpOrdersDetail> ProductsDetails { get; set; }
+        public int DocNum { get; set; }
     }
 }
