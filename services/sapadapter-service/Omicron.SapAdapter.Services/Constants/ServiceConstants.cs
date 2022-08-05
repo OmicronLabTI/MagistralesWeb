@@ -463,17 +463,17 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypes = "magistral,mixto,linea,maquila,muestra,paquetes";
+        public const string AllTypes = "magistral,mixto,linea,maquila,muestra,paquetes,omigenomics";
 
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypesByDoctor = "magistral,mixto,linea,maquila";
+        public const string AllTypesByDoctor = "magistral,mixto,linea,maquila,omigenomics";
 
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypesByDxp = "magistral,mixto,linea,maquila,paquetes";
+        public const string AllTypesByDxp = "magistral,mixto,linea,maquila,paquetes,omigenomics";
 
         /// <summary>
         /// all types.
@@ -624,6 +624,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// the nvo leon state.
         /// </summary>
         public const string WildcardDocNumDxp = "#";
+
+        /// <summary>
+        /// if a order is package.
+        /// </summary>
+        public const string OmigenomicsGroup = "Omigenomics";
 
         /// <summary>
         /// Gets the status of the order.

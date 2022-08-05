@@ -240,9 +240,11 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var maquilaDeliverys = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
             var packageDeliveries = deliveryHeaders.Where(x => x.IsPackage == ServiceConstants.IsPackage).ToList();
+            var omigenomicsDeliveries = deliveryHeaders.Where(del => del.IsOmigenomics.ValidateNull().ToLower() == ServiceConstants.IsOmigenomics.ToLower()).ToList();
 
             deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, maquilaDeliverys, ServiceConstants.Maquila);
             deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, packageDeliveries, ServiceConstants.Paquetes);
+            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, omigenomicsDeliveries, ServiceConstants.OmigenomicsGroup);
 
             deliveryHeaders = await this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
             deliveryHeaders = deliveryHeaders.OrderByDescending(x => x.DocNum).ToList();

@@ -118,7 +118,7 @@ namespace Omicron.SapAdapter.Test.Services
         /// <param name="type">the type of orders.</param>
         /// <returns>the data.</returns>
         [Test]
-        [TestCase("magistral, mixto, maquila, linea")]
+        [TestCase("magistral, mixto, maquila, linea, omigenomics")]
         [TestCase("magistral, mixto, linea")]
         public async Task SearchAlmacenOrdersByAllsDoctors(string type)
         {
