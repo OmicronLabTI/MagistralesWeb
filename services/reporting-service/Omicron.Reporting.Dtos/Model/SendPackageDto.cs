@@ -48,5 +48,12 @@ namespace Omicron.Reporting.Dtos.Model
         /// </summary>
         /// <value>The code.</value>
         public string SalesOrders { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value sales person email.
+        /// </summary>
+        /// <value>
+        /// Bool is production order.
+        public string SalesPrsonEmail { get; set; }
     }
 }
