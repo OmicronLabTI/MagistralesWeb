@@ -68,9 +68,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypesByDoctor);
             var types = typesString.Split(",").ToList();
 
-            // ToDo : delete this line when the filter is done.
-            types.Add(ServiceConstants.OmigenomicsGroup.ToLower());
-
             var userOrdersTuple = await ServiceUtilsAlmacen.GetUserOrdersAlmacenLeftList(this.pedidosService);
             var ids = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
             var lineProductsTuple = await ServiceUtilsAlmacen.GetLineProductsAlmacenLeftList(this.almacenService, ids, userOrdersTuple.Item3);
