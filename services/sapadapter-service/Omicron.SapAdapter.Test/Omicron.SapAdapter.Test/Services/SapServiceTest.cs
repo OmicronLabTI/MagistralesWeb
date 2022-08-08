@@ -21,8 +21,10 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Pedidos;
@@ -76,6 +78,16 @@ namespace Omicron.SapAdapter.Test.Services
             var mockUserService = new Mock<IUsersService>();
             var mockConfiguration = new Mock<IConfiguration>();
             var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Value = "A1", Field = "Medic" },
+            };
+
+            mockCatalogs
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(parameters)));
 
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
@@ -112,7 +124,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             this.sapDao = new SapDao(this.context, mockLog.Object);
             IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
-            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
         }
 
         /// <summary>
@@ -156,6 +168,16 @@ namespace Omicron.SapAdapter.Test.Services
             var mockUserService = new Mock<IUsersService>();
             var mockConfiguration = new Mock<IConfiguration>();
             var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Value = "A1", Field = "Medic" },
+            };
+
+            mockCatalogs
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(parameters)));
 
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
@@ -187,7 +209,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetDoctorsInfo()));
 
             IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
-            var localSap = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object);
+            var localSap = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
 
             // act
             var result = await localSap.GetOrders(dicParams);
@@ -997,6 +1019,16 @@ namespace Omicron.SapAdapter.Test.Services
             var mockConfiguration = new Mock<IConfiguration>();
             var mockRedis = new Mock<IRedisService>();
             var mockLog = new Mock<ILogger>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Value = "A1", Field = "Medic" },
+            };
+
+            mockCatalogs
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(parameters)));
 
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
             mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
@@ -1025,7 +1057,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetDoctorsInfo()));
 
             IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
-            var sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object);
+            var sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
 
             var dict = new Dictionary<string, string>();
 

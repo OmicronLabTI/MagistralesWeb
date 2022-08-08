@@ -19,10 +19,12 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Resources.Extensions;
+    using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Mapping;
@@ -49,6 +51,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IDoctorService doctorService;
 
+        private readonly ICatalogsService catalogsService;
+
         /// <summary>
         /// The logger.
         /// </summary>
@@ -67,7 +71,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="getProductionOrderUtils">the getproduction order utisl.</param>
         /// <param name="redisService">The reddis service.</param>
         /// <param name="doctorService">The doctor service.</param>
-        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration, ILogger logger, IGetProductionOrderUtils getProductionOrderUtils, IRedisService redisService, IDoctorService doctorService)
+        /// <param name="catalogsService">The catalog Service.</param>
+        public SapService(ISapDao sapDao, IPedidosService pedidosService, IUsersService userService, IConfiguration configuration, ILogger logger, IGetProductionOrderUtils getProductionOrderUtils, IRedisService redisService, IDoctorService doctorService, ICatalogsService catalogsService)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
@@ -77,6 +82,7 @@ namespace Omicron.SapAdapter.Services.Sap
             this.getProductionOrderUtils = getProductionOrderUtils;
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
             this.doctorService = doctorService.ThrowIfNull(nameof(doctorService));
+            this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
         }
 
         /// <summary>
@@ -107,6 +113,10 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var listUsers = await this.GetUsers(userOrders);
+
+            var catalogResponse = await this.catalogsService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.CardCodeResponsibleMedic}={ServiceConstants.CardCodeResponsibleMedic}");
+            var specialCardCodes = JsonConvert.DeserializeObject<List<ParametersModel>>(catalogResponse.Response.ToString()).Select(x => x.Value).ToList();
+
             orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
             var offset = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
@@ -128,7 +138,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var doctor = listDoctors.FirstOrDefault(x => x.CardCode == o.Codigo);
                 doctor ??= new DoctorPrescriptionInfoModel { DoctorName = o.Medico };
-                o.Medico = doctor.DoctorName;
+                o.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == o.Codigo), o.ShippingAddressName, doctor.DoctorName);
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);

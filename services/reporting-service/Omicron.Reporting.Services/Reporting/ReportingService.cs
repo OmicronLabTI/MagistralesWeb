@@ -99,7 +99,7 @@ namespace Omicron.Reporting.Services
                 request.DestinyEmail,
                 string.Format(ServiceConstants.ForeignEmailSubject, request.SalesOrders),
                 body,
-                smtpConfig.EmailCCDelivery,
+                $"{smtpConfig.EmailCCDelivery};{request.SalesPrsonEmail}",
                 invoiceAttachment);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };

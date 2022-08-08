@@ -162,5 +162,11 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string ShippingAddressName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string IsOmigenomics { get; set; }
     }
 }
