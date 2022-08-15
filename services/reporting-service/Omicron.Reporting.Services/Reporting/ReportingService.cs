@@ -93,9 +93,10 @@ namespace Omicron.Reporting.Services
             var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, ServiceConstants.RefundPolicy);
             var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId });
 
+            var destinityEmail = request.DestinyEmail.Split(";").FirstOrDefault(x => !string.IsNullOrEmpty(x)) ?? string.Empty;
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
-                request.DestinyEmail,
+                destinityEmail,
                 string.Format(ServiceConstants.ForeignEmailSubject, request.SalesOrders),
                 body,
                 $"{smtpConfig.EmailCCDelivery};{request.SalesPrsonEmail}",
