@@ -40,7 +40,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // arrange
             var request = new SendPackageModel
             {
-                DestinyEmail = "email",
+                DestinyEmail = "email@email.com;test@email.com",
                 PackageId = 1,
                 TrackingNumber = "asdf",
                 TransportMode = party,

@@ -436,6 +436,16 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> GetInvoicesByIds(List<int> invoicesIds)
         {
             var invoices = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(invoicesIds)).ToList();
+            var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(invoices.Select(x => x.SalesPrsonId).ToList())).ToList();
+
+            invoices.ForEach(x =>
+            {
+                var adviosr = salesPerson.FirstOrDefault(s => s.AsesorId == x.SalesPrsonId);
+                adviosr ??= new SalesPersonModel { Email = string.Empty, FirstName = string.Empty, LastName = string.Empty };
+                x.SalesPrsonEmail = adviosr.Email;
+                x.SalesPrsonName = $"{adviosr.FirstName} {adviosr.LastName}";
+            });
+
             return ServiceUtils.CreateResult(true, 200, null, invoices, null, null);
         }
 

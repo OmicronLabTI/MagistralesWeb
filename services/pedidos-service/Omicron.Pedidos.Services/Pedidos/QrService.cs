@@ -156,7 +156,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
             var saleOrders = (await this.pedidosDao.GetUserOrderByDeliveryId(ordersId)).ToList();
 
-            if (!saleOrders.Any())
+            if (ServiceShared.CalculateOr(!saleOrders.Any(), saleOrders.Select(x => x.DeliveryId).Distinct().Count() < ordersId.Count))
             {
                 var dictParam = $"?{ServiceConstants.Delivery}={JsonConvert.SerializeObject(ordersId)}";
                 var route = $"{ServiceConstants.AlmacenGetOrders}{dictParam}";
@@ -305,7 +305,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionRemisionQrModel>();
-            var memoryStrem = new MemoryStream();
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).ToList();
 
             foreach (var so in saleOrders)
@@ -320,10 +319,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
                 parameters.IsBoldFont = true;
-                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters, topText);
+                var remisionType = ServiceShared.CalculateTernary(string.IsNullOrEmpty(modelQr.Omi) || modelQr.Omi == "N", ServiceConstants.RemisionType, ServiceConstants.RemisionOmiType);
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, $"{remisionType}{ServiceConstants.QrBottomTextRemision}", modelQr.RemisionId.ToString(), parameters, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
 
-                memoryStrem.Flush();
+                var memoryStrem = new MemoryStream();
                 bitmap.Save(memoryStrem, ImageFormat.Png);
                 memoryStrem.Position = 0;
 

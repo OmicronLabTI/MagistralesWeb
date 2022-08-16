@@ -35,12 +35,6 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// Gets or sets the zipcode.
         /// </summary>
         /// <value>Zip code.</value>
-        public string BussinessName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the zipcode.
-        /// </summary>
-        /// <value>Zip code.</value>
         public string Rfc { get; set; }
 
         /// <summary>

@@ -90,16 +90,16 @@ namespace Omicron.Reporting.Services
             var sendEmailLink = email.Contains("http") ? string.Format(ServiceConstants.PlaceLink, email) : email;
 
             var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
-            var payment = string.Format(ServiceConstants.FooterPayment, request.PackageId);
-            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, payment, ServiceConstants.RefundPolicy);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, ServiceConstants.RefundPolicy);
             var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId });
 
+            var destinityEmail = request.DestinyEmail.Split(";").FirstOrDefault(x => !string.IsNullOrEmpty(x)) ?? string.Empty;
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
-                request.DestinyEmail,
+                destinityEmail,
                 string.Format(ServiceConstants.ForeignEmailSubject, request.SalesOrders),
                 body,
-                smtpConfig.EmailCCDelivery,
+                $"{smtpConfig.EmailCCDelivery};{request.SalesPrsonEmail}",
                 invoiceAttachment);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
@@ -301,7 +301,6 @@ namespace Omicron.Reporting.Services
         /// <returns>the text.</returns>
         private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package, string logo)
         {
-            var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
             package.SalesOrders = string.IsNullOrEmpty(package.SalesOrders) ? string.Empty : package.SalesOrders;
             var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
 
@@ -311,7 +310,7 @@ namespace Omicron.Reporting.Services
             {
                 var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
                 var greeting = string.Format(ServiceConstants.SentLocalPackage, package.ClientName, orders, button);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, payment, ServiceConstants.RefundPolicy);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, string.Empty, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
@@ -319,13 +318,13 @@ namespace Omicron.Reporting.Services
             {
                 var subject = string.Format(ServiceConstants.DeliveryEmailSubject, orders);
                 var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, package.ClientName, orders, button);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, payment, ServiceConstants.RefundPolicy);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, string.Empty, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
             var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
             var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.ClientName, orders, button);
-            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, payment, ServiceConstants.RefundPolicy);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, string.Empty, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);
         }

@@ -132,5 +132,23 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// String FirstName.
         /// </value>
         public bool IsSample { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the order is omigenomics.
+        /// </summary>
+        /// <value>Omigenomics value.</value>
+        public bool IsOmigenomicsOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the adviser id.
+        /// </summary>
+        /// <value>IdDoctor.</value>
+        public int? SlpCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the adviser id.
+        /// </summary>
+        /// <value>IdDoctor.</value>
+        public int? EmployeeId { get; set; }
     }
 }

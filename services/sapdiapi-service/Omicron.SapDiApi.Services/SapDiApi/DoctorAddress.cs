@@ -369,7 +369,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         private BusinessPartners SetInvoiceFieldData(BusinessPartners doctorSap, DoctorInvoiceAddressModel address)
         {
             doctorSap.Addresses.AddressName = address.NickName;
-            doctorSap.Addresses.UserFields.Fields.Item("U_RAZON").Value = address.BussinessName;
+            doctorSap.Addresses.UserFields.Fields.Item("U_RAZON").Value = address.NickName;
             doctorSap.Addresses.UserFields.Fields.Item("U_RFC").Value = address.Rfc;
             doctorSap.Addresses.FederalTaxID = address.Rfc;
             doctorSap.Addresses.ZipCode = address.ZipCode;
