@@ -179,7 +179,7 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()},{ServiceConstants.Magistral.ToLower()}" },
+                { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()},{ServiceConstants.Magistral.ToLower()}, {ServiceConstants.OmigenomicsGroup.ToLower()}" },
             };
 
             var mockDoctor = new Mock<IDoctorService>();

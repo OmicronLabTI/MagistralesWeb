@@ -10,10 +10,7 @@ namespace Omicron.SapAdapter.Services.Catalog
 {
     using System.Net.Http;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
 
