@@ -4,8 +4,7 @@
 
 export const environment = {
   production: true,
-  baseUrl: 'https://omicron-api.eastus2.cloudapp.azure.com/',
-  //baseUrl: 'https://magistralesprod.omicronlab.com.mx',
+  baseUrl: 'https://magistralesprod.omicronlab.com.mx',
   apiLogin: '/api/oauth/oauthrs',
   apiCatalogs: '/api/catalogos',
   apiUsers: '/api/usuarios',
