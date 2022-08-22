@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx-api
   tls:
-    - secretName: secure-tls
+    - secretName: secure-tls-prod
       hosts:
         - magistralesprod.omicronlab.com.mx
   rules:
