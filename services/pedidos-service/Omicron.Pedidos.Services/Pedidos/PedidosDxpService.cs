@@ -51,6 +51,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.InvoiceId,
                 x.PlanningDate,
                 x.InvoiceType,
+                IsSaleorder = string.IsNullOrEmpty(x.Productionorderid),
             }).ToList();
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
