@@ -422,6 +422,8 @@ namespace Omicron.SapAdapter.Services.Sap
             if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
             {
                 var sapOrdersById = (await this.sapDao.GetAllOrdersForAlmacenByListIds(new List<int> { pedidoId })).ToList();
+                sapOrdersById = ServiceUtils.GetOrdersWithValidWareHouse(sapOrdersById);
+
                 var listHeaders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrdersById, lineProducts);
                 return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listHeaders.Item1, listHeaders.Item2);
             }
@@ -429,6 +431,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple, false);
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
+            sapOrders = ServiceUtils.GetOrdersWithValidWareHouse(sapOrders);
 
             var possibleIdsToIgnore = sapOrders.Where(x => !userOrdersTuple.Item1.Any(y => y.Salesorderid == x.DocNum.ToString())).ToList();
             var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();

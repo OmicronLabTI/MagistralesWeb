@@ -171,6 +171,7 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = ServiceUtilsAlmacen.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductTuple.Item1, sapOrders);
             sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
             sapOrders.AddRange(sapCancelled);
+            sapOrders = ServiceUtils.GetOrdersWithValidWareHouse(sapOrders);
             return new Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>(ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1, doctorWithPackages, doctorWithOmigenomics);
         }
 

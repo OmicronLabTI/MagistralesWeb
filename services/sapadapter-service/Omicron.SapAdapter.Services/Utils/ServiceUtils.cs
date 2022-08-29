@@ -383,6 +383,17 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// Gets the orders with Pt.
+        /// </summary>
+        /// <param name="orders">the orders.</param>
+        /// <returns>the data.</returns>
+        public static List<CompleteAlmacenOrderModel> GetOrdersWithValidWareHouse(List<CompleteAlmacenOrderModel> orders)
+        {
+            var orderWIthPt = orders.Where(x => x.Detalles.WhsCode == ServiceConstants.WareHouseToExclude).Select(y => y.DocNum).ToList();
+            return orders.Where(x => !orderWIthPt.Contains(x.DocNum)).ToList();
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>
