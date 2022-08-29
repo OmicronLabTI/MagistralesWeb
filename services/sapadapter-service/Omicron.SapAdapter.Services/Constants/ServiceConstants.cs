@@ -633,7 +633,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// if a order is package.
         /// </summary>
-        public const string WareHouseToExclude = "REVE";
+        public const string WareHouseToExclude = "WareHouseToExclude";
 
         /// <summary>
         /// Gets the status of the order.

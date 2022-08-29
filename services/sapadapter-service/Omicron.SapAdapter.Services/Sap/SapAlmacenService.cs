@@ -418,11 +418,12 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>> GetSapLinesToLook(List<string> types, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, Dictionary<string, string> parameters)
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
+            var parametersWhs = (await ServiceUtils.GetParams(new List<string> { ServiceConstants.WareHouseToExclude }, this.catalogsService)).Select(x => x.Value).ToList();
 
             if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
             {
                 var sapOrdersById = (await this.sapDao.GetAllOrdersForAlmacenByListIds(new List<int> { pedidoId })).ToList();
-                sapOrdersById = ServiceUtils.GetOrdersWithValidWareHouse(sapOrdersById);
+                sapOrdersById = ServiceUtils.GetOrdersWithValidWareHouse(sapOrdersById, parametersWhs);
 
                 var listHeaders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrdersById, lineProducts);
                 return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listHeaders.Item1, listHeaders.Item2);
@@ -431,7 +432,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple, false);
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
-            sapOrders = ServiceUtils.GetOrdersWithValidWareHouse(sapOrders);
+            sapOrders = ServiceUtils.GetOrdersWithValidWareHouse(sapOrders, parametersWhs);
 
             var possibleIdsToIgnore = sapOrders.Where(x => !userOrdersTuple.Item1.Any(y => y.Salesorderid == x.DocNum.ToString())).ToList();
             var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();

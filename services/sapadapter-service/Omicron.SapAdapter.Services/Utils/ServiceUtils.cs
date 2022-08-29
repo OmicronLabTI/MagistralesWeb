@@ -383,13 +383,28 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// Get Params from catalog.
+        /// </summary>
+        /// <param name="parameterNames">the parameters.</param>
+        /// <param name="catalogService">the service.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<ParametersModel>> GetParams(List<string> parameterNames, ICatalogsService catalogService)
+        {
+            var query = $"{string.Join("=v&", parameterNames)}=v";
+            var route = $"{ServiceConstants.GetParams}?{query}";
+            var resultModel = await catalogService.GetParams(route);
+            return JsonConvert.DeserializeObject<List<ParametersModel>>(resultModel.Response.ToString());
+        }
+
+        /// <summary>
         /// Gets the orders with Pt.
         /// </summary>
         /// <param name="orders">the orders.</param>
+        /// <param name="whsToIgnore">The whs to ignore.</param>
         /// <returns>the data.</returns>
-        public static List<CompleteAlmacenOrderModel> GetOrdersWithValidWareHouse(List<CompleteAlmacenOrderModel> orders)
+        public static List<CompleteAlmacenOrderModel> GetOrdersWithValidWareHouse(List<CompleteAlmacenOrderModel> orders, List<string> whsToIgnore)
         {
-            var orderWIthPt = orders.Where(x => x.Detalles.WhsCode == ServiceConstants.WareHouseToExclude).Select(y => y.DocNum).ToList();
+            var orderWIthPt = orders.Where(x => whsToIgnore.Contains(x.Detalles.WhsCode)).Select(y => y.DocNum).ToList();
             return orders.Where(x => !orderWIthPt.Contains(x.DocNum)).ToList();
         }
 

@@ -996,4 +996,11 @@
 		<column name="field" value="CardCodeResponsibleMedic"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.100">
+	<insert tableName="parameters">
+		<column name="value" value="REVE"/>
+		<column name="type" value="string"/>
+		<column name="field" value="WareHouseToExclude"/>
+	</insert>	
+  </changeSet>
 </databaseChangeLog>
