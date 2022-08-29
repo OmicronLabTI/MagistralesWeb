@@ -631,6 +631,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string OmigenomicsGroup = "Omigenomics";
 
         /// <summary>
+        /// if a order is package.
+        /// </summary>
+        public const string WareHouseToExclude = "WareHouseToExclude";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
