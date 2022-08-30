@@ -101,6 +101,7 @@ namespace Omicron.SapAdapter.Test
             new RelationDxpDocEntry(),
             new RelationOrderAndTypeModel(),
             new CountDxpOrdersDetail(),
+            new DoctorShippingAddressRelationModel(),
         };
 
         /// <summary>
