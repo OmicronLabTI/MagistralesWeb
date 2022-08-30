@@ -318,6 +318,16 @@ namespace Omicron.Reporting.Services.Constants
         public const string InvoicePdfAzureroute = "InvoicePdfAzureroute";
 
         /// <summary>
+        /// status cancelado.
+        /// </summary>
+        public const string InvoicePdfName = "F{0}.pdf";
+
+        /// <summary>
+        /// status cancelado.
+        /// </summary>
+        public const string InvoiceXmlName = "F{0}.xml";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -362,6 +372,7 @@ namespace Omicron.Reporting.Services.Constants
         /// </value>
         public static List<string> ValidStatusToGetInvoiceAttachment { get; } = new List<string>
         {
+            Camino,
             Entregado,
             Enviado,
         };
