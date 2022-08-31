@@ -964,6 +964,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DoctorPhoneNumber = dop.GlblLocNum,
                              ShippingAddressName = invoice.ShippingAddressName,
                              IsOmigenomics = invoice.IsOmigenomics,
+                             IsDeliveredInOffice = invoice.IsDeliveredInOffice,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();

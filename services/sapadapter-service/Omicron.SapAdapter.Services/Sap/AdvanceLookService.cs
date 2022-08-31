@@ -1127,6 +1127,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 CodeClient = invoice.CardCode,
                 IsPackage = invoice.IsPackage == ServiceConstants.IsPackage,
                 Boxes = this.GetBoxesByInvoice(userOrder.StatusInvoice, invoiceId, parametersDistribution.Boxes),
+                EtablishmentName = deliveryAddress.EtablishmentName,
+                References = deliveryAddress.References,
+                BetweenStreets = deliveryAddress.BetweenStreets,
+                DoctorPhone = invoice.DoctorPhoneNumber,
+                IsDeliveredInOffice = invoice.IsDeliveredInOffice,
             };
 
             return card;
