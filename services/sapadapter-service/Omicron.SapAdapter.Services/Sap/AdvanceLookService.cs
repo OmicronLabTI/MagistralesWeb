@@ -1131,7 +1131,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 References = deliveryAddress.References,
                 BetweenStreets = deliveryAddress.BetweenStreets,
                 DoctorPhone = invoice.DoctorPhoneNumber,
-                IsDeliveredInOffice = invoice.IsDeliveredInOffice,
+                IsDeliveredInOffice = invoice.IsDeliveredInOffice ?? "N",
             };
 
             return card;
