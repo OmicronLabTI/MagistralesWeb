@@ -520,7 +520,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
-        Task<int> GetCountOrdersWIthDetailByDocNumDxpJoinProduct(string DocNumDxp);
+        Task<IEnumerable<CompleteOrderModel>> GetCountOrdersWIthDetailByDocNumDxpJoinProduct(string DocNumDxp);
 
         /// <summary>
         /// Gets the order by init date.
