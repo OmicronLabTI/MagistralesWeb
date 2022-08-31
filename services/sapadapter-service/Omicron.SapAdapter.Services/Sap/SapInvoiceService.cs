@@ -315,7 +315,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
 
                 var doctor = doctorData.FirstOrDefault(y => y.DoctorId == x.CardCode && y.AddressId == x.ShippingAddressName);
-                doctor ??= new DoctorDeliveryAddressModel { Contact = x.Medico };
+                doctor ??= new DoctorDeliveryAddressModel { Contact = x.Medico, BetweenStreets = string.Empty, EtablishmentName = string.Empty, References = string.Empty };
 
                 var prescriptionData = doctorPrescription.FirstOrDefault(y => y.CardCode == x.CardCode);
                 prescriptionData ??= new DoctorPrescriptionInfoModel { DoctorName = x.Medico };
@@ -330,6 +330,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.SalesPrsonName = $"{salePerson.FirstName.ValidateNull()} {salePerson.LastName.ValidateNull()}".Trim();
                 x.Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, x.Address, ServiceConstants.OnSiteDelivery);
                 x.ResponsibleMedic = prescriptionData.DoctorName;
+                x.BetweenStreets = doctor.BetweenStreets;
+                x.EtablishmentName = doctor.EtablishmentName;
+                x.References = doctor.References;
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
