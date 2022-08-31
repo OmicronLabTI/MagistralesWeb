@@ -161,6 +161,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string IsOmigenomics { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_Pickupoffice")]
+        public string IsDeliveredInOffice { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>
