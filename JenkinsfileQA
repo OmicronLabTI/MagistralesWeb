@@ -30,7 +30,7 @@ pipeline {
     ).trim()
   }
   stages {
-    stage('Docker Pull OracleJRE') {
+    /*stage('Docker Pull OracleJRE') {
       steps {
         withCredentials([
           [$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']
@@ -39,7 +39,7 @@ pipeline {
           sh 'docker pull store/oracle/serverjre:1.8.0_241-b07'
         }
       }
-    }
+    }*/
     stage('Build Front Web') {
       when {
         anyOf {
