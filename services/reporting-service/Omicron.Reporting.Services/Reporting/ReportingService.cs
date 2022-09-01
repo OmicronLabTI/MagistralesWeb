@@ -511,9 +511,16 @@ namespace Omicron.Reporting.Services
 
         private async Task<Dictionary<string, MemoryStream>> GetInvoiceAttachment(SendLocalPackageModel localPackage)
         {
-            if (ServiceConstants.ValidStatusToGetInvoiceAttachment.Contains(localPackage.Status))
+            if (!ServiceConstants.ValidStatusToGetInvoiceAttachment.Contains(localPackage.Status))
             {
-                var url = $"{this.configuration[ServiceConstants.InvoicePdfAzureroute]}F{localPackage.PackageId}.pdf";
+                return null;
+            }
+
+            var dictFiles = new Dictionary<string, MemoryStream>();
+
+            foreach (var file in new List<string> { string.Format(ServiceConstants.InvoicePdfName, localPackage.PackageId), string.Format(ServiceConstants.InvoiceXmlName, localPackage.PackageId) })
+            {
+                var url = $"{this.configuration[ServiceConstants.InvoicePdfAzureroute]}{file}";
                 var invoicePdf = await this.azureService.GetlementFromAzure(this.configuration[ServiceConstants.AzureAccountName], this.configuration[ServiceConstants.AzureAccountKey], url);
 
                 if (invoicePdf != null)
@@ -521,11 +528,11 @@ namespace Omicron.Reporting.Services
                     var ms = new MemoryStream();
                     invoicePdf.Content.CopyTo(ms);
                     ms.Position = 0;
-                    return new Dictionary<string, MemoryStream>() { { $"F{localPackage.PackageId}.pdf", ms } };
+                    dictFiles.Add($"{file}", ms);
                 }
             }
 
-            return null;
+            return dictFiles;
         }
     }
 }
