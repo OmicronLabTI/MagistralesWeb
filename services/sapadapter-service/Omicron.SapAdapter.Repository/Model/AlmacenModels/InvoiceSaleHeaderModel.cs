@@ -98,5 +98,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public bool IsPackage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor degree type.
+        /// </summary>
+        /// <value>Degree Type.</value>
+        public string IsDeliveredInOffice { get; set; }
     }
 }

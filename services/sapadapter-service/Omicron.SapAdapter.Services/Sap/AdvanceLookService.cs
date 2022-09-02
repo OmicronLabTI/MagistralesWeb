@@ -865,6 +865,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             IsRefactura = ServiceShared.CalculateAnd(!string.IsNullOrEmpty(invoiceHeader.Refactura), invoiceHeader.Refactura == ServiceConstants.IsRefactura),
                             TypeOrder = invoiceHeader.TypeOrder,
                             IsPackage = invoiceHeader.IsPackage == ServiceConstants.IsPackage,
+                            IsDeliveredInOffice = invoiceHeader.IsDeliveredInOffice ?? "N",
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
