@@ -804,6 +804,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsRefactura = false,
                 TypeOrder = invoiceHeader.TypeOrder,
                 IsPackage = invoiceHeader.IsPackage == ServiceConstants.IsPackage,
+                IsDeliveredInOffice = invoiceHeader.IsDeliveredInOffice ?? "N",
             };
             invoicesHeaders.Add(invoiceHeaderLookUp);
             return invoicesHeaders;
@@ -915,6 +916,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         IsRefactura = ServiceShared.CalculateAnd(!string.IsNullOrEmpty(invoiceHeaders.Refactura), invoiceHeaders.Refactura == ServiceConstants.IsRefactura),
                         TypeOrder = invoiceHeaders.TypeOrder,
                         IsPackage = invoiceHeaders.IsPackage == ServiceConstants.IsPackage,
+                        IsDeliveredInOffice = invoiceHeaders.IsDeliveredInOffice ?? "N",
                     };
                     invoicesHeaders.Add(invoiceHeaderLookUp);
                 }
