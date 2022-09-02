@@ -145,6 +145,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 CodeClient = invoiceHeader.InvoiceHeader.CardCode,
                 TotalPieces = invoiceDetails.Where(y => y.Detail.Quantity > 0).Sum(x => (int)x.Detail.Quantity),
                 IsPackage = invoiceHeader.InvoiceHeader.IsPackage == ServiceConstants.IsPackage,
+                IsDeliveredInOffice = invoiceHeader.InvoiceHeader.IsDeliveredInOffice ?? "N",
             };
 
             var invoiceModelToAdd = new InvoicesModel
