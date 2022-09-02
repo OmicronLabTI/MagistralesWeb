@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . ./
 RUN mvn clean package -DskipTests
 
-FROM store/oracle/serverjre:1.8.0_241-b07
+FROM container-registry.oracle.com/java/serverjre:1.8.0_241-b07
 WORKDIR /app
 COPY --from=build-env /app/oauth-web/target/oauth-web-1.0-SNAPSHOT.jar .
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app/oauth-web-1.0-SNAPSHOT.jar"]
