@@ -315,6 +315,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var userTolookFor = almacenData.PackageModels.Select(x => x.AssignedUser).ToList();
             userTolookFor.AddRange(userOrders.Select(x => x.UserCheckIn));
             userTolookFor.AddRange(almacenData.LineProducts.Select(x => x.UserCheckIn));
+            userTolookFor.AddRange(userOrders.Select(x => x.UserInvoiceStored));
+            userTolookFor.AddRange(almacenData.LineProducts.Select(x => x.UserInvoiceStored));
             var userResponse = await this.usersService.GetUsersById(userTolookFor.Distinct().ToList(), ServiceConstants.GetUsersById);
             return JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
         }
@@ -1066,7 +1068,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 return new List<InvoiceHeaderAdvancedLookUp>();
             }
 
-            userOrder.AddRange(lineProductOrder.Select(x => new UserOrderModel { StatusInvoice = x.StatusInvoice, InvoiceStoreDate = x.InvoiceStoreDate, DeliveryId = x.DeliveryId, Salesorderid = x.SaleOrderId.ToString() }));
+            userOrder.AddRange(lineProductOrder.Select(x => new UserOrderModel { StatusInvoice = x.StatusInvoice, InvoiceStoreDate = x.InvoiceStoreDate, DeliveryId = x.DeliveryId, Salesorderid = x.SaleOrderId.ToString(), UserInvoiceStored = x.UserInvoiceStored }));
 
             var objectForDistribution = new ParametersCardForDistribution
             {
@@ -1107,7 +1109,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var payment = parametersDistribution.Payments.GetPaymentBydocNumDxp(invoice.DocNumDxp);
             var deliveryAddress = parametersDistribution.DeliveryAddress.GetSpecificDeliveryAddress(invoice.CardCode, invoice.ShippingAddressName);
 
-            var card = new InvoiceHeaderAdvancedLookUp
+            var packer = parametersDistribution.Users.FirstOrDefault(x => x.Id == userOrder.UserInvoiceStored);
+            packer ??= new UserModel { FirstName = string.Empty, LastName = string.Empty };
+
+            return new InvoiceHeaderAdvancedLookUp
             {
                 Invoice = invoiceId,
                 DeliverId = ServiceShared.CalculateTernary(!isFromInvoice, userOrder.DeliveryId, 0),
@@ -1135,9 +1140,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 BetweenStreets = deliveryAddress.BetweenStreets,
                 DoctorPhone = invoice.DoctorPhoneNumber,
                 IsDeliveredInOffice = invoice.IsDeliveredInOffice ?? "N",
+                Packer = $"{packer.FirstName.ValidateNull()} {packer.LastName.ValidateNull()}".Trim(),
             };
-
-            return card;
         }
 
         private DateTime CalculateDistributioDate(string status, PackageModel package, UserOrderModel order)
