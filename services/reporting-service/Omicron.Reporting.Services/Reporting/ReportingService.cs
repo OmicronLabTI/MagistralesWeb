@@ -343,7 +343,7 @@ namespace Omicron.Reporting.Services
                 var greeting = string.Format(ServiceConstants.DelivereCommentsBody, orders, sendLocalPackage.DeliveryName, sendLocalPackage.DeliveredComments, sendLocalPackage.PackageId);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBase, logo, greeting, string.Empty, string.Empty);
 
-                var mailStatus = await this.omicronMailClient.SendMail(
+                await this.omicronMailClient.SendMail(
                 smtpConfig,
                 destinyEmail,
                 subject,
