@@ -309,7 +309,7 @@ namespace Omicron.Reporting.Services
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.ClientName, orders, button);
+                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.ClientName, orders, button, package.PackageId);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, string.Empty, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
@@ -317,13 +317,13 @@ namespace Omicron.Reporting.Services
             if (package.Status == ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.DeliveryEmailSubject, orders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, package.ClientName, orders, button);
+                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, package.ClientName, orders, button, package.PackageId);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, string.Empty, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
             var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
-            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.ClientName, orders, button);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.ClientName, orders, button, package.PackageId);
             var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, string.Empty, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);
@@ -343,7 +343,7 @@ namespace Omicron.Reporting.Services
                 var greeting = string.Format(ServiceConstants.DelivereCommentsBody, orders, sendLocalPackage.DeliveryName, sendLocalPackage.DeliveredComments, sendLocalPackage.PackageId);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBase, logo, greeting, string.Empty, string.Empty);
 
-                var mailStatus = await this.omicronMailClient.SendMail(
+                await this.omicronMailClient.SendMail(
                 smtpConfig,
                 destinyEmail,
                 subject,
