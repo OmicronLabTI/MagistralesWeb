@@ -189,5 +189,12 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public List<BoxModel> Boxes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type Order.
+        /// </summary>
+        /// <value>
+        /// type order.
+        public string Packer { get; set; }
     }
 }
