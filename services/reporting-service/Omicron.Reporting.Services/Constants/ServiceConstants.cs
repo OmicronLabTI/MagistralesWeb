@@ -148,17 +148,17 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackage = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> se encuentra en ruta para ser entregado en la dirección registrada a su nombre. Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/>";
+        public const string SentLocalPackage = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> se encuentra en ruta para ser entregado en la dirección registrada a su nombre. Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/><p>Factura: <b>{3}</b></p></br>";
 
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackageDelivery = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> fue entregado con éxito.</p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/>";
+        public const string SentLocalPackageDelivery = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> fue entregado con éxito.</p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/><p>Factura: <b>{3}</b></p></br>";
 
         /// <summary>
         /// not delivered body.
         /// </summary>
-        public const string PackageNotDeliveredBody = "<p>Estimado Dr. (a) {0}.<br/><br/>La entrega del pedido <b>{1}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/>";
+        public const string PackageNotDeliveredBody = "<p>Estimado Dr. (a) {0}.<br/><br/>La entrega del pedido <b>{1}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/><p>Factura: <b>{3}</b></p></br>";
 
         /// <summary>
         /// not delivered body.
