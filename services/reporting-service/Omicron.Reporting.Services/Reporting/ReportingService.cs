@@ -291,6 +291,7 @@ namespace Omicron.Reporting.Services
                 SmtpDefaultPassword = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewarePassword")).Value,
                 SmtpDefaultUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddleware")).Value,
                 EmailCCDelivery = parameters.FirstOrDefault(x => x.Field.Equals("EmailCCDelivery")).Value,
+                EmailMiddlewareUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewareUser")).Value,
             };
         }
 
