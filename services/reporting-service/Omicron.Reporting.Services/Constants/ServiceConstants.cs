@@ -340,6 +340,7 @@ namespace Omicron.Reporting.Services.Constants
           "SmtpServer",
           "SmtpPort",
           "EmailCCDelivery",
+          "EmailMiddlewareUser",
         };
 
         /// <summary>
