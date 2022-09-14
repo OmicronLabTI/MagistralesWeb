@@ -468,7 +468,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypesByDoctor = "magistral,mixto,linea,maquila,omigenomics";
+        public const string AllTypesByDoctor = "magistral,mixto,linea,maquila,paquetes,omigenomics";
 
         /// <summary>
         /// all types.
@@ -629,6 +629,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// if a order is package.
         /// </summary>
         public const string OmigenomicsGroup = "Omigenomics";
+
+        /// <summary>
+        /// if a order is package.
+        /// </summary>
+        public const string WareHouseToExclude = "WareHouseToExclude";
 
         /// <summary>
         /// Gets the status of the order.

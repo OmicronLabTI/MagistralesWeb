@@ -161,6 +161,13 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         public string IsOmigenomics { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_Pickupoffice")]
+        public string IsDeliveredInOffice { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets.
         /// </summary>
         /// <value>
@@ -236,5 +243,26 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [NotMapped]
         public string ResponsibleMedic { get; set; }
+
+        /// <summary>
+        /// Gets or sets the establishment name.
+        /// </summary>
+        /// <value>Establishment name.</value>
+        [NotMapped]
+        public string EtablishmentName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the card code.
+        /// </summary>
+        /// <value>Card code.</value>
+        [NotMapped]
+        public string BetweenStreets { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor degree type.
+        /// </summary>
+        /// <value>Degree Type.</value>
+        [NotMapped]
+        public string References { get; set; }
     }
 }

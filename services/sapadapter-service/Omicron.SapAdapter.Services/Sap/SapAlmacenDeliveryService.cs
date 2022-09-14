@@ -122,6 +122,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 HasInvoice = invoices.Any() && invoices.FirstOrDefault().Canceled == "N",
                 IsPackage = deliveryDetails.FirstOrDefault().IsPackage == ServiceConstants.IsPackage,
                 IsOmigenomics = deliveryDetails.FirstOrDefault().IsOmigenomics == ServiceConstants.IsOmigenomics,
+                DxpId = deliveryDetails.FirstOrDefault().DocNumDxp ?? string.Empty,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);

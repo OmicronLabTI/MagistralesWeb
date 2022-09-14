@@ -268,7 +268,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<MagistralQrModel>(so.MagistralQr);
                 modelQr.Quantity = Math.Round(modelQr.Quantity, 1);
-                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(new { modelQr.SaleOrder, modelQr.ProductionOrder, modelQr.Quantity, modelQr.NeedsCooling, modelQr.ItemCode }));
+                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(new { modelQr.SaleOrder, modelQr.ProductionOrder, modelQr.Quantity, modelQr.NeedsCooling, modelQr.ItemCode, Dxp = modelQr.DocNumDxp }));
 
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
                 var dxpDocNum = string.IsNullOrEmpty(modelQr.DocNumDxp) ? $"P:{modelQr.SaleOrder}" : $"S:{modelQr.DocNumDxp.ToUpper()} P:{modelQr.SaleOrder}";
