@@ -83,7 +83,10 @@ namespace Omicron.SapAdapter.Services.Sap
         public async Task<ResultModel> SearchAlmacenOrdersDetailsByDxpId(DoctorOrdersSearchDeatilDto details)
         {
             var sapOrders = await this.sapDao.GetSapOrderDetailForAlmacenRecepcionById(details.SaleOrders);
-            var totalOrders = await this.sapDao.GetCountOrdersWIthDetailByDocNumDxpJoinProduct(details.DxpId);
+            var ordersByDxp = await this.sapDao.GetCountOrdersWIthDetailByDocNumDxpJoinProduct(details.DxpId);
+            var totalOrdersWithDeliverys = ordersByDxp.Where(ord => ServiceShared.CalculateAnd(ord.PedidoStatus == "C", ord.Canceled != "Y"))
+                .Select(ord => ord.DocNum)
+                .Distinct().Count();
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
             var userOrdersResponse = await this.pedidosService.PostPedidos(details.SaleOrders, ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
@@ -100,7 +103,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = sapOrders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
                     IsPackage = details.IsPackage,
                     DxpId = details.DxpId,
-                    TotalShopOrders = totalOrders,
+                    TotalShopOrders = ordersByDxp.GroupBy(x => x.DocNum).Count(),
+                    TotalOrdersWithDelivery = totalOrdersWithDeliverys,
                     IsOmigenomics = details.IsOmigenomics,
                 },
 

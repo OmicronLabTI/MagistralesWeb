@@ -63,6 +63,12 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets a value indicating whether gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public int TotalOrdersWithDelivery { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public bool IsOmigenomics { get; set; }
     }
 }

@@ -53,13 +53,14 @@ namespace Omicron.SapAdapter.Api.Filters
 
                 var exceptionType = context.Exception.GetType();
                 HttpStatusCode status = HttpStatusCode.Conflict;
+                var isMarsError = exceptionType == typeof(Microsoft.Data.SqlClient.SqlException) && context.Exception.Message.ToUpper().Contains("MARS TDS");
                 if (exceptionType == typeof(CustomServiceException))
                 {
                     var customException = (CustomServiceException)context.Exception;
                     message = customException.Message;
                     status = (int)customException.Status == 0 ? status : customException.Status;
                 }
-                else if (exceptionType == typeof(InvalidOperationException))
+                else if (exceptionType == typeof(InvalidOperationException) || isMarsError)
                 {
                     var logMessageOp = $"ErrorType: {context.Exception.GetType()} Message: {context.Exception.Message}";
                     this.logger.Error(context.Exception, logMessageOp);

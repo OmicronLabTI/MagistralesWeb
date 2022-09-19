@@ -155,9 +155,46 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public bool IsPackage { get; set; }
 
         /// <summary>
+        /// Gets or sets the establishment name.
+        /// </summary>
+        /// <value>Establishment name.</value>
+        public string EtablishmentName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the card code.
+        /// </summary>
+        /// <value>Card code.</value>
+        public string BetweenStreets { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor degree type.
+        /// </summary>
+        /// <value>Degree Type.</value>
+        public string References { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor degree type.
+        /// </summary>
+        /// <value>Degree Type.</value>
+        public string DoctorPhone { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor degree type.
+        /// </summary>
+        /// <value>Degree Type.</value>
+        public string IsDeliveredInOffice { get; set; }
+
+        /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
         public List<BoxModel> Boxes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type Order.
+        /// </summary>
+        /// <value>
+        /// type order.
+        public string Packer { get; set; }
     }
 }

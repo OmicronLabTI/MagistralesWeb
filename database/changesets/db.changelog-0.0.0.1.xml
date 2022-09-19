@@ -996,4 +996,18 @@
 		<column name="field" value="CardCodeResponsibleMedic"/>
 	</insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.100">
+	<insert tableName="parameters">
+		<column name="value" value="REVE"/>
+		<column name="type" value="string"/>
+		<column name="field" value="WareHouseToExclude"/>
+	</insert>	
+  </changeSet>
+  <changeSet author="esanchez" id="changelog-1.101">
+    <insert tableName="parameters">
+      <column name="value" value="apikey"/>
+      <column name="type" value="string"/>
+      <column name="field" value="EmailMiddlewareUser"/>
+    </insert>
+  </changeSet>
 </databaseChangeLog>
