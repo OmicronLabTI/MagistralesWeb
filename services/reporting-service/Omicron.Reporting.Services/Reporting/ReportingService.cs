@@ -89,7 +89,7 @@ namespace Omicron.Reporting.Services
             var sendEmailOrTel = email.Contains("http") ? ServiceConstants.PaqueteEmail : ServiceConstants.TelefonoEmail;
             var sendEmailLink = email.Contains("http") ? string.Format(ServiceConstants.PlaceLink, email) : email;
 
-            var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
+            var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink, request.PackageId);
             var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, ServiceConstants.RefundPolicy);
             var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId });
 
@@ -291,6 +291,7 @@ namespace Omicron.Reporting.Services
                 SmtpDefaultPassword = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewarePassword")).Value,
                 SmtpDefaultUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddleware")).Value,
                 EmailCCDelivery = parameters.FirstOrDefault(x => x.Field.Equals("EmailCCDelivery")).Value,
+                EmailMiddlewareUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewareUser")).Value,
             };
         }
 

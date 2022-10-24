@@ -209,6 +209,8 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData, List<Tuple<int, string>> tupleIds, string initialDocNum)
         {
             var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIdsJoinProduct(tupleIds.Where(x => ServiceShared.CalculateOr(x.Item2 == ServiceConstants.SaleOrder, x.Item2 == ServiceConstants.DontExistsTable)).Select(y => y.Item1).ToList())).ToList();
+            sapSaleOrder = await this.ExcludeSpecialsWarehouses(sapSaleOrder);
+
             var sapDeliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(tupleIds.Where(x => x.Item2 == ServiceConstants.Delivery).Select(y => y.Item1).ToList())).ToList();
             sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailBySaleOrderJoinProduct(sapSaleOrder.Select(x => x.DocNum).ToList()));
             sapDeliveryDetails.AddRange(await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(sapDeliveryDetails.Select(x => x.DeliveryId).ToList()));
@@ -390,7 +392,7 @@ namespace Omicron.SapAdapter.Services.Sap
             {
                 var userOrders = paramentsCards.UserOrders.Where(x => x.Salesorderid == tuple.Item1.ToString()).ToList();
                 saporders = paramentsCards.OrderDetail.Where(x => x.DocNum.ToString() == userOrder.Salesorderid).ToList();
-                order = saporders.FirstOrDefault();
+                order = saporders.FirstOrDefault() ?? new CompleteOrderModel();
                 status = ServiceShared.CalculateTernary(ServiceConstants.StatusForBackOrder.Contains(userOrder.Status) && userOrder.StatusAlmacen == ServiceConstants.BackOrder, ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
                 status = ServiceShared.CalculateTernary(userOrder.Status != ServiceConstants.Finalizado && userOrder.Status != ServiceConstants.Almacenado && status != ServiceConstants.BackOrder, ServiceConstants.Pendiente, status);
                 status = ServiceShared.CalculateTernary(userOrder.Status == ServiceConstants.Almacenado && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(), ServiceConstants.Almacenado, status);
@@ -406,7 +408,7 @@ namespace Omicron.SapAdapter.Services.Sap
             if (ServiceShared.CalculateAnd(userOrder == null, lineProductOrder != null || (lineProductOrder == null && !hasActiveDeliveries)))
             {
                 saporders = paramentsCards.OrderDetail.Where(x => x.DocNum == tuple.Item1).ToList();
-                order = saporders.FirstOrDefault();
+                order = saporders.FirstOrDefault() ?? new CompleteOrderModel();
                 status = ServiceShared.CalculateTernary(lineProductOrder == null, ServiceConstants.PorRecibir, lineProductOrder?.StatusAlmacen);
                 status = ServiceShared.CalculateTernary(lineProductOrder?.StatusAlmacen == ServiceConstants.Recibir, ServiceConstants.PorRecibir, status);
                 status = ServiceShared.CalculateTernary(lineProductOrder?.StatusAlmacen == ServiceConstants.Almacenado && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(), ServiceConstants.Almacenado, status);
@@ -415,7 +417,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 hasCandidate = this.CalculateIfLineOrderIsCandidate(lineProductOrder, status, order);
             }
 
-            if (!hasCandidate)
+            if (ServiceShared.CalculateOr(!hasCandidate, order.DocNum == 0))
             {
                 return new List<AlmacenSalesHeaderModel>();
             }
@@ -1200,6 +1202,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 ServiceConstants.Enviado => boxes.Where(b => b.InvoiceId == invoiceid).DistinctBy(b => new { b.Dimensions, b.Weight }).ToList(),
                 _ => new List<BoxModel>(),
             };
+        }
+
+        private async Task<List<CompleteOrderModel>> ExcludeSpecialsWarehouses(List<CompleteOrderModel> sapSaleOrder)
+        {
+            var parametersWhs = (await ServiceUtils.GetParams(new List<string> { ServiceConstants.WareHouseToExclude }, this.catalogsService)).Select(x => x.Value).ToList();
+            var orderWIthPt = sapSaleOrder.Where(x => parametersWhs.Contains(x.Detalles.WhsCode)).Select(y => y.DocNum).Distinct().ToList();
+            return sapSaleOrder.Where(x => !orderWIthPt.Contains(x.DocNum)).ToList();
         }
     }
 }

@@ -143,7 +143,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentForeignPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> ha sido enviado por medio de paquetería a la dirección registrada bajo su nombre, el número de guía correspondiente es <b>{1}</b>.</p><p>{2}<br/>{3}</p>";
+        public const string SentForeignPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> ha sido enviado por medio de paquetería a la dirección registrada bajo su nombre, el número de guía correspondiente es <b>{1}</b>.</p><p>{2}<br/>{3}<br/>Factura: <b>{4}</b></p>";
 
         /// <summary>
         /// Sent local package.
@@ -340,6 +340,7 @@ namespace Omicron.Reporting.Services.Constants
           "SmtpServer",
           "SmtpPort",
           "EmailCCDelivery",
+          "EmailMiddlewareUser",
         };
 
         /// <summary>

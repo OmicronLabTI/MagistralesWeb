@@ -81,7 +81,7 @@ namespace Omicron.Reporting.Services.Clients
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
                 Timeout = 20000,
-                Credentials = new System.Net.NetworkCredential(smtpConfig.SmtpDefaultUser, smtpConfig.SmtpDefaultPassword),
+                Credentials = new System.Net.NetworkCredential(smtpConfig.EmailMiddlewareUser, smtpConfig.SmtpDefaultPassword),
             };
         }
 
