@@ -11,20 +11,24 @@ namespace Omicron.SapAdapter.Services.Sap
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Numerics;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
+    using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
+    using StackExchange.Redis;
 
     /// <summary>
     /// Class for almacen order doctor service.
@@ -43,6 +47,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IProccessPayments proccessPayments;
 
+        private readonly IDoctorService doctorService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AlmacenOrderDxpService"/> class.
         /// </summary>
@@ -52,7 +58,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">thre redis service.</param>
         /// <param name="proccessPayments">the proccess payments.</param>
-        public AlmacenOrderDxpService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments)
+        /// <param name="doctorService">the doctor service.</param>
+        public AlmacenOrderDxpService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments, IDoctorService doctorService)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
@@ -60,6 +67,7 @@ namespace Omicron.SapAdapter.Services.Sap
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
             this.proccessPayments = proccessPayments.ThrowIfNull(nameof(proccessPayments));
+            this.doctorService = doctorService.ThrowIfNull(nameof(doctorService));
         }
 
         /// <inheritdoc/>
@@ -93,10 +101,17 @@ namespace Omicron.SapAdapter.Services.Sap
             var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
             var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
 
+            var order = sapOrders.FirstOrDefault();
+            var adressesToFind = sapOrders.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.DeliveryAddressId }).DistinctBy(y => y.CardCode).ToList();
+            var doctorPrescriptionData = await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, adressesToFind);
+            var doctor = doctorPrescriptionData.FirstOrDefault(x => x.AddressId == order.DeliveryAddressId);
+            doctor ??= new DoctorDeliveryAddressModel { Contact = order.Cliente };
+
             var saleModel = new SalesByDoctorModel
             {
                 AlmacenHeaderByDoctor = new AlmacenSalesByDoctorHeaderModel
                 {
+                    Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctor.Contact), order.Medico, doctor.Contact),
                     Address = details.Address,
                     Doctor = details.Name,
                     TotalItems = sapOrders.Count(y => y.Detalles != null),
