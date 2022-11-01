@@ -7,7 +7,7 @@ metadata:
 spec:
   ingressClassName: nginx-log
   tls:
-    - secretName: secure-tls-prod
+    - secretName: secure-tls-prod-2022
       hosts:
         - magistralesdashboard.omicronlab.com.mx
   rules:

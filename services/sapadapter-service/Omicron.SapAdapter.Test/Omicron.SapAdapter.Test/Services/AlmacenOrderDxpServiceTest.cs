@@ -22,6 +22,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
@@ -79,6 +80,11 @@ namespace Omicron.SapAdapter.Test.Services
             mockLog
                 .Setup(m => m.Information(It.IsAny<string>()));
 
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
             var parameters = new List<ParametersModel>
             {
                 new ParametersModel { Value = "10" },
@@ -109,7 +115,7 @@ namespace Omicron.SapAdapter.Test.Services
             mockProccesspayments
                 .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(payments)));
-            this.almacenOrderDxpService = new AlmacenOrderDxpService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, this.catalogService.Object, mockRedis.Object, mockProccesspayments.Object);
+            this.almacenOrderDxpService = new AlmacenOrderDxpService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, this.catalogService.Object, mockRedis.Object, mockProccesspayments.Object, mockDoctor.Object);
         }
 
         /// <summary>
