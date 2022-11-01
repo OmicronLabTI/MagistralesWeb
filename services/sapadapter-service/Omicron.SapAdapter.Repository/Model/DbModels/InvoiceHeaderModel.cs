@@ -157,7 +157,7 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("U_Omigenomicstp")]
+        [Column("U_OmigenomicsTp")]
         public string IsOmigenomics { get; set; }
 
         /// <summary>
