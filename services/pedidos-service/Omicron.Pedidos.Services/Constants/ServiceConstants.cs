@@ -621,6 +621,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrMagistralRectyTop = "QrMagistralRectyTop";
 
         /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralAngleRotTop = "QrMagistralAngleRotTop";
+
+        /// <summary>
         /// Field for the max day to look.
         /// </summary>
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
