@@ -161,6 +161,6 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// Gets or sets the adviser id.
         /// </summary>
         /// <value>IdDoctor.</value>
-        public double TotalCost { get; set; }
+        public double OrderDiscount { get; set; }
     }
 }
