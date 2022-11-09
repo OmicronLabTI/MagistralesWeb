@@ -85,7 +85,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                 if (saleOrderModel.HasPromotionalCodeForOrder)
                 {
-                    order.DocTotal = saleOrderModel.TotalCost;
+                    order.DiscountPercent = saleOrderModel.OrderDiscount;
                 }
 
                 if (saleOrderModel.SlpCode != null)
