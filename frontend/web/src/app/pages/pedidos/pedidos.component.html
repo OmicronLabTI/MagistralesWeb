@@ -55,6 +55,9 @@
                <button mat-raised-button
                     class="button-blue"
                     (click)="requestMaterial()" *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">Solicitud de insumos</button>
+                <button  [disabled]="!isThereOrdersToFinalize" mat-raised-button
+                    [ngClass]="isThereOrdersToFinalize ? 'background-color-in-process' : 'disable-button'"
+                    (click)="finalizeOrders()" *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">Finalizar</button>
                 <button [disabled]="!isThereOrdersToPlan" mat-raised-button
                         [ngClass]="isThereOrdersToPlan ? 'button-blue' : 'disable-button'"
                         (click)="processOrdersService()" *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">Planificar</button>
@@ -67,9 +70,6 @@
                 <button [disabled]="!isThereOrdersToCancel" mat-raised-button
                               [ngClass]="isThereOrdersToCancel ? 'button-blue' : 'disable-button'"
                               (click)="cancelOrders()" *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">Cancelar</button>
-                <button  [disabled]="!isThereOrdersToFinalize" mat-raised-button
-                               [ngClass]="isThereOrdersToFinalize ? 'button-blue' : 'disable-button'"
-                               (click)="finalizeOrders()" *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">Finalizar</button>
                 <button [disabled]="!isThereOrdersToPlan" mat-raised-button
                         [ngClass]="isThereOrdersToPlan ? 'button-blue' : 'disable-button'"
                         (click)="ordersToRefuse()"
