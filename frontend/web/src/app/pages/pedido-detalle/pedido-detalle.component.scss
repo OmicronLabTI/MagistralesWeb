@@ -75,7 +75,11 @@
 .tdactions {
   width: 9% !important;
 }
-
+.background-color-in-process {
+  background-color: #e7515a;
+  margin-left: 15px;
+  color: white;
+}
 // ::ng-deep .mat-focused .mat-form-field-label {
 //     /*change color of label  */
 //     color: #6C90B3 !important;
