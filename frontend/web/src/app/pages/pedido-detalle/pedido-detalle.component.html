@@ -87,7 +87,7 @@
                 Solicitud de insumos
             </button>
             <button [disabled]="!isThereOrdersDetailToFinalize" mat-raised-button
-                [ngClass]="isThereOrdersDetailToFinalize ? 'background-color-in-process' : 'disable-button'"
+                [ngClass]="isThereOrdersDetailToFinalize ? 'button-blue' : 'disable-button'"
                 (click)="finalizeOrdersDetail()"
                 *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">
                 &nbsp; Finalizar &nbsp;
@@ -113,7 +113,7 @@
             </button>
 
             <button mat-raised-button [disabled]="!isThereOrdersDetailToCancel"
-                [ngClass]="isThereOrdersDetailToCancel ? 'button-blue' : 'disable-button'" (click)="cancelOrders()"
+                [ngClass]="isThereOrdersDetailToCancel ? 'background-color-in-process' : 'disable-button'" (click)="cancelOrders()"
                 *ngIf="localStorageService.getUserRole() !== '4' && localStorageService.getUserRole() !== '5'">
                 Cancelar
             </button>
