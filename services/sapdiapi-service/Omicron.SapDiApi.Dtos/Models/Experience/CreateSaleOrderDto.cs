@@ -150,17 +150,5 @@ namespace Omicron.SapDiApi.Dtos.Models.Experience
         /// </summary>
         /// <value>IdDoctor.</value>
         public int? EmployeeId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the adviser id.
-        /// </summary>
-        /// <value>IdDoctor.</value>
-        public bool HasPromotionalCodeForOrder { get; set; }
-
-        /// <summary>
-        /// Gets or sets the adviser id.
-        /// </summary>
-        /// <value>IdDoctor.</value>
-        public double OrderDiscount { get; set; }
     }
 }

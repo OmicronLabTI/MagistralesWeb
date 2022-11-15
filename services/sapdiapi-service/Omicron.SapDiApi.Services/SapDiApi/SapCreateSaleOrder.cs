@@ -83,11 +83,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.UserFields.Fields.Item("U_PedidoMuestra").Value = saleOrderModel.IsSample ? "Si" : "No";
                 order.UserFields.Fields.Item("U_Omigenomicstp").Value = saleOrderModel.IsOmigenomicsOrder ? "Y" : "N";
 
-                if (saleOrderModel.HasPromotionalCodeForOrder)
-                {
-                    order.DiscountPercent = saleOrderModel.OrderDiscount;
-                }
-
                 if (saleOrderModel.SlpCode != null)
                 {
                     order.SalesPersonCode = (int)saleOrderModel.SlpCode;
