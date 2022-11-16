@@ -49,6 +49,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public DateTime? FechaExpDateTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public string ItemCode { get; set; }
     }
 }

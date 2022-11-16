@@ -506,6 +506,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 totalNecesario = Math.Round(totalNecesario, 6);
                 doubleTotalBathches = Math.Round(doubleTotalBathches, 6);
 
+                var orderedList = localLotes.Where(x => x.FechaExpDateTime.HasValue).OrderBy(y => y.FechaExpDateTime).ToList();
+                orderedList.AddRange(localLotes.Where(x => !x.FechaExpDateTime.HasValue));
+
                 listToReturn.Add(new BatchesComponentModel
                 {
                     Almacen = x.Warehouse,
@@ -513,7 +516,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DescripcionProducto = x.Description,
                     TotalNecesario = Math.Round(totalNecesario - doubleTotalBathches, 6),
                     TotalSeleccionado = doubleTotalBathches,
-                    Lotes = localLotes,
+                    Lotes = orderedList,
                     LotesAsignados = localBatches,
                 });
             }
@@ -814,6 +817,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     FechaExp = x.FechaExp,
                     ItemCode = x.ItemCode,
                     Quantity = x.Quantity,
+                    FechaExpDateTime = x.FechaExpDateTime,
                 }).ToList();
 
             return listToReturn;

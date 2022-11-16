@@ -509,6 +509,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     DistNumber = batch.DistNumber ?? string.Empty,
                     SysNumber = x.SysNumber,
                     FechaExp = !batch.ExpDate.HasValue ? null : batch.ExpDate.Value.ToString("dd/MM/yyyy"),
+                    FechaExpDateTime = batch.ExpDate,
                     ItemCode = x.ItemCode,
                 });
             });
