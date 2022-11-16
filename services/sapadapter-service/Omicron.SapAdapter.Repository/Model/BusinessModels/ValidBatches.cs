@@ -8,6 +8,8 @@
 
 namespace Omicron.SapAdapter.Entities.Model.BusinessModels
 {
+    using System;
+
     /// <summary>
     /// the valid batches for the front.
     /// </summary>
@@ -42,6 +44,12 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
         /// </summary>
         /// <value>The code.</value>
         public string FechaExp { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public DateTime? FechaExpDateTime { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
