@@ -181,6 +181,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public string PatientName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public List<CompleteDetalleFormulaModel> Details { get; set; }
     }
 }

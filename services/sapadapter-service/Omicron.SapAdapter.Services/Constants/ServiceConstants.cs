@@ -636,6 +636,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string WareHouseToExclude = "WareHouseToExclude";
 
         /// <summary>
+        /// if a order is package.
+        /// </summary>
+        public const string PatientConstant = "Nombre del paciente: ";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

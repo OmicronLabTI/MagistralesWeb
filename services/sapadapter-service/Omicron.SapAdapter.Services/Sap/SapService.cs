@@ -283,7 +283,8 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var detailsFormula = !returnDetails ? (await this.sapDao.GetDetalleFormulaByProdOrdId(ordenFab.Select(x => x.OrdenId).Distinct().ToList())).ToList() : new List<DetalleFormulaModel>();
-            var pedidos = (await this.sapDao.GetDetailByDocNum(ordenFab.Where(y => y.PedidoId.HasValue).Select(x => x.PedidoId.Value).Distinct().ToList())).ToList();
+            var detallePedido = (await this.sapDao.GetDetailByDocNum(ordenFab.Where(y => y.PedidoId.HasValue).Select(x => x.PedidoId.Value).Distinct().ToList())).ToList();
+            var pedidoHeaers = await this.sapDao.GetOrdersById(ordenFab.Where(y => y.PedidoId.HasValue).Select(x => x.PedidoId.Value).Distinct().ToList());
 
             var prodcutsIds = ordenFab.Select(x => x.ProductoId).ToList();
             prodcutsIds.AddRange(detailsFormula.Select(x => x.ItemCode));
@@ -307,7 +308,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     details = details.OrderBy(x => x.Description).ToList();
                 }
 
-                var pedido = pedidos.FirstOrDefault(p => ServiceShared.CalculateAnd(p.PedidoId == o.PedidoId, p.ProductoId == o.ProductoId));
+                var pedidoLocal = pedidoHeaers.FirstOrDefault(p => p.PedidoId == o.PedidoId);
+                var detallePedidoLocal = detallePedido.FirstOrDefault(p => ServiceShared.CalculateAnd(p.PedidoId == o.PedidoId, p.ProductoId == o.ProductoId));
                 var item = listProducts.FirstOrDefault(i => i.ProductoId == o.ProductoId);
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
                 userOrder ??= new UserOrderModel { Comments = string.Empty };
@@ -339,13 +341,14 @@ namespace Omicron.SapAdapter.Services.Sap
                     Client = o.CardCode,
                     CompleteQuantity = o.CompleteQuantity,
                     RealEndDate = realEndDate,
-                    ProductLabel = pedido?.Label ?? string.Empty,
-                    Container = pedido?.Container ?? string.Empty,
-                    DestinyAddress = pedido?.DestinyAddress ?? string.Empty,
+                    ProductLabel = detallePedidoLocal?.Label ?? string.Empty,
+                    Container = detallePedidoLocal?.Container ?? string.Empty,
+                    DestinyAddress = detallePedidoLocal?.DestinyAddress ?? string.Empty,
                     Comments = comments,
                     HasBatches = details.Any(x => x.HasBatches),
                     HasMissingStock = ServiceShared.CalculateTernary(returnDetails, details.Any(y => y.Stock == 0), itemsByFormula.Any(y => y.OnHand == 0)),
                     CatalogGroupName = ServiceShared.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),
+                    PatientName = pedidoLocal.Patient.Replace(ServiceConstants.PatientConstant, string.Empty),
                     Details = ServiceShared.CalculateTernary(returnDetails, details, new List<CompleteDetalleFormulaModel>()),
                 };
 
