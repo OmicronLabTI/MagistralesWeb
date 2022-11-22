@@ -1143,6 +1143,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 DoctorPhone = invoice.DoctorPhoneNumber,
                 IsDeliveredInOffice = invoice.IsDeliveredInOffice ?? "N",
                 Packer = $"{packer.FirstName.ValidateNull()} {packer.LastName.ValidateNull()}".Trim(),
+                DeliveryComments = payment.DeliveryComments,
+                DeliverySuggestedTime = payment.DeliverySuggestedTime,
             };
         }
 
