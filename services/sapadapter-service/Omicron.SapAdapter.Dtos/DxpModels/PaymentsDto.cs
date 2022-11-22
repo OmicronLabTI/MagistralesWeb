@@ -8,8 +8,6 @@
 
 namespace Omicron.SapAdapter.Dtos.DxpModels
 {
-    using System;
-
     /// <summary>
     /// The payment table.
     /// </summary>
@@ -38,5 +36,21 @@ namespace Omicron.SapAdapter.Dtos.DxpModels
         /// User transaction Name.
         /// </value>
         public int ShippingCostAccepted { get; set; }
+
+        /// <summary>
+        /// Gets or sets.
+        /// </summary>
+        /// <value>
+        /// ItemCode.
+        /// </value>
+        public string DeliveryComments { get; set; }
+
+        /// <summary>
+        /// Gets or sets.
+        /// </summary>
+        /// <value>
+        /// ItemCode.
+        /// </value>
+        public string DeliverySuggestedTime { get; set; }
     }
 }

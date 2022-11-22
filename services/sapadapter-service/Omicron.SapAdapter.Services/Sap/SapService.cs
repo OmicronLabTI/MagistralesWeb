@@ -348,7 +348,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     HasBatches = details.Any(x => x.HasBatches),
                     HasMissingStock = ServiceShared.CalculateTernary(returnDetails, details.Any(y => y.Stock == 0), itemsByFormula.Any(y => y.OnHand == 0)),
                     CatalogGroupName = ServiceShared.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),
-                    PatientName = pedidoLocal.Patient.Replace(ServiceConstants.PatientConstant, string.Empty),
+                    PatientName = pedidoLocal.Patient.ValidateNull().Replace(ServiceConstants.PatientConstant, string.Empty),
                     Details = ServiceShared.CalculateTernary(returnDetails, details, new List<CompleteDetalleFormulaModel>()),
                 };
 
