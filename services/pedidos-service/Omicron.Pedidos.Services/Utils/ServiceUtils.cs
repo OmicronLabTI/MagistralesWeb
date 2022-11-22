@@ -212,6 +212,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                                 FinishedLabel = o.FinishedLabel,
                                 AreBatchesComplete = o.AreBatchesComplete == 1,
+                                PatientName = sapOrder.PatientName,
                             };
 
                             ordersDetail.Add(order);
