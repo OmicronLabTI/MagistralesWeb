@@ -360,7 +360,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var pickupOffcieInt = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(invoiceHeader.IsDeliveredInOffice) && invoiceHeader.IsDeliveredInOffice == "Y", 0, 1);
             var dxpTransaction = ServiceShared.CalculateTernary(string.IsNullOrEmpty(invoiceHeader.DocNumDxp), string.Empty, invoiceHeader.DocNumDxp);
             var dxpTransactions = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, new List<string> { dxpTransaction })).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == invoiceHeader.DocNumDxp);
-            dxpTransactions ??= new PaymentsDto { ShippingCostAccepted = pickupOffcieInt };
+            dxpTransactions ??= new PaymentsDto { ShippingCostAccepted = pickupOffcieInt, DeliveryComments = string.Empty, DeliverySuggestedTime = string.Empty };
 
             var addressesResponse = await this.doctorService.PostDoctors(new GetDoctorAddressModel { CardCode = invoiceHeader.CardCode, AddressId = invoiceHeader.ShippingAddressName }, ServiceConstants.GetDoctorAddress);
             var address = JsonConvert.DeserializeObject<List<DoctorAddressModel>>(addressesResponse.Response.ToString()).FirstOrDefault();
@@ -391,6 +391,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 SalesPrsonName = $"{salesPerson.FirstName.ValidateNull()} {salesPerson.LastName.ValidateNull()}".Trim(),
                 SalesOrders = JsonConvert.SerializeObject(new List<string> { invoiceHeader.DocNumDxp }),
                 Contact = address.Contact.ValidateNull(),
+                DeliveryComments = dxpTransactions.DeliveryComments,
+                DeliverySuggestedTime = dxpTransactions.DeliverySuggestedTime,
             };
 
             var isinvoiceLocal = ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeighbors, model.Address, dxpTransactions) || clients.Any(x => x.CodeSN == invoiceHeader.CardCode);
