@@ -334,6 +334,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.BetweenStreets = doctor.BetweenStreets;
                 x.EtablishmentName = doctor.EtablishmentName;
                 x.References = doctor.References;
+                x.DeliveryComments = payment.DeliveryComments;
+                x.DeliverySuggestedTime = payment.DeliverySuggestedTime;
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
