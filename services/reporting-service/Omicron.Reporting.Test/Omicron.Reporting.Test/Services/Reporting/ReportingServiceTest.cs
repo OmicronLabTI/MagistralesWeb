@@ -55,6 +55,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
                 new ParametersModel { Field = $"{party}Email", Value = "email@email.com" },
                 new ParametersModel { Field = "EmailLogoUrl", Value = "string" },
+                new ParametersModel { Field = "EmailMiddlewareUser", Value = "string" },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
@@ -108,6 +109,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailLogoUrl", Value = "string" },
                 new ParametersModel { Field = "DeliveryNotDeliveryCopy", Value = "string" },
                 new ParametersModel { Field = "EmailAtencionAClientes", Value = "string" },
+                new ParametersModel { Field = "EmailMiddlewareUser", Value = "string" },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
@@ -180,6 +182,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
                 new ParametersModel { Field = "EmailAtencionAClientes", Value = string.Empty },
                 new ParametersModel { Field = "EmailCCRejected", Value = string.Empty },
+                new ParametersModel { Field = "EmailMiddlewareUser", Value = "string" },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
@@ -254,6 +257,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailBioEqual", Value = string.Empty },
                 new ParametersModel { Field = "EmailBioElite", Value = string.Empty },
                 new ParametersModel { Field = "EmailLogoUrl", Value = "string" },
+                new ParametersModel { Field = "EmailMiddlewareUser", Value = "string" },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
@@ -472,6 +476,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailMiddleware", Value = "correo@axity.com" },
                 new ParametersModel { Field = "EmailCCDelivery", Value = "correo@axity.com" },
                 new ParametersModel { Field = "EmailIncidentReport", Value = "correo@axity.com" },
+                new ParametersModel { Field = "EmailMiddlewareUser", Value = "string" },
             };
 
             var mockCatalog = new Mock<ICatalogsService>();
@@ -521,6 +526,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 new ParametersModel { Field = "EmailMiddleware", Value = "correo@axity.com" },
                 new ParametersModel { Field = "EmailCCDelivery", Value = "correo@axity.com" },
                 new ParametersModel { Field = "EmailIncidentReport", Value = "correo@axity.com" },
+                new ParametersModel { Field = "EmailMiddlewareUser", Value = "string" },
             };
 
             var mockEmail = new Mock<IOmicronMailClient>();
