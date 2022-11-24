@@ -1114,13 +1114,16 @@ namespace Omicron.SapAdapter.Services.Sap
             var packer = parametersDistribution.Users.FirstOrDefault(x => x.Id == userOrder.UserInvoiceStored);
             packer ??= new UserModel { FirstName = string.Empty, LastName = string.Empty };
 
+            var pickupOffcieInt = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(invoice.IsDeliveredInOffice) && invoice.IsDeliveredInOffice == "Y", 0, 1);
+            payment ??= new PaymentsDto { ShippingCostAccepted = pickupOffcieInt };
+
             return new InvoiceHeaderAdvancedLookUp
             {
                 Invoice = invoiceId,
                 DeliverId = ServiceShared.CalculateTernary(!isFromInvoice, userOrder.DeliveryId, 0),
                 SalesOrder = !isFromInvoice ? int.Parse(userOrder.Salesorderid) : totalSales.Count,
                 StatusDelivery = userOrder.StatusInvoice,
-                Address = ServiceShared.CalculateTernary(invoice.IsDeliveredInOffice == "N", invoice.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
+                Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoice.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
                 ProductType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, parametersDistribution.LocalNeighbors, invoice.Address, payment),
                 Doctor = invoice.Medico,
                 TotalDeliveries = localInvoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),
