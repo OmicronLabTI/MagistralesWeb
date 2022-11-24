@@ -1120,7 +1120,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 DeliverId = ServiceShared.CalculateTernary(!isFromInvoice, userOrder.DeliveryId, 0),
                 SalesOrder = !isFromInvoice ? int.Parse(userOrder.Salesorderid) : totalSales.Count,
                 StatusDelivery = userOrder.StatusInvoice,
-                Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoice.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
+                Address = ServiceShared.CalculateTernary(invoice.IsDeliveredInOffice == "N", invoice.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
                 ProductType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, parametersDistribution.LocalNeighbors, invoice.Address, payment),
                 Doctor = invoice.Medico,
                 TotalDeliveries = localInvoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),
