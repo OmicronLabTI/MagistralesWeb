@@ -1114,8 +1114,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var packer = parametersDistribution.Users.FirstOrDefault(x => x.Id == userOrder.UserInvoiceStored);
             packer ??= new UserModel { FirstName = string.Empty, LastName = string.Empty };
 
-            var pickupOffcieInt = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(invoice.IsDeliveredInOffice) && invoice.IsDeliveredInOffice == "Y", 0, 1);
-            payment ??= new PaymentsDto { ShippingCostAccepted = pickupOffcieInt };
+            var shippingCostAcceptedInvoice = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(invoice.IsDeliveredInOffice) && invoice.IsDeliveredInOffice == "Y", 0, 1);
+            payment.ShippingCostAccepted = payment.TransactionId == null ? shippingCostAcceptedInvoice : payment.ShippingCostAccepted;
 
             return new InvoiceHeaderAdvancedLookUp
             {
