@@ -22,11 +22,21 @@ class PatientListViewController: UIViewController, UITableViewDataSource, UITabl
     let disposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.list = self.patientList.components(separatedBy: ",")
+        self.setUI()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        tableView.reloadData()
+    }
+
+    func setUI() {
+        list = self.patientList.components(separatedBy: ",")
         tableView.register(PatientListTableViewCell.self, forCellReuseIdentifier: "PatientListTableViewCell")
         tableView.delegate = self
         tableView.dataSource = self
-        self.orderId.text = "Pedido: \(order)"
+        orderId.text = "Pedido: \(order)"
+        tableView.rowHeight = UITableView.automaticDimension
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -35,11 +45,10 @@ class PatientListViewController: UIViewController, UITableViewDataSource, UITabl
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // swiftlint:disable force_cast
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PatientListTableViewCell", for: indexPath) as! PatientListTableViewCell
+        var cell = tableView.dequeueReusableCell(withIdentifier: "PatientListTableViewCell", for: indexPath) as! PatientListTableViewCell
         let name = list[indexPath.row]
-        cell.nameLabel?.text = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        cell.nameLabel?.textColor = .black
-        cell.nameLabel?.backgroundColor = .black
+        cell.textLabel?.text = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        // cell.nameLabel?.backgroundColor = .black
         print(name.trimmingCharacters(in: .whitespacesAndNewlines))
         return cell
     }

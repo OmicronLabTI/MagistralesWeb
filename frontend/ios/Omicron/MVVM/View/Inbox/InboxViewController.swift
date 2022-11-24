@@ -632,9 +632,9 @@ class InboxViewController: UIViewController {
             value.model == "Pedido: \(productID)"
         })
         var names = ""
-        order?.items.forEach({ Order in
-            if let namesNew = Order.patientName {
-                names = names + namesNew
+        order?.items.forEach({ order in
+            if let namesNew = order.patientName {
+                names += namesNew
             }
         })
         let orderSend = order?.items[0]
