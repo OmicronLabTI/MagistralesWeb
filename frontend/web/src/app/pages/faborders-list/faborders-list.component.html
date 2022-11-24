@@ -37,16 +37,16 @@
                     (click)="materialRequestIsolatedOrder()">
                 Solicitud de insumos
             </button>
+            <button [disabled]="!isFinalizeOrderIsolated" mat-raised-button
+            [ngClass]="isFinalizeOrderIsolated ? 'button-blue' : 'disable-button'" (click)="finalizeOrder()" >Finalizar</button>
             <button [disabled]="!isAssignOrderIsolated" mat-raised-button [ngClass]="isAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="assignOrderIsolated()" >
             Asignar
             </button>
             <button [disabled]="!isReAssignOrderIsolated" mat-raised-button
                     [ngClass]="isReAssignOrderIsolated ? 'button-blue' : 'disable-button'" (click)="reAssignOrder()" >Reasignar</button>
-            <button [disabled]="!isFinalizeOrderIsolated" mat-raised-button
-                    [ngClass]="isFinalizeOrderIsolated ? 'button-blue' : 'disable-button'" (click)="finalizeOrder()" >Finalizar</button>
 
             <button [disabled]="!isThereOrdersIsolatedToCancel" mat-raised-button
-                    [ngClass]="isThereOrdersIsolatedToCancel ? 'button-blue' : 'disable-button'"
+                    [ngClass]="isThereOrdersIsolatedToCancel ? 'background-color-in-process' : 'disable-button'"
                     (click)="cancelOrder()" >Cancelar</button>
 
             <button mat-raised-button class="button-blue margin-left-options" (click)="openSearchOrders()" >

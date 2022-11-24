@@ -357,13 +357,19 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             doctorSap.Addresses.StreetNo = address.Number;
             doctorSap.Addresses.GlobalLocationNumber = address.Phone;
             doctorSap.Addresses.AddressType = BoAddressType.bo_ShipTo;
+
+            if (!string.IsNullOrEmpty(address.Contact))
+            {
+                doctorSap.Addresses.AddressName2 = address.Contact;
+            }
+
             return doctorSap;
         }
 
         private BusinessPartners SetInvoiceFieldData(BusinessPartners doctorSap, DoctorInvoiceAddressModel address)
         {
             doctorSap.Addresses.AddressName = address.NickName;
-            doctorSap.Addresses.UserFields.Fields.Item("U_RAZON").Value = address.BussinessName;
+            doctorSap.Addresses.UserFields.Fields.Item("U_RAZON").Value = address.NickName;
             doctorSap.Addresses.UserFields.Fields.Item("U_RFC").Value = address.Rfc;
             doctorSap.Addresses.FederalTaxID = address.Rfc;
             doctorSap.Addresses.ZipCode = address.ZipCode;

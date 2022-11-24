@@ -156,7 +156,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
             var saleOrders = (await this.pedidosDao.GetUserOrderByDeliveryId(ordersId)).ToList();
 
-            if (!saleOrders.Any())
+            if (ServiceShared.CalculateOr(!saleOrders.Any(), saleOrders.Select(x => x.DeliveryId).Distinct().Count() < ordersId.Count))
             {
                 var dictParam = $"?{ServiceConstants.Delivery}={JsonConvert.SerializeObject(ordersId)}";
                 var route = $"{ServiceConstants.AlmacenGetOrders}{dictParam}";
@@ -268,13 +268,13 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<MagistralQrModel>(so.MagistralQr);
                 modelQr.Quantity = Math.Round(modelQr.Quantity, 1);
-                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(new { modelQr.SaleOrder, modelQr.ProductionOrder, modelQr.Quantity, modelQr.NeedsCooling, modelQr.ItemCode }));
+                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(new { modelQr.SaleOrder, modelQr.ProductionOrder, modelQr.Quantity, modelQr.NeedsCooling, modelQr.ItemCode, Dxp = modelQr.DocNumDxp }));
 
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
                 var dxpDocNum = string.IsNullOrEmpty(modelQr.DocNumDxp) ? $"P:{modelQr.SaleOrder}" : $"S:{modelQr.DocNumDxp.ToUpper()} P:{modelQr.SaleOrder}";
                 var topText = string.Format(ServiceConstants.QrTopTextOrden, dxpDocNum, modelQr.ItemCode);
                 parameters.IsBoldFont = false;
-                bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, topText);
+                bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, true, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");
                 var memoryStrem = new MemoryStream();
                 bitmap.Save(memoryStrem, ImageFormat.Png);
@@ -305,7 +305,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionRemisionQrModel>();
-            var memoryStrem = new MemoryStream();
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).ToList();
 
             foreach (var so in saleOrders)
@@ -320,10 +319,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
                 parameters.IsBoldFont = true;
-                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextRemision, modelQr.RemisionId.ToString(), parameters, topText);
+                var remisionType = ServiceShared.CalculateTernary(string.IsNullOrEmpty(modelQr.Omi) || modelQr.Omi == "N", ServiceConstants.RemisionType, ServiceConstants.RemisionOmiType);
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, $"{remisionType}{ServiceConstants.QrBottomTextRemision}", modelQr.RemisionId.ToString(), parameters, false, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
 
-                memoryStrem.Flush();
+                var memoryStrem = new MemoryStream();
                 bitmap.Save(memoryStrem, ImageFormat.Png);
                 memoryStrem.Position = 0;
 
@@ -369,7 +369,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 parameters.QrRectxTop = parameters.LabelRectx;
                 parameters.QrRectyTop = parameters.LabelRecty;
 
-                bitmap = this.AddTextToQr(bitmap, false, modelQr.PedidoId.ToString(), string.Empty, parameters, topText);
+                bitmap = this.AddTextToQr(bitmap, false, modelQr.PedidoId.ToString(), string.Empty, parameters, false, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"MU{modelQr.PedidoId}qr.png");
 
                 memoryStrem.Flush();
@@ -410,7 +410,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
                 var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
                 parameters.IsBoldFont = true;
-                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters);
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters, false);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
 
                 memoryStrem.Flush();
@@ -480,9 +480,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="botomText">the botom text.</param>
         /// <param name="identifierToPlace">the id to place.</param>
         /// <param name="parameters">the parameters.</param>
+        /// <param name="needTopTextRotated">Bool need top text rotated.</param>
         /// <param name="topText">Top text.</param>
         /// <returns>the bitmap to return.</returns>
-        private Bitmap AddTextToQr(Bitmap qrsBitmap, bool needsCoolingFlag, string botomText, string identifierToPlace, QrDimensionsModel parameters, string topText = null)
+        private Bitmap AddTextToQr(Bitmap qrsBitmap, bool needsCoolingFlag, string botomText, string identifierToPlace, QrDimensionsModel parameters, bool needTopTextRotated, string topText = null)
         {
             var needsCooling = needsCoolingFlag ? ServiceConstants.NeedsCooling : string.Empty;
             var bottomText = string.Format(botomText, identifierToPlace, needsCooling);
@@ -492,11 +493,11 @@ namespace Omicron.Pedidos.Services.Pedidos
             graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
             var fontStyle = parameters.IsBoldFont ? new Font(ServiceConstants.QrTextFontType, parameters.QrBottomTextSize, FontStyle.Bold) : new Font(ServiceConstants.QrTextFontType, parameters.QrBottomTextSize);
-            this.DrawRectangleText(graphic, parameters.QrRectx, parameters.QrRecty, parameters.QrRectWidth, parameters.QrRectHeight, bottomText, fontStyle);
+            this.DrawRectangleText(graphic, parameters.QrRectx, parameters.QrRecty, parameters.QrRectWidth, parameters.QrRectHeight, bottomText, fontStyle, false, 0);
 
             if (!string.IsNullOrEmpty(topText))
             {
-                this.CreateQrTopText(graphic, parameters, topText, fontStyle);
+                this.CreateQrTopText(graphic, parameters, topText, fontStyle, needTopTextRotated);
             }
 
             graphic.Flush();
@@ -513,9 +514,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="heigth">Rectangle heigth.</param>
         /// <param name="text">Text to draw.</param>
         /// <param name="font">Font elements.</param>
-        private void DrawRectangleText(Graphics graphic, int rectx, int recty, int width, int heigth, string text, Font font)
+        /// <param name="needRotate">need rottion.</param>
+        private void DrawRectangleText(Graphics graphic, int rectx, int recty, int width, int heigth, string text, Font font, bool needRotate, int angleRotate)
         {
             RectangleF rectf = new RectangleF(rectx, recty, width, heigth);
+
+            if (needRotate)
+            {
+                graphic.RotateTransform(angleRotate);
+            }
+
             graphic.DrawString(text, font, Brushes.Black, rectf);
         }
 
@@ -526,9 +534,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="parameters">Parameters.</param>
         /// <param name="topText">Top text to draw.</param>
         /// <param name="fontStyle">Font Style.</param>
-        private void CreateQrTopText(Graphics graphic, QrDimensionsModel parameters, string topText, Font fontStyle)
+        /// <param name="textRotated">Needs the text rotated.</param>
+        private void CreateQrTopText(Graphics graphic, QrDimensionsModel parameters, string topText, Font fontStyle, bool textRotated)
         {
-            this.DrawRectangleText(graphic, parameters.QrRectxTop, parameters.QrRectyTop, parameters.QrRectWidth, parameters.QrRectHeight, topText, fontStyle);
+            this.DrawRectangleText(graphic, parameters.QrRectxTop, parameters.QrRectyTop, parameters.QrRectWidth, parameters.QrRectHeight, topText, fontStyle, textRotated, parameters.QrTopTextRotationAngle);
         }
 
         private QrDimensionsModel GetMagistralParameters(List<ParametersModel> parameters)
@@ -543,6 +552,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var heigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrHeight));
             var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrWidth));
             var marginField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrMargin));
+            var rotateAngleTop = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralAngleRotTop));
 
             return new QrDimensionsModel
             {
@@ -556,6 +566,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 QrHeight = ServiceShared.GetValueFromParamterIntParse(heigthField, DefaultHeightWidth),
                 QrWidth = ServiceShared.GetValueFromParamterIntParse(widthField, DefaultHeightWidth),
                 QrMargin = ServiceShared.GetValueFromParamterIntParse(marginField, DefaultMargin),
+                QrTopTextRotationAngle = ServiceShared.GetValueFromParamterIntParse(rotateAngleTop, -90),
             };
         }
 

@@ -99,6 +99,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         public string IsMagistral { get; set; }
 
         /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string IsWorkableProduct { get; set; }
+
+        /// <summary>
         /// Gets or sets if is a canceled order.
         /// </summary>
         /// <value>The code.</value>
@@ -109,5 +115,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The code.</value>
         public string IsPackage { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string IsOmigenomics { get; set; }
     }
 }

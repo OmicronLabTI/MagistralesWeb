@@ -327,6 +327,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="ordersId">the orders id.</param>
         /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetCompleteDeliveryWithDetailBySaleOrder(List<int> ordersId);
+
+        /// <summary>
+        /// Gets the deliveries by the sale order.
+        /// </summary>
+        /// <param name="ordersId">the orders id.</param>
+        /// <returns>the data.</returns>
         Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailBySaleOrderJoinProduct(List<int> ordersId);
 
         /// <summary>
@@ -513,7 +520,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
-        Task<int> GetCountOrdersWIthDetailByDocNumDxpJoinProduct(string DocNumDxp);
+        Task<IEnumerable<CompleteOrderModel>> GetCountOrdersWIthDetailByDocNumDxpJoinProduct(string DocNumDxp);
 
         /// <summary>
         /// Gets the order by init date.

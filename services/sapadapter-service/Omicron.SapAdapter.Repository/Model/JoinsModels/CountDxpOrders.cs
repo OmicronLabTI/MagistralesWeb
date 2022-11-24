@@ -26,5 +26,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The IsChecked.</value>
         public List<int> NumOrders { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderDxpId.
+        /// </summary>
+        /// <value>The IsChecked.</value>
+        public List<CountDxpOrdersDetail> ProductsDetails { get; set; }
     }
 }

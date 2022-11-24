@@ -121,6 +121,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 TypeOrder = deliveryDetails.FirstOrDefault().TypeOrder,
                 HasInvoice = invoices.Any() && invoices.FirstOrDefault().Canceled == "N",
                 IsPackage = deliveryDetails.FirstOrDefault().IsPackage == ServiceConstants.IsPackage,
+                IsOmigenomics = deliveryDetails.FirstOrDefault().IsOmigenomics == ServiceConstants.IsOmigenomics,
+                DxpId = deliveryDetails.FirstOrDefault().DocNumDxp ?? string.Empty,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, null);
@@ -239,9 +241,11 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var maquilaDeliverys = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
             var packageDeliveries = deliveryHeaders.Where(x => x.IsPackage == ServiceConstants.IsPackage).ToList();
+            var omigenomicsDeliveries = deliveryHeaders.Where(del => del.IsOmigenomics.ValidateNull().ToLower() == ServiceConstants.IsOmigenomics.ToLower()).ToList();
 
             deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, maquilaDeliverys, ServiceConstants.Maquila);
             deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, packageDeliveries, ServiceConstants.Paquetes);
+            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, omigenomicsDeliveries, ServiceConstants.OmigenomicsGroup);
 
             deliveryHeaders = await this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
             deliveryHeaders = deliveryHeaders.OrderByDescending(x => x.DocNum).ToList();
@@ -369,6 +373,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeOrder = header.TypeOrder,
                     DeliveryTypeModel = deliveryType,
                     IsPackage = header.IsPackage == ServiceConstants.IsPackage,
+                    IsOmigenomics = header.IsOmigenomics == ServiceConstants.IsOmigenomics,
                 };
 
                 var saleModel = new SalesModel

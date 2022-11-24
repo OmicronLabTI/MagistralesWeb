@@ -90,6 +90,9 @@ namespace Omicron.SapAdapter.Services.Utils
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Paquetes.ToLower()), orderPackages, listToReturn);
             salesTypes = AddSalesTypeByOrders(orderPackages, salesTypes);
 
+            var ordersOmigenomics = sapOrders.Where(ord => ord.IsOmigenomics.ValidateNull().ToLower() == ServiceConstants.IsOmigenomics.ToLower()).ToList();
+            listToReturn = FilterByContainsType(types.Contains(ServiceConstants.OmigenomicsGroup.ToLower()), ordersOmigenomics, listToReturn);
+            salesTypes = AddSalesTypeByOrders(ordersOmigenomics, salesTypes);
             return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listToReturn.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList(), salesTypes);
         }
 
@@ -105,7 +108,7 @@ namespace Omicron.SapAdapter.Services.Utils
         {
             var idsMagistrales = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
 
-            var sapOrders = ServiceShared.CalculateTernary(needOnlyDxp, (await sapDao.GetAllOrdersForAlmacenDxp(userOrdersTuple.Item3)).ToList(), (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList());
+            var sapOrders = needOnlyDxp ? (await sapDao.GetAllOrdersForAlmacenDxp(userOrdersTuple.Item3)).ToList() : (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
@@ -254,7 +257,8 @@ namespace Omicron.SapAdapter.Services.Utils
                     OrderType = order.TypeOrder,
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
                     DxpId = order.DocNumDxp,
-                    IsPackage = order.IsPackage == "Y",
+                    IsPackage = order.IsPackage == ServiceConstants.IsPackage,
+                    IsOmigenomics = order.IsOmigenomics == ServiceConstants.IsOmigenomics,
                 });
             }
 

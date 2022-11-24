@@ -59,6 +59,7 @@ struct ViewControllerIdentifiers {
     static let headerReuseIdentifier = "header"
     static let showErrorViewController = "showError"
     static let mostCommonComponentsTableViewCell = "MostCommonComponentsTableViewCell"
+    static let patientListViewController = "PatientListViewController"
 }
 struct OmicronColors {
     static let blue = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
@@ -241,6 +242,7 @@ struct URLRoot {
     static let DEBUG = "http://201.163.179.29:8000/api"
     static let QAURL = "http://201.163.179.28:8000/api"
     static let RELEASE = "https://magistralesprod.omicronlab.com.mx/api"
+//    static let RELEASE = "https://omicron-api.eastus2.cloudapp.azure.com/api"
     static let omicronServer = "http://172.31.55.11:5000/"
     static let UAT = "https://omicronlabapiuat.eastus2.cloudapp.azure.com/api"
 }

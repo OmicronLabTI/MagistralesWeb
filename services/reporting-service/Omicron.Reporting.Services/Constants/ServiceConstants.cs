@@ -143,32 +143,27 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentForeignPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> ha sido enviado por medio de paquetería a la dirección registrada bajo su nombre, el número de guía correspondiente es <b>{1}</b>.</p><p>{2}<br/>{3}</p>";
+        public const string SentForeignPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> ha sido enviado por medio de paquetería a la dirección registrada bajo su nombre, el número de guía correspondiente es <b>{1}</b>.</p><p>{2}<br/>{3}<br/>Factura: <b>{4}</b></p>";
 
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackage = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> se encuentra en ruta para ser entregado en la dirección registrada a su nombre. Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/>";
+        public const string SentLocalPackage = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> se encuentra en ruta para ser entregado en la dirección registrada a su nombre. Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/><p>Factura: <b>{3}</b></p></br>";
 
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackageDelivery = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> fue entregado con éxito.</p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/>";
+        public const string SentLocalPackageDelivery = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> fue entregado con éxito.</p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/><p>Factura: <b>{3}</b></p></br>";
 
         /// <summary>
         /// not delivered body.
         /// </summary>
-        public const string PackageNotDeliveredBody = "<p>Estimado Dr. (a) {0}.<br/><br/>La entrega del pedido <b>{1}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/>";
+        public const string PackageNotDeliveredBody = "<p>Estimado Dr. (a) {0}.<br/><br/>La entrega del pedido <b>{1}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li>Con su asesor comercial</li><li>O al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p><p>Si desea consultar su pedido puede hacerlo aquí:</p>{2}<br/><p>Factura: <b>{3}</b></p></br>";
 
         /// <summary>
         /// not delivered body.
         /// </summary>
         public const string DelivereCommentsBody = "<p>Buen día,<br/><br/>Se le informa que la entrega del pedido <b>{0}</b> fue entregada de manera satisfactoria con los siguientes comentarios del repartidor:<br/><br/>Nombre del repartidor: <b>{1}</b><br/>Comentarios del repartidor: <b>{2}</b><br/>Factura: <b>{3}</b></p>";
-
-        /// <summary>
-        /// Body of email.
-        /// </summary>
-        public const string FooterPayment = "<p>Para realizar el pago de este pedido le compartimos los datos para la transferencia:</p><p>OMICRONLAB S.A. DE C.V.<br/><br/>Banco: Banorte<br/>Número de cuenta: 0515319189<br/>Clave Interbancaria: 072580005153191898<br/>Referencia: <b>{0}</b><br/><br/>Banco: Bancomer<br/>Número de cuenta: 0116534406<br/>Clave Interbancaria: 012580001165344066<br/>Referencia: <b>{0}</b><br/><br/>En caso de haber realizado el pago, haga caso omiso a esta información.</p>";
 
         /// <summary>
         /// refund policy.
@@ -323,6 +318,16 @@ namespace Omicron.Reporting.Services.Constants
         public const string InvoicePdfAzureroute = "InvoicePdfAzureroute";
 
         /// <summary>
+        /// status cancelado.
+        /// </summary>
+        public const string InvoicePdfName = "F{0}.pdf";
+
+        /// <summary>
+        /// status cancelado.
+        /// </summary>
+        public const string InvoiceXmlName = "F{0}.xml";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -335,6 +340,7 @@ namespace Omicron.Reporting.Services.Constants
           "SmtpServer",
           "SmtpPort",
           "EmailCCDelivery",
+          "EmailMiddlewareUser",
         };
 
         /// <summary>
@@ -367,6 +373,7 @@ namespace Omicron.Reporting.Services.Constants
         /// </value>
         public static List<string> ValidStatusToGetInvoiceAttachment { get; } = new List<string>
         {
+            Camino,
             Entregado,
             Enviado,
         };

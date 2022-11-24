@@ -621,6 +621,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrMagistralRectyTop = "QrMagistralRectyTop";
 
         /// <summary>
+        /// Gets the magistrgal qr.
+        /// </summary>
+        public const string QrMagistralAngleRotTop = "QrMagistralAngleRotTop";
+
+        /// <summary>
         /// Field for the max day to look.
         /// </summary>
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
@@ -643,7 +648,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// const for the bottom temxt.
         /// </summary>
-        public const string QrBottomTextRemision = "R: {0} {1}";
+        public const string QrBottomTextRemision = ": {0} {1}";
 
         /// <summary>
         /// const for the bottom temxt.
@@ -844,6 +849,16 @@ namespace Omicron.Pedidos.Services.Constants
         /// Gets the delivery qr.
         /// </summary>
         public const string ForeignShip = "Foráneo";
+
+        /// <summary>
+        /// Gets the delivery qr.
+        /// </summary>
+        public const string RemisionType = "R";
+
+        /// <summary>
+        /// Gets the delivery qr.
+        /// </summary>
+        public const string RemisionOmiType = "R-O";
 
         /// <summary>
         /// Gets the delivery qr.

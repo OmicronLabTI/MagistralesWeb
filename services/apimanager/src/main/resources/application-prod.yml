@@ -40,6 +40,10 @@ keycloak:
       securityCollections:
         - name: reporter-dxp
           patterns: [/api/dxp/*]
+    - authRoles: [coupons-admin]
+      securityCollections:
+        - name: coupons-admin-dxp
+          patterns: [/api/dxp/*]
     - authRoles: []
       securityCollections:
         - name: public-dxp
@@ -126,6 +130,9 @@ zuul:
     dxp-dhladapter:
       path: /dxp/dhladapter/**
       serviceId: dhladapterservice
+    dxp-coupons:
+      path: /dxp/coupons/**
+      serviceId: couponsservice
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   semaphore.maxSemaphores: 30000
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 600000

@@ -118,15 +118,9 @@ namespace Omicron.SapAdapter.Services.Utils
                 var typeLabel = ServiceShared.CalculateTernary(allPersonalized, ServiceConstants.PersonalizadoAbr, ServiceConstants.MixtoAbr);
                 typeLabel = ServiceShared.CalculateTernary(allGeneric, ServiceConstants.GenericoAbr, typeLabel);
 
-                var hasRecipe = p.FirstOrDefault()?.AtcEntry != null;
-                var needRecipe = p.Any(d => d.Detalles.HasRecipe.ValidateNull().ToLower() == ServiceConstants.HasRecipe);
-
-                var recipe = ServiceShared.CalculateTernary(hasRecipe, ServiceConstants.HasNeedsRecipe, ServiceConstants.DoesntHaveNeedRecipe);
-                recipe = ServiceShared.CalculateTernary(needRecipe, recipe, ServiceConstants.NoNeedRecipe);
-
                 var elementToSave = p.FirstOrDefault();
                 elementToSave.LabelType = typeLabel;
-                elementToSave.HasRecipte = recipe;
+                elementToSave.HasRecipte = ServiceConstants.HasNeedsRecipe;
 
                 var order = userOrder.GetSaleOrderHeader(elementToSave.DocNum.ToString());
                 elementToSave.Qfb = ServiceShared.CalculateTernary(order == null, string.Empty, order?.Userid);
@@ -386,6 +380,32 @@ namespace Omicron.SapAdapter.Services.Utils
         {
             var doctorsResponse = await doctorService.PostDoctors(cardcodes, ServiceConstants.GetSpecificDelieryAddress);
             return JsonConvert.DeserializeObject<List<DoctorDeliveryAddressModel>>(doctorsResponse.Response.ToString());
+        }
+
+        /// <summary>
+        /// Get Params from catalog.
+        /// </summary>
+        /// <param name="parameterNames">the parameters.</param>
+        /// <param name="catalogService">the service.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<ParametersModel>> GetParams(List<string> parameterNames, ICatalogsService catalogService)
+        {
+            var query = $"{string.Join("=v&", parameterNames)}=v";
+            var route = $"{ServiceConstants.GetParams}?{query}";
+            var resultModel = await catalogService.GetParams(route);
+            return JsonConvert.DeserializeObject<List<ParametersModel>>(resultModel.Response.ToString());
+        }
+
+        /// <summary>
+        /// Gets the orders with Pt.
+        /// </summary>
+        /// <param name="orders">the orders.</param>
+        /// <param name="whsToIgnore">The whs to ignore.</param>
+        /// <returns>the data.</returns>
+        public static List<CompleteAlmacenOrderModel> GetOrdersWithValidWareHouse(List<CompleteAlmacenOrderModel> orders, List<string> whsToIgnore)
+        {
+            var orderWIthPt = orders.Where(x => whsToIgnore.Contains(x.Detalles.WhsCode)).Select(y => y.DocNum).ToList();
+            return orders.Where(x => !orderWIthPt.Contains(x.DocNum)).ToList();
         }
 
         /// <summary>

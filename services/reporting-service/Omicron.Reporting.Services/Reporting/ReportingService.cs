@@ -89,17 +89,17 @@ namespace Omicron.Reporting.Services
             var sendEmailOrTel = email.Contains("http") ? ServiceConstants.PaqueteEmail : ServiceConstants.TelefonoEmail;
             var sendEmailLink = email.Contains("http") ? string.Format(ServiceConstants.PlaceLink, email) : email;
 
-            var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
-            var payment = string.Format(ServiceConstants.FooterPayment, request.PackageId);
-            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, payment, ServiceConstants.RefundPolicy);
+            var greeting = string.Format(ServiceConstants.SentForeignPackage, request.SalesOrders, request.TrackingNumber, sendEmailOrTel, sendEmailLink, request.PackageId);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, ServiceConstants.RefundPolicy);
             var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId });
 
+            var destinityEmail = request.DestinyEmail.Split(";").FirstOrDefault(x => !string.IsNullOrEmpty(x)) ?? string.Empty;
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
-                request.DestinyEmail,
+                destinityEmail,
                 string.Format(ServiceConstants.ForeignEmailSubject, request.SalesOrders),
                 body,
-                smtpConfig.EmailCCDelivery,
+                $"{smtpConfig.EmailCCDelivery};{request.SalesPrsonEmail}",
                 invoiceAttachment);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
@@ -291,6 +291,7 @@ namespace Omicron.Reporting.Services
                 SmtpDefaultPassword = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewarePassword")).Value,
                 SmtpDefaultUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddleware")).Value,
                 EmailCCDelivery = parameters.FirstOrDefault(x => x.Field.Equals("EmailCCDelivery")).Value,
+                EmailMiddlewareUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewareUser")).Value,
             };
         }
 
@@ -301,7 +302,6 @@ namespace Omicron.Reporting.Services
         /// <returns>the text.</returns>
         private Tuple<string, string> GetBodyForLocal(SendLocalPackageModel package, string logo)
         {
-            var payment = string.Format(ServiceConstants.FooterPayment, package.PackageId);
             package.SalesOrders = string.IsNullOrEmpty(package.SalesOrders) ? string.Empty : package.SalesOrders;
             var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
 
@@ -310,22 +310,22 @@ namespace Omicron.Reporting.Services
             if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.ClientName, orders, button);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, payment, ServiceConstants.RefundPolicy);
+                var greeting = string.Format(ServiceConstants.SentLocalPackage, package.ClientName, orders, button, package.PackageId);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, string.Empty, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
             if (package.Status == ServiceConstants.Entregado)
             {
                 var subject = string.Format(ServiceConstants.DeliveryEmailSubject, orders);
-                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, package.ClientName, orders, button);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, payment, ServiceConstants.RefundPolicy);
+                var greeting = string.Format(ServiceConstants.SentLocalPackageDelivery, package.ClientName, orders, button, package.PackageId);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, string.Empty, ServiceConstants.RefundPolicy);
                 return new Tuple<string, string>(subject, body);
             }
 
             var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
-            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.ClientName, orders, button);
-            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, payment, ServiceConstants.RefundPolicy);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.ClientName, orders, button, package.PackageId);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, string.Empty, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);
         }
@@ -344,7 +344,7 @@ namespace Omicron.Reporting.Services
                 var greeting = string.Format(ServiceConstants.DelivereCommentsBody, orders, sendLocalPackage.DeliveryName, sendLocalPackage.DeliveredComments, sendLocalPackage.PackageId);
                 var body = string.Format(ServiceConstants.SendEmailHtmlBase, logo, greeting, string.Empty, string.Empty);
 
-                var mailStatus = await this.omicronMailClient.SendMail(
+                await this.omicronMailClient.SendMail(
                 smtpConfig,
                 destinyEmail,
                 subject,
@@ -512,9 +512,16 @@ namespace Omicron.Reporting.Services
 
         private async Task<Dictionary<string, MemoryStream>> GetInvoiceAttachment(SendLocalPackageModel localPackage)
         {
-            if (ServiceConstants.ValidStatusToGetInvoiceAttachment.Contains(localPackage.Status))
+            if (!ServiceConstants.ValidStatusToGetInvoiceAttachment.Contains(localPackage.Status))
             {
-                var url = $"{this.configuration[ServiceConstants.InvoicePdfAzureroute]}F{localPackage.PackageId}.pdf";
+                return null;
+            }
+
+            var dictFiles = new Dictionary<string, MemoryStream>();
+
+            foreach (var file in new List<string> { string.Format(ServiceConstants.InvoicePdfName, localPackage.PackageId), string.Format(ServiceConstants.InvoiceXmlName, localPackage.PackageId) })
+            {
+                var url = $"{this.configuration[ServiceConstants.InvoicePdfAzureroute]}{file}";
                 var invoicePdf = await this.azureService.GetlementFromAzure(this.configuration[ServiceConstants.AzureAccountName], this.configuration[ServiceConstants.AzureAccountKey], url);
 
                 if (invoicePdf != null)
@@ -522,11 +529,11 @@ namespace Omicron.Reporting.Services
                     var ms = new MemoryStream();
                     invoicePdf.Content.CopyTo(ms);
                     ms.Position = 0;
-                    return new Dictionary<string, MemoryStream>() { { $"F{localPackage.PackageId}.pdf", ms } };
+                    dictFiles.Add($"{file}", ms);
                 }
             }
 
-            return null;
+            return dictFiles;
         }
     }
 }

@@ -27,12 +27,28 @@ spec:
           resources:
             limits:
               cpu: 1052m
-              memory: 572Mi
+              memory: 715Mi
             requests:
               cpu: 526m
               memory: 446Mi
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: apimanager
+  name: apimanager-svc
+spec:
+  ports:
+    - name: apimanager
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+  selector:
+    app: apimanager
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -68,7 +84,7 @@ spec:
           resources:
             limits:
               cpu: 1413m
-              memory: 414Mi
+              memory: 477Mi
             requests:
               cpu: 707m
               memory: 323Mi
@@ -109,7 +125,7 @@ spec:
           resources:
             limits:
               cpu: 170m
-              memory: 144Mi
+              memory: 166Mi
             requests:
               cpu: 85m
               memory: 95Mi
@@ -150,7 +166,7 @@ spec:
           resources:
             limits:
               cpu: 168m
-              memory: 233Mi
+              memory: 292Mi
             requests:
               cpu: 84m
               memory: 132Mi
@@ -349,6 +365,16 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Prod
+            - name: STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: storage_account
+            - name: STORAGE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: storage_account_key
           ports:
             - containerPort: 5105
           resources:

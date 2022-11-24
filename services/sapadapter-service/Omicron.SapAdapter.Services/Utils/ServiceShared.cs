@@ -207,7 +207,7 @@ namespace Omicron.SapAdapter.Services.Utils
         public static PaymentsDto GetPaymentBydocNumDxp(this List<PaymentsDto> payments, string docNumDxp)
         {
             var payment = payments.FirstOrDefault(p => p.TransactionId.GetSubtransaction() == docNumDxp);
-            payment ??= new PaymentsDto { ShippingCostAccepted = ServiceConstants.ShippingCostAccepted };
+            payment ??= new PaymentsDto { ShippingCostAccepted = ServiceConstants.ShippingCostAccepted, DeliveryComments = string.Empty, DeliverySuggestedTime = string.Empty };
             return payment;
         }
 
