@@ -12,6 +12,7 @@ import RxSwift
 
 protocol CardCellDelegate: NSObjectProtocol {
     func detailTapped(order: Order)
+    func patientList(order: Order)
 }
 
 class CardCollectionViewCell: UICollectionViewCell {
@@ -29,6 +30,7 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var destiny: UILabel!
     @IBOutlet weak var orderText: UILabel!
     @IBOutlet weak var manufacturingOrder: UILabel!
+    @IBOutlet weak var patientListButton: UIButton!
     weak var delegate: CardCellDelegate?
     var row: Int = -1
 
@@ -108,11 +110,18 @@ class CardCollectionViewCell: UICollectionViewCell {
             }
         }
     }
-
+    @IBAction func patientListAction(_ sender: Any) {
+        guard let order = self.order else { return }
+        if order.patientName != "" {
+            self.delegate?.patientList(order: order)
+        }
+    }
+    
     func detail() {
         guard let order = self.order else { return }
         self.delegate?.detailTapped(order: order)
     }
+    
 
     private func makeRoundedMissingStockImage() {
         missingStockImage.layer.borderWidth = 1

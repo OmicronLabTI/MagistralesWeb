@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -47,18 +47,6 @@
                             </label>
                         </subviews>
                     </stackView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="60267" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gV2-Wy-O4k">
-                        <rect key="frame" x="610.5" y="16" width="65.5" height="25.5"/>
-                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="21"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pedido: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tq0-m6-ZyW">
-                        <rect key="frame" x="534" y="16" width="76.5" height="25.5"/>
-                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="21"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="ALQUITRÁN DE PINO 6%, KETOKONAZOL 2%, MENTOL 0.1%, SALICILICO 3%" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bDd-OS-jWR">
                         <rect key="frame" x="146" y="57.5" width="530" height="43"/>
                         <constraints>
@@ -152,6 +140,27 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ltX-Wt-Npt">
+                        <rect key="frame" x="636" y="12" width="52" height="35"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <state key="normal" title="Button"/>
+                        <buttonConfiguration key="configuration" style="plain" image="patientName" title=" "/>
+                        <connections>
+                            <action selector="patientListAction:" destination="lZH-Hm-Vh8" eventType="touchUpInside" id="VVt-Jp-MBs"/>
+                        </connections>
+                    </button>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="60267" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gV2-Wy-O4k">
+                        <rect key="frame" x="569" y="17" width="65.5" height="25.5"/>
+                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="21"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pedido: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tq0-m6-ZyW">
+                        <rect key="frame" x="493" y="17" width="76.5" height="25.5"/>
+                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="21"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="calibratedRGB"/>
                 <constraints>
@@ -162,7 +171,7 @@
                     <constraint firstItem="bDd-OS-jWR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="L0g-X3-GyH" secondAttribute="trailing" constant="4" id="6IV-nB-f9n"/>
                     <constraint firstItem="apl-w1-wNf" firstAttribute="leading" secondItem="WSM-nT-8rP" secondAttribute="trailing" id="GOC-Fi-Ys0"/>
                     <constraint firstItem="msz-O0-DSu" firstAttribute="top" secondItem="Z1p-TG-JFi" secondAttribute="top" constant="16" id="HXm-yW-8AB"/>
-                    <constraint firstItem="D0m-qX-4KH" firstAttribute="trailing" secondItem="gV2-Wy-O4k" secondAttribute="trailing" id="I4i-bg-IX5"/>
+                    <constraint firstItem="D0m-qX-4KH" firstAttribute="trailing" secondItem="gV2-Wy-O4k" secondAttribute="trailing" constant="41.5" id="I4i-bg-IX5"/>
                     <constraint firstAttribute="trailing" secondItem="bDd-OS-jWR" secondAttribute="trailing" constant="24" id="IKA-dQ-VxF"/>
                     <constraint firstItem="arj-xW-G55" firstAttribute="centerX" secondItem="Z1p-TG-JFi" secondAttribute="centerX" id="IjQ-mH-oC0"/>
                     <constraint firstItem="XGa-Hf-Jp3" firstAttribute="centerX" secondItem="Z1p-TG-JFi" secondAttribute="centerX" constant="50" id="JWX-r8-AYU"/>
@@ -177,10 +186,10 @@
                     <constraint firstItem="71u-dI-nkq" firstAttribute="centerY" secondItem="WSM-nT-8rP" secondAttribute="centerY" id="XQy-Pu-05S"/>
                     <constraint firstItem="Tq0-m6-ZyW" firstAttribute="centerY" secondItem="gV2-Wy-O4k" secondAttribute="centerY" id="ZYM-id-xFX"/>
                     <constraint firstItem="gV2-Wy-O4k" firstAttribute="leading" secondItem="Tq0-m6-ZyW" secondAttribute="trailing" id="dDD-mf-Nng"/>
-                    <constraint firstItem="gV2-Wy-O4k" firstAttribute="centerY" secondItem="msz-O0-DSu" secondAttribute="centerY" id="eG1-Mv-pBK"/>
+                    <constraint firstItem="gV2-Wy-O4k" firstAttribute="centerY" secondItem="msz-O0-DSu" secondAttribute="centerY" constant="1" id="eG1-Mv-pBK"/>
                     <constraint firstItem="WSM-nT-8rP" firstAttribute="top" secondItem="qdT-xh-yQm" secondAttribute="bottom" constant="16" id="gBa-fR-uOT"/>
                     <constraint firstItem="Vne-uG-983" firstAttribute="centerY" secondItem="WSM-nT-8rP" secondAttribute="centerY" id="hES-cw-08p"/>
-                    <constraint firstItem="71u-dI-nkq" firstAttribute="trailing" secondItem="gV2-Wy-O4k" secondAttribute="trailing" id="hol-qD-DYr"/>
+                    <constraint firstItem="71u-dI-nkq" firstAttribute="trailing" secondItem="gV2-Wy-O4k" secondAttribute="trailing" constant="41.5" id="hol-qD-DYr"/>
                     <constraint firstItem="D0m-qX-4KH" firstAttribute="leading" secondItem="TO5-ft-mtb" secondAttribute="trailing" id="iwC-5M-4tO"/>
                     <constraint firstItem="msz-O0-DSu" firstAttribute="leading" secondItem="Z1p-TG-JFi" secondAttribute="leading" constant="24" id="kAT-Hs-a9O"/>
                     <constraint firstItem="TO5-ft-mtb" firstAttribute="centerY" secondItem="D0m-qX-4KH" secondAttribute="centerY" id="l1X-br-Ztc"/>
@@ -191,7 +200,7 @@
                     <constraint firstItem="arj-xW-G55" firstAttribute="centerY" secondItem="apl-w1-wNf" secondAttribute="centerY" id="vxC-16-TIO"/>
                     <constraint firstItem="KP2-PL-EKx" firstAttribute="leading" secondItem="msz-O0-DSu" secondAttribute="trailing" id="wSi-q7-N1y"/>
                     <constraint firstItem="WSM-nT-8rP" firstAttribute="leading" secondItem="msz-O0-DSu" secondAttribute="leading" id="y8m-eK-SQE"/>
-                    <constraint firstAttribute="trailing" secondItem="gV2-Wy-O4k" secondAttribute="trailing" constant="24" id="yjz-a7-3GQ"/>
+                    <constraint firstAttribute="trailing" secondItem="gV2-Wy-O4k" secondAttribute="trailing" constant="65.5" id="yjz-a7-3GQ"/>
                 </constraints>
             </collectionViewCellContentView>
             <size key="customSize" width="414" height="360"/>
@@ -205,15 +214,17 @@
                 <outlet property="missingStockImage" destination="1lY-Pu-5LY" id="wPD-F7-Jr0"/>
                 <outlet property="numberDescriptionLabel" destination="KP2-PL-EKx" id="sYm-gD-hEZ"/>
                 <outlet property="orderText" destination="Tq0-m6-ZyW" id="9bz-Fz-tZI"/>
+                <outlet property="patientListButton" destination="ltX-Wt-Npt" id="WJz-LU-7Jg"/>
                 <outlet property="plannedQuantityDescriptionLabel" destination="D0m-qX-4KH" id="elS-Cj-4q9"/>
                 <outlet property="productDescriptionLabel" destination="bDd-OS-jWR" id="y5K-At-0k1"/>
                 <outlet property="startDateDescriptionLabel" destination="apl-w1-wNf" id="bsh-nH-qKi"/>
                 <outlet property="tagDescriptionLabel" destination="9J6-L8-1Gq" id="BT3-lA-yxs"/>
             </connections>
-            <point key="canvasLocation" x="860.86956521739137" y="168.75"/>
+            <point key="canvasLocation" x="860.48780487804879" y="168.30508474576271"/>
         </collectionViewCell>
     </objects>
     <resources>
         <image name="matraz" width="22" height="18.5"/>
+        <image name="patientName" width="19.434000015258789" height="14"/>
     </resources>
 </document>
