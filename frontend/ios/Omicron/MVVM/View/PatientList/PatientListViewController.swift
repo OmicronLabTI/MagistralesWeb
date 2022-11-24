@@ -12,7 +12,8 @@ import RxCocoa
 import Resolver
 
 class PatientListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-
+    @IBOutlet weak var contentView: UIView!
+    @IBOutlet weak var buttonAcept: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var orderId: UILabel!
     var name: String?
@@ -31,6 +32,8 @@ class PatientListViewController: UIViewController, UITableViewDataSource, UITabl
     }
 
     func setUI() {
+        buttonAcept.layer.cornerRadius = 15
+        contentView.layer.cornerRadius = 15
         list = self.patientList.components(separatedBy: ",")
         tableView.register(PatientListTableViewCell.self, forCellReuseIdentifier: "PatientListTableViewCell")
         tableView.delegate = self

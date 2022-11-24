@@ -159,6 +159,7 @@ class InboxViewController: UIViewController {
         cell.isSelected = indexPathsSelected.contains(indexPath)
         cell.itemCode.text = element.itemCode
         cell.destiny.text = element.destiny
+        print(element.patientName)
         let patientName = (element.patientName != "") ? "patientName" : "noPatientName"
         cell.patientListButton.setImage(UIImage(named: patientName),for: .normal)
         return cell
@@ -633,13 +634,18 @@ class InboxViewController: UIViewController {
         })
         var names = ""
         order?.items.forEach({ order in
+            print(order)
             if let namesNew = order.patientName {
-                names += namesNew
+                names += "\(namesNew),"
             }
         })
+        let namesOK = names.components(separatedBy: ",").filter { name in
+            name != ""
+        }
+        print(namesOK.joined(separator: ","))
         let orderSend = order?.items[0]
         orderSend?.baseDocument = productID
-        orderSend?.patientName = names
+        orderSend?.patientName = namesOK.joined(separator: ",")
         return orderSend;
     }
 
