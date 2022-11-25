@@ -206,13 +206,14 @@ namespace Omicron.Pedidos.Services.Utils
                                 FinishDate = sapOrder.DueDate,
                                 PlannedQuantity = sapOrder.PlannedQuantity,
                                 ProductionOrderId = sapOrder.ProductionOrderId,
-                                StartDate = sapOrder.FabDate,
+                                StartDate = sapOrder.OrderCreateDate,
                                 ItemCode = sapOrder.Code,
                                 HasMissingStock = sapOrder.HasMissingStock,
                                 Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                                 FinishedLabel = o.FinishedLabel,
                                 AreBatchesComplete = o.AreBatchesComplete == 1,
                                 PatientName = sapOrder.PatientName,
+                                ClientDxp = sapOrder.ClientDxp,
                             };
 
                             ordersDetail.Add(order);
