@@ -16,15 +16,15 @@ inputs:
   sonar_token:
     required: true
     type: string
+
 runs:
   using: "composite"
   steps:
-    - name: set sonar token env
-      run: echo "SONAR_TOKEN=${{ inputs.sonar_token }}" >> $GITHUB_OUTPUT
-      shell: bash
     - name: sonar-scanner
-      uses: highbyte/sonarscan-dotnet@v2.2.1
-      with:
-        sonarProjectKey: ${{ inputs.project_name }}
-        sonarProjectName: ${{ inputs.project_name }}
-        sonarHostname: ${{ inputs.sonar_server }}
+      run: |
+        dotnet sonarscanner begin /k:'20_Omicron_AppiOSFormulas_${{ inputs.project_name }}_${{ inputs.environment }}' /d:sonar.host.url='${{ inputs.sonar_server }}' /d:sonar.login='${{ inputs.sonar_token }}' /d:sonar.cs.opencover.reportsPaths='Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.${{ inputs.project_name }}.Api/**'
+        dotnet build Omicron.${{ inputs.project_name }}.Microservice.sln
+        dotnet test Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=\"TestResults/\"
+        dotnet sonarscanner /d:sonar.login='${{ inputs.sonar_token }}'
+      working-directory: ${{ inputs.path }}
+      shell: bash
