@@ -291,6 +291,8 @@ namespace Omicron.SapAdapter.Services.Sap
             prodcutsIds = prodcutsIds.Distinct().ToList();
             var listProducts = (await this.sapDao.GetProductByIds(prodcutsIds)).ToList();
 
+            var listDoctors = await this.GetDoctors(pedidoHeaers.Select(x => x.Codigo).Distinct().ToList());
+
             foreach (var o in ordenFab)
             {
                 if (!dictUser.ContainsKey(o.User))
@@ -315,6 +317,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 userOrder ??= new UserOrderModel { Comments = string.Empty };
                 var comments = userOrder.Comments;
                 var realEndDate = ServiceShared.GetDateValueOrDefault(userOrder.CloseDate, string.Empty);
+
+                var doctor = listDoctors.FirstOrDefault(x => x.CardCode == pedidoLocal.Codigo);
+                doctor ??= new DoctorPrescriptionInfoModel { DoctorName = pedidoLocal.Medico };
 
                 var formulaComponents = detailsFormula.Where(f => f.OrderFabId == o.OrdenId).Select(p => p.ItemCode).Distinct().ToList();
                 var itemsByFormula = listProducts.Where(i => formulaComponents.Contains(i.ProductoId)).ToList();
@@ -346,6 +351,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Container = detallePedidoLocal?.Container ?? string.Empty,
                     DestinyAddress = detallePedidoLocal?.DestinyAddress ?? string.Empty,
                     Comments = comments,
+                    ClientDxp = doctor.DoctorName,
                     HasBatches = details.Any(x => x.HasBatches),
                     HasMissingStock = ServiceShared.CalculateTernary(returnDetails, details.Any(y => y.Stock == 0), itemsByFormula.Any(y => y.OnHand == 0)),
                     CatalogGroupName = ServiceShared.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),

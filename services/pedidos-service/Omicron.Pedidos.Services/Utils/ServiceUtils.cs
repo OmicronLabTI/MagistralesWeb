@@ -213,6 +213,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 FinishedLabel = o.FinishedLabel,
                                 AreBatchesComplete = o.AreBatchesComplete == 1,
                                 PatientName = sapOrder.PatientName,
+                                ClientDxp = sapOrder.ClientDxp,
                             };
 
                             ordersDetail.Add(order);
