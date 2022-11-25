@@ -45,7 +45,7 @@ jobs:
         uses: ./.github/actions/sonar-net
         with:
           path: services/catalogos-service
-          project_name: catalogos
+          project_name: Catalogos
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
@@ -65,7 +65,7 @@ jobs:
         uses: ./.github/actions/sonar-net
         with:
           path: services/pedidos-service
-          project_name: pedidos
+          project_name: Pedidos
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
@@ -75,7 +75,7 @@ jobs:
         uses: ./.github/actions/sonar-net
         with:
           path: services/reporting-service
-          project_name: reporting
+          project_name: Reporting
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
@@ -85,7 +85,7 @@ jobs:
         uses: ./.github/actions/sonar-net
         with:
           path: services/sapadapter-service
-          project_name: sapadapter
+          project_name: SapAdapter
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
@@ -95,7 +95,7 @@ jobs:
         uses: ./.github/actions/sonar-net
         with:
           path: services/usuarios-service
-          project_name: usuarios
+          project_name: Usuarios
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
@@ -105,7 +105,7 @@ jobs:
         uses: ./.github/actions/sonar-net
         with:
           path: services/warehouses-service
-          project_name: warehouses
+          project_name: Warehouses
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
