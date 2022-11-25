@@ -44,7 +44,7 @@ jobs:
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
         uses: ./.github/actions/sonar-net
         with:
-          path: catalogos-service
+          path: services/catalogos-service
           project_name: catalogos
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
@@ -54,7 +54,7 @@ jobs:
         if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
         uses: ./.github/actions/sonar-java
         with:
-          path: oauthserver
+          path: services/oauthserver
           project_name: oauthserver
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
@@ -64,7 +64,7 @@ jobs:
         if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
         uses: ./.github/actions/sonar-net
         with:
-          path: pedidos-service
+          path: services/pedidos-service
           project_name: pedidos
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
@@ -74,7 +74,7 @@ jobs:
         if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
         uses: ./.github/actions/sonar-net
         with:
-          path: reporting-service
+          path: services/reporting-service
           project_name: reporting
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
@@ -84,7 +84,7 @@ jobs:
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
         uses: ./.github/actions/sonar-net
         with:
-          path: sapadapter-service
+          path: services/sapadapter-service
           project_name: sapadapter
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
@@ -94,7 +94,7 @@ jobs:
         if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
         uses: ./.github/actions/sonar-net
         with:
-          path: usuarios-service
+          path: services/usuarios-service
           project_name: usuarios
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
@@ -104,7 +104,7 @@ jobs:
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
         uses: ./.github/actions/sonar-net
         with:
-          path: warehouses-service
+          path: services/warehouses-service
           project_name: warehouses
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
