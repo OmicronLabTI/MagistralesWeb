@@ -159,6 +159,9 @@ class InboxViewController: UIViewController {
         cell.isSelected = indexPathsSelected.contains(indexPath)
         cell.itemCode.text = element.itemCode
         cell.destiny.text = element.destiny
+        print(element.patientName)
+        let patientName = (element.patientName != "") ? "patientName" : "noPatientName"
+        cell.patientListButton.setImage(UIImage(named: patientName),for: .normal)
         return cell
     }
 
@@ -197,10 +200,16 @@ class InboxViewController: UIViewController {
                     header.productId = Int(productId) ?? 0
                     header.delegate = self
                     header.pdfImageView.isHidden = false
+                    header.patientListButton.isHidden = false
+                    if let order = self?.getNamesByOrder(productID: Int(productId) ?? 0) {
+                        let patientName = (order.patientName != "") ? "patientName" : "noPatientName"
+                        header.patientListButton.setImage(UIImage(named: patientName),for: .normal)
+                    }
                 } else {
                     header.productId = 0
                     header.delegate = nil
                     header.pdfImageView.isHidden = true
+                    header.patientListButton.isHidden = true
                 }
                 return header
             }
@@ -519,7 +528,16 @@ class InboxViewController: UIViewController {
             destination.statusType = self.inboxViewModel.getStatusName(index: statusId - 1)
             destination.destiny = destiny
            }
-       }
+       }else if (segue.identifier == ViewControllerIdentifiers.patientListViewController) {
+           if let destination = segue.destination as? PatientListViewController {
+               guard let orderId = self.inboxViewModel.selectedOrder?.baseDocument else { return }
+               guard let patientList = self.inboxViewModel.selectedOrder?.patientName else { return }
+               
+               destination.order = orderId
+               destination.patientList = patientList
+           }
+        
+        }
     }
 
     func detailTapped(order: Order) {
@@ -609,11 +627,37 @@ class InboxViewController: UIViewController {
         default: return lastColor
         }
     }
+    
+    func getNamesByOrder(productID: Int) -> Order? {
+        let order = inboxViewModel.sectionOrders.first(where: { value -> Bool in
+            value.model == "Pedido: \(productID)"
+        })
+        var names = ""
+        order?.items.forEach({ order in
+            print(order)
+            if let namesNew = order.patientName {
+                names += "\(namesNew),"
+            }
+        })
+        let namesOK = names.components(separatedBy: ",").filter { name in
+            name != ""
+        }
+        print(namesOK.joined(separator: ","))
+        let orderSend = order?.items[0]
+        orderSend?.baseDocument = productID
+        orderSend?.patientName = namesOK.joined(separator: ",")
+        return orderSend;
+    }
 
 }
 
 // MARK: Extencions
 extension InboxViewController: CardCellDelegate {
+    func patientList(order: Order) {
+        self.inboxViewModel.selectedOrder = order
+        self.performSegue(withIdentifier: ViewControllerIdentifiers.patientListViewController, sender: nil)
+    }
+    
     // Chec this
 //    func detailTapped(order: Order) {
 //        self.inboxViewModel.selectedOrder = order
@@ -647,6 +691,15 @@ extension InboxViewController: HeaderSelectedDelegate {
     func headerSelected(productID: Int) {
         inboxViewModel.getConnection()
         self.productID = productID
+    }
+    
+    func tapPatientList(productID: Int) {
+        if let order = self.getNamesByOrder(productID: productID) {
+            if order.patientName != "" {
+                self.inboxViewModel.selectedOrder = order
+                self.performSegue(withIdentifier: ViewControllerIdentifiers.patientListViewController, sender: nil)
+            }
+        }
     }
 
 }

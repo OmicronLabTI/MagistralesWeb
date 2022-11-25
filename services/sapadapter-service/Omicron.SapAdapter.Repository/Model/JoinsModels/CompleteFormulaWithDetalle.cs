@@ -97,6 +97,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public string OrderCreateDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public string User { get; set; }
 
         /// <summary>
@@ -182,6 +188,12 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The code.</value>
         public string PatientName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string ClientDxp { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
