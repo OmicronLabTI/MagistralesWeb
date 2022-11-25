@@ -1,0 +1,70 @@
+name: sonar-web
+
+inputs:
+  path:
+    required: true
+    type: string
+  project_name:
+    required: true
+    type: string
+  environment:
+    required: true
+    type: string
+  sonar_server:
+    required: true
+    type: string
+  sonar_token:
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 14
+        cache: "npm"
+        cache-dependency-path: ${{ inputs.path }}/package-lock.json
+    - name: Split path
+      env:
+        ITEM_PATH: ${{ inputs.path }}
+      id: split_path
+      run: echo "item_folder=${ITEM_PATH##*/}" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Split path
+      env:
+        ITEM_NAME: ${{ steps.split_path.outputs.item_folder }}
+      id: split_name
+      run: echo "item_name=${ITEM_NAME%-service}" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Capitalize name
+      id: string
+      uses: ASzc/change-string-case-action@v5
+      with:
+        string: ${{ steps.split_name.outputs.item_name }}
+    - name: npm install
+      run: npm ci
+      working-directory: ${{ inputs.path }}
+      shell: bash
+    - name: npm run lint
+      run: npm run lint
+      working-directory: ${{ inputs.path }}
+      shell: bash
+    - name: npm run test-ci
+      run: npm run test-ci
+      working-directory: ${{ inputs.path }}
+      shell: bash
+    - name: sonar-scanner
+      run: |
+        /opt/sonar-scanner/bin/sonar-scanner \
+        -Dsonar.projectKey=21_Omicron_DXP_${{ steps.string.outputs.capitalized }}_${{ inputs.environment }} \
+        -Dsonar.host.url=${{ inputs.sonar_server }} \
+        -Dsonar.login=${{ inputs.sonar_token }} \
+        -Dsonar.sourceEncoding=UTF-8 \
+        -Dsonar.sources=src/app \
+        -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts,**/*.module.ts,**/app.child.imports.ts \
+        -Dsonar.tests=src \
+        -Dsonar.test.inclusions=**/*.spec.ts \
+        -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+      working-directory: ${{ inputs.path }}
+      shell: bash

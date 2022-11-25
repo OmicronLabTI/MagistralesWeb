@@ -1,0 +1,40 @@
+name: docker-build
+
+inputs:
+  path:
+    required: true
+    type: string
+  environment:
+    required: true
+    type: string
+  registry:
+    required: true
+    type: string
+  dockerfile:
+    required: false
+    type: string
+    default: Dockerfile
+
+runs:
+  using: "composite"
+  steps:
+    - name: Split path
+      env:
+        ITEM_PATH: ${{ inputs.path }}
+      id: split_path
+      run: echo "item_folder=${ITEM_PATH##*/}" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Split path
+      env:
+        ITEM_NAME: ${{ steps.split_path.outputs.item_folder }}
+      id: split_name
+      run: echo "item_name=${ITEM_NAME%-service}" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Docker build ${{ inputs.path }}
+      working-directory: ${{ inputs.path }}
+      run: docker build -f ${{ inputs.dockerfile }} --build-arg BUILDKIT_INLINE_CACHE=1 --build-arg BASE_HREF=/magistrales/ -t {{ inputs.registry }}/omicron{{ inputs.environment }}/omicron-appiosformulas-${{ steps.split_name.outputs.item_name }}-repository:latest --cache-from {{ inputs.registry }}/{{ inputs.environment }}/omicron-appiosformulas-${{ steps.split_name.outputs.item_name }}-repository:latest . --progress=plain
+      shell: bash
+    - name: Docker push ${{ inputs.path }}
+      working-directory: ${{ inputs.path }}
+      run: docker push {{ inputs.registry }}/{{ inputs.environment }}/omicron-appiosformulas-${{ steps.split_name.outputs.item_name }}-repository:latest
+      shell: bash

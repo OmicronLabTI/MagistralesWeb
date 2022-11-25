@@ -1,0 +1,124 @@
+name: omicron-magistrales-dev-sonar
+on:
+  workflow_dispatch:
+    inputs:
+      force_test:
+        description: Force Test
+        type: boolean
+        default: false
+        required: false
+  pull_request:
+    branches:
+      - feature/newapimanager
+    paths:
+      - frontend/**
+      - services/**
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    name: run tests
+    runs-on: [self-hosted, omicron-dev]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changeset
+        id: changeset
+        run: echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
+
+      - name: Test frontend/web
+        if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_test) }}
+        uses: ./.github/actions/sonar-web
+        with:
+          path: frontend/web
+          project_name: web
+          environment: Dev
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Test catalogos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/sonar-net
+        with:
+          path: catalogos-service
+          project_name: catalogos
+          environment: Dev
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Test oauthserver
+        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
+        uses: ./.github/actions/sonar-java
+        with:
+          path: oauthserver
+          project_name: oauthserver
+          environment: Dev
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Test pedidos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/sonar-net
+        with:
+          path: pedidos-service
+          project_name: pedidos
+          environment: Dev
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Test reporting-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/sonar-net
+        with:
+          path: reporting-service
+          project_name: reporting
+          environment: Dev
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Test sapadapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/sonar-net
+        with:
+          path: sapadapter-service
+          project_name: sapadapter
+          environment: Dev
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Test usuarios-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/sonar-net
+        with:
+          path: usuarios-service
+          project_name: usuarios
+          environment: Dev
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Test warehouses-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/sonar-net
+        with:
+          path: warehouses-service
+          project_name: warehouses
+          environment: Dev
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+  notify:
+    name: teams notification
+    runs-on: [self-hosted, omicron-dev]
+    needs: test
+    steps:
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: ${{ always() }}
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          needs: ${{ toJson(needs) }}
+          job: ${{ toJson(job) }}
+          steps: ${{ toJson(steps) }}
