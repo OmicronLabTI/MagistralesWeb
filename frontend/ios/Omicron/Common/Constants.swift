@@ -123,6 +123,7 @@ struct CommonStrings {
     static let finishdate = "Fecha de finalización:"
     static let destiny = "Destino:"
     static let piece = "Pieza"
+    static let millar = "MIL"
     static let components = "Componentes: "
     static let code = "Código"
     static let baseQuantity = "Cant. Base"

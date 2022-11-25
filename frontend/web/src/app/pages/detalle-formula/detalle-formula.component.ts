@@ -71,6 +71,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   currentOrdenFabricacionId = CONST_STRING.empty;
   filterDataOrdersForOrderIsolated = new ParamsPedidos();
   catalogGroupName = CONST_STRING.empty;
+  sumFormula: number = CONST_NUMBER.zero;
   constructor(
     private pedidosService: PedidosService,
     private route: ActivatedRoute,
@@ -83,7 +84,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     private dateService: DateService,
     private messagesService: MessagesService,
     private filtersService: FiltersService
-    ) {
+  ) {
   }
 
   ngOnInit() {
@@ -141,7 +142,15 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
     this.componentsToDelete = [];
     this.dataService.setIsToSaveAnything(false);
     this.catalogGroupName = response.catalogGroupName || '';
+    this.sumFormulaAction();
   }
+
+  sumFormulaAction = (): void => {
+    const excludedUnits = ['Pieza', 'MIL'];
+    const details = this.oldDataFormulaDetail.details.filter((component) => (!excludedUnits.find(unit => component.unit === unit)));
+    this.sumFormula = details.map(c => c.requiredQuantity).reduce((a, b) => a + b);
+  }
+
   validateIsContainer(productId: string) {
     const productIdType = productId.split('-')[0];
     return productIdType === CONST_CONTAINER.en || productIdType === CONST_CONTAINER.em;
