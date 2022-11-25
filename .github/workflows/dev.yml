@@ -9,7 +9,7 @@ on:
         required: false
   push:
     branches:
-      - develop
+      - feature/new-apimanager
     paths:
       - frontend/**
       - services/**
