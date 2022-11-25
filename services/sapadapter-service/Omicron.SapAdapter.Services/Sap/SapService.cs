@@ -335,6 +335,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DueDate = ServiceShared.GetDateValueOrDefault(o.DueDate, string.Empty),
                     StartDate = o.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = ServiceShared.GetDateValueOrDefault(o.PostDate, string.Empty),
+                    OrderCreateDate = ServiceShared.GetDateValueOrDefault(pedidoLocal.FechaInicio, string.Empty),
                     User = dictUser[o.User],
                     Origin = ServiceShared.GetDictionaryValueString(ServiceConstants.DictStatusOrigin, o.OriginType, o.OriginType),
                     BaseDocument = o.PedidoId.Value,
