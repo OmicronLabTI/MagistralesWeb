@@ -20,6 +20,8 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Setup Maven
+      uses: stCarolas/setup-maven@v.4.5
     - name: sonar-scanner
       run: |
         mvn package sonar:sonar \
