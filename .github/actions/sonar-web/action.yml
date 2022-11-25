@@ -53,6 +53,7 @@ runs:
       with:
         string: ${{ steps.split_name.outputs.item_name }}
     - name: npm install
+      if: steps.npm-cache.outputs.cache-hit != 'true'
       run: npm ci
       working-directory: ${{ inputs.path }}
       shell: bash
