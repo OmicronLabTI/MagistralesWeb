@@ -27,6 +27,6 @@ runs:
         -Dsonar.projectName=20_Omicron_AppiOSFormulas_${{ inputs.project_name }}_${{ inputs.environment }} \
         -Dsonar.sources=src/main \
         -Dsonar.host.url=${{ inputs.sonar_server }} \
-        -Dsonar.login=${{ inputs.sonar_token }}"
+        -Dsonar.login=${{ inputs.sonar_token }}
       working-directory: ${{ inputs.path }}
       shell: bash
