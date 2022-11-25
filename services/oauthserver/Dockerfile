@@ -3,6 +3,7 @@ WORKDIR /app
 COPY . ./
 RUN mvn clean package -DskipTests
 
+
 FROM container-registry.oracle.com/java/serverjre:1.8.0_241-b07
 WORKDIR /app
 COPY --from=build-env /app/oauth-web/target/oauth-web-1.0-SNAPSHOT.jar .
