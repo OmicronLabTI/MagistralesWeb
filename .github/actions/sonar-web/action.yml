@@ -46,10 +46,10 @@ runs:
       run: npm ci
       working-directory: ${{ inputs.path }}
       shell: bash
-    - name: npm run lint
-      run: npm run lint
-      working-directory: ${{ inputs.path }}
-      shell: bash
+    # - name: npm run lint
+    #   run: npm run lint
+    #   working-directory: ${{ inputs.path }}
+    #   shell: bash
     - name: npm run test-ci
       run: npm run test-ci
       working-directory: ${{ inputs.path }}
