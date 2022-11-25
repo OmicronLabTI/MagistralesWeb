@@ -68,7 +68,7 @@ runs:
     - name: sonar-scanner
       run: |
         /opt/sonar-scanner/bin/sonar-scanner \
-        -Dsonar.projectKey=21_Omicron_DXP_${{ steps.string.outputs.capitalized }}_${{ inputs.environment }} \
+        -Dsonar.projectKey=20_Omicron_AppiOSFormulas_${{ steps.string.outputs.capitalized }}_${{ inputs.environment }} \
         -Dsonar.host.url=${{ inputs.sonar_server }} \
         -Dsonar.login=${{ inputs.sonar_token }} \
         -Dsonar.sourceEncoding=UTF-8 \
