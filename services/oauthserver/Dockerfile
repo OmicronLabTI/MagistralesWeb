@@ -1,4 +1,4 @@
-FROM maven:3.8.6-openjdk-18 AS build-env
+FROM maven:3.8.1-jdk-8-slim AS build-env
 WORKDIR /app
 COPY . ./
 RUN mvn clean package -DskipTests
