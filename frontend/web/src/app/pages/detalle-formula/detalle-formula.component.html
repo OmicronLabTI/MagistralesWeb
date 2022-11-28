@@ -25,6 +25,9 @@
     <div class="description-container">
         <span [ngClass]="oldDataFormulaDetail.hasMissingStock ? 'color-missing-material' : 'color-omicron'">{{oldDataFormulaDetail.code}}&nbsp;&nbsp;&nbsp;&nbsp;</span> |
          <span [ngClass]="oldDataFormulaDetail.hasMissingStock ? 'color-missing-material' : 'color-with-material'">&nbsp;&nbsp;&nbsp;&nbsp;{{oldDataFormulaDetail.productDescription }}</span>
+         <div class="py-1">
+            <span>Sumatoria de la fórmula: {{ sumFormula }} </span>
+         </div>
     </div>
     <div class="table-toolbar table-custom-formula">
             <div class="refresh-icon-on-toolbar with-buttons-custom">
