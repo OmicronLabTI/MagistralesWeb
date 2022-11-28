@@ -325,7 +325,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.TransportName = company.TrnspName;
 
                 x.Cliente = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctor.Contact), x.Medico, doctor.Contact);
-                x.SaleOrder = JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoDxpId?.ToUpper()).Distinct().ToList());
+                x.SaleOrder = saleOrders.Any(y => !string.IsNullOrEmpty(y.PedidoDxpId)) ? JsonConvert.SerializeObject(saleOrders.Where(z => !string.IsNullOrEmpty(z.PedidoDxpId)).Select(y => y.PedidoDxpId.ToUpper()).Distinct().ToList()) : JsonConvert.SerializeObject(saleOrders.Select(y => y.PedidoId).Distinct().ToList());
                 x.TotalSaleOrder = saleOrders.Select(y => y.PedidoId).Distinct().Count();
                 x.SalesPrsonEmail = salePerson.Email.ValidateNull();
                 x.SalesPrsonName = $"{salePerson.FirstName.ValidateNull()} {salePerson.LastName.ValidateNull()}".Trim();
