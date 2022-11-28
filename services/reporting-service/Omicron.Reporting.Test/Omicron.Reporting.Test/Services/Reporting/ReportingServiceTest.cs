@@ -44,6 +44,8 @@ namespace Omicron.Reporting.Test.Services.Request
                 PackageId = 1,
                 TrackingNumber = "asdf",
                 TransportMode = party,
+                ClientName = "Gustavo ramirez",
+                SalesOrders = "AASSs",
             };
 
             var listParams = new List<ParametersModel>

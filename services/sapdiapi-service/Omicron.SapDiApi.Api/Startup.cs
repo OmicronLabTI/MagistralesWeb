@@ -28,6 +28,7 @@ namespace Omicron.SapDiApi.Api
         public void Configuration(IAppBuilder app)
         {
             HttpConfiguration = this.GetConfiguration();
+            HttpConfiguration.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
             app.UseWebApi(HttpConfiguration);
 
             // sets the help page for the Web Api

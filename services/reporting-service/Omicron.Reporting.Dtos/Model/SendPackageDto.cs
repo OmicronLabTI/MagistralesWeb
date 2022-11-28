@@ -55,5 +55,13 @@ namespace Omicron.Reporting.Dtos.Model
         /// <value>
         /// Bool is production order.
         public string SalesPrsonEmail { get; set; }
+
+        /// <summary>
+        /// Gets or sets Sales Person Name.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string ClientName { get; set; }
     }
 }
