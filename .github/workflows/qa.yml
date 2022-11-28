@@ -98,10 +98,10 @@ jobs:
       - name: Kubernetes deploy
         working-directory: deploy/qa
         run: |
-          kubectl apply -f deploy_qa.yaml
-          kubectl apply -f ingress-oauth.yml
-          kubectl apply -f ingress-services.yml
-          kubectl apply -f ingress-web.yml
+          kubectl apply -f deploy_qa.yaml --context kubernetes-admin@kubernetes
+          kubectl apply -f ingress-oauth.yml --context kubernetes-admin@kubernetes
+          kubectl apply -f ingress-services.yml --context kubernetes-admin@kubernetes
+          kubectl apply -f ingress-web.yml --context kubernetes-admin@kubernetes
   rollout:
     name: kubectl rollout
     runs-on: [self-hosted, omicron-qa]
@@ -118,35 +118,35 @@ jobs:
 
       - name: Rollout frontend/web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy web-deployment
+        run: kubectl rollout restart deploy web-deployment --context kubernetes-admin@kubernetes
 
       - name: Rollout catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy catalogos-deployment
+        run: kubectl rollout restart deploy catalogos-deployment --context kubernetes-admin@kubernetes
 
       - name: Rollout oauthserver
         if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy oauthserver-deployment
+        run: kubectl rollout restart deploy oauthserver-deployment --context kubernetes-admin@kubernetes
 
       - name: Rollout pedidos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy pedidos-deployment
+        run: kubectl rollout restart deploy pedidos-deployment --context kubernetes-admin@kubernetes
 
       - name: Rollout reporting-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy reporting-deployment
+        run: kubectl rollout restart deploy reporting-deployment --context kubernetes-admin@kubernetes
 
       - name: Rollout sapadapter-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy sapadapter-deployment
+        run: kubectl rollout restart deploy sapadapter-deployment --context kubernetes-admin@kubernetes
 
       - name: Rollout usuarios-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy usuarios-deployment
+        run: kubectl rollout restart deploy usuarios-deployment --context kubernetes-admin@kubernetes
 
       - name: Rollout warehouses-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy warehouses-deployment
+        run: kubectl rollout restart deploy warehouses-deployment --context kubernetes-admin@kubernetes
   database:
     name: liquibase update
     runs-on: [self-hosted, omicron-qa]
