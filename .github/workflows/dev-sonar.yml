@@ -9,7 +9,7 @@ on:
         required: false
   pull_request:
     branches:
-      - feature/new-apimanager
+      - develop
     paths:
       - frontend/**
       - services/**
