@@ -201,11 +201,14 @@ class InboxViewController: UIViewController {
                     header.delegate = self
                     header.pdfImageView.isHidden = false
                     header.patientListButton.isHidden = false
-                    if let order = self?.getNamesByOrder(productID: Int(productId) ?? 0) {
+                    header.doctorName.isHidden = false
+                    if let order = self?.getNamesByOrder(productID: Int(productId) ?? 0 ) {
                         let patientName = (order.patientName != "") ? "patientName" : "noPatientName"
                         header.patientListButton.setImage(UIImage(named: patientName),for: .normal)
+                        header.doctorName.text = order.clientDxp
                     }
                 } else {
+                    header.doctorName.isHidden = true
                     header.productId = 0
                     header.delegate = nil
                     header.pdfImageView.isHidden = true

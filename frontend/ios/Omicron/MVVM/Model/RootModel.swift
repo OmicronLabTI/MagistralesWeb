@@ -91,13 +91,14 @@ class Order {
     var destiny: String?
     var hasMissingStock = false
     var finishedLabel = false
-    var patientName:String?
+    var patientName: String?
+    var clientDxp: String?;
     init(areBatchesComplete: Bool?, productionOrderId: Int?, baseDocument: Int?,
          container: String?, tag: String?, plannedQuantity: Decimal?,
          startDate: String?, finishDate: String?, descriptionProduct: String?,
          statusId: Int?, itemCode: String?,
          productCode: String?, destiny: String?,
-         hasMissingStock: Bool, finishedLabel: Bool, patientName: String?) {
+         hasMissingStock: Bool, finishedLabel: Bool, patientName: String?, clientDxp: String?) {
         self.areBatchesComplete = areBatchesComplete
         self.productionOrderId = productionOrderId
         self.baseDocument = baseDocument
@@ -114,6 +115,7 @@ class Order {
         self.hasMissingStock = hasMissingStock
         self.finishedLabel = finishedLabel
         self.patientName = patientName
+        self.clientDxp = clientDxp
     }
     required init?(map: Map) {}
 }
@@ -132,6 +134,7 @@ extension Order: Mappable {
         hasMissingStock <- map["hasMissingStock"]
         finishedLabel <- map["finishedLabel"]
         patientName <- map["patientName"]
+        clientDxp <- map["clientDxp"]
         areBatchesComplete <- map["areBatchesComplete"]
     }
 }
