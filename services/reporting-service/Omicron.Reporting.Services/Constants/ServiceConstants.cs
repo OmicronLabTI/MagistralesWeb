@@ -143,7 +143,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentForeignPackage = "<p>Estimado Cliente.<br/><br/>Le informamos que el pedido <b>{0}</b> ha sido enviado por medio de paquetería a la dirección registrada bajo su nombre, el número de guía correspondiente es <b>{1}</b>.</p><p>{2}<br/>{3}<br/>Factura: <b>{4}</b></p>";
+        public const string SentForeignPackage = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> ha sido enviado por medio de paquetería a la dirección registrada bajo su nombre con el número de factura <b>{2}</b>, el número de guía correspondiente es <b>{3}</b>.</p><p>{4}<br/>{5}</p>";
 
         /// <summary>
         /// Sent local package.
@@ -168,7 +168,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// refund policy.
         /// </summary>
-        public const string RefundPolicy = "<p>*Política de Cambios y Devoluciones*</p><ul><li>Una vez recibido el pedido se otorgan 15 días calendario para notificar cualquier inconsistencia o inconformidad con su solicitud.</li><li>Para notificar cualquier incidencia favor enviar un correo a: <u>incidencias@o-lab.mx</u>; por WhatsApp al número:  8118106776 o a través de su plataforma.</li></ul><center>Agradecemos su preferencia.</center><center>OmicronLab SA de CV</center>";
+        public const string RefundPolicy = "<p>*Política de Cambios y Devoluciones*</p><ul><li>Una vez recibido el pedido se otorgan 15 días calendario para notificar cualquier inconsistencia o inconformidad con su solicitud.</li><li>Para notificar cualquier incidencia favor enviar un correo a: <u>incidencias@o-lab.mx</u>; por WhatsApp al número:  8118106776 o a través de <b>OmicronShop</b>.</li></ul><center>Agradecemos su preferencia.</center><center>OmicronLab SA de CV</center>";
 
         /// <summary>
         /// Sent local package.
