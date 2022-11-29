@@ -6,7 +6,7 @@ COPY . .
 # RUN npm run lint
 ARG CONFIGURATION=""
 ARG BASE_HREF="/"
-RUN npm run build --configuration=$CONFIGURATION --basehref=$BASE_HREF
+RUN npm run build -- --configuration=$CONFIGURATION --baseHref=$BASE_HREF
 
 FROM nginx AS release
 COPY nginx.conf /etc/nginx/nginx.conf
