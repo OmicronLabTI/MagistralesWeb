@@ -159,9 +159,9 @@ class InboxViewController: UIViewController {
         cell.isSelected = indexPathsSelected.contains(indexPath)
         cell.itemCode.text = element.itemCode
         cell.destiny.text = element.destiny
-        print(element.patientName)
         let patientName = (element.patientName != "") ? "patientName" : "noPatientName"
         cell.patientListButton.setImage(UIImage(named: patientName),for: .normal)
+        cell.pdfDownloadButton.isHidden = !rootViewModel.needSearch
         return cell
     }
 
@@ -201,11 +201,14 @@ class InboxViewController: UIViewController {
                     header.delegate = self
                     header.pdfImageView.isHidden = false
                     header.patientListButton.isHidden = false
-                    if let order = self?.getNamesByOrder(productID: Int(productId) ?? 0) {
+                    header.doctorName.isHidden = false
+                    if let order = self?.getNamesByOrder(productID: Int(productId) ?? 0 ) {
                         let patientName = (order.patientName != "") ? "patientName" : "noPatientName"
                         header.patientListButton.setImage(UIImage(named: patientName),for: .normal)
+                        header.doctorName.text = order.clientDxp
                     }
                 } else {
+                    header.doctorName.isHidden = true
                     header.productId = 0
                     header.delegate = nil
                     header.pdfImageView.isHidden = true
@@ -653,6 +656,11 @@ class InboxViewController: UIViewController {
 
 // MARK: Extencions
 extension InboxViewController: CardCellDelegate {
+    func downloadPdf(id: Int) {
+        inboxViewModel.getConnection()
+        self.productID = id
+    }
+    
     func patientList(order: Order) {
         self.inboxViewModel.selectedOrder = order
         self.performSegue(withIdentifier: ViewControllerIdentifiers.patientListViewController, sender: nil)

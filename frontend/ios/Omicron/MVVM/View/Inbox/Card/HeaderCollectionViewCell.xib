@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="SF-Pro-Display-Regular.otf">
+            <string>SFProDisplay-Regular</string>
+        </array>
+    </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="header" id="eF4-Rs-Cgq" customClass="HeaderCollectionViewCell" customModule="OmicronDEV" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="300" height="100"/>
+            <rect key="frame" x="0.0" y="0.0" width="700" height="100"/>
             <autoresizingMask key="autoresizingMask"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                <rect key="frame" x="0.0" y="0.0" width="300" height="100"/>
+                <rect key="frame" x="0.0" y="0.0" width="700" height="100"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pS7-fw-OHY">
-                        <rect key="frame" x="0.0" y="0.0" width="300" height="100"/>
+                        <rect key="frame" x="0.0" y="0.0" width="700" height="100"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d4f-JR-fbn">
-                                <rect key="frame" x="30" y="0.0" width="197" height="100"/>
+                                <rect key="frame" x="30" y="0.0" width="575" height="100"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="25"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -35,21 +40,29 @@
                                     <constraint firstAttribute="height" constant="30" id="QpU-wP-L1z"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jiv-0M-7sE">
-                                <rect key="frame" x="235" y="1" width="65" height="99"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jiv-0M-7sE">
+                                <rect key="frame" x="613" y="1" width="87" height="98"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" image="patientName" title=" "/>
                                 <connections>
                                     <action selector="patientListAction:" destination="eF4-Rs-Cgq" eventType="touchUpInside" id="vks-g6-r9a"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o7A-Pc-yaj">
+                                <rect key="frame" x="220" y="1" width="480" height="64"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <edgeInsets key="layoutMargins" top="8" left="8" bottom="20" right="8"/>
+                                <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="d4f-JR-fbn" secondAttribute="trailing" constant="73" id="7pw-zY-vhv"/>
+                            <constraint firstAttribute="trailing" secondItem="d4f-JR-fbn" secondAttribute="trailing" constant="95" id="7pw-zY-vhv"/>
                             <constraint firstItem="1so-11-d1S" firstAttribute="centerY" secondItem="pS7-fw-OHY" secondAttribute="centerY" id="97k-NQ-tZ6"/>
                             <constraint firstItem="d4f-JR-fbn" firstAttribute="leading" secondItem="1so-11-d1S" secondAttribute="trailing" id="Lt1-Y4-Wh8"/>
-                            <constraint firstItem="jiv-0M-7sE" firstAttribute="leading" secondItem="1so-11-d1S" secondAttribute="trailing" constant="205" id="V6b-tk-8pO"/>
+                            <constraint firstItem="jiv-0M-7sE" firstAttribute="leading" secondItem="1so-11-d1S" secondAttribute="trailing" constant="583" id="V6b-tk-8pO"/>
                             <constraint firstItem="d4f-JR-fbn" firstAttribute="top" secondItem="pS7-fw-OHY" secondAttribute="top" id="YTi-LD-kHQ"/>
                             <constraint firstItem="jiv-0M-7sE" firstAttribute="centerY" secondItem="d4f-JR-fbn" secondAttribute="centerY" id="c0o-FP-nNI"/>
                             <constraint firstItem="jiv-0M-7sE" firstAttribute="top" secondItem="pS7-fw-OHY" secondAttribute="top" constant="1" id="dnx-AJ-Qbf"/>
@@ -67,13 +80,14 @@
                 <constraint firstAttribute="trailing" secondItem="pS7-fw-OHY" secondAttribute="trailing" id="lM3-M3-zVS"/>
                 <constraint firstItem="pS7-fw-OHY" firstAttribute="top" secondItem="eF4-Rs-Cgq" secondAttribute="top" id="qdI-3K-jhF"/>
             </constraints>
-            <size key="customSize" width="356" height="536"/>
+            <size key="customSize" width="536" height="536"/>
             <connections>
+                <outlet property="doctorName" destination="o7A-Pc-yaj" id="wGi-Kc-IQZ"/>
                 <outlet property="patientListButton" destination="jiv-0M-7sE" id="5t7-Jd-fMO"/>
                 <outlet property="pdfImageView" destination="1so-11-d1S" id="72u-V1-Gdk"/>
                 <outlet property="productID" destination="d4f-JR-fbn" id="whe-i7-bsx"/>
             </connections>
-            <point key="canvasLocation" x="-216.58536585365854" y="191.18644067796612"/>
+            <point key="canvasLocation" x="-150.73170731707316" y="191.18644067796612"/>
         </collectionViewCell>
     </objects>
     <resources>
