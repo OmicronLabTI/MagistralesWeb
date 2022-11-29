@@ -52,7 +52,7 @@ namespace Omicron.SapAdapter.Test
                 new OrderModel { PedidoId = 75000, DocNum = 75000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N", Patient = "paciente" },
                 new OrderModel { PedidoId = 75001, DocNum = 75001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo Le?n", Canceled = "N", Patient = "paciente" },
                 new OrderModel { PedidoId = 75002, DocNum = 75002, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null, Canceled = "N", Patient = "paciente" },
-                new OrderModel { PedidoId = 85000, DocNum = 85000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N" , Patient = "paciente" },
+                new OrderModel { PedidoId = 85000, DocNum = 85000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N", Patient = "paciente" },
 
                 // for packages
                 new OrderModel { PedidoId = 85001, DocNum = 85001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MX", Canceled = "N", IsPackage = "Y", DocNumDxp = "xse123", Patient = "paciente" },

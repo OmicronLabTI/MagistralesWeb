@@ -148,7 +148,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   sumFormulaAction = (): void => {
     const excludedUnits = ['Pieza', 'MIL'];
     const details = this.oldDataFormulaDetail.details.filter((component) => (!excludedUnits.find(unit => component.unit === unit)));
-    this.sumFormula = details.map(c => c.requiredQuantity).reduce((a, b) => a + b);
+    this.sumFormula = details.length > 0 ? details.map(c => c.requiredQuantity).reduce((a, b) => a + b) : 0
   }
 
   validateIsContainer(productId: string) {

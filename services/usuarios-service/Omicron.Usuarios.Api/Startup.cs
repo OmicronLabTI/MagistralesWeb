@@ -25,8 +25,6 @@ namespace Omicron.Usuarios.Api
     using Serilog;
     using Serilog.Events;
     using StackExchange.Redis;
-    using Steeltoe.Common.Http.Discovery;
-    using Steeltoe.Discovery.Client;
 
     /// <summary>
     /// Class Startup.
@@ -77,8 +75,6 @@ namespace Omicron.Usuarios.Api
             services.AddSingleton(Log.Logger);
             this.AddCorsSvc(services);
 
-            services.AddDiscoveryClient(this.Configuration);
-
             var mvcBuilder = services.AddMvc();
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomActionFilterAttribute(Log.Logger)));
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomExceptionFilterAttribute(Log.Logger)));
@@ -104,14 +100,12 @@ namespace Omicron.Usuarios.Api
             {
                 c.BaseAddress = new Uri(this.Configuration["PedidosUrl"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IPedidosService, PedidosService>();
 
             services.AddHttpClient("sapadapterservice", c =>
             {
                 c.BaseAddress = new Uri(this.Configuration["SapAdapterUrl"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapAdapter, SapAdapter>();
 
             this.AddRedis(services, Log.Logger);
@@ -151,7 +145,6 @@ namespace Omicron.Usuarios.Api
             });
             app.UseResponseCompression();
 
-            app.UseDiscoveryClient();
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
 
