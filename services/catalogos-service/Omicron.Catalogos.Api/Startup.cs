@@ -21,7 +21,6 @@ namespace Omicron.Catalogos.Api
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
-    using Steeltoe.Discovery.Client;
 
     /// <summary>
     /// Class Startup.
@@ -72,8 +71,6 @@ namespace Omicron.Catalogos.Api
                 .CreateLogger();
 
             services.AddSingleton(Log.Logger);
-
-            services.AddDiscoveryClient(this.Configuration);
 
             var mvcBuilder = services.AddMvc();
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomActionFilterAttribute(Log.Logger)));
@@ -134,7 +131,6 @@ namespace Omicron.Catalogos.Api
             });
             app.UseResponseCompression();
 
-            app.UseDiscoveryClient();
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
 

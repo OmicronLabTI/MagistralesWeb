@@ -37,6 +37,17 @@ public class OauthController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/validate", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity validateToken(@RequestHeader("Authorization") String credentials) {
+
+        LOG.info("Se invoca /validate");
+        String token = credentials.replace("Bearer ", "");
+        ValidTokenRequestTO validTokenRequest = new ValidTokenRequestTO();
+        validTokenRequest.setToken(token);
+        iOauthFacade.validate(validTokenRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/renew", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity renewToken(@RequestBody TokenRenewRequestTO tokenRenewRequest) {
 
