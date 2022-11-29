@@ -10,7 +10,6 @@ namespace Omicron.Pedidos.Api
 {
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
-    using Steeltoe.Common.Hosting;
     using Steeltoe.Extensions.Configuration.PlaceholderCore;
 
     /// <summary>
@@ -34,7 +33,6 @@ namespace Omicron.Pedidos.Api
         /// <returns>Web Host Builder.</returns>
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseCloudHosting(5103)
             .AddPlaceholderResolver()
             .UseStartup<Startup>();
     }

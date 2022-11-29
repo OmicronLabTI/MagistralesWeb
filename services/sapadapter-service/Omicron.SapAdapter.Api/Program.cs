@@ -10,7 +10,6 @@ namespace Omicron.SapAdapter.Api
 {
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
-    using Steeltoe.Common.Hosting;
     using Steeltoe.Extensions.Configuration.PlaceholderCore;
 
     /// <summary>
@@ -34,7 +33,6 @@ namespace Omicron.SapAdapter.Api
         /// <returns>Web Host Builder.</returns>
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseCloudHosting(5102)
             .AddPlaceholderResolver()
             .UseStartup<Startup>();
     }

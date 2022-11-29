@@ -29,8 +29,6 @@ namespace Omicron.Pedidos.Api
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
-    using Steeltoe.Common.Http.Discovery;
-    using Steeltoe.Discovery.Client;
 
     /// <summary>
     /// Class Startup.
@@ -80,8 +78,6 @@ namespace Omicron.Pedidos.Api
 
             services.AddSingleton(Log.Logger);
 
-            services.AddDiscoveryClient(this.Configuration);
-
             var mvcBuilder = services.AddMvc();
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomActionFilterAttribute(Log.Logger)));
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomExceptionFilterAttribute(Log.Logger)));
@@ -108,42 +104,36 @@ namespace Omicron.Pedidos.Api
             {
                 c.BaseAddress = new Uri(this.Configuration["SapAdapterUrl"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapAdapter, SapAdapter>();
 
             services.AddHttpClient("sapdiapi", c =>
             {
                 c.BaseAddress = new Uri(sapDiApiUrl);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapDiApi, SapDiApi>();
 
             services.AddHttpClient("usuariosservice", c =>
             {
                 c.BaseAddress = new Uri(this.Configuration["UserUrl"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IUsersService, UsersService>();
 
             services.AddHttpClient("sapfileService", c =>
             {
                 c.BaseAddress = new Uri(this.Configuration["SapFileUrl"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapFileService, SapFileService>();
 
             services.AddHttpClient("almacenService", c =>
             {
                 c.BaseAddress = new Uri(this.Configuration["AlmacenUrl"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IAlmacenService, AlmacenService>();
 
             services.AddHttpClient("reportingService", c =>
             {
                 c.BaseAddress = new Uri(this.Configuration["ReportingService"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IReportingService, ReportingService>();
 
             this.AddRedis(services, Log.Logger);
@@ -202,7 +192,6 @@ namespace Omicron.Pedidos.Api
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Invoice")),
                 RequestPath = "/resources/invoice",
             });
-            app.UseDiscoveryClient();
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
 

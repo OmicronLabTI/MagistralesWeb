@@ -30,64 +30,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: web-svc
+  labels:
+    app: web
 spec:
-  type: LoadBalancer
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 80
-      protocol: TCP
-  externalIPs:
-    - 192.168.0.101
   selector:
     app: web
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: apimanager-deployment
-  labels:
-    app: apimanager
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: apimanager
-  template:
-    metadata:
-      labels:
-        app: apimanager
-    spec:
-      containers:
-        - name: apimanager
-          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-apimanager-repository:latest
-          imagePullPolicy: Always
-          env:
-            - name: TZ
-              value: America/Mexico_City
-            - name: SPRING_PROFILES_ACTIVE
-              value: dev
-          ports:
-            - containerPort: 8000
-      imagePullSecrets:
-        - name: pullsecret
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: apimanager-svc
-  labels:
-    app: apimanager-svc
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 8000
-      targetPort: 8000
-      protocol: TCP
-      name: apimanager
-  externalIPs:
-    - 192.168.0.101
-  selector:
-    app: apimanager
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -119,6 +71,21 @@ spec:
       imagePullSecrets:
         - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauthserver-svc
+  labels:
+    app: oauthserver
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8090
+  selector:
+    app: oauthserver
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -145,9 +112,24 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 9010
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogos-svc
+  labels:
+    app: catalogos
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: catalogos
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -175,9 +157,24 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 5101
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usuarios-svc
+  labels:
+    app: usuarios
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: usuarios
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -205,16 +202,31 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 5102
+            - containerPort: 80
           livenessProbe:
             httpGet:
               path: /hc
-              port: 5102
+              port: 80
             initialDelaySeconds: 30
             periodSeconds: 300
             timeoutSeconds: 40
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sapadapter-svc
+  labels:
+    app: sapadapter
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: sapadapter
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -242,9 +254,24 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 5103
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pedidos-svc
+  labels:
+    app: pedidos
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: pedidos
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -272,9 +299,24 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 5104
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: warehouses-svc
+  labels:
+    app: warehouses
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: warehouses
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -302,9 +344,24 @@ spec:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
           ports:
-            - containerPort: 5105
+            - containerPort: 80
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting-svc
+  labels:
+    app: reporting
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: reporting
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -398,31 +455,3 @@ spec:
     - 192.168.0.101
   selector:
     app: redisdata
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: kafkaconsumer-deployment
-  labels:
-    app: kafkaconsumer
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: kafkaconsumer
-  template:
-    metadata:
-      labels:
-        app: kafkaconsumer
-    spec:
-      containers:
-        - name: kafkaconsumer
-          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-kafkaconsumer-repository:latest
-          imagePullPolicy: Always
-          env:
-            - name: TZ
-              value: America/Mexico_City
-            - name: ASPNETCORE_ENVIRONMENT
-              value: Development
-      imagePullSecrets:
-        - name: pullsecret
