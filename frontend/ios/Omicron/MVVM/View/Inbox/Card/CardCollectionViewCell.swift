@@ -13,6 +13,7 @@ import RxSwift
 protocol CardCellDelegate: NSObjectProtocol {
     func detailTapped(order: Order)
     func patientList(order: Order)
+    func downloadPdf(id: Int)
 }
 
 class CardCollectionViewCell: UICollectionViewCell {
@@ -31,6 +32,7 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var orderText: UILabel!
     @IBOutlet weak var manufacturingOrder: UILabel!
     @IBOutlet weak var patientListButton: UIButton!
+    @IBOutlet weak var pdfDownloadButton: UIButton!
     weak var delegate: CardCellDelegate?
     var row: Int = -1
 
@@ -115,6 +117,11 @@ class CardCollectionViewCell: UICollectionViewCell {
         if order.patientName != "" {
             self.delegate?.patientList(order: order)
         }
+    }
+
+    @IBAction func downloadPDF(_ sender: Any) {
+        guard let order = self.order else { return }
+        self.delegate?.downloadPdf(id: Int(order.baseDocument!))
     }
     
     func detail() {

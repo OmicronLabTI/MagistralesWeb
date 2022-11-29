@@ -273,7 +273,7 @@ class OrderDetailViewController: UIViewController {
             text: "\(CommonStrings.plannedQuantity) \(plannedQuantityText)",
             textToBold: CommonStrings.plannedQuantity)
         self.startDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(
-            text: "\(CommonStrings.manufacturingDate) \(detail.startDate ?? CommonStrings.empty)",
+            text: "\(CommonStrings.manufacturingDate) \(detail.orderCreateDate ?? CommonStrings.empty)",
             textToBold: CommonStrings.manufacturingDate)
         self.finishedDateDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(
             text: "\(CommonStrings.finishdate) \(detail.dueDate ?? CommonStrings.empty)",

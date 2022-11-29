@@ -159,9 +159,9 @@ class InboxViewController: UIViewController {
         cell.isSelected = indexPathsSelected.contains(indexPath)
         cell.itemCode.text = element.itemCode
         cell.destiny.text = element.destiny
-        print(element.patientName)
         let patientName = (element.patientName != "") ? "patientName" : "noPatientName"
         cell.patientListButton.setImage(UIImage(named: patientName),for: .normal)
+        cell.pdfDownloadButton.isHidden = !rootViewModel.needSearch
         return cell
     }
 
@@ -656,6 +656,11 @@ class InboxViewController: UIViewController {
 
 // MARK: Extencions
 extension InboxViewController: CardCellDelegate {
+    func downloadPdf(id: Int) {
+        inboxViewModel.getConnection()
+        self.productID = id
+    }
+    
     func patientList(order: Order) {
         self.inboxViewModel.selectedOrder = order
         self.performSegue(withIdentifier: ViewControllerIdentifiers.patientListViewController, sender: nil)
