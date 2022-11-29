@@ -159,6 +159,17 @@
                             <constraint firstAttribute="width" constant="33" id="yfg-03-YJi"/>
                         </constraints>
                     </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tEo-A3-ajS">
+                        <rect key="frame" x="452" y="13" width="32" height="31"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <state key="normal" title="Button"/>
+                        <buttonConfiguration key="configuration" style="plain" title=" ">
+                            <backgroundConfiguration key="background" image="PDF"/>
+                        </buttonConfiguration>
+                        <connections>
+                            <action selector="downloadPDF:" destination="lZH-Hm-Vh8" eventType="touchUpInside" id="Mfc-dY-0g0"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="calibratedRGB"/>
                 <constraints>
@@ -218,6 +229,7 @@
                 <outlet property="numberDescriptionLabel" destination="KP2-PL-EKx" id="sYm-gD-hEZ"/>
                 <outlet property="orderText" destination="Tq0-m6-ZyW" id="9bz-Fz-tZI"/>
                 <outlet property="patientListButton" destination="ltX-Wt-Npt" id="WJz-LU-7Jg"/>
+                <outlet property="pdfDownloadButton" destination="tEo-A3-ajS" id="bae-Jh-gBm"/>
                 <outlet property="plannedQuantityDescriptionLabel" destination="D0m-qX-4KH" id="elS-Cj-4q9"/>
                 <outlet property="productDescriptionLabel" destination="bDd-OS-jWR" id="y5K-At-0k1"/>
                 <outlet property="startDateDescriptionLabel" destination="apl-w1-wNf" id="bsh-nH-qKi"/>
@@ -227,6 +239,7 @@
         </collectionViewCell>
     </objects>
     <resources>
+        <image name="PDF" width="348" height="359"/>
         <image name="envase" width="17.659999847412109" height="21.031999588012695"/>
         <image name="etiqueta" width="22.52400016784668" height="22.455999374389648"/>
         <image name="matraz" width="22" height="18.5"/>
