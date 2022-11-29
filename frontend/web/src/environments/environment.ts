@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
-  baseUrl: "http://201.163.179.28:8083",
-  apiLogin: "/api/oauth/oauthrs",
-  apiCatalogs: "/api/catalogos",
-  apiUsers: "/api/usuarios",
+  baseUrl: 'http://201.163.179.28:8083',
+  apiLogin: '/api/oauth/oauthrs',
+  apiCatalogs: '/api/catalogos',
+  apiUsers: '/api/usuarios',
 };
 
 /*
