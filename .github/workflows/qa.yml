@@ -154,7 +154,7 @@ jobs:
     steps:
       - name: liquibase update
         working-directory: database/
-        run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase.properties" update
+        run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-qa.properties" update
   clean:
     name: clean docker resources
     runs-on: [self-hosted, omicron-qa]
