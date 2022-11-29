@@ -92,7 +92,7 @@ class Order {
     var hasMissingStock = false
     var finishedLabel = false
     var patientName: String?
-    var clientDxp: String?;
+    var clientDxp: String?
     init(areBatchesComplete: Bool?, productionOrderId: Int?, baseDocument: Int?,
          container: String?, tag: String?, plannedQuantity: Decimal?,
          startDate: String?, finishDate: String?, descriptionProduct: String?,
