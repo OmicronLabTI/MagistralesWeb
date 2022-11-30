@@ -162,6 +162,7 @@ class InboxViewController: UIViewController {
         let patientName = (element.patientName != "") ? "patientName" : "noPatientName"
         cell.patientListButton.setImage(UIImage(named: patientName),for: .normal)
         cell.pdfDownloadButton.isHidden = !rootViewModel.needSearch
+        cell.patientListButton.isHidden = !groupByOrderNumberButton.isEnabled && !rootViewModel.needSearch
         return cell
     }
 
