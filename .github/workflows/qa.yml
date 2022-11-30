@@ -34,6 +34,7 @@ jobs:
           path: frontend/web
           environment: qa
           registry: ${{ secrets.NEXUS_REGISTRY }}
+          configuration: staging
 
       - name: Build catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
