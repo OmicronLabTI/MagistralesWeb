@@ -1010,4 +1010,11 @@
       <column name="field" value="EmailMiddlewareUser"/>
     </insert>
   </changeSet>
+  <changeSet author="gramirez" id="changelog-1.102">
+    <insert tableName="parameters">
+      <column name="value" value="-90"/>
+      <column name="type" value="int"/>
+      <column name="field" value="QrMagistralAngleRotTop"/>
+    </insert>
+  </changeSet>
 </databaseChangeLog>

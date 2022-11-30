@@ -74,6 +74,12 @@ namespace Omicron.Pedidos.Entities.Model
         public int QrRectyTop { get; set; }
 
         /// <summary>
+        /// Gets or sets the QR Height.
+        /// </summary>
+        /// <value>Qr Height.</value>
+        public int QrTopTextRotationAngle { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether the font is bold.
         /// </summary>
         /// <value>Qr Height.</value>

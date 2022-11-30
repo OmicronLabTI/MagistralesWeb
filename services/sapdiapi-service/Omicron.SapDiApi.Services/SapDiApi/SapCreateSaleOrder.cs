@@ -93,7 +93,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     order.DocumentsOwner = (int)saleOrderModel.EmployeeId;
                 }
 
-
                 if (!string.IsNullOrEmpty(attachment))
                 {
                     order.AttachmentEntry = int.Parse(attachment);

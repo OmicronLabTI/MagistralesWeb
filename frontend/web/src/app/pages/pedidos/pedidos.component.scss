@@ -52,6 +52,11 @@
   justify-content: center;
   align-items: center;
 }
+.background-color-in-process {
+    background-color: #e7515a;
+    margin-left: 15px;
+    color: white;
+}
 .hide { display: none; }
 
   .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
