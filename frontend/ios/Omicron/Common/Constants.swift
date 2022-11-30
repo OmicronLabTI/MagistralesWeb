@@ -119,7 +119,7 @@ struct CommonStrings {
     static let tag = "Etiqueta:"
     static let manufacturingOrder = "Orden de fabricación:"
     static let plannedQuantity = "Cantidad planificada:"
-    static let manufacturingDate = "Fecha de fabricación:"
+    static let manufacturingDate = "Fecha de creación:"
     static let finishdate = "Fecha de finalización:"
     static let destiny = "Destino:"
     static let piece = "Pieza"

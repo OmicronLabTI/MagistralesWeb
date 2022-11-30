@@ -23,8 +23,6 @@ namespace Omicron.Reporting.Api
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
-    using Steeltoe.Common.Http.Discovery;
-    using Steeltoe.Discovery.Client;
 
     /// <summary>
     /// Class Startup.
@@ -76,8 +74,6 @@ namespace Omicron.Reporting.Api
             loggerFactory.AddSerilog();
             services.AddSingleton(loggerFactory);
 
-            services.AddDiscoveryClient(this.Configuration);
-
             var mvcBuilder = services.AddMvc();
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomActionFilterAttribute(Log.Logger)));
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomExceptionFilterAttribute(Log.Logger)));
@@ -101,7 +97,6 @@ namespace Omicron.Reporting.Api
             {
                 c.BaseAddress = new Uri(this.Configuration["CatalogsURL"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ICatalogsService, CatalogsService>();
 
             this.AddRedis(services, Log.Logger);
@@ -142,7 +137,6 @@ namespace Omicron.Reporting.Api
             });
             app.UseResponseCompression();
 
-            app.UseDiscoveryClient();
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
 

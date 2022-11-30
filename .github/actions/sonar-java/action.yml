@@ -1,0 +1,34 @@
+name: sonar-java
+
+inputs:
+  path:
+    required: true
+    type: string
+  project_name:
+    required: true
+    type: string
+  environment:
+    required: true
+    type: string
+  sonar_server:
+    required: true
+    type: string
+  sonar_token:
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Maven
+      uses: stCarolas/setup-maven@v.4.5
+    - name: sonar-scanner
+      run: |
+        mvn package sonar:sonar \
+        -Dsonar.projectKey=20_Omicron_AppiOSFormulas_${{ inputs.project_name }}_${{ inputs.environment }} \
+        -Dsonar.projectName=20_Omicron_AppiOSFormulas_${{ inputs.project_name }}_${{ inputs.environment }} \
+        -Dsonar.sources=src/main \
+        -Dsonar.host.url=${{ inputs.sonar_server }} \
+        -Dsonar.login=${{ inputs.sonar_token }}
+      working-directory: ${{ inputs.path }}
+      shell: bash
