@@ -48,7 +48,7 @@ class PatientListViewController: UIViewController, UITableViewDataSource, UITabl
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // swiftlint:disable force_cast
-        var cell = tableView.dequeueReusableCell(withIdentifier: "PatientListTableViewCell", for: indexPath) as! PatientListTableViewCell
+        var cell = tableView.dequeueReusableCell(withIdentifier: "PatientListTableViewCell", for: indexPath)
         let name = list[indexPath.row]
         cell.textLabel?.text = name.trimmingCharacters(in: .whitespacesAndNewlines)
         // cell.nameLabel?.backgroundColor = .black
