@@ -71,7 +71,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   currentOrdenFabricacionId = CONST_STRING.empty;
   filterDataOrdersForOrderIsolated = new ParamsPedidos();
   catalogGroupName = CONST_STRING.empty;
-  sumFormula: number = CONST_NUMBER.zero;
+  sumFormula: string = CONST_STRING.empty;
   constructor(
     private pedidosService: PedidosService,
     private route: ActivatedRoute,
@@ -148,7 +148,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   sumFormulaAction = (): void => {
     const excludedUnits = ['Pieza', 'MIL'];
     const details = this.oldDataFormulaDetail.details.filter((component) => (!excludedUnits.find(unit => component.unit === unit)));
-    this.sumFormula = details.length > 0 ? details.map(c => c.requiredQuantity).reduce((a, b) => a + b) : 0
+    const sum = details.length > 0 ? details.map(c => c.requiredQuantity).reduce((a, b) => a + b) : 0
+    this.sumFormula = sum.toFixed(6)
   }
 
   validateIsContainer(productId: string) {
