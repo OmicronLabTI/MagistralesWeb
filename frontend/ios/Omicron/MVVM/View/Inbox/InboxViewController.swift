@@ -532,15 +532,13 @@ class InboxViewController: UIViewController {
             destination.statusType = self.inboxViewModel.getStatusName(index: statusId - 1)
             destination.destiny = destiny
            }
-       }else if (segue.identifier == ViewControllerIdentifiers.patientListViewController) {
+       } else if segue.identifier == ViewControllerIdentifiers.patientListViewController {
            if let destination = segue.destination as? PatientListViewController {
                guard let orderId = self.inboxViewModel.selectedOrder?.baseDocument else { return }
                guard let patientList = self.inboxViewModel.selectedOrder?.patientName else { return }
-               
                destination.order = orderId
                destination.patientList = patientList
            }
-        
         }
     }
 
@@ -631,14 +629,14 @@ class InboxViewController: UIViewController {
         default: return lastColor
         }
     }
-    
+
     func getNamesByOrder(productID: Int) -> Order? {
         let order = inboxViewModel.sectionOrders.first(where: { value -> Bool in
             value.model == "Pedido: \(productID)"
         })
         let orderSend = order?.items[0]
         orderSend?.baseDocument = productID
-        return orderSend;
+        return orderSend
     }
 
 }
@@ -649,12 +647,12 @@ extension InboxViewController: CardCellDelegate {
         inboxViewModel.getConnection()
         self.productID = id
     }
-    
+
     func patientList(order: Order) {
         self.inboxViewModel.selectedOrder = order
         self.performSegue(withIdentifier: ViewControllerIdentifiers.patientListViewController, sender: nil)
     }
-    
+
     // Chec this
 //    func detailTapped(order: Order) {
 //        self.inboxViewModel.selectedOrder = order
@@ -689,7 +687,7 @@ extension InboxViewController: HeaderSelectedDelegate {
         inboxViewModel.getConnection()
         self.productID = productID
     }
-    
+
     func tapPatientList(productID: Int) {
         if let order = self.getNamesByOrder(productID: productID) {
             if order.patientName != "" {
