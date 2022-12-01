@@ -162,6 +162,7 @@ class InboxViewController: UIViewController {
         let patientName = (element.patientName != "") ? "patientName" : "noPatientName"
         cell.patientListButton.setImage(UIImage(named: patientName),for: .normal)
         cell.pdfDownloadButton.isHidden = !rootViewModel.needSearch
+        cell.patientListButton.isHidden = !groupByOrderNumberButton.isEnabled && !rootViewModel.needSearch
         return cell
     }
 
@@ -635,20 +636,8 @@ class InboxViewController: UIViewController {
         let order = inboxViewModel.sectionOrders.first(where: { value -> Bool in
             value.model == "Pedido: \(productID)"
         })
-        var names = ""
-        order?.items.forEach({ order in
-            print(order)
-            if let namesNew = order.patientName {
-                names += "\(namesNew),"
-            }
-        })
-        let namesOK = names.components(separatedBy: ",").filter { name in
-            name != ""
-        }
-        print(namesOK.joined(separator: ","))
         let orderSend = order?.items[0]
         orderSend?.baseDocument = productID
-        orderSend?.patientName = namesOK.joined(separator: ",")
         return orderSend;
     }
 
