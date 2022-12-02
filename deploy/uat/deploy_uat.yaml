@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: oauthserver
-          image: omicron_omicron.azurecr.io/omicronuat/omicron-appiosformulas-oauthserver-repository-uat:latest
+          image: omicron.azurecr.io/omicronuat/omicron-appiosformulas-oauthserver-repository-uat:latest
           imagePullPolicy: Always
           env:
             - name: TZ
@@ -73,7 +73,7 @@ spec:
     spec:
       containers:
         - name: catalogos
-          image: omicron_omicron.azurecr.io/omicronuat/omicron-appiosformulas-catalogos-repository-uat:latest
+          image: omicron.azurecr.io/omicronuat/omicron-appiosformulas-catalogos-repository-uat:latest
           imagePullPolicy: Always
           env:
             - name: TZ
@@ -130,7 +130,7 @@ spec:
     spec:
       containers:
         - name: usuarios
-          image: omicron_omicron.azurecr.io/omicronuat/omicron-appiosformulas-usuarios-repository-uat:latest
+          image: omicron.azurecr.io/omicronuat/omicron-appiosformulas-usuarios-repository-uat:latest
           imagePullPolicy: Always
           env:
             - name: TZ
@@ -187,7 +187,7 @@ spec:
     spec:
       containers:
         - name: sapadapter
-          image: omicron_omicron.azurecr.io/omicronuat/omicron-appiosformulas-sapadapter-repository-uat:latest
+          image: omicron.azurecr.io/omicronuat/omicron-appiosformulas-sapadapter-repository-uat:latest
           imagePullPolicy: Always
           env:
             - name: TZ
@@ -249,7 +249,7 @@ spec:
     spec:
       containers:
         - name: pedidos
-          image: omicron_omicron.azurecr.io/omicronuat/omicron-appiosformulas-pedidos-repository-uat:latest
+          image: omicron.azurecr.io/omicronuat/omicron-appiosformulas-pedidos-repository-uat:latest
           imagePullPolicy: Always
           env:
             - name: TZ
@@ -316,7 +316,7 @@ spec:
     spec:
       containers:
         - name: warehouses
-          image: omicron_omicron.azurecr.io/omicronuat/omicron-appiosformulas-warehouses-repository-uat:latest
+          image: omicron.azurecr.io/omicronuat/omicron-appiosformulas-warehouses-repository-uat:latest
           imagePullPolicy: Always
           env:
             - name: TZ
@@ -373,7 +373,7 @@ spec:
     spec:
       containers:
         - name: reporting
-          image: omicron_omicron.azurecr.io/omicronuat/omicron-appiosformulas-reporting-repository-uat:latest
+          image: omicron.azurecr.io/omicronuat/omicron-appiosformulas-reporting-repository-uat:latest
           imagePullPolicy: Always
           env:
             - name: TZ
