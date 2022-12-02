@@ -15,6 +15,7 @@ spec:
     secretName: tls-secret
   rules:
     - host: omicronlabapiuat.eastus2.cloudapp.azure.com
+      http:
         paths:
           - backend:
               service:
