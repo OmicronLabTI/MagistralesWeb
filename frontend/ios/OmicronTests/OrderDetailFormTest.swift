@@ -55,7 +55,7 @@ class OrderDetailFormTest: XCTestCase {
             detailDescription: "Acido Salicílico (A700)",
             baseQuantity: 0.002, requiredQuantity: 0.002, pendingQuantity: 0.002,
             stock: 55.447802000000003, warehouseQuantity: 6.2478020000000001,
-            consumed: 0.0, available: 2.9080119999999998, unit: "KG", warehouse: "MG", hasBatches: true)
+            consumed: 0.0, available: 2.9080119999999998, unit: "KG", warehouse: "MG", hasBatches: true, orderCreateDate: "10/09/2020")
         let data = OrderDetail(
             productionOrderID: 89662, code: "1005   120 ML",
             productDescription: "Agua de Rosas 50cc  Alcohol 60ª 50cc  Azufre 3.3gr",
@@ -66,7 +66,7 @@ class OrderDetailFormTest: XCTestCase {
             completeQuantity: 0, realEndDate: "", productLabel: "Selecciona una...",
             container: "Selecciona una...", comments: "", isChecked: false,
             details: [detail],
-            catalogGroupName: "MG")
+            catalogGroupName: "MG", orderCreateDate: "10/09/2020")
         self.orderDetailFormViewModel!.success.subscribe(onNext: { res in
             if res != 0 {
                 XCTAssertEqual(89662, res)

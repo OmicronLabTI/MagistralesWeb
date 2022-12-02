@@ -39,6 +39,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <inheritdoc/>
         public async Task<ResultModel> CreateDelivery(List<CreateDeliveryModel> createDelivery)
         {
+            _loggerProxy.Info($"order to be delivered {JsonConvert.SerializeObject(createDelivery)}");
             var dictionaryResult = new Dictionary<string, string>();
             var saleOrderId = createDelivery.First().SaleOrderId;
             try
@@ -69,21 +70,21 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     saleOrder.Lines.SetCurrentLine(i);
                     var itemCode = saleOrder.Lines.ItemCode;
-
                     deliveryNote = this.UpdateDelivery(deliveryNote, saleOrder, saleOrderId, i, createDelivery, itemCode);
                     deliveryNote.Lines.Add();
                 }
-
                 if (createDelivery.Any(x => x.ItemCode == ServiceConstants.ShippingCostItemCode))
                 {
                     var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
+                    var correctBaseLineId = GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
+                    
                     double.TryParse(shippingCost.OrderType, out var price);
-
                     deliveryNote.Lines.ItemCode = shippingCost.ItemCode;
                     deliveryNote.Lines.Quantity = 1;
                     deliveryNote.Lines.BaseType = 17;
                     deliveryNote.Lines.BaseEntry = shippingCost.ShippingCostOrderId;
                     deliveryNote.Lines.UnitPrice = price;
+                    deliveryNote.Lines.BaseLine = correctBaseLineId;
                     deliveryNote.Lines.Add();
                 }
 
@@ -113,6 +114,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <inheritdoc/>
         public async Task<ResultModel> CreateDeliveryPartial(List<CreateDeliveryModel> createDelivery)
         {
+            _loggerProxy.Info($"order to be delivered partial {JsonConvert.SerializeObject(createDelivery)}");
             var dictionaryResult = new Dictionary<string, string>();
             var saleOrderId = createDelivery.First().SaleOrderId;
             var productsIds = createDelivery.Where(x => x.ItemCode != ServiceConstants.ShippingCostItemCode).Select(x => x.ItemCode).ToList();
@@ -158,6 +160,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
                     double.TryParse(shippingCost.OrderType, out var price);
 
+
                     deliveryNote.Lines.ItemCode = shippingCost.ItemCode;
                     deliveryNote.Lines.Quantity = 1;
                     deliveryNote.Lines.BaseType = -1;
@@ -192,6 +195,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         /// <inheritdoc/>
         public async Task<ResultModel> CreateDeliveryBatch(List<CreateDeliveryModel> createDelivery)
         {
+            _loggerProxy.Info($"order to be batch {JsonConvert.SerializeObject(createDelivery)}");
             var dictionaryResult = new Dictionary<string, string>();
             var saleOrderId = createDelivery.First().SaleOrderId;
 
@@ -253,11 +257,14 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         double.TryParse(shippingCost.OrderType, out var price);
                         _loggerProxy.Info($"The price is {price}");
 
+                        var correctBaseLineId = GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
+
                         deliveryNote.Lines.ItemCode = shippingCost.ItemCode;
                         deliveryNote.Lines.Quantity = 1;
                         deliveryNote.Lines.BaseType = 17;
                         deliveryNote.Lines.BaseEntry = shippingCost.ShippingCostOrderId;
                         deliveryNote.Lines.UnitPrice = price;
+                        deliveryNote.Lines.BaseLine = correctBaseLineId;
                         deliveryNote.Lines.Add();
                         _loggerProxy.Info($"Here ends the fl 1 when its apart.");
                     }
@@ -410,6 +417,29 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
 
             return deliveryNote;
+        }
+
+        private int GetShippingCostBaseLine(int saleOrderId)
+        {
+            var saleOrderShipping = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
+            var saleOrderFound = saleOrderShipping.GetByKey(saleOrderId);
+
+            _loggerProxy.Info($"sale order found {saleOrderId} -- {saleOrderFound}");
+            var correctBaseLineId = 0;
+            for (var i = 0; i < saleOrderShipping.Lines.Count; i++)
+            {
+                saleOrderShipping.Lines.SetCurrentLine(i);
+                var itemCode = saleOrderShipping.Lines.ItemCode;
+
+                if (itemCode == ServiceConstants.ShippingCostItemCode)
+                {
+                    _loggerProxy.Info($"line num to place");
+                    correctBaseLineId = saleOrderShipping.Lines.LineNum;
+                    break;
+                }
+            }
+
+            return correctBaseLineId;
         }
     }
 }

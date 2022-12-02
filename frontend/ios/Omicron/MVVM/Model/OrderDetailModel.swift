@@ -26,7 +26,7 @@ class OrderDetail {
     var unit, warehouse: String?
     var number: Int?
     var fabDate, dueDate, startDate, endDate: String?
-    var user, origin: String?
+    var user, origin, orderCreateDate: String?
     var baseDocument: Int?
     var client: String?
     var completeQuantity: Int?
@@ -40,7 +40,7 @@ class OrderDetail {
          number: Int, fabDate: String, dueDate: String, startDate: String, endDate: String,
          user: String, origin: String, baseDocument: Int, client: String, completeQuantity: Int,
          realEndDate: String, productLabel: String, container: String, comments: String,
-         isChecked: Bool, details: [Detail], catalogGroupName: String) {
+         isChecked: Bool, details: [Detail], catalogGroupName: String, orderCreateDate: String) {
         self.productionOrderID = productionOrderID
         self.code = code
         self.productDescription = productDescription
@@ -66,6 +66,7 @@ class OrderDetail {
         self.isChecked = isChecked
         self.details = details
         self.catalogGroupName = catalogGroupName
+        self.orderCreateDate = orderCreateDate
     }
     required init?(map: Map) {}
 }
@@ -85,6 +86,7 @@ extension OrderDetail: Mappable {
         self.startDate <- map["startDate"]
         self.endDate <- map["endDate"]
         self.user <- map["user"]
+        self.orderCreateDate <- map["orderCreateDate"]
         self.origin <- map["origin"]
         self.baseDocument <- map["baseDocument"]
         self.client <- map["client"]
@@ -100,14 +102,14 @@ extension OrderDetail: Mappable {
 }
 class Detail {
     var orderFabID: Int?
-    var productID, detailDescription: String?
+    var productID, orderCreateDate, detailDescription: String?
     var baseQuantity, requiredQuantity, pendingQuantity, stock, warehouseQuantity, consumed, available: Double?
     var unit, warehouse: String?
     var hasBatches: Bool?
     init(orderFabID: Int, productID: String, detailDescription: String, baseQuantity: Double,
          requiredQuantity: Double, pendingQuantity: Double, stock: Double,
          warehouseQuantity: Double,
-         consumed: Double, available: Double, unit: String, warehouse: String, hasBatches: Bool) {
+         consumed: Double, available: Double, unit: String, warehouse: String, hasBatches: Bool, orderCreateDate: String) {
         self.orderFabID = orderFabID
         self.productID = productID
         self.detailDescription = detailDescription
@@ -121,6 +123,7 @@ class Detail {
         self.unit = unit
         self.warehouse = warehouse
         self.hasBatches = hasBatches
+        self.orderCreateDate = orderCreateDate
     }
     required init?(map: Map) { }
 }
@@ -139,6 +142,7 @@ extension Detail: Mappable {
         self.stock <- map["stock"]
         self.warehouseQuantity <- map["warehouseQuantity"]
         self.hasBatches <- map["hasBatches"]
+        self.orderCreateDate <- map["orderCreateDate"]
     }
 }
 class OrderDetailRequest: Codable {

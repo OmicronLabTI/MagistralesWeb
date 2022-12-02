@@ -10,15 +10,20 @@ import UIKit
 
 protocol HeaderSelectedDelegate: AnyObject {
     func headerSelected(productID: Int)
+    func tapPatientList(productID: Int)
 }
 
 class HeaderCollectionViewCell: UICollectionViewCell {
 
     @IBOutlet weak var productID: UILabel!
     @IBOutlet weak var pdfImageView: UIImageView!
-
+    @IBOutlet weak var patientListButton: UIButton!
+    @IBOutlet weak var doctorName: UILabel!
     var productId = 0
 
+    @IBAction func patientListAction(_ sender: Any) {
+        delegate?.tapPatientList(productID: productId)
+    }
     weak var delegate: HeaderSelectedDelegate?
 
     override func awakeFromNib() {

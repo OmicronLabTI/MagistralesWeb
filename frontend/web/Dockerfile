@@ -4,7 +4,9 @@ COPY package*.json ./
 RUN npm ci --no-optional
 COPY . .
 # RUN npm run lint
-RUN npm run buildEnv
+ARG CONFIGURATION=""
+ARG BASE_HREF="/"
+RUN npm run build -- --configuration=$CONFIGURATION --baseHref=$BASE_HREF
 
 FROM nginx AS release
 COPY nginx.conf /etc/nginx/nginx.conf

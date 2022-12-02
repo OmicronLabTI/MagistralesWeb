@@ -33,7 +33,7 @@ class ComponetsTest: XCTestCase {
             "Extracto de Te Verde 3%, Extracto de Pepino 3%, Glicerina 3%, Hamamelis 3%, Hialuronico 3%, " +
             "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
-            hasMissingStock: false, finishedLabel: false)
+            hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp")
         provider = MoyaProvider<ApiService>(
             endpointClosure: customEndpointClosure,
             stubClosure: MoyaProvider.immediatelyStub)
