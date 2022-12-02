@@ -1,0 +1,185 @@
+name: omicron-magistrales-uat
+on:
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: Force Build
+        type: boolean
+        default: false
+        required: false
+  push:
+    branches:
+      - release/Uat
+    paths:
+      - frontend/**
+      - services/**
+jobs:
+  build:
+    name: build docker images
+    runs-on: [self-hosted, omicron-qa]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changeset
+        id: changeset
+        run: echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
+
+      - name: Build frontend/web
+        if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: frontend/web
+          environment: uat
+          registry: omicron.azurecr.io
+          configuration: uat
+
+      - name: Build catalogos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/catalogos-service
+          environment: uat
+          registry: omicron.azurecr.io
+
+      - name: Build oauthserver
+        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/oauthserver
+          environment: uat
+          registry: omicron.azurecr.io
+
+      - name: Build pedidos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/pedidos-service
+          environment: uat
+          registry: omicron.azurecr.io
+
+      - name: Build reporting-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/reporting-service
+          environment: uat
+          registry: omicron.azurecr.io
+
+      - name: Build sapadapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/sapadapter-service
+          environment: uat
+          registry: omicron.azurecr.io
+
+      - name: Build usuarios-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/usuarios-service
+          environment: uat
+          registry: omicron.azurecr.io
+
+      - name: Build warehouses-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/warehouses-service
+          environment: uat
+          registry: omicron.azurecr.io
+  webapp:
+    name: deploy web app
+    runs-on: [self-hosted, omicron-qa]
+    needs: build
+    steps:
+      - name: Azure WebApp
+        uses: Azure/webapps-deploy@v2.2.4
+        with:
+          app-name: omicronlabmagistaluat
+          images: omicron.azurecr.io/omicronuat/omicron-appiosformulas-web-repository:latest
+  deploy:
+    name: deploy to kubernetes cluster
+    runs-on: [self-hosted, omicron-qa]
+    needs: build
+    steps:
+      - name: Kubernetes deploy
+        working-directory: deploy/uat
+        run: |
+          kubectl apply -f deploy_uat.yaml --context omicron_aks_uat
+          kubectl apply -f ingress-oauth.yml --context omicron_aks_uat
+          kubectl apply -f ingress-services.yml --context omicron_aks_uat
+  rollout:
+    name: kubectl rollout
+    runs-on: [self-hosted, omicron-qa]
+    needs: deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changeset
+        id: changeset
+        run: echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
+
+      - name: Rollout catalogos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy catalogos-deployment --context omicron_aks_uat
+
+      - name: Rollout oauthserver
+        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy oauthserver-deployment --context omicron_aks_uat
+
+      - name: Rollout pedidos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy pedidos-deployment --context omicron_aks_uat
+
+      - name: Rollout reporting-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy reporting-deployment --context omicron_aks_uat
+
+      - name: Rollout sapadapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy sapadapter-deployment --context omicron_aks_uat
+
+      - name: Rollout usuarios-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy usuarios-deployment --context omicron_aks_uat
+
+      - name: Rollout warehouses-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy warehouses-deployment --context omicron_aks_uat
+  database:
+    name: liquibase update
+    runs-on: [self-hosted, omicron-qa]
+    needs: rollout
+    steps:
+      - name: liquibase update
+        working-directory: database/
+        run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-uat.properties" update
+  clean:
+    name: clean docker resources
+    runs-on: [self-hosted, omicron-qa]
+    needs: database
+    steps:
+      - name: Docker prune
+        run: |
+          docker builder prune -f -a
+          docker image prune -f -a
+  notify:
+    name: teams notification
+    runs-on: [self-hosted, omicron-qa]
+    needs: database
+    steps:
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: ${{ always() }}
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          needs: ${{ toJson(needs) }}
+          job: ${{ toJson(job) }}
+          steps: ${{ toJson(steps) }}
