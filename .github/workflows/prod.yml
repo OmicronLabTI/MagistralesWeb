@@ -104,7 +104,7 @@ jobs:
   deploy:
     name: deploy to kubernetes cluster
     runs-on: [self-hosted, omicron-qa]
-    needs: build
+    needs: webapp
     steps:
       - name: Kubernetes deploy
         working-directory: deploy/prod
