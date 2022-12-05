@@ -84,5 +84,11 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// </summary>
         /// <value>Street number.</value>
         public string City { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor id.
+        /// </summary>
+        /// <value>Doctor Id.</value>
+        public string TaxRegimeCode { get; set; }
     }
 }
