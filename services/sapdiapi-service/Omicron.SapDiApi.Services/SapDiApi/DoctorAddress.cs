@@ -165,12 +165,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 var addressType = recordSet.Fields.Item("AdresType").Value;
                 var adressName = recordSet.Fields.Item("Address").Value;
-                
+
                 try
                 {
                     doctorSap.Addresses.SetCurrentLine(i);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     _loggerProxy.Info($"Error while trying to update address {adressName}");
                     continue;
@@ -197,7 +197,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 return doctorSap;
             }
-            
+
             var recordSet = this.ExecuteQuery(ServiceConstants.GetAddressesByDoctor, doctor);
 
             if (recordSet.RecordCount == 0)
@@ -282,7 +282,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     doctorSap.ShipToDefault = adressName;
                 }
-                
+
                 recordSet.MoveNext();
             }
 
@@ -327,7 +327,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 recordSet.MoveNext();
             }
 
-            foreach(var lineNum in listLineNum.OrderByDescending(x => x))
+            foreach (var lineNum in listLineNum.OrderByDescending(x => x))
             {
                 doctorSap.Addresses.SetCurrentLine(lineNum);
                 doctorSap.Addresses.Delete();
@@ -381,6 +381,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             doctorSap.Addresses.City = address.City;
             doctorSap.Addresses.GlobalLocationNumber = address.Email;
             doctorSap.Addresses.AddressType = BoAddressType.bo_BillTo;
+            doctorSap.Addresses.AddressName3 = address.TaxRegimeCode;
             return doctorSap;
         }
 
