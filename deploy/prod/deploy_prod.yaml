@@ -1,58 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apimanager-deployment
-  labels:
-    app: apimanager
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: apimanager
-  template:
-    metadata:
-      labels:
-        app: apimanager
-    spec:
-      containers:
-        - name: apimanager
-          image: omicron.azurecr.io/omicron-apimanager-repository:latest
-          env:
-            - name: TZ
-              value: America/Mexico_City
-            - name: SPRING_PROFILES_ACTIVE
-              value: prod
-          ports:
-            - containerPort: 8000
-          resources:
-            limits:
-              cpu: 1052m
-              memory: 715Mi
-            requests:
-              cpu: 526m
-              memory: 446Mi
-      imagePullSecrets:
-        - name: pullsecret
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: apimanager
-  name: apimanager-svc
-spec:
-  ports:
-    - name: apimanager
-      port: 8000
-      protocol: TCP
-      targetPort: 8000
-  selector:
-    app: apimanager
-  type: ClusterIP
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: oauthserver-deployment
   labels:
     app: oauthserver
@@ -68,7 +16,7 @@ spec:
     spec:
       containers:
         - name: oauthserver
-          image: omicron.azurecr.io/omicron-oauthserver-repository:latest
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-oauthserver-repository:latest
           env:
             - name: TZ
               value: America/Mexico_City
@@ -80,7 +28,7 @@ spec:
                   name: omicron-prod
                   key: omicron_jdbc_postgress_db
           ports:
-            - containerPort: 8090
+            - containerPort: 80
           resources:
             limits:
               cpu: 1413m
@@ -90,6 +38,21 @@ spec:
               memory: 323Mi
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauthserver-svc
+  labels:
+    app: oauthserver
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: oauthserver
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -109,7 +72,7 @@ spec:
     spec:
       containers:
         - name: catalogos
-          image: omicron.azurecr.io/omicron-catalogos-repository:latest
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-catalogos-repository:latest
           env:
             - name: TZ
               value: America/Mexico_City
@@ -132,6 +95,21 @@ spec:
       imagePullSecrets:
         - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogos-svc
+  labels:
+    app: catalogos
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: catalogos
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -150,7 +128,7 @@ spec:
     spec:
       containers:
         - name: usuarios
-          image: omicron.azurecr.io/omicron-usuarios-repository:latest
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-usuarios-repository:latest
           env:
             - name: TZ
               value: America/Mexico_City
@@ -173,6 +151,21 @@ spec:
       imagePullSecrets:
         - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usuarios-svc
+  labels:
+    app: usuarios
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: usuarios
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -191,7 +184,7 @@ spec:
     spec:
       containers:
         - name: sapadapter
-          image: omicron.azurecr.io/omicron-sapadapter-repository:latest
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-sapadapter-repository:latest
           env:
             - name: TZ
               value: America/Mexico_City
@@ -224,6 +217,21 @@ spec:
       imagePullSecrets:
         - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sapadapter-svc
+  labels:
+    app: sapadapter
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: sapadapter
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -242,7 +250,7 @@ spec:
     spec:
       containers:
         - name: pedidos
-          image: omicron.azurecr.io/omicron-pedidos-repository:latest
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-pedidos-repository:latest
           env:
             - name: TZ
               value: America/Mexico_City
@@ -300,6 +308,21 @@ spec:
       imagePullSecrets:
         - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pedidos-svc
+  labels:
+    app: pedidos
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: pedidos
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -318,7 +341,7 @@ spec:
     spec:
       containers:
         - name: warehouses
-          image: omicron.azurecr.io/omicron-warehouses-repository:latest
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-warehouses-repository:latest
           env:
             - name: TZ
               value: America/Mexico_City
@@ -341,6 +364,21 @@ spec:
       imagePullSecrets:
         - name: pullsecret
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: warehouses-svc
+  labels:
+    app: warehouses
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: warehouses
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -359,7 +397,7 @@ spec:
     spec:
       containers:
         - name: reporting
-          image: omicron.azurecr.io/omicron-reporting-repository:latest
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-reporting-repository:latest
           env:
             - name: TZ
               value: America/Mexico_City
@@ -386,3 +424,19 @@ spec:
               memory: 97Mi
       imagePullSecrets:
         - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting-svc
+  labels:
+    app: reporting
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: reporting
+  type: ClusterIP
+---

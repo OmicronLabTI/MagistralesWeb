@@ -1,4 +1,4 @@
-name: omicron-magistrales-dev
+name: omicron-magistrales-prod
 on:
   workflow_dispatch:
     inputs:
@@ -9,14 +9,14 @@ on:
         required: false
   push:
     branches:
-      - develop
+      - master
     paths:
       - frontend/**
       - services/**
 jobs:
   build:
     name: build docker images
-    runs-on: [self-hosted, omicron-dev]
+    runs-on: [self-hosted, omicron-qa]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -32,80 +32,89 @@ jobs:
         uses: ./.github/actions/docker-build
         with:
           path: frontend/web
-          environment: dev
-          registry: ${{ secrets.NEXUS_REGISTRY }}
-          href: /magistrales/
+          environment: prod
+          registry: omicron.azurecr.io
+          configuration: prod
 
       - name: Build catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build
         with:
           path: services/catalogos-service
-          environment: dev
-          registry: ${{ secrets.NEXUS_REGISTRY }}
+          environment: prod
+          registry: omicron.azurecr.io
 
       - name: Build oauthserver
         if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build
         with:
           path: services/oauthserver
-          environment: dev
-          registry: ${{ secrets.NEXUS_REGISTRY }}
+          environment: prod
+          registry: omicron.azurecr.io
 
       - name: Build pedidos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build
         with:
           path: services/pedidos-service
-          environment: dev
-          registry: ${{ secrets.NEXUS_REGISTRY }}
+          environment: prod
+          registry: omicron.azurecr.io
 
       - name: Build reporting-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build
         with:
           path: services/reporting-service
-          environment: dev
-          registry: ${{ secrets.NEXUS_REGISTRY }}
+          environment: prod
+          registry: omicron.azurecr.io
 
       - name: Build sapadapter-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build
         with:
           path: services/sapadapter-service
-          environment: dev
-          registry: ${{ secrets.NEXUS_REGISTRY }}
+          environment: prod
+          registry: omicron.azurecr.io
 
       - name: Build usuarios-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build
         with:
           path: services/usuarios-service
-          environment: dev
-          registry: ${{ secrets.NEXUS_REGISTRY }}
+          environment: prod
+          registry: omicron.azurecr.io
 
       - name: Build warehouses-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build
         with:
           path: services/warehouses-service
-          environment: dev
-          registry: ${{ secrets.NEXUS_REGISTRY }}
+          environment: prod
+          registry: omicron.azurecr.io
+  webapp:
+    name: deploy web app
+    runs-on: [self-hosted, omicron-qa]
+    needs: build
+    steps:
+      - name: Azure WebApp
+        uses: Azure/webapps-deploy@v2.2.4
+        with:
+          app-name: omicronlab
+          images: omicron.azurecr.io/omicronprod/omicron-appiosformulas-web-repository:latest
   deploy:
     name: deploy to kubernetes cluster
-    runs-on: [self-hosted, omicron-dev]
+    runs-on: [self-hosted, omicron-qa]
     needs: build
     steps:
       - name: Kubernetes deploy
-        working-directory: deploy/dev
+        working-directory: deploy/prod
         run: |
-          kubectl apply -f deploy_dev.yaml
-          kubectl apply -f ingress-oauth.yml
-          kubectl apply -f ingress-services.yml
-          kubectl apply -f ingress-web.yml
+          kubectl apply -f deploy_prod.yaml --context omicron-aks
+          kubectl apply -f ingress-oauth.yml --context omicron-aks
+          kubectl apply -f ingress-services.yml --context omicron-aks
   rollout:
     name: kubectl rollout
-    runs-on: [self-hosted, omicron-dev]
+    runs-on: [self-hosted, omicron-qa]
     needs: deploy
     steps:
       - name: Checkout
@@ -117,48 +126,44 @@ jobs:
         id: changeset
         run: echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
 
-      - name: Rollout frontend/web
-        if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy web-deployment
-
       - name: Rollout catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy catalogos-deployment
+        run: kubectl rollout restart deploy catalogos-deployment --context omicron-aks
 
       - name: Rollout oauthserver
         if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy oauthserver-deployment
+        run: kubectl rollout restart deploy oauthserver-deployment --context omicron-aks
 
       - name: Rollout pedidos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy pedidos-deployment
+        run: kubectl rollout restart deploy pedidos-deployment --context omicron-aks
 
       - name: Rollout reporting-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy reporting-deployment
+        run: kubectl rollout restart deploy reporting-deployment --context omicron-aks
 
       - name: Rollout sapadapter-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy sapadapter-deployment
+        run: kubectl rollout restart deploy sapadapter-deployment --context omicron-aks
 
       - name: Rollout usuarios-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy usuarios-deployment
+        run: kubectl rollout restart deploy usuarios-deployment --context omicron-aks
 
       - name: Rollout warehouses-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy warehouses-deployment
+        run: kubectl rollout restart deploy warehouses-deployment --context omicron-aks
   database:
     name: liquibase update
-    runs-on: [self-hosted, omicron-dev]
+    runs-on: [self-hosted, omicron-qa]
     needs: rollout
     steps:
       - name: liquibase update
         working-directory: database/
-        run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase.properties" update
+        run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-prod.properties" update
   clean:
     name: clean docker resources
-    runs-on: [self-hosted, omicron-dev]
+    runs-on: [self-hosted, omicron-qa]
     needs: database
     steps:
       - name: Docker prune
@@ -167,7 +172,7 @@ jobs:
           docker image prune -f -a
   notify:
     name: teams notification
-    runs-on: [self-hosted, omicron-dev]
+    runs-on: [self-hosted, omicron-qa]
     needs: database
     steps:
       - name: Microsoft Teams Notification
