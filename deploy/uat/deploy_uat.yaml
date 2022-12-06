@@ -29,7 +29,7 @@ spec:
                   name: omicron-uat
                   key: omicron_jdbc_postgress_db
           ports:
-            - containerPort: 80
+            - containerPort: 8090
           resources:
             limits:
               cpu: 1413m
@@ -50,7 +50,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8090
   selector:
     app: oauthserver
   type: ClusterIP

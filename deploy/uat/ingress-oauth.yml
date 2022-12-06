@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: ingress-oauthserver
   annotations:
+    kubernetes.io/ingress.class: nginx-api
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt
     nginx.ingress.kubernetes.io/rewrite-target: /$2
@@ -24,4 +25,4 @@ spec:
                   number: 80
             path: /api/oauth(/|$)(.*)
             pathType: Prefix
-  ingressClassName: nginx
+            
