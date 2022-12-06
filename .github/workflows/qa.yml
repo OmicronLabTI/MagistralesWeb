@@ -34,6 +34,8 @@ jobs:
           path: frontend/web
           environment: qa
           registry: ${{ secrets.NEXUS_REGISTRY }}
+          configuration: staging
+          href: /magistrales/
 
       - name: Build catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
@@ -154,7 +156,7 @@ jobs:
     steps:
       - name: liquibase update
         working-directory: database/
-        run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase.properties" update
+        run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-qa.properties" update
   clean:
     name: clean docker resources
     runs-on: [self-hosted, omicron-qa]
