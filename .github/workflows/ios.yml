@@ -1,0 +1,73 @@
+name: omicron-magistrales-ios
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish AppCenter
+        type: boolean
+        default: false
+        required: false
+jobs:
+  build:
+    name: build ios app
+    runs-on: [self-hosted, mac-os]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set Branch Environment Variables
+        uses: iamtheyammer/branch-env-vars@v1.2.1
+        with:
+          IOS_ENV: |
+            master:prod
+            release/Sprint12:qa
+            release/Uat:uat
+            develop:dev
+          IOS_FILENAME: |
+            master:Omicron-PROD
+            release/Sprint12:Omicron-QA
+            release/Uat:Omicron-UAT
+            develop:Omicron-DEV
+          APPCENTER_APPNAME: |
+            master:Omicron-Dev
+            release/Sprint12:Omicron-QA
+            release/Uat:Omicron-UAT-1
+            develop:Omicron-Internal
+          APPCENTER_GROUP: |
+            master:public
+            release/Sprint12:public
+            release/Uat:public
+            develop:Public
+      - name: Unlock Keychain
+        run: fastlane run unlock_keychain password:${{ secrets.MACOS_PASSWORD }}
+      - name: Build frontend/ios
+        run: fastlane archive_${{ env.IOS_ENV }}
+        working-directory: frontend/ios
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.IOS_FILENAME }}.ipa
+          path: frontend/ios/output/${{ env.IOS_FILENAME }}.ipa
+          retention-days: 5
+      - name: Publish to AppCenter
+        if: ${{ (inputs.publish) && (env.APPCENTER_APPNAME) }}
+        uses: akiojin/appcenter-distribute-github-action@v1
+        with:
+          token: ${{ secrets.APPCENTER_ACCESS_TOKEN }}
+          path: frontend/ios/output/${{ env.IOS_FILENAME }}.ipa
+          app: ArquitecturaSWD/${{ env.APPCENTER_APPNAME }}
+          group: ${{ env.APPCENTER_GROUP }}
+  notify:
+    name: teams notification
+    runs-on: [self-hosted, mac-os]
+    needs: build
+    steps:
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: ${{ always() }}
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          needs: ${{ toJson(needs) }}
+          job: ${{ toJson(job) }}
+          steps: ${{ toJson(steps) }}
