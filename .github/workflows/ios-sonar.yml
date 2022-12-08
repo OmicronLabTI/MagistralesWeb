@@ -27,6 +27,7 @@ jobs:
             release/Sprint12:qa
             release/Uat:uat
             develop:dev
+            !default:dev
       - uses: actions/cache@v3
         with:
           path: frontend/ios/Pods
