@@ -889,6 +889,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 var invoiceDetail = invoiceDetailsToLook.Where(x => x.InvoiceId == invoiceHeaders.InvoiceId).ToList();
                 var deliveryDetails = deliverysToLookSaleOrder.Where(x => x.InvoiceId == invoiceHeaders.InvoiceId).ToList();
 
+                var remissionList = invoiceDetail.DistinctBy(x => x.BaseEntry).Select(invoice => invoice.BaseEntry);
+                var remissionListStr = remissionList.Any() ? string.Join(", ", remissionList) : string.Empty;
+
+                var orderList = string.Join(", ", deliveryDetails.DistinctBy(x => x.BaseEntry).Select(delivery => delivery.BaseEntry));
+                var orderListStr = orderList.Any() ? string.Join(", ", orderList) : string.Empty;
+
                 var deliverys = this.GetDeliveryModel(deliveryDetails, invoiceDetail, userOrders, lineProducts);
                 var totalProducts = invoiceDetail.Count;
 
@@ -915,6 +921,8 @@ namespace Omicron.SapAdapter.Services.Sap
                         TotalProducts = totalProducts,
                         StatusDelivery = ServiceConstants.Almacenado,
                         DataCheckin = initDate.Value,
+                        RemissionList = remissionListStr,
+                        OrderList = orderListStr,
                         SalesOrder = deliveryDetails.DistinctBy(x => x.BaseEntry).Count(),
                         IsLookUpInvoices = true,
                         IsRefactura = ServiceShared.CalculateAnd(!string.IsNullOrEmpty(invoiceHeaders.Refactura), invoiceHeaders.Refactura == ServiceConstants.IsRefactura),
