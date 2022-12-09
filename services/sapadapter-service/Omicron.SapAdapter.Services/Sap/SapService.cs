@@ -311,6 +311,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 }
 
                 var pedidoLocal = pedidoHeaers.FirstOrDefault(p => p.PedidoId == o.PedidoId);
+                pedidoLocal ??= new OrderModel { PedidoId = 0, Codigo = string.Empty, Medico = string.Empty, FechaInicio = o.CreatedDate.Value, Patient = string.Empty };
                 var detallePedidoLocal = detallePedido.FirstOrDefault(p => ServiceShared.CalculateAnd(p.PedidoId == o.PedidoId, p.ProductoId == o.ProductoId));
                 var item = listProducts.FirstOrDefault(i => i.ProductoId == o.ProductoId);
                 var userOrder = userOrders.FirstOrDefault(x => x.Productionorderid.Equals(o.OrdenId.ToString()));
