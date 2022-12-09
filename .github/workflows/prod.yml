@@ -34,7 +34,7 @@ jobs:
           path: frontend/web
           environment: prod
           registry: omicron.azurecr.io
-          configuration: prod
+          configuration: production
 
       - name: Build catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
