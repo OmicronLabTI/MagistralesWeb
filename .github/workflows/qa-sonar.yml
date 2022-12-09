@@ -41,7 +41,7 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
       - name: Test catalogos-service
-        if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
+        if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-net
         with:
           path: services/catalogos-service
@@ -51,7 +51,7 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
       - name: Test oauthserver
-        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
+        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-java
         with:
           path: services/oauthserver
@@ -61,7 +61,7 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
       - name: Test pedidos-service
-        if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
+        if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-net
         with:
           path: services/pedidos-service
@@ -71,7 +71,7 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
       - name: Test reporting-service
-        if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
+        if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-net
         with:
           path: services/reporting-service
@@ -81,7 +81,7 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
       - name: Test sapadapter-service
-        if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-net
         with:
           path: services/sapadapter-service
@@ -91,7 +91,7 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
       - name: Test usuarios-service
-        if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
+        if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-net
         with:
           path: services/usuarios-service
@@ -101,7 +101,7 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
       - name: Test warehouses-service
-        if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
+        if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-net
         with:
           path: services/warehouses-service
