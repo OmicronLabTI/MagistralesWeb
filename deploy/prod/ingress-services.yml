@@ -22,6 +22,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-snippet: |
       set $auth_header $http_authorization;
 spec:
+  ingressClassName: nginx-api
   tls:
   - hosts:
     - magistralesprod.omicronlab.com.mx
