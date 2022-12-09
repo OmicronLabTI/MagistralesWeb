@@ -3,7 +3,6 @@ kind: Ingress
 metadata:
   name: ingress-magistrales
   annotations:
-    kubernetes.io/ingress.class: nginx-api
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: 20m
     nginx.ingress.kubernetes.io/rewrite-target: /$2
