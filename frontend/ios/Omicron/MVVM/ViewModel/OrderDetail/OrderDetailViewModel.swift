@@ -155,7 +155,7 @@ class OrderDetailViewModel {
     }
     func sum(tableDetails: [Detail]) -> Double {
         guard tableDetails.count > 0 else { return 0.0 }
-        return tableDetails.filter({ $0.unit != CommonStrings.piece}).map({$0.requiredQuantity ?? 0.0}).reduce(0.0, +)
+        return tableDetails.filter({ $0.unit != CommonStrings.piece && $0.unit != CommonStrings.millar}).map({$0.requiredQuantity ?? 0.0}).reduce(0.0, +)
     }
 
     func changeStatus(actionType: String) {

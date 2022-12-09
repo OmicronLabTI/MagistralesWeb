@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "prescription_no.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

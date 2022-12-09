@@ -23,18 +23,8 @@ spring:
 server:
   port: 8090
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://192.168.0.83:8000/eureka
-  instance:
-    leaseRenewalIntervalInSeconds: 5
-    preferIpAddress: true
-
 security:
-    values:
-      secret: Prueba
-      ttl: 3600000
-      ttl-refresh: 604800
+  values:
+    secret: Prueba
+    ttl: 3600000
+    ttl-refresh: 604800

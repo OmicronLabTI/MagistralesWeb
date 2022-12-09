@@ -264,5 +264,23 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>Degree Type.</value>
         [NotMapped]
         public string References { get; set; }
+
+        /// <summary>
+        /// Gets or sets.
+        /// </summary>
+        /// <value>
+        /// ItemCode.
+        /// </value>
+        [NotMapped]
+        public string DeliveryComments { get; set; }
+
+        /// <summary>
+        /// Gets or sets.
+        /// </summary>
+        /// <value>
+        /// ItemCode.
+        /// </value>
+        [NotMapped]
+        public string DeliverySuggestedTime { get; set; }
     }
 }

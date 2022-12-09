@@ -10,7 +10,6 @@ namespace Omicron.Catalogos.Api
 {
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
-    using Steeltoe.Common.Hosting;
     using Steeltoe.Extensions.Configuration.PlaceholderCore;
 
     /// <summary>
@@ -34,7 +33,6 @@ namespace Omicron.Catalogos.Api
         /// <returns>Web Host Builder.</returns>
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseCloudHosting(9010)
             .AddPlaceholderResolver()
             .UseStartup<Startup>();
     }

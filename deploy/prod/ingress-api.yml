@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: omicron-ingress-api
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 20m
+spec:
+  ingressClassName: nginx-api
+  tls:
+    - secretName: secure-tls-prod-2022
+      hosts:
+        - magistralesprod.omicronlab.com.mx
+  rules:
+    - host: magistralesprod.omicronlab.com.mx
+      http:
+        paths:
+          - backend:
+              service:
+                name: apimanager-svc
+                port:
+                  number: 8000
+            path: /
+            pathType: ImplementationSpecific

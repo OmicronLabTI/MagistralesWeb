@@ -203,7 +203,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 Container = sapOrder.Container,
                                 Tag = sapOrder.ProductLabel,
                                 DescriptionProduct = sapOrder.ProductDescription,
-                                FinishDate = sapOrder.DueDate,
+                                FinishDate = sapOrder.OrderCreateDate,
                                 PlannedQuantity = sapOrder.PlannedQuantity,
                                 ProductionOrderId = sapOrder.ProductionOrderId,
                                 StartDate = sapOrder.FabDate,
@@ -212,6 +212,8 @@ namespace Omicron.Pedidos.Services.Utils
                                 Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
                                 FinishedLabel = o.FinishedLabel,
                                 AreBatchesComplete = o.AreBatchesComplete == 1,
+                                PatientName = sapOrder.PatientName,
+                                ClientDxp = sapOrder.ClientDxp,
                             };
 
                             ordersDetail.Add(order);

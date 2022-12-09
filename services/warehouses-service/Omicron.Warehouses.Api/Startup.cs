@@ -23,8 +23,6 @@ namespace Omicron.Warehouses.Api
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
-    using Steeltoe.Common.Http.Discovery;
-    using Steeltoe.Discovery.Client;
 
     /// <summary>
     /// Class Startup.
@@ -76,8 +74,6 @@ namespace Omicron.Warehouses.Api
             loggerFactory.AddSerilog();
             services.AddSingleton(loggerFactory);
 
-            services.AddDiscoveryClient(this.Configuration);
-
             var mvcBuilder = services.AddMvc();
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomActionFilterAttribute(Log.Logger)));
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomExceptionFilterAttribute(Log.Logger)));
@@ -101,21 +97,18 @@ namespace Omicron.Warehouses.Api
             {
                 c.BaseAddress = new Uri(this.Configuration["UsersURL"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IUsersService, UsersService>();
 
             services.AddHttpClient("sapadapter", c =>
             {
                 c.BaseAddress = new Uri(this.Configuration["SapAdapterURL"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<ISapAdapterService, SapAdapterService>();
 
             services.AddHttpClient("reporting", c =>
             {
                 c.BaseAddress = new Uri(this.Configuration["ReportingURL"]);
             })
-            .AddHttpMessageHandler<DiscoveryHttpMessageHandler>()
             .AddTypedClient<IReportingService, ReportingService>();
 
             this.AddRedis(services, Log.Logger);
@@ -156,7 +149,6 @@ namespace Omicron.Warehouses.Api
             });
             app.UseResponseCompression();
 
-            app.UseDiscoveryClient();
             app.UseMetricServer();
             app.UseMiddleware<ResponseMiddleware>();
 

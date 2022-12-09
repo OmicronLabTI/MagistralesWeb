@@ -1,0 +1,442 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauthserver-deployment
+  labels:
+    app: oauthserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauthserver
+  template:
+    metadata:
+      labels:
+        app: oauthserver
+    spec:
+      containers:
+        - name: oauthserver
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-oauthserver-repository:latest
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: POSTGRESS_JDBC_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: omicron_jdbc_postgress_db
+          ports:
+            - containerPort: 8090
+          resources:
+            limits:
+              cpu: 1413m
+              memory: 477Mi
+            requests:
+              cpu: 707m
+              memory: 323Mi
+      imagePullSecrets:
+        - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauthserver-svc
+  labels:
+    app: oauthserver
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8090
+  selector:
+    app: oauthserver
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogos-deployment
+  labels:
+    app: catalogos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalogos
+  template:
+    metadata:
+      labels:
+        app: catalogos
+    spec:
+      containers:
+        - name: catalogos
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-catalogos-repository:latest
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Prod
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: omicron_net_postgress_db
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 170m
+              memory: 166Mi
+            requests:
+              cpu: 85m
+              memory: 95Mi
+      imagePullSecrets:
+        - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogos-svc
+  labels:
+    app: catalogos
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: catalogos
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usuarios-deployment
+  labels:
+    app: usuarios
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usuarios
+  template:
+    metadata:
+      labels:
+        app: usuarios
+    spec:
+      containers:
+        - name: usuarios
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-usuarios-repository:latest
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Prod
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: omicron_net_postgress_db
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 168m
+              memory: 292Mi
+            requests:
+              cpu: 84m
+              memory: 132Mi
+      imagePullSecrets:
+        - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usuarios-svc
+  labels:
+    app: usuarios
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: usuarios
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sapadapter-deployment
+  labels:
+    app: sapadapter
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sapadapter
+  template:
+    metadata:
+      labels:
+        app: sapadapter
+    spec:
+      containers:
+        - name: sapadapter
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-sapadapter-repository:latest
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Prod
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: redis
+            - name: SAP_CONNECTION_STRING_SQL_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: sap_connection_string_sql_server
+            - name: OMICRON_FILE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: omicron_file_url
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 1233m
+              memory: 1240Mi
+            requests:
+              cpu: 617m
+              memory: 396Mi
+      imagePullSecrets:
+        - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sapadapter-svc
+  labels:
+    app: sapadapter
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: sapadapter
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pedidos-deployment
+  labels:
+    app: pedidos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pedidos
+  template:
+    metadata:
+      labels:
+        app: pedidos
+    spec:
+      containers:
+        - name: pedidos
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-pedidos-repository:latest
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Prod
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: redis
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: omicron_net_postgress_db
+            - name: EVENHUB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: eventhub_net_connection
+            - name: SAP_DI_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: sap_di_api_url
+            - name: SAP_FILE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: sap_file_url
+            - name: OMICRON_FILE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: omicron_file_url
+            - name: STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: storage_account
+            - name: STORAGE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: storage_account_key
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 368m
+              memory: 3546Mi
+            requests:
+              cpu: 184m
+              memory: 463Mi
+      imagePullSecrets:
+        - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pedidos-svc
+  labels:
+    app: pedidos
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: pedidos
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: warehouses-deployment
+  labels:
+    app: warehouses
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warehouses
+  template:
+    metadata:
+      labels:
+        app: warehouses
+    spec:
+      containers:
+        - name: warehouses
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-warehouses-repository:latest
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Prod
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: omicron_net_postgress_db
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 102m
+              memory: 65Mi
+            requests:
+              cpu: 51m
+              memory: 51Mi
+      imagePullSecrets:
+        - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: warehouses-svc
+  labels:
+    app: warehouses
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: warehouses
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-deployment
+  labels:
+    app: reporting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reporting
+  template:
+    metadata:
+      labels:
+        app: reporting
+    spec:
+      containers:
+        - name: reporting
+          image: omicron.azurecr.io/omicronprod/omicron-appiosformulas-reporting-repository:latest
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Prod
+            - name: STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: storage_account
+            - name: STORAGE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: storage_account_key
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 38m
+              memory: 133Mi
+            requests:
+              cpu: 19m
+              memory: 97Mi
+      imagePullSecrets:
+        - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting-svc
+  labels:
+    app: reporting
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: reporting
+  type: ClusterIP
+---
