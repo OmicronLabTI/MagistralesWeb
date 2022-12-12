@@ -37,14 +37,6 @@ namespace Omicron.SapAdapter.Api
     public class Startup
     {
         private const string AXITYURL = "https://www.axity.com/";
-        private const string PedidoService = "http://pedidos-svc.default.svc.cluster.local/";
-        private const string UserService = "http://usuarios-svc.default.svc.cluster.local/";
-
-        private const string AlmacenService = "http://almacen-svc.default.svc.cluster.local/";
-
-        private const string CatalogService = "http://catalogos-svc.default.svc.cluster.local/";
-        private const string ProccessPaymentsService = "http://processpayment-svc.default.svc.cluster.local/";
-        private const string DoctorsServiceUrl = "http://doctor-svc.default.svc.cluster.local/";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
@@ -120,37 +112,37 @@ namespace Omicron.SapAdapter.Api
 
             services.AddHttpClient("pedidos", c =>
             {
-                c.BaseAddress = new Uri(PedidoService);
+                c.BaseAddress = new Uri(this.Configuration["PedidoService"]);
             })
             .AddTypedClient<IPedidosService, PedidoService>();
 
             services.AddHttpClient("users", c =>
             {
-                c.BaseAddress = new Uri(UserService);
+                c.BaseAddress = new Uri(this.Configuration["UserService"]);
             })
             .AddTypedClient<IUsersService, UsersService>();
 
             services.AddHttpClient("almacen", c =>
             {
-                c.BaseAddress = new Uri(AlmacenService);
+                c.BaseAddress = new Uri(this.Configuration["AlmacenService"]);
             })
             .AddTypedClient<IAlmacenService, AlmacenService>();
 
             services.AddHttpClient("catalogos", c =>
             {
-                c.BaseAddress = new Uri(CatalogService);
+                c.BaseAddress = new Uri(this.Configuration["CatalogService"]);
             })
             .AddTypedClient<ICatalogsService, CatalogsService>();
 
             services.AddHttpClient("proccespayments", c =>
             {
-                c.BaseAddress = new Uri(ProccessPaymentsService);
+                c.BaseAddress = new Uri(this.Configuration["ProccessPaymentsService"]);
             })
             .AddTypedClient<IProccessPayments, ProccessPayments>();
 
             services.AddHttpClient("doctors", c =>
             {
-                c.BaseAddress = new Uri(DoctorsServiceUrl);
+                c.BaseAddress = new Uri(this.Configuration["DoctorsService"]);
             })
             .AddTypedClient<IDoctorService, DoctorService>();
 
