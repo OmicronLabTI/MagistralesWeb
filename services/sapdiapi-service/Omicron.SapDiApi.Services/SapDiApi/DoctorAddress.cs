@@ -220,7 +220,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     continue;
                 }
 
-                var localAddress = address.FirstOrDefault(x => x.NickName == adressName);
+                var localAddress = address.FirstOrDefault(x => x.LastNickname == adressName);
+
+                if (localAddress == null)
+                {
+                    localAddress = address.FirstOrDefault(x => x.NickName == adressName);
+                }
 
                 if (addressType == ServiceConstants.AddresBill)
                 {
