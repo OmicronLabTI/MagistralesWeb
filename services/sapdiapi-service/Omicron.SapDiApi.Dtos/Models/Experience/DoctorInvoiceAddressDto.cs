@@ -35,6 +35,12 @@ namespace Omicron.SapDiApi.Dtos.Models.Experience
         /// Gets or sets the zipcode.
         /// </summary>
         /// <value>Zip code.</value>
+        public string LastNickname { get; set; }
+
+        /// <summary>
+        /// Gets or sets the zipcode.
+        /// </summary>
+        /// <value>Zip code.</value>
         public string BussinessName { get; set; }
 
         /// <summary>
