@@ -79,5 +79,17 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public List<DoctorDeliveryAddressModel> DeliveryAddress { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether IsFromDxpId.
+        /// </summary>
+        /// <value>The IsFromDxpId.</value>
+        public bool IsFromDxpId { get; set; }
+
+        /// <summary>
+        /// Gets or sets DocNum.
+        /// </summary>
+        /// <value>The DocNum.</value>
+        public string DocNum { get; set; }
     }
 }
