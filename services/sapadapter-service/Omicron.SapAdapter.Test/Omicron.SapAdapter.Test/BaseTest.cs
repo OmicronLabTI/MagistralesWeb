@@ -44,9 +44,10 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente" },
+                new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ShippingAddressName = "Nombre de la dirección" },
                 new OrderModel { PedidoId = 101, AsesorId = 1, Codigo = "Codigo", DocNum = 101, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente" },
                 new OrderModel { PedidoId = 102, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2, OrderType = "MN", Patient = "paciente" },
+                new OrderModel { PedidoId = 103, AsesorId = 1, Codigo = "Codigo1234", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente" },
 
                 // For Almacen
                 new OrderModel { PedidoId = 75000, DocNum = 75000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N", Patient = "paciente" },
@@ -123,6 +124,7 @@ namespace Omicron.SapAdapter.Test
             {
                 new DetalleFormulaModel { Almacen = "MN", BaseQuantity = 10.12345678M, ConsumidoQty = 10, ItemCode = "Abc Aspirina", LineNum = 1, OrderFabId = 100, RequiredQty = 100, UnidadCode = "KG" },
                 new DetalleFormulaModel { Almacen = "MN", BaseQuantity = 10, ConsumidoQty = 10, ItemCode = "Abc Aspirina", LineNum = 1, OrderFabId = 200, RequiredQty = 100, UnidadCode = "KG" },
+                new DetalleFormulaModel { Almacen = "MN", BaseQuantity = 10.12M, ConsumidoQty = 10, ItemCode = "Abc Aspirina", LineNum = 1, OrderFabId = 103, RequiredQty = 100, UnidadCode = "KG" },
             };
         }
 
@@ -308,6 +310,7 @@ namespace Omicron.SapAdapter.Test
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 110, PostDate = DateTime.Now, Quantity = 1, Status = "L", PedidoId = 0, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 0, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 120, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
                 new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 130, PostDate = DateTime.Now, Quantity = 1, Status = "L", PedidoId = 0, User = 1, Type = "S", OriginType = "M", CardCode = string.Empty, CompleteQuantity = 0, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT", Comments = "token" },
+                new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 103, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 103, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 100, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
 
                 // For Almacen
                 new OrdenFabricacionModel { ProductoId = "Magistral1", OrdenId = 1000, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 75000, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Now, DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
