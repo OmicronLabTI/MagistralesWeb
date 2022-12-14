@@ -791,6 +791,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var payment = payments.GetPaymentBydocNumDxp(invoiceHeader.DocNumDxp);
             var deliveryAddress = deliveryAddressList.GetSpecificDeliveryAddress(invoiceHeader.CardCode, invoiceHeader.ShippingAddressName);
 
+            var remissionList = invoiceDetail.DistinctBy(x => x.BaseEntry).Select(invoice => invoice.BaseEntry);
+            var remissionListStr = remissionList.Any() ? string.Join(", ", remissionList) : string.Empty;
+
             var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
             {
                 Address = invoiceHeader.Address.Replace("\r", string.Empty).ToUpper(),
@@ -810,6 +813,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 TypeOrder = invoiceHeader.TypeOrder,
                 IsPackage = invoiceHeader.IsPackage == ServiceConstants.IsPackage,
                 IsDeliveredInOffice = invoiceHeader.IsDeliveredInOffice ?? "N",
+                RemissionList = remissionListStr,
+                OrderList = string.Empty,
             };
             invoicesHeaders.Add(invoiceHeaderLookUp);
             return invoicesHeaders;
@@ -850,6 +855,12 @@ namespace Omicron.SapAdapter.Services.Sap
                     var payment = paramsCardInvoice.Payments.GetPaymentBydocNumDxp(invoiceHeader.DocNumDxp);
                     var deliveryAddress = paramsCardInvoice.DeliveryAddress.GetSpecificDeliveryAddress(invoiceHeader.CardCode, invoiceHeader.ShippingAddressName);
 
+                    var remissionList = invoiceDetail.DistinctBy(x => x.BaseEntry).Select(invoice => invoice.BaseEntry);
+                    var remissionListStr = remissionList.Any() ? string.Join(", ", remissionList) : string.Empty;
+
+                    var orderList = string.Join(", ", deliveryDetails.DistinctBy(x => x.BaseEntry).Select(delivery => delivery.BaseEntry));
+                    var orderListStr = orderList.Any() ? string.Join(", ", orderList) : string.Empty;
+
                     if (!deliverys.All(x => x.Status == ServiceConstants.Empaquetado))
                     {
                         var invoiceHeaderLookUp = new InvoiceHeaderAdvancedLookUp
@@ -872,6 +883,8 @@ namespace Omicron.SapAdapter.Services.Sap
                             TypeOrder = invoiceHeader.TypeOrder,
                             IsPackage = invoiceHeader.IsPackage == ServiceConstants.IsPackage,
                             IsDeliveredInOffice = invoiceHeader.IsDeliveredInOffice ?? "N",
+                            OrderList = orderListStr,
+                            RemissionList = remissionListStr,
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
