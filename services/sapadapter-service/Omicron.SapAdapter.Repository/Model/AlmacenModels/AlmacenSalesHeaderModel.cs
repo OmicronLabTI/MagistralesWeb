@@ -152,5 +152,17 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public bool IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets OrderList.
+        /// </summary>
+        /// <value>The OrderList.</value>
+        public string OrderList => this.ListSaleOrder;
+
+        /// <summary>
+        /// Gets RemissionList.
+        /// </summary>
+        /// <value>The RemissionList.</value>
+        public string RemissionList => this.Remision.ToString();
     }
 }
