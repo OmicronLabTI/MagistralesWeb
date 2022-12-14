@@ -537,8 +537,6 @@ namespace Omicron.SapAdapter.Services.Sap
                     LocalNeighbors = paramsCard.LocalNeighbors,
                     Payments = paramsCard.Payments,
                     DeliveryAddress = paramsCard.DeliveryAddress,
-                    DocNum = paramsCard.DocNum,
-                    IsFromDxpId = paramsCard.IsFromDxpId,
                 };
                 return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
@@ -562,8 +560,6 @@ namespace Omicron.SapAdapter.Services.Sap
                     LocalNeighbors = paramsCard.LocalNeighbors,
                     Payments = paramsCard.Payments,
                     DeliveryAddress = paramsCard.DeliveryAddress,
-                    DocNum = paramsCard.DocNum,
-                    IsFromDxpId = paramsCard.IsFromDxpId,
                 };
                 return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
@@ -587,8 +583,6 @@ namespace Omicron.SapAdapter.Services.Sap
                     LocalNeighbors = paramsCard.LocalNeighbors,
                     Payments = paramsCard.Payments,
                     DeliveryAddress = paramsCard.DeliveryAddress,
-                    DocNum = paramsCard.DocNum,
-                    IsFromDxpId = paramsCard.IsFromDxpId,
                 };
                 return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
@@ -634,8 +628,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var initDate = ServiceShared.CalculateTernary(userOrderByDelivery != null, userOrderByDelivery?.DateTimeCheckIn, lineProductByDelivery?.DateCheckIn);
                 var status = ServiceShared.CalculateTernary(userOrderByDelivery != null, userOrderByDelivery?.StatusAlmacen, lineProductByDelivery?.StatusAlmacen);
 
-                var lettersToRemoveDxpId = ServiceShared.CalculateTernary(paramsCardDelivery.DocNum.Length > 1, 1, 0);
-
                 saleHeader.Add(new AlmacenSalesHeaderModel
                 {
                     Client = deliveryAddress.Contact.ValidateNull(),
@@ -653,7 +645,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeOrder = header.TypeOrder,
                     IsPackage = header.IsPackage == ServiceConstants.IsPackage,
                     IsOmigenomics = header.IsOmigenomics == ServiceConstants.IsOmigenomics,
-                    DxpId = ServiceShared.CalculateTernary(paramsCardDelivery.IsFromDxpId, paramsCardDelivery.DocNum.ToLower().Remove(0, lettersToRemoveDxpId), string.Empty),
+                    DxpId = header.DocNumDxp,
                 });
             }
 
