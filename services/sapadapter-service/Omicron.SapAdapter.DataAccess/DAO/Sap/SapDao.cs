@@ -864,6 +864,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = invoice.DocNumDxp,
                              ShippingAddressName = invoice.ShippingAddressName,
                              IsOmigenomics = invoice.IsOmigenomics,
+                             IsDeliveredInOffice = invoice.IsDeliveredInOffice,
                          });
 
             return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
