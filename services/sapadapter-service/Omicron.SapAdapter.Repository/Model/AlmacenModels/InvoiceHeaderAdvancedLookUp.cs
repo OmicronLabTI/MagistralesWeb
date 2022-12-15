@@ -228,5 +228,13 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// String RemissionList.
         /// </value>
         public string RemissionList { get; set; }
+
+        /// <summary>
+        /// Gets or sets TotalPieces.
+        /// </summary>
+        /// <value>
+        /// Int TotalPieces.
+        /// </value>
+        public int TotalPieces { get; set; }
     }
 }

@@ -815,6 +815,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsDeliveredInOffice = invoiceHeader.IsDeliveredInOffice ?? "N",
                 RemissionList = remissionListStr,
                 OrderList = string.Empty,
+                TotalPieces = invoiceDetail.Where(y => y.Quantity > 0).Sum(x => (int)x.Quantity),
             };
             invoicesHeaders.Add(invoiceHeaderLookUp);
             return invoicesHeaders;
@@ -885,6 +886,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             IsDeliveredInOffice = invoiceHeader.IsDeliveredInOffice ?? "N",
                             OrderList = orderListStr,
                             RemissionList = remissionListStr,
+                            TotalPieces = invoiceDetail.Where(y => y.Quantity > 0).Sum(x => (int)x.Quantity),
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
@@ -943,6 +945,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         TypeOrder = invoiceHeaders.TypeOrder,
                         IsPackage = invoiceHeaders.IsPackage == ServiceConstants.IsPackage,
                         IsDeliveredInOffice = invoiceHeaders.IsDeliveredInOffice ?? "N",
+                        TotalPieces = invoiceDetail.Where(y => y.Quantity > 0).Sum(x => (int)x.Quantity),
                     };
                     invoicesHeaders.Add(invoiceHeaderLookUp);
                 }
