@@ -150,10 +150,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             response.CardOrder = response.CardOrder.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
             response.CardDelivery = response.CardDelivery.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
-            response.CardInvoice = (from invoice in response.CardInvoice
-                                    .Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower())))
-                                    group invoice by invoice.Invoice into grpByInvoice
-                                    select grpByInvoice.Last()).ToList();
+            response.CardInvoice = response.CardInvoice.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower())))
+                .DistinctBy(cd => cd.Invoice).ToList();
             response.CardDistribution = response.CardDistribution.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
@@ -304,6 +302,7 @@ namespace Omicron.SapAdapter.Services.Sap
             });
 
             cardToReturns.CardDelivery = cardToReturns.CardDelivery.DistinctBy(cd => new { cd.Remision, cd.ListSaleOrder }).ToList();
+            cardToReturns.CardInvoice = cardToReturns.CardInvoice.DistinctBy(cd => cd.Invoice).ToList();
             return cardToReturns;
         }
 
