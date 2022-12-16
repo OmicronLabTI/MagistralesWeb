@@ -35,6 +35,12 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// Gets or sets the zipcode.
         /// </summary>
         /// <value>Zip code.</value>
+        public string LastNickname { get; set; }
+
+        /// <summary>
+        /// Gets or sets the zipcode.
+        /// </summary>
+        /// <value>Zip code.</value>
         public string Rfc { get; set; }
 
         /// <summary>
@@ -84,5 +90,11 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// </summary>
         /// <value>Street number.</value>
         public string City { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor id.
+        /// </summary>
+        /// <value>Doctor Id.</value>
+        public string TaxRegimeCode { get; set; }
     }
 }
