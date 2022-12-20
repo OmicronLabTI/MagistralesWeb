@@ -35,7 +35,7 @@ namespace Omicron.SapDiApi.Dtos.Models
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public int? QtyPlanned { get; set; }
+        public decimal? QtyPlanned { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
