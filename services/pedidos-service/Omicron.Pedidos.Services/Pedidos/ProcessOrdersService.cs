@@ -295,7 +295,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     TypeOrder = saleOrder.Order.OrderType,
                     PlanningDate = DateTime.Now,
                     Quantity = x.Quantity,
-                    FinishedLabel = ServiceShared.CalculateTernary(productNoLabel.Any(y => x.ProductoId.Contains(y)) || detailByItem.Label == ServiceConstants.LabelImpresaPorCliente, 1, 0),
+                    FinishedLabel = ServiceShared.CalculateTernary(productNoLabel.Any(y => x.ProductoId.Contains(y) && !x.IsOmigenomics) || detailByItem.Label == ServiceConstants.LabelImpresaPorCliente, 1, 0),
                 };
                 listToReturn.Add(userOrder);
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { userOrder }));

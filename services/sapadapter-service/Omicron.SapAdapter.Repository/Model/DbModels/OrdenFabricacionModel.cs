@@ -159,5 +159,13 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Bool is sales order.
         [NotMapped]
         public bool HasMissingStock { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether IsOmigenomics.
+        /// </summary>
+        /// <value>
+        /// Bool IsOmigenomics.
+        [NotMapped]
+        public bool IsOmigenomics { get; set; }
     }
 }
