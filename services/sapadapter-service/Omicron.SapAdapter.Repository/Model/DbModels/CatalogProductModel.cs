@@ -23,7 +23,7 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// <value>The code.</value>
         [Key]
         [Column("ItmsGrpCod")]
-        public int ProductGroupId { get; set; }
+        public short ProductGroupId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
