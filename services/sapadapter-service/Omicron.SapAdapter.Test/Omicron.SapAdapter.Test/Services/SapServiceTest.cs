@@ -362,14 +362,12 @@ namespace Omicron.SapAdapter.Test.Services
         [Test]
         public async Task GetProdOrderByOrderItem()
         {
-            // arrange
-            var listIds = new List<string> { "100-Buscapina" };
-
-            // act
+            var listIds = new List<string> { "100-Buscapina", "100-Omigenomics" };
             var result = await this.sapService.GetProdOrderByOrderItem(listIds);
-
-            // assert
             Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Response);
+            var response = JsonConvert.DeserializeObject<List<OrdenFabricacionModel>>(result.Response.ToString());
+            Assert.AreEqual(response.Count, 2);
         }
 
         /// <summary>
