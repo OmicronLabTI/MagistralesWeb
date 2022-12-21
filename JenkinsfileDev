@@ -51,7 +51,6 @@ pipeline {
       steps {
         echo 'Building Frontend'
         dir('frontend/web/') {
-          sh "sudo sed -i \"s#buildEnv#build -- --baseHref=/magistrales/#g\" Dockerfile"
           script {
             DockerBuildAndPush("web", "/magistrales/")
           }
@@ -340,7 +339,6 @@ def SlackMsg(String buildResult) {
 }
 
 def DockerBuildAndPush(entity, urlbase) {
-  def previousBuild = GetPreviousBuild("${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository")
   docker.withRegistry("http://${NEXUS_REGISTRY}", "nexus_omicron") {
     docker.build("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --build-arg CONFIGURATION=${WEBCONFIGURATION} --build-arg BASE_HREF=${urlbase} --cache-from ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest .")    
     docker.image("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest").push()
