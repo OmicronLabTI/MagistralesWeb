@@ -120,7 +120,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DxpId = details.DxpId,
                     TotalShopOrders = ordersByDxp.GroupBy(x => x.DocNum).Count(),
                     TotalOrdersWithDelivery = totalOrdersWithDeliverys,
-                    IsOmigenomics = details.IsOmigenomics,
+                    IsOmigenomics = sapOrders.Any(x => x.IsOmigenomics == ServiceConstants.IsOmigenomics),
                 },
 
                 Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders, localNeigbors, userOrders, payments),
