@@ -19,7 +19,6 @@ pipeline {
     ENVIRONMENT = "dev"
     NEXUS_REGISTRY = "192.168.0.133:8083"
     REPOSITORY_NAME = "omicrondev"
-    WEBCONFIGURATION = ""
 
     // General configurations		
     SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_Dev";
@@ -341,7 +340,7 @@ def SlackMsg(String buildResult) {
 def DockerBuildAndPush(entity, urlbase) {
   def previousBuild = GetPreviousBuild("${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository")
   docker.withRegistry("http://${NEXUS_REGISTRY}", "nexus_omicron") {
-    docker.build("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest .")    
+    docker.build("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --build-arg BASE_HREF=${urlbase} --cache-from ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest .")    
     docker.image("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest").push()
   }
 }
