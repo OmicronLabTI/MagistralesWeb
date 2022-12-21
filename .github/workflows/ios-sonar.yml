@@ -19,6 +19,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - name: Set Branch Environment Variables
         uses: iamtheyammer/branch-env-vars@v1.2.1
         with:
@@ -28,20 +29,18 @@ jobs:
             release/Uat:uat
             develop:dev
             !default:dev
+
       - uses: actions/cache@v3
         with:
           path: frontend/ios/Pods
           key: ${{ runner.os }}-pods-${{ hashFiles(format('{0}/{1}', 'frontend/ios', 'Podfile.lock')) }}
           restore-keys: |
             ${{ runner.os }}-pods-
+
       - name: Test frontend/ios
         run: fastlane metrics_${{ env.IOS_ENV }}
         working-directory: frontend/ios
-  notify:
-    name: teams notification
-    runs-on: [self-hosted, mac-os]
-    needs: test
-    steps:
+
       - name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
         if: ${{ always() }}

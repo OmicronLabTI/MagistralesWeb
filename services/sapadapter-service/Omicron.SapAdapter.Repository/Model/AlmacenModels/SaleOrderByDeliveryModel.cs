@@ -56,5 +56,17 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public DateTime FechaInicio { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether IsPackage.
+        /// </summary>
+        /// <value>The IsPackage.</value>
+        public bool IsPackage { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether IsOmigenomics.
+        /// </summary>
+        /// <value>The IsOmigenomics.</value>
+        public bool IsOmigenomics { get; set; }
     }
 }
