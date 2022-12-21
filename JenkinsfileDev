@@ -372,7 +372,7 @@ def GetPreviousBuild(repo) {
       def res = sh(returnStdout: true, script: "curl -s -H \"Accept: application/json\"  -u ${USERNAME}:${PASSWORD} -X GET http://${NEXUS_REGISTRY}/v2/${repo}/tags/list").trim()
       def json = readJSON text: res
       def tags = json["tags"] as String[]
-      if (tags.length > 1) {
+      if (tags?.length > 1) {
         def n = tags[tags.length - 2].replaceAll("0.0.", "") as Integer
         return n;
       } else {
