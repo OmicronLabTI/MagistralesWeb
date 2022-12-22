@@ -15,7 +15,7 @@ on:
       - services/**
 jobs:
   build:
-    name: build docker images
+    name: build environment
     runs-on: [self-hosted, omicron-qa]
     steps:
       - name: Checkout
@@ -92,11 +92,7 @@ jobs:
           path: services/warehouses-service
           environment: qa
           registry: ${{ secrets.NEXUS_REGISTRY }}
-  deploy:
-    name: deploy to kubernetes cluster
-    runs-on: [self-hosted, omicron-qa]
-    needs: build
-    steps:
+
       - name: Kubernetes deploy
         working-directory: deploy/qa
         run: |
@@ -104,19 +100,6 @@ jobs:
           kubectl apply -f ingress-oauth.yml --context kubernetes-admin@kubernetes
           kubectl apply -f ingress-services.yml --context kubernetes-admin@kubernetes
           kubectl apply -f ingress-web.yml --context kubernetes-admin@kubernetes
-  rollout:
-    name: kubectl rollout
-    runs-on: [self-hosted, omicron-qa]
-    needs: deploy
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Get changeset
-        id: changeset
-        run: echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
 
       - name: Rollout frontend/web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_build) }}
@@ -149,28 +132,16 @@ jobs:
       - name: Rollout warehouses-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
         run: kubectl rollout restart deploy warehouses-deployment --context kubernetes-admin@kubernetes
-  database:
-    name: liquibase update
-    runs-on: [self-hosted, omicron-qa]
-    needs: rollout
-    steps:
-      - name: liquibase update
+
+      - name: Liquibase update
         working-directory: database/
         run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-qa.properties" update
-  clean:
-    name: clean docker resources
-    runs-on: [self-hosted, omicron-qa]
-    needs: database
-    steps:
+
       - name: Docker prune
         run: |
           docker builder prune -f -a
           docker image prune -f -a
-  notify:
-    name: teams notification
-    runs-on: [self-hosted, omicron-qa]
-    needs: database
-    steps:
+
       - name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
         if: ${{ always() }}
