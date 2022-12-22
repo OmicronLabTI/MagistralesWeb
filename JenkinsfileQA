@@ -182,10 +182,10 @@ pipeline {
       steps {
         dir('deploy/qa/'){
           echo 'Running Kubernetes'
-          sh 'sudo kubectl apply -f deploy_qa.yaml --context kubernetes-admin@kubernetes'
-          sh 'sudo kubectl apply -f ingress-oauth.yml --context kubernetes-admin@kubernetes'
-          sh 'sudo kubectl apply -f ingress-services.yml --context kubernetes-admin@kubernetes'
-          sh 'sudo kubectl apply -f ingress-web.yml --context kubernetes-admin@kubernetes'
+          sh 'kubectl apply -f deploy_qa.yaml --context kubernetes-admin@kubernetes'
+          sh 'kubectl apply -f ingress-oauth.yml --context kubernetes-admin@kubernetes'
+          sh 'kubectl apply -f ingress-services.yml --context kubernetes-admin@kubernetes'
+          sh 'kubectl apply -f ingress-web.yml --context kubernetes-admin@kubernetes'
         }  
       }
     }
@@ -198,7 +198,7 @@ pipeline {
       }
       steps {
         echo 'Rollout Building Frontend'
-        sh 'sudo kubectl rollout restart deploy web-deployment --context kubernetes-admin@kubernetes'
+        sh 'kubectl rollout restart deploy web-deployment --context kubernetes-admin@kubernetes'
       }
     }
     stage('RollOut Oauth') {
