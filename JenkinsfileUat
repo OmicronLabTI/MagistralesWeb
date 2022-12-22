@@ -203,18 +203,6 @@ pipeline {
         }  
       }
     }
-    stage('RollOut Build Front Web') {
-      when {
-        anyOf {
-          changeset "*frontend/web/**"
-          expression { currentBuild.previousBuild.result != "SUCCESS" }
-        }
-      }
-      steps {
-        echo 'Rollout Building Frontend'
-        sh 'sudo kubectl rollout restart deploy web-deployment --context omicron_aks_uat'
-      }
-    }
     stage('RollOut Oauth') {
       when {
         anyOf {
