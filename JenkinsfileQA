@@ -289,7 +289,6 @@ pipeline {
       steps {
         dir('database/') {
           sh '/opt/liquibase/liquibase --version'
-          sh 'sed -i "s/192.168.0.101:5432/192.168.0.83:5432/g" liquibase.properties'
           sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-qa.properties" update'
           echo 'Applying Db changes'
         }
@@ -355,7 +354,7 @@ def SlackMsg(String buildResult) {
   }
 }
 
-def DockerBuildAndPush(entity) {
+def DockerBuildAndPush(entity, urlbase) {
   def previousBuild = GetPreviousBuild("${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository")
   docker.withRegistry("http://${NEXUS_REGISTRY}", "nexus_omicron") {
     docker.build("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --build-arg CONFIGURATION=${WEBCONFIGURATION} --build-arg BASE_HREF=${urlbase} --cache-from ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest .")

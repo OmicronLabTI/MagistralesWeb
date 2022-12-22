@@ -16,8 +16,10 @@ pipeline {
     PROJECT_NAME = "AppiOSFormulas"
     PROJECT_NAME_LOWERCASE = "appiosformulas"
     SLACK_CHANNEL = "#omicron_notifications"
-    ENVIRONMENT = "Prod"
+    ENVIRONMENT = "prod"
     ACR = "omicron.azurecr.io"
+    REPOSITORY_NAME = "omicronprod"
+    WEBCONFIGURATION = "production"
 
     // General configurations		
     SONAR_KEY = "20_OMICRONLAB_App-iOS-Formulas_UAT";
@@ -51,30 +53,11 @@ pipeline {
       steps {
         echo 'Building Frontend'
         dir('frontend/web/') {
-          sh "sudo sed -i \"s/buildEnv/build-prod/g\" Dockerfile"
           script {
-            DockerBuildAndPush("web")
+            DockerBuildAndPush("web", "/")
           }
         }
       }
-    }
-    stage('ApiManager') {
-      when {
-        anyOf {
-          changeset "*services/apimanager/**"
-          expression {
-            currentBuild.previousBuild.result != "SUCCESS"
-          }
-        }
-      }
-      steps {
-        dir('services/apimanager/') {
-          script {
-            DockerBuildAndPush("apimanager")
-          }
-        }
-      }
-
     }
     stage('Oauth') {
       when {
@@ -88,7 +71,7 @@ pipeline {
       steps {
         dir('services/oauthserver/') {
           script {
-            DockerBuildAndPush("oauthserver")
+            DockerBuildAndPush("oauthserver", "")
           }
         }
       }
@@ -105,7 +88,7 @@ pipeline {
       steps {
         dir('services/catalogos-service/') {
           script {
-            DockerBuildAndPush("catalogos")
+            DockerBuildAndPush("catalogos", "")
           }
         }
       }
@@ -122,7 +105,7 @@ pipeline {
       steps {
         dir('services/usuarios-service/') {
           script {
-            DockerBuildAndPush("usuarios")
+            DockerBuildAndPush("usuarios", "")
           }
         }
       }
@@ -139,7 +122,7 @@ pipeline {
       steps {
         dir('services/pedidos-service/') {
           script {
-            DockerBuildAndPush("pedidos")
+            DockerBuildAndPush("pedidos", "")
           }
         }
       }
@@ -156,7 +139,7 @@ pipeline {
       steps {
         dir('services/sapadapter-service/') {
           script {
-            DockerBuildAndPush("sapadapter")
+            DockerBuildAndPush("sapadapter", "")
           }
         }
       }
@@ -173,7 +156,7 @@ pipeline {
       steps {
         dir('services/warehouses-service/') {
           script {
-            DockerBuildAndPush("warehouses")
+            DockerBuildAndPush("warehouses", "")
           }
         }
       }
@@ -190,7 +173,7 @@ pipeline {
       steps {
         dir('services/reporting-service/') {
           script {
-            DockerBuildAndPush("reporting")
+            DockerBuildAndPush("reporting", "")
           }
         }
       }
@@ -205,23 +188,103 @@ pipeline {
       steps {
         azureWebAppPublish azureCredentialsId: 'Omicronapp', publishType: 'docker',
           resourceGroup: 'OmicronProduccion', appName: 'omicronlab',
-          dockerImageName: 'omicron.azurecr.io/omicron-web-repository', dockerImageTag: 'latest',
+          dockerImageName: 'omicron.azurecr.io/omicronprod/omicron-appiosformulas-web-repository', dockerImageTag: 'latest',
           dockerRegistryEndpoint: [credentialsId: 'omicronacr', url: 'https://omicron.azurecr.io'],
           skipDockerBuild: true
       }
     }
-    stage('Kubernetes Down') {
-      steps {
-        echo 'Running Kubernetes down'
-        sh 'kubectl config use-context omicron-aks'
-        sh 'kubectl delete -f deploy_prod.yaml --grace-period=0 --force --ignore-not-found'
-      }
-    }
     stage('Kubernetes Up') {
       steps {
-        echo 'Running Kubernetes'
-        sh 'kubectl config use-context omicron-aks'
-        sh 'kubectl apply -f deploy_prod.yaml'
+        dir('deploy/prod/'){
+          echo 'Running Kubernetes'
+          sh 'sudo kubectl apply -f deploy_uat.yaml --context omicron-aks'
+          sh 'sudo kubectl apply -f ingress-oauth.yml --context omicron-aks'
+          sh 'sudo kubectl apply -f ingress-services.yml --context omicron-aks'
+        }  
+      }
+    }
+    stage('RollOut Oauth') {
+      when {
+        anyOf {
+          changeset "*services/oauthserver/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Oaut'
+        sh 'kubectl rollout restart deploy oauthserver-deployment --context omicron-aks'
+      }
+    }
+    stage('RollOut Catalogos') {
+      when {
+        anyOf {
+          changeset "*services/catalogos-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Catalogos'
+        sh 'kubectl rollout restart deploy catalogos-deployment --context omicron-aks'
+      }
+    }
+    stage('RollOut Usuarios') {
+      when {
+        anyOf {
+          changeset "*services/usuarios-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Usuarios'
+        sh 'kubectl rollout restart deploy usuarios-deployment --context omicron-aks'
+      }
+    }
+    stage('RollOut Pedidos') {
+      when {
+        anyOf {
+          changeset "*services/pedidos-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Pedidos'
+        sh 'kubectl rollout restart deploy pedidos-deployment --context omicron-aks'
+      }
+    }
+    stage('RollOut SapAdapter') {
+      when {
+        anyOf {
+          changeset "*services/sapadapter-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building SapAdapter'
+        sh 'kubectl rollout restart deploy sapadapter-deployment --context omicron-aks'
+      }
+    }
+    stage('RollOut Warehouse') {
+      when {
+        anyOf {
+          changeset "*services/warehouses-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building warehouse'
+        sh 'kubectl rollout restart deploy warehouses-deployment --context omicron-aks'
+      }
+    }
+    stage('RollOut Reporting') {
+      when {
+        anyOf {
+          changeset "*services/reporting-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Reporting'
+        sh 'kubectl rollout restart deploy reporting-deployment --context omicron-aks'
       }
     }
     stage('Database') {
@@ -292,9 +355,9 @@ def SlackMsg(String buildResult) {
   }
 }
 
-def DockerBuildAndPush(entity) {
+def DockerBuildAndPush(entity, urlbase) {
   docker.withRegistry("https://${ACR}", "omicronacr") {
-    docker.build("${ACR}/${COMPANY_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${ACR}/${COMPANY_LOWERCASE}-${entity}-repository:latest .")
-    docker.image("${ACR}/${COMPANY_LOWERCASE}-${entity}-repository:latest").push()
+    docker.build("${ACR}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --build-arg CONFIGURATION=${WEBCONFIGURATION} --build-arg BASE_HREF=${urlbase} --cache-from ${ACR}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest .")
+    docker.image("${ACR}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest").push()
   }
 }
