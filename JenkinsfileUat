@@ -197,9 +197,9 @@ pipeline {
       steps {
         dir('deploy/uat/'){
           echo 'Running Kubernetes'
-          sh 'sudo kubectl apply -f deploy_uat.yaml --context omicron_aks_uat'
-          sh 'sudo kubectl apply -f ingress-oauth.yml --context omicron_aks_uat'
-          sh 'sudo kubectl apply -f ingress-services.yml --context omicron_aks_uat'
+          sh 'kubectl apply -f deploy_uat.yaml --context omicron_aks_uat'
+          sh 'kubectl apply -f ingress-oauth.yml --context omicron_aks_uat'
+          sh 'kubectl apply -f ingress-services.yml --context omicron_aks_uat'
         }  
       }
     }
