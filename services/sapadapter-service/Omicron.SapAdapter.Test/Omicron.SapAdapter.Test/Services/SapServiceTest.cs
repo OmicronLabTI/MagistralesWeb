@@ -83,6 +83,7 @@ namespace Omicron.SapAdapter.Test.Services
             var parameters = new List<ParametersModel>
             {
                 new ParametersModel { Id = 1, Value = "A1", Field = "Medic" },
+                new ParametersModel { Id = 2, Value = "Codigo", Field = "CardCodeResponsibleMedic" },
             };
 
             mockCatalogs
@@ -374,12 +375,15 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Get the order with details.
         /// </summary>
+        /// <param name="id">Id.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task GetOrderFormula()
+        [TestCase(103)]
+        [TestCase(100)]
+        public async Task GetOrderFormula(int id)
         {
             // arrange
-            var listIds = new List<int> { 100 };
+            var listIds = new List<int> { id };
 
             // act
             var result = await this.sapService.GetOrderFormula(listIds, true, true);

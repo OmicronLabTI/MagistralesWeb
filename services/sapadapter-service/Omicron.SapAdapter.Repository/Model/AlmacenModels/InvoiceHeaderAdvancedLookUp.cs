@@ -212,5 +212,29 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// ItemCode.
         /// </value>
         public string DeliverySuggestedTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrderList.
+        /// </summary>
+        /// <value>
+        /// String OrderList.
+        /// </value>
+        public string OrderList { get; set; }
+
+        /// <summary>
+        /// Gets or sets RemissionList.
+        /// </summary>
+        /// <value>
+        /// String RemissionList.
+        /// </value>
+        public string RemissionList { get; set; }
+
+        /// <summary>
+        /// Gets or sets TotalPieces.
+        /// </summary>
+        /// <value>
+        /// Int TotalPieces.
+        /// </value>
+        public int TotalPieces { get; set; }
     }
 }
