@@ -289,7 +289,6 @@ pipeline {
       steps {
         dir('database/') {
           sh '/opt/liquibase/liquibase --version'
-          sh 'sed -i "s/192.168.0.101:5432/192.168.0.83:5432/g" liquibase.properties'
           sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-qa.properties" update'
           echo 'Applying Db changes'
         }
