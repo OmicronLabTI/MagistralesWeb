@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Test.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Moq;
@@ -274,21 +275,25 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserOrderInvoice()));
 
+            mockPedidos
+               .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+               .Returns(Task.FromResult(this.GetUserOrderInvoice()));
+
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
                 .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetLineProductsRemision()));
 
             mockAlmacen
-                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
-                .Returns(Task.FromResult(this.GetIncidents()));
+               .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+               .Returns(Task.FromResult(this.GetLineProductsRemision()));
 
             var mockProccessPayments = new Mock<IProccessPayments>();
             var mockDoctors = new Mock<IDoctorService>();
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
 
             // act
-            var response = await service.GetInvoiceProducts(1);
+            var response = await service.GetInvoiceProducts(1, "Distribucion", Enumerable.Empty<int>().ToList());
 
             // assert
             Assert.IsNotNull(response);
