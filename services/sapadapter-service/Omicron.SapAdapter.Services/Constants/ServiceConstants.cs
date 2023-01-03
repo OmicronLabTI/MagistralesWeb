@@ -231,6 +231,21 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetUserOrderDeliveryId = "userorders/delivery/id";
 
         /// <summary>
+        /// Get the delivery orders.
+        /// </summary>
+        public const string GetUserOrdersByInvoicesIds = "getUserOrder/invoices";
+
+        /// <summary>
+        /// Get the delivery orders.
+        /// </summary>
+        public const string GetUserOrderByDeliveryOrder = "getUserOrder/deliveryOrders";
+
+        /// <summary>
+        /// Value  for the lines for invoice.
+        /// </summary>
+        public const string GetLineOrdersByInvoice = "getline/invoiceId";
+
+        /// <summary>
         /// Get the user orders for invoices.
         /// </summary>
         public const string GetUserOrderInvoice = "userorders/invoice";
