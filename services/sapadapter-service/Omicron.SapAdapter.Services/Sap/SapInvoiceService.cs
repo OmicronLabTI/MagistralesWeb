@@ -183,8 +183,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProductsResponse = await this.almacenService.PostAlmacenOrders(routes["line-products"], data);
             var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
 
-            // var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
-            // var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { invoiceId })).FirstOrDefault();
             invoiceHeader ??= new InvoiceHeaderModel();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(new List<int> { invoiceHeader.InvoiceId })).ToList();
