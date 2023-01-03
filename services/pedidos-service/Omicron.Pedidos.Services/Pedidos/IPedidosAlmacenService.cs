@@ -105,5 +105,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="docNum">the doc nums.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> AdvanceLook(List<int> docNum);
+
+        /// <summary>
+        /// Get the user orders by invoices id.
+        /// </summary>
+        /// <param name="invoicesIds">the ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetUserOrdersByInvoicesIds(List<int> invoicesIds);
     }
 }

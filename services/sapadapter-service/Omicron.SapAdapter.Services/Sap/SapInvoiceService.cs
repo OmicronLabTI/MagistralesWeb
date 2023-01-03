@@ -158,10 +158,30 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetInvoiceProducts(int invoiceId)
+        public async Task<ResultModel> GetInvoiceProducts(int invoiceId, string type, List<int> deliveriesIds)
         {
-            var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
-            var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
+            Dictionary<string, string> routes = ServiceShared.CalculateTernary(
+                type == ServiceConstants.Empaquetado,
+                new Dictionary<string, string>
+                {
+                    { "user-order", ServiceConstants.GetUserOrderByDeliveryOrder },
+                    { "line-products", ServiceConstants.GetLinesForDeliveryId },
+                    { "data", string.Join('|', deliveriesIds) },
+                },
+                new Dictionary<string, string>
+                {
+                    { "user-order", ServiceConstants.GetUserOrdersByInvoicesIds },
+                    { "line-products", ServiceConstants.GetLineOrdersByInvoice },
+                    { "data", invoiceId.ToString() },
+                });
+
+            var data = routes["data"].Split('|').Select(deliveryId => int.Parse(deliveryId));
+
+            var userOrdersResponse = await this.pedidosService.PostPedidos(data, routes["user-order"]);
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
+
+            var lineProductsResponse = await this.almacenService.PostAlmacenOrders(routes["line-products"], data);
+            var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
 
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { invoiceId })).FirstOrDefault();
             invoiceHeader ??= new InvoiceHeaderModel();
@@ -286,9 +306,9 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeader = await this.GetInvoiceHeaderByParameters(invoiceHeader, new List<DeliveryDetailModel>(), dictParams);
             var total = invoiceHeader.Count;
             var invoiceHeaderOrdered = (from y in dataToLook.InvoiceDocNums
-                                          let invoiceDb = invoiceHeader.FirstOrDefault(a => a.DocNum == y)
-                                          where invoiceDb != null
-                                          select invoiceDb).ToList();
+                                        let invoiceDb = invoiceHeader.FirstOrDefault(a => a.DocNum == y)
+                                        where invoiceDb != null
+                                        select invoiceDb).ToList();
 
             invoiceHeaderOrdered = invoiceHeaderOrdered.Skip(dataToLook.Offset).Take(dataToLook.Limit).ToList();
 
@@ -646,7 +666,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="lineProducts">the line products.</param>
         /// <param name="orders">the owor orders.</param>
         /// <returns>the products.</returns>
-        private async Task<List<InvoiceProductModel>> GetProductModels(List<InvoiceDetailModel> invoices, List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders, List<IncidentsModel> incidents)
+        private async Task<List<InvoiceProductModel>> GetProductModels(
+            List<InvoiceDetailModel> invoices, List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders, List<IncidentsModel> incidents)
         {
             var listToReturn = new List<InvoiceProductModel>();
             invoices = invoices.Where(x => x.BaseEntry.HasValue).ToList();
@@ -772,7 +793,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<DeliveryScannedModel> GetDeliveryScannedData(InvoiceHeaderModel invoice, List<DeliveryDetailModel> deliveries, List<InvoiceDetailModel> invoices, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<OrdenFabricacionModel> orders)
         {
             var delivery = deliveries.FirstOrDefault();
-            delivery = ServiceShared.CalculateTernary(delivery == null || !delivery.BaseEntry.HasValue,  new DeliveryDetailModel { BaseEntry = 0 }, delivery);
+            delivery = ServiceShared.CalculateTernary(delivery == null || !delivery.BaseEntry.HasValue, new DeliveryDetailModel { BaseEntry = 0 }, delivery);
 
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { delivery.BaseEntry.Value });
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
