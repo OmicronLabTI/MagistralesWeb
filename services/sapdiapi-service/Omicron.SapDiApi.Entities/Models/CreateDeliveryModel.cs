@@ -50,5 +50,13 @@ namespace Omicron.SapDiApi.Entities.Models
         /// </summary>
         /// <value>The user that is assigning.</value>
         public string IsPackage { get; set; }
+
+        /// <summary>
+        /// Gets or sets IsOmigenomics.
+        /// </summary>
+        /// <value>
+        /// bool IsOmigenomics.
+        /// </value>
+        public bool IsOmigenomics { get; set; }
     }
 }

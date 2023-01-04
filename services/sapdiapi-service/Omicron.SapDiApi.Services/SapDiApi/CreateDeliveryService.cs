@@ -10,17 +10,16 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapDiApi.Entities.Context;
     using Omicron.SapDiApi.Entities.Models;
+    using Omicron.SapDiApi.Log;
     using Omicron.SapDiApi.Services.Constants;
     using Omicron.SapDiApi.Services.Utils;
     using SAPbobsCOM;
-    using Omicron.SapDiApi.Log;
-    using Omicron.LeadToCash.Resources.Exceptions;
-    using System.Text;
 
     public class CreateDeliveryService : ICreateDeliveryService
     {
@@ -41,7 +40,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             _loggerProxy.Info($"order to be delivered {JsonConvert.SerializeObject(createDelivery)}");
             var dictionaryResult = new Dictionary<string, string>();
-            var saleOrderId = createDelivery.First().SaleOrderId;
+            var createDeliveryFirst = createDelivery.First();
+            var saleOrderId = createDeliveryFirst.SaleOrderId;
             try
             {
                 var saleOrder = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
@@ -65,6 +65,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.Comments = saleOrder.Comments;
                 deliveryNote.UserFields.Fields.Item("U_comentarioremision").Value = $"Basado en pedido: {saleOrderId}";
                 deliveryNote.UserFields.Fields.Item("U_Pedido_Paquete").Value = createDelivery.Any(x => x.IsPackage == ServiceConstants.IsPackage) ? ServiceConstants.IsPackage : ServiceConstants.IsNotPackage;
+                deliveryNote.UserFields.Fields.Item("U_Omigenomicstp").Value = saleOrder.UserFields.Fields.Item("U_Omigenomicstp").Value;
 
                 for (var i = 0; i < saleOrder.Lines.Count; i++)
                 {
@@ -73,6 +74,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     deliveryNote = this.UpdateDelivery(deliveryNote, saleOrder, saleOrderId, i, createDelivery, itemCode);
                     deliveryNote.Lines.Add();
                 }
+
                 if (createDelivery.Any(x => x.ItemCode == ServiceConstants.ShippingCostItemCode))
                 {
                     var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
@@ -116,7 +118,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             _loggerProxy.Info($"order to be delivered partial {JsonConvert.SerializeObject(createDelivery)}");
             var dictionaryResult = new Dictionary<string, string>();
-            var saleOrderId = createDelivery.First().SaleOrderId;
+            var createDeliveryFirst = createDelivery.First();
+            var saleOrderId = createDeliveryFirst.SaleOrderId;
             var productsIds = createDelivery.Where(x => x.ItemCode != ServiceConstants.ShippingCostItemCode).Select(x => x.ItemCode).ToList();
             try
             {
@@ -140,6 +143,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
                 deliveryNote.Comments = saleOrder.Comments;
                 deliveryNote.UserFields.Fields.Item("U_comentarioremision").Value = $"Basado en pedido: {saleOrderId}";
+                deliveryNote.UserFields.Fields.Item("U_Omigenomicstp").Value = createDeliveryFirst.IsOmigenomics ? "Y" : "N";
 
                 for (var i = 0; i < saleOrder.Lines.Count; i++)
                 {
@@ -197,7 +201,8 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             _loggerProxy.Info($"order to be batch {JsonConvert.SerializeObject(createDelivery)}");
             var dictionaryResult = new Dictionary<string, string>();
-            var saleOrderId = createDelivery.First().SaleOrderId;
+            var createDeliveryFirst = createDelivery.First();
+            var saleOrderId = createDeliveryFirst.SaleOrderId;
 
             try
             {
@@ -225,6 +230,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.PayToCode = saleOrder.PayToCode;
                 deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
                 deliveryNote.UserFields.Fields.Item("U_comentarioremision").Value = $"Basado en pedido: {ids}";
+                deliveryNote.UserFields.Fields.Item("U_Omigenomicstp").Value = createDeliveryFirst.IsOmigenomics ? "Y" : "N";
 
                 var commentMultiple = new StringBuilder();
 
