@@ -324,3 +324,10 @@ export const constRealLabel = {
     impresaCliente: 'IMPRESA POR CLIENTE',
     personalizada: 'PERSONALIZADA'
 };
+
+export enum CatalogTypes {
+    omigenomics = 'Omigenomics',
+    dermazone = 'Dermazone',
+    magistralMedicament = 'Magistral Medicament',
+    magistralDermocos = 'Magistral Dermocos'
+}
