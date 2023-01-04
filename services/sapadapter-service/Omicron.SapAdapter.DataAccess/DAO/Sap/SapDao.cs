@@ -185,6 +185,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          from dp in DetallePedido.DefaultIfEmpty()
                          join p in this.databaseContext.ProductoModel on d.ProductoId equals p.ProductoId
                          join ped in this.databaseContext.OrderModel on d.PedidoId equals ped.PedidoId
+                         join g in this.databaseContext.CatalogProductModel on p.ProductGroupId equals g.ProductGroupId
                          where p.IsMagistral == "Y"
                          select new CompleteDetailOrderModel
                          {
@@ -204,6 +205,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Container = d.Container,
                              PatientName = ped.Patient ?? string.Empty,
                              PedidoId = d.PedidoId ?? 0,
+                             CatalogGroup = g.CatalogName,
                          }).AsNoTracking();
 
             return await this.RetryQuery<CompleteDetailOrderModel>(query);
@@ -257,9 +259,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<OrdenFabricacionModel>> GetProdOrderByOrderProduct(int pedidoId, string productId)
         {
             return (await (from order in this.databaseContext.OrdenFabricacionModel.Where(x => x.PedidoId == pedidoId && x.ProductoId == productId && x.DataSource == "O")
-                       join prod in this.databaseContext.ProductoModel on order.ProductoId equals prod.ProductoId
-                       join catalog in this.databaseContext.CatalogProductModel on prod.ProductGroupId equals catalog.ProductGroupId
-                       select new { order, catalog })
+                           join prod in this.databaseContext.ProductoModel on order.ProductoId equals prod.ProductoId
+                           join catalog in this.databaseContext.CatalogProductModel on prod.ProductGroupId equals catalog.ProductGroupId
+                           select new { order, catalog })
             .ToListAsync())
             .Select(x =>
             {

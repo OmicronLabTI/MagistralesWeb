@@ -146,5 +146,11 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>the value of stock.</value>
         public string PatientName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string CatalogGroup { get; set; }
     }
 }
