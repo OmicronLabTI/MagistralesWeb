@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Api
 {
     using System;
+    using Elastic.Apm.NetCoreAll;
     using HealthChecks.UI.Client;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -160,6 +161,7 @@ namespace Omicron.SapAdapter.Api
         /// <param name="env">Hosting Environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseAllElasticApm(this.Configuration);
             app.UseSwagger(c =>
             {
                 var basepath = this.Configuration["SwaggerAddress"];
