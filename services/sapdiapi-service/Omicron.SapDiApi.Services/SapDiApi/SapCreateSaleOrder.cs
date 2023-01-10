@@ -81,7 +81,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.UserFields.Fields.Item("U_DXPNEEDSSHIPCOST").Value = saleOrderModel.ShippingCost;
 
                 order.UserFields.Fields.Item("U_PedidoMuestra").Value = saleOrderModel.IsSample ? "Si" : "No";
-                order.UserFields.Fields.Item("U_Omigenomicstp").Value = saleOrderModel.IsOmigenomicsOrder ? "Y" : "N";
+
+                if(saleOrderModel.IsOmigenomicsOrder != null)
+                {
+                    order.UserFields.Fields.Item("U_Omigenomicstp").Value = (bool)saleOrderModel.IsOmigenomicsOrder ? "Y" : "N";
+                }
 
                 if (saleOrderModel.SlpCode != null)
                 {
