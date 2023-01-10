@@ -9,6 +9,7 @@
 namespace Omicron.Warehouses.Api
 {
     using System;
+    using Elastic.Apm.NetCoreAll;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
@@ -125,6 +126,7 @@ namespace Omicron.Warehouses.Api
         /// <param name="env">Hosting Environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseAllElasticApm(this.Configuration);
             app.UseSwagger(c =>
             {
                 var basepath = this.Configuration["SwaggerAddress"];

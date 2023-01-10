@@ -83,6 +83,16 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: omicron_net_postgress_db
+            - name: ELASTIC_APM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_token
+            - name: ELASTIC_APM_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_url
           ports:
             - containerPort: 80
           resources:
@@ -139,6 +149,16 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: omicron_net_postgress_db
+            - name: ELASTIC_APM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_token
+            - name: ELASTIC_APM_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_url
           ports:
             - containerPort: 80
           resources:
@@ -205,6 +225,16 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: omicron_file_url
+            - name: ELASTIC_APM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_token
+            - name: ELASTIC_APM_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_url
           ports:
             - containerPort: 80
           resources:
@@ -296,6 +326,16 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: storage_account_key
+            - name: ELASTIC_APM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_token
+            - name: ELASTIC_APM_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_url
           ports:
             - containerPort: 80
           resources:
@@ -352,6 +392,16 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: omicron_net_postgress_db
+            - name: ELASTIC_APM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_token
+            - name: ELASTIC_APM_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_url
           ports:
             - containerPort: 80
           resources:
@@ -413,6 +463,16 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: storage_account_key
+            - name: ELASTIC_APM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_token
+            - name: ELASTIC_APM_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: elastic_apm_url
           ports:
             - containerPort: 80
           resources:

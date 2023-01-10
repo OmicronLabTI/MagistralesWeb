@@ -124,6 +124,7 @@ struct CommonStrings {
     static let destiny = "Destino:"
     static let piece = "Pieza"
     static let millar = "MIL"
+    static let gameUnit = "Juego"
     static let components = "Componentes: "
     static let code = "Código"
     static let baseQuantity = "Cant. Base"
