@@ -178,7 +178,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineData = new LineScannerModel
             {
                 Batches = listBatchesModel,
-                Description = itemCode.ProductoName,
+                Description = itemCode.LargeDescription,
                 ItemCode = itemCode.ProductoId,
                 ProductType = $"Producto {productType}",
                 NeedsCooling = itemCode.NeedsCooling,
