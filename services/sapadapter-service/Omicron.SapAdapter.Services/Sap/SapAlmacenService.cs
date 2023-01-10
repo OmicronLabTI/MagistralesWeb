@@ -137,7 +137,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var magistralData = new MagistralScannerModel
             {
                 Container = order.Container,
-                Description = itemCode.ProductoName,
+                Description = itemCode.LargeDescription,
                 ItemCode = itemCode.ProductoId,
                 NeedsCooling = itemCode.NeedsCooling,
                 Pieces = order.QtyPlanned.Value,
