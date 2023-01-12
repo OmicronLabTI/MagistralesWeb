@@ -53,9 +53,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
                 }
 
+                var isOmigenomicsStr = saleOrder.UserFields.Fields.Item("U_Omigenomicstp").Value;
+                var isOmigenomics = isOmigenomicsStr != null && isOmigenomicsStr == "Y";
+
                 var deliveryNote = (Documents)company.GetBusinessObject(BoObjectTypes.oDeliveryNotes);
                 deliveryNote.CardCode = saleOrder.CardCode;
                 deliveryNote.SalesPersonCode = saleOrder.SalesPersonCode;
+                deliveryNote.DocumentsOwner = saleOrder.DocumentsOwner;
                 deliveryNote.DocType = BoDocumentTypes.dDocument_Items;
                 deliveryNote.DocumentSubType = BoDocumentSubType.bod_None;
                 deliveryNote.Address = saleOrder.Address;
@@ -65,7 +69,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.Comments = saleOrder.Comments;
                 deliveryNote.UserFields.Fields.Item("U_comentarioremision").Value = $"Basado en pedido: {saleOrderId}";
                 deliveryNote.UserFields.Fields.Item("U_Pedido_Paquete").Value = createDelivery.Any(x => x.IsPackage == ServiceConstants.IsPackage) ? ServiceConstants.IsPackage : ServiceConstants.IsNotPackage;
-                deliveryNote.UserFields.Fields.Item("U_Omigenomicstp").Value = saleOrder.UserFields.Fields.Item("U_Omigenomicstp").Value;
+                deliveryNote.UserFields.Fields.Item("U_Omigenomicstp").Value = isOmigenomicsStr;
 
                 for (var i = 0; i < saleOrder.Lines.Count; i++)
                 {
@@ -79,7 +83,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
                     var correctBaseLineId = GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
-                    
+
                     double.TryParse(shippingCost.OrderType, out var price);
                     deliveryNote.Lines.ItemCode = shippingCost.ItemCode;
                     deliveryNote.Lines.Quantity = 1;
@@ -87,7 +91,10 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     deliveryNote.Lines.BaseEntry = shippingCost.ShippingCostOrderId;
                     deliveryNote.Lines.UnitPrice = price;
                     deliveryNote.Lines.BaseLine = correctBaseLineId;
+                    deliveryNote.Lines.SalesPersonCode = saleOrder.SalesPersonCode;
                     deliveryNote.Lines.Add();
+
+                    UpdateShippingCostBaseLine(shippingCost.ShippingCostOrderId, isOmigenomicsStr, saleOrder.SalesPersonCode, saleOrder.DocumentsOwner);
                 }
 
                 var update = deliveryNote.Add();
@@ -104,12 +111,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     dictionaryResult.Add($"{saleOrderId}-Ok", $"Ok");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _loggerProxy.Info($"Error while Delivery {saleOrderId} {JsonConvert.SerializeObject(createDelivery)} - ex: {ex.Message} - stackTrace: {ex.StackTrace}");
                 dictionaryResult.Add($"{saleOrderId}-ErrorHandled", "Error mientras se crea remisión");
             }
-            
+
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
         }
 
@@ -164,7 +171,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
                     double.TryParse(shippingCost.OrderType, out var price);
 
-
                     deliveryNote.Lines.ItemCode = shippingCost.ItemCode;
                     deliveryNote.Lines.Quantity = 1;
                     deliveryNote.Lines.BaseType = -1;
@@ -217,6 +223,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                 var ids = string.Join(", ", createDelivery.Select(x => x.SaleOrderId).Distinct().ToList());
                 var listOrderType = new List<string>();
+                var isOmigenomicsStr = createDeliveryFirst.IsOmigenomics ? "Y" : "N";
 
                 var deliveryNote = (Documents)company.GetBusinessObject(BoObjectTypes.oDeliveryNotes);
                 deliveryNote.CardCode = saleOrder.CardCode;
@@ -230,14 +237,14 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 deliveryNote.PayToCode = saleOrder.PayToCode;
                 deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
                 deliveryNote.UserFields.Fields.Item("U_comentarioremision").Value = $"Basado en pedido: {ids}";
-                deliveryNote.UserFields.Fields.Item("U_Omigenomicstp").Value = createDeliveryFirst.IsOmigenomics ? "Y" : "N";
+                deliveryNote.UserFields.Fields.Item("U_Omigenomicstp").Value = isOmigenomicsStr;
 
                 var commentMultiple = new StringBuilder();
 
                 foreach (var sale in createDelivery.GroupBy(p => p.SaleOrderId).ToList())
                 {
                     var saleOrderFoundLocal = saleOrder.GetByKey(sale.FirstOrDefault().SaleOrderId);
-                    
+
                     if (!saleOrderFoundLocal)
                     {
                         _loggerProxy.Info($"The sale Order {sale.FirstOrDefault().SaleOrderId} was not found for creating the delivery");
@@ -271,8 +278,11 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         deliveryNote.Lines.BaseEntry = shippingCost.ShippingCostOrderId;
                         deliveryNote.Lines.UnitPrice = price;
                         deliveryNote.Lines.BaseLine = correctBaseLineId;
+                        deliveryNote.Lines.SalesPersonCode = saleOrder.SalesPersonCode;
                         deliveryNote.Lines.Add();
                         _loggerProxy.Info($"Here ends the fl 1 when its apart.");
+
+                        UpdateShippingCostBaseLine(shippingCost.ShippingCostOrderId, isOmigenomicsStr, saleOrder.SalesPersonCode, saleOrder.DocumentsOwner);
                     }
                 }
 
@@ -334,7 +344,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         }
 
                         inventoryGenExit.Lines.SetCurrentLine(numerationForExit);
-                        
+
                         inventoryGenExit.Lines.BaseType = -1;
                         inventoryGenExit.Lines.BaseLine = saleOrder.Lines.LineNum;
                         inventoryGenExit.Lines.Quantity = saleOrder.Lines.Quantity;
@@ -363,18 +373,18 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     if (inventoryGenExit.Add() != 0)
                     {
                         this.company.GetLastError(out int errorCode, out string errorMessage);
-                        _loggerProxy.Debug($"An error has ocurred on create oInventoryGenExit { errorCode } - { errorMessage }.");
+                        _loggerProxy.Debug($"An error has ocurred on create oInventoryGenExit {errorCode} - {errorMessage}.");
                         dictionaryResult.Add($"{order.SaleOrderId}-Inventory-Error", $"Error - {errorMessage}");
                     }
 
                     if (saleOrder.Close() != 0)
                     {
                         this.company.GetLastError(out int errorCode, out string errorMessage);
-                        _loggerProxy.Debug($"An error has ocurred while closing sale order {order.SaleOrderId} { errorCode } - { errorMessage }.");
+                        _loggerProxy.Debug($"An error has ocurred while closing sale order {order.SaleOrderId} {errorCode} - {errorMessage}.");
                         dictionaryResult.Add($"{order.SaleOrderId}-Error", $"Error - {errorMessage}");
                     }
 
-                    if(!dictionaryResult.Keys.Any(x => x.Contains("Error")))
+                    if (!dictionaryResult.Keys.Any(x => x.Contains("Error")))
                     {
                         _loggerProxy.Info($"The saleORder {order.SaleOrderId} was closed and the exit merchandise was done");
                         dictionaryResult.Add($"{order.SaleOrderId}-Ok", "Ok");
@@ -386,7 +396,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     dictionaryResult.Add($"{order.SaleOrderId}-ErrorHandled", $"{ex.Message}");
                 }
             }
-            
+
 
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
         }
@@ -436,7 +446,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             {
                 saleOrderShipping.Lines.SetCurrentLine(i);
                 var itemCode = saleOrderShipping.Lines.ItemCode;
-
                 if (itemCode == ServiceConstants.ShippingCostItemCode)
                 {
                     _loggerProxy.Info($"line num to place");
@@ -446,6 +455,35 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
 
             return correctBaseLineId;
+        }
+
+        private void UpdateShippingCostBaseLine(int saleOrderId, string isOmigenomics, int salesPersonCode, int documentsOwner)
+        {
+            var saleOrderShipping = (Documents)company.GetBusinessObject(BoObjectTypes.oOrders);
+            var saleOrderFound = saleOrderShipping.GetByKey(saleOrderId);
+            saleOrderShipping.DocumentsOwner = documentsOwner;
+            saleOrderShipping.SalesPersonCode = salesPersonCode;
+            saleOrderShipping.UserFields.Fields.Item("U_Omigenomicstp").Value = isOmigenomics;
+            _loggerProxy.Info($"sale order found {saleOrderId} -- {saleOrderFound}");
+            for (var i = 0; i < saleOrderShipping.Lines.Count; i++)
+            {
+                saleOrderShipping.Lines.SetCurrentLine(i);
+                if (saleOrderShipping.Lines.ItemCode == ServiceConstants.ShippingCostItemCode)
+                {
+                    saleOrderShipping.Lines.OwnerCode = documentsOwner;
+                    saleOrderShipping.Lines.SalesPersonCode = salesPersonCode;
+                    break;
+                }
+            }
+
+            var updated = saleOrderShipping.Update();
+            if (updated != 0)
+            {
+                company.GetLastError(out int errorCode, out string errMsg);
+                _loggerProxy.Info($"Ocurrio un error al actualizar el costo de envio: {saleOrderId} - {errorCode} - {errMsg} - {JsonConvert.SerializeObject(saleOrderShipping)}.\nMetodo: CreateDeliveryService.UpdateShippingCostBaseLine\nValores a actualizar: U_Omigenomicstp = {isOmigenomics}, OwnerCode = {documentsOwner}, SalesPersonCode = {salesPersonCode}");
+            }
+
+            _loggerProxy.Info($"Se actualizo el shipping code");
         }
     }
 }
