@@ -583,12 +583,12 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// valor for Si.
         /// </summary>
-        public const string IsSampleOrder = "SI";
+        public const string IsSampleOrder = "Si";
 
         /// <summary>
         /// valor for No.
         /// </summary>
-        public const string IsNotSampleOrder = "NO";
+        public const string IsNotSampleOrder = "No";
 
         /// <summary>
         /// value for refactua.
