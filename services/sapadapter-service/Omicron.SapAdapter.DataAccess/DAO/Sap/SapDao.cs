@@ -684,6 +684,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ShippingCost = order.ShippingCost,
                             ClientId = doctor.ClientId,
                             IsPackage = order.IsPackage,
+                            IsOmigenomics = order.IsOmigenomics,
                         };
             return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
         }

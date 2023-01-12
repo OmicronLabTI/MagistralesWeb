@@ -237,7 +237,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var product = new MagistralScannerModel
             {
                 Container = order.Container,
-                Description = itemCode.ProductoName,
+                Description = itemCode.LargeDescription,
                 ItemCode = itemCode.ProductoId,
                 NeedsCooling = itemCode.NeedsCooling,
                 Pieces = sapData.Item1.Quantity,
@@ -274,7 +274,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineData = new LineScannerModel
             {
                 Batches = batches,
-                Description = itemCode.ProductoName,
+                Description = itemCode.LargeDescription,
                 ItemCode = itemCode.ProductoId,
                 ProductType = $"Producto {productType}",
                 InvoiceId = sapData.Item2.DocNum,
