@@ -82,7 +82,7 @@ namespace Omicron.SapAdapter.Services.Utils
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Maquila.ToLower()), ordersMaquila, listToReturn);
             salesTypes = AddSalesTypeByOrders(ordersMaquila, salesTypes);
 
-            var ordersSample = sapOrders.Where(x => x.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower()).ToList();
+            var ordersSample = sapOrders.Where(x => x.PedidoMuestra.ValidateNull() == ServiceConstants.IsSampleOrder).ToList();
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Muestra.ToLower()), ordersSample, listToReturn);
             salesTypes = AddSalesTypeByOrders(ordersSample, salesTypes);
 
@@ -104,11 +104,18 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="lineProductTuple">line produc tuple.</param>
         /// <param name="needOnlyDxp">if the query only needs the dxp order.</param>
         /// <returns>the orders.</returns>
-        public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(ISapDao sapDao, Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, bool needOnlyDxp)
+        public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(
+            ISapDao sapDao,
+            Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple,
+            Tuple<List<LineProductsModel>, List<int>> lineProductTuple,
+            bool needOnlyDxp)
         {
             var idsMagistrales = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
 
-            var sapOrders = needOnlyDxp ? (await sapDao.GetAllOrdersForAlmacenDxp(userOrdersTuple.Item3)).ToList() : (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
+            var sapOrders = needOnlyDxp ?
+                (await sapDao.GetAllOrdersForAlmacenDxp(userOrdersTuple.Item3)).ToList() :
+                (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
+
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
