@@ -91,7 +91,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     deliveryNote.Lines.BaseEntry = shippingCost.ShippingCostOrderId;
                     deliveryNote.Lines.UnitPrice = price;
                     deliveryNote.Lines.BaseLine = correctBaseLineId;
-                    // deliveryNote.Lines.OwnerCode = saleOrder.DocumentsOwner;
                     deliveryNote.Lines.SalesPersonCode = saleOrder.SalesPersonCode;
                     deliveryNote.Lines.Add();
 
@@ -171,7 +170,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 {
                     var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
                     double.TryParse(shippingCost.OrderType, out var price);
-
 
                     deliveryNote.Lines.ItemCode = shippingCost.ItemCode;
                     deliveryNote.Lines.Quantity = 1;
@@ -280,7 +278,6 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         deliveryNote.Lines.BaseEntry = shippingCost.ShippingCostOrderId;
                         deliveryNote.Lines.UnitPrice = price;
                         deliveryNote.Lines.BaseLine = correctBaseLineId;
-                        // deliveryNote.Lines.OwnerCode = saleOrder.DocumentsOwner;
                         deliveryNote.Lines.SalesPersonCode = saleOrder.SalesPersonCode;
                         deliveryNote.Lines.Add();
                         _loggerProxy.Info($"Here ends the fl 1 when its apart.");
