@@ -1,0 +1,35 @@
+name: omicron-magistrales-prod-kubeup
+on:
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: Force KubeUp
+        type: boolean
+        default: false
+        required: false
+jobs:
+  build:
+    name: KubeUP
+    runs-on: [self-hosted, omicron-qa]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changeset
+        id: changeset
+        run: echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT      
+
+      - name: Kubernetes deploy
+        working-directory: deploy/prod
+        run: kubectl apply -f deploy_prod.yaml --context omicron-aks      
+
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: ${{ always() }}
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          needs: ${{ toJson(needs) }}
+          job: ${{ toJson(job) }}
+          steps: ${{ toJson(steps) }}
