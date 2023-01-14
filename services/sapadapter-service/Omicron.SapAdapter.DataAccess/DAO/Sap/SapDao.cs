@@ -250,6 +250,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             Medico = doctor.AliasName,
                             IsPackage = order.IsPackage,
                             IsOmigenomics = order.IsOmigenomics,
+                            ProffesionalLicense = doctor.ProffesionalLicense,
                         };
 
             return (await this.RetryQuery<OrderModel>(query)).ToList();
