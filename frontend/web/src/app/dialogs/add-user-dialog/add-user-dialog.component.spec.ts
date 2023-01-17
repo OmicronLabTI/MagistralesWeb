@@ -56,7 +56,8 @@ describe('AddUserDialogComponent', () => {
       [
         'getRoles',
         'createUserService',
-        'updateUser'
+        'updateUser',
+        'getClasifications'
       ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService',
       [
