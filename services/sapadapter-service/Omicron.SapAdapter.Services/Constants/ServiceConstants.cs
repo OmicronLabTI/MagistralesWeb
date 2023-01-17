@@ -293,6 +293,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// gets the address.
         /// </summary>
+        public const string GetAcademicInfoDoctors = "doctor/academicdoctorinfo";
+
+        /// <summary>
+        /// gets the address.
+        /// </summary>
         public const string GetSpecificDelieryAddress = "doctor/specific/deliveryaddress/list";
 
         /// <summary>
