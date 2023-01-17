@@ -1,17 +1,20 @@
 <div class="add-user-container">
     <mat-card class="add-user-card">
         <mat-card-header class="card-header-container">
-            <mat-card-title ><span *ngIf="!isForEditModal">Agregar usuario</span><span *ngIf="isForEditModal">Editar usuario</span>
+            <mat-card-title><span *ngIf="!isForEditModal">Agregar usuario</span><span *ngIf="isForEditModal">Editar
+                    usuario</span>
             </mat-card-title>
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
 
         </mat-card-header>
         <mat-card-content class="content-card-container">
-            <form [formGroup]="addUserForm" class="form-add-user" autocomplete="off" (keydown)="keyDownFunction($event)">
+            <form [formGroup]="addUserForm" class="form-add-user" autocomplete="off"
+                (keydown)="keyDownFunction($event)">
                 <div class="row-form-user padding-user">
                     <div class="form-field">
                         <mat-form-field class="custom-field">
-                            <input matInput placeholder="Ingresa usuario" formControlName="userName" maxlength="50" class="height-input">
+                            <input matInput placeholder="Ingresa usuario" formControlName="userName" maxlength="50"
+                                class="height-input">
                             <mat-error *ngIf="addUserForm?.controls.userName?.errors?.required">
                                 Usuario es <strong>requerido</strong>
                             </mat-error>
@@ -22,7 +25,8 @@
                     </div>
                     <div class="form-field">
                         <mat-form-field class="custom-field">
-                            <input matInput placeholder="Nombre(s)" formControlName="firstName" maxlength="50" class="height-input">
+                            <input matInput placeholder="Nombre(s)" formControlName="firstName" maxlength="50"
+                                class="height-input">
                             <mat-error *ngIf="addUserForm?.controls.firstName?.errors?.required">
                                 Nombre es <strong>requerido</strong>
                             </mat-error>
@@ -35,7 +39,8 @@
                 <div class="row-form-user">
                     <div class="form-field">
                         <mat-form-field class="custom-field">
-                            <input matInput placeholder="Apellido(s)" formControlName="lastName" maxlength="50" class="height-input">
+                            <input matInput placeholder="Apellido(s)" formControlName="lastName" maxlength="50"
+                                class="height-input">
                             <mat-error *ngIf="addUserForm?.controls.lastName?.errors?.required">
                                 Apellido es <strong>requerido</strong>
                             </mat-error>
@@ -47,8 +52,9 @@
                     <div class="form-field">
                         <mat-form-field appearance="outline" class="custom-field magin-top-field">
                             <mat-label>Selecciona rol</mat-label>
-                            <mat-select formControlName="userTypeR">
-                                <mat-option value="{{user.id}}"   *ngFor="let user of userRoles">{{user.description}}</mat-option>
+                            <mat-select formControlName="userTypeR" (selectionChange)="validateClasification()">
+                                <mat-option value="{{user.id}}"
+                                    *ngFor="let user of userRoles">{{user.description}}</mat-option>
                             </mat-select>
                             <mat-error *ngIf="addUserForm?.controls.userTypeR?.errors?.required">
                                 Rol es <strong>requerido</strong>
@@ -60,7 +66,8 @@
                     <div class="form-field">
                         <mat-form-field class="custom-field">
                             <input matInput placeholder="Contraseña" formControlName="password" class="height-input">
-                            <mat-error *ngIf="addUserForm?.controls.password?.errors?.pattern || addUserForm?.controls.password?.errors?.required">
+                            <mat-error
+                                *ngIf="addUserForm?.controls.password?.errors?.pattern || addUserForm?.controls.password?.errors?.required">
                                 La contraseña debe contener lo siguiente:
                                 8 caracteres como mínimo,
                                 máximo 50 caracteres,
@@ -71,13 +78,9 @@
                     </div>
                     <div class="form-field">
                         <mat-form-field class="custom-field">
-                            <input matInput
-                                   formControlName="piezas"
-                                   placeholder="Piezas máximas"
-                                   class="height-input"
-                                   type="text" pattern="[0-9]*" maxlength="5"
-                                   (keypress)="dataService.inputNumbersOnly($event)"
-                                   />
+                            <input matInput formControlName="piezas" placeholder="Piezas máximas" class="height-input"
+                                type="text" pattern="[0-9]*" maxlength="5"
+                                (keypress)="dataService.inputNumbersOnly($event)" />
 
                             <mat-error *ngIf="addUserForm?.controls.piezas?.errors?.required">
                                 Piezas máximas es <strong>requerido</strong>
@@ -93,9 +96,11 @@
                         <mat-form-field appearance="outline" class="custom-field magin-top-field">
                             <mat-label>Selecciona clasificación</mat-label>
                             <mat-select formControlName="classificationQFB">
-                                <mat-option value="MN">Bioelite (MN)</mat-option>
-                                <mat-option value="BE">Bioequal (BE)</mat-option>
-                                <mat-option value="MG">Magistral (MG)</mat-option>
+                                <ng-container *ngFor="let clasification of activeClasifications">
+                                    <mat-option [value]="clasification.value">
+                                        {{ clasification.description}}
+                                    </mat-option>
+                                </ng-container>
                             </mat-select>
                             <mat-error *ngIf="addUserForm.controls.classificationQFB.hasError('required')">
                                 Clasificación <strong>requerida</strong>
