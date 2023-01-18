@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import {ConsumeService} from './consume.service';
-import {IRolesRes, IUserListRes, IUserReq} from '../model/http/users';
-import {Endpoints} from '../../environments/endpoints';
+import { ConsumeService } from './consume.service';
+import { ClasificationsResponse, IRolesRes, IUserListRes, IUserReq } from '../model/http/users';
+import { Endpoints } from '../../environments/endpoints';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,8 @@ export class UsersService {
   }
   updateUser(user: IUserReq) {
     return this.consumeService.httpPut(Endpoints.users.update, user);
-
-}
+  }
+  getClasifications(): Observable<ClasificationsResponse> {
+    return this.consumeService.httpGet(Endpoints.users.getClasifications);
+  }
 }
