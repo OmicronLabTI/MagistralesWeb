@@ -13,11 +13,10 @@ namespace Omicron.SapDiApi.Facade.Sap
     using AutoMapper;
     using Omicron.SapDiApi.Dtos.Models;
     using Omicron.SapDiApi.Dtos.Models.Experience;
-    using Omicron.SapDiApi.Entities.Context;
     using Omicron.SapDiApi.Entities.Models;
     using Omicron.SapDiApi.Entities.Models.Experience;
     using Omicron.SapDiApi.Services.SapDiApi;
-    using SAPbobsCOM;
+
     public class SapFacade : ISapFacade
     {
         private readonly IMapper mapper;

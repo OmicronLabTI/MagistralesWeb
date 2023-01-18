@@ -410,6 +410,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     Products = localDetails.Count,
                     Status = ServiceConstants.Almacenado,
                     SaleOrderType = $"Pedido {productType}",
+                    IsPackage = s.IsPackage == ServiceConstants.IsPackage,
+                    IsOmigenomics = s.IsOmigenomics == ServiceConstants.IsOmigenomics,
                 });
             });
 

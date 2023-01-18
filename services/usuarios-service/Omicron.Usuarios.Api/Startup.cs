@@ -9,13 +9,13 @@
 namespace Omicron.Usuarios.Api
 {
     using System;
+    using Elastic.Apm.NetCoreAll;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
     using Omicron.Usuarios.Api.Filters;
     using Omicron.Usuarios.DependencyInjection;
@@ -23,7 +23,6 @@ namespace Omicron.Usuarios.Api
     using Omicron.Usuarios.Services.SapAdapter;
     using Prometheus;
     using Serilog;
-    using Serilog.Events;
     using StackExchange.Redis;
 
     /// <summary>
@@ -121,6 +120,7 @@ namespace Omicron.Usuarios.Api
         /// <param name="env">Hosting Environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseAllElasticApm(this.Configuration);
             app.UseSwagger(c =>
             {
                 var basepath = this.Configuration["SwaggerAddress"];

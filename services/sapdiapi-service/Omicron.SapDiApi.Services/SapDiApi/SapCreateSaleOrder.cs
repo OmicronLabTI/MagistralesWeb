@@ -74,14 +74,18 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                 order.DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial);
                 order.UserFields.Fields.Item("U_Pedido_DXP").Value = saleOrderModel.TransactionId;
                 order.UserFields.Fields.Item("U_Comentarios_Ecommerce").Value = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}" : string.Empty;
-                order.UserFields.Fields.Item("U_BXP_USOCFDI").Value = saleOrderModel.CfdiValue;
+                order.UserFields.Fields.Item("U_CFDI_Provisional").Value = saleOrderModel.CfdiValue;
                 order.UserFields.Fields.Item("U_BXP_METPAGO33").Value = saleOrderModel.PaymentMethodSapCode;
                 order.UserFields.Fields.Item("U_BXP_FORMAPAGO33").Value = saleOrderModel.WayToPaySapCode;
                 order.UserFields.Fields.Item("U_Pedido_Paquete").Value = saleOrderModel.IsPackage ? ServiceConstants.IsPackage : ServiceConstants.IsNotPackage;
                 order.UserFields.Fields.Item("U_DXPNEEDSSHIPCOST").Value = saleOrderModel.ShippingCost;
 
                 order.UserFields.Fields.Item("U_PedidoMuestra").Value = saleOrderModel.IsSample ? "Si" : "No";
-                order.UserFields.Fields.Item("U_Omigenomicstp").Value = saleOrderModel.IsOmigenomicsOrder ? "Y" : "N";
+
+                if(saleOrderModel.IsOmigenomicsOrder != null)
+                {
+                    order.UserFields.Fields.Item("U_Omigenomicstp").Value = (bool)saleOrderModel.IsOmigenomicsOrder ? "Y" : "N";
+                }
 
                 if (saleOrderModel.SlpCode != null)
                 {

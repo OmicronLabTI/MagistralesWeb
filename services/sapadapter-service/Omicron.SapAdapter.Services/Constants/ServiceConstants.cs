@@ -231,6 +231,21 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetUserOrderDeliveryId = "userorders/delivery/id";
 
         /// <summary>
+        /// Get the delivery orders.
+        /// </summary>
+        public const string GetUserOrdersByInvoicesIds = "getUserOrder/invoices";
+
+        /// <summary>
+        /// Get the delivery orders.
+        /// </summary>
+        public const string GetUserOrderByDeliveryOrder = "getUserOrder/deliveryOrders";
+
+        /// <summary>
+        /// Value  for the lines for invoice.
+        /// </summary>
+        public const string GetLineOrdersByInvoice = "getline/invoiceId";
+
+        /// <summary>
         /// Get the user orders for invoices.
         /// </summary>
         public const string GetUserOrderInvoice = "userorders/invoice";
@@ -274,6 +289,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// gets the address.
         /// </summary>
         public const string GetResponsibleDoctors = "doctor/responsibledoctorinfo";
+
+        /// <summary>
+        /// gets the address.
+        /// </summary>
+        public const string GetAcademicInfoDoctors = "doctor/academicdoctorinfo";
 
         /// <summary>
         /// gets the address.
@@ -568,12 +588,12 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// valor for Si.
         /// </summary>
-        public const string IsSampleOrder = "SI";
+        public const string IsSampleOrder = "Si";
 
         /// <summary>
         /// valor for No.
         /// </summary>
-        public const string IsNotSampleOrder = "NO";
+        public const string IsNotSampleOrder = "No";
 
         /// <summary>
         /// value for refactua.

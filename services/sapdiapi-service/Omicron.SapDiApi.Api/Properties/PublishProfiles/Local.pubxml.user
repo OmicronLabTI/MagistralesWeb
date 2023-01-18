@@ -6,181 +6,183 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <_PublishTargetUrl>C:\Publish\AssortmentServices</_PublishTargetUrl>
+    <History>True|2023-01-04T19:58:43.1577029Z;True|2023-01-04T13:07:58.5641501-06:00;</History>
+    <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/AnnTaylor.Assortment.Services.XML">
-      <publishTime>09/07/2022 11:48:49</publishTime>
+      <publishTime>01/04/2023 13:56:45</publishTime>
     </File>
     <File Include="bin/AutoMapper.dll">
-      <publishTime>08/25/2020 18:35:49</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/EntityFramework.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/EntityFramework.SqlServer.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.Agent.Intercept.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.DependencyCollector.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.PerfCounterCollector.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.ServerTelemetryChannel.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.Web.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.WindowsServer.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.ApplicationInsights.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.AspNet.TelemetryCorrelation.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.Azure.KeyVault.Core.dll">
-      <publishTime>11/04/2021 10:07:04</publishTime>
+      <publishTime>10/05/2022 16:03:50</publishTime>
     </File>
     <File Include="bin/Microsoft.Azure.Storage.Blob.dll">
-      <publishTime>11/04/2021 10:07:04</publishTime>
+      <publishTime>10/05/2022 16:03:50</publishTime>
     </File>
     <File Include="bin/Microsoft.Azure.Storage.Common.dll">
-      <publishTime>11/04/2021 10:07:04</publishTime>
+      <publishTime>10/05/2022 16:03:50</publishTime>
     </File>
     <File Include="bin/Microsoft.IO.RecyclableMemoryStream.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.Owin.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.Owin.Host.SystemWeb.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.Practices.ServiceLocation.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.Practices.ServiceLocation.pdb">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Microsoft.Web.Infrastructure.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Newtonsoft.Json.dll">
-      <publishTime>08/25/2020 18:35:51</publishTime>
+      <publishTime>10/05/2022 16:03:52</publishTime>
     </File>
     <File Include="bin/NLog.config">
-      <publishTime>08/25/2020 18:35:48</publishTime>
+      <publishTime>10/05/2022 16:03:50</publishTime>
     </File>
     <File Include="bin/NLog.dll">
-      <publishTime>08/25/2020 18:35:49</publishTime>
+      <publishTime>10/05/2022 16:03:50</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Api.dll">
-      <publishTime>09/07/2022 11:48:49</publishTime>
+      <publishTime>01/04/2023 13:56:45</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Api.pdb">
-      <publishTime>09/07/2022 11:48:49</publishTime>
+      <publishTime>01/04/2023 13:56:45</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Dtos.dll">
-      <publishTime>09/07/2022 11:03:49</publishTime>
+      <publishTime>01/04/2023 13:55:42</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Dtos.pdb">
-      <publishTime>09/07/2022 11:03:49</publishTime>
+      <publishTime>01/04/2023 13:55:42</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Entities.dll">
-      <publishTime>09/07/2022 11:48:02</publishTime>
+      <publishTime>01/04/2023 13:55:56</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Entities.pdb">
-      <publishTime>09/07/2022 11:48:02</publishTime>
+      <publishTime>01/04/2023 13:55:56</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Facade.dll">
-      <publishTime>09/07/2022 11:48:24</publishTime>
+      <publishTime>01/04/2023 13:56:28</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Facade.dll.config">
-      <publishTime>09/02/2022 17:34:48</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Facade.pdb">
-      <publishTime>09/07/2022 11:48:24</publishTime>
+      <publishTime>01/04/2023 13:56:28</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Log.dll">
-      <publishTime>09/08/2021 13:06:17</publishTime>
+      <publishTime>01/04/2023 13:55:42</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Log.pdb">
-      <publishTime>09/08/2021 13:06:17</publishTime>
+      <publishTime>01/04/2023 13:55:42</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Services.dll">
-      <publishTime>09/07/2022 11:48:24</publishTime>
+      <publishTime>01/04/2023 13:56:12</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Services.dll.config">
-      <publishTime>09/02/2022 17:34:46</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Omicron.SapDiApi.Services.pdb">
-      <publishTime>09/07/2022 11:48:24</publishTime>
+      <publishTime>01/04/2023 13:56:12</publishTime>
     </File>
     <File Include="bin/Owin.dll">
-      <publishTime>08/25/2020 18:35:51</publishTime>
+      <publishTime>10/05/2022 16:03:52</publishTime>
     </File>
     <File Include="bin/System.Diagnostics.DiagnosticSource.dll">
-      <publishTime>08/25/2020 18:35:51</publishTime>
+      <publishTime>10/05/2022 16:03:52</publishTime>
     </File>
     <File Include="bin/System.Net.Http.Formatting.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/System.Runtime.CompilerServices.Unsafe.dll">
-      <publishTime>08/25/2020 18:35:49</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/System.Threading.Tasks.Extensions.dll">
       <publishTime>11/29/2018 15:39:20</publishTime>
     </File>
     <File Include="bin/System.Web.Helpers.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/System.Web.Http.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/System.Web.Http.Owin.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/System.Web.Http.WebHost.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/System.Web.Mvc.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/System.Web.Razor.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/System.Web.WebPages.Deployment.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/System.Web.WebPages.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/System.Web.WebPages.Razor.dll">
-      <publishTime>08/25/2020 18:35:50</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Unity.Abstractions.dll">
-      <publishTime>08/25/2020 18:35:49</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Unity.Abstractions.pdb">
-      <publishTime>08/25/2020 18:35:49</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Unity.Container.dll">
-      <publishTime>08/25/2020 18:35:49</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="bin/Unity.Container.pdb">
-      <publishTime>08/25/2020 18:35:49</publishTime>
+      <publishTime>10/05/2022 16:03:51</publishTime>
     </File>
     <File Include="NLog.config">
-      <publishTime>08/25/2020 18:35:48</publishTime>
+      <publishTime>10/05/2022 16:03:50</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>09/06/2022 12:53:11</publishTime>
+      <publishTime>01/04/2023 13:58:42</publishTime>
     </File>
   </ItemGroup>
 </Project>

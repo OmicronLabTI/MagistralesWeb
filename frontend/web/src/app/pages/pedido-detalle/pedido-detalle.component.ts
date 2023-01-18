@@ -17,7 +17,8 @@ import {
   RolesType,
   RouterPaths,
   TypeToSeeTap,
-  constRealLabel
+  constRealLabel,
+  CatalogTypes
 } from '../../constants/const';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
@@ -87,7 +88,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     public localStorageService: LocalStorageService,
     private messagesService: MessagesService,
     private filtersService: FiltersService,
-    ) {
+  ) {
     this.observableService.setUrlActive(HttpServiceTOCall.DETAIL_ORDERS);
   }
 
@@ -347,10 +348,15 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   getArrayToFinishLabel(isFromRemoveSignature: boolean, index?: number) {
+    const invalidCatalogGroups = [CatalogTypes.dermazone.toUpperCase(),
+    CatalogTypes.magistralDermocos.toUpperCase(),
+    CatalogTypes.magistralMedicament.toUpperCase()];
     if (!isFromRemoveSignature) {
       return this.dataSource.data.filter(order => order.isChecked &&
         (order.status !== ConstStatus.abierto && order.status !== ConstStatus.cancelado)
-        && order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value && order.finishedLabel !== 1)
+        && (order.codigoProducto.split(' ')[0] !== this.ProductNoLabel.value
+          || !invalidCatalogGroups.includes(order.catalogGroup.toUpperCase()))
+        && order.finishedLabel !== 1)
         .map(order => {
           const labelToFinish = new LabelToFinish();
           labelToFinish.orderId = order.ordenFabricacionId;
@@ -488,6 +494,6 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
     this.ProductNoLabel = this.localStorageService.getProductNoLabel();
   }
 
-  donothing() {}
+  donothing() { }
 }
 

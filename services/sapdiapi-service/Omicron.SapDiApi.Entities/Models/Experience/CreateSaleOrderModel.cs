@@ -137,7 +137,7 @@ namespace Omicron.SapDiApi.Entities.Models.Experience
         /// Gets or sets a value indicating whether the order is omigenomics.
         /// </summary>
         /// <value>Omigenomics value.</value>
-        public bool IsOmigenomicsOrder { get; set; }
+        public bool? IsOmigenomicsOrder { get; set; }
 
         /// <summary>
         /// Gets or sets the adviser id.

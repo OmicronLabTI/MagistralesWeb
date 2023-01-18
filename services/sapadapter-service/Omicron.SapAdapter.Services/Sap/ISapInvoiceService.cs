@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Services.Sap
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 
@@ -33,11 +34,13 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetInvoiceDetail(int invoice);
 
         /// <summary>
-        /// Get the invoice products.
+        /// Gets the orders.
         /// </summary>
-        /// <param name="invoiceId">the invoice id.</param>
+        /// <param name="invoiceId">The invoice Id.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="deliveriesIds">The deliveriesIds.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetInvoiceProducts(int invoiceId);
+        Task<ResultModel> GetInvoiceProducts(int invoiceId, string type, List<int> deliveriesIds);
 
         /// <summary>
         /// Gets the data of the delivey.
