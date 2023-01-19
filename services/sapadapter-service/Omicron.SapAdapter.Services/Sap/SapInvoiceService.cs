@@ -379,7 +379,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var pickupOffcieInt = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(invoiceHeader.IsDeliveredInOffice) && invoiceHeader.IsDeliveredInOffice == "Y", 0, 1);
             var dxpTransaction = ServiceShared.CalculateTernary(string.IsNullOrEmpty(invoiceHeader.DocNumDxp), string.Empty, invoiceHeader.DocNumDxp);
-            var dxpTransactions = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, new List<string> { dxpTransaction })).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == invoiceHeader.DocNumDxp);
+            var dxpTransactions = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, new List<string> { dxpTransaction })).FirstOrDefault(p => ServiceShared.ValidateShopTransaction(p.TransactionId, invoiceHeader.DocNumDxp));
             dxpTransactions ??= new PaymentsDto { ShippingCostAccepted = pickupOffcieInt, DeliveryComments = string.Empty, DeliverySuggestedTime = string.Empty };
 
             var addressesResponse = await this.doctorService.PostDoctors(new GetDoctorAddressModel { CardCode = invoiceHeader.CardCode, AddressId = invoiceHeader.ShippingAddressName }, ServiceConstants.GetDoctorAddress);

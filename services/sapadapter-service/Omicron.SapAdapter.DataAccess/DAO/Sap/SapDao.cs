@@ -101,7 +101,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
                          join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
                          join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                         where order.DocNumDxp == docNumDxp && producto.IsMagistral == "Y"
+                         where (order.DocNumDxp == docNumDxp || order.DocNumDxp.Contains(docNumDxp)) && producto.IsMagistral == "Y"
                          select new CompleteOrderModel
                          {
                              DocNum = order.DocNum,
@@ -1234,9 +1234,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByDocNumDxpJoinProduct(List<string> DocNumDxp)
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByDocNumDxpJoinProduct(string DocNumDxp)
         {
-            var query = this.GetAllOrdersWithDetailQuery().Where(o => DocNumDxp.Contains(o.DocNumDxp));
+            var query = this.GetAllOrdersWithDetailQuery().Where(o => o.DocNumDxp.Contains(DocNumDxp) || o.DocNumDxp == DocNumDxp);
             return await this.RetryQuery<CompleteOrderModel>(query);
         }
 
