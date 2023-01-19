@@ -13,34 +13,35 @@ import Resolver
 extension OrderDetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.selectionStyle = .none
-
         let colorDefault = indexPath.row % 2 == 0 ? OmicronColors.tableColorRow : .white
         let selected = self.orderDetailViewModel.indexDeleteExist(indexPath.row)
         let color = selected ? OmicronColors.processStatus : colorDefault
         cell.isSelected = selected
         cell.backgroundColor = color
     }
-   
     // Selected Cell
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        
+        if self.actionsIsEnabled(indexPath.row) {
+            self.orderDetailViewModel.addIndexDeleteTable(index: indexPath.row)
+        }
         let colorDefault = indexPath.row % 2 == 0 ? OmicronColors.tableColorRow : .white
-        self.orderDetailViewModel.addIndexDeleteTable(index: indexPath.row)
         let selected = self.orderDetailViewModel.indexDeleteExist(indexPath.row)
         let color = selected ? OmicronColors.processStatus : colorDefault
         cell.isSelected = selected
         cell.backgroundColor = color
-        
     }
-    
+
+    func actionsIsEnabled(_ index: Int) -> Bool {
+        (self.statusType == StatusNameConstants.inProcessStatus
+         || self.statusType == StatusNameConstants.reassignedStatus)
+        && (orderDetail.count > 0 && !(orderDetail[0].details?[index].hasBatches ?? true))
+    }
+
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
         -> UISwipeActionsConfiguration? {
-            if (self.statusType == StatusNameConstants.inProcessStatus ||
-                self.statusType == StatusNameConstants.reassignedStatus) &&
-                (orderDetail.count > 0 && !(orderDetail[0].details?[indexPath.row].hasBatches ?? true)) {
-
+            if self.actionsIsEnabled(indexPath.row) {
                 // Lógica para editar un item de la tabla
                 let editItem = UIContextualAction(
                 style: .normal, title: CommonStrings.edit) { [weak self] ( _, _, _) in
