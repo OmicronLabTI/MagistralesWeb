@@ -338,7 +338,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var userOrder = pedidos.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             var order = sapOrders.FirstOrDefault();
-            var payment = payments.FirstOrDefault(p => p.TransactionId.GetSubtransaction() == order.DocNumDxp);
+            var payment = payments.FirstOrDefault(p => ServiceShared.ValidateShopTransaction(p.TransactionId, order.DocNumDxp));
             payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
             var invoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, order.Address, payment);
 

@@ -98,7 +98,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var pedidosResponse = await this.pedidosService.PostPedidos(saleOrders, ServiceConstants.GetUserSalesOrder);
             var pedidos = JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
             var transactionsIds = deliveryDetails.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
-            var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).FirstOrDefault(p => p.TransactionId.GetSubtransaction() == deliveryDetails.First().DocNumDxp);
+            var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).FirstOrDefault(p => ServiceShared.ValidateShopTransaction(p.TransactionId, deliveryDetails.First().DocNumDxp));
             payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
 
             var addressesToFind = deliveryDetails.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.DeliveryAddressId }).DistinctBy(x => x.CardCode).ToList();
@@ -535,7 +535,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="validBatches">the valid batches.</param>
         /// <param name="batchName">the batches from sales.</param>
         /// <returns>the data.</returns>
-        private List<string> GetBatchesByDelivery(string itemCode, List<BatchesTransactionQtyModel> batchTrans, List<CompleteBatchesJoinModel> validBatches,  List<AlmacenBatchModel> batchName)
+        private List<string> GetBatchesByDelivery(string itemCode, List<BatchesTransactionQtyModel> batchTrans, List<CompleteBatchesJoinModel> validBatches, List<AlmacenBatchModel> batchName)
         {
             var batchTransLocal = batchTrans.Where(x => x.ItemCode == itemCode).ToList();
             var batchesToLoop = validBatches.Where(x => ServiceShared.CalculateAnd(batchTransLocal.Any(y => y.SysNumber == x.SysNumber), x.ItemCode == itemCode)).ToList();

@@ -177,13 +177,29 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
-        /// Calculates the "or´s" conditions.
+        /// Calculates the short shop transaction.
         /// </summary>
-        /// <param name="transactionId">the transactionid.</param>
-        /// <returns>the data.</returns>
-        public static string GetSubtransaction(this string transactionId)
+        /// <param name="transactionId">Transaction id.</param>
+        /// <returns>Short shop transaction.</returns>
+        public static string GetShortShopTransaction(this string transactionId)
         {
-            return transactionId.Substring(transactionId.Length - 6, 6);
+            if (!string.IsNullOrEmpty(transactionId))
+            {
+                return string.Empty;
+            }
+
+            return transactionId[^ServiceConstants.DigitsForShortShopTransaction..];
+        }
+
+        /// <summary>
+        /// Validate shop transaction.
+        /// </summary>
+        /// <param name="transactionId">Transaction id.</param>
+        /// <param name="transactionIdToLook">Transaction id to look.</param>
+        /// <returns>the data.</returns>
+        public static bool ValidateShopTransaction(string transactionId, string transactionIdToLook)
+        {
+            return CalculateOr(transactionId.Equals(transactionIdToLook), transactionId.GetShortShopTransaction().Equals(transactionIdToLook));
         }
 
         /// <summary>
@@ -191,7 +207,7 @@ namespace Omicron.SapAdapter.Services.Utils
         /// </summary>
         /// <param name="proccessPayments">the proccess payments.</param>
         /// <param name="transactionsIds">th transactions ids.</param>
-        /// <returns>the data.</returns>
+        /// <returns>the data.</returns>+
         public static async Task<List<PaymentsDto>> GetPaymentsByTransactionsIds(IProccessPayments proccessPayments, List<string> transactionsIds)
         {
             var paymentsResponse = await proccessPayments.PostProccessPayments(transactionsIds, ServiceConstants.EndPointToGetPayments);
@@ -206,7 +222,7 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>data.</returns>
         public static PaymentsDto GetPaymentBydocNumDxp(this List<PaymentsDto> payments, string docNumDxp)
         {
-            var payment = payments.FirstOrDefault(p => p.TransactionId.GetSubtransaction() == docNumDxp);
+            var payment = payments.FirstOrDefault(p => p.TransactionId == docNumDxp);
             payment ??= new PaymentsDto { ShippingCostAccepted = ServiceConstants.ShippingCostAccepted, DeliveryComments = string.Empty, DeliverySuggestedTime = string.Empty };
             return payment;
         }
