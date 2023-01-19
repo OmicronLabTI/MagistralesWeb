@@ -640,7 +640,9 @@ class InboxViewController: UIViewController {
 
     func getNamesByOrder(productID: Int) -> Order? {
         let order = inboxViewModel.sectionOrders.first(where: { value -> Bool in
-            value.model == "Pedido: \(productID)"
+            value.items.first(where: { order in
+                order.baseDocument == productID
+            }) != nil
         })
         let orderSend = order?.items[0]
         orderSend?.baseDocument = productID
