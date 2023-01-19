@@ -194,21 +194,20 @@ class InboxViewController: UIViewController {
                     withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier,
                     for: indexPath) as? HeaderCollectionViewCell else { return HeaderCollectionViewCell() }
                 let headerText = dataSource.sectionModels[indexPath.section].identity
+                let orderTemp = dataSource.sectionModels[indexPath.section].items.first
                 header.productID.text = headerText
                 if headerText.contains(CommonStrings.orderTitile)  || headerText.contains(CommonStrings.shopTransaction) {
                     let productId = headerText
                         .components(separatedBy: CharacterSet.decimalDigits.inverted)
                         .joined()
-                    header.productId = Int(productId) ?? 0
+                    header.productId = Int(orderTemp?.baseDocument ?? 0)
                     header.delegate = self
                     header.pdfImageView.isHidden = false
                     header.patientListButton.isHidden = false
                     header.doctorName.isHidden = false
-                    if let order = self?.getNamesByOrder(productID: Int(productId) ?? 0 ) {
-                        let patientName = (order.patientName != "") ? "patientName" : "noPatientName"
-                        header.patientListButton.setImage(UIImage(named: patientName),for: .normal)
-                        header.doctorName.text = order.clientDxp
-                    }
+                    let patientName = (orderTemp != nil && orderTemp?.patientName != "" ) ? "patientName" : "noPatientName"
+                    header.patientListButton.setImage(UIImage(named: patientName),for: .normal)
+                    header.doctorName.text = orderTemp?.clientDxp
                 } else {
                     header.doctorName.isHidden = true
                     header.productId = 0
