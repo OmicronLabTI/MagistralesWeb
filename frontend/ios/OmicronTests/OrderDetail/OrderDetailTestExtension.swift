@@ -122,7 +122,7 @@ class OrderDetailTestExtension: XCTestCase {
                      XCTAssertEqual(res.count, 4)
                 }
             }).disposed(by: (self?.disposeBag)!)
-            self?.orderDetailViewModel?.deleteItemFromTable(index: index)
+            self?.orderDetailViewModel?.deleteItemFromTable(indexs: [index])
         }).disposed(by: self.disposeBag!)
     }
     func testDeleteItemFromTableWhenCodeIs500() {
@@ -137,7 +137,7 @@ class OrderDetailTestExtension: XCTestCase {
             }).disposed(by: (self?.disposeBag)!)
             self?.statusCode = 500
             self?.orderDetailViewModel?.networkManager = NetworkManager(provider: (self?.provider)!)
-            self?.orderDetailViewModel?.deleteItemFromTable(index: index)
+            self?.orderDetailViewModel?.deleteItemFromTable(indexs: [index])
         }).disposed(by: self.disposeBag!)
 
         orderDetailViewModel?.showAlert.subscribe(onNext: { res in
@@ -145,6 +145,6 @@ class OrderDetailTestExtension: XCTestCase {
         }).disposed(by: disposeBag!)
         statusCode = 500
         orderDetailViewModel?.networkManager = NetworkManager(provider: provider)
-        orderDetailViewModel?.deleteItemFromTable(index: index)
+        orderDetailViewModel?.deleteItemFromTable(indexs: [index])
     }
 }

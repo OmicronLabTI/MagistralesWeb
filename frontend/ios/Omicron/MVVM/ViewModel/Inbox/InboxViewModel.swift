@@ -32,7 +32,9 @@ class InboxViewModel {
     var pendingButtonIsEnable = PublishSubject<Bool>()
     var hideGroupingButtons = PublishSubject<Bool>()
     var groupByOrderNumberButtonDidTap = PublishSubject<Void>()
+    var groupByShopTransactionButtonDidTap = PublishSubject<Void>()
     var groupedByOrderNumberIsEnable = PublishSubject<Bool>()
+    var groupedByShopTransactionIsEnable = PublishSubject<Bool>()
     var showKPIView = PublishSubject<Bool>()
     var viewKPIDidPressed = PublishSubject<Void>()
     var deselectRow = PublishSubject<Bool>()
@@ -76,7 +78,9 @@ class InboxViewModel {
         normalViewButtonDidTapBinding()
         // Funcionalidad para mostra la vista ordenada número de orden
         groupByOrderNumberButtonDidTapBinding()
-
+        //  Action para ordenado por shopTransaction
+        groupByShopTransactionButtonDidTapBinding()
+        
         initExtension()
     }
 
@@ -149,7 +153,25 @@ class InboxViewModel {
             self.similarityViewButtonIsEnable.onNext(true)
             self.normalViewButtonIsEnable.onNext(false)
             self.groupedByOrderNumberIsEnable.onNext(true)
+            self.groupedByShopTransactionIsEnable.onNext(true)
             self.changeStatusSort(normal: true, similarity: false, grouped: false)
+            self.resetData.onNext(())
+        }).disposed(by: self.disposeBag)
+    }
+    
+    func groupByShopTransactionButtonDidTapBinding(){
+        groupByShopTransactionButtonDidTap.subscribe(onNext: {[weak self] _ in
+            guard let self = self else { return }
+            self.processButtonIsEnable.onNext(false)
+            self.pendingButtonIsEnable.onNext(false)
+            let ordersGroupedAndSorted = self.sortOrderShopTransactionView()
+            self.sectionOrders = ordersGroupedAndSorted
+            self.statusDataGrouped.onNext(ordersGroupedAndSorted)
+            self.normalViewButtonIsEnable.onNext(true)
+            self.similarityViewButtonIsEnable.onNext(true)
+            self.groupedByOrderNumberIsEnable.onNext(true)
+            self.groupedByShopTransactionIsEnable.onNext(false)
+            self.changeStatusSort(normal: false, similarity: false, grouped: true)
             self.resetData.onNext(())
         }).disposed(by: self.disposeBag)
     }
@@ -165,6 +187,7 @@ class InboxViewModel {
             self.normalViewButtonIsEnable.onNext(true)
             self.similarityViewButtonIsEnable.onNext(true)
             self.groupedByOrderNumberIsEnable.onNext(false)
+            self.groupedByShopTransactionIsEnable.onNext(true)
             self.changeStatusSort(normal: false, similarity: false, grouped: true)
             self.resetData.onNext(())
         }).disposed(by: self.disposeBag)
@@ -219,6 +242,30 @@ class InboxViewModel {
             dataGroupedByBaseDocument = Dictionary(grouping: self.ordersTemp,
                                                    by: { "\($0.baseDocument ?? 0)" })
             ordersGroupedAndSorted.append(contentsOf: self.groupedByOrderNumber(data: dataGroupedByBaseDocument))
+        }
+        return ordersGroupedAndSorted
+    }
+    
+    // Short by ShopTransaccion
+    func sortOrderShopTransactionView() -> [SectionModel<String, Order>] {
+        var ordersGroupedAndSorted: [SectionModel<String, Order>] = []
+        var dataGroupedByShopTransaction: [String: [Order]] = [:]
+        if self.currentSection.statusName == StatusNameConstants.inProcessStatus ||
+            self.currentSection.statusName == StatusNameConstants.reassignedStatus {
+            let ordersReadyToFinish =
+                Dictionary(grouping:
+                            self.ordersTemp
+                            .filter({ $0.areBatchesComplete == true}), by: { $0.shopTransaction ?? "" })
+            let ordersNotReadyToFinish =
+                Dictionary(
+                    grouping: self.ordersTemp
+                        .filter({ $0.areBatchesComplete == false}), by: { $0.shopTransaction ?? "" })
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByShopTransaction(data: ordersReadyToFinish))
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByShopTransaction(data: ordersNotReadyToFinish))
+        } else {
+            dataGroupedByShopTransaction = Dictionary(grouping: self.ordersTemp,
+                                                   by: { $0.shopTransaction ?? "" })
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByShopTransaction(data: dataGroupedByShopTransaction))
         }
         return ordersGroupedAndSorted
     }

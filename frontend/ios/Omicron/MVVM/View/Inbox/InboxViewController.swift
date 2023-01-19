@@ -24,6 +24,7 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var similarityViewButton: UIButton!
     @IBOutlet weak var normalViewButton: UIButton!
     @IBOutlet weak var groupByOrderNumberButton: UIButton!
+    @IBOutlet weak var groupByShopTransactionButton: UIButton!
     @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
     @IBOutlet weak var chartViewContainer: UIView!
     @IBOutlet weak var cardsView: UIView!
@@ -193,21 +194,20 @@ class InboxViewController: UIViewController {
                     withReuseIdentifier: ViewControllerIdentifiers.headerReuseIdentifier,
                     for: indexPath) as? HeaderCollectionViewCell else { return HeaderCollectionViewCell() }
                 let headerText = dataSource.sectionModels[indexPath.section].identity
+                let orderTemp = dataSource.sectionModels[indexPath.section].items.first
                 header.productID.text = headerText
-                if headerText.contains(CommonStrings.orderTitile) {
+                if headerText.contains(CommonStrings.orderTitile)  || headerText.contains(CommonStrings.shopTransaction) {
                     let productId = headerText
                         .components(separatedBy: CharacterSet.decimalDigits.inverted)
                         .joined()
-                    header.productId = Int(productId) ?? 0
+                    header.productId = Int(orderTemp?.baseDocument ?? 0)
                     header.delegate = self
                     header.pdfImageView.isHidden = false
                     header.patientListButton.isHidden = false
                     header.doctorName.isHidden = false
-                    if let order = self?.getNamesByOrder(productID: Int(productId) ?? 0 ) {
-                        let patientName = (order.patientName != "") ? "patientName" : "noPatientName"
-                        header.patientListButton.setImage(UIImage(named: patientName),for: .normal)
-                        header.doctorName.text = order.clientDxp
-                    }
+                    let patientName = (orderTemp != nil && orderTemp?.patientName != "" ) ? "patientName" : "noPatientName"
+                    header.patientListButton.setImage(UIImage(named: patientName),for: .normal)
+                    header.doctorName.text = orderTemp?.clientDxp
                 } else {
                     header.doctorName.isHidden = true
                     header.productId = 0
@@ -282,6 +282,13 @@ class InboxViewController: UIViewController {
             self.showMoreIndicators()
             self.goToTop()
         }).disposed(by: self.disposeBag)
+        
+        inboxViewModel.groupedByShopTransactionIsEnable.subscribe(onNext: { [weak self] isEnabled in
+            guard let self = self else { return }
+            self.groupByShopTransactionButton.isEnabled = isEnabled
+            self.showMoreIndicators()
+            self.goToTop()
+        }).disposed(by: self.disposeBag)
         // Oculta o muestra los botones de agrupamiento cuando se se realiza una búsqueda
         inboxViewModel.hideGroupingButtons.subscribe(onNext: { [weak self] isHidden in
             guard let self = self else { return }
@@ -334,7 +341,8 @@ class InboxViewController: UIViewController {
             processButton.rx.tap.bind(to: inboxViewModel.processDidTap),
             similarityViewButton.rx.tap.bind(to: inboxViewModel.similarityViewButtonDidTap),
             normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewButtonDidTap),
-            groupByOrderNumberButton.rx.tap.bind(to: inboxViewModel.groupByOrderNumberButtonDidTap)
+            groupByOrderNumberButton.rx.tap.bind(to: inboxViewModel.groupByOrderNumberButtonDidTap),
+            groupByShopTransactionButton.rx.tap.bind(to: inboxViewModel.groupByShopTransactionButtonDidTap)
         ].forEach({ $0.disposed(by: disposeBag) })
         order.bind(to: inboxViewModel.selectOrder).disposed(by: disposeBag)
         selectedRowBinding()
@@ -632,13 +640,14 @@ class InboxViewController: UIViewController {
 
     func getNamesByOrder(productID: Int) -> Order? {
         let order = inboxViewModel.sectionOrders.first(where: { value -> Bool in
-            value.model == "Pedido: \(productID)"
+            value.items.first(where: { order in
+                order.baseDocument == productID
+            }) != nil
         })
         let orderSend = order?.items[0]
         orderSend?.baseDocument = productID
         return orderSend
     }
-
 }
 
 // MARK: Extencions

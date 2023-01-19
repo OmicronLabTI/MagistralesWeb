@@ -51,8 +51,6 @@ class PatientListViewController: UIViewController, UITableViewDataSource, UITabl
         var cell = tableView.dequeueReusableCell(withIdentifier: "PatientListTableViewCell", for: indexPath)
         let name = list[indexPath.row]
         cell.textLabel?.text = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        // cell.nameLabel?.backgroundColor = .black
-        print(name.trimmingCharacters(in: .whitespacesAndNewlines))
         return cell
     }
 
