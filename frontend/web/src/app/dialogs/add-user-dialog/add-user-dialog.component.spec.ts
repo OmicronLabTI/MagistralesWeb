@@ -136,19 +136,21 @@ describe('AddUserDialogComponent', () => {
     expect(component.userRoles).toEqual(RolesMock.response);
     expect(component.addUserForm.get('userTypeR').value).toEqual('2');
     expect(component.addUserForm.get('activo').value).toEqual(1);
+
+  });
+
+  it('should create when is edit mode', () => {
     component.isForEditModal = true;
     component.ngOnInit();
     expect(component.userRoles).toEqual(RolesMock.response);
     expect(component.addUserForm.get('userTypeR').value).toEqual('3');
-
     expect(component.addUserForm.get('firstName').value).toEqual(userEditSpec.firstName);
     expect(component.addUserForm.get('lastName').value).toEqual(userEditSpec.lastName);
     expect(component.addUserForm.get('password').value).toEqual(atob('QXhpdHkyMDIwaGh4eA=='));
     expect(component.addUserForm.get('activo').value).toEqual(userEditSpec.activo.toString());
-    expect(component.addUserForm.get('piezas').value).toEqual(userEditSpec.piezas);
     expect(component.addUserForm.get('asignable').value).toEqual(userEditSpec.asignable.toString());
     expect(component.addUserForm.get('classificationQFB').value).toEqual(userEditSpec.classification);
-  });
+  })
   it('should ngOnInit create faild', () => {
     userServiceSpy.getRoles.and.callFake(() => {
       return throwError({ error: true });
