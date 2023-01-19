@@ -414,14 +414,18 @@
 		7CF2EA3824F6C6330005602F /* SignaturePadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF2EA3724F6C6330005602F /* SignaturePadViewController.swift */; };
 		7CF2EA3A24F6C6500005602F /* SignaturePadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF2EA3924F6C6500005602F /* SignaturePadViewModel.swift */; };
 		7CF2EA3C24F6C66B0005602F /* SignaturePadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF2EA3B24F6C66B0005602F /* SignaturePadModel.swift */; };
+		7F3FBFF22975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */; };
+		7F3FBFF32975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */; };
+		7F3FBFF42975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */; };
+		7F3FBFF52975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */; };
+		7F3FBFF72977ED4B00C6EA3F /* PatientListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3FBFF62977ED4A00C6EA3F /* PatientListTableViewCell.swift */; };
+		7F3FBFF82977ED4B00C6EA3F /* PatientListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3FBFF62977ED4A00C6EA3F /* PatientListTableViewCell.swift */; };
+		7F3FBFF92977ED4B00C6EA3F /* PatientListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3FBFF62977ED4A00C6EA3F /* PatientListTableViewCell.swift */; };
+		7F3FBFFA2977ED4B00C6EA3F /* PatientListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3FBFF62977ED4A00C6EA3F /* PatientListTableViewCell.swift */; };
 		7F4FFECB292EA1DC00428501 /* PatientListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */; };
 		7F4FFECC292EA1DC00428501 /* PatientListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */; };
 		7F4FFECD292EA1DC00428501 /* PatientListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */; };
 		7F4FFECE292EA1DC00428501 /* PatientListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */; };
-		7F4FFED0292EA1F000428501 /* PatientListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECF292EA1F000428501 /* PatientListTableViewCell.swift */; };
-		7F4FFED1292EA1F000428501 /* PatientListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECF292EA1F000428501 /* PatientListTableViewCell.swift */; };
-		7F4FFED2292EA1F000428501 /* PatientListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECF292EA1F000428501 /* PatientListTableViewCell.swift */; };
-		7F4FFED3292EA1F000428501 /* PatientListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECF292EA1F000428501 /* PatientListTableViewCell.swift */; };
 		9719266841FFCA3A47C03F7D /* Pods_Omicron_OmicronUAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 264FF1FB957F8628A24ED936 /* Pods_Omicron_OmicronUAT.framework */; };
 		98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CAF24AFBC6C00E7772F /* AppDelegate.swift */; };
 		98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CB124AFBC6C00E7772F /* SceneDelegate.swift */; };
@@ -592,8 +596,9 @@
 		7CF2EA3924F6C6500005602F /* SignaturePadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadViewModel.swift; sourceTree = "<group>"; };
 		7CF2EA3B24F6C66B0005602F /* SignaturePadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePadModel.swift; sourceTree = "<group>"; };
 		7D79BEA8926B484FFA4B0247 /* Pods_Omicron_Omicron_QA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_Omicron_QA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewTable.swift; sourceTree = "<group>"; };
+		7F3FBFF62977ED4A00C6EA3F /* PatientListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientListTableViewCell.swift; sourceTree = "<group>"; };
 		7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientListViewController.swift; sourceTree = "<group>"; };
-		7F4FFECF292EA1F000428501 /* PatientListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientListTableViewCell.swift; sourceTree = "<group>"; };
 		7FB342D1D6AD96AF4C8DAA0E /* Pods_OmicronTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OmicronTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		942B27E76651174E700E02BA /* Pods-Omicron-OmicronUAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUAT.debug.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUAT/Pods-Omicron-OmicronUAT.debug.xcconfig"; sourceTree = "<group>"; };
 		98015CAC24AFBC6C00E7772F /* OmicronLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmicronLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1031,6 +1036,7 @@
 			children = (
 				7CB6735D24E1D4D60072F2F6 /* CustomCell */,
 				7CB6332124DDCBAE0055425C /* OrderDetailViewController.swift */,
+				7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */,
 			);
 			path = OrderDetail;
 			sourceTree = "<group>";
@@ -1078,8 +1084,8 @@
 		7F4FFEC9292EA1A400428501 /* PatientList */ = {
 			isa = PBXGroup;
 			children = (
+				7F3FBFF62977ED4A00C6EA3F /* PatientListTableViewCell.swift */,
 				7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */,
-				7F4FFECF292EA1F000428501 /* PatientListTableViewCell.swift */,
 			);
 			path = PatientList;
 			sourceTree = "<group>";
@@ -2013,7 +2019,6 @@
 				490B697E268E98ED00DBE9F1 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				490B697F268E98ED00DBE9F1 /* NetworkManager.swift in Sources */,
 				490B6980268E98ED00DBE9F1 /* DetailTableViewCell.swift in Sources */,
-				7F4FFED3292EA1F000428501 /* PatientListTableViewCell.swift in Sources */,
 				490B6981268E98ED00DBE9F1 /* ChartCollectionViewCell.swift in Sources */,
 				490B6982268E98ED00DBE9F1 /* Utils.swift in Sources */,
 				490B6983268E98ED00DBE9F1 /* FileManager.swift in Sources */,
@@ -2025,6 +2030,7 @@
 				490B6989268E98ED00DBE9F1 /* ComponentFormViewController.swift in Sources */,
 				490B698A268E98ED00DBE9F1 /* ComponentsTableViewCell.swift in Sources */,
 				490B698B268E98ED00DBE9F1 /* AppDelegate.swift in Sources */,
+				7F3FBFF52975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */,
 				490B698C268E98ED00DBE9F1 /* AlertManager.swift in Sources */,
 				490B698D268E98ED00DBE9F1 /* ChartViewController.swift in Sources */,
 				490B698E268E98ED00DBE9F1 /* LottieManager.swift in Sources */,
@@ -2055,6 +2061,7 @@
 				490B69A5268E98ED00DBE9F1 /* InboxViewController.swift in Sources */,
 				490B69A6268E98ED00DBE9F1 /* Config.swift in Sources */,
 				490B69A7268E98ED00DBE9F1 /* RootModel.swift in Sources */,
+				7F3FBFFA2977ED4B00C6EA3F /* PatientListTableViewCell.swift in Sources */,
 				7F4FFECE292EA1DC00428501 /* PatientListViewController.swift in Sources */,
 				490B69A8268E98ED00DBE9F1 /* InboxModel.swift in Sources */,
 				490B69A9268E98ED00DBE9F1 /* PDFViewController.swift in Sources */,
@@ -2091,7 +2098,6 @@
 				49CF65C025F2D4AB002CD598 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				49CF65C125F2D4AB002CD598 /* NetworkManager.swift in Sources */,
 				49CF65C225F2D4AB002CD598 /* DetailTableViewCell.swift in Sources */,
-				7F4FFED1292EA1F000428501 /* PatientListTableViewCell.swift in Sources */,
 				383DD58A25F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
 				49CF65C325F2D4AB002CD598 /* Utils.swift in Sources */,
 				49CF65C425F2D4AB002CD598 /* FileManager.swift in Sources */,
@@ -2103,6 +2109,7 @@
 				49CF65CA25F2D4AB002CD598 /* ComponentFormViewController.swift in Sources */,
 				49CF65CB25F2D4AB002CD598 /* ComponentsTableViewCell.swift in Sources */,
 				49CF65CC25F2D4AB002CD598 /* AppDelegate.swift in Sources */,
+				7F3FBFF32975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */,
 				49CF65CD25F2D4AB002CD598 /* AlertManager.swift in Sources */,
 				49CF65CE25F2D4AB002CD598 /* ChartViewController.swift in Sources */,
 				49CF65CF25F2D4AB002CD598 /* LottieManager.swift in Sources */,
@@ -2133,6 +2140,7 @@
 				49CF65E625F2D4AB002CD598 /* InboxViewController.swift in Sources */,
 				49CF65E725F2D4AB002CD598 /* Config.swift in Sources */,
 				49CF65E825F2D4AB002CD598 /* RootModel.swift in Sources */,
+				7F3FBFF82977ED4B00C6EA3F /* PatientListTableViewCell.swift in Sources */,
 				7F4FFECC292EA1DC00428501 /* PatientListViewController.swift in Sources */,
 				49CF65E925F2D4AB002CD598 /* InboxModel.swift in Sources */,
 				49CF65EA25F2D4AB002CD598 /* PDFViewController.swift in Sources */,
@@ -2169,7 +2177,6 @@
 				49CF664325F2D821002CD598 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				49CF664425F2D821002CD598 /* NetworkManager.swift in Sources */,
 				49CF664525F2D821002CD598 /* DetailTableViewCell.swift in Sources */,
-				7F4FFED2292EA1F000428501 /* PatientListTableViewCell.swift in Sources */,
 				383DD58B25F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
 				49CF664625F2D821002CD598 /* Utils.swift in Sources */,
 				49CF664725F2D821002CD598 /* FileManager.swift in Sources */,
@@ -2181,6 +2188,7 @@
 				49CF664D25F2D821002CD598 /* ComponentFormViewController.swift in Sources */,
 				49CF664E25F2D821002CD598 /* ComponentsTableViewCell.swift in Sources */,
 				49CF664F25F2D821002CD598 /* AppDelegate.swift in Sources */,
+				7F3FBFF42975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */,
 				49CF665025F2D821002CD598 /* AlertManager.swift in Sources */,
 				49CF665125F2D821002CD598 /* ChartViewController.swift in Sources */,
 				49CF665225F2D821002CD598 /* LottieManager.swift in Sources */,
@@ -2211,6 +2219,7 @@
 				49CF666925F2D821002CD598 /* InboxViewController.swift in Sources */,
 				49CF666A25F2D821002CD598 /* Config.swift in Sources */,
 				49CF666B25F2D821002CD598 /* RootModel.swift in Sources */,
+				7F3FBFF92977ED4B00C6EA3F /* PatientListTableViewCell.swift in Sources */,
 				7F4FFECD292EA1DC00428501 /* PatientListViewController.swift in Sources */,
 				49CF666C25F2D821002CD598 /* InboxModel.swift in Sources */,
 				49CF666D25F2D821002CD598 /* PDFViewController.swift in Sources */,
@@ -2247,7 +2256,6 @@
 				1E85E51D25224505007636E8 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				98C8C04024AFCE3500018A88 /* NetworkManager.swift in Sources */,
 				7CB6736024E1D51D0072F2F6 /* DetailTableViewCell.swift in Sources */,
-				7F4FFED0292EA1F000428501 /* PatientListTableViewCell.swift in Sources */,
 				383DD58925F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
 				7CB6332824DDEE3F0055425C /* Utils.swift in Sources */,
 				7CCC6A4824F880E200ACBBE8 /* FileManager.swift in Sources */,
@@ -2259,6 +2267,7 @@
 				989391D9250AE174004750D8 /* ComponentFormViewController.swift in Sources */,
 				7C7DDC73251007760049B43C /* ComponentsTableViewCell.swift in Sources */,
 				98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */,
+				7F3FBFF22975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */,
 				7CED3DA324DC0FBA00C52225 /* AlertManager.swift in Sources */,
 				1EF0321C25192C5C0040DC65 /* ChartViewController.swift in Sources */,
 				98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */,
@@ -2289,6 +2298,7 @@
 				7CE216D224CB9553005A7FED /* InboxViewController.swift in Sources */,
 				98C8C03E24AFCC9200018A88 /* Config.swift in Sources */,
 				7C844BB024D2A0FC00D26B96 /* RootModel.swift in Sources */,
+				7F3FBFF72977ED4B00C6EA3F /* PatientListTableViewCell.swift in Sources */,
 				7F4FFECB292EA1DC00428501 /* PatientListViewController.swift in Sources */,
 				7CE216D624CB9588005A7FED /* InboxModel.swift in Sources */,
 				1E83B0732534F34C00755026 /* PDFViewController.swift in Sources */,
@@ -2495,7 +2505,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2718,7 +2728,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2744,7 +2754,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2929,7 +2939,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;

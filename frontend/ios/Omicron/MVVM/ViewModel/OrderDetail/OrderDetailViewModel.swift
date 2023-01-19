@@ -26,6 +26,8 @@ class OrderDetailViewModel {
     var finishedButtonDidTap = PublishSubject<Void>()
     var pendingButtonDidTap = PublishSubject<Void>()
     var seeLotsButtonDidTap = PublishSubject<Void>()
+    var deleteManyButtonDidTap = PublishSubject<Void>()
+    var deleteManyButtonIsEnable = BehaviorSubject<Bool>(value: false)
     var goToSeeLotsViewController = PublishSubject<Void>()
     let backToInboxView: PublishSubject<Void> = PublishSubject<Void>()
     var showIconComments = PublishSubject<String>()
@@ -39,6 +41,7 @@ class OrderDetailViewModel {
     var needsRefresh = true
     var changeColorLabelsHt = PublishSubject<Void>()
     var catalogGroup = String()
+    var itemSelectedDetail:[Int] = []
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
     // MARK: - Init
@@ -49,7 +52,8 @@ class OrderDetailViewModel {
         seeLotsBtnBinding()
     }
 
-    // MARK: - Functions
+    // MARK: - Functions Binding
+    // MARK: - FINISH BINDINGACTION
     func finishBtnActionBinding() {
         self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
@@ -57,6 +61,10 @@ class OrderDetailViewModel {
                 message: CommonStrings.doYouWantToFinishTheOrder, typeOfStatus: StatusNameConstants.finishedStatus)
             self.showAlertConfirmation.onNext(message)
         }).disposed(by: self.disposeBag)
+    }
+    // MARK: - DELETE MANY BUTTON BINDIND ACTION
+    func deleteItemsFromTableDidTap() {
+        self.deleteItemFromTable(indexs: self.itemSelectedDetail)
     }
 
     func processBtnBinding() {
@@ -179,21 +187,40 @@ class OrderDetailViewModel {
             print(error.localizedDescription)
             }).disposed(by: self.disposeBag)
     }
+    
+    func addIndexDeleteTable(index:Int)  {
+        let existIndex = itemSelectedDetail.firstIndex(where: { $0 == index })
+        if existIndex == nil  {
+            if itemSelectedDetail.count + 1 != auxTabledata.count {
+                itemSelectedDetail.append(index)
+            }
+        } else {
+            itemSelectedDetail.remove(at: existIndex!)
+        }
+        self.deleteManyButtonIsEnable.onNext(itemSelectedDetail.count>0)
+    }
+    
+    func indexDeleteExist(_ index:Int) -> Bool {
+        itemSelectedDetail.firstIndex(where: { $0 == index }) != nil
+    }
 
-    func deleteItemFromTable(index: Int) {
+    func deleteItemFromTable(indexs: [Int]) {
         self.loading.onNext(true)
-        let itemToDelete = auxTabledata[index]
-        let componets = [Component(
-                            orderFabID: itemToDelete.orderFabID ?? 0, productId: itemToDelete.productID ?? String(),
-                            componentDescription: itemToDelete.detailDescription ?? String(),
-                            baseQuantity: itemToDelete.baseQuantity ?? 0.0,
-                            requiredQuantity: itemToDelete.requiredQuantity ?? 0.0,
-                            consumed: itemToDelete.consumed ?? 0.0, available: itemToDelete.available ?? 0.0,
-                            unit: itemToDelete.unit ?? String(), warehouse: itemToDelete.warehouse ?? String(),
-                            pendingQuantity: itemToDelete.pendingQuantity ?? 0.0,
-                            stock: itemToDelete.stock ?? 0.0,
-                            warehouseQuantity: itemToDelete.warehouseQuantity ?? 0.0, action: Actions.delete.rawValue)]
-
+        let itemsToDelete = indexs.map { index in
+            auxTabledata[index]
+        }
+       let componets = itemsToDelete.map({ itemToDelete in
+            Component(
+                                orderFabID: itemToDelete.orderFabID ?? 0, productId: itemToDelete.productID ?? String(),
+                                componentDescription: itemToDelete.detailDescription ?? String(),
+                                baseQuantity: itemToDelete.baseQuantity ?? 0.0,
+                                requiredQuantity: itemToDelete.requiredQuantity ?? 0.0,
+                                consumed: itemToDelete.consumed ?? 0.0, available: itemToDelete.available ?? 0.0,
+                                unit: itemToDelete.unit ?? String(), warehouse: itemToDelete.warehouse ?? String(),
+                                pendingQuantity: itemToDelete.pendingQuantity ?? 0.0,
+                                stock: itemToDelete.stock ?? 0.0,
+                                warehouseQuantity: itemToDelete.warehouseQuantity ?? 0.0, action: Actions.delete.rawValue)
+        })
         let fechaFinFormated = UtilsManager.shared.formattedDateFromString(
             dateString: tempOrderDetailData?.dueDate ?? String(), withFormat: DateFormat.yyyymmdd)
         let order = OrderDetailRequest(
@@ -205,7 +232,9 @@ class OrderDetailViewModel {
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             if self?.tempOrderDetailData != nil {
                 self?.loading.onNext(false)
-                self?.tempOrderDetailData?.details?.remove(at: index)
+                self?.removeOfDetailsIndexs(indexs)
+                self?.itemSelectedDetail = []
+                self?.deleteManyButtonIsEnable.onNext(false)
                 self?.auxTabledata = self?.tempOrderDetailData?.details ?? []
                 self?.tableData.onNext(self?.tempOrderDetailData?.details ?? [])
                 self?.sumFormula.accept(self?.sum(tableDetails: (self?.tempOrderDetailData?.details ?? [])) ?? 0.0)
@@ -216,6 +245,13 @@ class OrderDetailViewModel {
                 print(error.localizedDescription)
         }).disposed(by: self.disposeBag)
     }
+    
+    func removeOfDetailsIndexs(_ indexs:[Int]){
+        self.tempOrderDetailData?.details =  self.tempOrderDetailData?.details?.enumerated()
+            .filter { !indexs.contains($0.offset) }
+            .map { $0.element }
+    }
+    
     func getDataTableToEdit() -> OrderDetail {
         return self.tempOrderDetailData!
     }
