@@ -48,6 +48,7 @@ namespace Omicron.Catalogos.Test.Services
             this.context = new DatabaseContext(options);
             this.context.RoleModel.AddRange(this.GetListRoles());
             this.context.ParametersModel.AddRange(this.GetParameters());
+            this.context.ClassificationQfbModel.AddRange(this.GetActiveClassificationQfbModel());
             this.context.SaveChanges();
 
             this.catalogDao = new CatalogDao(this.context);
@@ -83,6 +84,24 @@ namespace Omicron.Catalogos.Test.Services
 
             Assert.True(result != null);
             Assert.IsNotNull(result.Response);
+        }
+
+        /// <summary>
+        /// Method to verify Get All Users.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task GetActiveClassificationQfb()
+        {
+            var result = await this.catalogService.GetActiveClassificationQfb();
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Success);
+            Assert.IsTrue(result.Code == 200);
+            Assert.IsNotNull(result.Response);
+            Assert.IsNull(result.UserError);
+            Assert.IsInstanceOf<object>(result.Response);
         }
     }
 }

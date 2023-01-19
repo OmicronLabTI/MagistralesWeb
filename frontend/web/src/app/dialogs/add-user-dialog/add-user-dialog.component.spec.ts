@@ -56,7 +56,8 @@ describe('AddUserDialogComponent', () => {
       [
         'getRoles',
         'createUserService',
-        'updateUser'
+        'updateUser',
+        'getClasifications'
       ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService',
       [
@@ -72,6 +73,16 @@ describe('AddUserDialogComponent', () => {
     userServiceSpy.createUserService.and.callFake(() => {
       return of({});
     });
+
+    userServiceSpy.getClasifications.and.returnValue(of({
+      response: [
+        { value: 'MN', description: 'Bioelite (MN)' },
+        { value: 'BE', description: 'Bioequal (BE)' },
+        { value: 'MG', description: 'Magistral (MG)' },
+        { value: 'DZ', description: 'Dermazon (DZ)' }
+      ]
+    }));
+
     //  --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
       [

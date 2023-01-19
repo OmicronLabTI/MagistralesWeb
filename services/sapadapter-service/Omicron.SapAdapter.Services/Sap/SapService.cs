@@ -361,6 +361,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     CatalogGroupName = ServiceShared.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),
                     PatientName = pedidoLocal.Patient.ValidateNull().Replace(ServiceConstants.PatientConstant, string.Empty),
                     Details = ServiceShared.CalculateTernary(returnDetails, details, new List<CompleteDetalleFormulaModel>()),
+                    ShopTransaction = pedidoLocal.DocNumDxp,
                 };
 
                 listToReturn.Add(formulaDetalle);

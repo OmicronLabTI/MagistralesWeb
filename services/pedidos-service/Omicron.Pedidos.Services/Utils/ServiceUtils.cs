@@ -214,6 +214,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 AreBatchesComplete = o.AreBatchesComplete == 1,
                                 PatientName = sapOrder.PatientName,
                                 ClientDxp = sapOrder.ClientDxp,
+                                ShopTransaction = sapOrder.ShopTransaction,
                             };
 
                             ordersDetail.Add(order);

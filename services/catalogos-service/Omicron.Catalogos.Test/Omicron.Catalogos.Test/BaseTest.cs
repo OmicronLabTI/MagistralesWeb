@@ -73,5 +73,21 @@ namespace Omicron.Catalogos.Test
                 new ParametersModel { Id = 1, Field = "Email", Type = "string", Value = "email" },
             };
         }
+
+        /// <summary>
+        /// Gets the parameters.
+        /// </summary>
+        /// <returns>the parameters.</returns>
+        public IEnumerable<ClassificationQfbModel> GetActiveClassificationQfbModel()
+        {
+            return new List<ClassificationQfbModel>
+            {
+                new ClassificationQfbModel { Id = 1, Value = "MN", Description = "Bioelite (MN)", Active = true },
+                new ClassificationQfbModel { Id = 2, Value = "BE", Description = "Bioequal (BE)", Active = true },
+                new ClassificationQfbModel { Id = 3, Value = "MG", Description = "Magistrales (MG)", Active = true },
+                new ClassificationQfbModel { Id = 4, Value = "DZ", Description = "Dermazone (DZ)", Active = true },
+                new ClassificationQfbModel { Id = 5, Value = "O", Description = "OTRO (O)", Active = false },
+            };
+        }
     }
 }
