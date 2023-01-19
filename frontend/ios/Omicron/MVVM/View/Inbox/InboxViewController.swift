@@ -24,6 +24,7 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var similarityViewButton: UIButton!
     @IBOutlet weak var normalViewButton: UIButton!
     @IBOutlet weak var groupByOrderNumberButton: UIButton!
+    @IBOutlet weak var groupByShopTransactionButton: UIButton!
     @IBOutlet weak var heigthCollectionViewConstraint: NSLayoutConstraint!
     @IBOutlet weak var chartViewContainer: UIView!
     @IBOutlet weak var cardsView: UIView!
@@ -194,7 +195,7 @@ class InboxViewController: UIViewController {
                     for: indexPath) as? HeaderCollectionViewCell else { return HeaderCollectionViewCell() }
                 let headerText = dataSource.sectionModels[indexPath.section].identity
                 header.productID.text = headerText
-                if headerText.contains(CommonStrings.orderTitile) {
+                if headerText.contains(CommonStrings.orderTitile)  || headerText.contains(CommonStrings.shopTransaction) {
                     let productId = headerText
                         .components(separatedBy: CharacterSet.decimalDigits.inverted)
                         .joined()
@@ -282,6 +283,13 @@ class InboxViewController: UIViewController {
             self.showMoreIndicators()
             self.goToTop()
         }).disposed(by: self.disposeBag)
+        
+        inboxViewModel.groupedByShopTransactionIsEnable.subscribe(onNext: { [weak self] isEnabled in
+            guard let self = self else { return }
+            self.groupByShopTransactionButton.isEnabled = isEnabled
+            self.showMoreIndicators()
+            self.goToTop()
+        }).disposed(by: self.disposeBag)
         // Oculta o muestra los botones de agrupamiento cuando se se realiza una búsqueda
         inboxViewModel.hideGroupingButtons.subscribe(onNext: { [weak self] isHidden in
             guard let self = self else { return }
@@ -334,7 +342,8 @@ class InboxViewController: UIViewController {
             processButton.rx.tap.bind(to: inboxViewModel.processDidTap),
             similarityViewButton.rx.tap.bind(to: inboxViewModel.similarityViewButtonDidTap),
             normalViewButton.rx.tap.bind(to: inboxViewModel.normalViewButtonDidTap),
-            groupByOrderNumberButton.rx.tap.bind(to: inboxViewModel.groupByOrderNumberButtonDidTap)
+            groupByOrderNumberButton.rx.tap.bind(to: inboxViewModel.groupByOrderNumberButtonDidTap),
+            groupByShopTransactionButton.rx.tap.bind(to: inboxViewModel.groupByShopTransactionButtonDidTap)
         ].forEach({ $0.disposed(by: disposeBag) })
         order.bind(to: inboxViewModel.selectOrder).disposed(by: disposeBag)
         selectedRowBinding()
@@ -638,7 +647,6 @@ class InboxViewController: UIViewController {
         orderSend?.baseDocument = productID
         return orderSend
     }
-
 }
 
 // MARK: Extencions

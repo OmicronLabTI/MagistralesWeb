@@ -70,7 +70,8 @@ class RootViewModel {
         return orders.filter({ order in
             guard let orderId = order.productionOrderId else { return false }
             guard let baseDocument = order.baseDocument else { return false }
-            return String(orderId).contains(text) || String(baseDocument).contains(text)
+            guard let itemCode = order.itemCode else { return false }
+            return String(orderId).contains(text) || String(baseDocument).contains(text) || String(itemCode).contains(text)
         })
     }
 

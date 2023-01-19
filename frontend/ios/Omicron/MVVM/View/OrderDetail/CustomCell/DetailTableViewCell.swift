@@ -17,6 +17,7 @@ class DetailTableViewCell: UITableViewCell {
     @IBOutlet weak var unitLabel: UILabel!
     @IBOutlet weak var werehouseLabel: UILabel!
     @IBOutlet weak var hashTagLabel: UILabel!
+    var textColor: UIColor = .black
     override func awakeFromNib() {
         super.awakeFromNib()
         let fontSize = CGFloat(17)
@@ -30,15 +31,22 @@ class DetailTableViewCell: UITableViewCell {
     }
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+        let textColor = selected ? .white : self.textColor
+        self.updateTextColor(color: textColor)
         // Configure the view for the selected state
     }
     func setEmptyStock(_ hasStock: Bool) {
-        codeLabel.textColor = hasStock ? .black : .systemOrange
-        descriptionLabel.textColor = hasStock ? .black : .systemOrange
-        baseQuantityLabel.textColor = hasStock ? .black : .systemOrange
-        requiredQuantityLabel.textColor = hasStock ? .black : .systemOrange
-        unitLabel.textColor = hasStock ? .black : .systemOrange
-        werehouseLabel.textColor = hasStock ? .black : .systemOrange
-        hashTagLabel.textColor = hasStock ? .black : .systemOrange
+        self.textColor = hasStock ? .black : .systemOrange
+        self.updateTextColor(color: self.textColor)
+    }
+    
+    func updateTextColor(color:UIColor){
+        codeLabel.textColor = color
+        descriptionLabel.textColor = color
+        baseQuantityLabel.textColor = color
+        requiredQuantityLabel.textColor = color
+        unitLabel.textColor = color
+        werehouseLabel.textColor = color
+        hashTagLabel.textColor = color
     }
 }
