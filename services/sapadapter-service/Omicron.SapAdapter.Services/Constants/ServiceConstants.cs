@@ -661,6 +661,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string PatientConstant = "Nombre del paciente: ";
 
         /// <summary>
+        /// Digits For Short Shop Transaction.
+        /// </summary>
+        public const int DigitsForShortShopTransaction = 6;
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

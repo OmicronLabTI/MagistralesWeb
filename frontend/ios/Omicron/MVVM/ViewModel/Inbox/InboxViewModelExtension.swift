@@ -207,6 +207,7 @@ extension InboxViewModel {
         normalViewButtonIsEnable.onNext(true)
         similarityViewButtonIsEnable.onNext(true)
         groupedByOrderNumberIsEnable.onNext(false)
+        groupedByShopTransactionIsEnable.onNext(true)
     }
 
     func orderingOrders(section: SectionOrder) -> [Order] {
@@ -261,6 +262,7 @@ extension InboxViewModel {
         normalViewButtonIsEnable.onNext(false)
         processButtonIsEnable.onNext(false)
         pendingButtonIsEnable.onNext(false)
+        groupedByShopTransactionIsEnable.onNext(true)
     }
 
     func processSimilaritySort() {
@@ -282,6 +284,7 @@ extension InboxViewModel {
         similarityViewButtonIsEnable.onNext(false)
         normalViewButtonIsEnable.onNext(true)
         groupedByOrderNumberIsEnable.onNext(true)
+        groupedByShopTransactionIsEnable.onNext(true)
     }
 
     func groupedByOrderNumber(data: [String?: [Order]]) -> [SectionModel<String, Order>] {
