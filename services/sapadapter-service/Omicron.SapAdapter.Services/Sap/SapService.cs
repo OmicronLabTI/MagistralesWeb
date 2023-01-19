@@ -133,7 +133,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
-            var listDoctors = await this.GetDoctors(orderToReturn.Select(x => x.Codigo).Distinct().ToList());
+            var listDoctors = await this.GetDoctors(orderToReturn.Select(x => x.Codigo).Distinct().ToList(), ServiceConstants.GetResponsibleDoctors);
 
             orderToReturn.ForEach(o =>
             {
@@ -292,7 +292,7 @@ namespace Omicron.SapAdapter.Services.Sap
             prodcutsIds = prodcutsIds.Distinct().ToList();
             var listProducts = (await this.sapDao.GetProductByIds(prodcutsIds)).ToList();
 
-            var listDoctors = await this.GetDoctors(pedidoHeaers.Select(x => x.Codigo).Distinct().ToList());
+            var listDoctors = await this.GetDoctors(pedidoHeaers.Select(x => x.Codigo).Distinct().ToList(), ServiceConstants.GetAcademicInfoDoctors);
 
             var catalogResponse = await this.catalogsService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.CardCodeResponsibleMedic}={ServiceConstants.CardCodeResponsibleMedic}");
             var specialCardCodes = JsonConvert.DeserializeObject<List<ParametersModel>>(catalogResponse.Response.ToString()).Select(x => x.Value).ToList();
@@ -361,6 +361,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     CatalogGroupName = ServiceShared.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),
                     PatientName = pedidoLocal.Patient.ValidateNull().Replace(ServiceConstants.PatientConstant, string.Empty),
                     Details = ServiceShared.CalculateTernary(returnDetails, details, new List<CompleteDetalleFormulaModel>()),
+                    ShopTransaction = pedidoLocal.DocNumDxp,
                 };
 
                 listToReturn.Add(formulaDetalle);
@@ -807,9 +808,9 @@ namespace Omicron.SapAdapter.Services.Sap
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
         }
 
-        private async Task<List<DoctorPrescriptionInfoModel>> GetDoctors(List<string> cardCodes)
+        private async Task<List<DoctorPrescriptionInfoModel>> GetDoctors(List<string> cardCodes, string url)
         {
-            var doctorsResponse = await this.doctorService.PostDoctors(cardCodes, ServiceConstants.GetResponsibleDoctors);
+            var doctorsResponse = await this.doctorService.PostDoctors(cardCodes, url);
             return JsonConvert.DeserializeObject<List<DoctorPrescriptionInfoModel>>(doctorsResponse.Response.ToString());
         }
 
@@ -947,17 +948,16 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>Client DXP.</returns>
         private string GetClientDxp(OrderModel pedidoLocal, List<DoctorPrescriptionInfoModel> listDoctors)
         {
-            if (!string.IsNullOrEmpty(pedidoLocal.DocNumDxp))
-            {
-                return pedidoLocal.ProffesionalLicense.CleanLicense();
-            }
+            var licenseName = string.Empty;
 
             if (listDoctors.Any(x => x.CardCode == pedidoLocal.Codigo))
             {
-                return ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(pedidoLocal.ProffesionalLicense), pedidoLocal.ProffesionalLicense.CleanLicense(), pedidoLocal.Medico);
+                var info = listDoctors.FirstOrDefault(x => x.License.Equals(pedidoLocal.ProffesionalLicense.CleanLicense()));
+                info ??= new DoctorPrescriptionInfoModel { DoctorName = string.Empty };
+                licenseName = info.DoctorName;
             }
 
-            return pedidoLocal.Medico;
+            return ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(licenseName), licenseName, pedidoLocal.Medico);
         }
     }
 }

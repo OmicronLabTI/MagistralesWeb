@@ -102,5 +102,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string ClientDxp { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string ShopTransaction { get; set; }
     }
 }

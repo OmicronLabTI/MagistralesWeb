@@ -76,6 +76,10 @@ namespace Omicron.Catalogos.Test.Facade
                 .Setup(m => m.GetParamsContains(It.IsAny<Dictionary<string, string>>()))
                 .Returns(Task.FromResult(response));
 
+            mockServicesCat
+               .Setup(m => m.GetActiveClassificationQfb())
+               .Returns(Task.FromResult(response));
+
             this.catalogFacade = new CatalogFacade(mockServicesCat.Object, this.mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }
@@ -161,6 +165,21 @@ namespace Omicron.Catalogos.Test.Facade
 
             // Act
             var response = await this.catalogFacade.GetParamsContains(containsValue);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+        }
+
+        /// <summary>
+        /// Test getting the roles.
+        /// </summary>
+        /// <returns>the roles.</returns>
+        [Test]
+        public async Task GetActiveClassificationQfb()
+        {
+            // Act
+            var response = await this.catalogFacade.GetActiveClassificationQfb();
 
             // Assert
             Assert.IsNotNull(response);
