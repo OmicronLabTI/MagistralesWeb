@@ -104,6 +104,17 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     return String(this.userRoles.find(item => item.id === id).description);
   }
 
+
+  changeClasification(): void {
+    const selection = String(this.addUserForm.get('classificationQFB').value);
+    if (selection.toUpperCase() === TypeClasifications.dermazone.toUpperCase()) {
+      this.addUserForm.get('piezas').setValue(0);
+      this.addUserForm.get('piezas').disable();
+    } else {
+      this.addUserForm.get('piezas').enable();
+    }
+  }
+
   validateClasification(): void {
     const rolId = Number(this.addUserForm.get('userTypeR').value);
     const rol = this.getRol(rolId);
@@ -130,6 +141,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('asignable').setValue(this.userToEdit.asignable.toString());
       this.addUserForm.get('classificationQFB').setValue(this.userToEdit.classification);
     }
+    this.changeClasification();
   }
 
   saveUser() {
