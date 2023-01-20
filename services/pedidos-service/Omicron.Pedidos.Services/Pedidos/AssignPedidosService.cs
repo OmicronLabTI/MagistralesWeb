@@ -107,6 +107,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var ordersToUpdate = ordersSap.Where(x => !userSaleOrder.Item2.Contains(x.Order.DocNum)).ToList();
             var pedidosString = ordersToUpdate.Select(x => x.Order.DocNum.ToString()).ToList();
             var listToUpdate = ServiceUtils.GetOrdersToAssign(ordersToUpdate);
+
             var listToUpdateSAP = listToUpdate.Concat(relationOrdersWithUsersDZIsNotOmi
                 .SelectMany(relation =>
                     relation.Order.Detalle.Where(d => d.Status.Equals("P"))
@@ -115,7 +116,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                         {
                             OrderFabId = detail.OrdenFabricacionId,
                             Status = ServiceConstants.StatusSapLiberado,
-                        })));
+                        }))).ToList();
 
             var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdateSAP, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
@@ -130,14 +131,16 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
                 int.TryParse(x.Productionorderid, out int productionId);
-
-                if (userSaleOrder.Item1.ContainsKey(saleOrderInt))
+                bool isClasificationDZ = relationOrdersWithUsersDZIsNotOmi.Any(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt));
+                if (userSaleOrder.Item1.ContainsKey(saleOrderInt) || isClasificationDZ)
                 {
                     var previousStatus = x.Status;
-                    var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdate.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
+                    var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdateSAP.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
                     x.Status = ServiceShared.CalculateTernary(asignable, ServiceConstants.Asignado, x.Status);
                     x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, x.Status);
-                    x.Userid = userSaleOrder.Item1[saleOrderInt];
+                    x.Userid = isClasificationDZ ?
+                    relationOrdersWithUsersDZIsNotOmi.Where(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt)).First().UserId :
+                    userSaleOrder.Item1[saleOrderInt];
 
                     if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                     {
