@@ -647,7 +647,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeOrder = header.TypeOrder,
                     IsPackage = header.IsPackage == ServiceConstants.IsPackage,
                     IsOmigenomics = header.IsOmigenomics == ServiceConstants.IsOmigenomics,
-                    DxpId = header.DocNumDxp,
+                    DxpId = header.DocNumDxp.GetShortShopTransaction(),
                 });
             }
 

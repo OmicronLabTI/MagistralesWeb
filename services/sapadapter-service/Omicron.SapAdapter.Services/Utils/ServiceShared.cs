@@ -183,7 +183,7 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>Short shop transaction.</returns>
         public static string GetShortShopTransaction(this string transactionId)
         {
-            if (!string.IsNullOrEmpty(transactionId))
+            if (string.IsNullOrEmpty(transactionId))
             {
                 return string.Empty;
             }
