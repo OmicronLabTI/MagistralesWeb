@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Test
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
@@ -257,7 +258,22 @@ namespace Omicron.Pedidos.Test
         {
             var listDetalles = new List<CompleteDetailOrderModel>
             {
-                new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 100, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L", CreatedDate = DateTime.Now, Label = "Pesonalizada" },
+                new CompleteDetailOrderModel
+                {
+                    CodigoProducto = "Aspirina",
+                    DescripcionProducto = "dec",
+                    FechaOf = "2020/01/01",
+                    FechaOfFin = "2020/01/01",
+                    IsChecked = false,
+                    OrdenFabricacionId = 100,
+                    Qfb = "qfb",
+                    QtyPlanned = 1,
+                    QtyPlannedDetalle = 1,
+                    Status = "L",
+                    CreatedDate = DateTime.Now,
+                    Label = "Pesonalizada",
+                    IsOmigenomics = false,
+                },
             };
 
             var listOrders = new List<OrderWithDetailModel>
@@ -278,6 +294,48 @@ namespace Omicron.Pedidos.Test
                     Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 101, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 100, PedidoStatus = "L", OrderType = "MX" },
                 },
             };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listOrders,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultModelCompleteDetailDZModel()
+        {
+            var listDetailDZ = Enumerable.Range(1, 1)
+                .Select(detail => new CompleteDetailOrderModel
+                {
+                    CodigoProducto = $"DZ Test {detail}",
+                    DescripcionProducto = "dec",
+                    FechaOf = "2020/01/01",
+                    FechaOfFin = "2020/01/01",
+                    IsChecked = false,
+                    OrdenFabricacionId = 100,
+                    Qfb = "qfb",
+                    QtyPlanned = 1,
+                    QtyPlannedDetalle = 1,
+                    Status = "L",
+                    CreatedDate = DateTime.Now,
+                    Label = "Pesonalizada",
+                    IsOmigenomics = false,
+                });
+
+            var listOrders = Enumerable.Range(1, 7)
+                .Select(x =>
+                new OrderWithDetailModel
+                {
+                    Detalle = new List<CompleteDetailOrderModel>(listDetailDZ),
+                    Order = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = x, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = x, PedidoStatus = "L", OrderType = "MG" },
+                }).ToList();
 
             return new ResultModel
             {
@@ -536,6 +594,31 @@ namespace Omicron.Pedidos.Test
             {
                 new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MN" },
                 new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "BE" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = users,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the users by role.
+        /// </summary>
+        /// <returns>the users.</returns>
+        public ResultModel GetUsersByRoleWithDZ()
+        {
+            var users = new List<UserModel>
+            {
+                new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MN" },
+                new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "BE" },
+                new UserModel { Id = "abcde", Activo = 1, FirstName = "Magistrales", LastName = "Magistrales", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MG" },
+                new UserModel { Id = "abcdef", Activo = 1, FirstName = "Test DZ 1", LastName = "Test DZ 1", Password = "pass", Role = 2, UserName = "gus1", Piezas = 0, Asignable = 1, Classification = "DZ" },
+                new UserModel { Id = "abcdefg", Activo = 1, FirstName = "Test DZ 2", LastName = "Test DZ 2", Password = "pass", Role = 2, UserName = "gus1", Piezas = 0, Asignable = 1, Classification = "DZ" },
             };
 
             return new ResultModel

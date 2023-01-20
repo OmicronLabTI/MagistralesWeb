@@ -98,5 +98,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>the value of stock.</value>
         public string NeedsCooling { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether IsOmigenomics.
+        /// </summary>
+        /// <value>IsOmigenomics.</value>
+        public bool IsOmigenomics { get; set; }
     }
 }
