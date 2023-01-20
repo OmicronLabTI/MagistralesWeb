@@ -10,10 +10,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing.Printing;
     using System.Linq;
     using System.Net;
-    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
@@ -21,6 +19,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Broker;
+    using Omicron.Pedidos.Services.Builders;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
@@ -93,14 +92,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             var sapOrderTypes = ordersSap.Select(x => x.Order.OrderType).Distinct().ToList();
             var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
 
-            var usersDZ = users.FindAll(x => x.Classification.ToUpper().Equals(ServiceConstants.UserClassificationDZ));
-            var ordersDzAndIsNotOmigenomics = this.GetOrdersDzAndIsNotOmigenomics(orders, ordersSap);
-            if (ordersDzAndIsNotOmigenomics.Any() && !usersDZ.Any())
-            {
-                throw new CustomServiceException(ServiceConstants.ErrorUsersDZAutomatico, HttpStatusCode.BadRequest);
-            }
-
-            var x = this.AssignOrdersToUsersDZIsNotOmi(ordersDzAndIsNotOmigenomics, usersDZ);
+            var builder = new DzIsNotOmigenomicsBuilder(orders, users, ordersSap);
+            var relationOrdersWithUsersDZIsNotOmi = builder.AssignOrdersToUsersDZIsNotOmi();
 
             users = ServiceShared.CalculateTernary(sapOrderTypes.Contains(ServiceConstants.Mix), users, users.Where(x => sapOrderTypes.Contains(x.Classification)).ToList());
             var userOrders = (await this.pedidosDao.GetUserOrderByUserIdAndNotInStatus(users.Select(x => x.Id).ToList(), invalidStatus)).ToList();
@@ -114,15 +107,25 @@ namespace Omicron.Pedidos.Services.Pedidos
             var ordersToUpdate = ordersSap.Where(x => !userSaleOrder.Item2.Contains(x.Order.DocNum)).ToList();
             var pedidosString = ordersToUpdate.Select(x => x.Order.DocNum.ToString()).ToList();
             var listToUpdate = ServiceUtils.GetOrdersToAssign(ordersToUpdate);
-            var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
+            var listToUpdateSAP = listToUpdate.Concat(relationOrdersWithUsersDZIsNotOmi
+                .SelectMany(relation =>
+                    relation.Order.Detalle.Where(d => d.Status.Equals("P"))
+                    .Select(detail =>
+                        new UpdateFabOrderModel
+                        {
+                            OrderFabId = detail.OrdenFabricacionId,
+                            Status = ServiceConstants.StatusSapLiberado,
+                        })));
+
+            var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdateSAP, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
 
-            var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosString)).ToList();
+            var pedidosStringUpdate = pedidosString.Concat(relationOrdersWithUsersDZIsNotOmi.Select(x => x.Order.Order.DocNum.ToString())).Distinct().ToList();
+            var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosStringUpdate)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
-
             userOrdersToUpdate.ForEach(x =>
             {
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
@@ -238,37 +241,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.UpdateUserOrders(ordersToUpdate);
             _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
-        }
-
-        private List<OrderWithDetailModel> GetOrdersDzAndIsNotOmigenomics(ResultModel orders, List<OrderWithDetailModel> ordersSap)
-        {
-            var ordersDzIsNotOmi = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response))
-                            .FindAll(x => x.Detalle.Any(AsignarLogic.IsDzAndIsNotOmigenomics));
-            ordersDzIsNotOmi.ForEach(orderDzIsNotOmi => orderDzIsNotOmi.Detalle = orderDzIsNotOmi.Detalle.Where(AsignarLogic.IsDzAndIsNotOmigenomics).ToList());
-            ordersDzIsNotOmi.RemoveAll(order => !order.Detalle.Any());
-
-            ordersSap.ForEach(orderSap => orderSap.Detalle.RemoveAll(AsignarLogic.IsDzAndIsNotOmigenomics));
-            ordersSap.RemoveAll(order => !order.Detalle.Any());
-
-            return ordersDzIsNotOmi;
-        }
-
-        private List<RelationUserDZAndOrdersDZModel> AssignOrdersToUsersDZIsNotOmi(List<OrderWithDetailModel> orders, List<UserModel> users)
-        {
-            users = users.OrderBy(user => user.Piezas).ToList();
-            orders = orders.OrderBy(o => o.Order.PedidoId).ToList();
-            var userCount = (users.Count == 0 ? 1 : users.Count);
-            var iterations = (int)Math.Ceiling((decimal)orders.Count / userCount);
-            return Enumerable.Range(0, iterations)
-                .SelectMany(index =>
-                    orders.Skip(index == 0 ? index : userCount * index)
-                    .Take(userCount)
-                    .Select((order, indexInt) =>
-                    new RelationUserDZAndOrdersDZModel
-                    {
-                        UserId = users[indexInt].Id,
-                        Order = order,
-                    })).ToList();
         }
     }
 }
