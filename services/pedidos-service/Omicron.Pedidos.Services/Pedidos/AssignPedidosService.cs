@@ -131,16 +131,18 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
                 int.TryParse(x.Productionorderid, out int productionId);
+
                 bool isClasificationDZ = relationOrdersWithUsersDZIsNotOmi.Any(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt));
-                if (userSaleOrder.Item1.ContainsKey(saleOrderInt) || isClasificationDZ)
+                bool idTraditional = userSaleOrder.Item1.ContainsKey(saleOrderInt);
+                if (ServiceShared.CalculateOr(idTraditional, isClasificationDZ))
                 {
                     var previousStatus = x.Status;
                     var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdateSAP.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
                     x.Status = ServiceShared.CalculateTernary(asignable, ServiceConstants.Asignado, x.Status);
                     x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, x.Status);
-                    x.Userid = isClasificationDZ ?
-                    relationOrdersWithUsersDZIsNotOmi.Where(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt)).First().UserId :
-                    userSaleOrder.Item1[saleOrderInt];
+                    x.Userid = idTraditional ?
+                    userSaleOrder.Item1[saleOrderInt] :
+                    relationOrdersWithUsersDZIsNotOmi.Where(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt)).First().UserId;
 
                     if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                     {
