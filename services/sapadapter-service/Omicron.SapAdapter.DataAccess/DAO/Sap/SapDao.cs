@@ -206,21 +206,22 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              PatientName = ped.Patient ?? string.Empty,
                              PedidoId = d.PedidoId ?? 0,
                              CatalogGroup = g.CatalogName,
+                             IsOmigenomics = g.CatalogName.ToLower() == "omigenomics",
                          }).AsNoTracking();
 
-            return await this.RetryQuery<CompleteDetailOrderModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<List<OrderModel>> GetOrdersById(int pedidoID)
         {
-            return (await this.RetryQuery<OrderModel>(this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoID))).ToList();
+            return (await this.RetryQuery(this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoID))).ToList();
         }
 
         /// <inheritdoc/>
         public async Task<List<OrderModel>> GetOrdersById(List<int> pedidoID)
         {
-            return (await this.RetryQuery<OrderModel>(this.databaseContext.OrderModel.Where(x => pedidoID.Contains(x.PedidoId)).AsNoTracking())).ToList();
+            return (await this.RetryQuery(this.databaseContext.OrderModel.Where(x => pedidoID.Contains(x.PedidoId)).AsNoTracking())).ToList();
         }
 
         /// <inheritdoc/>
@@ -253,7 +254,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ProffesionalLicense = doctor.ProffesionalLicense,
                         };
 
-            return (await this.RetryQuery<OrderModel>(query)).ToList();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         /// <inheritdoc/>
@@ -286,7 +287,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderById(List<int> pedidoId)
         {
-            return await this.RetryQuery(this.databaseContext.OrdenFabricacionModel.Where(x => pedidoId.Contains(x.OrdenId)));
+            return (await (from order in this.databaseContext.OrdenFabricacionModel.Where(x => pedidoId.Contains(x.OrdenId))
+                           join prod in this.databaseContext.ProductoModel on order.ProductoId equals prod.ProductoId
+                           join catalog in this.databaseContext.CatalogProductModel on prod.ProductGroupId equals catalog.ProductGroupId
+                           select new { order, catalog })
+            .ToListAsync())
+            .Select(x =>
+            {
+                x.order.IsOmigenomics = x.catalog.CatalogName.ToLower() == "omigenomics";
+                return x.order;
+            });
         }
 
         /// <inheritdoc/>

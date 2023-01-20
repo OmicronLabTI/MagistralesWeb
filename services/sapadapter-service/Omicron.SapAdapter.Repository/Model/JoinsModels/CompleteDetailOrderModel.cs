@@ -152,5 +152,11 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string CatalogGroup { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether IsOmigenomics.
+        /// </summary>
+        /// <value>IsOmigenomics.</value>
+        public bool IsOmigenomics { get; set; }
     }
 }
