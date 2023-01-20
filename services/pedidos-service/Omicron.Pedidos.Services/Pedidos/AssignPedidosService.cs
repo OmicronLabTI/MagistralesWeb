@@ -8,8 +8,12 @@
 
 namespace Omicron.Pedidos.Services.Pedidos
 {
+    using System;
     using System.Collections.Generic;
+    using System.Drawing.Printing;
     using System.Linq;
+    using System.Net;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
@@ -80,27 +84,35 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> AutomaticAssign(AutomaticAssingModel assignModel)
         {
             var invalidStatus = new List<string> { ServiceConstants.Finalizado, ServiceConstants.Pendiente, ServiceConstants.Cancelled, ServiceConstants.Entregado, ServiceConstants.Almacenado };
+
             var orders = await this.sapAdapter.PostSapAdapter(assignModel.DocEntry, ServiceConstants.GetOrderWithDetailDxp);
             var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
             var relationships = JsonConvert.DeserializeObject<List<RelationDxpDocEntryModel>>(JsonConvert.SerializeObject(orders.Comments));
             relationships ??= new List<RelationDxpDocEntryModel>();
-            var sapOrderTypes = ordersSap.Select(x => x.Order.OrderType).Distinct().ToList();
 
+            var sapOrderTypes = ordersSap.Select(x => x.Order.OrderType).Distinct().ToList();
             var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
+
+            var usersDZ = users.FindAll(x => x.Classification.ToUpper().Equals(ServiceConstants.UserClassificationDZ));
+            var ordersDzAndIsNotOmigenomics = this.GetOrdersDzAndIsNotOmigenomics(orders, ordersSap);
+            if (ordersDzAndIsNotOmigenomics.Any() && !usersDZ.Any())
+            {
+                throw new CustomServiceException(ServiceConstants.ErrorUsersDZAutomatico, HttpStatusCode.BadRequest);
+            }
+
+            var x = this.AssignOrdersToUsersDZIsNotOmi(ordersDzAndIsNotOmigenomics, usersDZ);
+
             users = ServiceShared.CalculateTernary(sapOrderTypes.Contains(ServiceConstants.Mix), users, users.Where(x => sapOrderTypes.Contains(x.Classification)).ToList());
             var userOrders = (await this.pedidosDao.GetUserOrderByUserIdAndNotInStatus(users.Select(x => x.Id).ToList(), invalidStatus)).ToList();
-            var validUsers = await AsignarLogic.GetValidUsersByLoad(users, userOrders, this.sapAdapter);
-
+            var validUsers = AsignarLogic.GetValidUsersByLoad(users, userOrders, this.sapAdapter);
             if (!validUsers.Any())
             {
-                throw new CustomServiceException(ServiceConstants.ErrorQfbAutomatico, System.Net.HttpStatusCode.BadRequest);
+                throw new CustomServiceException(ServiceConstants.ErrorQfbAutomatico, HttpStatusCode.BadRequest);
             }
 
             var userSaleOrder = AsignarLogic.GetValidUsersByFormula(validUsers, ordersSap, userOrders, relationships);
-
             var ordersToUpdate = ordersSap.Where(x => !userSaleOrder.Item2.Contains(x.Order.DocNum)).ToList();
             var pedidosString = ordersToUpdate.Select(x => x.Order.DocNum.ToString()).ToList();
-
             var listToUpdate = ServiceUtils.GetOrdersToAssign(ordersToUpdate);
             var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
@@ -137,13 +149,13 @@ namespace Omicron.Pedidos.Services.Pedidos
             });
 
             await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             if (userSaleOrder.Item2.Any())
             {
                 var errorParcial = new StringBuilder();
                 userSaleOrder.Item2.ForEach(x => errorParcial.Append($"{x}, "));
-                throw new CustomServiceException(string.Format(ServiceConstants.ErrirQfbAutomaticoParcial, errorParcial.ToString()), System.Net.HttpStatusCode.BadRequest);
+                throw new CustomServiceException(string.Format(ServiceConstants.ErrirQfbAutomaticoParcial, errorParcial.ToString()), HttpStatusCode.BadRequest);
             }
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
@@ -197,7 +209,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             if (orders.Any())
             {
                 await this.pedidosDao.UpdateUserOrders(orders);
-                this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
             }
 
             return ServiceUtils.CreateResult(true, 200, null, null, null);
@@ -224,8 +236,39 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
             await this.pedidosDao.UpdateUserOrders(ordersToUpdate);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
+        }
+
+        private List<OrderWithDetailModel> GetOrdersDzAndIsNotOmigenomics(ResultModel orders, List<OrderWithDetailModel> ordersSap)
+        {
+            var ordersDzIsNotOmi = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response))
+                            .FindAll(x => x.Detalle.Any(AsignarLogic.IsDzAndIsNotOmigenomics));
+            ordersDzIsNotOmi.ForEach(orderDzIsNotOmi => orderDzIsNotOmi.Detalle = orderDzIsNotOmi.Detalle.Where(AsignarLogic.IsDzAndIsNotOmigenomics).ToList());
+            ordersDzIsNotOmi.RemoveAll(order => !order.Detalle.Any());
+
+            ordersSap.ForEach(orderSap => orderSap.Detalle.RemoveAll(AsignarLogic.IsDzAndIsNotOmigenomics));
+            ordersSap.RemoveAll(order => !order.Detalle.Any());
+
+            return ordersDzIsNotOmi;
+        }
+
+        private List<RelationUserDZAndOrdersDZModel> AssignOrdersToUsersDZIsNotOmi(List<OrderWithDetailModel> orders, List<UserModel> users)
+        {
+            users = users.OrderBy(user => user.Piezas).ToList();
+            orders = orders.OrderBy(o => o.Order.PedidoId).ToList();
+            var userCount = (users.Count == 0 ? 1 : users.Count);
+            var iterations = (int)Math.Ceiling((decimal)orders.Count / userCount);
+            return Enumerable.Range(0, iterations)
+                .SelectMany(index =>
+                    orders.Skip(index == 0 ? index : userCount * index)
+                    .Take(userCount)
+                    .Select((order, indexInt) =>
+                    new RelationUserDZAndOrdersDZModel
+                    {
+                        UserId = users[indexInt].Id,
+                        Order = order,
+                    })).ToList();
         }
     }
 }
