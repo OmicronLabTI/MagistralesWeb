@@ -29,7 +29,7 @@ describe('SearchUsersDialogComponent', () => {
       'getNormalizeString'
     ]);
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
-      'getRoles', 'createUserService' , 'updateUser'
+      'getRoles', 'createUserService' , 'updateUser','getClasifications'
     ]);
     userServiceSpy.getRoles.and.callFake(() => {
       return of(RolesMock);
@@ -37,6 +37,15 @@ describe('SearchUsersDialogComponent', () => {
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
+    userServiceSpy.getClasifications.and.returnValue(of({
+      response: [
+        { value: 'MN', description: 'Bioelite (MN)' },
+        { value: 'BE', description: 'Bioequal (BE)' },
+        { value: 'MG', description: 'Magistral (MG)' },
+        { value: 'DZ', description: 'Dermazon (DZ)' }
+      ]
+    }));
+
     const matDialogSpy = jasmine.createSpyObj('MatDialogRef', ['onNoClick', 'closeDialog']);
     TestBed.configureTestingModule({
       imports: [FormsModule, HttpClientTestingModule, MatCardModule, ReactiveFormsModule,
