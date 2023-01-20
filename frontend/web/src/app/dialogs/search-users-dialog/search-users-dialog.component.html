@@ -40,9 +40,11 @@
                         <mat-form-field appearance="outline" class="custom-field magin-top-field">
                             <mat-label>Selecciona clasificación</mat-label>
                             <mat-select formControlName="classificationQFBSe"> 
-                                <mat-option value="MN">Bioelite (MN)</mat-option>
-                                <mat-option value="BE">Bioequal (BE)</mat-option>
-                                <mat-option value="MG">Magistral (MG)</mat-option>
+                                <ng-container *ngFor="let clasification of clasifications">
+                                    <mat-option [value]="clasification.value">
+                                        {{ clasification.description}}
+                                    </mat-option>
+                                </ng-container>
                             </mat-select>
                         </mat-form-field> 
                     </div>
