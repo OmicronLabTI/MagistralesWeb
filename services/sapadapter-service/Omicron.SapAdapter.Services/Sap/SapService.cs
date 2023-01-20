@@ -858,6 +858,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(new List<int> { lastTransaction.LogEntry })).ToList();
             var listToReturn = (from x in batchesQty
                                 let batch = validBatches.FirstOrDefault(y => y.SysNumber == x.SysNumber)
+                                where x.AllocQty > 0
                                 select new AssignedBatches
                                 {
                                     CantidadSeleccionada = x.AllocQty,
@@ -896,6 +897,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(listLastTransacionts.Select(x => x.LogEntry).ToList())).ToList();
             var listToReturn = (from x in batchesQty
                                 let batch = validBatches.FirstOrDefault(y => ServiceShared.CalculateAnd(y.SysNumber == x.SysNumber, x.ItemCode == y.ItemCode))
+                                where x.AllocQty > 0
                                 select new AssignedBatches
                                 {
                                     CantidadSeleccionada = x.AllocQty,
