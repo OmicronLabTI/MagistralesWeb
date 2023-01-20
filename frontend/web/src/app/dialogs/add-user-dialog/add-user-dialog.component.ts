@@ -105,13 +105,14 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   }
 
 
-  changeClasification(): void {
+  changeClasification(quantity = 200): void {
     const selection = String(this.addUserForm.get('classificationQFB').value);
     if (selection.toUpperCase() === TypeClasifications.dermazone.toUpperCase()) {
       this.addUserForm.get('piezas').setValue(0);
       this.addUserForm.get('piezas').disable();
     } else {
       this.addUserForm.get('piezas').enable();
+      this.addUserForm.get('piezas').setValue(`${quantity}`);
     }
   }
 
@@ -140,8 +141,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('piezas').setValue(this.userToEdit.piezas);
       this.addUserForm.get('asignable').setValue(this.userToEdit.asignable.toString());
       this.addUserForm.get('classificationQFB').setValue(this.userToEdit.classification);
+      this.changeClasification(this.userToEdit.piezas);
     }
-    this.changeClasification();
   }
 
   saveUser() {

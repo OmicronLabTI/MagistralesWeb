@@ -150,7 +150,7 @@ describe('AddUserDialogComponent', () => {
     expect(component.addUserForm.get('activo').value).toEqual(userEditSpec.activo.toString());
     expect(component.addUserForm.get('asignable').value).toEqual(userEditSpec.asignable.toString());
     expect(component.addUserForm.get('classificationQFB').value).toEqual(userEditSpec.classification);
-  })
+  });
   it('should ngOnInit create faild', () => {
     userServiceSpy.getRoles.and.callFake(() => {
       return throwError({ error: true });
