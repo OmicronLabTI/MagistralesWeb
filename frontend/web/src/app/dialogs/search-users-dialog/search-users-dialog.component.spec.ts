@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SearchUsersDialogComponent } from './search-users-dialog.component';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
-import {UsersService} from '../../services/users.service';
-import {ErrorService} from '../../services/error.service';
-import {DataService} from '../../services/data.service';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSelectModule} from '@angular/material/select';
-import {MatCardModule} from '@angular/material/card';
-import {MatInputModule} from '@angular/material/input';
-import {of} from 'rxjs';
-import {RolesMock} from '../../../mocks/rolesMock';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { UsersService } from '../../services/users.service';
+import { ErrorService } from '../../services/error.service';
+import { DataService } from '../../services/data.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { of } from 'rxjs';
+import { RolesMock } from '../../../mocks/rolesMock';
 import { MODAL_FIND_ORDERS } from 'src/app/constants/const';
 
 describe('SearchUsersDialogComponent', () => {
@@ -29,7 +29,7 @@ describe('SearchUsersDialogComponent', () => {
       'getNormalizeString'
     ]);
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
-      'getRoles', 'createUserService' , 'updateUser','getClasifications'
+      'getRoles', 'createUserService', 'updateUser', 'getClasifications'
     ]);
     userServiceSpy.getRoles.and.callFake(() => {
       return of(RolesMock);
@@ -54,19 +54,19 @@ describe('SearchUsersDialogComponent', () => {
         MatFormFieldModule,
         MatSelectModule,
         MatInputModule],
-      declarations: [ SearchUsersDialogComponent ],
+      declarations: [SearchUsersDialogComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         {
           provide: MatDialogRef,
-          useValue: {close}
+          useValue: { close }
         },
-        { provide: MAT_DIALOG_DATA, useValue: matDialogSpy } ,
+        { provide: MAT_DIALOG_DATA, useValue: matDialogSpy },
         { provide: UsersService, useValue: userServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: DataService, useValue: dataServiceSpy }]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -89,7 +89,7 @@ describe('SearchUsersDialogComponent', () => {
 
   it('should keyDownUsers', () => {
     // expect(component.keyDownFunction).toBeTruthy();
-    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: MODAL_FIND_ORDERS.keyEnter});
+    const keyEvent = new KeyboardEvent('keyEnter', { code: 'Digit0', key: MODAL_FIND_ORDERS.keyEnter });
     component.keyDownUsers(keyEvent);
     // expect(MockDialogRef.close).toHaveBeenCalled();
     expect(component.keyDownUsers).toBeTruthy();
