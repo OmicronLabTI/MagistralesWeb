@@ -41,7 +41,7 @@ class OrderDetailViewModel {
     var needsRefresh = true
     var changeColorLabelsHt = PublishSubject<Void>()
     var catalogGroup = String()
-    var itemSelectedDetail:[Int] = []
+    var itemSelectedDetail: [Int] = []
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
     // MARK: - Init
@@ -94,6 +94,8 @@ class OrderDetailViewModel {
     }
 
     func getOrdenDetail(isRefresh: Bool = false) {
+        itemSelectedDetail = []
+        deleteManyButtonIsEnable.onNext(false)
         if needsRefresh { loading.onNext(true) }
         networkManager.getOrdenDetail(self.orderId)
             .observeOn(MainScheduler.instance)
@@ -187,10 +189,10 @@ class OrderDetailViewModel {
             print(error.localizedDescription)
             }).disposed(by: self.disposeBag)
     }
-    
-    func addIndexDeleteTable(index:Int)  {
+
+    func addIndexDeleteTable(index: Int) {
         let existIndex = itemSelectedDetail.firstIndex(where: { $0 == index })
-        if existIndex == nil  {
+        if existIndex == nil {
             if itemSelectedDetail.count + 1 != auxTabledata.count {
                 itemSelectedDetail.append(index)
             }
@@ -199,8 +201,8 @@ class OrderDetailViewModel {
         }
         self.deleteManyButtonIsEnable.onNext(itemSelectedDetail.count>0)
     }
-    
-    func indexDeleteExist(_ index:Int) -> Bool {
+
+    func indexDeleteExist(_ index: Int) -> Bool {
         itemSelectedDetail.firstIndex(where: { $0 == index }) != nil
     }
 
