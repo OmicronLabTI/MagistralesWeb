@@ -295,6 +295,7 @@ class InboxViewController: UIViewController {
             self.similarityViewButton.isHidden = isHidden
             self.normalViewButton.isHidden = isHidden
             self.groupByOrderNumberButton.isHidden = isHidden
+            self.groupByShopTransactionButton.isHidden = isHidden
             self.showMoreIndicators()
             self.goToTop()
         }).disposed(by: self.disposeBag)
