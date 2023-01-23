@@ -1055,4 +1055,9 @@
 			<column name="active" value="true"/>
 		</insert>
 	</changeSet>
+	<changeSet author="jarturoep" id="changelog-1.105">
+		<sql endDelimiter=";">
+			update classificationqfb set description = 'Dermazone (DZ)' where value = 'DZ';
+		</sql>
+	</changeSet>	
 </databaseChangeLog>
