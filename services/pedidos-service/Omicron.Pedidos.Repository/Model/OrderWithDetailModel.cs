@@ -32,6 +32,17 @@ namespace Omicron.Pedidos.Entities.Model
         /// Conver instance to list of user order models.
         /// </summary>
         /// <returns>User order models.</returns>
+        public List<CompleteDetailOrderModel> CloneDetail()
+        {
+            var clone = new List<CompleteDetailOrderModel>();
+
+            return clone;
+        }
+
+        /// <summary>
+        /// Conver instance to list of user order models.
+        /// </summary>
+        /// <returns>User order models.</returns>
         public List<UserOrderModel> ToUserOrderModels()
         {
             var userOrderModels = new List<UserOrderModel>();

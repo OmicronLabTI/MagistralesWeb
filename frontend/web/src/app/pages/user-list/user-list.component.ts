@@ -58,6 +58,16 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.dataSource.paginator = this.paginator;
     }
 
+    getClassification(type: string): string {
+        const dictOptions: { [key: string]: string } = {
+            MN: 'Bioelite (MN)',
+            BE: 'Bioequal (BE)',
+            MG: 'Magistral (MG)',
+            DZ: 'Dermazone (DZ)',
+        };
+        return dictOptions[type];
+    }
+
     getUsers() {
         this.usersService.getUsers(`?${this.fullQueryString}&offset=${this.offset}&limit=${this.limit}`).subscribe(userRes => {
 
@@ -67,17 +77,7 @@ export class UserListComponent implements OnInit, OnDestroy {
                 user.isChecked = false;
                 user.piezas = this.dataService.getFormattedNumber(user.piezas);
                 if (user.classification) {
-                    switch (user.classification) {
-                        case 'MN':
-                            user.fullClasification = 'Bioelite (MN)';
-                            break;
-                        case 'BE':
-                            user.fullClasification = 'Bioequal (BE)';
-                            break;
-                        case 'MG':
-                            user.fullClasification = 'Magistral (MG)';
-                            break;
-                    }
+                    user.fullClasification = this.getClassification(user.classification);
                 }
             });
             this.isAllComplete = false;

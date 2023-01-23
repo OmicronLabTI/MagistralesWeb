@@ -27,6 +27,13 @@ namespace Omicron.Pedidos.Services.Utils
     public static class AsignarLogic
     {
         /// <summary>
+        /// Function to filter Dz not omigenoimcs.
+        /// </summary>
+        /// <param name="detail">detail.</param>
+        /// <returns>Boolean.</returns>
+        public static bool IsDzAndIsNotOmigenomics(CompleteDetailOrderModel detail) => detail.CodigoProducto.ToUpper().StartsWith("DZ ") && !detail.IsOmigenomics;
+
+        /// <summary>
         /// makes the logic to assign a pedido.
         /// </summary>
         /// <param name="assignModel">the assign model.</param>
@@ -61,7 +68,7 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             await pedidosDao.UpdateUserOrders(userOrders);
-            kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
@@ -107,7 +114,7 @@ namespace Omicron.Pedidos.Services.Utils
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
             await pedidosDao.UpdateUserOrders(userOrdersByProd);
-            kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
@@ -119,33 +126,26 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="userOrders">the user orders.</param>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <returns>the users.</returns>
-        public static async Task<List<AutomaticAssignUserModel>> GetValidUsersByLoad(List<UserModel> users, List<UserOrderModel> userOrders, ISapAdapter sapAdapter)
+        public static List<AutomaticAssignUserModel> GetValidUsersByLoad(List<UserModel> users, List<UserOrderModel> userOrders, ISapAdapter sapAdapter)
         {
             var validUsers = new List<AutomaticAssignUserModel>();
-
-            await Task.WhenAll(users.Select(async user =>
+            users.ForEach(user =>
             {
                 var pedidosId = userOrders.Where(x => x.Userid.Equals(user.Id) && x.IsProductionOrder).Select(y => int.Parse(y.Productionorderid)).Distinct().ToList();
-                var orders = await sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetUsersByOrdersById);
+                var orders = sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetUsersByOrdersById).Result;
                 var ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(JsonConvert.SerializeObject(orders.Response));
-
                 var total = ordersSap.Sum(x => x.Quantity);
-
                 if (total < user.Piezas)
                 {
-                    lock (validUsers)
+                    validUsers.Add(new AutomaticAssignUserModel
                     {
-                        validUsers.Add(new AutomaticAssignUserModel
-                        {
-                            User = user,
-                            TotalCount = (int)total,
-                            ItemCodes = ordersSap.Select(x => x.ProductoId).ToList(),
-                            ProductionOrders = ordersSap.Select(x => x.OrdenId).ToList(),
-                        });
-                    }
+                        User = user,
+                        TotalCount = (int)total,
+                        ItemCodes = ordersSap.Select(x => x.ProductoId).ToList(),
+                        ProductionOrders = ordersSap.Select(x => x.OrdenId).ToList(),
+                    });
                 }
-            }));
-
+            });
             return validUsers.OrderBy(x => x.TotalCount).ThenBy(y => y.User.FirstName).ToList();
         }
 
@@ -157,7 +157,8 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="userOrders">The user orders.</param>
         /// <param name="listRelation">list relation.</param>
         /// <returns>the data to return.</returns>
-        public static Tuple<Dictionary<int, string>, List<int>> GetValidUsersByFormula(List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders, List<RelationDxpDocEntryModel> listRelation)
+        public static Tuple<Dictionary<int, string>, List<int>> GetValidUsersByFormula(
+            List<AutomaticAssignUserModel> users, List<OrderWithDetailModel> orderDetail, List<UserOrderModel> userOrders, List<RelationDxpDocEntryModel> listRelation)
         {
             var dictUserPedido = new Dictionary<int, string>();
             var listOrdersWithNoUser = new List<int>();

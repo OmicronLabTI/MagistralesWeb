@@ -135,6 +135,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
           element.pedidoStatus = element.canceled === ConstStatus.canceled ?
             ConstStatus.cancelado : element.pedidoStatus;
           element.docNumDxp = element.docNumDxp ? element.docNumDxp : '';
+          element.docNumDxp = element.docNumDxp.slice(-6);
           switch (element.pedidoStatus) {
             case ConstStatus.abierto:
               element.class = 'abierto';
