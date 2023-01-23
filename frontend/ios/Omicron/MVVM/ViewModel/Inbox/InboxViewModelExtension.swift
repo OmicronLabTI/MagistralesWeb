@@ -301,18 +301,17 @@ extension InboxViewModel {
                 items: self.sortByBaseBocumentAscending(orders: orders.value))
         })
         let sortedSections = sections.sorted { $0.model < $1.model }
-        
         sectionModels.append(contentsOf: sortedSections)
         return sectionModels
     }
-    
+
     func groupedByShopTransaction(data: [String?: [Order]]) -> [SectionModel<String, Order>] {
         var sectionModels: [SectionModel<String, Order>] = []
         let sections = data.map({ [unowned self] (orders) -> SectionModel<String, Order> in
             return SectionModel(
-                model: "\(CommonStrings.shopTransaction) \(orders.key?.suffix(6) ?? "")",
+                model: "\(CommonStrings.shopTransaction): \(orders.key?.suffix(6).uppercased() ?? "")",
                 items: self.sortByShopTransaction(orders: orders.value, shopTransaction: orders.key ?? ""))
-        })
+        }).filter({ $0.items.count > 0 })
         let sortedSections = sections.sorted { $0.model < $1.model }
         sectionModels.append(contentsOf: sortedSections)
         return sectionModels
