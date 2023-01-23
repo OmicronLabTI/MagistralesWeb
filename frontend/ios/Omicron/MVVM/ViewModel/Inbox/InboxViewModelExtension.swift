@@ -310,7 +310,7 @@ extension InboxViewModel {
         var sectionModels: [SectionModel<String, Order>] = []
         let sections = data.map({ [unowned self] (orders) -> SectionModel<String, Order> in
             return SectionModel(
-                model: "\(CommonStrings.shopTransaction) \(orders.key ?? CommonStrings.empty)",
+                model: "\(CommonStrings.shopTransaction) \(orders.key?.suffix(6) ?? "")",
                 items: self.sortByShopTransaction(orders: orders.value, shopTransaction: orders.key ?? ""))
         })
         let sortedSections = sections.sorted { $0.model < $1.model }

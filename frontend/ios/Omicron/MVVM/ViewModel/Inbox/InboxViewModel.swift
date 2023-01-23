@@ -158,8 +158,8 @@ class InboxViewModel {
             self.resetData.onNext(())
         }).disposed(by: self.disposeBag)
     }
-    
-    func groupByShopTransactionButtonDidTapBinding(){
+
+    func groupByShopTransactionButtonDidTapBinding() {
         groupByShopTransactionButtonDidTap.subscribe(onNext: {[weak self] _ in
             guard let self = self else { return }
             self.processButtonIsEnable.onNext(false)

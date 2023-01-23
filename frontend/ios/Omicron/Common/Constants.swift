@@ -97,7 +97,7 @@ struct CommonStrings {
     static let OKConst = "Aceptar"
     static let cancel = "Cancelar"
     static let shopTransaction = "Pedido OmicronShop"
-    static let searchOrden = "Buscar orden / pedido / fórmula"
+    static let searchOrden = "Buscar orden/pedido/fórmula"
     static let signatureViewTitleQFB = "Firma del  QFB"
     static let signatureViewTitleTechnical = "Firma del Técnico"
     static let addComponentTitle = "Agregar Componentes"
