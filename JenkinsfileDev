@@ -16,7 +16,7 @@ pipeline {
     PROJECT_NAME = "AppiOSFormulas"
     PROJECT_NAME_LOWERCASE = "appiosformulas"
     SLACK_CHANNEL = "#omicron_notifications"
-    ENVIRONMENT = "Dev"
+    ENVIRONMENT = "dev"
     NEXUS_REGISTRY = "192.168.0.133:8083"
     REPOSITORY_NAME = "omicrondev"
 
@@ -50,28 +50,11 @@ pipeline {
       steps {
         echo 'Building Frontend'
         dir('frontend/web/') {
-          sh "sudo sed -i \"s#buildEnv#build -- --baseHref=/magistrales/#g\" Dockerfile"
           script {
-            DockerBuildAndPush("web")
+            DockerBuildAndPush("web", "/magistrales/")
           }
         }
       }
-    }
-    stage('ApiManager') {
-      when {
-        anyOf {
-          changeset "*services/apimanager/**"
-          expression { currentBuild.previousBuild.result != "SUCCESS" }
-        }
-      }
-      steps {
-        dir('services/apimanager/') {
-          script {
-            DockerBuildAndPush("apimanager")
-          }
-        }
-      }
-
     }
     stage('Oauth') {
       when {
@@ -83,7 +66,7 @@ pipeline {
       steps {
         dir('services/oauthserver/') {
           script {
-            DockerBuildAndPush("oauthserver")
+            DockerBuildAndPush("oauthserver", "")
           }
         }
       }
@@ -98,7 +81,7 @@ pipeline {
       steps {
         dir('services/catalogos-service/') {
           script {
-            DockerBuildAndPush("catalogos")
+            DockerBuildAndPush("catalogos", "")
           }
         }
       }
@@ -113,7 +96,7 @@ pipeline {
       steps {
         dir('services/usuarios-service/') {
           script {
-            DockerBuildAndPush("usuarios")
+            DockerBuildAndPush("usuarios", "")
           }
         }
       }
@@ -128,7 +111,7 @@ pipeline {
       steps {
         dir('services/pedidos-service/') {
           script {
-            DockerBuildAndPush("pedidos")
+            DockerBuildAndPush("pedidos", "")
           }
         }
       }
@@ -143,7 +126,7 @@ pipeline {
       steps {
         dir('services/sapadapter-service/') {
           script {
-            DockerBuildAndPush("sapadapter")
+            DockerBuildAndPush("sapadapter", "")
           }
         }
       }
@@ -158,7 +141,7 @@ pipeline {
       steps {
         dir('services/warehouses-service/') {
           script {
-            DockerBuildAndPush("warehouses")
+            DockerBuildAndPush("warehouses", "")
           }
         }
       }
@@ -173,43 +156,123 @@ pipeline {
       steps {
         dir('services/reporting-service/') {
           script {
-            DockerBuildAndPush("reporting")
+            DockerBuildAndPush("reporting", "")
           }
         }
-      }
-    }
-    stage('KafkaConsumer') {
-      when {
-        anyOf {
-          changeset "*services/kafkaconsumer-service/**"
-          expression { currentBuild.previousBuild.result != "SUCCESS" }
-        }
-      }
-      steps {
-        dir('services/kafkaconsumer-service/') {
-          script {
-            DockerBuildAndPush("kafkaconsumer")
-          }
-        }
-      }
-    }
-    stage('Kubernetes Down') {
-      steps {
-        echo 'Running Kubernetes down'
-        sh 'sudo kubectl delete -f deploy_dev.yaml --grace-period=0 --force --ignore-not-found'
       }
     }
     stage('Kubernetes Up') {
       steps {
-        echo 'Running Kubernetes'
+        dir('deploy/dev/'){
+          echo 'Running Kubernetes'
         sh 'sudo kubectl apply -f deploy_dev.yaml'
+        sh 'sudo kubectl apply -f ingress-oauth.yml'
+        sh 'sudo kubectl apply -f ingress-services.yml'
+        sh 'sudo kubectl apply -f ingress-web.yml'
+        }        
+      }
+    }
+    stage('RollOut Build Front Web') {
+      when {
+        anyOf {
+          changeset "*frontend/web/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Frontend'
+        sh 'sudo kubectl rollout restart deploy web-deployment'
+      }
+    }
+    stage('RollOut Oauth') {
+      when {
+        anyOf {
+          changeset "*services/oauthserver/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Oaut'
+        sh 'kubectl rollout restart deploy oauthserver-deployment'
+      }
+    }
+    stage('RollOut Catalogos') {
+      when {
+        anyOf {
+          changeset "*services/catalogos-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Catalogos'
+        sh 'kubectl rollout restart deploy catalogos-deployment'
+      }
+    }
+    stage('RollOut Usuarios') {
+      when {
+        anyOf {
+          changeset "*services/usuarios-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Usuarios'
+        sh 'kubectl rollout restart deploy usuarios-deployment'
+      }
+    }
+    stage('RollOut Pedidos') {
+      when {
+        anyOf {
+          changeset "*services/pedidos-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Pedidos'
+        sh 'kubectl rollout restart deploy pedidos-deployment'
+      }
+    }
+    stage('RollOut SapAdapter') {
+      when {
+        anyOf {
+          changeset "*services/sapadapter-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building SapAdapter'
+        sh 'kubectl rollout restart deploy sapadapter-deployment'
+      }
+    }
+    stage('RollOut Warehouse') {
+      when {
+        anyOf {
+          changeset "*services/warehouses-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building warehouse'
+        sh 'kubectl rollout restart deploy warehouses-deployment'
+      }
+    }
+    stage('RollOut Reporting') {
+      when {
+        anyOf {
+          changeset "*services/reporting-service/**"
+          expression { currentBuild.previousBuild.result != "SUCCESS" }
+        }
+      }
+      steps {
+        echo 'Rollout Building Reporting'
+        sh 'kubectl rollout restart deploy reporting-deployment'
       }
     }
     stage('Database') {
       steps {
         dir('database/') {
           sh '/opt/liquibase/liquibase --version'
-          sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
+          sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase.properties" update'
           echo 'Applying Db changes'
         }
       }
@@ -231,7 +294,8 @@ pipeline {
     stage('Docker Clean') {
       steps {
         echo 'Cleaning Docker'
-        sh "docker system prune -f -a"
+        sh "docker builder prune -f -a"
+        sh 'docker image prune -f -a'
       }
     }
   }
@@ -273,12 +337,10 @@ def SlackMsg(String buildResult) {
   }
 }
 
-def DockerBuildAndPush(entity) {
+def DockerBuildAndPush(entity, urlbase) {
   def previousBuild = GetPreviousBuild("${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository")
   docker.withRegistry("http://${NEXUS_REGISTRY}", "nexus_omicron") {
-    docker.build("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest .")
-    sh "docker tag ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:0.0.${env.BUILD_NUMBER}"
-    docker.image("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:0.0.${env.BUILD_NUMBER}").push()
+    docker.build("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest", "--build-arg BUILDKIT_INLINE_CACHE=1 --build-arg BASE_HREF=${urlbase} --cache-from ${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest .")    
     docker.image("${NEXUS_REGISTRY}/${REPOSITORY_NAME}/${COMPANY_LOWERCASE}-${PROJECT_NAME_LOWERCASE}-${entity}-repository:latest").push()
   }
 }
@@ -308,7 +370,7 @@ def GetPreviousBuild(repo) {
       def res = sh(returnStdout: true, script: "curl -s -H \"Accept: application/json\"  -u ${USERNAME}:${PASSWORD} -X GET http://${NEXUS_REGISTRY}/v2/${repo}/tags/list").trim()
       def json = readJSON text: res
       def tags = json["tags"] as String[]
-      if (tags.length > 1) {
+      if (tags?.length > 1) {
         def n = tags[tags.length - 2].replaceAll("0.0.", "") as Integer
         return n;
       } else {

@@ -120,7 +120,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     DxpId = details.DxpId,
                     TotalShopOrders = ordersByDxp.GroupBy(x => x.DocNum).Count(),
                     TotalOrdersWithDelivery = totalOrdersWithDeliverys,
-                    IsOmigenomics = details.IsOmigenomics,
+                    IsOmigenomics = sapOrders.Any(x => x.IsOmigenomics == ServiceConstants.IsOmigenomics),
                 },
 
                 Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders, localNeigbors, userOrders, payments),
@@ -148,7 +148,7 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
 
             sapOrders = ServiceUtilsAlmacen.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductTuple.Item1, sapOrders);
-            sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
+            sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.IsSampleOrder).ToList();
             sapOrders.AddRange(sapCancelled);
             return new Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>(ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1, orderWithPackages, orderWithOmigenomics);
         }

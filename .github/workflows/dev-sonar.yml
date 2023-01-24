@@ -109,11 +109,7 @@ jobs:
           environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
-  notify:
-    name: teams notification
-    runs-on: [self-hosted, omicron-dev]
-    needs: test
-    steps:
+
       - name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
         if: ${{ always() }}

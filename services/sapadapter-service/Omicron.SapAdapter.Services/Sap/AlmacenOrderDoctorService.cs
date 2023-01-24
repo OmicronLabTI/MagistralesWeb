@@ -154,7 +154,10 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the sap orders.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>> GetSapOrders(Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, List<string> types)
+        private async Task<Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>> GetSapOrders(
+            Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple,
+            Tuple<List<LineProductsModel>, List<int>> lineProductTuple,
+            List<string> types)
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
             var parametersWhs = (await ServiceUtils.GetParams(new List<string> { ServiceConstants.WareHouseToExclude }, this.catalogsService)).Select(x => x.Value).ToList();
@@ -170,10 +173,14 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
 
             sapOrders = ServiceUtilsAlmacen.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductTuple.Item1, sapOrders);
-            sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.OrderTypeMU).ToList();
+            sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.IsSampleOrder).ToList();
             sapOrders.AddRange(sapCancelled);
             sapOrders = ServiceUtils.GetOrdersWithValidWareHouse(sapOrders, parametersWhs);
-            return new Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>(ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1, doctorWithPackages, doctorWithOmigenomics);
+
+            return new Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>(
+                ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1,
+                doctorWithPackages,
+                doctorWithOmigenomics);
         }
 
         private async Task<List<CompleteAlmacenOrderModel>> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)

@@ -24,5 +24,11 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
         /// </summary>
         /// <value>Doctor name.</value>
         public string DoctorName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the doctor professional license.
+        /// </summary>
+        /// <value>Proffesional license.</value>
+        public string License { get; set; }
     }
 }

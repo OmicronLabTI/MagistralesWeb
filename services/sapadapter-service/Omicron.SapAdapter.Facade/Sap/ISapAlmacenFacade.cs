@@ -9,6 +9,7 @@
 namespace Omicron.SapAdapter.Facade.Sap
 {
     using System.Collections.Generic;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
     using Omicron.SapAdapter.Dtos.Models;
 
@@ -102,11 +103,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetInvoiceDetail(int invoice);
 
         /// <summary>
-        /// Gets the invoices.
+        /// Gets the orders.
         /// </summary>
-        /// <param name="invoiceId">the invoice id.</param>
+        /// <param name="invoiceId">The invoice Id.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="deliveriesIds">The deliveriesIds.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetInvoiceProducts(int invoiceId);
+        Task<ResultDto> GetInvoiceProducts(int invoiceId, string type, List<int> deliveriesIds);
 
         /// <summary>
         /// Gets the headers from SAP.

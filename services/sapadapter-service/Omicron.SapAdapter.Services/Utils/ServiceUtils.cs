@@ -409,6 +409,34 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// Calculate value from validation.
+        /// </summary>
+        /// <typeparam name="T">the type.</typeparam>
+        /// <param name="validation">Validation.</param>
+        /// <param name="value">True value.</param>
+        /// <param name="defaultValue">False value.</param>
+        /// <returns>Result.</returns>
+        public static T CalculateTernary<T>(bool validation, T value, T defaultValue)
+        {
+            return validation ? value : defaultValue;
+        }
+
+        /// <summary>
+        /// Clean license.
+        /// </summary>
+        /// <param name="license">The license.</param>
+        /// <returns>the resultModel.</returns>
+        public static string CleanLicense(this string license)
+        {
+            if (string.IsNullOrEmpty(license))
+            {
+                return string.Empty;
+            }
+
+            return license.Replace("*", string.Empty);
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>
