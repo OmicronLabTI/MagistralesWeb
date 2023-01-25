@@ -74,7 +74,7 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
 
   setControlValue(formControlName: string, value: string): void {
     this.searchUserForm.get(formControlName).setValue(value !== null && value !== undefined && value !== '' ?
-      this.searchData.userNameSe :
+      value :
       CONST_STRING.empty);
   }
   getClassifications(): void {
