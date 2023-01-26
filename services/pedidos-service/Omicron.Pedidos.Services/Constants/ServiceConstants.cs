@@ -1076,6 +1076,6 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// String ErrorUsersDZAutomatico.
         /// </value>
-        public static string ErrorUsersDZAutomatico => "No hay quimico asignado para atender los productos Dermazone, favor de configurar un usuario o asignarlos manualmente";
+        public static string ErrorUsersDZAutomatico => "No hay químico asignado para atender los productos Dermazone, favor de configurar un usuario o asignarlos manualmente";
     }
 }

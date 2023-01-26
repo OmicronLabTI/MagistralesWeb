@@ -71,7 +71,9 @@ class RootViewModel {
             guard let orderId = order.productionOrderId else { return false }
             guard let baseDocument = order.baseDocument else { return false }
             guard let itemCode = order.itemCode else { return false }
-            return String(orderId).contains(text) || String(baseDocument).contains(text) || String(itemCode).contains(text.uppercased())
+            return String(orderId).contains(text)
+                || String(baseDocument).contains(text)
+            || String(itemCode).contains(text.uppercased())
         })
     }
 

@@ -16,3 +16,10 @@ class MessageToChangeStatus {
         self.typeOfStatus = typeOfStatus
     }
 }
+
+enum ShortType: String {
+    case normal = "Batches"
+    case similarity = "Stock"
+    case groupSort = "groupSort"
+    case shopTransaction = "shopTransaction"
+}

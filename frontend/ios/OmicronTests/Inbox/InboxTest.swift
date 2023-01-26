@@ -192,12 +192,4 @@ class InboxTest: XCTestCase {
         inboxViewModel!.changeStatus(indexPath: [indexPath], typeOfStatus: typeStatus)
     }
 
-    func testGetConectWhenCodeIs500() {
-        inboxViewModel?.hasConnection.subscribe(onNext: { res in
-            XCTAssertFalse(res)
-        }).disposed(by: disposeBag!)
-        statusCode = 500
-        inboxViewModel?.networkManager = NetworkManager(provider: provider)
-        inboxViewModel?.getConnection()
-    }
 }

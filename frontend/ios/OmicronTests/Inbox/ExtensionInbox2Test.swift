@@ -122,8 +122,7 @@ class ExtensionInbox2Test: XCTestCase {
         var orders: [Order] = []
         orders.append(orderTest1!)
         orders.append(orderTest2!)
-        self.inboxViewModel?.similaritySort = true
-        self.inboxViewModel?.normalSort = false
+        self.inboxViewModel?.shortType = .similarity
         let section = SectionOrder(
             statusId: 1, statusName: "Asignadas", numberTask: 2, imageIndicatorStatus: "assignedStatus", orders: orders)
 

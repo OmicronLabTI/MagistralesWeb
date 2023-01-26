@@ -235,11 +235,11 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="739.5" height="50"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hF3-1w-S8M">
-                                                                <rect key="frame" x="0.0" y="0.0" width="379.5" height="50"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="220" height="50"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                             </view>
                                                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7P0-go-amH">
-                                                                <rect key="frame" x="399.5" y="0.0" width="100" height="50"/>
+                                                                <rect key="frame" x="240" y="0.0" width="259.5" height="50"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="mmz-nL-lXT"/>
                                                                 </constraints>
@@ -1479,7 +1479,7 @@
                                             <constraint firstAttribute="height" constant="221" id="BcY-8h-PaH"/>
                                         </constraints>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="ZxU-Dx-4Fp" style="IBUITableViewCellStyleDefault" id="bPd-el-pqn">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PatientListTableViewCell" textLabel="ZxU-Dx-4Fp" style="IBUITableViewCellStyleDefault" id="bPd-el-pqn">
                                                 <rect key="frame" x="0.0" y="55.5" width="450" height="128"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bPd-el-pqn" id="BLB-Of-vqT">

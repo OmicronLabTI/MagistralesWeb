@@ -428,14 +428,14 @@ class OrderDetailViewController: UIViewController {
             }
         }
     }
-    
-    func deleteManyDidEnableBinding(){
+
+    func deleteManyDidEnableBinding() {
         self.orderDetailViewModel.deleteManyButtonIsEnable.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] isEnable in
             self?.deleteManyButton.isHidden = !isEnable
         }).disposed(by: self.disposeBag)
     }
-    
-    func deleteConfirmationDialog(){
+
+    func deleteConfirmationDialog() {
         let alert = UIAlertController(title: CommonStrings.deleteComponentMessage, message: nil, preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive,
                                          handler: {[weak self] _ in

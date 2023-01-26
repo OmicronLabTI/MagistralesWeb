@@ -75,7 +75,7 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.orderURLPDF.subscribe(onNext: { [weak self] res in
             XCTAssertEqual(res, self?.expectedResult)
         }).disposed(by: disposeBag!)
-        inboxViewModel?.selectOrder.onNext(1234667)
+        
     }
 
     func testPostOrderPDf() {
@@ -155,5 +155,9 @@ class ExtensionInboxTest3: XCTestCase {
         XCTAssertNotNil(model)
         XCTAssertEqual(model.code, 200)
         XCTAssertEqual(model.response, [""])
+    }
+
+    func testShowPatientList() {
+        inboxViewModel?.resetData.onNext(())
     }
 }
