@@ -132,19 +132,18 @@ namespace Omicron.Pedidos.Services.Pedidos
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
                 int.TryParse(x.Productionorderid, out int productionId);
 
+                bool isOnlyClasificationDZ = ServiceShared.CalculateAnd(relationOrdersWithUsersDZIsNotOmi.Any(), !ordersSap.Any());
                 bool isClasificationDZ = relationOrdersWithUsersDZIsNotOmi.Any(rel =>
                     ServiceShared.CalculateAnd(rel.Order.Order.PedidoId.Equals(saleOrderInt), rel.Order.Detalle.Any(product => product.OrdenFabricacionId.Equals(productionId))));
-                bool isTraditional = userSaleOrder.Item1.ContainsKey(saleOrderInt);
+                bool isTraditional = ServiceShared.CalculateOr(userSaleOrder.Item1.ContainsKey(saleOrderInt), isOnlyClasificationDZ);
+
                 if (ServiceShared.CalculateOr(isTraditional, isClasificationDZ))
                 {
                     var previousStatus = x.Status;
                     var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdateSAP.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
                     x.Status = ServiceShared.CalculateTernary(asignable, ServiceConstants.Asignado, x.Status);
                     x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, x.Status);
-                    x.Userid = isClasificationDZ ?
-                    relationOrdersWithUsersDZIsNotOmi.Where(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt)).First().UserId :
-                    userSaleOrder.Item1[saleOrderInt];
-
+                    x.Userid = this.GetUserId(relationOrdersWithUsersDZIsNotOmi, userSaleOrder, saleOrderInt, isClasificationDZ, isOnlyClasificationDZ);
                     if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                     {
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
@@ -247,6 +246,23 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.UpdateUserOrders(ordersToUpdate);
             _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
+        }
+
+        private string GetUserId(
+            List<RelationUserDZAndOrdersDZModel> relationOrdersWithUsersDZIsNotOmi,
+            Tuple<Dictionary<int, string>, List<int>> userSaleOrder,
+            int saleOrderInt,
+            bool isClasificationDZ,
+            bool isOnlyClasificationDZ)
+        {
+            if (isOnlyClasificationDZ)
+            {
+                return relationOrdersWithUsersDZIsNotOmi.Where(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt)).First().UserId;
+            }
+
+            return isClasificationDZ ?
+                relationOrdersWithUsersDZIsNotOmi.Where(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt)).First().UserId :
+                userSaleOrder.Item1[saleOrderInt];
         }
     }
 }
