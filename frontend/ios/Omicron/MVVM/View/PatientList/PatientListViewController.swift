@@ -16,16 +16,14 @@ class PatientListViewController: UIViewController, UITableViewDataSource, UITabl
     @IBOutlet weak var buttonAcept: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var orderId: UILabel!
-    var name: String?
-    var order: Int = 0
-    var patientList: String = ""
+    var name: String = ""
     var list: [String] = []
     let disposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setUI()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         tableView.reloadData()
@@ -34,11 +32,9 @@ class PatientListViewController: UIViewController, UITableViewDataSource, UITabl
     func setUI() {
         buttonAcept.layer.cornerRadius = 15
         contentView.layer.cornerRadius = 15
-        list = self.patientList.components(separatedBy: ",")
-        tableView.register(PatientListTableViewCell.self, forCellReuseIdentifier: "PatientListTableViewCell")
         tableView.delegate = self
         tableView.dataSource = self
-        orderId.text = "Pedido: \(order)"
+        orderId.text = self.name
         tableView.rowHeight = UITableView.automaticDimension
     }
 
@@ -47,8 +43,7 @@ class PatientListViewController: UIViewController, UITableViewDataSource, UITabl
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // swiftlint:disable force_cast
-        var cell = tableView.dequeueReusableCell(withIdentifier: "PatientListTableViewCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "PatientListTableViewCell", for: indexPath)
         let name = list[indexPath.row]
         cell.textLabel?.text = name.trimmingCharacters(in: .whitespacesAndNewlines)
         return cell
@@ -58,5 +53,3 @@ class PatientListViewController: UIViewController, UITableViewDataSource, UITabl
         dismiss(animated: true, completion: nil)
     }
 }
-
-

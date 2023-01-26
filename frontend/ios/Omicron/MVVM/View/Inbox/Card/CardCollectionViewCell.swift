@@ -14,6 +14,7 @@ protocol CardCellDelegate: NSObjectProtocol {
     func detailTapped(order: Order)
     func patientList(order: Order)
     func downloadPdf(id: Int)
+    
 }
 
 class CardCollectionViewCell: UICollectionViewCell {
