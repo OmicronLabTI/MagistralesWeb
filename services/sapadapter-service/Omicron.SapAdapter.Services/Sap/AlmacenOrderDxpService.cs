@@ -162,7 +162,10 @@ namespace Omicron.SapAdapter.Services.Sap
                 return sapOrders;
             }
 
-            return sapOrders.Where(x => x.DocNumDxp.GetShortShopTransaction().ToLower() == parameters[ServiceConstants.Chips].ToLower().Remove(0, 1)).ToList();
+            var chip = parameters[ServiceConstants.Chips].ToLower().Remove(0, 1);
+            return sapOrders.Where(x =>
+                                        x.DocNumDxp.GetShortShopTransaction().ToLower() == chip ||
+                                        x.DocNumDxp.Contains(chip)).ToList();
         }
 
         private AlmacenOrdersByDoctorModel GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters, List<string> orderWithPackages, List<string> orderWithOmigenomics)
