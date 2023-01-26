@@ -64,19 +64,18 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
   }
 
   setFormValues(): void {
-    this.searchUserForm.get('userNameSe').setValue(this.searchData.userNameSe && this.searchData.userNameSe !== '' ?
-      this.searchData.userNameSe : CONST_STRING.empty);
-    this.searchUserForm.get('firstNameSe').setValue(this.searchData.firstNameSe && this.searchData.firstNameSe !== '' ?
-      this.searchData.firstNameSe : CONST_STRING.empty);
-    this.searchUserForm.get('lastNameSe').setValue(this.searchData.lastNameSe && this.searchData.lastNameSe !== '' ?
-      this.searchData.lastNameSe : CONST_STRING.empty);
-    this.searchUserForm.get('activoSe').setValue(this.searchData.activoSe && this.searchData.activoSe !== '' ?
-      this.searchData.activoSe : CONST_STRING.empty);
-    this.searchUserForm.get('asignableSe').setValue(this.searchData.asignableSe && this.searchData.asignableSe !== '' ?
-      this.searchData.asignableSe : CONST_STRING.empty);
-    // tslint:disable-next-line:max-line-length
-    this.searchUserForm.get('classificationQFBSe').setValue(this.searchData.classificationQFBSe && this.searchData.classificationQFBSe !== '' ?
-      this.searchData.classificationQFBSe : CONST_STRING.empty);
+    this.setControlValue('userNameSe', this.searchData.userNameSe);
+    this.setControlValue('firstNameSe', this.searchData.firstNameSe);
+    this.setControlValue('lastNameSe', this.searchData.lastNameSe);
+    this.setControlValue('activoSe', this.searchData.activoSe);
+    this.setControlValue('asignableSe', this.searchData.asignableSe);
+    this.setControlValue('classificationQFBSe', this.searchData.classificationQFBSe);
+  }
+
+  setControlValue(formControlName: string, value: string): void {
+    this.searchUserForm.get(formControlName).setValue(value !== null && value !== undefined ?
+      value :
+      CONST_STRING.empty);
   }
   getClassifications(): void {
     this.usersService.getClasifications().subscribe((res) => {
