@@ -132,7 +132,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
                 int.TryParse(x.Productionorderid, out int productionId);
 
-                bool isOnlyClasificationDZ = ServiceShared.CalculateAnd(relationOrdersWithUsersDZIsNotOmi.Any(), !ordersSap.Any());
+                bool isOnlyClasificationDZ = relationOrdersWithUsersDZIsNotOmi.Any();
                 bool isClasificationDZ = relationOrdersWithUsersDZIsNotOmi.Any(rel =>
                     ServiceShared.CalculateAnd(rel.Order.Order.PedidoId.Equals(saleOrderInt), rel.Order.Detalle.Any(product => product.OrdenFabricacionId.Equals(productionId))));
                 bool isTraditional = ServiceShared.CalculateOr(userSaleOrder.Item1.ContainsKey(saleOrderInt), isOnlyClasificationDZ);
