@@ -127,23 +127,21 @@ namespace Omicron.Pedidos.Services.Pedidos
             var pedidosStringUpdate = pedidosString.Concat(relationOrdersWithUsersDZIsNotOmi.Select(x => x.Order.Order.DocNum.ToString())).Distinct().ToList();
             var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosStringUpdate)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
+            bool isOnlyClasificationDZ = ServiceShared.CalculateAnd(relationOrdersWithUsersDZIsNotOmi.Any(), !ordersSap.Any());
             userOrdersToUpdate.ForEach(x =>
             {
+                bool isHeader = string.IsNullOrEmpty(x.Productionorderid);
                 int.TryParse(x.Salesorderid, out int saleOrderInt);
                 int.TryParse(x.Productionorderid, out int productionId);
-
-                bool isOnlyClasificationDZ = relationOrdersWithUsersDZIsNotOmi.Any();
-                bool isClasificationDZ = relationOrdersWithUsersDZIsNotOmi.Any(rel =>
-                    ServiceShared.CalculateAnd(rel.Order.Order.PedidoId.Equals(saleOrderInt), rel.Order.Detalle.Any(product => product.OrdenFabricacionId.Equals(productionId))));
-                bool isTraditional = ServiceShared.CalculateOr(userSaleOrder.Item1.ContainsKey(saleOrderInt), isOnlyClasificationDZ);
-
-                if (ServiceShared.CalculateOr(isTraditional, isClasificationDZ))
+                bool isClasificationDZ = relationOrdersWithUsersDZIsNotOmi.Any(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt));
+                bool isTraditional = userSaleOrder.Item1.ContainsKey(saleOrderInt);
+                if (ServiceShared.CalculateOr(isTraditional, isClasificationDZ, isOnlyClasificationDZ))
                 {
                     var previousStatus = x.Status;
-                    var asignable = !string.IsNullOrEmpty(x.Productionorderid) && listToUpdateSAP.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
+                    var asignable = !isHeader && listToUpdateSAP.Any(y => y.OrderFabId.ToString() == x.Productionorderid);
                     x.Status = ServiceShared.CalculateTernary(asignable, ServiceConstants.Asignado, x.Status);
-                    x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, x.Status);
-                    x.Userid = this.GetUserId(relationOrdersWithUsersDZIsNotOmi, userSaleOrder, saleOrderInt, isClasificationDZ, isOnlyClasificationDZ);
+                    x.Status = ServiceShared.CalculateTernary(isHeader, ServiceConstants.Liberado, x.Status);
+                    x.Userid = this.GetUserId(isHeader, relationOrdersWithUsersDZIsNotOmi, userSaleOrder, saleOrderInt, isClasificationDZ, isOnlyClasificationDZ, productionId);
                     if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                     {
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
@@ -249,15 +247,25 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         private string GetUserId(
+            bool isHeader,
             List<RelationUserDZAndOrdersDZModel> relationOrdersWithUsersDZIsNotOmi,
             Tuple<Dictionary<int, string>, List<int>> userSaleOrder,
             int saleOrderInt,
             bool isClasificationDZ,
-            bool isOnlyClasificationDZ)
+            bool isOnlyClasificationDZ,
+            int productionId)
         {
             if (isOnlyClasificationDZ)
             {
                 return relationOrdersWithUsersDZIsNotOmi.Where(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt)).First().UserId;
+            }
+
+            if (!isHeader)
+            {
+                isClasificationDZ = relationOrdersWithUsersDZIsNotOmi.Any(rel =>
+                        ServiceShared.CalculateAnd(
+                            rel.Order.Order.PedidoId.Equals(saleOrderInt),
+                            rel.Order.Detalle.Any(product => product.OrdenFabricacionId.Equals(productionId))));
             }
 
             return isClasificationDZ ?
