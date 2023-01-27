@@ -8,4 +8,5 @@
   <include file="changesets/db.changelog-0.0.0.1.xml"/> 
   <include file="changesets/db.changelog-0.0.0.2.xml"/>
   <include file="changesets/db.changelog-0.0.0.3.xml"/>  
+  <include file="changesets/db.changelog-soporte.xml"/>  
 </databaseChangeLog> 
