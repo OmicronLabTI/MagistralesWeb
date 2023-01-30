@@ -112,9 +112,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     if (valueForm.userTypeR) {
       this.changeUserTypeValue(valueForm.userTypeR);
     }
-    if (valueForm.requireTechnical) {
-      this.requireTechnicalChange();
-    }
+    this.requireTechnicalChange();
   }
 
   requireTechnicalChange(): void {
