@@ -22,7 +22,7 @@ import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comm
 @NgModule({
     declarations: [
         AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent,
-        ComponentslistComponent, RequestSignatureDialogComponent, AddCommentsDialogComponent,
+        ComponentslistComponent, RequestSignatureDialogComponent, AddCommentsDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -34,8 +34,7 @@ import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comm
         FlexLayoutModule,
         FormsModule,
         InfiniteScrollModule,
-        SignaturePadModule,
-
+        SignaturePadModule
     ],
     providers: [
         APP_PROVIDERS,

@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsersService } from '../../services/users.service';
-import { Clasification, IUserReq, RoleUser } from '../../model/http/users';
+import { Clasification, IAddUserDialogConfig, IUserReq, RoleUser, TechnicalUser } from '../../model/http/users';
 import { ErrorService } from '../../services/error.service';
 import {
   CONST_NUMBER, CONST_STRING,
@@ -33,16 +33,19 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   clasifications: Clasification[] = [];
   activeClasifications: Clasification[] = [];
   qfbRolId = 0;
+  technicalUser: TechnicalUser[] = [];
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: IAddUserDialogConfig,
     private formBuilder: FormBuilder,
     private usersService: UsersService,
     private errorService: ErrorService,
     public dataService: DataService,
     private dialogRef: MatDialogRef<AddUserDialogComponent>,
     private observableService: ObservableService) {
+
     this.isForEditModal = this.data.modalType === MODAL_NAMES.editUser;
     this.userToEdit = this.data.userToEditM;
+
     this.addUserForm = this.formBuilder.group({
       userName: ['', [Validators.required, Validators.maxLength(50)]],
       firstName: ['', [Validators.required, Validators.maxLength(50)]],
@@ -52,52 +55,104 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       activo: ['', [Validators.required]],
       piezas: [CONST_USER_DIALOG.defaultNumberOfPieces, [Validators.required, Validators.maxLength(5)]],
       asignable: ['', [Validators.required]],
-      classificationQFB: ['', [Validators.required]]
+      classificationQFB: ['', [Validators.required]],
+      requireTechnical: [false, [Validators.required]],
+      technical: ['', [Validators.required]]
     });
-
   }
 
   ngOnInit() {
     this.subscription = this.addUserForm.valueChanges.subscribe(valueForm => {
-      if (valueForm.userName) {
-        this.addUserForm.get('userName').setValue(
-          this.dataService.getNormalizeString(valueForm.userName), { emitEvent: false });
-      }
-      if (valueForm.piezas) {
-        this.addUserForm.get('piezas').setValue(this.getOnlyNumbers(valueForm.piezas), { emitEvent: false });
-      }
-      if (valueForm.userTypeR && valueForm.userTypeR !== '2') {
-        this.addUserForm.get('piezas').disable({ onlySelf: true, emitEvent: false });
-        this.addUserForm.get('asignable').disable({ onlySelf: true, emitEvent: false });
-        this.addUserForm.get('classificationQFB').disable({ onlySelf: true, emitEvent: false });
-        this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
-      } else {
-        this.addUserForm.get('piezas').enable({ onlySelf: true, emitEvent: false });
-        this.addUserForm.get('asignable').enable({ onlySelf: true, emitEvent: false });
-        this.addUserForm.get('classificationQFB').enable({ onlySelf: true, emitEvent: false });
-        this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
-      }
+      this.formValuesChanges(valueForm);
     });
-    this.usersService.getRoles().subscribe(rolesRes => {
+    this.callServices();
+  }
+
+  async getRoles(): Promise<void> {
+    return this.usersService.getRoles().toPromise().then((rolesRes) => {
       this.userRoles = rolesRes.response;
-      this.addUserForm.get('userTypeR').
-        setValue(!this.isForEditModal ? this.userRoles.
-          filter(user =>
-            CONST_USER_DIALOG.defaultQfb.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString() :
-          this.userToEdit.role.toString());
-      this.qfbRolId = this.userRoles.find(rol => rol.description.toLowerCase() === CONST_USER_DIALOG.defaultQfb.toLowerCase()).id;
-    }, error => {
-      this.errorService.httpError(error);
-      this.dialogRef.close();
-    });
-    this.usersService.getClasifications().subscribe((res) => {
+    }).catch((error) => this.callErrorOnService(error));
+  }
+
+  async getClassifications(): Promise<void> {
+    return this.usersService.getClasifications().toPromise().then((res) => {
       this.clasifications = Object.assign(res.response, []);
       this.activeClasifications = this.clasifications;
+    }).catch((error) => this.callErrorOnService(error));
+  }
+
+  async getTehcnicalUsers(): Promise<void> {
+    return this.usersService.getTehcnicalUsers().toPromise().then((res) => {
+      this.technicalUser = res.response;
+    }).catch((error) => this.callErrorOnService(error));
+  }
+
+  callErrorOnService(error: ErrorHttpInterface): void {
+    this.errorService.httpError(error);
+    this.dialogRef.close();
+  }
+  async callServices(): Promise<void> {
+    await Promise.all([this.getRoles(), this.getClassifications(), this.getTehcnicalUsers()]).then(() => {
       this.setFormValues();
-    }, error => {
-      this.errorService.httpError(error);
-      this.dialogRef.close();
     });
+  }
+
+  getDefaultRol(): string {
+    return this.userRoles.filter(user => CONST_USER_DIALOG.defaultQfb.toLowerCase()
+      === user.description.toLocaleLowerCase())[0].id.toString();
+  }
+  formValuesChanges(valueForm: any): void {
+    if (valueForm.userName) {
+      this.addUserForm.get('userName').setValue(
+        this.dataService.getNormalizeString(valueForm.userName), { emitEvent: false });
+    }
+    if (valueForm.piezas) {
+      this.addUserForm.get('piezas').setValue(this.getOnlyNumbers(valueForm.piezas), { emitEvent: false });
+    }
+    if (valueForm.userTypeR) {
+      this.changeUserTypeValue(valueForm.userTypeR);
+    }
+    if (valueForm.requireTechnical) {
+      this.requireTechnicalChange();
+    }
+  }
+
+  requireTechnicalChange(): void {
+    if (this.addUserForm.get('requireTechnical').value !== '1') {
+      this.addUserForm.get('technical').setValue('', { onlySelf: true, emitEvent: false });
+      this.addUserForm.get('technical').disable({ onlySelf: true, emitEvent: false });
+    }
+  }
+
+  changeUserTypeValue(userTypeR: string): void {
+    if (userTypeR === '9') {
+      this.clearTechnical();
+      this.addUserForm.get('asignable').enable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('piezas').disable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('classificationQFB').disable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('requireTechnical').disable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('technical').disable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+    } else if (userTypeR && userTypeR !== '2') {
+      this.clearTechnical();
+      this.addUserForm.get('piezas').disable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('asignable').disable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('classificationQFB').disable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('requireTechnical').disable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('technical').disable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+    } else {
+      this.addUserForm.get('piezas').enable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('asignable').enable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('classificationQFB').enable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('requireTechnical').enable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('technical').enable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+    }
+  }
+  clearTechnical(): void {
+    this.addUserForm.get('requireTechnical').setValue('0', { emitEvent: false });
+    this.addUserForm.get('technical').setValue('', { emitEvent: false });
   }
 
   getRol(id: number): string {
@@ -129,10 +184,13 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     }
   }
   setFormValues(): void {
+    this.qfbRolId = this.userRoles.find(rol => rol.description.toLowerCase() === CONST_USER_DIALOG.defaultQfb.toLowerCase()).id;
     if (!this.isForEditModal) {
+      this.addUserForm.get('userTypeR').setValue(this.getDefaultRol());
       this.addUserForm.get('asignable').setValue(CONST_NUMBER.one.toString());
       this.addUserForm.get('activo').setValue(CONST_NUMBER.one);
     } else {
+      this.addUserForm.get('userTypeR').setValue(this.userToEdit.role.toString());
       this.addUserForm.get('userName').setValue(this.userToEdit.userName);
       this.addUserForm.get('firstName').setValue(this.userToEdit.firstName);
       this.addUserForm.get('lastName').setValue(this.userToEdit.lastName);
@@ -141,44 +199,56 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('piezas').setValue(this.userToEdit.piezas);
       this.addUserForm.get('asignable').setValue(this.userToEdit.asignable.toString());
       this.addUserForm.get('classificationQFB').setValue(this.userToEdit.classification);
+      this.addUserForm.get('requireTechnical').setValue(this.userToEdit.tecnicId !== null && this.userToEdit.tecnicId !== '' ? '1' : '0');
+      this.addUserForm.get('technical').setValue(this.userToEdit.tecnicId);
       this.changeClasification(this.userToEdit.piezas);
     }
   }
 
-  saveUser() {
+  save() {
+    const requireTecnic = String(this.addUserForm.get('requireTechnical').value) === '1';
+    const tecnicId = requireTecnic ? this.addUserForm.get('technical').value : null;
     if (!this.isForEditModal) {
-      const user: IUserReq = {
-        ...this.addUserForm.value,
-        password: btoa(this.addUserForm.get('password').value),
-        role: Number(this.addUserForm.get('userTypeR').value),
-        asignable: Number(this.addUserForm.get('asignable').value),
-        piezas: Number(this.addUserForm.get('piezas').value),
-        classification: this.addUserForm.get('classificationQFB').value
-      };
-      this.usersService.createUserService(user).subscribe(() => {
-        this.createMessageOk(Messages.success, 'success', false);
-        this.dialogRef.close();
-      },
-        error => this.userExistDialog(error));
+      this.saveUser(tecnicId);
     } else {
-      const user: IUserReq = {
-        ...this.addUserForm.value,
-        id: this.userToEdit.id,
-        password: btoa(this.addUserForm.get('password').value),
-        role: Number(this.addUserForm.get('userTypeR').value),
-        asignable: Number(this.addUserForm.get('asignable').value),
-        activo: Number(this.addUserForm.get('activo').value),
-        piezas: Number(this.addUserForm.get('piezas').value),
-        classification: this.addUserForm.get('classificationQFB').value
-      };
-      this.usersService.updateUser(user).subscribe(() => {
-        this.createMessageOk(Messages.success, 'success', false);
-        this.dialogRef.close();
-      },
-        error => this.userExistDialog(error));
+      this.updateUser(tecnicId);
     }
-
   }
+
+  saveUser(tecnicId?: string): void {
+    const user: IUserReq = {
+      ...this.addUserForm.value,
+      password: btoa(this.addUserForm.get('password').value),
+      role: Number(this.addUserForm.get('userTypeR').value),
+      asignable: Number(this.addUserForm.get('asignable').value),
+      piezas: Number(this.addUserForm.get('piezas').value),
+      classification: this.addUserForm.get('classificationQFB').value,
+      tecnicId
+    };
+    this.usersService.createUserService(user).subscribe(() => {
+      this.createMessageOk(Messages.success, 'success', false);
+      this.dialogRef.close();
+    }, error => this.userExistDialog(error));
+  }
+
+  updateUser(tecnicId?: string): void {
+    const user: IUserReq = {
+      ...this.addUserForm.value,
+      id: this.userToEdit.id,
+      password: btoa(this.addUserForm.get('password').value),
+      role: Number(this.addUserForm.get('userTypeR').value),
+      asignable: Number(this.addUserForm.get('asignable').value),
+      activo: Number(this.addUserForm.get('activo').value),
+      piezas: Number(this.addUserForm.get('piezas').value),
+      classification: this.addUserForm.get('classificationQFB').value,
+      tecnicId
+    };
+    this.usersService.updateUser(user).subscribe(() => {
+      this.createMessageOk(Messages.success, 'success', false);
+      this.dialogRef.close();
+    }, error => this.userExistDialog(error));
+  }
+
   createMessageOk(title: string, icon: SweetAlertIcon, isButtonAccept: boolean) {
     this.observableService.setCallHttpService(HttpServiceTOCall.USERS);
     this.observableService.setMessageGeneralCallHttp({ title, icon, isButtonAccept });

@@ -1,0 +1,31 @@
+.work-team-dialog {
+    p {
+        margin: 0;
+    }
+    .title {
+        color: #6c90b3 !important;
+        font-weight: bold !important;
+        padding-bottom: 5px;
+    }
+    width: 350px;
+    max-width: 100vw;
+    height: auto;
+    max-height: 90vh;
+    padding: 20px 30px;
+    .work-team-user {
+        padding: 10px 0;
+        border-bottom: 1px solid #d3d3d3;
+    }
+    .work-team-user:nth-child(odd) {
+        background-color: #f1f2f3;
+    }
+    .button-content {
+        padding-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+.button-blue-user-list {
+    background-color: #6c90b3 !important;
+    color: #fff !important;
+  }
