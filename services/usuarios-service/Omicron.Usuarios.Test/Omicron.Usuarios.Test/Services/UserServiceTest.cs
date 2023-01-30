@@ -18,6 +18,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     using NUnit.Framework;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Usuarios.DataAccess.DAO.User;
+    using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Context;
     using Omicron.Usuarios.Entities.Model;
     using Omicron.Usuarios.Services.Constants;
@@ -328,6 +329,46 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             Assert.IsNotNull(data.CountTotalPieces);
             Assert.IsNotNull(data.UserId);
             Assert.IsNotNull(data.UserName);
+        }
+
+        /// <summary>
+        /// test to get all tecnic users.
+        /// </summary>
+        /// <returns>returns list of users.</returns>
+        [Test]
+        public async Task GetAllUsersTecnics()
+        {
+            // act
+            var response = await this.userServices.GetUsersTecnic();
+
+            // Assert
+            Assert.IsNotNull(response.Response);
+        }
+
+        /// <summary>
+        /// test to get all tecnic users.
+        /// </summary>
+        /// <param name="id">Id User to get relation with tecnic.</param>
+        /// <returns>returns list of users.</returns>
+        [Test]
+        [TestCase("9")]
+        [TestCase("8")]
+        [TestCase("Noexiste")]
+        [TestCase("10")]
+        public async Task GetRelationalUserInfor(string id)
+        {
+            // act
+            var response = await this.userServices.GetRelationalUserInfor(id);
+
+            // Assert
+            if (id.Equals("Noexiste") || id.Equals("10"))
+            {
+                Assert.Null(response.Comments);
+            }
+            else
+            {
+                Assert.NotNull(response.Comments);
+            }
         }
     }
 }

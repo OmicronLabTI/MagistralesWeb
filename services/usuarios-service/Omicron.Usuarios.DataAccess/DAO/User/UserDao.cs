@@ -70,7 +70,7 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         /// <returns>the user.</returns>
         public async Task<bool> DeleteUsers(List<string> id)
         {
-            var users = (await this.databaseContext.Usuarios.Where(x => id.Contains(x.Id)).ToListAsync()).ToList();
+            var users = await this.databaseContext.Usuarios.Where(x => id.Contains(x.Id)).ToListAsync();
             users.ForEach(x =>
             {
                 x.Deleted = true;
@@ -79,6 +79,14 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
                 x.Piezas = 0;
             });
             this.databaseContext.Usuarios.UpdateRange(users);
+
+            var updateuser = await this.databaseContext.Usuarios.Where(x => id.Contains(x.TecnicId)).ToListAsync();
+            updateuser.ForEach(x =>
+            {
+                x.TecnicId = null;
+            });
+            this.databaseContext.Usuarios.UpdateRange(updateuser);
+
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
         }
