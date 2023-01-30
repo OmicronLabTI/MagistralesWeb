@@ -91,6 +91,11 @@ namespace Omicron.Usuarios.Services.Constants
         public const int RoleQfb = 2;
 
         /// <summary>
+        /// the tecnic role.
+        /// </summary>
+        public const int RoleTecnic = 9;
+
+        /// <summary>
         /// gets the roles from catalogservice.
         /// </summary>
         public const string QfbOrders = "qfbOrders";

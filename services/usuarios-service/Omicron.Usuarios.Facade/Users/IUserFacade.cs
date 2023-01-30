@@ -53,6 +53,19 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         Task<ResultDto> GetUsers(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Gets all the tecnic user.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetUsersTecnic();
+
+        /// <summary>
+        /// Gets relation user info.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetRelationUserInfo(string id);
+
+        /// <summary>
         /// deletes the user.
         /// </summary>
         /// <param name="listIds">the list of ids.</param>

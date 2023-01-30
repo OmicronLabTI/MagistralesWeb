@@ -92,5 +92,13 @@ namespace Omicron.Usuarios.Dtos.User
         /// String Activo.
         /// </value>
         public string Classification { get; set; }
+
+        /// <summary>
+        /// Gets or sets Tecnic Id.
+        /// </summary>
+        /// <value>
+        /// String Activo.
+        /// </value>
+        public string TecnicId { get; set; }
     }
 }
