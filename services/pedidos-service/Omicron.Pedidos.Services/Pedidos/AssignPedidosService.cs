@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using System.Net;
     using System.Text;
@@ -17,6 +18,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Builders;
@@ -191,6 +193,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private async Task<ResultModel> ReassingarPedido(ManualAssignModel assign)
         {
+            var tecnicInfo = await this.GetTecnicInfoByQfbId(assign.UserId);
+
+            if (!tecnicInfo.IsValidTecnic)
+            {
+                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, tecnicInfo.QfbFirstName, tecnicInfo.QfbLastName), null, null);
+            }
+
             var listSaleOrders = assign.DocEntry.Select(x => x.ToString()).ToList();
             var orders = (await this.pedidosDao.GetUserOrderBySaleOrder(listSaleOrders)).Where(x => !ServiceConstants.StatusAvoidReasignar.Contains(x.Status)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
@@ -199,6 +208,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var previousStatus = x.Status;
                 x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
                 x.Userid = assign.UserId;
+                x.TecnicId = tecnicInfo.TecnicId;
                 if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                 {
                     /** add logs**/
@@ -271,6 +281,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             return isClasificationDZ ?
                 relationOrdersWithUsersDZIsNotOmi.Where(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt)).First().UserId :
                 userSaleOrder.Item1[saleOrderInt];
+        }
+
+        private async Task<QfbTecnicInfoDto> GetTecnicInfoByQfbId(string qfbId)
+        {
+            var resultUsers = await this.userService.SimpleGetUsers(string.Format(ServiceConstants.GetTecnicByQfbId, qfbId));
+            return JsonConvert.DeserializeObject<QfbTecnicInfoDto>(JsonConvert.SerializeObject(resultUsers.Response));
         }
     }
 }
