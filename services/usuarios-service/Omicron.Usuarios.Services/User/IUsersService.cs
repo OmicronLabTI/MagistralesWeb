@@ -53,6 +53,19 @@ namespace Omicron.Usuarios.Services.User
         Task<ResultModel> GetUsers(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Gets all tecnic users.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetUsersTecnic();
+
+        /// <summary>
+        /// Gets relation user info.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetRelationalUserInfor(string id);
+
+        /// <summary>
         /// Deletes the user logically.
         /// </summary>
         /// <param name="listIds">the list ids.</param>

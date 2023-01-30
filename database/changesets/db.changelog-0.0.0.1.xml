@@ -1059,5 +1059,13 @@
 		<sql endDelimiter=";">
 			update classificationqfb set description = 'Dermazone (DZ)' where value = 'DZ';
 		</sql>
-	</changeSet>	
+	</changeSet>
+	<changeSet author="israelmorales" id="changelog-1.107">
+		<addColumn tableName ="user">
+			<column
+				name="tecnicid"
+				type="varchar(50)">
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
