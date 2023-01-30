@@ -4,19 +4,17 @@
             <span>Usuarios</span>
         </div>
         <div class="add-user-container">
-            <div class="icon-add" (click)="openDialog('addModal','')">
-                <svg data-toggle="modal" data-target="#agregar" xmlns="http://www.w3.org/2000/svg" width="30"
-                     height="30" viewBox="0 0 24 24" fill="none" stroke=" #888ea8" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <line x1="20" y1="8" x2="20" y2="14"></line>
-                    <line x1="23" y1="11" x2="17" y2="11"></line>
-                </svg>
-            </div>
+            <button mat-raised-button class="ico-col-pri" (click)="deleteUsers('')">
+                <img src="assets/icons/delete.svg" alt="edit">
+            </button>
+
+            <button mat-raised-button class="button-blue-user-list" (click)="openDialog('addModal','')">
+                <img src="assets/icons/add-user.svg" alt="add user">
+            </button>
 
             <button mat-raised-button class="button-blue-user-list" (click)="openSearchUsers()">
-                <mat-icon *ngIf="searchUsersData.activoSe && searchUsersData.activoSe !== '' ||
+                <mat-icon
+                    *ngIf="searchUsersData.activoSe && searchUsersData.activoSe !== '' ||
                                  searchUsersData.asignableSe && searchUsersData.asignableSe !== '' ||
                                  searchUsersData.firstNameSe && searchUsersData.firstNameSe !== '' ||
                                  searchUsersData.lastNameSe && searchUsersData.lastNameSe !== '' ||
@@ -29,43 +27,43 @@
         </div>
     </div>
     <div class="list-users-container">
-        <div class="table-container">
-            <table  mat-table [dataSource]="dataSource"  [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''" aria-describedby>
-                <ng-container matColumnDef="delete">
+        <div class="table-container mt-15">
+            <table mat-table [dataSource]="dataSource" [ngClass]="dataSource.data.length !== 0 ? 'mat-elevation-z8': ''"
+                aria-describedby>
+                <ng-container matColumnDef="delete" sticky>
                     <th scope="row" mat-header-cell *matHeaderCellDef>
-                        <mat-checkbox
-                                [checked]="isAllComplete"
-                                [indeterminate]="someComplete()"
-                                (change)="setAll($event.checked)"
-                        >
+                        <mat-checkbox [checked]="isAllComplete" [indeterminate]="someComplete()"
+                            (change)="setAll($event.checked)">
                         </mat-checkbox>
                     </th>
-                    <td mat-cell *matCellDef="let element">
-                        <mat-checkbox [(ngModel)]="element.isChecked"
-                                      (ngModelChange)="updateAllComplete()"
-                        >
+                    <td mat-cell *matCellDef="let element" class="custom-min-width">
+                        <mat-checkbox [(ngModel)]="element.isChecked" (ngModelChange)="updateAllComplete()">
                         </mat-checkbox>
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="username">
-                    <th scope="row" mat-header-cell class="centered" *matHeaderCellDef > USUARIO </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell"> {{element.userName }} </td>
+                    <th scope="row" mat-header-cell class="centered" *matHeaderCellDef> USUARIO </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell">
+                        {{element.userName }} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="names">
-                    <th scope="row" mat-header-cell class="centered" *matHeaderCellDef > NOMBRE(S) </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell"> {{element.firstName | uppercase}} </td>
+                    <th scope="row" mat-header-cell class="centered" *matHeaderCellDef> NOMBRE(S) </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell">
+                        {{element.firstName | uppercase}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="lastName">
-                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef  > APELLIDO(S) </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide tdcell-center"> {{element.lastName | uppercase}} </td>
+                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef> APELLIDO(S) </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide tdcell-center">
+                        {{element.lastName | uppercase}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="role">
-                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef > ROL</th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
+                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef> ROL</th>
+                    <td mat-cell *matCellDef="let element"
+                        class="color-text-intables tdcell text-center mobile-hide tdcell-center">
                         <span *ngIf="element.role === 2">QFB</span>
                         <span *ngIf="element.role === 1">ADMINISTRADOR</span>
                         <span *ngIf="element.role === 3">LOGÍSTICA</span>
@@ -74,74 +72,67 @@
                         <span *ngIf="element.role === 6">REPARTIDOR</span>
                         <span *ngIf="element.role === 7">INCIDENCIAS</span>
                         <span *ngIf="element.role === 8">REPARTIDOR CAC </span>
+                        <span *ngIf="element.role === 9">TÉCNICO </span>
                     </td>
 
                 </ng-container>
 
                 <ng-container matColumnDef="clasfqf">
-                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef > CLASIFICACIÓN</th>
-                        <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
-                            {{element.role === 2 ? element.fullClasification : 'NO APLICA'}}
-                        </td>
+                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef> CLASIFICACIÓN</th>
+                    <td mat-cell *matCellDef="let element"
+                        class="color-text-intables tdcell text-center mobile-hide tdcell-center">
+                        {{element.role === 2 ? element.fullClasification : 'NO APLICA'}}
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="pieces">
 
-                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef > PIEZAS MÁXIMAS</th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
+                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef> PIEZAS MÁXIMAS</th>
+                    <td mat-cell *matCellDef="let element"
+                        class="color-text-intables tdcell text-center mobile-hide tdcell-center">
                         {{element.role === 2 ? element.piezas : 'NO APLICA'}}
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="asignable">
 
-                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef > ASIGNACIONES</th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide tdcell-center" >
-                        {{element.role === 2 ? element.asignable === 1  ? 'ENCENDIDO' : 'APAGADO' : 'NO APLICA'}}
+                    <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef> ASIGNACIONES</th>
+                    <td mat-cell *matCellDef="let element"
+                        class="color-text-intables tdcell text-center mobile-hide tdcell-center">
+                        {{element.role === 2 ? element.asignable === 1 ? 'ENCENDIDO' : 'APAGADO' : 'NO APLICA'}}
                     </td>
 
                 </ng-container>
                 <ng-container matColumnDef="status">
-                    <th scope="row" mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef > ESTATUS </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide" > {{element.activo == 1 ? "ACTIVO" : "INACTIVO"}} </td>
+                    <th scope="row" mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef> ESTATUS
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide">
+                        {{element.activo == 1 ? "ACTIVO" : "INACTIVO"}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="actions">
-                    <th scope="row" mat-header-cell class="tdcell tdcell-center delete-many-icon" *matHeaderCellDef >
-                        <button mat-icon-button class="ico-col-pri" (click)="deleteUsers('')">
-                            <mat-icon class="icon-many-delete">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                     class="delete-multiple">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                                </svg>
-                            </mat-icon>
-                        </button>
+                <ng-container matColumnDef="actions" stickyEnd>
+                    <th scope="row" mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef> ACCIONES
                     </th>
-
-                    <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions">
-                        <button mat-icon-button class="ico-col-pri" (click)="openDialog('editModal',element.id)" >
-                            <mat-icon class="icon-many-delete">
-                                <svg data-toggle="modal" data-target="#editar" xmlns="http://www.w3.org/2000/svg" width="24"
-                                     height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit">
-                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                </svg>
-                            </mat-icon>
+                    <td mat-cell *matCellDef="let element" class="tdcell tdcell-center tdactions custom-min-width">
+                        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                            <mat-icon>more_vert</mat-icon>
                         </button>
-                        <button mat-icon-button class="ico-col-pri" (click)="deleteUsers(element.id)">
-                            <mat-icon class="icon-many-delete">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                     class="feather feather-user-minus delete">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="8.5" cy="7" r="4"></circle>
-                                    <line x1="23" y1="11" x2="17" y2="11"></line>
-                                </svg>
-                            </mat-icon>
-                        </button>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item class="d-flex align-items-center"
+                                (click)="openDialog('editModal',element.id)">
+                                <img src="assets/icons/edit.svg" alt="edit" width="20" height="20" class="pr-2">
+                                <span>Editar</span>
+                            </button>
+                            <button mat-menu-item class="d-flex align-items-center"
+                                (click)="openWorkFlowDialog(element)"
+                                *ngIf="element.role === 2 && element.tecnicId !== null ||  element.role === 9">
+                                <img src="assets/icons/team.svg" alt="team" width="20" height="20" class="pr-2">
+                                <span>Equipo de trabajo</span>
+                            </button>
+                            <button mat-menu-item class="d-flex align-items-center" (click)="deleteUsers(element.id)">
+                                <img src="assets/icons/delete.svg" alt="delete" width="20" height="20" class="pr-2">
+                                <span>Eliminar</span>
+                            </button>
+                        </mat-menu>
                     </td>
                 </ng-container>
 
@@ -155,13 +146,8 @@
             </div>
         </div>
         <div *ngIf="dataSource.data.length !== 0" class="paginator-container">
-            <mat-paginator
-                    [pageSizeOptions]="[5, 10, 15, 20]"
-                    [pageSize]="pageSize"
-                    [length]="lengthPaginator"
-                    [pageIndex]="pageIndex"
-                    (page)="pageEvent = changeDataEvent($event)"
-            ></mat-paginator>
+            <mat-paginator [pageSizeOptions]="[5, 10, 15, 20]" [pageSize]="pageSize" [length]="lengthPaginator"
+                [pageIndex]="pageIndex" (page)="pageEvent = changeDataEvent($event)"></mat-paginator>
 
         </div>
     </div>

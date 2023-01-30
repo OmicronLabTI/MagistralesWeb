@@ -14,6 +14,8 @@ import { Subscription } from 'rxjs';
 import { SearchUsersDialogComponent } from '../../dialogs/search-users-dialog/search-users-dialog.component';
 import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { WorkTeamComponent } from 'src/app/dialogs/work-team/work-team.component';
+import { WorkTeamDialogConfig } from 'src/app/model/device/workteam.model';
 
 @Component({
     selector: 'app-user-list',
@@ -131,9 +133,17 @@ export class UserListComponent implements OnInit, OnDestroy {
                 userToEditM: userId !== CONST_STRING.empty ? this.dataSource.data.filter(user => user.id === userId)[0] : {}
             }
         });
-
     }
 
+    openWorkFlowDialog(user: IUserReq): void {
+        const data = new WorkTeamDialogConfig();
+        data.title = user.role === 2 ? 'TÉCNICO' : 'QUÍMICO (S)';
+        data.id = user.id;
+        this.dialog.open(WorkTeamComponent, {
+            panelClass: 'custom-dialog-container',
+            data
+        });
+    }
     changeDataEvent(event: PageEvent) {
         this.pageSize = event.pageSize;
         this.offset = (event.pageSize * (event.pageIndex));

@@ -1,33 +1,50 @@
-.add-user-container{
+.add-user-container {
   width: 100%;
   display: flex;
   justify-content: flex-end;
+  gap: 15px;
 }
-.delete-many-icon{
+.delete-many-icon {
   text-align: center;
 }
-.icon-add{
+.icon-add {
   cursor: pointer;
 }
 
-.icon-many-delete svg{
+.icon-many-delete svg {
   cursor: pointer;
   color: #515365;
   width: 20px;
   fill: rgba(27, 85, 226, 0.23921568627450981);
 }
 
-.tr-custom{
+.tr-custom {
   height: 30px !important;
   box-shadow: 0 2px 4px rgba(110, 112, 117, 0.45) !important;
   margin: 5px !important;
 }
 
-.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
-  background: #6C90B3 !important; 
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
+.mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background: #6c90b3 !important;
 }
 .button-blue-user-list {
-    background-color: #6C90B3 !important;
-    color: #fff !important;
-    margin-left: 15px !important;
+  background-color: #6c90b3 !important;
+  color: #fff !important;
+}
+.table-container {
+  overflow-x: auto;
+  table {
+    max-width: 100%;
+    td {
+      padding-right: 10px !important;
+      min-width: 100px;
+    }
+  }
+}
+.custom-min-width {
+  min-width: 30px !important;
+}
+.mt-15 {
+  margin-top: 15px;
 }
