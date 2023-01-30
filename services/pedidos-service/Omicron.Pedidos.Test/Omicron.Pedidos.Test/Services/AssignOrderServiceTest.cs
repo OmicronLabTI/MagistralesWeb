@@ -453,23 +453,13 @@ namespace Omicron.Pedidos.Test.Services
                 UserLogistic = "abc",
             };
 
-            var tecnicInfo = new QfbTecnicInfoDto
-            {
-                IsTecnicRequired = true,
-                IsValidTecnic = isValidtecnic,
-                QfbFirstName = "Juan",
-                QfbLastName = "Pérez",
-                QfbId = "abc",
-                TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b801",
-            };
-
             var sapAdapterLocal = new Mock<ISapAdapter>();
             var mockUsers = new Mock<IUsersService>();
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
 
             mockUsers
                 .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GenerateResultModel(tecnicInfo)));
+                .Returns(Task.FromResult(this.GetQfbTecnicInfoDto(isValidtecnic)));
 
             // act
             var assignPedidosService = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
@@ -480,15 +470,17 @@ namespace Omicron.Pedidos.Test.Services
             Assert.IsNull(result.ExceptionMessage);
             Assert.IsNull(result.Response);
             Assert.IsNull(result.Comments);
-            Assert.IsNull(result.UserError);
+            
 
             if (isValidtecnic)
             {
+                Assert.IsNull(result.UserError);
                 Assert.IsTrue(result.Success);
                 Assert.AreEqual(200, result.Code);
             }
             else
             {
+                Assert.IsNotNull(result.UserError);
                 Assert.IsFalse(result.Success);
                 Assert.AreEqual(400, result.Code);
             }
