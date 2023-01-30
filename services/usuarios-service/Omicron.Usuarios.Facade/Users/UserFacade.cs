@@ -155,5 +155,15 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.GetRelationalUserInfor(id));
         }
+
+        /// <summary>
+        /// Method to get tecnic info by Id.
+        /// </summary>
+        /// <param name="qfbId">Qfb id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> GetTecnicInfoByQfbId(string qfbId)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.GetTecnicInfoByQfbId(qfbId));
+        }
     }
 }

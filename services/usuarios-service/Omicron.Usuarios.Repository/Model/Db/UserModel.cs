@@ -125,5 +125,14 @@ namespace Omicron.Usuarios.Entities.Model
         /// </value>
         [Column("tecnicid")]
         public string TecnicId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether logic deleted flag.
+        /// </summary>
+        /// <value>
+        /// Deleted flag.
+        /// </value>
+        [NotMapped]
+        public bool TechnicalRequire { get; set; }
     }
 }

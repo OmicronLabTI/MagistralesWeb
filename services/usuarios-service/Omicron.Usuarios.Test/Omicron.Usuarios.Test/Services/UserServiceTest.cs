@@ -370,5 +370,29 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
                 Assert.NotNull(response.Comments);
             }
         }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <param name="qfbId">Qfb id.</param>
+        /// <returns>the user.</returns>
+        [Test]
+        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b801")]
+        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b802")]
+        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b803")]
+        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b804")]
+        public async Task GetTecnicInfoByQfbId(string qfbId)
+        {
+            // act
+            var response = await this.userServices.GetTecnicInfoByQfbId(qfbId);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.AreEqual(response.Code, 200);
+            Assert.IsNull(response.Comments);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.UserError);
+        }
     }
 }
