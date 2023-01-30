@@ -13,6 +13,7 @@ import Resolver
 // swiftlint:disable type_body_length
 class OrderDetailViewController: UIViewController {
     // Outlets
+    @IBOutlet weak var deleteManyButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
     @IBOutlet weak var finishedButton: UIButton!
     @IBOutlet weak var addComponentButton: UIButton!
@@ -106,6 +107,7 @@ class OrderDetailViewController: UIViewController {
         self.viewModelBinding2()
         self.viewModelBinding3()
         self.viewModelBinding4()
+        self.deleteManyDidEnableBinding()
         self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] iconName in
                 guard let self = self else { return }
@@ -171,6 +173,10 @@ class OrderDetailViewController: UIViewController {
         self.seeLotsButton.rx.tap.bind(to: orderDetailViewModel.seeLotsButtonDidTap).disposed(by: self.disposeBag)
         self.finishedButton.rx.tap.bind(to: orderDetailViewModel.finishedButtonDidTap).disposed(by: self.disposeBag)
         self.penddingButton.rx.tap.bind(to: orderDetailViewModel.pendingButtonDidTap).disposed(by: self.disposeBag)
+        self.deleteManyButton.rx.tap.subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            self.deleteConfirmationDialog()
+        }).disposed(by: self.disposeBag)
         self.addComponentButton.rx.tap.subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.goToComponentsViewController()
@@ -313,6 +319,9 @@ class OrderDetailViewController: UIViewController {
         return number.truncatingRemainder(dividingBy: 1)
     }
     func initComponents() {
+        UtilsManager.shared.setStyleButtonStatus(button: self.deleteManyButton, title: StatusNameConstants.deleteComponents,
+                                                 color: OmicronColors.processStatus,
+                                                 titleColor: OmicronColors.processStatus)
         UtilsManager.shared.setStyleButtonStatus(button: self.finishedButton, title: StatusNameConstants.finishedStatus,
                                                  color: OmicronColors.finishedStatus,
                                                  titleColor: OmicronColors.finishedStatus)
@@ -408,7 +417,7 @@ class OrderDetailViewController: UIViewController {
         self.seeLotsButton.isHidden = hideBtns.seeBatches
     }
     func sendIndexToDelete(index: Int) {
-        orderDetailViewModel.deleteItemFromTable(index: index)
+        orderDetailViewModel.deleteItemFromTable(indexs: [index])
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == ViewControllerIdentifiers.orderDetailFormViewController {
@@ -419,44 +428,24 @@ class OrderDetailViewController: UIViewController {
             }
         }
     }
-}
 
-extension OrderDetailViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.selectionStyle = .none
-        cell.backgroundColor  = indexPath.row%2 == 0 ? OmicronColors.tableColorRow : .white
+    func deleteManyDidEnableBinding() {
+        self.orderDetailViewModel.deleteManyButtonIsEnable.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] isEnable in
+            self?.deleteManyButton.isHidden = !isEnable
+        }).disposed(by: self.disposeBag)
     }
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
-        -> UISwipeActionsConfiguration? {
-            if (self.statusType == StatusNameConstants.inProcessStatus ||
-                self.statusType == StatusNameConstants.reassignedStatus) &&
-                (orderDetail.count > 0 && !(orderDetail[0].details?[indexPath.row].hasBatches ?? true)) {
 
-                // Lógica para editar un item de la tabla
-                let editItem = UIContextualAction(
-                style: .normal, title: CommonStrings.edit) { [weak self] ( _, _, _) in
-                    self?.indexOfTableToEditItem = indexPath.row
-                    self?.performSegue(
-                        withIdentifier: ViewControllerIdentifiers.orderDetailFormViewController, sender: nil)
-                }
-                // Logica para borrar un elemento de la tabla
-                let deleteItem = UIContextualAction(
-                style: .destructive, title: CommonStrings.delete) { [weak self] (_, _, _) in
-                    let alert = UIAlertController(title: CommonStrings.deleteComponentMessage,
-                                                  message: nil, preferredStyle: .alert)
-                    let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive,
-                                                     handler: { [weak self] _ in self?.dismiss(animated: true)})
-                    let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
-                                                 handler: { [weak self] _ in
-                                                    self?.sendIndexToDelete(index: indexPath.row)})
-                    alert.addAction(cancelAction)
-                    alert.addAction(okAction)
-                    self?.present(alert, animated: true)
-                }
-                let swipeActions = UISwipeActionsConfiguration(actions: [editItem, deleteItem])
-                return swipeActions
-            }
-            return nil
+    func deleteConfirmationDialog() {
+        let alert = UIAlertController(title: CommonStrings.deleteComponentMessage, message: nil, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive,
+                                         handler: {[weak self] _ in
+                                            self?.dismiss(animated: true, completion: nil)})
+        let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
+                                     handler: { [weak self] _ in
+            self?.orderDetailViewModel.deleteItemsFromTableDidTap()
+        })
+        alert.addAction(cancelAction)
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
     }
-    // swiftlint:disable file_length
 }

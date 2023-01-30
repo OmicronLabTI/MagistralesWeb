@@ -1061,5 +1061,21 @@ namespace Omicron.Pedidos.Services.Constants
             Pendiente,
             Reasignado,
         };
+
+        /// <summary>
+        /// Gets the clasification user DZ.
+        /// </summary>
+        /// <value>
+        /// String UserTypeDZ.
+        /// </value>
+        public static string UserClassificationDZ => "DZ";
+
+        /// <summary>
+        /// Gets error users dz automatico.
+        /// </summary>
+        /// <value>
+        /// String ErrorUsersDZAutomatico.
+        /// </value>
+        public static string ErrorUsersDZAutomatico => "No hay químico asignado para atender los productos Dermazone, favor de configurar un usuario o asignarlos manualmente";
     }
 }

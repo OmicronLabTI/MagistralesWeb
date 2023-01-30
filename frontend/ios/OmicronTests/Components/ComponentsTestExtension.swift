@@ -35,7 +35,7 @@ class ComponentsTestExtension: XCTestCase {
             "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
             hasMissingStock: false, finishedLabel: false, patientName: "Ejemplo",
-            clientDxp: "clientDxp")
+            clientDxp: "clientDxp", shopTransaction: "")
         provider = MoyaProvider<ApiService>(
             endpointClosure: customEndpointClosure,
             stubClosure: MoyaProvider.immediatelyStub)

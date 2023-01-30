@@ -96,7 +96,8 @@ struct CommonStrings {
     static let empty = ""
     static let OKConst = "Aceptar"
     static let cancel = "Cancelar"
-    static let searchOrden = "Buscar orden / pedido"
+    static let shopTransaction = "Pedido OmicronShop"
+    static let searchOrden = "Buscar orden/pedido/fórmula"
     static let signatureViewTitleQFB = "Firma del  QFB"
     static let signatureViewTitleTechnical = "Firma del Técnico"
     static let addComponentTitle = "Agregar Componentes"
@@ -201,6 +202,7 @@ struct StatusNameConstants {
     static let reassignedStatus = "Reasignado"
     static let finalizedStatus = "Finalizado"
     static let addComponent = "Agregar componente"
+    static let deleteComponents = "Eliminar componentes"
     static let save = "Guardar"
     static let seeLots = "Ver Lotes"
 }

@@ -56,7 +56,8 @@ describe('AddUserDialogComponent', () => {
       [
         'getRoles',
         'createUserService',
-        'updateUser'
+        'updateUser',
+        'getClasifications'
       ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService',
       [
@@ -72,6 +73,16 @@ describe('AddUserDialogComponent', () => {
     userServiceSpy.createUserService.and.callFake(() => {
       return of({});
     });
+
+    userServiceSpy.getClasifications.and.returnValue(of({
+      response: [
+        { value: 'MN', description: 'Bioelite (MN)' },
+        { value: 'BE', description: 'Bioequal (BE)' },
+        { value: 'MG', description: 'Magistral (MG)' },
+        { value: 'DZ', description: 'Dermazon (DZ)' }
+      ]
+    }));
+
     //  --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
       [
@@ -125,16 +136,18 @@ describe('AddUserDialogComponent', () => {
     expect(component.userRoles).toEqual(RolesMock.response);
     expect(component.addUserForm.get('userTypeR').value).toEqual('2');
     expect(component.addUserForm.get('activo').value).toEqual(1);
+
+  });
+
+  it('should create when is edit mode', () => {
     component.isForEditModal = true;
     component.ngOnInit();
     expect(component.userRoles).toEqual(RolesMock.response);
     expect(component.addUserForm.get('userTypeR').value).toEqual('3');
-
     expect(component.addUserForm.get('firstName').value).toEqual(userEditSpec.firstName);
     expect(component.addUserForm.get('lastName').value).toEqual(userEditSpec.lastName);
     expect(component.addUserForm.get('password').value).toEqual(atob('QXhpdHkyMDIwaGh4eA=='));
     expect(component.addUserForm.get('activo').value).toEqual(userEditSpec.activo.toString());
-    expect(component.addUserForm.get('piezas').value).toEqual(userEditSpec.piezas);
     expect(component.addUserForm.get('asignable').value).toEqual(userEditSpec.asignable.toString());
     expect(component.addUserForm.get('classificationQFB').value).toEqual(userEditSpec.classification);
   });
@@ -194,5 +207,37 @@ describe('AddUserDialogComponent', () => {
     });
     component.saveUser();
     expect(errorServiceSpy.httpError).toHaveBeenCalled();
+  });
+  it('should validateClasification as QFB',()=>{
+    component.userRoles = RolesMock.response;
+    component.addUserForm.get('userTypeR').setValue(RolesMock.response[0].id);
+    component.activeClasifications = [
+      { value: 'MN', description: 'Bioelite (MN)' },
+      { value: 'BE', description: 'Bioequal (BE)' },
+      { value: 'MG', description: 'Magistral (MG)' },
+      { value: 'DZ', description: 'Dermazon (DZ)' }];
+    component.validateClasification();
+    expect(component.activeClasifications.length).toBe(4);
+  });
+  it('should validateClasification as admin',()=>{
+    component.userRoles = RolesMock.response;
+    component.addUserForm.get('userTypeR').setValue(RolesMock.response[2].id);
+    component.activeClasifications = [
+      { value: 'MN', description: 'Bioelite (MN)' },
+      { value: 'BE', description: 'Bioequal (BE)' },
+      { value: 'MG', description: 'Magistral (MG)' },
+      { value: 'DZ', description: 'Dermazon (DZ)' }];
+    component.validateClasification();
+    expect(component.activeClasifications.length).toBe(3);
+  });
+  it('should changeClasification with DZ value',()=>{
+    component.addUserForm.get('classificationQFB').setValue('DZ');
+    component.changeClasification();
+    expect(component.addUserForm.get('piezas').value).toBe(0);
+  });
+  it('should changeClasification with BE value',()=>{
+    component.addUserForm.get('classificationQFB').setValue('BE');
+    component.changeClasification(200);
+    expect(component.addUserForm.get('piezas').value).toBe('200');
   });
 });

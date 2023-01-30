@@ -9,8 +9,8 @@
 import UIKit
 
 protocol HeaderSelectedDelegate: AnyObject {
-    func headerSelected(productID: Int)
-    func tapPatientList(productID: Int)
+    func downloadPDF(_ ordersID: [Int])
+    func showPatientList(_ title: String, _ patientList: [String])
 }
 
 class HeaderCollectionViewCell: UICollectionViewCell {
@@ -19,10 +19,12 @@ class HeaderCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var pdfImageView: UIImageView!
     @IBOutlet weak var patientListButton: UIButton!
     @IBOutlet weak var doctorName: UILabel!
-    var productId = 0
+    var orders: Set<Int> = []
+    var titlePatients: String = ""
+    var patientNames: Set<String> = []
 
     @IBAction func patientListAction(_ sender: Any) {
-        delegate?.tapPatientList(productID: productId)
+        delegate?.showPatientList(titlePatients, Array(patientNames))
     }
     weak var delegate: HeaderSelectedDelegate?
 
@@ -31,11 +33,10 @@ class HeaderCollectionViewCell: UICollectionViewCell {
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         contentView.addGestureRecognizer(tap)
-
     }
 
     @objc func handleTap() {
-        delegate?.headerSelected(productID: productId)
+        delegate?.downloadPDF(Array(orders))
     }
 
 }

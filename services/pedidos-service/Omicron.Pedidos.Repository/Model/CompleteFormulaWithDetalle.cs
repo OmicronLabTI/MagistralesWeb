@@ -187,6 +187,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public string ShopTransaction { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public List<CompleteDetalleFormulaModel> Details { get; set; }
     }
 }

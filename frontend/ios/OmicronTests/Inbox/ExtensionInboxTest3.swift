@@ -32,7 +32,7 @@ class ExtensionInboxTest3: XCTestCase {
             "Extracto de Te Verde 3%, Extracto de Pepino 3%, Glicerina 3%, Hamamelis 3%, Hialuronico 3%, " +
             "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
-            hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp")
+            hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd")
         expectedResult = "http://172.30.5.49:5002/Pruebas_ArchivosOmicronTemp/SaleOrders/Order76260.pdf"
         provider = MoyaProvider<ApiService>(
             endpointClosure: customEndpointClosure,
@@ -75,7 +75,7 @@ class ExtensionInboxTest3: XCTestCase {
         inboxViewModel?.orderURLPDF.subscribe(onNext: { [weak self] res in
             XCTAssertEqual(res, self?.expectedResult)
         }).disposed(by: disposeBag!)
-        inboxViewModel?.selectOrder.onNext(1234667)
+        
     }
 
     func testPostOrderPDf() {
@@ -155,5 +155,9 @@ class ExtensionInboxTest3: XCTestCase {
         XCTAssertNotNil(model)
         XCTAssertEqual(model.code, 200)
         XCTAssertEqual(model.response, [""])
+    }
+
+    func testShowPatientList() {
+        inboxViewModel?.resetData.onNext(())
     }
 }

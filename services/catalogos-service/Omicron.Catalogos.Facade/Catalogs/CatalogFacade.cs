@@ -56,5 +56,11 @@ namespace Omicron.Catalogos.Facade.Catalogs
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.GetParamsContains(parameters));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetActiveClassificationQfb()
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.GetActiveClassificationQfb());
+        }
     }
 }

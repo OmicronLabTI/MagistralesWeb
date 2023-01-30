@@ -2,14 +2,15 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsersService } from '../../services/users.service';
-import { IUserReq, RoleUser } from '../../model/http/users';
+import { Clasification, IUserReq, RoleUser } from '../../model/http/users';
 import { ErrorService } from '../../services/error.service';
 import {
   CONST_NUMBER, CONST_STRING,
   CONST_USER_DIALOG,
   HttpServiceTOCall,
   HttpStatus, MODAL_FIND_ORDERS,
-  MODAL_NAMES
+  MODAL_NAMES,
+  TypeClasifications
 } from '../../constants/const';
 import { DataService } from '../../services/data.service';
 import { Messages } from '../../constants/messages';
@@ -29,6 +30,9 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   isForEditModal: boolean;
   userRoles: RoleUser[] = [];
   subscription = new Subscription();
+  clasifications: Clasification[] = [];
+  activeClasifications: Clasification[] = [];
+  qfbRolId = 0;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private formBuilder: FormBuilder,
@@ -81,11 +85,50 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
           filter(user =>
             CONST_USER_DIALOG.defaultQfb.toLowerCase() === user.description.toLocaleLowerCase())[0].id.toString() :
           this.userToEdit.role.toString());
+      this.qfbRolId = this.userRoles.find(rol => rol.description.toLowerCase() === CONST_USER_DIALOG.defaultQfb.toLowerCase()).id;
     }, error => {
       this.errorService.httpError(error);
       this.dialogRef.close();
     });
+    this.usersService.getClasifications().subscribe((res) => {
+      this.clasifications = Object.assign(res.response, []);
+      this.activeClasifications = this.clasifications;
+      this.setFormValues();
+    }, error => {
+      this.errorService.httpError(error);
+      this.dialogRef.close();
+    });
+  }
 
+  getRol(id: number): string {
+    return String(this.userRoles.find(item => item.id === id).description);
+  }
+
+
+  changeClasification(quantity = 200): void {
+    const selection = String(this.addUserForm.get('classificationQFB').value);
+    if (selection.toUpperCase() === TypeClasifications.dermazone.toUpperCase()) {
+      this.addUserForm.get('piezas').setValue(0);
+      this.addUserForm.get('piezas').disable();
+    } else {
+      this.addUserForm.get('piezas').enable();
+      this.addUserForm.get('piezas').setValue(`${quantity}`);
+    }
+  }
+
+  validateClasification(): void {
+    const rolId = Number(this.addUserForm.get('userTypeR').value);
+    const rol = this.getRol(rolId);
+    if (rol.toUpperCase() === CONST_USER_DIALOG.defaultQfb.toUpperCase()) {
+      this.activeClasifications = this.clasifications;
+    } else {
+      this.activeClasifications = this.activeClasifications.filter(clasification =>
+        clasification.value.toUpperCase() !== TypeClasifications.dermazone.toUpperCase());
+      const isDZSelection = this.addUserForm.get('classificationQFB').value === TypeClasifications.dermazone.toUpperCase();
+      this.addUserForm.get('classificationQFB').setValue(isDZSelection ? '' : this.addUserForm.get('classificationQFB').value);
+    }
+  }
+  setFormValues(): void {
     if (!this.isForEditModal) {
       this.addUserForm.get('asignable').setValue(CONST_NUMBER.one.toString());
       this.addUserForm.get('activo').setValue(CONST_NUMBER.one);
@@ -98,6 +141,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('piezas').setValue(this.userToEdit.piezas);
       this.addUserForm.get('asignable').setValue(this.userToEdit.asignable.toString());
       this.addUserForm.get('classificationQFB').setValue(this.userToEdit.classification);
+      this.changeClasification(this.userToEdit.piezas);
     }
   }
 

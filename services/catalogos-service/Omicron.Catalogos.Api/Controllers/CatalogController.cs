@@ -56,5 +56,17 @@ namespace Omicron.Catalogos.Api.Controllers
             var response = await this.catalogFacade.GetParamsContains(parameters);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
+        [Route("/getclassificationqfb")]
+        [HttpGet]
+        public async Task<IActionResult> GetActiveClassificationQfb()
+        {
+            var response = await this.catalogFacade.GetActiveClassificationQfb();
+            return this.Ok(response);
+        }
     }
 }

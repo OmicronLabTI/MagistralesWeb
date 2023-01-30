@@ -43,20 +43,17 @@ extension InboxViewModel {
         }).disposed(by: self.disposeBag)
     }
 
-    func getConnection() {
-
+    func downloadPDF(_ ordersId: [Int]) {
         self.loading.onNext(true)
         networkManager.getConnect()
             .subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
-            self.hasConnection.onNext(true)
+                self.postOrderPDf(orders: ordersId)
         }, onError: { [weak self] _ in
             guard let self = self else { return }
-            self.hasConnection.onNext(false)
             self.loading.onNext(false)
             self.showAlert.onNext(CommonStrings.errorPDF)
         }).disposed(by: disposeBag)
-
     }
 
     func finisOrderService(_ finishOrder: FinishOrder) {
@@ -122,19 +119,21 @@ extension InboxViewModel {
         }
     }
 
-    func changeStatusSort(normal: Bool, similarity: Bool, grouped: Bool) {
-        if normal {
-            normalSort = true
-            similaritySort = false
-            groupSort = false
-        } else if similarity {
-            normalSort = false
-            similaritySort = true
-            groupSort = false
-        } else {
-            normalSort = false
-            similaritySort = false
-            groupSort = true
+    func changeStatusSort(_ type: ShortType) {
+        shortType = type
+        normalViewButtonIsEnable.onNext(true)
+        similarityViewButtonIsEnable.onNext(true)
+        groupedByOrderNumberIsEnable.onNext(true)
+        groupedByShopTransactionIsEnable.onNext(true)
+        switch shortType {
+        case .normal:
+            processNormalSort()
+        case .similarity:
+            processSimilaritySort()
+        case .groupSort:
+            proccessGroupShort()
+        case.shopTransaction:
+            processShopTransaction()
         }
     }
 
@@ -200,13 +199,11 @@ extension InboxViewModel {
     }
 
     func proccessGroupShort() {
-        processButtonIsEnable.onNext(false)
         let ordersGroupedAndSorted = sortOrderWithBatchesByOrderNumberView()
         sectionOrders = ordersGroupedAndSorted
         statusDataGrouped.onNext(ordersGroupedAndSorted)
-        normalViewButtonIsEnable.onNext(true)
-        similarityViewButtonIsEnable.onNext(true)
         groupedByOrderNumberIsEnable.onNext(false)
+        processButtonIsEnable.onNext(false)
     }
 
     func orderingOrders(section: SectionOrder) -> [Order] {
@@ -245,15 +242,28 @@ extension InboxViewModel {
         }
     }
 
+    func sortByShopTransaction(orders: [Order], shopTransaction: String) -> [Order] {
+        orders.filter { order in
+            order.shopTransaction == shopTransaction
+        }
+    }
+
     func processNormalSort() {
         let ordering = self.sortOrderWithOrderBatchesCompleteByNormalView()
         statusDataGrouped.onNext([SectionModel(model: CommonStrings.empty, items: ordering)])
         sectionOrders = [SectionModel(model: CommonStrings.empty, items: ordering)]
-        similarityViewButtonIsEnable.onNext(true)
-        groupedByOrderNumberIsEnable.onNext(true)
         normalViewButtonIsEnable.onNext(false)
         processButtonIsEnable.onNext(false)
         pendingButtonIsEnable.onNext(false)
+    }
+
+    func processShopTransaction() {
+            let ordering = self.sortOrderShopTransactionView()
+            sectionOrders = ordering
+            statusDataGrouped.onNext(ordering)
+        processButtonIsEnable.onNext(false)
+        pendingButtonIsEnable.onNext(false)
+        groupedByShopTransactionIsEnable.onNext(false)
     }
 
     func processSimilaritySort() {
@@ -273,8 +283,6 @@ extension InboxViewModel {
         sectionOrders = sectionModels
         statusDataGrouped.onNext(sectionModels)
         similarityViewButtonIsEnable.onNext(false)
-        normalViewButtonIsEnable.onNext(true)
-        groupedByOrderNumberIsEnable.onNext(true)
     }
 
     func groupedByOrderNumber(data: [String?: [Order]]) -> [SectionModel<String, Order>] {
@@ -294,6 +302,19 @@ extension InboxViewModel {
         sectionModels.append(contentsOf: sortedSections)
         return sectionModels
     }
+
+    func groupedByShopTransaction(data: [String?: [Order]]) -> [SectionModel<String, Order>] {
+        var sectionModels: [SectionModel<String, Order>] = []
+        let sections = data.map({ [unowned self] (orders) -> SectionModel<String, Order> in
+            return SectionModel(
+                model: "\(CommonStrings.shopTransaction): \(orders.key?.suffix(6).uppercased() ?? "")",
+                items: self.sortByShopTransaction(orders: orders.value, shopTransaction: orders.key ?? ""))
+        }).filter({ $0.items.count > 0 })
+        let sortedSections = sections.sorted { $0.model < $1.model }
+        sectionModels.append(contentsOf: sortedSections)
+        return sectionModels
+    }
+
     func setSelection(section: SectionOrder, removeSelecteds: Bool = false) {
         currentSection = section
         let ordering = orderingOrders(section: section)
@@ -301,16 +322,9 @@ extension InboxViewModel {
         if removeSelecteds {
             resetData.onNext(())
         }
-        if normalSort {
-            processNormalSort()
-        } else if similaritySort {
-            processSimilaritySort()
-        } else {
-            proccessGroupShort()
-        }
+        self.changeStatusSort(shortType)
         title.onNext(section.statusName)
         showKPIView.onNext(false)
         reloadData.onNext(())
     }
-
 }
