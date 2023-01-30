@@ -153,6 +153,7 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.Piezas = user.Piezas;
             usertoUpdate.Asignable = user.Asignable;
             usertoUpdate.Classification = user.Classification;
+            usertoUpdate.TecnicId = user.TecnicId;
 
             var response = await this.userDao.UpdateUser(usertoUpdate);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
@@ -208,6 +209,76 @@ namespace Omicron.Usuarios.Services.User
             var userWithCount = this.GroupUserWithOrderCount(users, userOrders);
 
             return ServiceUtils.CreateResult(true, 200, null, userWithCount, null, null);
+        }
+
+        /// <summary>
+        /// Get all tecnic users.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> GetUsersTecnic()
+        {
+            var users = (await this.userDao.GetAllUsersAsync()).ToList();
+
+            var usersOrdered = users.Where(x => x.Role == ServiceConstants.RoleTecnic && x.Activo == 1 && x.Asignable == 1).OrderBy(x => x.FirstName).ToList();
+            var listUsers = new List<SimpleUserDto>();
+
+            foreach (var user in usersOrdered)
+            {
+                listUsers.Add(new SimpleUserDto { Id = user.Id, FirstName = user.FirstName, LastName = user.LastName });
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null, listUsers.Count);
+        }
+
+        /// <summary>
+        /// Gets relation user info.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>A <see cref="Task{Result}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> GetRelationalUserInfor(string id)
+        {
+            var user = await this.userDao.GetUserById(id);
+
+            List<SimpleUserDto> listToReturn = new List<SimpleUserDto>();
+
+            if (user == null)
+            {
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
+            }
+
+            switch (user.Role)
+            {
+                case ServiceConstants.RoleTecnic:
+                    {
+                        var users = await this.userDao.GetAllUsersAsync();
+                        var qfbs = users.Where(x => x.TecnicId == id).ToList();
+                        foreach (var qfb in qfbs)
+                        {
+                            listToReturn.Add(new SimpleUserDto { Id = qfb.Id, FirstName = qfb.FirstName, LastName = qfb.LastName });
+                        }
+
+                        break;
+                    }
+
+                default:
+                    {
+                        if (user.TecnicId == null)
+                        {
+                            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
+                        }
+
+                        var users = await this.userDao.GetAllUsersAsync();
+                        var qfbs = users.Where(x => x.Id == user.TecnicId).ToList();
+                        foreach (var qfb in qfbs)
+                        {
+                            listToReturn.Add(new SimpleUserDto { Id = qfb.Id, FirstName = qfb.FirstName, LastName = qfb.LastName });
+                        }
+
+                        break;
+                    }
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToReturn, null, listToReturn.Count);
         }
 
         /// <summary>

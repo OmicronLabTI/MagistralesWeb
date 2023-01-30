@@ -34,6 +34,9 @@ namespace Omicron.Usuarios.Test
                 new UserModel { Id = "5", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = true, },
                 new UserModel { Id = "6", FirstName = "Benjamin", LastName = "Galindo", UserName = "Benji", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = true, },
                 new UserModel { Id = "7", FirstName = "Usuario7", LastName = "Usuario7", UserName = "Usuario7", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 1, Deleted = true, },
+                new UserModel { Id = "8", FirstName = "TecnicoPrueba Nombre", LastName = "TecnicoPrueba Apellido", UserName = "TecnicoPrueba", Password = "QXhpdHkyMDIw", Role = 9, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, },
+                new UserModel { Id = "9", FirstName = "QFBTECNICO", LastName = "QFBTECNICO", UserName = "QFBTECNICO", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 1, Deleted = false, TecnicId = "8", },
+                new UserModel { Id = "10", FirstName = "QFBNOTECNICO", LastName = "QFBNOTECNICO", UserName = "QFBNOTECNICO", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 1, Deleted = false, },
             };
         }
 
@@ -86,6 +89,7 @@ namespace Omicron.Usuarios.Test
             return new List<RoleModel>
             {
                 new RoleModel { Description = "qfb", Id = 2 },
+                new RoleModel { Description = "TÉCNICO", Id = 9 },
             };
         }
 

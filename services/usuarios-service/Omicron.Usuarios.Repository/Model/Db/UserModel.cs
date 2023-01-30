@@ -116,5 +116,14 @@ namespace Omicron.Usuarios.Entities.Model
         /// </value>
         [Column("classification")]
         public string Classification { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Tecnic Id.
+        /// </summary>
+        /// <value>
+        /// String tecnic id.
+        /// </value>
+        [Column("tecnicid")]
+        public string TecnicId { get; set; }
     }
 }
