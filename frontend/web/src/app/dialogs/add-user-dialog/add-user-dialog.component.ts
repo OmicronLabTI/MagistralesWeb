@@ -207,13 +207,13 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     const requireTecnic = String(this.addUserForm.get('requireTechnical').value) === '1';
     const tecnicId = requireTecnic ? this.addUserForm.get('technical').value : null;
     if (!this.isForEditModal) {
-      this.saveUser(tecnicId);
+      this.saveUser(requireTecnic, tecnicId);
     } else {
-      this.updateUser(tecnicId);
+      this.updateUser(requireTecnic, tecnicId);
     }
   }
 
-  saveUser(tecnicId?: string): void {
+  saveUser(requireTecnic: boolean, tecnicId?: string): void {
     const user: IUserReq = {
       ...this.addUserForm.value,
       password: btoa(this.addUserForm.get('password').value),
@@ -221,6 +221,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       asignable: Number(this.addUserForm.get('asignable').value),
       piezas: Number(this.addUserForm.get('piezas').value),
       classification: this.addUserForm.get('classificationQFB').value,
+      technicalRequire: requireTecnic,
       tecnicId
     };
     this.usersService.createUserService(user).subscribe(() => {
@@ -229,7 +230,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     }, error => this.userExistDialog(error));
   }
 
-  updateUser(tecnicId?: string): void {
+  updateUser(requireTecnic: boolean, tecnicId?: string): void {
     const user: IUserReq = {
       ...this.addUserForm.value,
       id: this.userToEdit.id,
@@ -239,6 +240,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       activo: Number(this.addUserForm.get('activo').value),
       piezas: Number(this.addUserForm.get('piezas').value),
       classification: this.addUserForm.get('classificationQFB').value,
+      technicalRequire: requireTecnic,
       tecnicId
     };
     this.usersService.updateUser(user).subscribe(() => {
@@ -274,7 +276,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
 
   keyDownFunction(event: KeyboardEvent) {
     if (event.key === MODAL_FIND_ORDERS.keyEnter && this.addUserForm.valid) {
-      this.saveUser();
+      this.save();
     }
   }
 
