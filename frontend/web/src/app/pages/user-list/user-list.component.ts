@@ -70,6 +70,21 @@ export class UserListComponent implements OnInit, OnDestroy {
         return dictOptions[type];
     }
 
+    getRol(typeRol: number): string {
+        const dictOptions: { [key: number]: string } = {
+            2: 'QFB',
+            1: 'ADMINISTRADOR',
+            3: 'LOGÍSTICA',
+            4: 'DISEÑO',
+            5: 'ALMACÉN',
+            6: 'REPARTIDOR',
+            7: 'INCIDENCIAS',
+            8: 'REPARTIDOR CAC',
+            9: 'TÉCNICO',
+        };
+        return dictOptions[typeRol];
+    }
+
     getUsers() {
         this.usersService.getUsers(`?${this.fullQueryString}&offset=${this.offset}&limit=${this.limit}`).subscribe(userRes => {
 
