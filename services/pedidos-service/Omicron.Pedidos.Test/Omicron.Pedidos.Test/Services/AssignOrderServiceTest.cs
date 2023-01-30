@@ -470,7 +470,6 @@ namespace Omicron.Pedidos.Test.Services
             Assert.IsNull(result.ExceptionMessage);
             Assert.IsNull(result.Response);
             Assert.IsNull(result.Comments);
-            
 
             if (isValidtecnic)
             {
