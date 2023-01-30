@@ -114,6 +114,18 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         }
 
         /// <summary>
+        /// Updates a multi-users.
+        /// </summary>
+        /// <param name="users">the user to update.</param>
+        /// <returns>the user.</returns>
+        public async Task<bool> UpdateUsers(List<UserModel> users)
+        {
+            this.databaseContext.Usuarios.UpdateRange(users);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
         /// looks users based in the roleId.
         /// </summary>
         /// <param name="roleId">the role id.</param>
