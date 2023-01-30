@@ -27,7 +27,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
-import { MatMenuModule } from '@angular/material';
+import { MatMenuModule, MatTooltipModule } from '@angular/material';
 export class MatDialogMock {
   open() {
     return {
@@ -97,7 +97,8 @@ describe('UserListComponent', () => {
         MatInputModule,
         MatSelectModule,
         RouterTestingModule,
-        MatMenuModule],
+        MatMenuModule,
+        MatTooltipModule],
       declarations: [UserListComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [DatePipe,
@@ -206,5 +207,16 @@ describe('UserListComponent', () => {
     } as MatDialogRef<typeof component>);
     component.openDialog('', 'da423-sdf34-23');
     expect(matDialog.open).toHaveBeenCalled();
+  });
+  it('should get roles', () => {
+    expect(component.getRol(2)).toBe('QFB');
+    expect(component.getRol(1)).toBe('ADMINISTRADOR');
+    expect(component.getRol(3)).toBe('LOGÍSTICA');
+    expect(component.getRol(4)).toBe('DISEÑO');
+    expect(component.getRol(5)).toBe('ALMACÉN');
+    expect(component.getRol(6)).toBe('REPARTIDOR');
+    expect(component.getRol(7)).toBe('INCIDENCIAS');
+    expect(component.getRol(8)).toBe('REPARTIDOR CAC');
+    expect(component.getRol(9)).toBe('TÉCNICO');
   });
 });
