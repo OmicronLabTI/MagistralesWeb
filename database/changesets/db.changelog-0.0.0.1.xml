@@ -1024,4 +1024,9 @@
 			<column name="technicalrequire" defaultValueBoolean="false" type="BOOLEAN" />
 		</addColumn>
 	</changeSet>
+	<changeSet author="jarturoep" id="changelog-1.109">
+		<addColumn tableName="usersorders">
+			<column name="tecnicid" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

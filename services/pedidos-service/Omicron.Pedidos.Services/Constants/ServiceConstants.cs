@@ -886,6 +886,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string FailConsumedQuantity = "No coincide la cantidad requerida con la cantidad consumida de la siguiente orden {0}";
 
         /// <summary>
+        /// Gets the users by role from user service.
+        /// </summary>
+        public const string GetTecnicByQfbId = "gettecnic/info/{0}";
+
+        /// <summary>
+        /// Reason unexpected error.
+        /// </summary>
+        public const string QfbWithoutTecnic = "El químico {0} {1} no tiene un técnico activo asignado, favor de realizar la asignación para poder continuar";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
