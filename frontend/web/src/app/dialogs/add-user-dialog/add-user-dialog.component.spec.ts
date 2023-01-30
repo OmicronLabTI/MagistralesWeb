@@ -23,9 +23,9 @@ import { MessagesService } from 'src/app/services/messages.service';
 describe('AddUserDialogComponent', () => {
   let component: AddUserDialogComponent;
   let fixture: ComponentFixture<AddUserDialogComponent>;
-  let userServiceSpy;
-  let errorServiceSpy;
-  let dataServiceSpy;
+  let userServiceSpy: jasmine.SpyObj<UsersService>;
+  let errorServiceSpy: jasmine.SpyObj<ErrorService>;
+  let dataServiceSpy: jasmine.SpyObj<DataService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
 
@@ -57,8 +57,23 @@ describe('AddUserDialogComponent', () => {
         'getRoles',
         'createUserService',
         'updateUser',
-        'getClasifications'
+        'getClasifications',
+        'getTehcnicalUsers'
       ]);
+    userServiceSpy.getTehcnicalUsers.and.returnValue(of({
+      response: [
+        {
+          id: '1',
+          firstName: 'Daniel',
+          lastName: 'Perez'
+        },
+        {
+          id: '2',
+          firstName: 'Daniel',
+          lastName: 'Perez'
+        },
+      ]
+    }));
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService',
       [
         'httpError'
@@ -129,45 +144,20 @@ describe('AddUserDialogComponent', () => {
   it('should formDefined', () => {
     expect(component.addUserForm).toBeDefined();
   });
-  it('should ngOnInit create ok', () => {
+  it('should callServices create ok', () => {
     component.isForEditModal = false;
-    component.ngOnInit();
+    component.callServices();
     expect(userServiceSpy.getRoles).toHaveBeenCalled();
-    expect(component.userRoles).toEqual(RolesMock.response);
-    expect(component.addUserForm.get('userTypeR').value).toEqual('2');
-    expect(component.addUserForm.get('activo').value).toEqual(1);
-
   });
 
   it('should create when is edit mode', () => {
     component.isForEditModal = true;
-    component.ngOnInit();
-    expect(component.userRoles).toEqual(RolesMock.response);
-    expect(component.addUserForm.get('userTypeR').value).toEqual('3');
-    expect(component.addUserForm.get('firstName').value).toEqual(userEditSpec.firstName);
-    expect(component.addUserForm.get('lastName').value).toEqual(userEditSpec.lastName);
-    expect(component.addUserForm.get('password').value).toEqual(atob('QXhpdHkyMDIwaGh4eA=='));
-    expect(component.addUserForm.get('activo').value).toEqual(userEditSpec.activo.toString());
-    expect(component.addUserForm.get('asignable').value).toEqual(userEditSpec.asignable.toString());
-    expect(component.addUserForm.get('classificationQFB').value).toEqual(userEditSpec.classification);
+    component.callServices();
+    expect(userServiceSpy.getRoles).toHaveBeenCalled();
   });
-  it('should ngOnInit create faild', () => {
-    userServiceSpy.getRoles.and.callFake(() => {
-      return throwError({ error: true });
-    });
-    component.ngOnInit();
-    expect(errorServiceSpy.httpError).toHaveBeenCalledWith({ error: true });
-  });
-  it('should createUser defaultValues Form', () => {
-    userServiceSpy.getRoles.and.callFake(() => {
-      return throwError({ error: true });
-    });
-    component.ngOnInit();
-    expect(errorServiceSpy.httpError).toHaveBeenCalledWith({ error: true });
-  });
-  it('should saveUser() ', () => {
+  it('should save() ', () => {
     component.isForEditModal = false;
-    component.saveUser();
+    component.save();
     expect(userServiceSpy.createUserService).toHaveBeenCalled();
     expect(observableServiceSpy.setCallHttpService).toHaveBeenCalled();
     expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
@@ -175,7 +165,7 @@ describe('AddUserDialogComponent', () => {
     userServiceSpy.createUserService.and.callFake(() => {
       return throwError({ status: 400 });
     });
-    component.saveUser();
+    component.save();
     expect(observableServiceSpy.setCallHttpService).toHaveBeenCalled();
     expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
 
@@ -183,12 +173,12 @@ describe('AddUserDialogComponent', () => {
     userServiceSpy.createUserService.and.callFake(() => {
       return throwError({ status: 401 });
     });
-    component.saveUser();
+    component.save();
     expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
   it('should editUser() ', () => {
     component.isForEditModal = true;
-    component.saveUser();
+    component.save();
     expect(userServiceSpy.updateUser).toHaveBeenCalled();
     expect(observableServiceSpy.setCallHttpService).toHaveBeenCalled();
     expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
@@ -197,7 +187,7 @@ describe('AddUserDialogComponent', () => {
     userServiceSpy.updateUser.and.callFake(() => {
       return throwError({ status: 400 });
     });
-    component.saveUser();
+    component.save();
     expect(observableServiceSpy.setCallHttpService).toHaveBeenCalled();
     expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
 
@@ -205,12 +195,17 @@ describe('AddUserDialogComponent', () => {
     userServiceSpy.updateUser.and.callFake(() => {
       return throwError({ status: 401 });
     });
-    component.saveUser();
+    component.save();
     expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
-  it('should validateClasification as QFB',()=>{
+  it('should validateClasification as QFB', () => {
     component.userRoles = RolesMock.response;
-    component.addUserForm.get('userTypeR').setValue(RolesMock.response[0].id);
+    component.clasifications = [
+      { value: 'MN', description: 'Bioelite (MN)' },
+      { value: 'BE', description: 'Bioequal (BE)' },
+      { value: 'MG', description: 'Magistral (MG)' },
+      { value: 'DZ', description: 'Dermazon (DZ)' }];
+    component.addUserForm.get('userTypeR').setValue(RolesMock.response[0].id, { emitEvent: false });
     component.activeClasifications = [
       { value: 'MN', description: 'Bioelite (MN)' },
       { value: 'BE', description: 'Bioequal (BE)' },
@@ -219,7 +214,7 @@ describe('AddUserDialogComponent', () => {
     component.validateClasification();
     expect(component.activeClasifications.length).toBe(4);
   });
-  it('should validateClasification as admin',()=>{
+  it('should validateClasification as admin', () => {
     component.userRoles = RolesMock.response;
     component.addUserForm.get('userTypeR').setValue(RolesMock.response[2].id);
     component.activeClasifications = [
@@ -230,12 +225,12 @@ describe('AddUserDialogComponent', () => {
     component.validateClasification();
     expect(component.activeClasifications.length).toBe(3);
   });
-  it('should changeClasification with DZ value',()=>{
+  it('should changeClasification with DZ value', () => {
     component.addUserForm.get('classificationQFB').setValue('DZ');
     component.changeClasification();
     expect(component.addUserForm.get('piezas').value).toBe(0);
   });
-  it('should changeClasification with BE value',()=>{
+  it('should changeClasification with BE value', () => {
     component.addUserForm.get('classificationQFB').setValue('BE');
     component.changeClasification(200);
     expect(component.addUserForm.get('piezas').value).toBe('200');

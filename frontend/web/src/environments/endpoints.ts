@@ -13,7 +13,9 @@ export const Endpoints = {
     getUser: `${environment.baseUrl}/api/usuarios/user/`,
     qfbs: `${environment.baseUrl}/api/usuarios/role`,
     qfbsWithOrders: `${environment.baseUrl}/api/usuarios/qfb/countOrders`,
-    getClasifications: `${environment.baseUrl}/api/catalogos/getclassificationqfb`
+    getClasifications: `${environment.baseUrl}/api/catalogos/getclassificationqfb`,
+    getTechnical: `${environment.baseUrl}/api/usuarios/getUsers/tecnics`,
+    workTeam: `${environment.baseUrl}/api/usuarios/getUsers/inforelation`
   },
   pedidos: {
     getPedidos: `${environment.baseUrl}/api/sapadapter/orders`,

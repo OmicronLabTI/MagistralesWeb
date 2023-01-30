@@ -22,6 +22,20 @@ export class ClasificationsResponse extends BaseResponseHttp {
     response: Clasification[];
 }
 
+export interface TechnicalListResponse extends BaseResponseHttp {
+    response: TechnicalUser[];
+}
+
+export class TechnicalUser {
+    firstName: string;
+    lastName: string;
+    id: string;
+    constructor() {
+        this.firstName = '';
+        this.lastName = '';
+        this.id = '';
+    }
+}
 export class IUserReq {
     id?: string;
     userName: string;
@@ -36,10 +50,16 @@ export class IUserReq {
     isChecked?: boolean;
     classification?: string;
     fullClasification?: string;
+    tecnicId: string | null;
     constructor() {
         this.isChecked = false;
     }
 }
+export interface IAddUserDialogConfig {
+    modalType: string;
+    userToEditM: IUserReq;
+}
+
 export class UserRes {
     activo: number;
     firstName: string;

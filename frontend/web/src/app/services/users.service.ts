@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConsumeService } from './consume.service';
-import { ClasificationsResponse, IRolesRes, IUserListRes, IUserReq } from '../model/http/users';
+import { ClasificationsResponse, IRolesRes, IUserListRes, IUserReq, TechnicalListResponse } from '../model/http/users';
 import { Endpoints } from '../../environments/endpoints';
 import { Observable, of } from 'rxjs';
 
@@ -15,10 +15,10 @@ export class UsersService {
   createUserService(user: IUserReq) {
     return this.consumeService.httpPost(Endpoints.users.createUser, user);
   }
-  getRoles() {
+  getRoles(): Observable<IRolesRes> {
     return this.consumeService.httpGet<IRolesRes>(Endpoints.users.roles);
   }
-  getUsers(fullQueryString: string) {
+  getUsers(fullQueryString: string): Observable<IUserListRes> {
     return this.consumeService.httpGet<IUserListRes>(`${Endpoints.users.getUsers}${fullQueryString}`);
   }
   deleteUsers(idsToDelete: string[]) {
@@ -29,5 +29,11 @@ export class UsersService {
   }
   getClasifications(): Observable<ClasificationsResponse> {
     return this.consumeService.httpGet(Endpoints.users.getClasifications);
+  }
+  getTehcnicalUsers(): Observable<TechnicalListResponse> {
+    return this.consumeService.httpGet(Endpoints.users.getTechnical);
+  }
+  getWorkTeam(id: string): Observable<TechnicalListResponse> {
+    return this.consumeService.httpGet(`${Endpoints.users.workTeam}/${id}`);
   }
 }

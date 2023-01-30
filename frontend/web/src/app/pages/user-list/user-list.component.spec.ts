@@ -27,6 +27,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { MatMenuModule } from '@angular/material';
 export class MatDialogMock {
   open() {
     return {
@@ -95,7 +96,8 @@ describe('UserListComponent', () => {
         ReactiveFormsModule,
         MatInputModule,
         MatSelectModule,
-        RouterTestingModule],
+        RouterTestingModule,
+        MatMenuModule],
       declarations: [UserListComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [DatePipe,
