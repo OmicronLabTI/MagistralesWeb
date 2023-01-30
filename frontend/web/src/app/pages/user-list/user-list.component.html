@@ -44,26 +44,26 @@
 
                 <ng-container matColumnDef="username">
                     <th scope="row" mat-header-cell class="centered" *matHeaderCellDef> USUARIO </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell">
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell" [matTooltip]="element.userName">
                         {{element.userName }} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="names">
                     <th scope="row" mat-header-cell class="centered" *matHeaderCellDef> NOMBRE(S) </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell">
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell-center tdcell" [matTooltip]="element.firstName | uppercase">
                         {{element.firstName | uppercase}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="lastName">
                     <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef> APELLIDO(S) </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide tdcell-center">
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell mobile-hide tdcell-center" [matTooltip]="element.lastName | uppercase">
                         {{element.lastName | uppercase}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="role">
                     <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef> ROL</th>
                     <td mat-cell *matCellDef="let element"
-                        class="color-text-intables tdcell text-center mobile-hide tdcell-center">
+                        class="color-text-intables tdcell text-center mobile-hide tdcell-center" [matTooltip]="getRol(element.role)">
                         <span *ngIf="element.role === 2">QFB</span>
                         <span *ngIf="element.role === 1">ADMINISTRADOR</span>
                         <span *ngIf="element.role === 3">LOGÍSTICA</span>
@@ -80,7 +80,7 @@
                 <ng-container matColumnDef="clasfqf">
                     <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef> CLASIFICACIÓN</th>
                     <td mat-cell *matCellDef="let element"
-                        class="color-text-intables tdcell text-center mobile-hide tdcell-center">
+                        class="color-text-intables tdcell text-center mobile-hide tdcell-center" [matTooltip]="element.role === 2 ? element.fullClasification : 'NO APLICA'">
                         {{element.role === 2 ? element.fullClasification : 'NO APLICA'}}
                     </td>
                 </ng-container>
@@ -89,7 +89,8 @@
 
                     <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef> PIEZAS MÁXIMAS</th>
                     <td mat-cell *matCellDef="let element"
-                        class="color-text-intables tdcell text-center mobile-hide tdcell-center">
+                        class="color-text-intables tdcell text-center mobile-hide tdcell-center" 
+                        [matTooltip]="element.role === 2 ? element.piezas : 'NO APLICA'">
                         {{element.role === 2 ? element.piezas : 'NO APLICA'}}
                     </td>
                 </ng-container>
@@ -97,7 +98,8 @@
 
                     <th scope="row" mat-header-cell class="centered mobile-hide" *matHeaderCellDef> ASIGNACIONES</th>
                     <td mat-cell *matCellDef="let element"
-                        class="color-text-intables tdcell text-center mobile-hide tdcell-center">
+                        class="color-text-intables tdcell text-center mobile-hide tdcell-center" 
+                        [matTooltip]="element.role === 2 ? element.asignable === 1 ? 'ENCENDIDO' : 'APAGADO' : 'NO APLICA'">
                         {{element.role === 2 ? element.asignable === 1 ? 'ENCENDIDO' : 'APAGADO' : 'NO APLICA'}}
                     </td>
 
@@ -105,7 +107,7 @@
                 <ng-container matColumnDef="status">
                     <th scope="row" mat-header-cell class="centered mobile-hide mobile-hide" *matHeaderCellDef> ESTATUS
                     </th>
-                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide">
+                    <td mat-cell *matCellDef="let element" class="color-text-intables tdcell text-center mobile-hide" [matTooltip]="element.activo == 1 ? 'ACTIVO' : 'INACTIVO'">
                         {{element.activo == 1 ? "ACTIVO" : "INACTIVO"}} </td>
                 </ng-container>
 

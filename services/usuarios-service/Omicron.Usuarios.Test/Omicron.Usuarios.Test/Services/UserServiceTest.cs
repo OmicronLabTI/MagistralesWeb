@@ -107,7 +107,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             // Arrange
             var user = this.GetUserDto();
-            user.Id = "12";
+            user.Id = "13";
 
             // Act
             var result = await this.userServices.InsertUser(user);
@@ -222,6 +222,23 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             user.Id = "1";
             user.UserName = "userName1";
             user.Piezas = 10;
+
+            // act
+            var response = await this.userServices.UpdateUser(user);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task UpdateTechnicalUser()
+        {
+            // arrange
+            var user = new UserModel { Id = "11", FirstName = "TecnicoPrueba Update", LastName = "TecnicoPrueba Update Apellido", UserName = "TecnicoPrueba Update", Password = "QXhpdHkyMDIw", Role = 9, Activo = 1, Piezas = 200, Asignable = 0, Deleted = false, };
 
             // act
             var response = await this.userServices.UpdateUser(user);

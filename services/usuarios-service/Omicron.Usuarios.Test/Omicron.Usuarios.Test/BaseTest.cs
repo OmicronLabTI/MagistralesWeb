@@ -37,6 +37,8 @@ namespace Omicron.Usuarios.Test
                 new UserModel { Id = "8", FirstName = "TecnicoPrueba Nombre", LastName = "TecnicoPrueba Apellido", UserName = "TecnicoPrueba", Password = "QXhpdHkyMDIw", Role = 9, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, },
                 new UserModel { Id = "9", FirstName = "QFBTECNICO", LastName = "QFBTECNICO", UserName = "QFBTECNICO", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 1, Deleted = false, TecnicId = "8", },
                 new UserModel { Id = "10", FirstName = "QFBNOTECNICO", LastName = "QFBNOTECNICO", UserName = "QFBNOTECNICO", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 1, Deleted = false, },
+                new UserModel { Id = "11", FirstName = "TecnicoPrueba Update", LastName = "TecnicoPrueba Update Apellido", UserName = "TecnicoPrueba Update", Password = "QXhpdHkyMDIw", Role = 9, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, },
+                new UserModel { Id = "12", FirstName = "QFBTECNICOUpdate", LastName = "QFBTECNICO Update", UserName = "QFBTECNICO Update", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 1, Deleted = false, TecnicId = "11", },
 
                 // QFB's
                 new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b801", FirstName = "Arturo", LastName = "Espinosa", UserName = "ArturQfb", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, TechnicalRequire = true, TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b805" },
