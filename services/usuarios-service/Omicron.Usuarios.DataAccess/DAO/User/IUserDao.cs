@@ -66,6 +66,13 @@ namespace Omicron.Usuarios.DataAccess.DAO.User
         Task<bool> UpdateUser(UserModel user);
 
         /// <summary>
+        /// Updates a multi-users.
+        /// </summary>
+        /// <param name="users">the user to update.</param>
+        /// <returns>the user.</returns>
+        Task<bool> UpdateUsers(List<UserModel> users);
+
+        /// <summary>
         /// looks users based in the roleId.
         /// </summary>
         /// <param name="roleId">the role id.</param>
