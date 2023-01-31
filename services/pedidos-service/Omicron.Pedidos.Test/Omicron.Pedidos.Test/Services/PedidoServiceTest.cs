@@ -25,13 +25,13 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.Redis;
+    using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
-    using Omicron.Pedidos.Services.Reporting;
-    using Omicron.Pedidos.Services.Redis;
 
     /// <summary>
     /// class for the test.
@@ -166,6 +166,44 @@ namespace Omicron.Pedidos.Test.Services
             mockSaDiApi
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+
+            // act
+            var response = await pedidosServiceLocal.GetFabOrderByUserId(id);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetFabOrderByTcnicID()
+        {
+            // arrange
+            var id = "tecnic";
+
+            var localSapAdapter = new Mock<ISapAdapter>();
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetListFormulaDetalle()));
+
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            this.usersService = new Mock<IUsersService>();
+
+            this.usersService
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUserModel(true)));
 
             var mockSapFile = new Mock<ISapFileService>();
 
