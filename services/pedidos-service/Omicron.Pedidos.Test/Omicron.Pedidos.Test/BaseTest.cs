@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Test
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Dtos.User;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
@@ -642,6 +643,33 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = JsonConvert.SerializeObject(dataToSend),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the users by role.
+        /// </summary>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
+        /// <returns>the users.</returns>
+        public ResultModel GetQfbTecnicInfoDto(bool isValidtecnic)
+        {
+            var tecnicInfo = new QfbTecnicInfoDto
+            {
+                IsTecnicRequired = true,
+                IsValidTecnic = isValidtecnic,
+                QfbFirstName = "Juan",
+                QfbLastName = "Pérez",
+                QfbId = "abc",
+                TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b801",
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = tecnicInfo,
                 Success = true,
                 UserError = string.Empty,
             };

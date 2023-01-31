@@ -137,6 +137,18 @@ namespace Omicron.Usuarios.Services.User
                 throw new CustomServiceException(ServiceConstants.UserDontExist, HttpStatusCode.BadRequest);
             }
 
+            if (usertoUpdate.Role == ServiceConstants.RoleTecnic && (user.Activo == 0 || user.Asignable == 0))
+            {
+                var userstremovetecnic = await this.userDao.GetAllUsersAsync();
+                var listusers = userstremovetecnic.Where(x => x.TecnicId == user.Id).ToList();
+                foreach (var users in listusers)
+                {
+                    users.TecnicId = null;
+                }
+
+                var result = await this.userDao.UpdateUsers(listusers);
+            }
+
             var userExist = await this.userDao.GetUserByUserName(user.UserName);
 
             if (userExist != null && userExist.Id != user.Id)
@@ -154,6 +166,7 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.Asignable = user.Asignable;
             usertoUpdate.Classification = user.Classification;
             usertoUpdate.TecnicId = user.TecnicId;
+            usertoUpdate.TechnicalRequire = user.TechnicalRequire;
 
             var response = await this.userDao.UpdateUser(usertoUpdate);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
@@ -279,6 +292,41 @@ namespace Omicron.Usuarios.Services.User
             }
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToReturn, null, listToReturn.Count);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetTecnicInfoByQfbId(string qfbId)
+        {
+            var qfbUser = await this.userDao.GetUserById(qfbId);
+            var tecnicInfo = new QfbTecnicInfoDto
+            {
+                QfbId = qfbUser.Id,
+                QfbFirstName = qfbUser.FirstName,
+                QfbLastName = qfbUser.LastName,
+                IsTecnicRequired = qfbUser.TechnicalRequire,
+                IsValidTecnic = true,
+                TecnicId = qfbUser.TecnicId,
+            };
+
+            if (!tecnicInfo.IsTecnicRequired)
+            {
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, tecnicInfo, null, null);
+            }
+
+            if (ServiceUtils.CalculateAnd(tecnicInfo.IsTecnicRequired, string.IsNullOrEmpty(tecnicInfo.TecnicId)))
+            {
+                tecnicInfo.IsValidTecnic = false;
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, tecnicInfo, null, null);
+            }
+
+            var tecnicInfoDetail = await this.userDao.GetUserById(qfbUser.TecnicId);
+
+            if (ServiceUtils.CalculateOr(tecnicInfoDetail.Activo == 0, tecnicInfoDetail.Deleted))
+            {
+                tecnicInfo.IsValidTecnic = false;
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, tecnicInfo, null, null);
         }
 
         /// <summary>

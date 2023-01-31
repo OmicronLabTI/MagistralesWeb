@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.Test.Services
     using NUnit.Framework;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Broker;
@@ -437,9 +438,12 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// Get last isolated production order id.
         /// </summary>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task ReassignOrder()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task ReassignOrder(bool isValidtecnic)
         {
             var reassign = new ManualAssignModel
             {
@@ -449,11 +453,36 @@ namespace Omicron.Pedidos.Test.Services
                 UserLogistic = "abc",
             };
 
+            var sapAdapterLocal = new Mock<ISapAdapter>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+
+            mockUsers
+                .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbTecnicInfoDto(isValidtecnic)));
+
             // act
-            var result = await this.pedidosService.ReassignOrder(reassign);
+            var assignPedidosService = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var result = await assignPedidosService.ReassignOrder(reassign);
 
             // assert
             Assert.IsNotNull(result);
+            Assert.IsNull(result.ExceptionMessage);
+            Assert.IsNull(result.Response);
+            Assert.IsNull(result.Comments);
+
+            if (isValidtecnic)
+            {
+                Assert.IsNull(result.UserError);
+                Assert.IsTrue(result.Success);
+                Assert.AreEqual(200, result.Code);
+            }
+            else
+            {
+                Assert.IsNotNull(result.UserError);
+                Assert.IsFalse(result.Success);
+                Assert.AreEqual(400, result.Code);
+            }
         }
 
         /// <summary>

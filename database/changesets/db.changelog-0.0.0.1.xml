@@ -1,271 +1,273 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 	<changeSet author="gramirez" id="changelog-1.1">
 		<createTable tableName="User">
 			<column name="Id" type="VARCHAR(50)">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
 			<column name="UserName" type="VARCHAR(50)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="FirstName" type="VARCHAR(50)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="LastName" type="VARCHAR(50)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="Role" type="INT">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="Password" type="VARCHAR(80)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 		</createTable>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.2">
 		<createTable tableName="OrdersLogs">
 			<column name="Id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
 			<column name="LogDateTime" type="TIMESTAMP">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="UserId" type="VARCHAR(50)">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="Type" type="VARCHAR(2)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="NoId" type="VARCHAR(50)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="Description" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 		</createTable>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.3">
 		<createTable tableName="UsersOrders">
 			<column name="Id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
 			<column name="UserId" type="VARCHAR(50)">
-				<constraints nullable="true"/>
+				<constraints nullable="true" />
 			</column>
 			<column name="SalesOrderId" type="VARCHAR(50)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="ProductionOrderId" type="VARCHAR(50)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="Status" type="VARCHAR(20)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 		</createTable>
-		<addForeignKeyConstraint baseColumnNames="UserId" baseTableName="OrdersLogs" constraintName="fk_orderslogs_id" referencedColumnNames="Id" referencedTableName="User"/>
-		<addForeignKeyConstraint baseColumnNames="UserId" baseTableName="UsersOrders" constraintName="fk_userorders_id" referencedColumnNames="Id" referencedTableName="User"/>
+		<addForeignKeyConstraint baseColumnNames="UserId" baseTableName="OrdersLogs"
+			constraintName="fk_orderslogs_id" referencedColumnNames="Id" referencedTableName="User" />
+		<addForeignKeyConstraint baseColumnNames="UserId" baseTableName="UsersOrders"
+			constraintName="fk_userorders_id" referencedColumnNames="Id" referencedTableName="User" />
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.4">
 		<renameTable
 			newTableName="user"
 			oldTableName="User"
-	/>
+		/>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.5">
 		<renameColumn
 			newColumnName="id"
 			oldColumnName="Id"
 			tableName="user"
-	/>
+		/>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.6">
 		<renameColumn
 			newColumnName="username"
 			oldColumnName="UserName"
 			tableName="user"
-	/>
+		/>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.7">
 		<renameColumn
 			newColumnName="firstname"
 			oldColumnName="FirstName"
 			tableName="user"
-	/>
+		/>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.8">
 		<renameColumn
 			newColumnName="lastname"
 			oldColumnName="LastName"
 			tableName="user"
-	/>
+		/>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.9">
 		<renameColumn
 			newColumnName="role"
 			oldColumnName="Role"
 			tableName="user"
-	/>
+		/>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.10">
 		<renameColumn
 			newColumnName="password"
 			oldColumnName="Password"
 			tableName="user"
-	/>
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.11">
 		<renameTable
-		  newTableName="orderslogs"
-		  oldTableName="OrdersLogs"
-    />
+			newTableName="orderslogs"
+			oldTableName="OrdersLogs"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.12">
 		<renameColumn
-		  newColumnName="id"
-		  oldColumnName="Id"
-		  tableName="orderslogs"
-    />
+			newColumnName="id"
+			oldColumnName="Id"
+			tableName="orderslogs"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.13">
 		<renameColumn
-		  newColumnName="logdatetime"
-		  oldColumnName="LogDateTime"
-		  tableName="orderslogs"
-    />
+			newColumnName="logdatetime"
+			oldColumnName="LogDateTime"
+			tableName="orderslogs"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.14">
 		<renameColumn
-		  newColumnName="userid"
-		  oldColumnName="UserId"
-		  tableName="orderslogs"
-    />
+			newColumnName="userid"
+			oldColumnName="UserId"
+			tableName="orderslogs"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.15">
 		<renameColumn
-		  newColumnName="type"
-		  oldColumnName="Type"
-		  tableName="orderslogs"
-    />
+			newColumnName="type"
+			oldColumnName="Type"
+			tableName="orderslogs"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.16">
 		<renameColumn
-		  newColumnName="noid"
-		  oldColumnName="NoId"
-		  tableName="orderslogs"
-    />
+			newColumnName="noid"
+			oldColumnName="NoId"
+			tableName="orderslogs"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.17">
 		<renameColumn
-		  newColumnName="description"
-		  oldColumnName="Description"
-		  tableName="orderslogs"
-    />
+			newColumnName="description"
+			oldColumnName="Description"
+			tableName="orderslogs"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.18">
 		<renameTable
-		  newTableName="usersorders"
-		  oldTableName="UsersOrders"
-    />
+			newTableName="usersorders"
+			oldTableName="UsersOrders"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.19">
 		<renameColumn
-		  newColumnName="id"
-		  oldColumnName="Id"
-		  tableName="usersorders"
-    />
+			newColumnName="id"
+			oldColumnName="Id"
+			tableName="usersorders"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.20">
 		<renameColumn
-		  newColumnName="userid"
-		  oldColumnName="UserId"
-		  tableName="usersorders"
-    />
+			newColumnName="userid"
+			oldColumnName="UserId"
+			tableName="usersorders"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.21">
 		<renameColumn
-		  newColumnName="salesorderid"
-		  oldColumnName="SalesOrderId"
-		  tableName="usersorders"
-    />
+			newColumnName="salesorderid"
+			oldColumnName="SalesOrderId"
+			tableName="usersorders"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.22">
 		<renameColumn
-		  newColumnName="productionorderid"
-		  oldColumnName="ProductionOrderId"
-		  tableName="usersorders"
-    />
+			newColumnName="productionorderid"
+			oldColumnName="ProductionOrderId"
+			tableName="usersorders"
+		/>
 	</changeSet>
 	<changeSet author="gcruz" id="changelog-1.23">
 		<renameColumn
-		  newColumnName="status"
-		  oldColumnName="Status"
-		  tableName="usersorders"
-    />
+			newColumnName="status"
+			oldColumnName="Status"
+			tableName="usersorders"
+		/>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.24">
 		<createTable tableName="roles">
 			<column name="idrole" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
 			<column name="roledescription" type="VARCHAR(50)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 		</createTable>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.25">
-		<addColumn tableName ="user">
+		<addColumn tableName="user">
 			<column
 				name="activo"
 				type="INT"
-				defaultValue="0">
-			</column>
+				defaultValue="0"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.26">
 		<insert tableName="roles">
-			<column name="roledescription" value="Administrador"/>
+			<column name="roledescription" value="Administrador" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.27">
 		<insert tableName="roles">
-			<column name="roledescription" value="QFB"/>
+			<column name="roledescription" value="QFB" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.28">
-		<dropNotNullConstraint tableName="usersorders" columnName="userid" columnDataType="varchar(50)"/>
+		<dropNotNullConstraint tableName="usersorders" columnName="userid"
+			columnDataType="varchar(50)" />
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.29">
-		<dropNotNullConstraint tableName="usersorders" columnName="productionorderid" columnDataType="varchar(50)"/>
+		<dropNotNullConstraint tableName="usersorders" columnName="productionorderid"
+			columnDataType="varchar(50)" />
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.30">
 		<createTable tableName="parameters">
 			<column name="Id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
 			<column name="value" type="VARCHAR(500)">
-				<constraints nullable="true" primaryKey="false" unique="false"/>
+				<constraints nullable="true" primaryKey="false" unique="false" />
 			</column>
 			<column name="type" type="VARCHAR(50)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="field" type="VARCHAR(100)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 		</createTable>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.31">
 		<insert tableName="parameters">
-			<column name="value" value="200"/>
-			<column name="type" value="int"/>
-			<column name="field" value="MaxUserOrders"/>
+			<column name="value" value="200" />
+			<column name="type" value="int" />
+			<column name="field" value="MaxUserOrders" />
 		</insert>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.32">
-		<addColumn tableName="usersorders" >
+		<addColumn tableName="usersorders">
 			<column name="comments" type="varchar(500)">
 				<constraints nullable="true" />
 			</column>
@@ -274,10 +276,9 @@
 	<changeSet author="hmiguel" id="changelog-1.33">
 		<createTable tableName="userorderssignatures">
 			<column name="id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
-			<column name="userorderid" type="INT">
-			</column>
+			<column name="userorderid" type="INT"> </column>
 			<column name="technicalsignature" type="BYTEA">
 				<constraints nullable="true" />
 			</column>
@@ -285,60 +286,60 @@
 				<constraints nullable="true" />
 			</column>
 		</createTable>
-		<addForeignKeyConstraint baseColumnNames="userorderid" baseTableName="userorderssignatures" constraintName="fk_userorderssignatures_userorders_id" referencedColumnNames="id" referencedTableName="usersorders"/>
+		<addForeignKeyConstraint baseColumnNames="userorderid" baseTableName="userorderssignatures"
+			constraintName="fk_userorderssignatures_userorders_id" referencedColumnNames="id"
+			referencedTableName="usersorders" />
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.34">
-		<addColumn tableName ="usersorders">
+		<addColumn tableName="usersorders">
 			<column
 				name="finishdate"
-				type="VARCHAR(20)">
-			</column>
+				type="VARCHAR(20)"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.35">
-		<addColumn tableName ="usersorders">
+		<addColumn tableName="usersorders">
 			<column
 				name="closedate"
-				type="VARCHAR(20)">
-			</column>
+				type="VARCHAR(20)"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.36">
-		<addColumn tableName ="usersorders">
+		<addColumn tableName="usersorders">
 			<column
 				name="closeuserid"
-				type="VARCHAR(50)">
-			</column>
+				type="VARCHAR(50)"> </column>
 		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="closeuserid" baseTableName="usersorders" constraintName="fk_close_userorders_users_id" referencedColumnNames="id" referencedTableName="user"/>
+		<addForeignKeyConstraint baseColumnNames="closeuserid" baseTableName="usersorders"
+			constraintName="fk_close_userorders_users_id" referencedColumnNames="id"
+			referencedTableName="user" />
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.37">
-		<addColumn tableName ="userorderssignatures">
+		<addColumn tableName="userorderssignatures">
 			<column
 				name="qfbsignature"
-				type="BYTEA">
-			</column>
+				type="BYTEA"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.38">
-		<addColumn tableName ="usersorders">
+		<addColumn tableName="usersorders">
 			<column
 				name="creationdate"
-				type="VARCHAR(30)">
-			</column>
+				type="VARCHAR(30)"> </column>
 		</addColumn>
-		<addColumn tableName ="usersorders">
+		<addColumn tableName="usersorders">
 			<column
 				name="creationuserid"
-				type="VARCHAR(50)">
-			</column>
+				type="VARCHAR(50)"> </column>
 		</addColumn>
-		<addForeignKeyConstraint baseColumnNames="creationuserid" baseTableName="usersorders" constraintName="fk_creation_userorders_users_id" referencedColumnNames="id" referencedTableName="user"/>
+		<addForeignKeyConstraint baseColumnNames="creationuserid" baseTableName="usersorders"
+			constraintName="fk_creation_userorders_users_id" referencedColumnNames="id"
+			referencedTableName="user" />
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.39">
 		<createTable tableName="customcomponentlists">
 			<column name="id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
 			<column name="productid" type="VARCHAR(50)">
 				<constraints nullable="false" />
@@ -357,10 +358,9 @@
 	<changeSet author="hmiguel" id="changelog-1.40">
 		<createTable tableName="customcomponentlistscomponents">
 			<column name="id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
-			<column name="customlistid" type="INT">
-			</column>
+			<column name="customlistid" type="INT"> </column>
 			<column name="productid" type="VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
@@ -371,26 +371,28 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-		<addForeignKeyConstraint baseColumnNames="customlistid" baseTableName="customcomponentlistscomponents" constraintName="fk_customcomponentlistscomponents_customcomponentlists_id" referencedColumnNames="id" referencedTableName="customcomponentlists"/>
+		<addForeignKeyConstraint baseColumnNames="customlistid"
+			baseTableName="customcomponentlistscomponents"
+			constraintName="fk_customcomponentlistscomponents_customcomponentlists_id"
+			referencedColumnNames="id" referencedTableName="customcomponentlists" />
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.41">
 		<insert tableName="roles">
-			<column name="roledescription" value="Logistica"/>
+			<column name="roledescription" value="Logistica" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.42">
-		<addColumn tableName ="user">
+		<addColumn tableName="user">
 			<column
 				name="pieces"
 				type="INT"
-				defaultValue="200">
-			</column>
+				defaultValue="200"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.43">
 		<createTable tableName="rawmaterialrequest">
 			<column name="id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
 			<column name="productionorderid" type="INT">
 				<constraints nullable="false" />
@@ -411,16 +413,19 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-		<addForeignKeyConstraint baseColumnNames="creationuserid" baseTableName="rawmaterialrequest" constraintName="fk_rawmaterialrequest_creation_user_users_id" referencedColumnNames="id" referencedTableName="user"/>
-		<addForeignKeyConstraint baseColumnNames="signinguserid" baseTableName="rawmaterialrequest" constraintName="fk_rawmaterialrequest_signing_user_users_id" referencedColumnNames="id" referencedTableName="user"/>
+		<addForeignKeyConstraint baseColumnNames="creationuserid" baseTableName="rawmaterialrequest"
+			constraintName="fk_rawmaterialrequest_creation_user_users_id" referencedColumnNames="id"
+			referencedTableName="user" />
+		<addForeignKeyConstraint baseColumnNames="signinguserid" baseTableName="rawmaterialrequest"
+			constraintName="fk_rawmaterialrequest_signing_user_users_id" referencedColumnNames="id"
+			referencedTableName="user" />
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.44">
 		<createTable tableName="rawmaterialrequestdetail">
 			<column name="id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
-			<column name="rawmaterialrequestid" type="INT">
-			</column>
+			<column name="rawmaterialrequestid" type="INT"> </column>
 			<column name="productid" type="VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
@@ -431,30 +436,30 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-		<addForeignKeyConstraint baseColumnNames="rawmaterialrequestid" baseTableName="rawmaterialrequestdetail" constraintName="fk_rawmaterialrequestdetail_rawmaterialrequest_id" referencedColumnNames="id" referencedTableName="rawmaterialrequest"/>
+		<addForeignKeyConstraint baseColumnNames="rawmaterialrequestid"
+			baseTableName="rawmaterialrequestdetail"
+			constraintName="fk_rawmaterialrequestdetail_rawmaterialrequest_id"
+			referencedColumnNames="id" referencedTableName="rawmaterialrequest" />
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.45">
-		<addColumn tableName ="user">
+		<addColumn tableName="user">
 			<column
 				name="asignable"
 				type="INT"
-				defaultValue="1">
-			</column>
+				defaultValue="1"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.46">
-		<dropTable schemaName="public"  tableName="rawmaterialrequestdetail"/>
-		<dropTable schemaName="public"  tableName="rawmaterialrequest"/>
+		<dropTable schemaName="public" tableName="rawmaterialrequestdetail" />
+		<dropTable schemaName="public" tableName="rawmaterialrequest" />
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.47">
-		<sql endDelimiter=";">
-			CREATE SCHEMA warehouse
-		</sql>
+		<sql endDelimiter=";"> CREATE SCHEMA warehouse </sql>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.48">
 		<createTable schemaName="warehouse" tableName="rawmaterialrequest">
 			<column name="id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
 			<column name="productionorderid" type="INT">
 				<constraints nullable="false" />
@@ -479,10 +484,9 @@
 	<changeSet author="hmiguel" id="changelog-1.49">
 		<createTable schemaName="warehouse" tableName="rawmaterialrequestdetail">
 			<column name="id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
-			<column name="rawmaterialrequestid" type="INT">
-			</column>
+			<column name="rawmaterialrequestid" type="INT"> </column>
 			<column name="productid" type="VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
@@ -500,46 +504,36 @@
 			constraintName="fk_rawmaterialrequestdetail_rawmaterialrequest_id"
 			referencedColumnNames="id"
 			referencedTableName="rawmaterialrequest"
-			referencedTableSchemaName="warehouse"/>
+			referencedTableSchemaName="warehouse" />
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.50">
-		<sql endDelimiter=";">
-			ALTER TABLE customcomponentlistscomponents ALTER COLUMN description TYPE VARCHAR(255)
-		</sql>
+		<sql endDelimiter=";"> ALTER TABLE customcomponentlistscomponents ALTER COLUMN description
+			TYPE VARCHAR(255) </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.51">
-		<sql endDelimiter=";">
-			update roles set roledescription = 'LOGÍSTICA' where idrole = 3
-		</sql>
+		<sql endDelimiter=";"> update roles set roledescription = 'LOGÍSTICA' where idrole = 3 </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.52">
-		<sql endDelimiter=";">
-			update roles set roledescription = 'ADMINISTRACIÓN' where idrole = 1
-		</sql>
+		<sql endDelimiter=";"> update roles set roledescription = 'ADMINISTRACIÓN' where idrole = 1 </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.53">
-		<sql endDelimiter=";">
-			update roles set roledescription = 'ADMINISTRADOR' where idrole = 1
-		</sql>
+		<sql endDelimiter=";"> update roles set roledescription = 'ADMINISTRADOR' where idrole = 1 </sql>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.54">
-		<addColumn schemaName= "warehouse" tableName="rawmaterialrequestdetail" >
-			<column name="unit" type="VARCHAR(50)"/>
+		<addColumn schemaName="warehouse" tableName="rawmaterialrequestdetail">
+			<column name="unit" type="VARCHAR(50)" />
 		</addColumn>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.55">
-		<sql endDelimiter=";">
-			update "user" set pieces = 0 where role != 2;
-			update "user" set asignable = 0 where role != 2;
-		</sql>
+		<sql endDelimiter=";"> update "user" set pieces = 0 where role != 2; update "user" set
+			asignable = 0 where role != 2; </sql>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.56">
 		<createTable schemaName="warehouse" tableName="rawmaterialrequestorders">
 			<column name="id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
-			<column name="rawmaterialrequestid" type="INT">
-			</column>
+			<column name="rawmaterialrequestid" type="INT"> </column>
 			<column name="productionorderid" type="INT">
 				<constraints nullable="false" />
 			</column>
@@ -551,526 +545,488 @@
 			constraintName="fk_rawmaterialrequestorders_rawmaterialrequest_id"
 			referencedColumnNames="id"
 			referencedTableName="rawmaterialrequest"
-			referencedTableSchemaName="warehouse"/>
+			referencedTableSchemaName="warehouse" />
 	</changeSet>
-	<changeSet  author="hmiguel"  id="changelog-1.57">
-		<dropColumn  columnName="productionorderid" schemaName="warehouse"  tableName="rawmaterialrequest" />
+	<changeSet author="hmiguel" id="changelog-1.57">
+		<dropColumn columnName="productionorderid" schemaName="warehouse"
+			tableName="rawmaterialrequest" />
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.58">
 		<insert tableName="parameters">
-			<column name="value" value="almacenmp@o-lab.mx"/>
-			<column name="type" value="string"/>
-			<column name="field" value="EmailAlmacen"/>
+			<column name="value" value="almacenmp@o-lab.mx" />
+			<column name="type" value="string" />
+			<column name="field" value="EmailAlmacen" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.59">
 		<insert tableName="parameters">
-			<column name="value" value="mag2@o-lab.mx"/>
-			<column name="type" value="string"/>
-			<column name="field" value="EmailLogisticaCc1"/>
+			<column name="value" value="mag2@o-lab.mx" />
+			<column name="type" value="string" />
+			<column name="field" value="EmailLogisticaCc1" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.60">
 		<insert tableName="parameters">
-			<column name="value" value="aescobar@o-lab.mx"/>
-			<column name="type" value="string"/>
-			<column name="field" value="EmailLogisticaCc2"/>
+			<column name="value" value="aescobar@o-lab.mx" />
+			<column name="type" value="string" />
+			<column name="field" value="EmailLogisticaCc2" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.61">
 		<insert tableName="parameters">
-			<column name="value" value="info@o-lab.mx"/>
-			<column name="type" value="string"/>
-			<column name="field" value="EmailMiddleware"/>
+			<column name="value" value="info@o-lab.mx" />
+			<column name="type" value="string" />
+			<column name="field" value="EmailMiddleware" />
 		</insert>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.62">
 		<insert tableName="parameters">
-			<column name="value" value="Nox23293"/>
-			<column name="type" value="string"/>
-			<column name="field" value="EmailMiddlewarePassword"/>
+			<column name="value" value="Nox23293" />
+			<column name="type" value="string" />
+			<column name="field" value="EmailMiddlewarePassword" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="smtp.office365.com"/>
-			<column name="type" value="string"/>
-			<column name="field" value="SmtpServer"/>
+			<column name="value" value="smtp.office365.com" />
+			<column name="type" value="string" />
+			<column name="field" value="SmtpServer" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="587"/>
-			<column name="type" value="int"/>
-			<column name="field" value="SmtpPort"/>
+			<column name="value" value="587" />
+			<column name="type" value="int" />
+			<column name="field" value="SmtpPort" />
 		</insert>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.63">
-		<sql endDelimiter=";">
-			ALTER TABLE warehouse.rawmaterialrequestdetail ALTER COLUMN description TYPE VARCHAR(255)
-		</sql>
+		<sql endDelimiter=";"> ALTER TABLE warehouse.rawmaterialrequestdetail ALTER COLUMN
+			description TYPE VARCHAR(255) </sql>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.64">
-		<addColumn schemaName= "public" tableName="user" >
+		<addColumn schemaName="public" tableName="user">
 			<column name="deleted" defaultValueBoolean="false" type="BOOLEAN" />
 		</addColumn>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.65">
 		<insert tableName="roles">
-			<column name="roledescription" value="DISEÑO"/>
+			<column name="roledescription" value="DISEÑO" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.66">
 		<insert tableName="roles">
-			<column name="roledescription" value="ALMACÉN"/>
+			<column name="roledescription" value="ALMACÉN" />
 		</insert>
 	</changeSet>
 	<changeSet author="hmiguel" id="changelog-1.67">
-		<sql endDelimiter=";">
-			ALTER TABLE usersorders ALTER COLUMN comments TYPE VARCHAR(1000)
-		</sql>
+		<sql endDelimiter=";"> ALTER TABLE usersorders ALTER COLUMN comments TYPE VARCHAR(1000) </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.68">
-		<addColumn tableName ="usersorders">
+		<addColumn tableName="usersorders">
 			<column
 				name="finishedlabel"
 				type="INT"
-				defaultValue="0">
-			</column>
+				defaultValue="0"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.69">
-		<addColumn tableName ="userorderssignatures">
+		<addColumn tableName="userorderssignatures">
 			<column
 				name="designerid"
-				type="varchar(100)">
-			</column>
+				type="varchar(100)"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.70">
-		<addColumn tableName ="userorderssignatures">
+		<addColumn tableName="userorderssignatures">
 			<column
 				name="designersignature"
-				type="BYTEA">
-			</column>
+				type="BYTEA"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.71">
 		<insert tableName="parameters">
-			<column name="value" value="6"/>
-			<column name="type" value="int"/>
-			<column name="field" value="MagistralesDaysToLook"/>
+			<column name="value" value="6" />
+			<column name="type" value="int" />
+			<column name="field" value="MagistralesDaysToLook" />
 		</insert>
 	</changeSet>
 	<changeSet author="erosas" id="changelog-1.72">
 		<insert tableName="parameters">
-			<column name="value" value="sc1@o-lab.mx"/>
-			<column name="type" value="string"/>
-			<column name="field" value="EmailAtencionAClientes"/>
+			<column name="value" value="sc1@o-lab.mx" />
+			<column name="type" value="string" />
+			<column name="field" value="EmailAtencionAClientes" />
 		</insert>
 	</changeSet>
 	<changeSet author="erosas" id="changelog-1.73">
-		<sql endDelimiter=";">
-			update parameters set value = 'mzuniga@o-lab.mx' where field = 'EmailAtencionAClientes'
-		</sql>
+		<sql endDelimiter=";"> update parameters set value = 'mzuniga@o-lab.mx' where field =
+			'EmailAtencionAClientes' </sql>
 	</changeSet>
 	<changeSet author="erosas" id="changelog-1.74">
-		<addColumn tableName ="usersorders">
+		<addColumn tableName="usersorders">
 			<column
-			  name="batchfinalized"
-			  type="varchar(50)">
-			</column>
+				name="batchfinalized"
+				type="varchar(50)"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="esanchez" id="changelog-1.75">
-		<addColumn tableName ="user">
+		<addColumn tableName="user">
 			<column
-			  name="classification"
-			  type="varchar(30)">
-			</column>
+				name="classification"
+				type="varchar(30)"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.76">
-		<sql endDelimiter=";">
-			ALTER TABLE usersorders ALTER COLUMN closedate TYPE Date using closedate::date;
-		</sql>
+		<sql endDelimiter=";"> ALTER TABLE usersorders ALTER COLUMN closedate TYPE Date using
+			closedate::date; </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.77">
-		<sql endDelimiter=";">
-			ALTER TABLE usersorders ALTER COLUMN finishdate TYPE Date using finishdate::date;
-		</sql>
+		<sql endDelimiter=";"> ALTER TABLE usersorders ALTER COLUMN finishdate TYPE Date using
+			finishdate::date; </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.78">
-		<sql endDelimiter=";">
-			insert into usersorders (salesorderid , productionorderid , status) values('', '1', 'Planificado');
-			INSERT INTO public."user" (id,username,firstname,lastname,"role","password",activo,pieces,asignable,deleted,classification) VALUES ('00197298-0e73-4299-b004-092de34c5aab','admin','admin','admin',1,'QXhpdHkyMDIw',1,200,1,false,'');
-		</sql>
+		<sql endDelimiter=";"> insert into usersorders (salesorderid , productionorderid , status)
+			values('', '1', 'Planificado'); INSERT INTO public."user"
+			(id,username,firstname,lastname,"role","password",activo,pieces,asignable,deleted,classification)
+			VALUES
+			('00197298-0e73-4299-b004-092de34c5aab','admin','admin','admin',1,'QXhpdHkyMDIw',1,200,1,false,'');
+			</sql>
 	</changeSet>
 	<changeSet author="jespinosap" id="changelog-1.79">
-		<addColumn tableName ="usersorders">
+		<addColumn tableName="usersorders">
 			<column
-			  name="quantity"
-			  type="DECIMAL(19,6)"
-			  defaultValue="0">
-			</column>
+				name="quantity"
+				type="DECIMAL(19,6)"
+				defaultValue="0"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="esanchez" id="changelog-1.80">
-		<sql endDelimiter=";">
-			ALTER TABLE customcomponentlistscomponents ALTER COLUMN basequantity TYPE NUMERIC(19,8);
-		</sql>
+		<sql endDelimiter=";"> ALTER TABLE customcomponentlistscomponents ALTER COLUMN basequantity
+			TYPE NUMERIC(19,8); </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.81">
-		<sql endDelimiter=";">
-			UPDATE parameters SET value='500' WHERE "Id"=28;
-			UPDATE parameters SET value='500' WHERE "Id"=29;
-			UPDATE parameters SET value='15'  WHERE "Id"=30;
-			UPDATE parameters SET value='110' WHERE "Id"=31;
-			UPDATE parameters SET value='390' WHERE "Id"=32;
-			UPDATE parameters SET value='300' WHERE "Id"=33;
-			UPDATE parameters SET value='100' WHERE "Id"=34;
-		</sql>
+		<sql endDelimiter=";"> UPDATE parameters SET value='500' WHERE "Id"=28; UPDATE parameters
+			SET value='500' WHERE "Id"=29; UPDATE parameters SET value='15' WHERE "Id"=30; UPDATE
+			parameters SET value='110' WHERE "Id"=31; UPDATE parameters SET value='390' WHERE
+			"Id"=32; UPDATE parameters SET value='300' WHERE "Id"=33; UPDATE parameters SET
+			value='100' WHERE "Id"=34; </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.82">
-		<addColumn tableName ="usersorders">
+		<addColumn tableName="usersorders">
 			<column
-			  name="arebatchescomplete"
-			  type="int"
-			  defaultValue = "0">
-			</column>
+				name="arebatchescomplete"
+				type="int"
+				defaultValue="0"> </column>
 		</addColumn>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.83">
 		<insert tableName="parameters">
-			<column name="value" value="aescobar@o-lab.mx"/>
-			<column name="type" value="string"/>
-			<column name="field" value="EmailCCRejected"/>
+			<column name="value" value="aescobar@o-lab.mx" />
+			<column name="type" value="string" />
+			<column name="field" value="EmailCCRejected" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.84">
-		<sql endDelimiter=";">
-			UPDATE parameters SET value='500' WHERE field = 'QrMagistralHeight';
-			UPDATE parameters SET value='500' WHERE field = 'QrMagistralWidth';
-			UPDATE parameters SET value='15'  WHERE field = 'QrMagistralMargin';
-			UPDATE parameters SET value='110' WHERE field = 'QrMagistralRectx';
-			UPDATE parameters SET value='390' WHERE field = 'QrMagistralRecty';
-			UPDATE parameters SET value='300' WHERE field = 'QrMagistralRectWidth';
-			UPDATE parameters SET value='100' WHERE field = 'QrMagistralRectHeight';
-		</sql>
+		<sql endDelimiter=";"> UPDATE parameters SET value='500' WHERE field = 'QrMagistralHeight';
+			UPDATE parameters SET value='500' WHERE field = 'QrMagistralWidth'; UPDATE parameters
+			SET value='15' WHERE field = 'QrMagistralMargin'; UPDATE parameters SET value='110'
+			WHERE field = 'QrMagistralRectx'; UPDATE parameters SET value='390' WHERE field =
+			'QrMagistralRecty'; UPDATE parameters SET value='300' WHERE field =
+			'QrMagistralRectWidth'; UPDATE parameters SET value='100' WHERE field =
+			'QrMagistralRectHeight'; </sql>
 	</changeSet>
 	<changeSet author="esanchez" id="changelog-1.85">
-		<sql endDelimiter=";">
-			ALTER TABLE customcomponentlistscomponents ALTER COLUMN basequantity TYPE NUMERIC(19,6);
-		</sql>
+		<sql endDelimiter=";"> ALTER TABLE customcomponentlistscomponents ALTER COLUMN basequantity
+			TYPE NUMERIC(19,6); </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.86">
-		<sql endDelimiter=";">
-			UPDATE parameters SET value='130' WHERE field = 'QrMagistralRectx';
-		</sql>
+		<sql endDelimiter=";"> UPDATE parameters SET value='130' WHERE field = 'QrMagistralRectx'; </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.87">
 		<insert tableName="parameters">
-			<column name="value" value="24"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrMagistralBottomTextSize"/>
+			<column name="value" value="24" />
+			<column name="type" value="int" />
+			<column name="field" value="QrMagistralBottomTextSize" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.88">
-		<sql endDelimiter=";">
-			UPDATE parameters SET value='400' WHERE field = 'QrMagistralRectWidth';
-		</sql>
+		<sql endDelimiter=";"> UPDATE parameters SET value='400' WHERE field =
+			'QrMagistralRectWidth'; </sql>
 	</changeSet>
 	<changeSet author="jarturoep" id="changelog-1.89">
 		<insert tableName="parameters">
-			<column name="value" value="130"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrMagistralRectxTop"/>
+			<column name="value" value="130" />
+			<column name="type" value="int" />
+			<column name="field" value="QrMagistralRectxTop" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="25"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrMagistralRectyTop"/>
+			<column name="value" value="25" />
+			<column name="type" value="int" />
+			<column name="field" value="QrMagistralRectyTop" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.90">
 		<insert tableName="parameters">
-			<column name="value" value="27"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrMagistralBottomTextSizeDelivery"/>
+			<column name="value" value="27" />
+			<column name="type" value="int" />
+			<column name="field" value="QrMagistralBottomTextSizeDelivery" />
 		</insert>
 	</changeSet>
 	<changeSet author="jarturoep" id="changelog-1.91">
 		<insert tableName="parameters">
-			<column name="value" value="500"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrDeliveryHeight"/>
+			<column name="value" value="500" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryHeight" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="500"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrDeliveryWidth"/>
+			<column name="value" value="500" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryWidth" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="15"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrDeliveryMargin"/>
+			<column name="value" value="15" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryMargin" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="110"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrDeliveryRectx"/>
+			<column name="value" value="110" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryRectx" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="400"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrDeliveryRecty"/>
+			<column name="value" value="400" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryRecty" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="400"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrDeliveryRectWidth"/>
+			<column name="value" value="400" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryRectWidth" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="100"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrDeliveryRectHeight"/>
+			<column name="value" value="100" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryRectHeight" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="110"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrDeliveryRectxTop"/>
+			<column name="value" value="110" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryRectxTop" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="25"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrDeliveryRectyTop"/>
+			<column name="value" value="25" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryRectyTop" />
 		</insert>
 	</changeSet>
 	<changeSet author="jarturoep" id="changelog-1.92">
-		<sql endDelimiter=";">
-			UPDATE parameters SET field = 'QrDeliveryBottomTextSize' WHERE field = 'QrMagistralBottomTextSizeDelivery';
-		</sql>
+		<sql endDelimiter=";"> UPDATE parameters SET field = 'QrDeliveryBottomTextSize' WHERE field
+			= 'QrMagistralBottomTextSizeDelivery'; </sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.93">
 		<insert tableName="parameters">
-			<column name="value" value="Apodaca"/>
-			<column name="type" value="string"/>
-			<column name="field" value="LocalNeighborhood"/>
+			<column name="value" value="Apodaca" />
+			<column name="type" value="string" />
+			<column name="field" value="LocalNeighborhood" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="Guadalupe"/>
-			<column name="type" value="string"/>
-			<column name="field" value="LocalNeighborhood"/>
+			<column name="value" value="Guadalupe" />
+			<column name="type" value="string" />
+			<column name="field" value="LocalNeighborhood" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="Monterrey"/>
-			<column name="type" value="string"/>
-			<column name="field" value="LocalNeighborhood"/>
+			<column name="value" value="Monterrey" />
+			<column name="type" value="string" />
+			<column name="field" value="LocalNeighborhood" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="San Nicolás de los Garza"/>
-			<column name="type" value="string"/>
-			<column name="field" value="LocalNeighborhood"/>
+			<column name="value" value="San Nicolás de los Garza" />
+			<column name="type" value="string" />
+			<column name="field" value="LocalNeighborhood" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="San Pedro Garza García"/>
-			<column name="type" value="string"/>
-			<column name="field" value="LocalNeighborhood"/>
+			<column name="value" value="San Pedro Garza García" />
+			<column name="type" value="string" />
+			<column name="field" value="LocalNeighborhood" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="Santa Catarina"/>
-			<column name="type" value="string"/>
-			<column name="field" value="LocalNeighborhood"/>
+			<column name="value" value="Santa Catarina" />
+			<column name="type" value="string" />
+			<column name="field" value="LocalNeighborhood" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="General Escobedo"/>
-			<column name="type" value="string"/>
-			<column name="field" value="LocalNeighborhood"/>
+			<column name="value" value="General Escobedo" />
+			<column name="type" value="string" />
+			<column name="field" value="LocalNeighborhood" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.94">
 		<insert tableName="parameters">
-			<column name="value" value="San Nicolas de los Garza"/>
-			<column name="type" value="string"/>
-			<column name="field" value="LocalNeighborhood"/>
+			<column name="value" value="San Nicolas de los Garza" />
+			<column name="type" value="string" />
+			<column name="field" value="LocalNeighborhood" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="San Pedro Garza Garcia"/>
-			<column name="type" value="string"/>
-			<column name="field" value="LocalNeighborhood"/>
+			<column name="value" value="San Pedro Garza Garcia" />
+			<column name="type" value="string" />
+			<column name="field" value="LocalNeighborhood" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.95">
 		<insert tableName="parameters">
-			<column name="value" value="DZ"/>
-			<column name="type" value="string"/>
-			<column name="field" value="ProductNoLabel"/>
+			<column name="value" value="DZ" />
+			<column name="type" value="string" />
+			<column name="field" value="ProductNoLabel" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.96">
 		<insert tableName="parameters">
-			<column name="value" value="75"/>
-			<column name="type" value="string"/>
-			<column name="field" value="QrDeliveryLabelRectx"/>
+			<column name="value" value="75" />
+			<column name="type" value="string" />
+			<column name="field" value="QrDeliveryLabelRectx" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="100"/>
-			<column name="type" value="string"/>
-			<column name="field" value="QrDeliveryLabelRecty"/>
+			<column name="value" value="100" />
+			<column name="type" value="string" />
+			<column name="field" value="QrDeliveryLabelRecty" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="150"/>
-			<column name="type" value="string"/>
-			<column name="field" value="QrDeliveryLabelSaleRectx"/>
+			<column name="value" value="150" />
+			<column name="type" value="string" />
+			<column name="field" value="QrDeliveryLabelSaleRectx" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="250"/>
-			<column name="type" value="string"/>
-			<column name="field" value="QrDeliveryLabelSaleRecty"/>
+			<column name="value" value="250" />
+			<column name="type" value="string" />
+			<column name="field" value="QrDeliveryLabelSaleRecty" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="27"/>
-			<column name="type" value="string"/>
-			<column name="field" value="QrDeliveryLabelSaleFontSize"/>
+			<column name="value" value="27" />
+			<column name="type" value="string" />
+			<column name="field" value="QrDeliveryLabelSaleFontSize" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.97">
 		<insert tableName="roles">
-			<column name="roledescription" value="REPARTIDOR CAC"/>
+			<column name="roledescription" value="REPARTIDOR CAC" />
 		</insert>
-	</changeSet>
-	<changeSet author="gramirez" id="changelog-1.98">
-		<sql endDelimiter=";">
-			CREATE INDEX IF NOT EXISTS saleorderid_userorder_index ON usersorders
-			(salesorderid) where (salesorderid is not null);
-
-			CREATE INDEX IF NOT EXISTS productionorderid_userorder_index ON usersorders
-			(productionorderid) where (productionorderid is not null);
-
-			CREATE INDEX IF NOT EXISTS status_userorder_index ON usersorders
-			(status) where (status is not null);
-
-			CREATE INDEX IF NOT EXISTS closedate_userorder_index ON usersorders
-			(closedate) where (closedate is not null);
-
-			CREATE INDEX IF NOT EXISTS saleorderid_lineproducts_index ON lineproducts
-			(salesorderid) where (salesorderid is not null);
-
-			CREATE INDEX IF NOT EXISTS itemcode_lineproducts_index ON lineproducts
-			(itemcode) where (itemcode is not null);
-
-			CREATE INDEX IF NOT EXISTS statusalmacen_lineproducts_index ON lineproducts
-			(statusalmacen) where (statusalmacen is not null);
-		</sql>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.99">
 		<insert tableName="parameters">
-			<column name="value" value="C00089"/>
-			<column name="type" value="string"/>
-			<column name="field" value="CardCodeResponsibleMedic"/>
+			<column name="value" value="C00089" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="C00098"/>
-			<column name="type" value="string"/>
-			<column name="field" value="CardCodeResponsibleMedic"/>
+			<column name="value" value="C00098" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="C00100"/>
-			<column name="type" value="string"/>
-			<column name="field" value="CardCodeResponsibleMedic"/>
+			<column name="value" value="C00100" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="C00130"/>
-			<column name="type" value="string"/>
-			<column name="field" value="CardCodeResponsibleMedic"/>
+			<column name="value" value="C00130" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="C00721"/>
-			<column name="type" value="string"/>
-			<column name="field" value="CardCodeResponsibleMedic"/>
+			<column name="value" value="C00721" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="C01817"/>
-			<column name="type" value="string"/>
-			<column name="field" value="CardCodeResponsibleMedic"/>
+			<column name="value" value="C01817" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
 		</insert>
 		<insert tableName="parameters">
-			<column name="value" value="C05298"/>
-			<column name="type" value="string"/>
-			<column name="field" value="CardCodeResponsibleMedic"/>
+			<column name="value" value="C05298" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.100">
 		<insert tableName="parameters">
-			<column name="value" value="REVE"/>
-			<column name="type" value="string"/>
-			<column name="field" value="WareHouseToExclude"/>
+			<column name="value" value="REVE" />
+			<column name="type" value="string" />
+			<column name="field" value="WareHouseToExclude" />
 		</insert>
 	</changeSet>
 	<changeSet author="esanchez" id="changelog-1.101">
 		<insert tableName="parameters">
-			<column name="value" value="apikey"/>
-			<column name="type" value="string"/>
-			<column name="field" value="EmailMiddlewareUser"/>
+			<column name="value" value="apikey" />
+			<column name="type" value="string" />
+			<column name="field" value="EmailMiddlewareUser" />
 		</insert>
 	</changeSet>
 	<changeSet author="gramirez" id="changelog-1.102">
 		<insert tableName="parameters">
-			<column name="value" value="-90"/>
-			<column name="type" value="int"/>
-			<column name="field" value="QrMagistralAngleRotTop"/>
+			<column name="value" value="-90" />
+			<column name="type" value="int" />
+			<column name="field" value="QrMagistralAngleRotTop" />
 		</insert>
 	</changeSet>
 	<changeSet author="jarturoep" id="changelog-1.103">
 		<createTable tableName="classificationqfb">
 			<column name="id" type="INT" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" unique="true"/>
+				<constraints nullable="false" primaryKey="true" unique="true" />
 			</column>
 			<column name="value" type="VARCHAR(10)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="description" type="VARCHAR(100)">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 			<column name="active" defaultValueBoolean="true" type="BOOLEAN">
-				<constraints nullable="false" primaryKey="false" unique="false"/>
+				<constraints nullable="false" primaryKey="false" unique="false" />
 			</column>
 		</createTable>
 	</changeSet>
 	<changeSet author="jarturoep" id="changelog-1.104">
 		<insert tableName="classificationqfb">
-			<column name="value" value="MN"/>
-			<column name="description" value="Bioelite (MN)"/>
-			<column name="active" value="true"/>
+			<column name="value" value="MN" />
+			<column name="description" value="Bioelite (MN)" />
+			<column name="active" value="true" />
 		</insert>
 		<insert tableName="classificationqfb">
-			<column name="value" value="BE"/>
-			<column name="description" value="Bioequal (BE)"/>
-			<column name="active" value="true"/>
+			<column name="value" value="BE" />
+			<column name="description" value="Bioequal (BE)" />
+			<column name="active" value="true" />
 		</insert>
 		<insert tableName="classificationqfb">
-			<column name="value" value="MG"/>
-			<column name="description" value="Magistral (MG)"/>
-			<column name="active" value="true"/>
+			<column name="value" value="MG" />
+			<column name="description" value="Magistral (MG)" />
+			<column name="active" value="true" />
 		</insert>
 		<insert tableName="classificationqfb">
-			<column name="value" value="DZ"/>
-			<column name="description" value="Dermazon (DZ)"/>
-			<column name="active" value="true"/>
+			<column name="value" value="DZ" />
+			<column name="description" value="Dermazon (DZ)" />
+			<column name="active" value="true" />
 		</insert>
 	</changeSet>
 	<changeSet author="jarturoep" id="changelog-1.105">
-		<sql endDelimiter=";">
-			update classificationqfb set description = 'Dermazone (DZ)' where value = 'DZ';
-		</sql>
+		<sql endDelimiter=";"> update classificationqfb set description = 'Dermazone (DZ)' where
+			value = 'DZ'; </sql>
 	</changeSet>
-  <changeSet author="israelmorales" id="changelog-1.106">
+	<changeSet author="israelmorales" id="changelog-1.106">
 		<insert tableName="roles">
-			<column name="roledescription" value="TÉCNICO"/>
+			<column name="roledescription" value="TÉCNICO" />
 		</insert>
 	</changeSet>
 	<changeSet author="israelmorales" id="changelog-1.107">
-		<addColumn tableName ="user">
+		<addColumn tableName="user">
 			<column
 				name="tecnicid"
-				type="varchar(50)">
-			</column>
+				type="varchar(50)"> </column>
 		</addColumn>
-   </changeSet>
+	</changeSet>
+	<changeSet author="israelmorales" id="changelog-1.108">
+		<addColumn tableName="user">
+			<column name="technicalrequire" defaultValueBoolean="false" type="BOOLEAN" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="jarturoep" id="changelog-1.109">
+		<addColumn tableName="usersorders">
+			<column name="tecnicid" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
