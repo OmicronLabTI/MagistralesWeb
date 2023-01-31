@@ -292,14 +292,17 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the processs.
         /// </summary>
+        /// <param name="userRoleType">User role type.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task UpdateUserOrderStatus()
+        [TestCase(9)]
+        [TestCase(2)]
+        public async Task UpdateUserOrderStatus(int userRoleType)
         {
             // arrange
             var components = new List<UpdateStatusOrderModel>
             {
-                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 100, Status = "Proceso" },
+                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 100, Status = "Proceso", UserRoleType = userRoleType },
             };
 
             // act
@@ -307,19 +310,28 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.AreEqual(200, response.Code);
+            Assert.IsNull(response.UserError);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.UserError);
+            Assert.IsNull(response.Comments);
         }
 
         /// <summary>
         /// the processs.
         /// </summary>
+        /// <param name="userRoleType">User role type.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task UpdateUserOrderStatusEntregado()
+        [TestCase(9)]
+        [TestCase(2)]
+        public async Task UpdateUserOrderStatusEntregado(int userRoleType)
         {
             // arrange
             var components = new List<UpdateStatusOrderModel>
             {
-                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 301, Status = "Entregado" },
+                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 301, Status = "Entregado", UserRoleType = userRoleType },
             };
 
             // act
@@ -327,6 +339,12 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.AreEqual(200, response.Code);
+            Assert.IsNull(response.UserError);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.UserError);
+            Assert.IsNull(response.Comments);
         }
 
         /// <summary>

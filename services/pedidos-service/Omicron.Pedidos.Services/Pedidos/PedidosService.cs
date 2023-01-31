@@ -17,6 +17,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Resources.Extensions;
@@ -150,13 +151,15 @@ namespace Omicron.Pedidos.Services.Pedidos
             var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
             var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
+            var isTecnicUser = updateStatusOrder.All(x => (UserRoleType)x.UserRoleType == UserRoleType.Tecnic);
 
             ordersList.ForEach(x =>
             {
                 var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid));
                 order = order ?? new UpdateStatusOrderModel();
                 x.Status = order.Status ?? x.Status;
-                x.Userid = order.UserId ?? x.Userid;
+                x.TecnicId = isTecnicUser ? order.UserId ?? x.TecnicId : x.TecnicId;
+                x.Userid = isTecnicUser ? x.Userid : order.UserId ?? x.Userid;
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, new List<UserOrderModel> { x }));
             });
 
@@ -168,7 +171,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var allDelivered = ordersList.Where(x => x.IsProductionOrder && x.Status != ServiceConstants.Cancelled).All(y => y.Status == ServiceConstants.Entregado);
                 var saleOrder = ordersList.FirstOrDefault(x => x.IsSalesOrder);
                 saleOrder.Status = ServiceShared.CalculateTernary(allDelivered, ServiceConstants.Entregado, saleOrder.Status);
-                var userId = ordersList.FirstOrDefault().Userid;
+                var userId = isTecnicUser ? ordersList.FirstOrDefault().TecnicId : ordersList.FirstOrDefault().Userid;
                 if (allDelivered)
                 {
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { saleOrder }));
