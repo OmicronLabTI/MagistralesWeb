@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.Utils
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
@@ -430,6 +431,18 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return (sapOrders, productionOrders.ToList(), preProductionOrders.ToList());
+        }
+
+        /// <summary>
+        /// Get Tecnic Info By QfbId.
+        /// </summary>
+        /// <param name="qfbId">QfbId.</param>
+        /// <param name="userService">User service.</param>
+        /// <returns>Tecnic info.</returns>
+        public static async Task<QfbTecnicInfoDto> GetTecnicInfoByQfbId(string qfbId, IUsersService userService)
+        {
+            var resultUsers = await userService.SimpleGetUsers(string.Format(ServiceConstants.GetTecnicByQfbId, qfbId));
+            return JsonConvert.DeserializeObject<QfbTecnicInfoDto>(JsonConvert.SerializeObject(resultUsers.Response));
         }
 
         /// <summary>

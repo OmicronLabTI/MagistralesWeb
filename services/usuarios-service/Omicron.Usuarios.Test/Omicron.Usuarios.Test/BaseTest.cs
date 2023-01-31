@@ -42,13 +42,14 @@ namespace Omicron.Usuarios.Test
 
                 // QFB's
                 new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b801", FirstName = "Arturo", LastName = "Espinosa", UserName = "ArturQfb", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, TechnicalRequire = true, TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b805" },
-                new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b802", FirstName = "Juan", LastName = "Perez", UserName = "JuanQfb", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 1, Deleted = false, TechnicalRequire = true, TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b806", },
-                new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b803", FirstName = "Pedro", LastName = "Infante", UserName = "PedroQfb", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 1, Deleted = false, TechnicalRequire = true },
-                new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b804", FirstName = "Ricardo", LastName = "Juárez", UserName = "RicardoQfb", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 1, Deleted = false, TechnicalRequire = false },
+                new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b802", FirstName = "Juan", LastName = "Perez", UserName = "JuanQfb", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, TechnicalRequire = true, TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b806", },
+                new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b803", FirstName = "Pedro", LastName = "Infante", UserName = "PedroQfb", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, TechnicalRequire = true },
+                new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b804", FirstName = "Ricardo", LastName = "Juárez", UserName = "RicardoQfb", Password = "QXhpdHkyMDIw", Role = 1, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, TechnicalRequire = false },
 
                 // Técnico
                 new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b805", FirstName = "Sergio", LastName = "Rocha", UserName = "SergioTecnico", Password = "QXhpdHkyMDIw", Role = 9, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, },
                 new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b806", FirstName = "Rogelio", LastName = "Casas", UserName = "RogelioTecnico", Password = "QXhpdHkyMDIw", Role = 9, Activo = 0, Piezas = 200, Asignable = 1, Deleted = false, },
+                new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b807", FirstName = "Ricardo", LastName = "Rocha", UserName = "RicardoQfb", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 0, Deleted = true, TechnicalRequire = false },
             };
         }
 

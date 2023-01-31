@@ -893,7 +893,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// Reason unexpected error.
         /// </summary>
-        public const string QfbWithoutTecnic = "El químico {0} {1} no tiene un técnico activo asignado, favor de realizar la asignación para poder continuar";
+        public const string QfbWithoutTecnic = "El químico {0} no tiene un técnico activo asignado, favor de realizar la asignación para poder continuar";
 
         /// <summary>
         /// Gets the status of the order.
