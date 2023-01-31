@@ -103,7 +103,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             if (users.First().Role.Equals(9))
             {
                 userOrders = (await this.pedidosDao.GetUserOrderByTecnicId(new List<string> { userId }))
-                    .Where(x => x.Status != ServiceConstants.Finalizado && x.Status != ServiceConstants.Almacenado)
+                    .Where(x => x.Status == ServiceConstants.Asignado ||
+                                x.Status == ServiceConstants.Pendiente ||
+                                x.Status == ServiceConstants.Reasignado)
                     .ToList();
             }
             else
