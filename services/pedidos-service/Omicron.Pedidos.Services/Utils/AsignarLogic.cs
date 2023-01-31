@@ -20,6 +20,7 @@ namespace Omicron.Pedidos.Services.Utils
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.User;
 
     /// <summary>
     /// Logic To assign orders.
@@ -41,9 +42,17 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="sapDiApi">The sap di api.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
+        /// <param name="userService">User service.</param>
         /// <returns>the result.</returns>
-        public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi, IKafkaConnector kafkaConnector)
+        public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi, IKafkaConnector kafkaConnector, IUsersService userService)
         {
+            var tecnicInfo = await ServiceUtils.GetTecnicInfoByQfbId(assignModel.UserId, userService);
+
+            if (ServiceShared.CalculateOr(!tecnicInfo.IsValidTecnic, !tecnicInfo.IsValidQfb))
+            {
+                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{tecnicInfo.QfbFirstName} {tecnicInfo.QfbLastName}"), null, null);
+            }
+
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
             var userOrders = (await pedidosDao.GetUserOrderBySaleOrder(listSalesOrders)).ToList();
 
@@ -63,6 +72,7 @@ namespace Omicron.Pedidos.Services.Utils
             {
                 x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Asignado;
                 x.Userid = assignModel.UserId;
+                x.TecnicId = tecnicInfo.TecnicId;
                 /** add logs**/
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
             });

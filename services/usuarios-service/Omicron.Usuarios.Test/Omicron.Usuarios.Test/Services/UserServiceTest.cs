@@ -398,6 +398,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b802")]
         [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b803")]
         [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b804")]
+        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b807")]
         public async Task GetTecnicInfoByQfbId(string qfbId)
         {
             // act

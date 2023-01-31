@@ -306,7 +306,14 @@ namespace Omicron.Usuarios.Services.User
                 IsTecnicRequired = qfbUser.TechnicalRequire,
                 IsValidTecnic = true,
                 TecnicId = qfbUser.TecnicId,
+                IsValidQfb = true,
             };
+
+            if (ServiceUtils.CalculateOr(qfbUser.Deleted, qfbUser.Activo == 0, qfbUser.Asignable == 0))
+            {
+                tecnicInfo.IsValidQfb = false;
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, tecnicInfo, null, null);
+            }
 
             if (!tecnicInfo.IsTecnicRequired)
             {
