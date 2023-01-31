@@ -434,12 +434,12 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// Get Tecnic Info By QfbId.
+        /// validates if null and turns to upper.
         /// </summary>
-        /// <param name="qfbId">QfbId.</param>
-        /// <param name="userService">User service.</param>
-        /// <returns>Tecnic info.</returns>
-        public static async Task<QfbTecnicInfoDto> GetTecnicInfoByQfbId(string qfbId, IUsersService userService)
+        /// <param name="value">the value.</param>
+        /// <param name="last">The long of subtring from end to last.</param>
+        /// <returns>the data.</returns>
+        public static string GetSubstring(this string value, int last)
         {
             return !string.IsNullOrEmpty(value) ? value.Substring(value.Length - last, last).ToUpper() : value;
         }
