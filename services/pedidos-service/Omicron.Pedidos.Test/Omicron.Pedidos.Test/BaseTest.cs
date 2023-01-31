@@ -166,6 +166,9 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 134, Productionorderid = null, Salesorderid = "900", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
                 new UserOrderModel { Id = 135, Productionorderid = "901", Salesorderid = "901", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1 },
                 new UserOrderModel { Id = 136, Productionorderid = null, Salesorderid = "901", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+
+                // Tecnical id
+                new UserOrderModel { Id = 137, Productionorderid = null, Salesorderid = "901", Status = "Planificado", Userid = "abc",  TecnicId = "tecnial", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
             };
         }
 
@@ -416,13 +419,25 @@ namespace Omicron.Pedidos.Test
         /// <summary>
         /// Gets user Dto.
         /// </summary>
+        /// <param name="isTecnic">Is tecnic.</param>
         /// <returns>the user.</returns>
-        public ResultModel GetResultUserModel()
+        public ResultModel GetResultUserModel(bool isTecnic = false)
         {
-            var listUsers = new List<UserModel>
+            List<UserModel> listUsers;
+            if (isTecnic)
             {
-                new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1 },
-            };
+                listUsers = new List<UserModel>
+                {
+                    new UserModel { Activo = 1, FirstName = "Sutano", Id = "tecnic", LastName = "Lope", Password = "as", Role = 9, UserName = "sutan", Piezas = 1000, Asignable = 1 },
+                };
+            }
+            else
+            {
+                listUsers = new List<UserModel>
+                {
+                    new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1 },
+                };
+            }
 
             return new ResultModel
             {
