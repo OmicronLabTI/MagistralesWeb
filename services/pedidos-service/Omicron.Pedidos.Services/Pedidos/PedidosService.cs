@@ -97,7 +97,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetFabOrderByUserId(string userId)
         {
-            var userResponse = await this.userService.PostSimpleUsers(userId, ServiceConstants.GetUsersById);
+            var userResponse = await this.userService.PostSimpleUsers(new List<string> { userId }, ServiceConstants.GetUsersById);
             var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
             var userOrders = new List<UserOrderModel>();
             if (users.First().Role.Equals(9))
