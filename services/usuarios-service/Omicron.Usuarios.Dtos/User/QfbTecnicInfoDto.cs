@@ -60,5 +60,13 @@ namespace Omicron.Usuarios.Dtos.User
         /// Int Id.
         /// </value>
         public bool IsValidTecnic { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets is tecnic required.
+        /// </summary>
+        /// <value>
+        /// Int Id.
+        /// </value>
+        public bool IsValidQfb { get; set; }
     }
 }

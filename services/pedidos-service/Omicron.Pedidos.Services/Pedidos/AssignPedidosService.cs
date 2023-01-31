@@ -69,7 +69,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             if (manualAssign.OrderType.Equals(ServiceConstants.TypePedido))
             {
-                return await AsignarLogic.AssignPedido(manualAssign, this.pedidosDao, this.sapAdapter, this.sapDiApi, this.kafkaConnector);
+                return await AsignarLogic.AssignPedido(manualAssign, this.pedidosDao, this.sapAdapter, this.sapDiApi, this.kafkaConnector, this.userService);
             }
             else
             {
@@ -130,6 +130,16 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosStringUpdate)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
             bool isOnlyClasificationDZ = ServiceShared.CalculateAnd(relationOrdersWithUsersDZIsNotOmi.Any(), !ordersSap.Any());
+
+            var validQfbs = userSaleOrder.Item1.Where(x => userOrdersToUpdate.Select(uo => int.Parse(uo.Salesorderid)).Distinct().Contains(x.Key));
+            var invalidQfbs = users.Where(user => validQfbs.Select(vq => vq.Value).Contains(user.Id) &&
+                user.TechnicalRequire && string.IsNullOrEmpty(user.TecnicId)).ToList();
+
+            if (invalidQfbs.Any())
+            {
+                throw new CustomServiceException(string.Format(ServiceConstants.QfbWithoutTecnic, string.Join(",", invalidQfbs.Select(x => $"{x.FirstName} {x.LastName}"))), HttpStatusCode.BadRequest);
+            }
+
             userOrdersToUpdate.ForEach(x =>
             {
                 bool isHeader = string.IsNullOrEmpty(x.Productionorderid);
@@ -144,6 +154,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.Status = ServiceShared.CalculateTernary(asignable, ServiceConstants.Asignado, x.Status);
                     x.Status = ServiceShared.CalculateTernary(isHeader, ServiceConstants.Liberado, x.Status);
                     x.Userid = this.GetUserId(isHeader, relationOrdersWithUsersDZIsNotOmi, userSaleOrder, saleOrderInt, isClasificationDZ, isOnlyClasificationDZ, productionId);
+                    x.TecnicId = users.FirstOrDefault(user => user.Id == x.Userid)?.TecnicId;
                     if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                     {
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
@@ -193,11 +204,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private async Task<ResultModel> ReassingarPedido(ManualAssignModel assign)
         {
-            var tecnicInfo = await this.GetTecnicInfoByQfbId(assign.UserId);
+            var tecnicInfo = await ServiceUtils.GetTecnicInfoByQfbId(assign.UserId, this.userService);
 
-            if (!tecnicInfo.IsValidTecnic)
+            if (ServiceShared.CalculateOr(!tecnicInfo.IsValidTecnic, !tecnicInfo.IsValidQfb))
             {
-                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, tecnicInfo.QfbFirstName, tecnicInfo.QfbLastName), null, null);
+                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{tecnicInfo.QfbFirstName} {tecnicInfo.QfbLastName}"), null, null);
             }
 
             var listSaleOrders = assign.DocEntry.Select(x => x.ToString()).ToList();
@@ -281,12 +292,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             return isClasificationDZ ?
                 relationOrdersWithUsersDZIsNotOmi.Where(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt)).First().UserId :
                 userSaleOrder.Item1[saleOrderInt];
-        }
-
-        private async Task<QfbTecnicInfoDto> GetTecnicInfoByQfbId(string qfbId)
-        {
-            var resultUsers = await this.userService.SimpleGetUsers(string.Format(ServiceConstants.GetTecnicByQfbId, qfbId));
-            return JsonConvert.DeserializeObject<QfbTecnicInfoDto>(JsonConvert.SerializeObject(resultUsers.Response));
         }
     }
 }
