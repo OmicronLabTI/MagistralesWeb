@@ -433,6 +433,17 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// validates if null and turns to upper.
+        /// </summary>
+        /// <param name="value">the value.</param>
+        /// <param name="last">The long of subtring from end to last.</param>
+        /// <returns>the data.</returns>
+        public static string GetSubstring(this string value, int last)
+        {
+            return !string.IsNullOrEmpty(value) ? value.Substring(value.Length - last, last).ToUpper() : value;
+        }
+
+        /// <summary>
         /// split the dates to int array.
         /// </summary>
         /// <param name="date">the date in string.</param>
