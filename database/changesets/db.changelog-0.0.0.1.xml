@@ -1029,4 +1029,9 @@
 			<column name="tecnicid" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	<changeSet author="jarturoep" id="changelog-1.110">
+		<addColumn tableName="usersorders">
+			<column name="statusfortecnic" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

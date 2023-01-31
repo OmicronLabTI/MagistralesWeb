@@ -280,6 +280,14 @@ namespace Omicron.Pedidos.Entities.Model
         public string TecnicId { get; set; }
 
         /// <summary>
+        /// Gets or sets status.
+        /// </summary>
+        /// <value>
+        /// String status.
+        [Column("statusfortecnic")]
+        public string StatusForTecnic { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>
