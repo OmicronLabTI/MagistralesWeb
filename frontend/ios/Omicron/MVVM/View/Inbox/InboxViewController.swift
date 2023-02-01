@@ -153,7 +153,6 @@ class InboxViewController: UIViewController {
         inboxViewModel.title.subscribe(onNext: { [weak self] title in
             guard let self = self else { return }
             self.title = title
-            let statusId = self.inboxViewModel.getStatusId(name: title)
             self.hideButtons(title: title)
             self.removeOrdersSelectedView.backgroundColor = self.updateRemoveViewColor(title: title)
         }).disposed(by: disposeBag)
@@ -253,17 +252,6 @@ class InboxViewController: UIViewController {
             title: StatusNameConstants.package,
             color: OmicronColors.packageButton,
             titleColor: OmicronColors.packageButton)
-        
-    }
-    func setStyleButton() {
-        packageButton.setTitle(StatusNameConstants.package, for: .normal)
-        packageButton.setTitleColor(OmicronColors.packageButton, for: .normal)
-//        packageButton.setTitleColor(OmicronColors.packageButton.withAlphaComponent(0.35), for: .disabled)
-        packageButton.layer.borderWidth = 1
-        packageButton.layer.cornerRadius = 10
-        packageButton.layer.borderColor = OmicronColors.packageButton.cgColor
-        packageButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 16)
-        packageButton.backgroundColor = UIColor.white
     }
     func extensionInitComponents() {
         self.similarityViewButton.setTitle("", for: .normal)
