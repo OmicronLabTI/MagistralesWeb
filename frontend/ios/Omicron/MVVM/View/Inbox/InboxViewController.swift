@@ -87,7 +87,7 @@ class InboxViewController: UIViewController {
                 guard let statusId = self.inboxViewModel.selectedOrder?.statusId else { return }
                 guard let destiny = self.inboxViewModel.selectedOrder?.destiny else { return }
                 destination.orderId = orderId // you can pass value to destination view controller
-                destination.statusType = self.inboxViewModel.getStatusName(index: statusId - 1)
+                destination.statusType = self.inboxViewModel.getStatusName(index: statusId)
                 destination.destiny = destiny
             }
         } else if segue.identifier == ViewControllerIdentifiers.patientListViewController {
