@@ -17,6 +17,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Resources.Extensions;
@@ -97,9 +98,25 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetFabOrderByUserId(string userId)
         {
-            var userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status != ServiceConstants.Finalizado && x.Status != ServiceConstants.Almacenado).ToList();
-            var resultFormula = await this.GetSapOrders(userOrders);
+            var userResponse = await this.userService.PostSimpleUsers(new List<string> { userId }, ServiceConstants.GetUsersById);
+            var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
+            var userOrders = new List<UserOrderModel>();
+            if (users.First().Role.Equals(9))
+            {
+                userOrders = (await this.pedidosDao.GetUserOrderByTecnicId(new List<string> { userId }))
+                    .Where(x => x.Status == ServiceConstants.Asignado ||
+                                x.Status == ServiceConstants.Pendiente ||
+                                x.Status == ServiceConstants.Reasignado)
+                    .ToList();
+            }
+            else
+            {
+                userOrders = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId }))
+                    .Where(x => x.Status != ServiceConstants.Finalizado && x.Status != ServiceConstants.Almacenado)
+                    .ToList();
+            }
 
+            var resultFormula = await this.GetSapOrders(userOrders);
             var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders);
             return ServiceUtils.CreateResult(true, 200, null, groups, null);
         }
@@ -134,13 +151,15 @@ namespace Omicron.Pedidos.Services.Pedidos
             var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
             var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
+            var isTecnicUser = updateStatusOrder.All(x => (UserRoleType)x.UserRoleType == UserRoleType.Tecnic);
 
             ordersList.ForEach(x =>
             {
                 var order = updateStatusOrder.FirstOrDefault(y => y.OrderId.ToString().Equals(x.Productionorderid));
                 order = order ?? new UpdateStatusOrderModel();
                 x.Status = order.Status ?? x.Status;
-                x.Userid = order.UserId ?? x.Userid;
+                x.TecnicId = isTecnicUser ? order.UserId ?? x.TecnicId : x.TecnicId;
+                x.Userid = isTecnicUser ? x.Userid : order.UserId ?? x.Userid;
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(x.Userid, new List<UserOrderModel> { x }));
             });
 
@@ -152,7 +171,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var allDelivered = ordersList.Where(x => x.IsProductionOrder && x.Status != ServiceConstants.Cancelled).All(y => y.Status == ServiceConstants.Entregado);
                 var saleOrder = ordersList.FirstOrDefault(x => x.IsSalesOrder);
                 saleOrder.Status = ServiceShared.CalculateTernary(allDelivered, ServiceConstants.Entregado, saleOrder.Status);
-                var userId = ordersList.FirstOrDefault().Userid;
+                var userId = isTecnicUser ? ordersList.FirstOrDefault().TecnicId : ordersList.FirstOrDefault().Userid;
                 if (allDelivered)
                 {
                     listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { saleOrder }));
@@ -161,7 +180,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { saleOrder });
             }
 
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(updateStatusOrder), null);
         }
@@ -288,7 +307,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 listToGenPdf.Add(int.Parse(localSalesOrder.Salesorderid));
             }
 
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             // validate that the quantity consumed and required is equal in orders finished, if not is equal send a warning message.
             failed.AddRange(await this.ValidateQuantityConsumedFinishOrders(finishOrders.Select(x => new CloseProductionOrderModel { OrderId = x.OrderId, UserId = x.UserId }).ToList(), orderFabSuccesfullFinalized));
@@ -339,7 +358,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.InsertUserOrder(succesfuly);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var resultAsesors = await this.sapAdapter.PostSapAdapter(succesfuly.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(), ServiceConstants.GetAsesorsMail);
             var resultAsesorEmail = JsonConvert.DeserializeObject<List<AsesorModel>>(JsonConvert.SerializeObject(resultAsesors.Response));
@@ -357,7 +376,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             // send Emails
-            this.reportingService.PostReportingService(new { rejectedOrder = asesorsToReportingEmail }, ServiceConstants.SendEmailToRejectedOrders);
+            _ = this.reportingService.PostReportingService(new { rejectedOrder = asesorsToReportingEmail }, ServiceConstants.SendEmailToRejectedOrders);
             var results = new
             {
                 success = succesfuly.Select(x => new { OrderId = x.Salesorderid }).Distinct(),
@@ -495,7 +514,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             // validate that the quantity consumed and required is equal in orders finished, if not is equal send a warning message.
             failed.AddRange(await this.ValidateQuantityConsumedFinishOrders(finishOrders, successfuly.Cast<OrderIdModel>().Select(x => x.OrderId).ToList()));
             await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
 
             var results = new
             {
@@ -666,7 +685,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             await this.pedidosDao.UpdateUserOrders(listorderToUpdate);
-            this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, updateOrderSignature, null);
         }
 
@@ -703,7 +722,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 /** add logs**/
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(isolatedFabOrder.UserId, new List<UserOrderModel> { newProductionOrder }));
                 await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
-                this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
             }
 
             return ServiceUtils.CreateResult(true, 200, resultMessage.Value, productionOrderId, null);

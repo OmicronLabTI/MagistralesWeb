@@ -208,18 +208,8 @@ class InboxViewController: UIViewController {
                 alert.addAction(okAction)
                 self.present(alert, animated: true, completion: nil)
             }).disposed(by: self.disposeBag)
-        selectedRowBinding()
         didScrollBinding()
         showKPIViewBinding()
-    }
-
-    func selectedRowBinding() {
-        rootViewModel.selectedRow.subscribe(onNext: { [weak self] index in
-            guard let self = self, let row = index?.row else { return }
-            self.chageStatusName(index: row)
-            self.hideButtons(index: row)
-            self.goToTop()
-        }).disposed(by: disposeBag)
     }
 
     func didScrollBinding() {
@@ -307,17 +297,37 @@ class InboxViewController: UIViewController {
     }
     private func hideButtons(index: Int) {
         showContainersButtons.isHidden = true
+        if rootViewModel.userType == .technical {
+            hideButtonsTechnical(index)
+        } else {
+            hideButtonQFB(index)
+        }
+    }
+
+    func hideButtonsTechnical(_ index: Int) {
         switch index {
-        case 0:
-            self.changePropertyIsHiddenStatusButtons(false, true, false)
+        case 1:
+            self.changePropertyIsHiddenStatusButtons(true, true, false)
             showContainersButtons.isHidden = false
-        case 1: self.changePropertyIsHiddenStatusButtons(true, false, false)
-        case 2: self.changePropertyIsHiddenStatusButtons(false, true, true)
-        case 3: self.changePropertyIsHiddenStatusButtons(true, true, true)
-        case 4: self.changePropertyIsHiddenStatusButtons(true, false, false)
+        case 3: self.changePropertyIsHiddenStatusButtons(false, true, true)
+        case 5: self.changePropertyIsHiddenStatusButtons(true, true, false)
         default: self.changePropertyIsHiddenStatusButtons(true, true, true)
         }
     }
+
+    func hideButtonQFB(_ index: Int) {
+        switch index {
+        case 1:
+            self.changePropertyIsHiddenStatusButtons(false, true, false)
+            showContainersButtons.isHidden = false
+        case 2: self.changePropertyIsHiddenStatusButtons(true, false, false)
+        case 3: self.changePropertyIsHiddenStatusButtons(false, true, true)
+        case 4: self.changePropertyIsHiddenStatusButtons(true, true, true)
+        case 5: self.changePropertyIsHiddenStatusButtons(true, false, false)
+        default: self.changePropertyIsHiddenStatusButtons(true, true, true)
+        }
+    }
+
     private func changePropertyIsHiddenStatusButtons(
         _ processButtonIsHidden: Bool,
         _ finishedButtonIsHidden: Bool,

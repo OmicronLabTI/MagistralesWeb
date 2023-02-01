@@ -188,6 +188,19 @@ namespace Omicron.Usuarios.Api.Controllers
         }
 
         /// <summary>
+        /// Method to get tecnic info by Id.
+        /// </summary>
+        /// <param name="qfbId">Qfb id.</param>
+        /// <returns>User Model.</returns>
+        [Route("/gettecnic/info/{qfbId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetTecnicInfoByQfbId(string qfbId)
+        {
+            var result = await this.userFacade.GetTecnicInfoByQfbId(qfbId);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Method Ping.
         /// </summary>
         /// <returns>Pong.</returns>

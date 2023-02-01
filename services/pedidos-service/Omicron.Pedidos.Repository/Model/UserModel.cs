@@ -92,5 +92,21 @@ namespace Omicron.Pedidos.Entities.Model
         /// String Activo.
         /// </value>
         public string Classification { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Tecnic Id.
+        /// </summary>
+        /// <value>
+        /// String tecnic id.
+        /// </value>
+        public string TecnicId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Technical Require.
+        /// </summary>
+        /// <value>
+        /// Boolean active.
+        /// </value>
+        public bool TechnicalRequire { get; set; }
     }
 }

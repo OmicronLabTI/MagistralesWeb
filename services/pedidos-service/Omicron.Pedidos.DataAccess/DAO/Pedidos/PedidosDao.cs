@@ -15,7 +15,6 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
     using System.Linq;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using System.Security.Cryptography.X509Certificates;
     using Omicron.Pedidos.Entities.Model.Db;
 
     /// <summary>
@@ -118,7 +117,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaClose(DateTime fechaInicio, DateTime fechaFin)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => x.CloseDate != null && x.CloseDate >= fechaInicio && x.CloseDate <= fechaFin).ToListAsync();            
+            return await this.databaseContext.UserOrderModel.Where(x => x.CloseDate != null && x.CloseDate >= fechaInicio && x.CloseDate <= fechaFin).ToListAsync();
         }
 
         /// <summary>
@@ -177,7 +176,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<bool> SaveOrderSignatures(List<UserOrderSignatureModel> orderSignature)
         {
             this.databaseContext.UserOrderSignatureModel.UpdateRange(orderSignature);
-            await((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
         }
 
@@ -275,7 +274,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<bool> InsertQrRoute(List<ProductionOrderQr> modelsToSave)
         {
             this.databaseContext.ProductionOrderQr.AddRange(modelsToSave);
-            await((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
         }
 
@@ -299,22 +298,22 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             {
                 var orders = y.Where(z => z.IsProductionOrder).ToList();
                 var productionStatus = y.Where(z => z.IsProductionOrder && (z.Status == status || z.Status == secondStatus)).ToList();
-                if (productionStatus.Any() && 
-                    productionStatus.All(z => z.FinishedLabel == 1) && 
-                    orders.All(z => statusPending.Contains(z.Status) && 
+                if (productionStatus.Any() &&
+                    productionStatus.All(z => z.FinishedLabel == 1) &&
+                    orders.All(z => statusPending.Contains(z.Status) &&
                     !orders.All(z => z.Status == secondStatus)))
                 {
                     orderstoReturn.AddRange(y);
                 }
             });
-            
+
             return orderstoReturn;
         }
 
         /// <inheritdoc/>
         public async Task<List<UserOrderModel>> GetOrderForAlmacenToIgnore(string status, DateTime dateToLook)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => string.IsNullOrEmpty(x.Productionorderid) && 
+            return await this.databaseContext.UserOrderModel.Where(x => string.IsNullOrEmpty(x.Productionorderid) &&
             (x.FinalizedDate == null || x.FinalizedDate >= dateToLook) &&
             (x.Status != status || x.FinishedLabel != 1)).ToListAsync();
         }
@@ -407,7 +406,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>Related lists.</returns>
         public async Task<List<CustomComponentListModel>> GetCustomComponentListByProductAndName(string productId, string name)
         {
-            return await this.databaseContext.CustomComponentLists.Where(x => x.ProductId.Equals(productId) && x.Name.Equals(name) ).ToListAsync();
+            return await this.databaseContext.CustomComponentLists.Where(x => x.ProductId.Equals(productId) && x.Name.Equals(name)).ToListAsync();
         }
 
         /// <summary>
@@ -438,6 +437,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByPlanningDate(DateTime fechaInicio, DateTime fechaFin)
         {
             return await this.databaseContext.UserOrderModel.Where(x => x.PlanningDate != null && x.PlanningDate >= fechaInicio && x.PlanningDate <= fechaFin).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByTecnicId(List<string> listIds)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.TecnicId)).ToListAsync();
         }
     }
 }

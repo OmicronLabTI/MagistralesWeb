@@ -107,7 +107,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             // Arrange
             var user = this.GetUserDto();
-            user.Id = "12";
+            user.Id = "13";
 
             // Act
             var result = await this.userServices.InsertUser(user);
@@ -222,6 +222,23 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             user.Id = "1";
             user.UserName = "userName1";
             user.Piezas = 10;
+
+            // act
+            var response = await this.userServices.UpdateUser(user);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task UpdateTechnicalUser()
+        {
+            // arrange
+            var user = new UserModel { Id = "11", FirstName = "TecnicoPrueba Update", LastName = "TecnicoPrueba Update Apellido", UserName = "TecnicoPrueba Update", Password = "QXhpdHkyMDIw", Role = 9, Activo = 1, Piezas = 200, Asignable = 0, Deleted = false, };
 
             // act
             var response = await this.userServices.UpdateUser(user);
@@ -369,6 +386,31 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             {
                 Assert.NotNull(response.Comments);
             }
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <param name="qfbId">Qfb id.</param>
+        /// <returns>the user.</returns>
+        [Test]
+        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b801")]
+        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b802")]
+        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b803")]
+        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b804")]
+        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b807")]
+        public async Task GetTecnicInfoByQfbId(string qfbId)
+        {
+            // act
+            var response = await this.userServices.GetTecnicInfoByQfbId(qfbId);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.AreEqual(response.Code, 200);
+            Assert.IsNull(response.Comments);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.UserError);
         }
     }
 }

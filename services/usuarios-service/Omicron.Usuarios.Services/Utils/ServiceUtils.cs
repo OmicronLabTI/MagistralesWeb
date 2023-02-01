@@ -60,5 +60,25 @@ namespace Omicron.Usuarios.Services.Utils
             users = criteria.ContainsKey(ServiceConstants.TypeQfb) ? users.Where(x => x.Classification == criteria[ServiceConstants.TypeQfb]).ToList() : users;
             return users;
         }
+
+        /// <summary>
+        /// Calculates the left and right with and AND.
+        /// </summary>
+        /// <param name="list">List of bools..</param>
+        /// <returns>the data.</returns>
+        public static bool CalculateAnd(params bool[] list)
+        {
+            return list.All(element => element);
+        }
+
+        /// <summary>
+        /// Calculates the left and right with and OR.
+        /// </summary>
+        /// <param name="list">List of bools..</param>
+        /// <returns>the data.</returns>
+        public static bool CalculateOr(params bool[] list)
+        {
+            return list.Any(element => element);
+        }
     }
 }

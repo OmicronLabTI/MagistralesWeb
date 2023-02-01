@@ -169,7 +169,7 @@ class OrderDetailTest: XCTestCase {
         "\"CreationDate\":\"10/09/2020 09:44:31 AM\",\"CreatorUserId\":\"14409829-caa8-42f5-83e8-bc52b1f7afa5\"," +
         "\"CloseDate\":null,\"CloseUserId\":null,\"IsIsolatedProductionOrder\":true,\"IsSalesOrder\":false," +
         "\"IsProductionOrder\":true,\"StatusOrder\":5}]"
-        let changeStatus = ChangeStatusRequest(userId: "", orderId: 89026, status: status)
+        let changeStatus = ChangeStatusRequest(userId: "", orderId: 89026, status: status, userType: 2)
         // When
         networkManager.changeStatusOrder([changeStatus]).subscribe(onNext: { res in
             // Then

@@ -97,7 +97,7 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// the list ids.
         /// </summary>
         /// <param name="listIds">the users.</param>
-        /// <returns>the users.</returns>
+        /// <returns>the users by id.</returns>
         Task<ResultDto> GetUsersById(List<string> listIds);
 
         /// <summary>
@@ -105,5 +105,12 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> GetQfbWithOrderCount();
+
+        /// <summary>
+        /// Method to get tecnic info by Id.
+        /// </summary>
+        /// <param name="qfbId">Qfb id.</param>
+        /// <returns>User Model.</returns>
+        Task<ResultDto> GetTecnicInfoByQfbId(string qfbId);
     }
 }

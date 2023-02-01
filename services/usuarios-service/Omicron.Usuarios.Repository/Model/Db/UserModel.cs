@@ -8,6 +8,7 @@
 
 namespace Omicron.Usuarios.Entities.Model
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -125,5 +126,14 @@ namespace Omicron.Usuarios.Entities.Model
         /// </value>
         [Column("tecnicid")]
         public string TecnicId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Technical Require.
+        /// </summary>
+        /// <value>
+        /// Boolean active.
+        /// </value>
+        [Column("technicalrequire")]
+        public bool TechnicalRequire { get; set; }
     }
 }

@@ -270,6 +270,24 @@ namespace Omicron.Pedidos.Entities.Model
         public int AreBatchesComplete { get; set; }
 
         /// <summary>
+        /// Gets or sets the Tecnic Id.
+        /// </summary>
+        /// <value>
+        /// String tecnic id.
+        /// </value>
+        /// [Column("tecnicid")]
+        [Column("tecnicid")]
+        public string TecnicId { get; set; }
+
+        /// <summary>
+        /// Gets or sets status.
+        /// </summary>
+        /// <value>
+        /// String status.
+        [Column("statusfortecnic")]
+        public string StatusForTecnic { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>
