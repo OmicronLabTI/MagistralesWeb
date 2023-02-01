@@ -73,6 +73,7 @@ namespace Omicron.Pedidos.Services.Utils
                 x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Asignado;
                 x.Userid = assignModel.UserId;
                 x.TecnicId = tecnicInfo.TecnicId;
+                x.StatusForTecnic = x.Status;
                 /** add logs**/
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
             });
