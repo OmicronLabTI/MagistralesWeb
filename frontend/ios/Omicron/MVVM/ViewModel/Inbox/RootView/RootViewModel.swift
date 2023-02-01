@@ -38,7 +38,7 @@ class RootViewModel {
         logoutDidTapBinding()
         searchFilterBinding()
         userData()
-    }
+    } 
 
     func userData() {
         let rol = Persistence.shared.getUserData()?.role ?? UserType.technical.rawValue
@@ -133,7 +133,7 @@ class RootViewModel {
     func getOrdersService(userId: String, isUpdate: Bool) {
         self.networkManager.getStatusList(userId).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
-            var sections = self.getSections(res: res)
+            let sections = self.getSections(res: res)
             self.sections = sections
             self.dataStatus.onNext(sections)
             self.orders = sections
