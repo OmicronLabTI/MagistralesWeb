@@ -18,6 +18,7 @@ class RootViewController: UIViewController {
     @IBOutlet weak var searchOrdesSearchBar: UISearchBar!
     @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var kpiButton: UIButton!
+    @IBOutlet weak var kpiButtonViewContain: UIView!
     @IBOutlet weak var versionLabel: UILabel!
 
     @IBAction func logoutAction(_ sender: UIButton) {
@@ -152,6 +153,7 @@ class RootViewController: UIViewController {
     func rootViewModelBinding2() {
         logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: disposeBag)
         kpiButton.rx.tap.bind(to: inboxViewModel.viewKPIDidPressed).disposed(by: disposeBag)
+        kpiButtonViewContain.isHidden = rootViewModel.userType == .technical
         // Selecciona el primer elemento de estatus cuando termina la carga de datos
         self.rootViewModel.refreshSelection.withLatestFrom(self.rootViewModel.selectedRow)
             .subscribe(onNext: { [weak self] row in

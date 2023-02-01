@@ -99,7 +99,10 @@ class Order {
          startDate: String?, finishDate: String?, descriptionProduct: String?,
          statusId: Int?, itemCode: String?,
          productCode: String?, destiny: String?,
-         hasMissingStock: Bool, finishedLabel: Bool, patientName: String?, clientDxp: String?, shopTransaction: String?) {
+         hasMissingStock: Bool, finishedLabel: Bool,
+         patientName: String?,
+         clientDxp: String?,
+         shopTransaction: String?) {
         self.areBatchesComplete = areBatchesComplete
         self.productionOrderId = productionOrderId
         self.baseDocument = baseDocument
