@@ -83,7 +83,7 @@ class RootViewController: UIViewController {
             guard let self = self else { return }
             self.lastRow = indexPath
         }).disposed(by: disposeBag)
-        /*viewTable.rx.itemSelected.bind(to: self.rootViewModel.selectedRow).disposed(by: disposeBag)*/
+        viewTable.rx.itemSelected.bind(to: self.rootViewModel.selectedRow).disposed(by: disposeBag)
         // Búsqueda de órdenes
         self.searchOrdesSearchBar.rx.text.orEmpty.bind(to: self.rootViewModel.searchFilter).disposed(by: disposeBag)
         inboxViewModel.deselectRow.observeOn(MainScheduler.instance)

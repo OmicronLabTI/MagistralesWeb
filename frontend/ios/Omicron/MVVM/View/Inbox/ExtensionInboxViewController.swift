@@ -70,7 +70,7 @@ extension InboxViewController {
                 self.collectionView.setEmptyMessage(message)
             }).subscribe().disposed(by: disposeBag)
     }
-    
+
     func registerCellsOfCollectionView() {
         collectionView.register(
             UINib(
@@ -202,7 +202,7 @@ extension InboxViewController {
         }
 
     }
-    
+
     func detailTapped(order: Order) {
         if rootViewModel.userType != .technical {
             self.inboxViewModel.selectedOrder = order
@@ -210,7 +210,7 @@ extension InboxViewController {
             self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
         }
     }
-    
+
     func showSignatureVC() {
         inboxViewModel.showSignatureVc.subscribe(onNext: { [weak self] titleView in
             guard let self = self else { return }
@@ -246,7 +246,7 @@ extension InboxViewController {
         let stringNames = namesNoRepeat.joined(separator: ",")
         return stringNames.components(separatedBy: ",").filter({!$0.isEmpty})
     }
-    
+
     func updateRemoveViewColor(title: String) -> UIColor {
         switch title {
         case StatusNameConstants.assignedStatus:

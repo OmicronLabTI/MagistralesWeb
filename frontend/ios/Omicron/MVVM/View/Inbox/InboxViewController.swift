@@ -298,27 +298,36 @@ class InboxViewController: UIViewController {
     private func hideButtons(index: Int) {
         showContainersButtons.isHidden = true
         if rootViewModel.userType == .technical {
-            switch index {
-            case 1:
-                self.changePropertyIsHiddenStatusButtons(true, true, false)
-                showContainersButtons.isHidden = false
-            case 3: self.changePropertyIsHiddenStatusButtons(false, true, true)
-            case 5: self.changePropertyIsHiddenStatusButtons(true, true, false)
-            default: self.changePropertyIsHiddenStatusButtons(true, true, true)
-            }
-        }else {
-            switch index {
-            case 1:
-                self.changePropertyIsHiddenStatusButtons(false, true, false)
-                showContainersButtons.isHidden = false
-            case 2: self.changePropertyIsHiddenStatusButtons(true, false, false)
-            case 3: self.changePropertyIsHiddenStatusButtons(false, true, true)
-            case 4: self.changePropertyIsHiddenStatusButtons(true, true, true)
-            case 5: self.changePropertyIsHiddenStatusButtons(true, false, false)
-            default: self.changePropertyIsHiddenStatusButtons(true, true, true)
-            }
+            hideButtonsTechnical(index)
+        } else {
+            hideButtonQFB(index)
         }
     }
+
+    func hideButtonsTechnical(_ index: Int) {
+        switch index {
+        case 1:
+            self.changePropertyIsHiddenStatusButtons(true, true, false)
+            showContainersButtons.isHidden = false
+        case 3: self.changePropertyIsHiddenStatusButtons(false, true, true)
+        case 5: self.changePropertyIsHiddenStatusButtons(true, true, false)
+        default: self.changePropertyIsHiddenStatusButtons(true, true, true)
+        }
+    }
+
+    func hideButtonQFB(_ index: Int) {
+        switch index {
+        case 1:
+            self.changePropertyIsHiddenStatusButtons(false, true, false)
+            showContainersButtons.isHidden = false
+        case 2: self.changePropertyIsHiddenStatusButtons(true, false, false)
+        case 3: self.changePropertyIsHiddenStatusButtons(false, true, true)
+        case 4: self.changePropertyIsHiddenStatusButtons(true, true, true)
+        case 5: self.changePropertyIsHiddenStatusButtons(true, false, false)
+        default: self.changePropertyIsHiddenStatusButtons(true, true, true)
+        }
+    }
+
     private func changePropertyIsHiddenStatusButtons(
         _ processButtonIsHidden: Bool,
         _ finishedButtonIsHidden: Bool,

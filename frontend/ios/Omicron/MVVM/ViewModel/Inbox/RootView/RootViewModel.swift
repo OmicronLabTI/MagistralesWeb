@@ -38,7 +38,7 @@ class RootViewModel {
         searchFilterBinding()
         userData()
     }
-    
+
     func userData() {
         let rol = Persistence.shared.getUserData()?.role ?? UserType.technical.rawValue
         self.userType = UserType(rawValue: rol)!
@@ -168,7 +168,9 @@ class RootViewModel {
 
     func getSections(res: StatusResponse) -> [SectionOrder] {
         if self.userType == UserType.technical {
-            res.response?.status = res.response?.status?.filter({$0.statusId ?? 0 != StatusOrders.inProcess.rawValue && $0.statusId ?? 0 != StatusOrders.finished.rawValue})
+            res.response?.status = res.response?.status?.filter({
+                $0.statusId! != StatusOrders.inProcess.rawValue &&
+                $0.statusId! != StatusOrders.finished.rawValue })
         }
         return res.response?.status.map({ status in
             return status.map({ detail -> SectionOrder? in
