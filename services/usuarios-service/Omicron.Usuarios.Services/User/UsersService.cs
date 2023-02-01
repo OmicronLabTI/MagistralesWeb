@@ -137,7 +137,7 @@ namespace Omicron.Usuarios.Services.User
                 throw new CustomServiceException(ServiceConstants.UserDontExist, HttpStatusCode.BadRequest);
             }
 
-            if (usertoUpdate.Role == ServiceConstants.RoleTecnic && (user.Activo == 0 || user.Asignable == 0))
+            if (usertoUpdate.Role == ServiceConstants.RoleTecnic && (user.Activo == 0 || user.Asignable == 0 || user.Role != ServiceConstants.RoleTecnic))
             {
                 var userstremovetecnic = await this.userDao.GetAllUsersAsync();
                 var listusers = userstremovetecnic.Where(x => x.TecnicId == user.Id).ToList();
