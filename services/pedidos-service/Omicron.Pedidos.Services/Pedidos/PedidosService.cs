@@ -13,6 +13,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using AutoMapper.Configuration.Annotations;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
@@ -101,13 +102,15 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userResponse = await this.userService.PostSimpleUsers(new List<string> { userId }, ServiceConstants.GetUsersById);
             var users = JsonConvert.DeserializeObject<List<UserModel>>(userResponse.Response.ToString());
             var userOrders = new List<UserOrderModel>();
-            if (users.First().Role.Equals(9))
+            var isTecnic = users.First().Role.Equals(9);
+            if (isTecnic)
             {
                 userOrders = (await this.pedidosDao.GetUserOrderByTecnicId(new List<string> { userId }))
-                    .Where(x => x.Status == ServiceConstants.Asignado ||
-                                x.Status == ServiceConstants.Pendiente ||
-                                x.Status == ServiceConstants.Reasignado)
+                    .Where(x => x.StatusForTecnic == ServiceConstants.Asignado ||
+                                x.StatusForTecnic == ServiceConstants.Pendiente ||
+                                x.StatusForTecnic == ServiceConstants.Reasignado)
                     .ToList();
+                userOrders.ForEach(x => x.Status = x.StatusForTecnic);
             }
             else
             {
@@ -117,7 +120,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             var resultFormula = await this.GetSapOrders(userOrders);
-            var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders);
+            var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders, isTecnic);
             return ServiceUtils.CreateResult(true, 200, null, groups, null);
         }
 
