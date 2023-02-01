@@ -10,6 +10,7 @@ namespace Omicron.Usuarios.Services.User
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.Usuarios.Dtos.Models;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Model;
 
@@ -105,5 +106,12 @@ namespace Omicron.Usuarios.Services.User
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultModel> GetActiveQfbWithOrcerCount();
+
+        /// <summary>
+        /// Method to get tecnic info by Id.
+        /// </summary>
+        /// <param name="qfbId">Qfb id.</param>
+        /// <returns>User Model.</returns>
+        Task<ResultModel> GetTecnicInfoByQfbId(string qfbId);
     }
 }

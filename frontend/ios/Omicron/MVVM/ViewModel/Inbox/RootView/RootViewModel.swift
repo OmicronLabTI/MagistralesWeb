@@ -33,9 +33,16 @@ class RootViewModel {
     var orders: [SectionOrder] = []
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
+    var userType: UserType = UserType.technical
     init() {
         logoutDidTapBinding()
         searchFilterBinding()
+        userData()
+    }
+
+    func userData() {
+        let rol = Persistence.shared.getUserData()?.role ?? UserType.technical.rawValue
+        self.userType = UserType(rawValue: rol)!
     }
     // MARK: - Functions
     func logoutDidTapBinding() {
@@ -162,6 +169,11 @@ class RootViewModel {
     }
 
     func getSections(res: StatusResponse) -> [SectionOrder] {
+        if self.userType == UserType.technical {
+            res.response?.status = res.response?.status?.filter({
+                $0.statusId! != StatusOrders.inProcess.rawValue &&
+                $0.statusId! != StatusOrders.finished.rawValue })
+        }
         return res.response?.status.map({ status in
             return status.map({ detail -> SectionOrder? in
                 let orders = detail.orders ?? []

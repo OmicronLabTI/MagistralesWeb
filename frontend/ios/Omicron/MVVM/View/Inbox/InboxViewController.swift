@@ -209,18 +209,8 @@ class InboxViewController: UIViewController {
                 alert.addAction(okAction)
                 self.present(alert, animated: true, completion: nil)
             }).disposed(by: self.disposeBag)
-        selectedRowBinding()
         didScrollBinding()
         showKPIViewBinding()
-    }
-
-    func selectedRowBinding() {
-        rootViewModel.selectedRow.subscribe(onNext: { [weak self] index in
-            guard let self = self, let row = index?.row else { return }
-            self.chageStatusName(index: row)
-            self.hideButtons(index: row)
-            self.goToTop()
-        }).disposed(by: disposeBag)
     }
 
     func didScrollBinding() {
@@ -325,8 +315,10 @@ class InboxViewController: UIViewController {
         case StatusNameConstants.finishedStatus: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
         case StatusNameConstants.reassignedStatus: self.changePropertyIsHiddenStatusButtons(true, false, false, false)
         default: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
-        }
     }
+
+
+
     private func changePropertyIsHiddenStatusButtons(
         _ processButtonIsHidden: Bool,
         _ finishedButtonIsHidden: Bool,

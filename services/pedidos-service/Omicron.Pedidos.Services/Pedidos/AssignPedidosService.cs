@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using System.Net;
     using System.Text;
@@ -17,6 +18,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Builders;
@@ -67,7 +69,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             if (manualAssign.OrderType.Equals(ServiceConstants.TypePedido))
             {
-                return await AsignarLogic.AssignPedido(manualAssign, this.pedidosDao, this.sapAdapter, this.sapDiApi, this.kafkaConnector);
+                return await AsignarLogic.AssignPedido(manualAssign, this.pedidosDao, this.sapAdapter, this.sapDiApi, this.kafkaConnector, this.userService);
             }
             else
             {
@@ -128,6 +130,16 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosStringUpdate)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
             bool isOnlyClasificationDZ = ServiceShared.CalculateAnd(relationOrdersWithUsersDZIsNotOmi.Any(), !ordersSap.Any());
+
+            var validQfbs = userSaleOrder.Item1.Where(x => userOrdersToUpdate.Select(uo => int.Parse(uo.Salesorderid)).Distinct().Contains(x.Key));
+            var invalidQfbs = users.Where(user => validQfbs.Select(vq => vq.Value).Contains(user.Id) &&
+                user.TechnicalRequire && string.IsNullOrEmpty(user.TecnicId)).ToList();
+
+            if (invalidQfbs.Any())
+            {
+                throw new CustomServiceException(string.Format(ServiceConstants.QfbWithoutTecnic, string.Join(",", invalidQfbs.Select(x => $"{x.FirstName} {x.LastName}"))), HttpStatusCode.BadRequest);
+            }
+
             userOrdersToUpdate.ForEach(x =>
             {
                 bool isHeader = string.IsNullOrEmpty(x.Productionorderid);
@@ -142,6 +154,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.Status = ServiceShared.CalculateTernary(asignable, ServiceConstants.Asignado, x.Status);
                     x.Status = ServiceShared.CalculateTernary(isHeader, ServiceConstants.Liberado, x.Status);
                     x.Userid = this.GetUserId(isHeader, relationOrdersWithUsersDZIsNotOmi, userSaleOrder, saleOrderInt, isClasificationDZ, isOnlyClasificationDZ, productionId);
+                    x.TecnicId = users.FirstOrDefault(user => user.Id == x.Userid)?.TecnicId;
                     if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                     {
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
@@ -191,6 +204,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private async Task<ResultModel> ReassingarPedido(ManualAssignModel assign)
         {
+            var tecnicInfo = await ServiceUtils.GetTecnicInfoByQfbId(assign.UserId, this.userService);
+
+            if (ServiceShared.CalculateOr(!tecnicInfo.IsValidTecnic, !tecnicInfo.IsValidQfb))
+            {
+                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{tecnicInfo.QfbFirstName} {tecnicInfo.QfbLastName}"), null, null);
+            }
+
             var listSaleOrders = assign.DocEntry.Select(x => x.ToString()).ToList();
             var orders = (await this.pedidosDao.GetUserOrderBySaleOrder(listSaleOrders)).Where(x => !ServiceConstants.StatusAvoidReasignar.Contains(x.Status)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
@@ -199,6 +219,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var previousStatus = x.Status;
                 x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
                 x.Userid = assign.UserId;
+                x.TecnicId = tecnicInfo.TecnicId;
                 if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                 {
                     /** add logs**/

@@ -218,7 +218,7 @@ class InboxViewModel {
 
     // Se agrupan ordenes por similitud o sin similitud
     func groupedWithSimilarityOrWithoutSimilarity(
-        data: [String? : [Order]], titleForOrdersWithoutSimilarity: String,
+        data: [String?: [Order]], titleForOrdersWithoutSimilarity: String,
         titleForOrdersWithSimilarity: String) -> [SectionModel<String, Order>] {
         var sectionModels: [SectionModel<String, Order>] = []
         // Se extraen las ordenes que contengan más de una coincidencia por código de producto

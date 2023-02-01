@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Test
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Dtos.User;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
@@ -165,6 +166,9 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 134, Productionorderid = null, Salesorderid = "900", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
                 new UserOrderModel { Id = 135, Productionorderid = "901", Salesorderid = "901", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1 },
                 new UserOrderModel { Id = 136, Productionorderid = null, Salesorderid = "901", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+
+                // Tecnical id
+                new UserOrderModel { Id = 137, Productionorderid = null, Salesorderid = "901", Status = "Planificado", Userid = "abc",  TecnicId = "tecnial", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
             };
         }
 
@@ -415,13 +419,25 @@ namespace Omicron.Pedidos.Test
         /// <summary>
         /// Gets user Dto.
         /// </summary>
+        /// <param name="isTecnic">Is tecnic.</param>
         /// <returns>the user.</returns>
-        public ResultModel GetResultUserModel()
+        public ResultModel GetResultUserModel(bool isTecnic = false)
         {
-            var listUsers = new List<UserModel>
+            List<UserModel> listUsers;
+            if (isTecnic)
             {
-                new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1 },
-            };
+                listUsers = new List<UserModel>
+                {
+                    new UserModel { Activo = 1, FirstName = "Sutano", Id = "tecnic", LastName = "Lope", Password = "as", Role = 9, UserName = "sutan", Piezas = 1000, Asignable = 1 },
+                };
+            }
+            else
+            {
+                listUsers = new List<UserModel>
+                {
+                    new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1 },
+                };
+            }
 
             return new ResultModel
             {
@@ -609,15 +625,16 @@ namespace Omicron.Pedidos.Test
         /// <summary>
         /// gets the users by role.
         /// </summary>
+        /// <param name="technicalRequire">Is Technical Require.</param>
         /// <returns>the users.</returns>
-        public ResultModel GetUsersByRoleWithDZ()
+        public ResultModel GetUsersByRoleWithDZ(bool technicalRequire = false)
         {
             var users = new List<UserModel>
             {
-                new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MN" },
-                new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "BE" },
-                new UserModel { Id = "abcde", Activo = 1, FirstName = "Magistrales", LastName = "Magistrales", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MG" },
-                new UserModel { Id = "abcdef", Activo = 1, FirstName = "Test DZ 1", LastName = "Test DZ 1", Password = "pass", Role = 2, UserName = "gus1", Piezas = 0, Asignable = 1, Classification = "DZ" },
+                new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MN", TechnicalRequire = true, TecnicId = "8c426e2d-0615-4516-a94c-a79e5c11ae4d" },
+                new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "BE", TechnicalRequire = true, TecnicId = "8c426e2d-0615-4516-a94c-a79e5c11ae4d" },
+                new UserModel { Id = "abcde", Activo = 1, FirstName = "Magistrales", LastName = "Magistrales", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MG", TechnicalRequire = technicalRequire },
+                new UserModel { Id = "abcdef", Activo = 1, FirstName = "Test DZ 1", LastName = "Test DZ 1", Password = "pass", Role = 2, UserName = "gus1", Piezas = 0, Asignable = 1, Classification = "DZ", TechnicalRequire = true, TecnicId = "8c426e2d-0615-4516-a94c-a79e5c11ae4d" },
             };
 
             return new ResultModel
@@ -642,6 +659,34 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = JsonConvert.SerializeObject(dataToSend),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the users by role.
+        /// </summary>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
+        /// <returns>the users.</returns>
+        public ResultModel GetQfbTecnicInfoDto(bool isValidtecnic)
+        {
+            var tecnicInfo = new QfbTecnicInfoDto
+            {
+                IsTecnicRequired = true,
+                IsValidTecnic = isValidtecnic,
+                QfbFirstName = "Juan",
+                QfbLastName = "Pérez",
+                QfbId = "abc",
+                TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b801",
+                IsValidQfb = true,
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = tecnicInfo,
                 Success = true,
                 UserError = string.Empty,
             };

@@ -100,5 +100,13 @@ namespace Omicron.Usuarios.Dtos.User
         /// String Activo.
         /// </value>
         public string TecnicId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Technical Require.
+        /// </summary>
+        /// <value>
+        /// Boolean active.
+        /// </value>
+        public bool TechnicalRequire { get; set; }
     }
 }

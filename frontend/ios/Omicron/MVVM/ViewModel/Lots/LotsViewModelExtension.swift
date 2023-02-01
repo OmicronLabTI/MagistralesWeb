@@ -105,7 +105,7 @@ extension LotsViewModel {
         self.loading.onNext(true)
         let orderToChageStatus = ChangeStatusRequest(
             userId: Persistence.shared.getUserData()?.id ?? String(),
-            orderId: self.orderId, status: CommonStrings.pending)
+            orderId: self.orderId, status: CommonStrings.pending, userType: rootViewModel.userType.rawValue)
         self.networkManager.changeStatusOrder([orderToChageStatus])
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }

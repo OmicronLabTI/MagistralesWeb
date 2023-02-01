@@ -32,5 +32,11 @@ namespace Omicron.Pedidos.Dtos.Models
         /// </summary>
         /// <value>The code.</value>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int UserRoleType { get; set; }
     }
 }

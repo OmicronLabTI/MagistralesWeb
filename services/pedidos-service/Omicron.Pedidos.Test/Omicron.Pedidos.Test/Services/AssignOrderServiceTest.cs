@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.Test.Services
     using NUnit.Framework;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Broker;
@@ -94,9 +95,12 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the processs.
         /// </summary>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task AssignOrderPedido()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task AssignOrderPedido(bool isValidtecnic)
         {
             // arrange
             var assign = new ManualAssignModel
@@ -108,6 +112,8 @@ namespace Omicron.Pedidos.Test.Services
             };
 
             var mockSaDiApi = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+
             mockSaDiApi
                 .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
@@ -116,13 +122,34 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.GetSapAdapter(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetListCompleteDetailOrderModel()));
 
-            var pedidosServiceLocal = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, this.kafkaConnector.Object);
+            mockUsers
+                .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbTecnicInfoDto(isValidtecnic)));
+
+            var pedidosServiceLocal = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, this.kafkaConnector.Object);
 
             // act
             var response = await pedidosServiceLocal.AssignOrder(assign);
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.Comments);
+
+            if (isValidtecnic)
+            {
+                Assert.IsNotNull(response.UserError);
+                Assert.IsTrue(response.Success);
+                Assert.AreEqual(200, response.Code);
+                Assert.IsNotNull(response.Response);
+            }
+            else
+            {
+                Assert.IsNotNull(response.UserError);
+                Assert.IsFalse(response.Success);
+                Assert.AreEqual(400, response.Code);
+                Assert.IsNull(response.Response);
+            }
         }
 
         /// <summary>
@@ -209,7 +236,7 @@ namespace Omicron.Pedidos.Test.Services
             var mockUsers = new Mock<IUsersService>();
             mockUsers
                 .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetUsersByRoleWithDZ()));
+                .Returns(Task.FromResult(this.GetUsersByRoleWithDZ(false)));
 
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
             mockSaDiApiLocal
@@ -259,6 +286,68 @@ namespace Omicron.Pedidos.Test.Services
             Assert.IsTrue(result.Success);
             Assert.AreEqual(200, result.Code);
             Assert.IsNull(result.ExceptionMessage);
+        }
+
+        /// <summary>
+        /// the automatic assign test.
+        /// </summary>
+        [Test]
+        public void AutomaticAssignTecnicError()
+        {
+            var assign = new AutomaticAssingModel
+            {
+                DocEntry = new List<int> { 900, 902 },
+                UserLogistic = "abcde",
+            };
+
+            var mockUsers = new Mock<IUsersService>();
+            mockUsers
+                .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUsersByRoleWithDZ(true)));
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            mockSaDiApiLocal
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 1", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada" };
+            var detalle901 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 2", IsOmigenomics = true, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 901, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada" };
+            var detalle902 = new CompleteDetailOrderModel { CodigoProducto = "567 120 ML", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 902, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada" };
+
+            var order900 = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 900, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 900, PedidoStatus = "P", OrderType = "MG", DocNumDxp = "A1" };
+            var order902 = new OrderModel { AsesorId = 2, Cliente = "C", Codigo = "C", DocNum = 902, FechaFin = DateTime.Now, FechaInicio = DateTime.Now, Medico = "M", PedidoId = 902, PedidoStatus = "L", OrderType = "MG", DocNumDxp = "A1" };
+
+            var listOrders = new List<OrderWithDetailModel>
+            {
+                new OrderWithDetailModel
+                {
+                    Detalle = new List<CompleteDetailOrderModel> { detalle900, detalle902 },
+                    Order = order900,
+                },
+            };
+
+            var realtioOrderType = new List<RelationOrderAndTypeModel>
+            {
+                new RelationOrderAndTypeModel { DocNum = 900, OrderType = "MN" },
+                new RelationOrderAndTypeModel { DocNum = 902, OrderType = "MN" },
+            };
+
+            var relationShip = new List<RelationDxpDocEntryModel>
+            {
+                new RelationDxpDocEntryModel { DxpDocNum = "A1", DocNum = realtioOrderType },
+            };
+
+            var resultSap = this.GenerateResultModel(listOrders);
+            resultSap.Response = listOrders;
+            resultSap.Comments = relationShip;
+
+            var sapAdapterLocal = new Mock<ISapAdapter>();
+            sapAdapterLocal
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(resultSap));
+
+            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
+            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.AutomaticAssign(assign));
         }
 
         /// <summary>
@@ -437,9 +526,12 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// Get last isolated production order id.
         /// </summary>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task ReassignOrder()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task ReassignOrder(bool isValidtecnic)
         {
             var reassign = new ManualAssignModel
             {
@@ -449,11 +541,36 @@ namespace Omicron.Pedidos.Test.Services
                 UserLogistic = "abc",
             };
 
+            var sapAdapterLocal = new Mock<ISapAdapter>();
+            var mockUsers = new Mock<IUsersService>();
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+
+            mockUsers
+                .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbTecnicInfoDto(isValidtecnic)));
+
             // act
-            var result = await this.pedidosService.ReassignOrder(reassign);
+            var assignPedidosService = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var result = await assignPedidosService.ReassignOrder(reassign);
 
             // assert
             Assert.IsNotNull(result);
+            Assert.IsNull(result.ExceptionMessage);
+            Assert.IsNull(result.Response);
+            Assert.IsNull(result.Comments);
+
+            if (isValidtecnic)
+            {
+                Assert.IsNull(result.UserError);
+                Assert.IsTrue(result.Success);
+                Assert.AreEqual(200, result.Code);
+            }
+            else
+            {
+                Assert.IsNotNull(result.UserError);
+                Assert.IsFalse(result.Success);
+                Assert.AreEqual(400, result.Code);
+            }
         }
 
         /// <summary>
