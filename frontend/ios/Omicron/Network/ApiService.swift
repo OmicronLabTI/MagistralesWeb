@@ -19,6 +19,7 @@ enum ApiService {
     case changeStatusOrder(changeStatusRequest: [ChangeStatusRequest])
     case getLots(orderId: Int)
     case finishOrder(finishOrder: FinishOrder)
+    case packageOrders(packageOrders: FinishOrder)
     case assingLots(lotsRequest: [BatchSelected])
     case askIfOrderCanBeFinalized(orderId: Int)
     case getComponents(data: ComponentRequest)
@@ -67,6 +68,8 @@ extension ApiService: AuthorizedTargetType {
             return "sapadapter/componentes/lotes/\(orderId)"
         case .finishOrder:
             return "pedidos/finishOrder"
+        case .packageOrders:
+            return "pedidos/package"
         case .assingLots:
             return "/pedidos/assignBatches"
         case .askIfOrderCanBeFinalized(let orderId):
@@ -93,7 +96,8 @@ extension ApiService: AuthorizedTargetType {
              .renew,
              .finishOrder,
              .postOrdersPDF,
-             .validateOrders:
+             .validateOrders,
+             .packageOrders:
             return .post
         case .getInfoUser,
              .getStatusList,
@@ -131,6 +135,8 @@ extension ApiService: AuthorizedTargetType {
         case .changeStatusOrder(let data):
             return .requestJSONEncodable(data)
         case .finishOrder(let data):
+            return .requestJSONEncodable(data)
+        case .packageOrders(let data):
             return .requestJSONEncodable(data)
         case .assingLots(let data):
             return .requestJSONEncodable(data)
@@ -193,6 +199,12 @@ extension ApiService: AuthorizedTargetType {
             }
             return data
         case .finishOrder:
+            guard let url = Bundle.main.url(forResource: "finishedOrderResponse", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .packageOrders:
             guard let url = Bundle.main.url(forResource: "finishedOrderResponse", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()

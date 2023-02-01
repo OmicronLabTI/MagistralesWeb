@@ -149,7 +149,8 @@ extension InboxViewModel {
 
             finisOrderService(finishOrder)
         }
-        if !qfbSignatureIsGet && technicalSignatureIsGet {
+        if technicalSignatureIsGet && rootViewModel.userType == .technical {
+            loading.onNext(true)
             guard let userID = Persistence.shared.getUserData()?.id,
                   let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
             let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
@@ -159,9 +160,19 @@ extension InboxViewModel {
             packageOrdersService(data: packageOrder)
         }
     }
-    
+
     func packageOrdersService(data: FinishOrder) {
-        print(data.fabricationOrderId?.count)
+        networkManager.packageOrders(data)
+            .subscribe(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.isUserInteractionEnabled.onNext(true)
+                self.refreshDataWhenChangeProcessIsSucces.onNext(())
+            }, onError: { [weak self] _ in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showAlert.onNext(CommonStrings.errorPackageOrders)
+            }).disposed(by: disposeBag)
     }
 
     func validOrders(

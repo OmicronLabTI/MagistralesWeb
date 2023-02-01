@@ -173,6 +173,7 @@ struct CommonStrings {
                           "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
     static let errorFinishOrder = "Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo"
     static let errorFinishOrders = "Ocurrió un error al finalizar las ordenes, por favor intentarlo de nuevo"
+    static let errorPackageOrders = "Ocurrió un error al envasar las ordenes, por favor intentarlo de nuevo"
     static let errorPDF = "Por el momento no es posible mostrar el PDF del pedido, intenta más tarde"
     static let zero = "0"
     static let errorUserIdIndexPathOfOrdersSelected = "Hubo un error al obtener userID de UserDefaults u obtener indexPathOfOrdersSelected"
