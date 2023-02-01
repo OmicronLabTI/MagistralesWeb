@@ -75,7 +75,6 @@ class InboxViewModel {
         groupByOrderNumberButtonDidTapBinding()
         //  Action para ordenado por shopTransaction
         groupByShopTransactionButtonDidTapBinding()
-        
         initExtension()
     }
 
@@ -192,7 +191,7 @@ class InboxViewModel {
         }
         return ordersGroupedAndSorted
     }
-    
+
     // Short by ShopTransaccion
     func sortOrderShopTransactionView() -> [SectionModel<String, Order>] {
         var ordersGroupedAndSorted: [SectionModel<String, Order>] = []

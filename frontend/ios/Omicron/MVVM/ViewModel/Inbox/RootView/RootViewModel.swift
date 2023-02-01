@@ -30,6 +30,7 @@ class RootViewModel {
     var refreshSearch = PublishSubject<String>()
     var searchStore = String()
     var needSearch = false
+    var orders: [SectionOrder] = []
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
     init() {
@@ -125,9 +126,10 @@ class RootViewModel {
     func getOrdersService(userId: String, isUpdate: Bool) {
         self.networkManager.getStatusList(userId).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
-            let sections = self.getSections(res: res)
+            var sections = self.getSections(res: res)
             self.sections = sections
             self.dataStatus.onNext(sections)
+            self.orders = sections
             self.refreshSelection.onNext(sections.count)
             self.needRefreshAction()
             self.needIsUpdate(isUpdate: isUpdate)

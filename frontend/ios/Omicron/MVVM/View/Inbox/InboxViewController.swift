@@ -20,6 +20,7 @@ class InboxViewController: UIViewController {
     @IBOutlet weak var finishedButton: UIButton!
     @IBOutlet weak var pendingButton: UIButton!
     @IBOutlet weak var processButton: UIButton!
+    @IBOutlet weak var packageButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var similarityViewButton: UIButton!
     @IBOutlet weak var normalViewButton: UIButton!
@@ -242,6 +243,7 @@ class InboxViewController: UIViewController {
         self.processButton.isEnabled = false
         self.pendingButton.isEnabled = false
         self.finishedButton.isEnabled = false
+        self.packageButton.isEnabled = false
         UtilsManager.shared.setStyleButtonStatus(
             button: self.finishedButton,
             title: StatusNameConstants.finishedStatus,
@@ -257,6 +259,11 @@ class InboxViewController: UIViewController {
             title: StatusNameConstants.inProcessStatus,
             color: OmicronColors.processStatus,
             titleColor: OmicronColors.processStatus)
+        UtilsManager.shared.setStyleButtonStatus(
+            button: self.packageButton,
+            title: StatusNameConstants.package,
+            color: OmicronColors.packageButton,
+            titleColor: OmicronColors.packageButton)
     }
     func extensionInitComponents() {
         self.similarityViewButton.setTitle("", for: .normal)
@@ -286,6 +293,7 @@ class InboxViewController: UIViewController {
             self.processButton.isEnabled = false
             self.pendingButton.isEnabled = false
             self.finishedButton.isEnabled = false
+            self.packageButton.isEnabled = false
         }).disposed(by: disposeBag)
     }
 
@@ -307,26 +315,31 @@ class InboxViewController: UIViewController {
     }
     private func hideButtons(index: Int) {
         showContainersButtons.isHidden = true
-        switch index {
-        case 0:
-            self.changePropertyIsHiddenStatusButtons(false, true, false)
+        let statusName = self.rootViewModel.orders[index].statusName
+        switch statusName {
+        case StatusNameConstants.assignedStatus:
+            self.changePropertyIsHiddenStatusButtons(false, true, false, false)
             showContainersButtons.isHidden = false
-        case 1: self.changePropertyIsHiddenStatusButtons(true, false, false)
-        case 2: self.changePropertyIsHiddenStatusButtons(false, true, true)
-        case 3: self.changePropertyIsHiddenStatusButtons(true, true, true)
-        case 4: self.changePropertyIsHiddenStatusButtons(true, false, false)
-        default: self.changePropertyIsHiddenStatusButtons(true, true, true)
+        case StatusNameConstants.inProcessStatus: self.changePropertyIsHiddenStatusButtons(true, false, false, true)
+        case StatusNameConstants.penddingStatus: self.changePropertyIsHiddenStatusButtons(false, true, true, true)
+        case StatusNameConstants.finishedStatus: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
+        case StatusNameConstants.reassignedStatus: self.changePropertyIsHiddenStatusButtons(true, false, false, false)
+        default: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
         }
     }
     private func changePropertyIsHiddenStatusButtons(
         _ processButtonIsHidden: Bool,
         _ finishedButtonIsHidden: Bool,
-        _ pendingButtonIsHidden: Bool) {
+        _ pendingButtonIsHidden: Bool,
+        _ packageButtonIsHidden: Bool) {
         self.processButton.isHidden = processButtonIsHidden
         self.finishedButton.isHidden = finishedButtonIsHidden
         self.pendingButton.isHidden = pendingButtonIsHidden
+        let activeRol = Persistence.shared.getUserData()?.role ?? 0
+        self.packageButton.isHidden = packageButtonIsHidden || activeRol != 9
     }
 
+    // aqui se detecta cuando se mantuvo presionada la celda para seleccionarla
     @objc func handleLongPress(gesture: UILongPressGestureRecognizer!) {
         if gesture.state != .ended { return }
         let position = gesture.location(in: self.collectionView)
@@ -335,6 +348,14 @@ class InboxViewController: UIViewController {
         }
     }
 
+    @IBAction func packageOrdersDidPressed(_ sender: Any) {
+        if !self.inboxViewModel.validateSelectedOrdersAreSameSAPId(indexPathOfOrdersSelected: indexPathsSelected) {
+            rootViewModel.error.onNext(Constants.Errors.invalidSapOrderId.rawValue)
+            return
+        }
+        inboxViewModel.indexPathOfOrdersSelected = indexPathsSelected
+        inboxViewModel.showSignatureVc.onNext(CommonStrings.signatureViewTitleTechnical)
+    }
     @IBAction func removeSelectedOrdersDidPressed(_ sender: Any) {
         self.indexPathsSelected.removeAll()
         DispatchQueue.main.async {
@@ -342,6 +363,7 @@ class InboxViewController: UIViewController {
             self.processButton.isEnabled = false
             self.pendingButton.isEnabled = false
             self.finishedButton.isEnabled = false
+            self.packageButton.isEnabled = false
         }
         if self.removeOrdersSelectedVerticalSpace.constant > 0 {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
