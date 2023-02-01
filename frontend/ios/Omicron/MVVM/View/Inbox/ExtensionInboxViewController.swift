@@ -190,6 +190,8 @@ extension InboxViewController {
             processButton.isEnabled = true
             pendingButton.isEnabled = true
             finishedButton.isEnabled = true
+            packageButton.isEnabled = self.inboxViewModel.ordersHasBatchesCompleted(
+                indexPathOfOrdersSelected: indexPathsSelected)
         } else {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
                 guard let self = self else { return }
@@ -199,10 +201,9 @@ extension InboxViewController {
             processButton.isEnabled = false
             pendingButton.isEnabled = false
             finishedButton.isEnabled = false
+            packageButton.isEnabled = false
         }
-
     }
-
     func detailTapped(order: Order) {
         if rootViewModel.userType != .technical {
             self.inboxViewModel.selectedOrder = order
@@ -210,7 +211,6 @@ extension InboxViewController {
             self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
         }
     }
-
     func showSignatureVC() {
         inboxViewModel.showSignatureVc.subscribe(onNext: { [weak self] titleView in
             guard let self = self else { return }
@@ -246,7 +246,6 @@ extension InboxViewController {
         let stringNames = namesNoRepeat.joined(separator: ",")
         return stringNames.components(separatedBy: ",").filter({!$0.isEmpty})
     }
-
     func updateRemoveViewColor(title: String) -> UIColor {
         switch title {
         case StatusNameConstants.assignedStatus:

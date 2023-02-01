@@ -23,6 +23,8 @@ struct Constants {
         case assignedBatches = "Hubo un error al asignar los siguientes lotes"
         case assignedBatchesTryAgain = "Hubo un error al asignar los lotes, por favor intentar de nuevo"
         case loadOrdersDetail = "Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo"
+        case invalidSapOrderId = "Hay Ordenes de Fabricación seleccionadas de diferente pedido, favor de seleccionar del mismo pedido para poder continuar"
+  
     }
     enum Tags: Int {
         case loading = 101
@@ -69,6 +71,7 @@ struct OmicronColors {
     static let pendingStatus = UIColor.init(red: 255/255, green: 184/255, blue: 0/255, alpha: 1)
     static let finishedStatus = UIColor.init(red: 28/255, green: 124/255, blue: 213/255, alpha: 1)
     static let reassignedStatus = UIColor.init(red: 186/255, green: 49/255, blue: 237/255, alpha: 1)
+    static let packageButton = UIColor.init(red: 252/255, green: 176/255, blue: 124/255, alpha: 1)
     static let tableStatus = UIColor.init(red: 233/255, green: 233/255, blue: 233/255, alpha: 1)
     static let tableColorRow = UIColor.init(red: 192/255, green: 219/255, blue: 243/255, alpha: 1)
     static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
@@ -205,6 +208,7 @@ struct StatusNameConstants {
     static let deleteComponents = "Eliminar componentes"
     static let save = "Guardar"
     static let seeLots = "Ver Lotes"
+    static let package = "Envasar"
 }
 struct ImageButtonNames {
     static let assigned = "showAssignedDetailButton.png"

@@ -30,6 +30,7 @@ class RootViewModel {
     var refreshSearch = PublishSubject<String>()
     var searchStore = String()
     var needSearch = false
+    var orders: [SectionOrder] = []
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
     var userType: UserType = UserType.technical
@@ -37,7 +38,7 @@ class RootViewModel {
         logoutDidTapBinding()
         searchFilterBinding()
         userData()
-    }
+    } 
 
     func userData() {
         let rol = Persistence.shared.getUserData()?.role ?? UserType.technical.rawValue
@@ -135,6 +136,7 @@ class RootViewModel {
             let sections = self.getSections(res: res)
             self.sections = sections
             self.dataStatus.onNext(sections)
+            self.orders = sections
             self.refreshSelection.onNext(sections.count)
             self.needRefreshAction()
             self.needIsUpdate(isUpdate: isUpdate)
