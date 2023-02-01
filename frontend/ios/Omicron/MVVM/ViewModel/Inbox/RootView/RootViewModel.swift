@@ -38,7 +38,7 @@ class RootViewModel {
         logoutDidTapBinding()
         searchFilterBinding()
         userData()
-    } 
+    }
 
     func userData() {
         let rol = Persistence.shared.getUserData()?.role ?? UserType.technical.rawValue
