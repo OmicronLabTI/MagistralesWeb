@@ -190,10 +190,12 @@ class ChangeStatusRequest: Codable {
     var userId: String
     var orderId: Int
     var status: String
-    init(userId: String, orderId: Int, status: String) {
+    var userType: Int
+    init(userId: String, orderId: Int, status: String, userType: Int) {
         self.userId = userId
         self.orderId = orderId
         self.status = status
+        self.userType = userType
     }
 }
 class ChangeStatusRespose: HttpResponse {

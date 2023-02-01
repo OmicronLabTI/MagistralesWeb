@@ -85,7 +85,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnEmpty() {
         // Given
-        let index = 5
+        let index = 6
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -93,7 +93,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnAssignedStatus() {
         // Given
-        let index = 0
+        let index = 1
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -101,7 +101,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnProcessStatus() {
         // Given
-        let index = 1
+        let index = 2
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -109,7 +109,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnPendingStatus() {
         // Given
-        let index = 2
+        let index = 3
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -117,7 +117,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnFinishedStatus() {
         // Given
-        let index = 3
+        let index = 4
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -125,7 +125,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnReassinedStatus() {
         // Given
-        let index = 4
+        let index = 5
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -145,7 +145,7 @@ class ExtensionInboxTest: XCTestCase {
         // Then
         let status = inboxViewModel!.getStatusId(name: name)
         // When
-        XCTAssertEqual(status, 0)
+        XCTAssertEqual(status, 1)
     }
     func testGetStatusIdShouldBeProcessStatus() {
         // Given

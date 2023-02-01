@@ -177,7 +177,7 @@ class OrderDetailViewModel {
         let status = actionType == StatusNameConstants.inProcessStatus ? CommonStrings.process : CommonStrings.pending
         let changeStatus = ChangeStatusRequest(userId: (Persistence.shared.getUserData()?.id) ?? String(),
                                                orderId: (self.tempOrderDetailData?.productionOrderID) ?? 0,
-                                               status: status)
+                                               status: status, userType: rootViewModel.userType.rawValue)
         self.networkManager.changeStatusOrder([changeStatus])
             .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
             self?.rootViewModel.needsRefresh = true

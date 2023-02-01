@@ -99,22 +99,22 @@ extension InboxViewModel {
 
     func getStatusName(index: Int) -> String {
         switch index {
-        case 0: return StatusNameConstants.assignedStatus
-        case 1: return StatusNameConstants.inProcessStatus
-        case 2: return StatusNameConstants.penddingStatus
-        case 3: return StatusNameConstants.finishedStatus
-        case 4: return StatusNameConstants.reassignedStatus
+        case 1: return StatusNameConstants.assignedStatus
+        case 2: return StatusNameConstants.inProcessStatus
+        case 3: return StatusNameConstants.penddingStatus
+        case 4: return StatusNameConstants.finishedStatus
+        case 5: return StatusNameConstants.reassignedStatus
         default: return CommonStrings.empty
         }
     }
 
     func getStatusId(name: String) -> Int {
         switch name {
-        case StatusNameConstants.assignedStatus: return 0
-        case StatusNameConstants.inProcessStatus: return 1
-        case StatusNameConstants.penddingStatus: return 2
-        case StatusNameConstants.finishedStatus: return 3
-        case StatusNameConstants.reassignedStatus: return 4
+        case StatusNameConstants.assignedStatus: return 1
+        case StatusNameConstants.inProcessStatus: return 2
+        case StatusNameConstants.penddingStatus: return 3
+        case StatusNameConstants.finishedStatus: return 4
+        case StatusNameConstants.reassignedStatus: return 5
         default: return -1
         }
     }
@@ -192,7 +192,7 @@ extension InboxViewModel {
             let card = self.sectionOrders[index.section].items[index.row]
             let order = ChangeStatusRequest(
                 userId: (Persistence.shared.getUserData()?.id) ?? CommonStrings.empty,
-                orderId: card.productionOrderId ?? 0, status: status)
+                orderId: card.productionOrderId ?? 0, status: status, userType: rootViewModel.userType.rawValue)
             orders.append(order)
         }
         changeStatusService(orders)

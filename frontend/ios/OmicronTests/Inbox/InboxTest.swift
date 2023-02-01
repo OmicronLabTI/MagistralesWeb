@@ -100,7 +100,7 @@ class InboxTest: XCTestCase {
         let orderId = 89628
         let statusToChange = "Proceso"
         var arrayOfOrdersToChangeStatusToProgress: [ChangeStatusRequest] = []
-        let orderToChangeToChangeStatus = ChangeStatusRequest(userId: userId, orderId: orderId, status: statusToChange)
+        let orderToChangeToChangeStatus = ChangeStatusRequest(userId: userId, orderId: orderId, status: statusToChange, userType: 2)
         arrayOfOrdersToChangeStatusToProgress.append(orderToChangeToChangeStatus)
         // When
         networkManager.changeStatusOrder(arrayOfOrdersToChangeStatusToProgress).subscribe(onNext: { res in

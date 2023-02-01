@@ -77,7 +77,7 @@ class ExtensionInbox2Test: XCTestCase {
         // Then
         let status = inboxViewModel!.getStatusId(name: name)
         // When
-        XCTAssertEqual(status, 2)
+        XCTAssertEqual(status, 3)
     }
     func testGetStatusIdShouldBeFinishedStatus() {
         // Given
@@ -85,7 +85,7 @@ class ExtensionInbox2Test: XCTestCase {
         // Then
         let status = inboxViewModel!.getStatusId(name: name)
         // When
-        XCTAssertEqual(status, 3)
+        XCTAssertEqual(status, 4)
     }
     func testGetStatusIdShouldBeReasignedStatus() {
         // Given
@@ -93,7 +93,7 @@ class ExtensionInbox2Test: XCTestCase {
         // Then
         let status = inboxViewModel!.getStatusId(name: name)
         // When
-        XCTAssertEqual(status, 4)
+        XCTAssertEqual(status, 5)
     }
     func testPendingDidTap() {
         self.inboxViewModel!.showAlertToChangeOrderOfStatus.subscribe(onNext: { message in
@@ -213,32 +213,32 @@ class ExtensionInbox2Test: XCTestCase {
         self.inboxViewModel?.changeStatus(indexPath: [indexPath], typeOfStatus: typeStatus)
     }
     func testGetStatusNameAssignedStatusName() {
-        let index = 0
+        let index = 1
         let statusName = self.inboxViewModel?.getStatusName(index: index)
         XCTAssertEqual(statusName, StatusNameConstants.assignedStatus)
     }
     func testGetStatusNameProcessStatusName() {
-        let index = 1
+        let index = 2
         let statusName = self.inboxViewModel?.getStatusName(index: index)
         XCTAssertEqual(statusName, StatusNameConstants.inProcessStatus)
     }
     func testGetStatusNamePendingStatusName() {
-        let index = 2
+        let index = 3
         let statusName = self.inboxViewModel?.getStatusName(index: index)
         XCTAssertEqual(statusName, StatusNameConstants.penddingStatus)
     }
     func testGetStatusNameFinishedStatusName() {
-        let index = 3
+        let index = 4
         let statusName = self.inboxViewModel?.getStatusName(index: index)
         XCTAssertEqual(statusName, StatusNameConstants.finishedStatus)
     }
     func testGetStatusNameReasignedStatusName() {
-        let index = 4
+        let index = 5
         let statusName = self.inboxViewModel?.getStatusName(index: index)
         XCTAssertEqual(statusName, StatusNameConstants.reassignedStatus)
     }
     func testGetStatusNameDefaultStatusName() {
-        let index = 5
+        let index = 6
         let statusName = self.inboxViewModel?.getStatusName(index: index)
         XCTAssertEqual(statusName, CommonStrings.empty)
     }

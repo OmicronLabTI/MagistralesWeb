@@ -204,9 +204,11 @@ extension InboxViewController {
     }
     
     func detailTapped(order: Order) {
-        self.inboxViewModel.selectedOrder = order
-        self.view.endEditing(true)
-        self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
+        if rootViewModel.userType != .technical {
+            self.inboxViewModel.selectedOrder = order
+            self.view.endEditing(true)
+            self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
+        }
     }
     
     func showSignatureVC() {
