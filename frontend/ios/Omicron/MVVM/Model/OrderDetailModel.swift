@@ -106,10 +106,20 @@ class Detail {
     var baseQuantity, requiredQuantity, pendingQuantity, stock, warehouseQuantity, consumed, available: Double?
     var unit, warehouse: String?
     var hasBatches: Bool?
-    init(orderFabID: Int, productID: String, detailDescription: String, baseQuantity: Double,
-         requiredQuantity: Double, pendingQuantity: Double, stock: Double,
+    init(orderFabID: Int,
+         productID: String,
+         detailDescription: String,
+         baseQuantity: Double,
+         requiredQuantity: Double,
+         pendingQuantity: Double,
+         stock: Double,
          warehouseQuantity: Double,
-         consumed: Double, available: Double, unit: String, warehouse: String, hasBatches: Bool, orderCreateDate: String) {
+         consumed: Double,
+         available: Double,
+         unit: String,
+         warehouse: String,
+         hasBatches: Bool,
+         orderCreateDate: String) {
         self.orderFabID = orderFabID
         self.productID = productID
         self.detailDescription = detailDescription
@@ -190,10 +200,12 @@ class ChangeStatusRequest: Codable {
     var userId: String
     var orderId: Int
     var status: String
-    init(userId: String, orderId: Int, status: String) {
+    var userRoleType: Int
+    init(userId: String, orderId: Int, status: String, userType: Int) {
         self.userId = userId
         self.orderId = orderId
         self.status = status
+        self.userRoleType = userType
     }
 }
 class ChangeStatusRespose: HttpResponse {

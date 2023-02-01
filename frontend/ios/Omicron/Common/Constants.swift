@@ -270,3 +270,16 @@ enum DecimalFormat: String {
     case zero = "%.0f"
     case six = "%6f"
 }
+
+enum StatusOrders: Int {
+    case assigned = 1
+    case inProcess = 2
+    case pendding = 3
+    case finished = 4
+    case reasigned = 5
+}
+
+enum UserType: Int {
+    case technical = 9
+    case qfb = 2
+}
