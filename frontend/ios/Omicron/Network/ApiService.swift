@@ -69,7 +69,7 @@ extension ApiService: AuthorizedTargetType {
         case .finishOrder:
             return "pedidos/finishOrder"
         case .packageOrders:
-            return "pedidos/package"
+            return "pedidos/tecnic/signorder"
         case .assingLots:
             return "/pedidos/assignBatches"
         case .askIfOrderCanBeFinalized(let orderId):
