@@ -166,64 +166,18 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="sapOrders">the sap ordrs.</param>
         /// <param name="userOrders">the user ordes.</param>
+        /// <param name="isTecnic">Is tecnic.</param>
         /// <returns>the data froupted.</returns>
-        public static QfbOrderModel GroupUserOrder(List<CompleteFormulaWithDetalle> sapOrders, List<UserOrderModel> userOrders)
+        public static QfbOrderModel GroupUserOrder(List<CompleteFormulaWithDetalle> sapOrders, List<UserOrderModel> userOrders, bool isTecnic)
         {
             var result = new QfbOrderModel
             {
                 Status = new List<QfbOrderDetail>(),
             };
-
-            foreach (var status in Enum.GetValues(typeof(ServiceEnums.Status)))
+            var enums = isTecnic ? Enum.GetValues(typeof(ServiceEnums.StatusTecnic)) : Enum.GetValues(typeof(ServiceEnums.Status));
+            foreach (var status in enums)
             {
-                var statusId = (int)Enum.Parse(typeof(ServiceEnums.Status), status.ToString());
-                var orders = new QfbOrderDetail
-                {
-                    StatusName = statusId == (int)ServiceEnums.Status.Proceso ? ServiceConstants.ProcesoStatus : status.ToString(),
-                    StatusId = statusId,
-                    Orders = new List<FabOrderDetail>(),
-                };
-
-                var ordersDetail = new List<FabOrderDetail>();
-
-                userOrders
-                    .Where(x => x.Status.Equals(status.ToString()))
-                    .ToList()
-                    .ForEach(o =>
-                    {
-                        int.TryParse(o.Productionorderid, out int orderId);
-                        var sapOrder = sapOrders.FirstOrDefault(s => s.ProductionOrderId == orderId);
-
-                        if (sapOrder != null)
-                        {
-                            var destiny = sapOrder.DestinyAddress.Split(",");
-
-                            var order = new FabOrderDetail
-                            {
-                                BaseDocument = sapOrder.BaseDocument,
-                                Container = sapOrder.Container,
-                                Tag = sapOrder.ProductLabel,
-                                DescriptionProduct = sapOrder.ProductDescription,
-                                FinishDate = sapOrder.OrderCreateDate,
-                                PlannedQuantity = sapOrder.PlannedQuantity,
-                                ProductionOrderId = sapOrder.ProductionOrderId,
-                                StartDate = sapOrder.FabDate,
-                                ItemCode = sapOrder.Code,
-                                HasMissingStock = sapOrder.HasMissingStock,
-                                Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
-                                FinishedLabel = o.FinishedLabel,
-                                AreBatchesComplete = o.AreBatchesComplete == 1,
-                                PatientName = sapOrder.PatientName,
-                                ClientDxp = sapOrder.ClientDxp,
-                                ShopTransaction = sapOrder.ShopTransaction,
-                            };
-
-                            ordersDetail.Add(order);
-                        }
-                    });
-
-                orders.Orders = ordersDetail.OrderByDescending(x => x.AreBatchesComplete).ThenBy(y => y.ProductionOrderId).ToList();
-                result.Status.Add(orders);
+                BuildGroupUserOrderResult(sapOrders, userOrders, result, status);
             }
 
             return result;
@@ -494,6 +448,58 @@ namespace Omicron.Pedidos.Services.Utils
                 var localTries = tries == 1 ? 2 : 3;
                 return CalculateDateNow(localTries);
             }
+        }
+
+        private static void BuildGroupUserOrderResult(List<CompleteFormulaWithDetalle> sapOrders, List<UserOrderModel> userOrders, QfbOrderModel result, object status)
+        {
+            var statusId = (int)Enum.Parse(typeof(ServiceEnums.Status), status.ToString());
+            var orders = new QfbOrderDetail
+            {
+                StatusName = statusId == (int)ServiceEnums.Status.Proceso ? ServiceConstants.ProcesoStatus : status.ToString(),
+                StatusId = statusId,
+                Orders = new List<FabOrderDetail>(),
+            };
+
+            var ordersDetail = new List<FabOrderDetail>();
+
+            userOrders
+                .Where(x => x.Status.Equals(status.ToString()))
+                .ToList()
+                .ForEach(o =>
+                {
+                    int.TryParse(o.Productionorderid, out int orderId);
+                    var sapOrder = sapOrders.FirstOrDefault(s => s.ProductionOrderId == orderId);
+
+                    if (sapOrder != null)
+                    {
+                        var destiny = sapOrder.DestinyAddress.Split(",");
+
+                        var order = new FabOrderDetail
+                        {
+                            BaseDocument = sapOrder.BaseDocument,
+                            Container = sapOrder.Container,
+                            Tag = sapOrder.ProductLabel,
+                            DescriptionProduct = sapOrder.ProductDescription,
+                            FinishDate = sapOrder.OrderCreateDate,
+                            PlannedQuantity = sapOrder.PlannedQuantity,
+                            ProductionOrderId = sapOrder.ProductionOrderId,
+                            StartDate = sapOrder.FabDate,
+                            ItemCode = sapOrder.Code,
+                            HasMissingStock = sapOrder.HasMissingStock,
+                            Destiny = destiny.Count() < 3 || destiny[destiny.Count() - 3].Contains(ServiceConstants.NuevoLeon) ? ServiceConstants.Local : ServiceConstants.Foraneo,
+                            FinishedLabel = o.FinishedLabel,
+                            AreBatchesComplete = o.AreBatchesComplete == 1,
+                            PatientName = sapOrder.PatientName,
+                            ClientDxp = sapOrder.ClientDxp,
+                            ShopTransaction = sapOrder.ShopTransaction,
+                        };
+
+                        ordersDetail.Add(order);
+                    }
+                });
+
+            orders.Orders = ordersDetail.OrderByDescending(x => x.AreBatchesComplete).ThenBy(y => y.ProductionOrderId).ToList();
+            result.Status.Add(orders);
         }
     }
 }

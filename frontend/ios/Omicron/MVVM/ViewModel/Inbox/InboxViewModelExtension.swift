@@ -149,6 +149,30 @@ extension InboxViewModel {
 
             finisOrderService(finishOrder)
         }
+        if technicalSignatureIsGet && rootViewModel.userType == .technical {
+            loading.onNext(true)
+            guard let userID = Persistence.shared.getUserData()?.id,
+                  let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
+            let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
+            let packageOrder = FinishOrder(
+                userId: userID, fabricationOrderId: orderIds, qfbSignature: "",
+                technicalSignature: technicalSignature)
+            packageOrdersService(data: packageOrder)
+        }
+    }
+
+    func packageOrdersService(data: FinishOrder) {
+        networkManager.packageOrders(data)
+            .subscribe(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.isUserInteractionEnabled.onNext(true)
+                self.refreshDataWhenChangeProcessIsSucces.onNext(())
+            }, onError: { [weak self] _ in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showAlert.onNext(CommonStrings.errorPackageOrders)
+            }).disposed(by: disposeBag)
     }
 
     func validOrders(
@@ -168,6 +192,30 @@ extension InboxViewModel {
             fabOrderIDs.append(orderId ?? 0)
         }
         return fabOrderIDs
+    }
+    func ordersHasBatchesCompleted(indexPathOfOrdersSelected: [IndexPath]) -> Bool {
+        guard indexPathOfOrdersSelected.count > 0 else { return false }
+        return getFabOrders(indexPathOfOrdersSelected:
+                                indexPathOfOrdersSelected).allSatisfy { $0.areBatchesComplete ?? false }
+    }
+    func getFabOrders(indexPathOfOrdersSelected: [IndexPath]) -> [Order] {
+        guard indexPathOfOrdersSelected.count > 0 else { return []}
+        var orders = [Order]()
+        indexPathOfOrdersSelected.forEach { [weak self] (indexPath) in
+            if let order = self?.sectionOrders[indexPath.section].items[indexPath.row] {
+                orders.append(order)
+            }
+        }
+        return orders
+    }
+
+    func validateSelectedOrdersAreSameSAPId(indexPathOfOrdersSelected: [IndexPath]) -> Bool {
+        guard indexPathOfOrdersSelected.count > 0 else { return false }
+        let fabOrders = getFabOrders(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
+        let sapOrdersList = fabOrders.map { $0.baseDocument }
+        return sapOrdersList.allSatisfy { item in
+            sapOrdersList.filter { sapOrderId in sapOrderId == item }.count == sapOrdersList.count
+        }
     }
 
     // Cambia el estatus de una orden a proceso o pendiente

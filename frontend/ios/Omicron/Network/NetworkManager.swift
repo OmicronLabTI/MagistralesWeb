@@ -128,6 +128,12 @@ class NetworkManager: SessionProtocol {
         let res: Observable<FinishOrderResponse> = makeRequest(request: req)
         return res
     }
+    // Envasa la order
+    func packageOrders(_ orders: FinishOrder) -> Observable<FinishOrderResponse> {
+        let req: ApiService = ApiService.packageOrders(packageOrders: orders)
+        let res: Observable<FinishOrderResponse> = makeRequest(request: req)
+        return res
+    }
     // Asigna lotes a una orden de fabricación
     func assignLots(_ lotsRequest: [BatchSelected]) -> Observable<AssingbBatchResponse> {
         let req: ApiService = ApiService.assingLots(lotsRequest: lotsRequest)

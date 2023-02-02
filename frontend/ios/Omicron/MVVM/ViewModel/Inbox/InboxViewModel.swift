@@ -75,7 +75,6 @@ class InboxViewModel {
         groupByOrderNumberButtonDidTapBinding()
         //  Action para ordenado por shopTransaction
         groupByShopTransactionButtonDidTapBinding()
-
         initExtension()
     }
 

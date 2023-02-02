@@ -145,7 +145,6 @@ extension OrderDetailViewModel {
                     self.rootViewModel.needsRefresh = true
                 }, onError: { [weak self] error in
                     self?.loading.onNext(false)
-                    print(error.localizedDescription)
                 }).disposed(by: self.disposeBag)
         }
     }
