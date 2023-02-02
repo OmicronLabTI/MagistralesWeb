@@ -13,5 +13,18 @@
 			  <column name="type" value="string" />      
 			  <column name="field" value="CardCodeResponsibleMedic" />    
 		  </insert> 
-	   </changeSet>  
+	   </changeSet> 
+
+	 <changeSet author="lreyes" id="changelog-1.1">
+			<insert tableName="parameters">      
+				 <column name="value" value="C02042" />      
+				 <column name="type" value="string" />      
+				 <column name="field" value="CardCodeResponsibleMedic" />    
+			</insert>				 
+			<insert tableName="parameters">      
+				 <column name="value" value="C00408" />      
+				 <column name="type" value="string" />      
+				 <column name="field" value="CardCodeResponsibleMedic" />    
+		    </insert> 
+		</changeSet> 	   
 </databaseChangeLog>
