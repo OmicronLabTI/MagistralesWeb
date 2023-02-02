@@ -435,7 +435,7 @@ namespace Omicron.Pedidos.Test
             {
                 listUsers = new List<UserModel>
                 {
-                    new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1 },
+                    new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1, TechnicalRequire = true },
                 };
             }
 

@@ -124,6 +124,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var resultFormula = await this.GetSapOrders(userOrders);
             var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders, isTecnic);
+            groups.RequireTechnical = users.First().TechnicalRequire;
             return ServiceUtils.CreateResult(true, 200, null, groups, null);
         }
 
