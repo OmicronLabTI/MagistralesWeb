@@ -901,6 +901,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QfbWithoutTecnic = "El químico {0} no tiene un técnico activo asignado, favor de realizar la asignación para poder continuar";
 
         /// <summary>
+        /// Reason unexpected error.
+        /// </summary>
+        public const string OrderWithoutTecnicSign = "No es posible Terminar, falta la firma del técnico para las ordenes de fabricación {0}";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
