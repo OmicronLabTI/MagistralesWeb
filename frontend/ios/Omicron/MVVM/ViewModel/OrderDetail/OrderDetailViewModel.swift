@@ -101,7 +101,6 @@ class OrderDetailViewModel {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: {[weak self] res in
                 guard let self = self else { return }
-                self.rootViewModel.requireTechnical = res.response?.requireTechnical ?? false
                 self.onSuccessOrderDetail(response: res, isRefresh)
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
