@@ -31,6 +31,7 @@ class RootViewModel {
     var searchStore = String()
     var needSearch = false
     var orders: [SectionOrder] = []
+    var requireTechnical = false
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
     var userType: UserType = UserType.technical
@@ -134,6 +135,7 @@ class RootViewModel {
         self.networkManager.getStatusList(userId).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             let sections = self.getSections(res: res)
+            self.requireTechnical = res.response?.requireTechnical ?? false
             self.sections = sections
             self.dataStatus.onNext(sections)
             self.orders = sections

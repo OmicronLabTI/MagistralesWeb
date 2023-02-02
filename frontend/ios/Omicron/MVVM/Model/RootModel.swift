@@ -55,11 +55,13 @@ class StatusResponse: HttpResponse {
 }
 class Status {
     var status: [StatusDetail]?
+    var requireTechnical: Bool?
     required init?(map: Map) {}
 }
 extension Status: Mappable {
     func mapping(map: Map) {
         self.status <- map["status"]
+        self.requireTechnical <- map["requireTechnical"]
     }
 }
 class StatusDetail {
