@@ -185,5 +185,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultModel> DeleteFiles();
+
+        /// <summary>
+        /// Sign orders by tecnic.
+        /// </summary>
+        /// <param name="tecnicOrderSignature">the model.</param>
+        /// <returns>the result.</returns>
+        Task<ResultModel> SignOrdersByTecnic(FinishOrderModel tecnicOrderSignature);
     }
 }

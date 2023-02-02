@@ -126,6 +126,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string OrdenVentaPlan = "Orden de venta planificada";
 
         /// <summary>
+        /// status planificada.
+        /// </summary>
+        public const string SignedStatus = "Firmado";
+
+        /// <summary>
         /// when the order goes to Proceso.
         /// </summary>
         public const string OrdenProceso = "La orden {0} paso a Proceso";

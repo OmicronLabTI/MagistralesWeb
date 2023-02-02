@@ -135,5 +135,15 @@ namespace Omicron.Pedidos.Services.Utils
         {
             return list.Count(x => x.InvoiceType == invoiceType && x.StatusInvoice == status);
         }
+
+        /// <summary>
+        /// validates if null and turns to upper.
+        /// </summary>
+        /// <param name="value">the value.</param>
+        /// <returns>the data.</returns>
+        public static string ValidateIfNull(this string value)
+        {
+            return string.IsNullOrEmpty(value) ? string.Empty : value;
+        }
     }
 }

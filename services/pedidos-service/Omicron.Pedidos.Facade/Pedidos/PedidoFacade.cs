@@ -297,5 +297,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.DeleteFiles());
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> SignOrdersByTecnic(FinishOrderDto tecnicOrderSignature)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.SignOrdersByTecnic(this.mapper.Map<FinishOrderModel>(tecnicOrderSignature)));
+        }
     }
 }
