@@ -63,7 +63,7 @@ extension InboxViewController: CardCellDelegate {
         cell.pdfDownloadButton.isHidden = !rootViewModel.needSearch
         cell.patientListButton.isHidden = !groupByOrderNumberButton.isEnabled && !rootViewModel.needSearch
         cell.qfbNameContainer.isHidden = rootViewModel.userType != .technical
-        cell.qfbName.text = "Quim. \(String(describing: element.qfbName))"
+        cell.qfbName.text = "Quím. \(String(describing: element.qfbName))"
         cell.itemCodeConstrains.constant = rootViewModel.userType != .technical ? 16 : 52
         cell.descriptionConstraint.constant = rootViewModel.userType != .technical ? 16 : 52
         return cell
