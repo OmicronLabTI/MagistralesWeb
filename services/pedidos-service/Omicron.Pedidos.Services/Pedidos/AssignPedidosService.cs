@@ -205,11 +205,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private async Task<ResultModel> ReassingarPedido(ManualAssignModel assign)
         {
-            var tecnicInfo = await ServiceUtils.GetTecnicInfoByQfbId(assign.UserId, this.userService);
-
-            if (ServiceShared.CalculateOr(!tecnicInfo.IsValidTecnic, !tecnicInfo.IsValidQfb))
+            var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(new List<string> { assign.UserId }, this.userService)).FirstOrDefault();
+            qfbInfoValidated ??= new QfbTecnicInfoDto();
+            if (ServiceShared.CalculateOr(!qfbInfoValidated.IsValidTecnic, !qfbInfoValidated.IsValidQfb))
             {
-                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{tecnicInfo.QfbFirstName} {tecnicInfo.QfbLastName}"), null, null);
+                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{qfbInfoValidated.QfbFirstName} {qfbInfoValidated.QfbLastName}"), null, null);
             }
 
             var listSaleOrders = assign.DocEntry.Select(x => x.ToString()).ToList();
@@ -220,7 +220,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var previousStatus = x.Status;
                 x.Status = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
                 x.Userid = assign.UserId;
-                x.TecnicId = tecnicInfo.TecnicId;
+                x.TecnicId = qfbInfoValidated.TecnicId;
                 x.StatusForTecnic = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
                 if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                 {

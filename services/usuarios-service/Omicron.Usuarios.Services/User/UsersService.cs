@@ -295,45 +295,30 @@ namespace Omicron.Usuarios.Services.User
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetTecnicInfoByQfbId(string qfbId)
+        public async Task<ResultModel> GetQfbInfoByIds(List<string> qfbIds)
         {
-            var qfbUser = await this.userDao.GetUserById(qfbId);
-            var tecnicInfo = new QfbTecnicInfoDto
+            var qfbUsers = (await this.userDao.GetUsersById(qfbIds)).ToList();
+            var tecnicUsers = (await this.userDao.GetUsersById(qfbUsers.Select(x => x.TecnicId).ToList())).ToList();
+            QfbTecnicInfoDto qfbInfo;
+            var qfbsInfoList = new List<QfbTecnicInfoDto>();
+
+            qfbUsers.ForEach(qfbUser =>
             {
-                QfbId = qfbUser.Id,
-                QfbFirstName = qfbUser.FirstName,
-                QfbLastName = qfbUser.LastName,
-                IsTecnicRequired = qfbUser.TechnicalRequire,
-                IsValidTecnic = true,
-                TecnicId = qfbUser.TecnicId,
-                IsValidQfb = true,
-            };
+                qfbInfo = new QfbTecnicInfoDto
+                {
+                    QfbId = qfbUser.Id,
+                    QfbFirstName = qfbUser.FirstName,
+                    QfbLastName = qfbUser.LastName,
+                    IsTecnicRequired = qfbUser.TechnicalRequire,
+                    IsValidTecnic = true,
+                    TecnicId = qfbUser.TecnicId,
+                    IsValidQfb = true,
+                };
 
-            if (ServiceUtils.CalculateOr(qfbUser.Deleted, qfbUser.Activo == 0, qfbUser.Asignable == 0))
-            {
-                tecnicInfo.IsValidQfb = false;
-                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, tecnicInfo, null, null);
-            }
+                qfbsInfoList.Add(this.QfbInfoValidator(qfbInfo, qfbUser, tecnicUsers));
+            });
 
-            if (!tecnicInfo.IsTecnicRequired)
-            {
-                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, tecnicInfo, null, null);
-            }
-
-            if (ServiceUtils.CalculateAnd(tecnicInfo.IsTecnicRequired, string.IsNullOrEmpty(tecnicInfo.TecnicId)))
-            {
-                tecnicInfo.IsValidTecnic = false;
-                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, tecnicInfo, null, null);
-            }
-
-            var tecnicInfoDetail = await this.userDao.GetUserById(qfbUser.TecnicId);
-
-            if (ServiceUtils.CalculateOr(tecnicInfoDetail.Activo == 0, tecnicInfoDetail.Deleted))
-            {
-                tecnicInfo.IsValidTecnic = false;
-            }
-
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, tecnicInfo, null, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, qfbsInfoList, null, null);
         }
 
         /// <summary>
@@ -385,6 +370,42 @@ namespace Omicron.Usuarios.Services.User
             var ids = orders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
             var sapResponse = await this.sapService.PostSapAdapter(ids, ServiceConstants.GetFabOrders);
             return JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
+        }
+
+        /// <summary>
+        /// Qfb validator info.
+        /// </summary>
+        /// <param name="qfbInfo">Qfb info start info.</param>
+        /// <param name="qfbUser">Database Qfb info.</param>
+        /// <param name="tecnicUsers">All tecnic users.</param>
+        /// <returns>Qfb validated info.</returns>
+        private QfbTecnicInfoDto QfbInfoValidator(QfbTecnicInfoDto qfbInfo, UserModel qfbUser, List<UserModel> tecnicUsers)
+        {
+            if (ServiceUtils.CalculateOr(qfbUser.Deleted, qfbUser.Activo == 0, qfbUser.Asignable == 0))
+            {
+                qfbInfo.IsValidQfb = false;
+                return qfbInfo;
+            }
+
+            if (!qfbInfo.IsTecnicRequired)
+            {
+                return qfbInfo;
+            }
+
+            if (ServiceUtils.CalculateAnd(qfbInfo.IsTecnicRequired, string.IsNullOrEmpty(qfbInfo.TecnicId)))
+            {
+                qfbInfo.IsValidTecnic = false;
+                return qfbInfo;
+            }
+
+            var tecnicInfoDetail = tecnicUsers.FirstOrDefault(tecnic => qfbUser.TecnicId.Equals(tecnic.Id));
+            tecnicInfoDetail ??= new UserModel { Activo = 0, Asignable = 0, Deleted = false };
+            if (ServiceUtils.CalculateOr(tecnicInfoDetail.Activo == 0, tecnicInfoDetail.Deleted, tecnicInfoDetail.Asignable == 0))
+            {
+                qfbInfo.IsValidTecnic = false;
+            }
+
+            return qfbInfo;
         }
     }
 }

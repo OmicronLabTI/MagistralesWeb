@@ -15,6 +15,7 @@ namespace Omicron.Pedidos.Services.Utils
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
@@ -46,11 +47,12 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>the result.</returns>
         public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi, IKafkaConnector kafkaConnector, IUsersService userService)
         {
-            var tecnicInfo = await ServiceUtils.GetTecnicInfoByQfbId(assignModel.UserId, userService);
+            var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(new List<string> { assignModel.UserId }, userService)).FirstOrDefault();
+            qfbInfoValidated ??= new QfbTecnicInfoDto();
 
-            if (ServiceShared.CalculateOr(!tecnicInfo.IsValidTecnic, !tecnicInfo.IsValidQfb))
+            if (ServiceShared.CalculateOr(!qfbInfoValidated.IsValidTecnic, !qfbInfoValidated.IsValidQfb))
             {
-                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{tecnicInfo.QfbFirstName} {tecnicInfo.QfbLastName}"), null, null);
+                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{qfbInfoValidated.QfbFirstName} {qfbInfoValidated.QfbLastName}"), null, null);
             }
 
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
@@ -72,7 +74,7 @@ namespace Omicron.Pedidos.Services.Utils
             {
                 x.Status = string.IsNullOrEmpty(x.Productionorderid) ? ServiceConstants.Liberado : ServiceConstants.Asignado;
                 x.Userid = assignModel.UserId;
-                x.TecnicId = tecnicInfo.TecnicId;
+                x.TecnicId = qfbInfoValidated.TecnicId;
                 x.StatusForTecnic = x.Status;
                 /** add logs**/
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));

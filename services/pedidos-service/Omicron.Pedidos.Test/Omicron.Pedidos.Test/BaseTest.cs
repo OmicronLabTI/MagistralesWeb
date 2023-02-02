@@ -669,24 +669,27 @@ namespace Omicron.Pedidos.Test
         /// </summary>
         /// <param name="isValidtecnic">Is valid tecnic.</param>
         /// <returns>the users.</returns>
-        public ResultModel GetQfbTecnicInfoDto(bool isValidtecnic)
+        public ResultModel GetQfbInfoDto(bool isValidtecnic)
         {
-            var tecnicInfo = new QfbTecnicInfoDto
+            var qfbValidatedInfo = new List<QfbTecnicInfoDto>
             {
-                IsTecnicRequired = true,
-                IsValidTecnic = isValidtecnic,
-                QfbFirstName = "Juan",
-                QfbLastName = "Pérez",
-                QfbId = "abc",
-                TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b801",
-                IsValidQfb = true,
+                new QfbTecnicInfoDto
+                {
+                    IsTecnicRequired = true,
+                    IsValidTecnic = isValidtecnic,
+                    QfbFirstName = "Juan",
+                    QfbLastName = "Pérez",
+                    QfbId = "abc",
+                    TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b801",
+                    IsValidQfb = true,
+                },
             };
 
             return new ResultModel
             {
                 Code = 200,
                 ExceptionMessage = string.Empty,
-                Response = tecnicInfo,
+                Response = qfbValidatedInfo,
                 Success = true,
                 UserError = string.Empty,
             };

@@ -123,8 +123,8 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(this.GetListCompleteDetailOrderModel()));
 
             mockUsers
-                .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetQfbTecnicInfoDto(isValidtecnic)));
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbInfoDto(isValidtecnic)));
 
             var pedidosServiceLocal = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, this.kafkaConnector.Object);
 
@@ -546,8 +546,8 @@ namespace Omicron.Pedidos.Test.Services
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
 
             mockUsers
-                .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetQfbTecnicInfoDto(isValidtecnic)));
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbInfoDto(isValidtecnic)));
 
             // act
             var assignPedidosService = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);

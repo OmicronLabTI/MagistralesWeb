@@ -107,10 +107,10 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         Task<ResultDto> GetQfbWithOrderCount();
 
         /// <summary>
-        /// Method to get tecnic info by Id.
+        /// Method to get qfbs info by Id.
         /// </summary>
-        /// <param name="qfbId">Qfb id.</param>
+        /// <param name="qfbIds">Qfb ids.</param>
         /// <returns>User Model.</returns>
-        Task<ResultDto> GetTecnicInfoByQfbId(string qfbId);
+        Task<ResultDto> GetQfbInfoByIds(List<string> qfbIds);
     }
 }

@@ -108,10 +108,10 @@ namespace Omicron.Usuarios.Services.User
         Task<ResultModel> GetActiveQfbWithOrcerCount();
 
         /// <summary>
-        /// Method to get tecnic info by Id.
+        /// Method to get qfb's info by Id.
         /// </summary>
-        /// <param name="qfbId">Qfb id.</param>
+        /// <param name="qfbIds">Qfb ids.</param>
         /// <returns>User Model.</returns>
-        Task<ResultModel> GetTecnicInfoByQfbId(string qfbId);
+        Task<ResultModel> GetQfbInfoByIds(List<string> qfbIds);
     }
 }
