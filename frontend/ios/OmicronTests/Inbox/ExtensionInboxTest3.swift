@@ -14,6 +14,7 @@ import Moya
 @testable import OmicronLab
 class ExtensionInboxTest3: XCTestCase {
     var inboxViewModel: InboxViewModel?
+    var rootViewModel: RootViewModel?
     var disposeBag: DisposeBag?
     var order1: Order?
     var expectedResult: String?
@@ -99,6 +100,33 @@ class ExtensionInboxTest3: XCTestCase {
     func testCallFinishOrderService() {
         inboxViewModel?.qfbSignatureIsGet = true
         inboxViewModel?.technicalSignatureIsGet = true
+        rootViewModel?.requireTechnical = false
+        rootViewModel?.userType = .qfb
+        inboxViewModel?.indexPathOfOrdersSelected = [IndexPath(row: 0, section: 0)]
+        inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
+        inboxViewModel?.isUserInteractionEnabled.subscribe(onNext: { res in
+            XCTAssertTrue(res)
+        }).disposed(by: disposeBag!)
+        inboxViewModel?.callFinishOrderService()
+    }
+
+    func testCallFinishOrderServiceWithTechnicalRequiredAsQFB() {
+        inboxViewModel?.qfbSignatureIsGet = true
+        inboxViewModel?.technicalSignatureIsGet = false
+        rootViewModel?.requireTechnical = true
+        rootViewModel?.userType = .qfb
+        inboxViewModel?.indexPathOfOrdersSelected = [IndexPath(row: 0, section: 0)]
+        inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
+        inboxViewModel?.isUserInteractionEnabled.subscribe(onNext: { res in
+            XCTAssertTrue(res)
+        }).disposed(by: disposeBag!)
+        inboxViewModel?.callFinishOrderService()
+    }
+    func testCallFinishOrderServiceWithTechnicalRequiredAsTechnical() {
+        inboxViewModel?.qfbSignatureIsGet = false
+        inboxViewModel?.technicalSignatureIsGet = true
+        rootViewModel?.requireTechnical = true
+        rootViewModel?.userType = .technical
         inboxViewModel?.indexPathOfOrdersSelected = [IndexPath(row: 0, section: 0)]
         inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
         inboxViewModel?.isUserInteractionEnabled.subscribe(onNext: { res in
