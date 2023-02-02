@@ -882,5 +882,24 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.IsNotNull(response);
             Assert.IsTrue(response.Success);
         }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task SignOrdersByTecnic()
+        {
+            // act
+            var response = await this.pedidoFacade.SignOrdersByTecnic(new FinishOrderDto());
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
     }
 }

@@ -1166,5 +1166,34 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(result);
         }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task SignOrdersByTecnic()
+        {
+            // arrange
+            var update = new FinishOrderModel
+            {
+                FabricationOrderId = new List<int> { 100, 200 },
+                TechnicalSignature = "QXhpdHkyMDIw",
+                UserId = "abc",
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+
+            // act
+            var response = await pedidoServiceLocal.SignOrdersByTecnic(update);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }

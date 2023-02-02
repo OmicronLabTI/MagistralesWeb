@@ -270,5 +270,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> DeleteFiles();
+
+        /// <summary>
+        /// Sign orders by tecnic.
+        /// </summary>
+        /// <param name="tecnicOrderSignature">the model.</param>
+        /// <returns>the result.</returns>
+        Task<ResultDto> SignOrdersByTecnic(FinishOrderDto tecnicOrderSignature);
     }
 }
