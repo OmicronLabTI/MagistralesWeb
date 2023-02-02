@@ -56,7 +56,14 @@ extension InboxViewModel {
         }).disposed(by: disposeBag)
     }
 
-    func finisOrderService(_ finishOrder: FinishOrder) {
+    func finishOrderService(qfbSignature: String, technicalSignature: String) {
+        loading.onNext(true)
+        guard let userID = Persistence.shared.getUserData()?.id,
+              let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
+        let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
+        let finishOrder = FinishOrder(
+            userId: userID, fabricationOrderId: orderIds, qfbSignature: qfbSignature,
+            technicalSignature: technicalSignature)
         networkManager.finishOrder(finishOrder)
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
@@ -138,31 +145,26 @@ extension InboxViewModel {
     }
 
     func callFinishOrderService() {
-        if qfbSignatureIsGet && technicalSignatureIsGet {
-            loading.onNext(true)
-            guard let userID = Persistence.shared.getUserData()?.id,
-                  let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
-            let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
-            let finishOrder = FinishOrder(
-                userId: userID, fabricationOrderId: orderIds, qfbSignature: sqfbSignature,
-                technicalSignature: technicalSignature)
-
-            finisOrderService(finishOrder)
+        if qfbSignatureIsGet && technicalSignatureIsGet && !rootViewModel.requireTechnical {
+            finishOrderService(qfbSignature: sqfbSignature, technicalSignature: technicalSignature)
+        }
+        if qfbSignatureIsGet && rootViewModel.requireTechnical {
+            finishOrderService(qfbSignature: sqfbSignature, technicalSignature: "")
         }
         if technicalSignatureIsGet && rootViewModel.userType == .technical {
-            loading.onNext(true)
-            guard let userID = Persistence.shared.getUserData()?.id,
-                  let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
-            let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
-            let packageOrder = FinishOrder(
-                userId: userID, fabricationOrderId: orderIds, qfbSignature: "",
-                technicalSignature: technicalSignature)
-            packageOrdersService(data: packageOrder)
+            packageOrdersService(qfbSignature: "", technicalSignature: technicalSignature)
         }
     }
 
-    func packageOrdersService(data: FinishOrder) {
-        networkManager.packageOrders(data)
+    func packageOrdersService(qfbSignature: String, technicalSignature: String) {
+        loading.onNext(true)
+        guard let userID = Persistence.shared.getUserData()?.id,
+              let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
+        let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
+        let packageOrder = FinishOrder(
+            userId: userID, fabricationOrderId: orderIds, qfbSignature: qfbSignature,
+            technicalSignature: technicalSignature)
+        networkManager.packageOrders(packageOrder)
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)
