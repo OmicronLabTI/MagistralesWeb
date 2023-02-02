@@ -263,7 +263,8 @@ class InboxViewController: UIViewController {
         self.groupByOrderNumberButton.setImage(UIImage(systemName: ImageButtonNames.rectangule3offgrid), for: .normal)
         let layout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 60)
-        layout.itemSize = CGSize(width: 700, height: 180)
+        let size = rootViewModel.userType != .technical ? 180 : 210
+        layout.itemSize = CGSize(width: 700, height: size)
         layout.minimumLineSpacing = 16
         collectionView.setCollectionViewLayout(layout, animated: true)
         heigthCollectionViewConstraint.constant = -60
