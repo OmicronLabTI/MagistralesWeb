@@ -893,7 +893,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// Gets the users by role from user service.
         /// </summary>
-        public const string GetTecnicByQfbId = "gettecnic/info/{0}";
+        public const string GetQfbInfoById = "getqfb/info/byids";
 
         /// <summary>
         /// Reason unexpected error.

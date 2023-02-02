@@ -157,13 +157,13 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         }
 
         /// <summary>
-        /// Method to get tecnic info by Id.
+        /// Method to get qfb's info by Id.
         /// </summary>
-        /// <param name="qfbId">Qfb id.</param>
+        /// <param name="qfbIds">Qfb id.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public async Task<ResultDto> GetTecnicInfoByQfbId(string qfbId)
+        public async Task<ResultDto> GetQfbInfoByIds(List<string> qfbIds)
         {
-            return this.mapper.Map<ResultDto>(await this.usersService.GetTecnicInfoByQfbId(qfbId));
+            return this.mapper.Map<ResultDto>(await this.usersService.GetQfbInfoByIds(qfbIds));
         }
     }
 }

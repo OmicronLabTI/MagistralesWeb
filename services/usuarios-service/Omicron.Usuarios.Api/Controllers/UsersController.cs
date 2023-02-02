@@ -188,15 +188,15 @@ namespace Omicron.Usuarios.Api.Controllers
         }
 
         /// <summary>
-        /// Method to get tecnic info by Id.
+        /// Method to get qfb info by Id.
         /// </summary>
-        /// <param name="qfbId">Qfb id.</param>
+        /// <param name="qfbIds">Qfb idx.</param>
         /// <returns>User Model.</returns>
-        [Route("/gettecnic/info/{qfbId}")]
-        [HttpGet]
-        public async Task<IActionResult> GetTecnicInfoByQfbId(string qfbId)
+        [Route("/getqfb/info/byids")]
+        [HttpPost]
+        public async Task<IActionResult> GetQfbInfoByIds(List<string> qfbIds)
         {
-            var result = await this.userFacade.GetTecnicInfoByQfbId(qfbId);
+            var result = await this.userFacade.GetQfbInfoByIds(qfbIds);
             return this.Ok(result);
         }
 

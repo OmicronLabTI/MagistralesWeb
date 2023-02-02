@@ -11,13 +11,16 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Text;
     using System.Threading.Tasks;
     using AutoMapper.Configuration.Annotations;
+    using Confluent.Kafka;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
@@ -121,6 +124,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var resultFormula = await this.GetSapOrders(userOrders);
             var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders, isTecnic);
+            groups.RequireTechnical = users.First().TechnicalRequire;
             return ServiceUtils.CreateResult(true, 200, null, groups, null);
         }
 
@@ -151,10 +155,17 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder)
         {
+            var isTecnicUser = updateStatusOrder.All(x => (UserRoleType)x.UserRoleType == UserRoleType.Tecnic);
+            var (isValidQfbs, message) = await this.ValidateQfbConfiguration(updateStatusOrder, isTecnicUser);
+
+            if (ServiceShared.CalculateOr(!isValidQfbs))
+            {
+                return ServiceUtils.CreateResult(false, 400, message, null, null);
+            }
+
             var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
             var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
-            var isTecnicUser = updateStatusOrder.All(x => (UserRoleType)x.UserRoleType == UserRoleType.Tecnic);
 
             ordersList.ForEach(x =>
             {
@@ -1014,6 +1025,28 @@ namespace Omicron.Pedidos.Services.Pedidos
                 signature.QfbSignature = ServiceShared.CalculateTernary(qfbSignatureAsByte.Length > 0, qfbSignatureAsByte, signature.QfbSignature);
                 listToUpdate.Add(signature);
             }
+        }
+
+        private async Task<(bool isValidQfbs, string message)> ValidateQfbConfiguration(List<UpdateStatusOrderModel> updateStatusOrder, bool isTecnicUser)
+        {
+            var isValidQfbs = true;
+            var message = string.Empty;
+
+            if (isTecnicUser)
+            {
+                return (isValidQfbs, message);
+            }
+
+            var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(updateStatusOrder.Select(x => x.UserId).ToList(), this.userService)).ToList();
+            var invalidQfbs = qfbInfoValidated.Where(qfb => ServiceShared.CalculateOr(!qfb.IsValidQfb, !qfb.IsValidTecnic));
+
+            if (invalidQfbs.Any())
+            {
+                message = string.Format(ServiceConstants.QfbWithoutTecnic, string.Join(",", invalidQfbs.Select(x => $"{x.QfbFirstName} {x.QfbLastName}")));
+                isValidQfbs = false;
+            }
+
+            return (isValidQfbs, message);
         }
     }
 }
