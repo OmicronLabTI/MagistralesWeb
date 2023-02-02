@@ -50,25 +50,43 @@ extension LotsViewModel {
 
     // Valida si el usuario obtuvo las firmas y finaliza la orden
     func callFinishOrderService() {
-        if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
-            self.loading.onNext(true)
-            let finishOrder = FinishOrder(
-                userId: Persistence.shared.getUserData()?.id ?? String(), fabricationOrderId: [self.orderId],
-                qfbSignature: self.sqfbSignature, technicalSignature: technicalSignature)
-            self.networkManager.finishOrder(finishOrder)
-                .subscribe(onNext: { [weak self] _ in
-                    guard let self = self else { return }
-                    self.loading.onNext(false)
-                    self.backToInboxView.onNext(())
-                    self.rootViewModel.needsRefresh = true
-                }, onError: {[weak self] error in
-                    self?.loading.onNext(false)
-                    self?.showMessage.onNext(CommonStrings.errorFinishOrder)
-                    print(error.localizedDescription)
-            }).disposed(by: self.disposeBag)
+        if self.rootViewModel.requireTechnical {
+            finishOrderWithTechnical()
+        } else {
+            finishOrderWithoutTechnical()
         }
     }
 
+    func finishOrderWithoutTechnical() {
+        if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
+            finishOrderService(qfbSignature: self.sqfbSignature,
+                               technicalSignature: technicalSignature)
+        }
+    }
+    func finishOrderWithTechnical() {
+        if self.qfbSignatureIsGet {
+            finishOrderService(qfbSignature: self.sqfbSignature,
+                               technicalSignature: "")
+        }
+    }
+    func finishOrderService(qfbSignature: String, technicalSignature: String) {
+        self.loading.onNext(true)
+        let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()?.id ?? String(),
+                                      fabricationOrderId: [self.orderId],
+                                      qfbSignature: qfbSignature,
+                                      technicalSignature: technicalSignature)
+        self.networkManager.finishOrder(finishOrder)
+            .subscribe(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.backToInboxView.onNext(())
+                self.rootViewModel.needsRefresh = true
+            }, onError: {[weak self] error in
+                self?.loading.onNext(false)
+                self?.showMessage.onNext(CommonStrings.errorFinishOrder)
+                print(error.localizedDescription)
+        }).disposed(by: self.disposeBag)
+    }
     // Pregunta al server si la orden puede ser finaliada o no
     func validIfOrderCanBeFinalized() {
         self.loading.onNext(true)
