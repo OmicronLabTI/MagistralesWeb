@@ -17,6 +17,11 @@ export class IQfbWithNumberRes extends BaseResponseHttp {
     response: QfbWithNumber[];
 
 }
+
+export class ClasificationsResponse extends BaseResponseHttp {
+    response: Clasification[];
+}
+
 export class IUserReq {
     id?: string;
     userName: string;
@@ -86,4 +91,13 @@ export class SearchUsersData {
     activoSe: string;
     asignableSe: string;
     classificationQFBSe: string;
+}
+
+export class Clasification {
+    value: string;
+    description: string;
+    constructor() {
+        this.value = '';
+        this.description = '';
+    }
 }

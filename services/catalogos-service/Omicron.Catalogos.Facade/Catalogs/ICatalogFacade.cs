@@ -29,5 +29,11 @@ namespace Omicron.Catalogos.Facade.Catalogs
         /// <param name="parameters">the dictionary.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetParamsContains(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
+        Task<ResultDto> GetActiveClassificationQfb();
     }
 }

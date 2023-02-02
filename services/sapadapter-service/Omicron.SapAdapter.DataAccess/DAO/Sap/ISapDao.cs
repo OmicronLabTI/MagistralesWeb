@@ -7,7 +7,7 @@
 // </summary>
 
 namespace Omicron.SapAdapter.DataAccess.DAO.Sap
-{    
+{
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -119,7 +119,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="salesOrderIds">the sales order ids.</param>        
         /// <returns>the data.</returns>
         Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderBySalesOrderId(List<int> salesOrderIds);
-        
+
         /// <summary>
         /// gets the realtion between WOR1, OITM ans OITW.
         /// </summary>
@@ -514,7 +514,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByDocNumDxpJoinProduct(List<string> DocNumDxp);
+        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByDocNumDxpJoinProduct(string DocNumDxp);
 
         /// <summary>
         /// Get the orders.

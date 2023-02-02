@@ -214,6 +214,7 @@ namespace Omicron.Pedidos.Services.Utils
                                 AreBatchesComplete = o.AreBatchesComplete == 1,
                                 PatientName = sapOrder.PatientName,
                                 ClientDxp = sapOrder.ClientDxp,
+                                ShopTransaction = sapOrder.ShopTransaction,
                             };
 
                             ordersDetail.Add(order);
@@ -429,6 +430,17 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             return (sapOrders, productionOrders.ToList(), preProductionOrders.ToList());
+        }
+
+        /// <summary>
+        /// validates if null and turns to upper.
+        /// </summary>
+        /// <param name="value">the value.</param>
+        /// <param name="last">The long of subtring from end to last.</param>
+        /// <returns>the data.</returns>
+        public static string GetSubstring(this string value, int last)
+        {
+            return !string.IsNullOrEmpty(value) ? value.Substring(value.Length - last, last).ToUpper() : value;
         }
 
         /// <summary>

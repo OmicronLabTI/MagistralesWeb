@@ -331,3 +331,10 @@ export enum CatalogTypes {
     magistralMedicament = 'Magistral Medicament',
     magistralDermocos = 'Magistral Dermocos'
 }
+
+export const TypeClasifications = {
+    dermazone: 'DZ',
+    bioelite: 'MN',
+    bioequal: 'BE',
+    magistral: 'MG',
+};

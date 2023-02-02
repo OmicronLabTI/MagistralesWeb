@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { CONST_STRING, MODAL_FIND_ORDERS } from '../../constants/const';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UsersService } from '../../services/users.service';
-import { RoleUser } from '../../model/http/users';
+import { Clasification, RoleUser } from '../../model/http/users';
 import { ErrorService } from '../../services/error.service';
 import { DataService } from '../../services/data.service';
 
@@ -18,6 +18,7 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
   subscription = new Subscription();
   isCorrectData = false;
   userRoles: RoleUser[] = [];
+  clasifications: Clasification[] = [];
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<SearchUsersDialogComponent>,
@@ -37,6 +38,7 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.getClassifications();
     this.subscription.add(this.searchUserForm.valueChanges.subscribe(searchValue => {
       if (searchValue.userNameSe) {
         this.searchUserForm.get('userNameSe').setValue(
@@ -59,21 +61,31 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
       this.errorService.httpError(error);
       this.dialogRef.close();
     });
-    this.searchUserForm.get('userNameSe').setValue(this.searchData.userNameSe && this.searchData.userNameSe !== '' ?
-      this.searchData.userNameSe : CONST_STRING.empty);
-    this.searchUserForm.get('firstNameSe').setValue(this.searchData.firstNameSe && this.searchData.firstNameSe !== '' ?
-      this.searchData.firstNameSe : CONST_STRING.empty);
-    this.searchUserForm.get('lastNameSe').setValue(this.searchData.lastNameSe && this.searchData.lastNameSe !== '' ?
-      this.searchData.lastNameSe : CONST_STRING.empty);
-    this.searchUserForm.get('activoSe').setValue(this.searchData.activoSe && this.searchData.activoSe !== '' ?
-      this.searchData.activoSe : CONST_STRING.empty);
-    this.searchUserForm.get('asignableSe').setValue(this.searchData.asignableSe && this.searchData.asignableSe !== '' ?
-      this.searchData.asignableSe : CONST_STRING.empty);
-    // tslint:disable-next-line:max-line-length
-    this.searchUserForm.get('classificationQFBSe').setValue(this.searchData.classificationQFBSe && this.searchData.classificationQFBSe !== '' ?
-      this.searchData.classificationQFBSe : CONST_STRING.empty);
   }
 
+  setFormValues(): void {
+    this.setControlValue('userNameSe', this.searchData.userNameSe);
+    this.setControlValue('firstNameSe', this.searchData.firstNameSe);
+    this.setControlValue('lastNameSe', this.searchData.lastNameSe);
+    this.setControlValue('activoSe', this.searchData.activoSe);
+    this.setControlValue('asignableSe', this.searchData.asignableSe);
+    this.setControlValue('classificationQFBSe', this.searchData.classificationQFBSe);
+  }
+
+  setControlValue(formControlName: string, value: string): void {
+    this.searchUserForm.get(formControlName).setValue(value !== null && value !== undefined ?
+      value :
+      CONST_STRING.empty);
+  }
+  getClassifications(): void {
+    this.usersService.getClasifications().subscribe((res) => {
+      this.clasifications = Object.assign(res.response, []);
+      this.setFormValues();
+    }, error => {
+      this.errorService.httpError(error);
+      this.dialogRef.close();
+    });
+  }
 
   searchUser(): void {
     this.dialogRef.close(this.searchUserForm.value);

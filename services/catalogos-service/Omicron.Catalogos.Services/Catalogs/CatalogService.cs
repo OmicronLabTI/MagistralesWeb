@@ -55,5 +55,12 @@ namespace Omicron.Catalogos.Services.Catalogs
             var dataParams = (await this.catalogDao.GetParamsByField(dictKeys)).DistinctBy(x => x.Id).ToList();
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, dataParams, null);
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetActiveClassificationQfb()
+        {
+            var classifications = (await this.catalogDao.GetActiveClassificationQfb()).Select(x => new { x.Value, x.Description }).OrderBy(x => x.Description).ToList();
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, classifications, null);
+        }
     }
 }

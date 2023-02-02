@@ -29,5 +29,11 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetParamsContains(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
+        Task<ResultModel> GetActiveClassificationQfb();
     }
 }

@@ -112,7 +112,7 @@ namespace Omicron.SapAdapter.Services.Sap
             if (isDxpId)
             {
                 var dxpToLookUp = docNum.ToLower().Remove(0, 1);
-                var ordersdxp = (await this.sapDao.GetAllOrdersWIthDetailByDocNumDxpJoinProduct(new List<string> { dxpToLookUp })).ToList();
+                var ordersdxp = (await this.sapDao.GetAllOrdersWIthDetailByDocNumDxpJoinProduct(dxpToLookUp)).ToList();
                 var salesId = ordersdxp.Select(o => o.DocNum).Distinct().ToList();
                 listDocs.AddRange(salesId);
             }
@@ -647,7 +647,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeOrder = header.TypeOrder,
                     IsPackage = header.IsPackage == ServiceConstants.IsPackage,
                     IsOmigenomics = header.IsOmigenomics == ServiceConstants.IsOmigenomics,
-                    DxpId = header.DocNumDxp,
+                    DxpId = header.DocNumDxp.GetShortShopTransaction(),
                 });
             }
 

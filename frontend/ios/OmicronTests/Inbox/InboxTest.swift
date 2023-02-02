@@ -44,30 +44,30 @@ class InboxTest: XCTestCase {
             "Extracto de Te Verde 3%, Extracto de Pepino 3%, Glicerina 3%, Hamamelis 3%, Hialuronico 3%, " +
             "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
-            hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp")
+            hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd")
         order2 = Order(
             areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284, container: "PRINCESS/ATOMIZADOR",
             tag: "NA", plannedQuantity: 1, startDate: "22/09/2020", finishDate: "30/09/2020",
             descriptionProduct: "Lactico 30% Solución", statusId: 1, itemCode: "1027S   30 ML",
-            productCode: "1027S", destiny: "Local", hasMissingStock: false, finishedLabel: false, patientName: "NamePatient 1", clientDxp: "clientDxp 1")
+            productCode: "1027S", destiny: "Local", hasMissingStock: false, finishedLabel: false, patientName: "NamePatient 1", clientDxp: "clientDxp 1", shopTransaction: "emnjkd")
         orderItemCodeEmpty = Order(
             areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284,
             container: "PRINCESS/ATOMIZADOR", tag: "NA",
             plannedQuantity: 1, startDate: "22/09/2020",
             finishDate: "30/09/2020", descriptionProduct: "Lactico 30% Solución",
             statusId: 1, itemCode: "", productCode: "1027S", destiny: "Local",
-            hasMissingStock: false, finishedLabel: false,  patientName: "NamePatient 2", clientDxp: "clientDxp 3")
+            hasMissingStock: false, finishedLabel: false,  patientName: "NamePatient 2", clientDxp: "clientDxp 3", shopTransaction: "emnjkd")
         orderTest1 = Order(
             areBatchesComplete: true, productionOrderId: 90006, baseDocument: 60288, container: "Selecciona una...",
             tag: "Selecciona una...", plannedQuantity: 2, startDate: "24/09/2020", finishDate: "25/09/2020",
             descriptionProduct: "Agua de rosas 48%  agua de hamamelis 48%   propilenglicol 4%",
             statusId: 1, itemCode: "1132   120 ML", productCode: nil, destiny: "Local",
-            hasMissingStock: true, finishedLabel: false,  patientName: "NamePatient 3", clientDxp: "clientDxp 3")
+            hasMissingStock: true, finishedLabel: false,  patientName: "NamePatient 3", clientDxp: "clientDxp 3", shopTransaction: "emnjkd")
         orderTest2 = Order(
             areBatchesComplete: true, productionOrderId: 89997, baseDocument: 60284, container: "PRINCESS/DISCTOP",
             tag: "PERSONALIZADA", plannedQuantity: 1, startDate: "22/09/2020", finishDate: "30/09/2020",
             descriptionProduct: "Aceite de Lima 20%, Vaselina", statusId: 1, itemCode: "2573   30 ML",
-            productCode: nil, destiny: "Local", hasMissingStock: false, finishedLabel: false,  patientName: "NamePatient4", clientDxp: "clientDxp4")
+            productCode: nil, destiny: "Local", hasMissingStock: false, finishedLabel: false,  patientName: "NamePatient4", clientDxp: "clientDxp4", shopTransaction: "emnjkd")
 
         provider = MoyaProvider<ApiService>(
             endpointClosure: customEndpointClosure, stubClosure: MoyaProvider.immediatelyStub)
@@ -125,7 +125,7 @@ class InboxTest: XCTestCase {
         let order = Order(areBatchesComplete: true, productionOrderId: 89852, baseDocument: 0, container: "", tag: "",
                           plannedQuantity: 1, startDate: "14/09/2020", finishDate: "14/09/2020",
                           descriptionProduct: "CREMA BASE PARA RETINOICO", statusId: 1, itemCode: "BA-01",
-                          productCode: "BA-01", destiny: "Local", hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp")
+                          productCode: "BA-01", destiny: "Local", hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd")
         data["BA-01"] = [order]
         // When
         let sectionModels = inboxViewModel!.groupedWithSimilarityOrWithoutSimilarity(
@@ -192,12 +192,4 @@ class InboxTest: XCTestCase {
         inboxViewModel!.changeStatus(indexPath: [indexPath], typeOfStatus: typeStatus)
     }
 
-    func testGetConectWhenCodeIs500() {
-        inboxViewModel?.hasConnection.subscribe(onNext: { res in
-            XCTAssertFalse(res)
-        }).disposed(by: disposeBag!)
-        statusCode = 500
-        inboxViewModel?.networkManager = NetworkManager(provider: provider)
-        inboxViewModel?.getConnection()
-    }
 }

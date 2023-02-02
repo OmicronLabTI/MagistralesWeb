@@ -29,5 +29,11 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// <param name="fields">the data to look.</param>
         /// <returns>the data to return.</returns>
         Task<IEnumerable<ParametersModel>> GetParamsByField(List<string> fields);
+
+        /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
+        Task<IEnumerable<ClassificationQfbModel>> GetActiveClassificationQfb();
     }
 }
