@@ -312,6 +312,13 @@ namespace Omicron.Pedidos.Entities.Model
         public bool IsProductionOrder => !string.IsNullOrEmpty(this.Productionorderid);
 
         /// <summary>
+        /// Gets or sets QFB Name.
+        /// </summary>
+        /// <value>String QFB Name.</value>
+        [NotMapped]
+        public string QfbName { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>
