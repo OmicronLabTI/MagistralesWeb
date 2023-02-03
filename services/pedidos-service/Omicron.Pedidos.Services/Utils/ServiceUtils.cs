@@ -492,6 +492,7 @@ namespace Omicron.Pedidos.Services.Utils
                             PatientName = sapOrder.PatientName,
                             ClientDxp = sapOrder.ClientDxp,
                             ShopTransaction = sapOrder.ShopTransaction,
+                            QfbName = o.QfbName,
                         };
 
                         ordersDetail.Add(order);
