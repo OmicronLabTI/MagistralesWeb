@@ -86,6 +86,9 @@ export class PlaceOrderDialogComponent implements OnInit {
             case QfbClassification.be:
                 this.currentQfbType = QfbClassification.be;
                 break;
+            case QfbClassification.dz:
+                this.currentQfbType = QfbClassification.dz;
+                break;
         }
         if (!isFromInit) {
             this.changeCurrentQfbs();
