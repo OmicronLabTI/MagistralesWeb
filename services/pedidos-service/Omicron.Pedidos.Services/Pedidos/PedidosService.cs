@@ -113,6 +113,13 @@ namespace Omicron.Pedidos.Services.Pedidos
                                 x.StatusForTecnic == ServiceConstants.Pendiente ||
                                 x.StatusForTecnic == ServiceConstants.Reasignado)
                     .ToList();
+                foreach (var order in userOrders)
+                {
+                    var usersqfb = await this.userService.PostSimpleUsers(new List<string> { order.Userid }, ServiceConstants.GetUsersById);
+                    var user = JsonConvert.DeserializeObject<List<UserModel>>(usersqfb.Response.ToString());
+                    order.QfbName = string.Concat(user.FirstOrDefault().FirstName, " ", user.FirstOrDefault().LastName);
+                }
+
                 userOrders.ForEach(x => x.Status = x.StatusForTecnic);
             }
             else
