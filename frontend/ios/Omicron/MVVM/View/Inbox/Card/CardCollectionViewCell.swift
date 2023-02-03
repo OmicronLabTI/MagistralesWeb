@@ -33,6 +33,10 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var manufacturingOrder: UILabel!
     @IBOutlet weak var patientListButton: UIButton!
     @IBOutlet weak var pdfDownloadButton: UIButton!
+    @IBOutlet weak var qfbName: UILabel!
+    @IBOutlet weak var qfbNameContainer: UIView!
+    @IBOutlet weak var itemCodeConstrains: NSLayoutConstraint!
+    @IBOutlet weak var descriptionConstraint: NSLayoutConstraint!
     weak var delegate: CardCellDelegate?
     var row: Int = -1
 

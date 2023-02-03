@@ -569,16 +569,20 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the processs.
         /// </summary>
+        /// <param name="qfbSignature">Qfb signature.</param>
+        /// <param name="technicalSignature">Technical Signature.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task FinishOrder()
+        [TestCase("QXhpdHkyMDIw", null)]
+        [TestCase("QXhpdHkyMDIw", "QXhpdHkyMDIw")]
+        public async Task FinishOrder(string qfbSignature, string technicalSignature)
         {
             // arrange
             var update = new FinishOrderModel
             {
                 FabricationOrderId = new List<int> { 100 },
-                TechnicalSignature = "QXhpdHkyMDIw",
-                QfbSignature = "QXhpdHkyMDIw",
+                TechnicalSignature = technicalSignature,
+                QfbSignature = qfbSignature,
                 UserId = "abc",
             };
 

@@ -108,5 +108,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string ShopTransaction { get; set; }
+
+        /// <summary>
+        /// Gets or sets QFB Name.
+        /// </summary>
+        /// <value>String QFB Name.</value>
+        public string QfbName { get; set; }
     }
 }
