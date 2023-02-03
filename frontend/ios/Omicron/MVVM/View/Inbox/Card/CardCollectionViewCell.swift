@@ -14,7 +14,6 @@ protocol CardCellDelegate: NSObjectProtocol {
     func detailTapped(order: Order)
     func patientList(order: Order)
     func downloadPdf(id: Int)
-    
 }
 
 class CardCollectionViewCell: UICollectionViewCell {
@@ -99,16 +98,16 @@ class CardCollectionViewCell: UICollectionViewCell {
     func assignedStyleCard(color: CGColor) {
         layer.cornerRadius = CGFloat(20)
         layer.borderColor = color
-        layer.borderWidth = CGFloat(1)
+        layer.borderWidth = CGFloat(4)
     }
 
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                layer.borderWidth = CGFloat(5)
+                layer.borderWidth = CGFloat(10)
                 missingStockImage.layer.borderWidth = 3
             } else {
-                layer.borderWidth = CGFloat(1)
+                layer.borderWidth = CGFloat(4)
                 missingStockImage.layer.borderWidth = 1
             }
         }
@@ -124,12 +123,11 @@ class CardCollectionViewCell: UICollectionViewCell {
         guard let order = self.order else { return }
         self.delegate?.downloadPdf(id: Int(order.baseDocument!))
     }
-    
+
     func detail() {
         guard let order = self.order else { return }
         self.delegate?.detailTapped(order: order)
     }
-    
 
     private func makeRoundedMissingStockImage() {
         missingStockImage.layer.borderWidth = 1
