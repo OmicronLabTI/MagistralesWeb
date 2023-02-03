@@ -304,6 +304,25 @@ class InboxViewController: UIViewController {
     }
     private func hideButtons(title: String) {
         showContainersButtons.isHidden = true
+        if(rootViewModel.userType == .technical){
+            hideButtonsTechnical(title)
+        } else {
+            hideButtonsQfB(title)
+        }
+    }
+
+    func hideButtonsTechnical(_ title: String) {
+        switch title {
+        case StatusNameConstants.assignedStatus:
+            self.changePropertyIsHiddenStatusButtons(true, true, false, true)
+            showContainersButtons.isHidden = false
+        case StatusNameConstants.penddingStatus: self.changePropertyIsHiddenStatusButtons(false, true, true, true)
+        case StatusNameConstants.reassignedStatus: self.changePropertyIsHiddenStatusButtons(true, true, false, true)
+        default: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
+        }
+    }
+
+    func hideButtonsQfB(_ title: String) {
         switch title {
         case StatusNameConstants.assignedStatus:
             self.changePropertyIsHiddenStatusButtons(false, true, false, false)
@@ -315,6 +334,7 @@ class InboxViewController: UIViewController {
         default: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
         }
     }
+
     private func changePropertyIsHiddenStatusButtons(
         _ processButtonIsHidden: Bool,
         _ finishedButtonIsHidden: Bool,

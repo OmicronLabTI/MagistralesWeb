@@ -102,16 +102,16 @@ class CardCollectionViewCell: UICollectionViewCell {
     func assignedStyleCard(color: CGColor) {
         layer.cornerRadius = CGFloat(20)
         layer.borderColor = color
-        layer.borderWidth = CGFloat(1)
+        layer.borderWidth = CGFloat(4)
     }
 
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                layer.borderWidth = CGFloat(5)
+                layer.borderWidth = CGFloat(10)
                 missingStockImage.layer.borderWidth = 3
             } else {
-                layer.borderWidth = CGFloat(1)
+                layer.borderWidth = CGFloat(4)
                 missingStockImage.layer.borderWidth = 1
             }
         }
