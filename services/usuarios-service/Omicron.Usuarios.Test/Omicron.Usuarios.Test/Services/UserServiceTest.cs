@@ -408,18 +408,22 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// Updates the user.
         /// </summary>
-        /// <param name="qfbId">Qfb id.</param>
         /// <returns>the user.</returns>
         [Test]
-        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b801")]
-        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b802")]
-        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b803")]
-        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b804")]
-        [TestCase("6bc7f8a8-8617-43ac-a804-79cf9667b807")]
-        public async Task GetTecnicInfoByQfbId(string qfbId)
+
+        public async Task GetQfbInfoByIds()
         {
+            var qfbIds = new List<string>
+            {
+                "6bc7f8a8-8617-43ac-a804-79cf9667b801",
+                "6bc7f8a8-8617-43ac-a804-79cf9667b802",
+                "6bc7f8a8-8617-43ac-a804-79cf9667b803",
+                "6bc7f8a8-8617-43ac-a804-79cf9667b804",
+                "6bc7f8a8-8617-43ac-a804-79cf9667b807",
+            };
+
             // act
-            var response = await this.userServices.GetTecnicInfoByQfbId(qfbId);
+            var response = await this.userServices.GetQfbInfoByIds(qfbIds);
 
             // assert
             Assert.IsNotNull(response);

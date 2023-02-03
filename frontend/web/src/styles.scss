@@ -396,6 +396,10 @@ th.centered {
   border-radius: .25rem;
   transition: all 0.35s ease;
 }
+.btn-add-modal:disabled {
+  background-color: #b5b9bd!important;
+  border: .1px solid #b5b9bd;
+}
 .btn-cancel-modal{
   width: 7rem;
   height: 3rem;

@@ -112,7 +112,12 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     if (valueForm.userTypeR) {
       this.changeUserTypeValue(valueForm.userTypeR);
     }
-    this.requireTechnicalChange();
+    if (valueForm.requireTechnical) {
+      this.requireTechnicalChange();
+    }
+    if (valueForm.classificationQFB) {
+      this.changeClasification(this.addUserForm.get('piezas').value);
+    }
   }
 
   requireTechnicalChange(): void {
@@ -139,12 +144,14 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('requireTechnical').disable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('technical').disable({ onlySelf: true, emitEvent: false });
       this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
-    } else {
+    }
+    if (userTypeR === '2') {
       this.addUserForm.get('piezas').enable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('asignable').enable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('classificationQFB').enable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('requireTechnical').enable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('technical').enable({ onlySelf: true, emitEvent: false });
+      this.requireTechnicalChange();
       this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     }
   }
@@ -161,11 +168,11 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   changeClasification(quantity = 200): void {
     const selection = String(this.addUserForm.get('classificationQFB').value);
     if (selection.toUpperCase() === TypeClasifications.dermazone.toUpperCase()) {
-      this.addUserForm.get('piezas').setValue(0);
-      this.addUserForm.get('piezas').disable();
+      this.addUserForm.get('piezas').setValue(0, { emitEvent: false });
+      this.addUserForm.get('piezas').disable({ emitEvent: false });
     } else {
-      this.addUserForm.get('piezas').enable();
-      this.addUserForm.get('piezas').setValue(`${quantity}`);
+      this.addUserForm.get('piezas').enable({ emitEvent: false });
+      this.addUserForm.get('piezas').setValue(`${quantity}`, { emitEvent: false });
     }
   }
 
@@ -184,6 +191,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   setFormValues(): void {
     this.qfbRolId = this.userRoles.find(rol => rol.description.toLowerCase() === CONST_USER_DIALOG.defaultQfb.toLowerCase()).id;
     if (!this.isForEditModal) {
+      this.addUserForm.get('requireTechnical').setValue('0');
       this.addUserForm.get('userTypeR').setValue(this.getDefaultRol());
       this.addUserForm.get('asignable').setValue(CONST_NUMBER.one.toString());
       this.addUserForm.get('activo').setValue(CONST_NUMBER.one);

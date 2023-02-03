@@ -14,6 +14,7 @@ import Moya
 @testable import OmicronLab
 class ExtensionInboxTest3: XCTestCase {
     var inboxViewModel: InboxViewModel?
+    var rootViewModel: RootViewModel?
     var disposeBag: DisposeBag?
     var order1: Order?
     var expectedResult: String?
@@ -33,7 +34,7 @@ class ExtensionInboxTest3: XCTestCase {
             "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
             hasMissingStock: false, finishedLabel: false, patientName: "NamePatient",
-            clientDxp: "clientDxp", shopTransaction: "emnjkd")
+            clientDxp: "clientDxp", shopTransaction: "emnjkd", qfbName: "")
         expectedResult = "http://172.30.5.49:5002/Pruebas_ArchivosOmicronTemp/SaleOrders/Order76260.pdf"
         provider = MoyaProvider<ApiService>(
             endpointClosure: customEndpointClosure,
@@ -99,6 +100,33 @@ class ExtensionInboxTest3: XCTestCase {
     func testCallFinishOrderService() {
         inboxViewModel?.qfbSignatureIsGet = true
         inboxViewModel?.technicalSignatureIsGet = true
+        rootViewModel?.requireTechnical = false
+        rootViewModel?.userType = .qfb
+        inboxViewModel?.indexPathOfOrdersSelected = [IndexPath(row: 0, section: 0)]
+        inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
+        inboxViewModel?.isUserInteractionEnabled.subscribe(onNext: { res in
+            XCTAssertTrue(res)
+        }).disposed(by: disposeBag!)
+        inboxViewModel?.callFinishOrderService()
+    }
+
+    func testCallFinishOrderServiceWithTechnicalRequiredAsQFB() {
+        inboxViewModel?.qfbSignatureIsGet = true
+        inboxViewModel?.technicalSignatureIsGet = false
+        rootViewModel?.requireTechnical = true
+        rootViewModel?.userType = .qfb
+        inboxViewModel?.indexPathOfOrdersSelected = [IndexPath(row: 0, section: 0)]
+        inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
+        inboxViewModel?.isUserInteractionEnabled.subscribe(onNext: { res in
+            XCTAssertTrue(res)
+        }).disposed(by: disposeBag!)
+        inboxViewModel?.callFinishOrderService()
+    }
+    func testCallFinishOrderServiceWithTechnicalRequiredAsTechnical() {
+        inboxViewModel?.qfbSignatureIsGet = false
+        inboxViewModel?.technicalSignatureIsGet = true
+        rootViewModel?.requireTechnical = true
+        rootViewModel?.userType = .technical
         inboxViewModel?.indexPathOfOrdersSelected = [IndexPath(row: 0, section: 0)]
         inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
         inboxViewModel?.isUserInteractionEnabled.subscribe(onNext: { res in

@@ -14,7 +14,6 @@ protocol CardCellDelegate: NSObjectProtocol {
     func detailTapped(order: Order)
     func patientList(order: Order)
     func downloadPdf(id: Int)
-    
 }
 
 class CardCollectionViewCell: UICollectionViewCell {
@@ -34,6 +33,10 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var manufacturingOrder: UILabel!
     @IBOutlet weak var patientListButton: UIButton!
     @IBOutlet weak var pdfDownloadButton: UIButton!
+    @IBOutlet weak var qfbName: UILabel!
+    @IBOutlet weak var qfbNameContainer: UIView!
+    @IBOutlet weak var itemCodeConstrains: NSLayoutConstraint!
+    @IBOutlet weak var descriptionConstraint: NSLayoutConstraint!
     weak var delegate: CardCellDelegate?
     var row: Int = -1
 
@@ -124,12 +127,11 @@ class CardCollectionViewCell: UICollectionViewCell {
         guard let order = self.order else { return }
         self.delegate?.downloadPdf(id: Int(order.baseDocument!))
     }
-    
+
     func detail() {
         guard let order = self.order else { return }
         self.delegate?.detailTapped(order: order)
     }
-    
 
     private func makeRoundedMissingStockImage() {
         missingStockImage.layer.borderWidth = 1

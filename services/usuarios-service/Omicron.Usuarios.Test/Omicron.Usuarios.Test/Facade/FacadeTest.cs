@@ -98,7 +98,7 @@ namespace Omicron.Usuarios.Test.Facade
                 .Returns(Task.FromResult(result));
 
             mockServices
-                .Setup(m => m.GetTecnicInfoByQfbId(It.IsAny<string>()))
+                .Setup(m => m.GetQfbInfoByIds(It.IsAny<List<string>>()))
                 .Returns(Task.FromResult(result));
 
             this.userFacade = new UserFacade(mockServices.Object, this.mapper);
@@ -329,13 +329,13 @@ namespace Omicron.Usuarios.Test.Facade
         /// </summary>
         /// <returns>the user.</returns>
         [Test]
-        public async Task GetTecnicInfoByQfbId()
+        public async Task GetQfbInfoByIds()
         {
             // arrange
             var qfbId = "6bc7f8a8-8617-43ac-a804-79cf9667b8ae";
 
             // act
-            var response = await this.userFacade.GetTecnicInfoByQfbId(qfbId);
+            var response = await this.userFacade.GetQfbInfoByIds(new List<string> { qfbId });
 
             // Assert
             Assert.IsNotNull(response);

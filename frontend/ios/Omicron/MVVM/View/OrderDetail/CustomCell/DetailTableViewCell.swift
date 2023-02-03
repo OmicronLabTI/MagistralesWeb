@@ -39,7 +39,7 @@ class DetailTableViewCell: UITableViewCell {
         self.textColor = hasStock ? .black : .systemOrange
         self.updateTextColor(color: self.textColor)
     }
-    
+
     func updateTextColor(color:UIColor){
         codeLabel.textColor = color
         descriptionLabel.textColor = color

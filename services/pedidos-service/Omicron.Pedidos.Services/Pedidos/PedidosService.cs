@@ -11,13 +11,16 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Text;
     using System.Threading.Tasks;
     using AutoMapper.Configuration.Annotations;
+    using Confluent.Kafka;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
@@ -110,6 +113,13 @@ namespace Omicron.Pedidos.Services.Pedidos
                                 x.StatusForTecnic == ServiceConstants.Pendiente ||
                                 x.StatusForTecnic == ServiceConstants.Reasignado)
                     .ToList();
+                foreach (var order in userOrders)
+                {
+                    var usersqfb = await this.userService.PostSimpleUsers(new List<string> { order.Userid }, ServiceConstants.GetUsersById);
+                    var user = JsonConvert.DeserializeObject<List<UserModel>>(usersqfb.Response.ToString());
+                    order.QfbName = string.Concat(user.FirstOrDefault().FirstName, " ", user.FirstOrDefault().LastName);
+                }
+
                 userOrders.ForEach(x => x.Status = x.StatusForTecnic);
             }
             else
@@ -121,6 +131,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var resultFormula = await this.GetSapOrders(userOrders);
             var groups = ServiceUtils.GroupUserOrder(resultFormula, userOrders, isTecnic);
+            groups.RequireTechnical = users.First().TechnicalRequire;
             return ServiceUtils.CreateResult(true, 200, null, groups, null);
         }
 
@@ -151,10 +162,17 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder)
         {
+            var isTecnicUser = updateStatusOrder.All(x => (UserRoleType)x.UserRoleType == UserRoleType.Tecnic);
+            var (isValidQfbs, message) = await this.ValidateQfbConfiguration(updateStatusOrder, isTecnicUser);
+
+            if (ServiceShared.CalculateOr(!isValidQfbs))
+            {
+                return ServiceUtils.CreateResult(false, 400, message, null, null);
+            }
+
             var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
             var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
-            var isTecnicUser = updateStatusOrder.All(x => (UserRoleType)x.UserRoleType == UserRoleType.Tecnic);
 
             ordersList.ForEach(x =>
             {
@@ -626,8 +644,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userModelIds = orders.Select(x => x.Id).Distinct().ToList();
             var orderSignatures = (await this.pedidosDao.GetSignaturesByUserOrderId(userModelIds)).ToList();
 
-            var newQfbSignatureAsByte = Convert.FromBase64String(updateOrderSignature.QfbSignature);
-            var newTechSignatureAsByte = Convert.FromBase64String(updateOrderSignature.TechnicalSignature);
+            var (isValidTecnicSign, message) = this.ValidateTecnicSign(updateOrderSignature.TechnicalSignature, orders, orderSignatures);
+            if (!isValidTecnicSign)
+            {
+                return ServiceUtils.CreateResult(false, 400, message, null, null);
+            }
+
+            var newQfbSignatureAsByte = Convert.FromBase64String(updateOrderSignature.QfbSignature.ValidateIfNull());
+            var newTechSignatureAsByte = Convert.FromBase64String(updateOrderSignature.TechnicalSignature.ValidateIfNull());
 
             var listSignatureToInsert = new List<UserOrderSignatureModel>();
             var listToUpdate = new List<UserOrderSignatureModel>();
@@ -635,23 +659,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             orders.ForEach(o =>
             {
                 var signature = orderSignatures.FirstOrDefault(x => x.UserOrderId == o.Id);
-
-                if (signature == null)
-                {
-                    listSignatureToInsert.Add(new UserOrderSignatureModel
-                    {
-                        TechnicalSignature = newTechSignatureAsByte,
-                        QfbSignature = newQfbSignatureAsByte,
-                        UserOrderId = o.Id,
-                    });
-                }
-                else
-                {
-                    signature.TechnicalSignature = newTechSignatureAsByte;
-                    signature.QfbSignature = newQfbSignatureAsByte;
-                    listToUpdate.Add(signature);
-                }
-
+                this.GetOrdersSignatures(signature, listSignatureToInsert, listToUpdate, o, newTechSignatureAsByte, newQfbSignatureAsByte);
                 o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
@@ -875,6 +883,31 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> SignOrdersByTecnic(FinishOrderModel tecnicOrderSignature)
+        {
+            var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(tecnicOrderSignature.FabricationOrderId.Select(ts => ts.ToString()).ToList())).ToList();
+            var orderSignatures = (await this.pedidosDao.GetSignaturesByUserOrderId(orders.Select(x => x.Id).Distinct().ToList())).ToList();
+            var tecnicSignatureAsByte = Convert.FromBase64String(tecnicOrderSignature.TechnicalSignature.ValidateIfNull());
+            var qfbSignatureAsByte = Convert.FromBase64String(tecnicOrderSignature.QfbSignature.ValidateIfNull());
+            var listSignatureToInsert = new List<UserOrderSignatureModel>();
+            var listToUpdate = new List<UserOrderSignatureModel>();
+            var listOrderLogToInsert = new List<SalesLogs>();
+            orders.ForEach(order =>
+            {
+                var signature = orderSignatures.FirstOrDefault(x => x.UserOrderId == order.Id);
+                this.GetOrdersSignatures(signature, listSignatureToInsert, listToUpdate, order, tecnicSignatureAsByte, qfbSignatureAsByte);
+                order.StatusForTecnic = ServiceConstants.SignedStatus;
+                listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(tecnicOrderSignature.UserId, new List<UserOrderModel> { order }));
+            });
+
+            await this.pedidosDao.InsertOrderSignatures(listSignatureToInsert);
+            await this.pedidosDao.SaveOrderSignatures(listToUpdate);
+            await this.pedidosDao.UpdateUserOrders(orders);
+            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            return ServiceUtils.CreateResult(true, 200, null, tecnicOrderSignature, null);
+        }
+
         /// <summary>
         /// Gets the order updated and the signatures to insert or update.
         /// </summary>
@@ -980,6 +1013,78 @@ namespace Omicron.Pedidos.Services.Pedidos
                 })
                 .ToList();
             return ordersInvalid;
+        }
+
+        private void GetOrdersSignatures(
+                                 UserOrderSignatureModel signature,
+                                 List<UserOrderSignatureModel> listSignatureToInsert,
+                                 List<UserOrderSignatureModel> listToUpdate,
+                                 UserOrderModel order,
+                                 byte[] tecnicSignatureAsByte,
+                                 byte[] qfbSignatureAsByte)
+        {
+            if (signature == null)
+            {
+                listSignatureToInsert.Add(new UserOrderSignatureModel
+                {
+                    TechnicalSignature = ServiceShared.CalculateTernary(tecnicSignatureAsByte.Length > 0, tecnicSignatureAsByte, null),
+                    UserOrderId = order.Id,
+                    QfbSignature = ServiceShared.CalculateTernary(qfbSignatureAsByte.Length > 0, qfbSignatureAsByte, null),
+                });
+            }
+            else
+            {
+                signature.TechnicalSignature = ServiceShared.CalculateTernary(tecnicSignatureAsByte.Length > 0, tecnicSignatureAsByte, signature.TechnicalSignature);
+                signature.QfbSignature = ServiceShared.CalculateTernary(qfbSignatureAsByte.Length > 0, qfbSignatureAsByte, signature.QfbSignature);
+                listToUpdate.Add(signature);
+            }
+        }
+
+        private async Task<(bool isValidQfbs, string message)> ValidateQfbConfiguration(List<UpdateStatusOrderModel> updateStatusOrder, bool isTecnicUser)
+        {
+            var isValidQfbs = true;
+            var message = string.Empty;
+
+            if (isTecnicUser)
+            {
+                return (isValidQfbs, message);
+            }
+
+            var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(updateStatusOrder.Select(x => x.UserId).ToList(), this.userService)).ToList();
+            var invalidQfbs = qfbInfoValidated.Where(qfb => ServiceShared.CalculateOr(!qfb.IsValidQfb, !qfb.IsValidTecnic));
+
+            if (invalidQfbs.Any())
+            {
+                message = string.Format(ServiceConstants.QfbWithoutTecnic, string.Join(",", invalidQfbs.Select(x => $"{x.QfbFirstName} {x.QfbLastName}")));
+                isValidQfbs = false;
+            }
+
+            return (isValidQfbs, message);
+        }
+
+        private (bool isValidTecnicSign, string message) ValidateTecnicSign(
+                string technicalSignature,
+                List<UserOrderModel> orders,
+                List<UserOrderSignatureModel> orderSignatures)
+        {
+            var isValidTecnicSign = true;
+            var message = string.Empty;
+
+            if (!string.IsNullOrEmpty(technicalSignature))
+            {
+                return (isValidTecnicSign, message);
+            }
+
+            var ordersWithoutTecnicSign = orderSignatures.Where(os => os.TechnicalSignature == null).Select(x => x.UserOrderId).ToList();
+            var invalidOrdersByTecnicSign = orders.Where(o => ordersWithoutTecnicSign.Contains(o.Id)).ToList();
+
+            if (invalidOrdersByTecnicSign.Any())
+            {
+                message = string.Format(ServiceConstants.OrderWithoutTecnicSign, string.Join(",", invalidOrdersByTecnicSign.Select(x => x.Productionorderid)));
+                isValidTecnicSign = false;
+            }
+
+            return (isValidTecnicSign, message);
         }
     }
 }

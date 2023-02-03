@@ -51,17 +51,34 @@ class SignaturePadViewModel {
         case ViewControllerIdentifiers.orderDetailViewController:
             orderDetailVC.qfbSignatureIsGet = true
             orderDetailVC.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
-            orderDetailVC.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
+            callCorrectFunction(orderDetailVC.rootViewModel.requireTechnical,
+                                requiredFunction: {orderDetailVC.validSignatures()},
+                                qfbFunction: {orderDetailVC.showSignatureView.onNext(
+                                    CommonStrings.signatureViewTitleTechnical)})
         case ViewControllerIdentifiers.lotsViewController:
             lotsViewModel.qfbSignatureIsGet = true
             lotsViewModel.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
-            lotsViewModel.showSignatureView.onNext(CommonStrings.signatureViewTitleTechnical)
+            callCorrectFunction(lotsViewModel.rootViewModel.requireTechnical,
+                                requiredFunction: {lotsViewModel.callFinishOrderService()},
+                                qfbFunction: {lotsViewModel.showSignatureView.onNext(
+                                    CommonStrings.signatureViewTitleTechnical)})
         case ViewControllerIdentifiers.inboxViewController:
             inboxVM.qfbSignatureIsGet = true
             inboxVM.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
-            inboxVM.showSignatureVc.onNext(CommonStrings.signatureViewTitleTechnical)
+            callCorrectFunction(inboxVM.rootViewModel.requireTechnical,
+                                requiredFunction: {inboxVM.callFinishOrderService()},
+                                qfbFunction: {inboxVM.showSignatureVc.onNext(
+                                    CommonStrings.signatureViewTitleTechnical)})
         default:
             break
+        }
+    }
+
+    func callCorrectFunction( _ isTechnicalRequired: Bool, requiredFunction: () -> Void, qfbFunction: () -> Void) {
+        if isTechnicalRequired {
+            requiredFunction()
+        } else {
+            qfbFunction()
         }
     }
 

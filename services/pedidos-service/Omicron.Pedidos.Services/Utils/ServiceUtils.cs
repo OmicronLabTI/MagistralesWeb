@@ -399,15 +399,15 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// Get Tecnic Info By QfbId.
+        /// Get Qfbs Info By QfbId.
         /// </summary>
-        /// <param name="qfbId">QfbId.</param>
+        /// <param name="qfbIds">QfbIds.</param>
         /// <param name="userService">User service.</param>
         /// <returns>Tecnic info.</returns>
-        public static async Task<QfbTecnicInfoDto> GetTecnicInfoByQfbId(string qfbId, IUsersService userService)
+        public static async Task<List<QfbTecnicInfoDto>> GetQfbInfoById(List<string> qfbIds, IUsersService userService)
         {
-            var resultUsers = await userService.SimpleGetUsers(string.Format(ServiceConstants.GetTecnicByQfbId, qfbId));
-            return JsonConvert.DeserializeObject<QfbTecnicInfoDto>(JsonConvert.SerializeObject(resultUsers.Response));
+            var resultUsers = await userService.PostSimpleUsers(qfbIds, ServiceConstants.GetQfbInfoById);
+            return JsonConvert.DeserializeObject<List<QfbTecnicInfoDto>>(JsonConvert.SerializeObject(resultUsers.Response));
         }
 
         /// <summary>
