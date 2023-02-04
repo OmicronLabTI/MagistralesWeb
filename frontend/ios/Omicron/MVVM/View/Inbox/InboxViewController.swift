@@ -316,9 +316,9 @@ class InboxViewController: UIViewController {
         case StatusNameConstants.assignedStatus:
             self.changePropertyIsHiddenStatusButtons(true, true, false, true)
             showContainersButtons.isHidden = false
-        case StatusNameConstants.penddingStatus: self.changePropertyIsHiddenStatusButtons(false, true, true, true)
-        case StatusNameConstants.reassignedStatus: self.changePropertyIsHiddenStatusButtons(true, true, false, true)
-        default: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
+        case StatusNameConstants.penddingStatus: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
+        case StatusNameConstants.reassignedStatus: self.changePropertyIsHiddenStatusButtons(true, true, false, false)
+        default: self.changePropertyIsHiddenStatusButtons(true, true, true, false)
         }
     }
 
