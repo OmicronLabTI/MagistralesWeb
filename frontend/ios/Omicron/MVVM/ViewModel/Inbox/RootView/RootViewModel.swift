@@ -81,10 +81,10 @@ class RootViewModel {
             guard let baseDocument = order.baseDocument else { return false }
             guard let itemCode = order.itemCode else { return false }
             guard let description = order.descriptionProduct else { return false }
-            guard let shopTransaction = order.shopTransaction else { return false }
+            guard let shopTransaction = order.shopTransaction?.suffix(6).uppercased() else { return false }
             return String(orderId).contains(text)
                 || String(baseDocument).contains(text)
-                || String(shopTransaction).contains(text)
+                || String(shopTransaction).contains(text.uppercased())
                 || String(itemCode).contains(text.uppercased())
                 || description.uppercased().contains(text.uppercased())
         })
