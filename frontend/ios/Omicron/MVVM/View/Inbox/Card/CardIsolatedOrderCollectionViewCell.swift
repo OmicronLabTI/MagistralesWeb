@@ -17,7 +17,11 @@ class CardIsolatedOrderCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var productDescriptionLabel: UILabel!
     @IBOutlet weak var missingStockImage: UIImageView!
     @IBOutlet weak var itemCode: UILabel!
-
+    @IBOutlet weak var qfbName: UILabel!
+    @IBOutlet weak var qfbNameContainer: UIView!
+    @IBOutlet weak var itemCodeConstrains: NSLayoutConstraint!
+    @IBOutlet weak var descriptionConstraint: NSLayoutConstraint!
+    
     weak var delegate: CardCellDelegate?
     var row: Int = -1
 
@@ -84,16 +88,16 @@ class CardIsolatedOrderCollectionViewCell: UICollectionViewCell {
     func assignedStyleCard(color: CGColor) {
         layer.cornerRadius = CGFloat(20)
         layer.borderColor = color
-        layer.borderWidth = CGFloat(1)
+        layer.borderWidth = CGFloat(4)
     }
 
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                layer.borderWidth = CGFloat(5)
+                layer.borderWidth = CGFloat(10)
                 missingStockImage.layer.borderWidth = 3
             } else {
-                layer.borderWidth = CGFloat(1)
+                layer.borderWidth = CGFloat(4)
                 missingStockImage.layer.borderWidth = 1
             }
         }
