@@ -493,6 +493,7 @@ namespace Omicron.Pedidos.Services.Utils
                             ClientDxp = sapOrder.ClientDxp,
                             ShopTransaction = sapOrder.ShopTransaction,
                             TechnicalSign = o.StatusForTecnic == ServiceConstants.SignedStatus,
+                            QfbName = o.QfbName,
                         };
 
                         ordersDetail.Add(order);

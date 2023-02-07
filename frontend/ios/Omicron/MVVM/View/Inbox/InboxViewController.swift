@@ -263,7 +263,8 @@ class InboxViewController: UIViewController {
         self.groupByOrderNumberButton.setImage(UIImage(systemName: ImageButtonNames.rectangule3offgrid), for: .normal)
         let layout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 60)
-        layout.itemSize = CGSize(width: 700, height: 180)
+        let size = rootViewModel.userType != .technical ? 180 : 210
+        layout.itemSize = CGSize(width: 700, height: size)
         layout.minimumLineSpacing = 16
         collectionView.setCollectionViewLayout(layout, animated: true)
         heigthCollectionViewConstraint.constant = -60
@@ -303,6 +304,25 @@ class InboxViewController: UIViewController {
     }
     private func hideButtons(title: String) {
         showContainersButtons.isHidden = true
+        if(rootViewModel.userType == .technical){
+            hideButtonsTechnical(title)
+        } else {
+            hideButtonsQfB(title)
+        }
+    }
+
+    func hideButtonsTechnical(_ title: String) {
+        switch title {
+        case StatusNameConstants.assignedStatus:
+            self.changePropertyIsHiddenStatusButtons(true, true, false, true)
+            showContainersButtons.isHidden = false
+        case StatusNameConstants.penddingStatus: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
+        case StatusNameConstants.reassignedStatus: self.changePropertyIsHiddenStatusButtons(true, true, false, false)
+        default: self.changePropertyIsHiddenStatusButtons(true, true, true, false)
+        }
+    }
+
+    func hideButtonsQfB(_ title: String) {
         switch title {
         case StatusNameConstants.assignedStatus:
             self.changePropertyIsHiddenStatusButtons(false, true, false, false)
@@ -314,6 +334,7 @@ class InboxViewController: UIViewController {
         default: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
         }
     }
+
     private func changePropertyIsHiddenStatusButtons(
         _ processButtonIsHidden: Bool,
         _ finishedButtonIsHidden: Bool,

@@ -100,7 +100,8 @@ export  class QfbWithNumber {
 export const QfbClassification = {
     mg: 'mg',
     mn: 'mn',
-    be: 'be'
+    be: 'be',
+    dz: 'dz'
 };
 
 export class SearchUsersData {
