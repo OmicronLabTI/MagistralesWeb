@@ -31,6 +31,10 @@ extension InboxViewController: CardCellDelegate {
             cell.missingStockImage.isHidden = !element.hasMissingStock
             cell.isSelected = indexPathsSelected.contains(indexPath)
             cell.itemCode.text = element.itemCode
+            cell.qfbNameContainer.isHidden = rootViewModel.userType != .technical
+            cell.qfbName.text = "Quím. \(element.qfbName ?? "")"
+            cell.itemCodeConstrains.constant = rootViewModel.userType != .technical ? 16 : 52
+            cell.descriptionConstraint.constant = rootViewModel.userType != .technical ? 16 : 52
             return cell
         }
 
