@@ -155,9 +155,12 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the processs.
         /// </summary>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task AssignOrder()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task AssignOrder(bool isValidtecnic)
         {
             // arrange
             var assign = new ManualAssignModel
@@ -178,13 +181,37 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
-            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, this.kafkaConnector.Object);
+            var mockUsers = new Mock<IUsersService>();
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbInfoDto(isValidtecnic)));
+
+            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, this.kafkaConnector.Object);
 
             // act
             var response = await pedidosServiceLocal.AssignOrder(assign);
 
             // assert
+            // ssert.IsNotNull(response);
+            // assert
             Assert.IsNotNull(response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.Comments);
+
+            if (isValidtecnic)
+            {
+                Assert.IsNotNull(response.UserError);
+                Assert.IsTrue(response.Success);
+                Assert.AreEqual(200, response.Code);
+                Assert.IsNotNull(response.Response);
+            }
+            else
+            {
+                Assert.IsNotNull(response.UserError);
+                Assert.IsFalse(response.Success);
+                Assert.AreEqual(400, response.Code);
+                Assert.IsNull(response.Response);
+            }
         }
 
         /// <summary>
@@ -602,7 +629,12 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
                 .Returns(Task.FromResult(new ResultModel()));
 
-            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, this.kafkaConnector.Object);
+            var mockUsers = new Mock<IUsersService>();
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbInfoDto(true)));
+
+            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, this.kafkaConnector.Object);
 
             // act
             var result = await pedidosServiceLocal.ReassignOrder(reassign);
