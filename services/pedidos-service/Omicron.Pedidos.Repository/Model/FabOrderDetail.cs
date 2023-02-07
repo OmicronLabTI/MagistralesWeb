@@ -110,6 +110,12 @@ namespace Omicron.Pedidos.Entities.Model
         public string ShopTransaction { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets or sets if technical sign the order.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool TechnicalSign { get; set; }
+
+        /// <summary>
         /// Gets or sets QFB Name.
         /// </summary>
         /// <value>String QFB Name.</value>
