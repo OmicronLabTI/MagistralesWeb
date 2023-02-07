@@ -1075,6 +1075,13 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return (isValidTecnicSign, message);
             }
 
+            if (!orderSignatures.Any())
+            {
+                message = string.Format(ServiceConstants.OrderWithoutTecnicSign, string.Join(",", orders.Select(x => x.Productionorderid)));
+                isValidTecnicSign = false;
+                return (isValidTecnicSign, message);
+            }
+
             var ordersWithoutTecnicSign = orderSignatures.Where(os => os.TechnicalSignature == null).Select(x => x.UserOrderId).ToList();
             var invalidOrdersByTecnicSign = orders.Where(o => ordersWithoutTecnicSign.Contains(o.Id)).ToList();
 

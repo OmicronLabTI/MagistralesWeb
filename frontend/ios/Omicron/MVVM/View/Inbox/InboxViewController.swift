@@ -304,7 +304,7 @@ class InboxViewController: UIViewController {
     }
     private func hideButtons(title: String) {
         showContainersButtons.isHidden = true
-        if(rootViewModel.userType == .technical){
+        if rootViewModel.userType == .technical {
             hideButtonsTechnical(title)
         } else {
             hideButtonsQfB(title)
