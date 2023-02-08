@@ -236,13 +236,17 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the processs.
         /// </summary>
+        /// <param name="iduser">User Id.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task GetQfbOrdersByStatus()
+        [TestCase("abcquimico")]
+        [TestCase("abcquimicocd")]
+        [TestCase("tecnicoqfb")]
+        [TestCase("tecnicoqfb2")]
+        public async Task GetQfbOrdersByStatus(string iduser)
         {
             // arrange
             var status = "Asignado";
-            var iduser = "abc-cde";
 
             // act
             var response = await this.pedidosService.GetQfbOrdersByStatus(status, iduser);
