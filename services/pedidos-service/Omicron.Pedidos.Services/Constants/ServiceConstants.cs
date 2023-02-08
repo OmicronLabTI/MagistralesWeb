@@ -903,7 +903,7 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// Reason unexpected error.
         /// </summary>
-        public const string OrderWithoutTecnicSign = "No es posible Terminar, falta la firma del técnico para las ordenes de fabricación {0}";
+        public const string OrderWithoutTecnicSign = "No es posible terminar, falta la firma del técnico asignado";
 
         /// <summary>
         /// Gets the status of the order.
