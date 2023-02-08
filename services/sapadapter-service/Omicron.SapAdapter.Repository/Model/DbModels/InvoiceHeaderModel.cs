@@ -281,5 +281,14 @@ namespace Omicron.SapAdapter.Entities.Model.DbModels
         /// </value>
         [NotMapped]
         public string DeliverySuggestedTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets is doctor direction.
+        /// </summary>
+        /// <value>
+        /// ItemCode.
+        /// </value>
+        [NotMapped]
+        public bool IsDoctorDirection { get; set; }
     }
 }
