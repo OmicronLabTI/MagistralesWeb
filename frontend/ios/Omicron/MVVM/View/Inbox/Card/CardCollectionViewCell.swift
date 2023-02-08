@@ -17,7 +17,7 @@ protocol CardCellDelegate: NSObjectProtocol {
 }
 
 class CardCollectionViewCell: UICollectionViewCell {
-
+    
     @IBOutlet weak var numberDescriptionLabel: UILabel!
     @IBOutlet weak var baseDocumentDescriptionLabel: UILabel!
     @IBOutlet weak var containerLabel: UILabel!
@@ -45,7 +45,7 @@ class CardCollectionViewCell: UICollectionViewCell {
             self.setColor()
         }
     }
-
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -55,7 +55,7 @@ class CardCollectionViewCell: UICollectionViewCell {
 
     func setColor() {
         let textColor =  self.order?.areBatchesComplete ?? false ?
-            UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : .black
+        UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : .black
         switch self.order?.statusId {
         case 1:
             self.propertyCard(
@@ -63,11 +63,9 @@ class CardCollectionViewCell: UICollectionViewCell {
                 borderColor: OmicronColors.assignedStatus,
                 iconName: ImageButtonNames.assigned)
         case 2:
-            let borderColor: UIColor = self.order?.areBatchesComplete ?? false ?
-                UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : OmicronColors.processStatus
             self.propertyCard(
                 cell: self,
-                borderColor: borderColor,
+                borderColor: borderColorBatchesSign(OmicronColors.processStatus),
                 iconName: ImageButtonNames.inProcess, orderTextColor: textColor)
         case 3:
             self.propertyCard(
@@ -80,15 +78,22 @@ class CardCollectionViewCell: UICollectionViewCell {
                 borderColor: OmicronColors.finishedStatus,
                 iconName: ImageButtonNames.finished)
         case 5:
-            let borderColor: UIColor = self.order?.areBatchesComplete ?? false ?
-                UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : OmicronColors.reassignedStatus
             self.propertyCard(
                 cell: self,
-                borderColor: borderColor,
+                borderColor: borderColorBatchesSign(OmicronColors.reassignedStatus),
                 iconName: ImageButtonNames.reasigned,
                 orderTextColor: textColor)
         default: break
         }
+    }
+
+    func borderColorBatchesSign(_ colorDefault: UIColor) -> UIColor {
+        let signOk = self.order?.technicalSign ?? false
+        let batchesComplete = self.order?.areBatchesComplete ?? false
+        if signOk || batchesComplete {
+            return signOk ? OmicronColors.signColor : OmicronColors.batchesColor
+        }
+        return colorDefault
     }
 
     func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String,
