@@ -662,6 +662,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 this.GetOrdersSignatures(signature, listSignatureToInsert, listToUpdate, o, newTechSignatureAsByte, newQfbSignatureAsByte);
                 o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
+                o.StatusForTecnic = ServiceConstants.Terminado;
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
             });
 
@@ -686,6 +687,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     tupleValues ??= new OrderWithDetailModel { Detalle = new List<CompleteDetailOrderModel>() };
                     var previousStatus = sale.Status;
                     sale.Status = ServiceShared.CalculateTernary(areInvalidOrders || tupleValues.Detalle.Any(x => string.IsNullOrEmpty(x.Status)), sale.Status, ServiceConstants.Terminado);
+                    sale.StatusForTecnic = sale.Status;
 
                     /** add logs**/
                     if (previousStatus != sale.Status)
