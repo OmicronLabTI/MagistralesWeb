@@ -28,13 +28,19 @@ extension InboxViewModel {
 
     func changeStatusService(_ orders: [ChangeStatusRequest]) {
         networkManager.changeStatusOrder(orders)
-            .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
+            .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
                 guard let self = self else { return }
-                self.processButtonIsEnable.onNext(false)
-                self.pendingButtonIsEnable.onNext(false)
-                self.rootViewModel.needsRefresh = true
+                if res.code == 200 {
+                    self.processButtonIsEnable.onNext(false)
+                    self.pendingButtonIsEnable.onNext(false)
+                    self.rootViewModel.needsRefresh = true
+                    self.loading.onNext(false)
+                    self.refreshDataWhenChangeProcessIsSucces.onNext(())
+                    return
+                }
                 self.loading.onNext(false)
-                self.refreshDataWhenChangeProcessIsSucces.onNext(())
+                self.showAlert.onNext(res.userError ?? CommonStrings.errorToChangeStatus)
+                self.processButtonIsEnable.onNext(true)
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)
@@ -165,11 +171,16 @@ extension InboxViewModel {
             userId: userID, fabricationOrderId: orderIds, qfbSignature: qfbSignature,
             technicalSignature: technicalSignature)
         networkManager.packageOrders(packageOrder)
-            .subscribe(onNext: { [weak self] _ in
+            .subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
+                if res.code == 200 {
+                    self.loading.onNext(false)
+                    self.isUserInteractionEnabled.onNext(true)
+                    self.refreshDataWhenChangeProcessIsSucces.onNext(())
+                    return
+                }
                 self.loading.onNext(false)
-                self.isUserInteractionEnabled.onNext(true)
-                self.refreshDataWhenChangeProcessIsSucces.onNext(())
+                self.showAlert.onNext(res.userError ?? CommonStrings.errorPackageOrders)
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)

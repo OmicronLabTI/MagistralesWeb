@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -21,18 +21,18 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="card_isolated_order" id="0fv-vl-t36" customClass="CardIsolatedOrderCollectionViewCell" customModule="OmicronLab" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="700" height="180"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="card_isolated_order" id="0fv-vl-t36" customClass="CardIsolatedOrderCollectionViewCell" customModule="OmicronDEV" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="700" height="224"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="2sG-Yy-GXs">
-                <rect key="frame" x="0.0" y="0.0" width="700" height="180"/>
+                <rect key="frame" x="0.0" y="0.0" width="700" height="224"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="bottom" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="07T-CQ-Xc8">
-                        <rect key="frame" x="24" y="16" width="349.5" height="25.5"/>
+                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="bottom" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="07T-CQ-Xc8" userLabel="order title">
+                        <rect key="frame" x="24" y="16" width="335.5" height="24"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="matraz" translatesAutoresizingMaskIntoConstraints="NO" id="OC5-nQ-Owx">
-                                <rect key="frame" x="0.0" y="1.5" width="24" height="24"/>
+                                <rect key="frame" x="0.0" y="0.0" width="24" height="24"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="24" id="eAm-pG-OVV"/>
@@ -40,17 +40,17 @@
                                 </constraints>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="odr-iA-8v0">
-                                <rect key="frame" x="40" y="0.0" width="309.5" height="25.5"/>
+                                <rect key="frame" x="40" y="0.0" width="295.5" height="24"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Orden de fabricación: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J9V-fZ-mih">
-                                        <rect key="frame" x="0.0" y="0.0" width="229" height="25.5"/>
-                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="21"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="218.5" height="24"/>
+                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="20"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="141248" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vvc-G0-AZZ">
-                                        <rect key="frame" x="229" y="0.0" width="80.5" height="25.5"/>
-                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="21"/>
+                                        <rect key="frame" x="218.5" y="0.0" width="77" height="24"/>
+                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="20"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -58,8 +58,32 @@
                             </stackView>
                         </subviews>
                     </stackView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Cu-wW-0UW" userLabel="QFBName">
+                        <rect key="frame" x="26" y="56" width="674" height="20"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="matrazOrder" translatesAutoresizingMaskIntoConstraints="NO" id="s2t-XA-DQb">
+                                <rect key="frame" x="0.0" y="0.0" width="17" height="20"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Quím. Fabián Moreno Perez" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bCJ-U1-YRX">
+                                <rect key="frame" x="22" y="0.0" width="160" height="20"/>
+                                <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="bCJ-U1-YRX" firstAttribute="leading" secondItem="s2t-XA-DQb" secondAttribute="trailing" constant="5" id="3Dr-uS-g1I"/>
+                            <constraint firstAttribute="bottom" secondItem="bCJ-U1-YRX" secondAttribute="bottom" id="P7s-yB-gaA"/>
+                            <constraint firstItem="s2t-XA-DQb" firstAttribute="leading" secondItem="8Cu-wW-0UW" secondAttribute="leading" id="nIG-XH-IyH"/>
+                            <constraint firstAttribute="height" constant="20" id="tGr-jv-oB6"/>
+                            <constraint firstItem="s2t-XA-DQb" firstAttribute="top" secondItem="8Cu-wW-0UW" secondAttribute="top" id="tWh-R7-1sF"/>
+                            <constraint firstItem="bCJ-U1-YRX" firstAttribute="top" secondItem="8Cu-wW-0UW" secondAttribute="top" id="uHN-5j-XBu"/>
+                            <constraint firstAttribute="bottom" secondItem="s2t-XA-DQb" secondAttribute="bottom" id="xUO-Mj-VNK"/>
+                        </constraints>
+                    </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ALQUITRÁN DE PINO 6%, KETOKONAZOL 2%, MENTOL 0.1%, SALICILICO 3%, SHAMPOO" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eW6-TI-qSP">
-                        <rect key="frame" x="146" y="57.5" width="530" height="38.5"/>
+                        <rect key="frame" x="146" y="92" width="530" height="38.5"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="530" id="GlG-if-4f9"/>
                         </constraints>
@@ -68,31 +92,31 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="04/02/2021" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E5g-lX-TIX">
-                        <rect key="frame" x="203" y="147.5" width="72" height="16.5"/>
+                        <rect key="frame" x="203" y="191.5" width="72" height="16.5"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fecha orden de fabricación: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dOE-xt-RE6">
-                        <rect key="frame" x="24" y="147.5" width="179" height="16.5"/>
+                        <rect key="frame" x="24" y="191.5" width="179" height="16.5"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="04/02/2021" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Ds-PF-Cu9">
-                        <rect key="frame" x="604" y="147.5" width="72" height="16.5"/>
+                        <rect key="frame" x="604" y="191.5" width="72" height="16.5"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fecha de fabricación: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0TZ-ds-kGc">
-                        <rect key="frame" x="465" y="147.5" width="139" height="16.5"/>
+                        <rect key="frame" x="465" y="191.5" width="139" height="16.5"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="Otd-fE-lW1">
-                        <rect key="frame" x="603" y="115" width="73" height="16.5"/>
+                        <rect key="frame" x="603" y="159" width="73" height="16.5"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cantidad: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fEa-TI-YgM">
                                 <rect key="frame" x="0.0" y="0.0" width="65" height="16.5"/>
@@ -109,8 +133,8 @@
                         </subviews>
                     </stackView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="GR-233" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cBn-A4-0LT">
-                        <rect key="frame" x="24" y="57.5" width="66.5" height="21.5"/>
-                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="18"/>
+                        <rect key="frame" x="24" y="92" width="62.5" height="20.5"/>
+                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
@@ -121,35 +145,43 @@
                     <constraint firstItem="6Ds-PF-Cu9" firstAttribute="trailing" secondItem="eW6-TI-qSP" secondAttribute="trailing" id="5Pw-nB-zkx"/>
                     <constraint firstItem="dOE-xt-RE6" firstAttribute="top" secondItem="Otd-fE-lW1" secondAttribute="bottom" constant="16" id="5vw-9z-jKG"/>
                     <constraint firstAttribute="trailing" secondItem="eW6-TI-qSP" secondAttribute="trailing" constant="24" id="9DY-d7-vma"/>
-                    <constraint firstItem="eW6-TI-qSP" firstAttribute="top" secondItem="07T-CQ-Xc8" secondAttribute="bottom" constant="16" id="NfO-zw-zXd"/>
+                    <constraint firstAttribute="trailing" secondItem="8Cu-wW-0UW" secondAttribute="trailing" id="GFa-ct-hZi"/>
+                    <constraint firstItem="eW6-TI-qSP" firstAttribute="top" secondItem="07T-CQ-Xc8" secondAttribute="bottom" constant="52" id="NfO-zw-zXd"/>
                     <constraint firstItem="0TZ-ds-kGc" firstAttribute="centerY" secondItem="6Ds-PF-Cu9" secondAttribute="centerY" id="Odg-2b-vjO"/>
                     <constraint firstItem="E5g-lX-TIX" firstAttribute="leading" secondItem="dOE-xt-RE6" secondAttribute="trailing" id="QQ5-t2-aHP"/>
+                    <constraint firstItem="8Cu-wW-0UW" firstAttribute="top" secondItem="07T-CQ-Xc8" secondAttribute="bottom" constant="16" id="Qob-nf-Bla"/>
                     <constraint firstItem="dOE-xt-RE6" firstAttribute="leading" secondItem="07T-CQ-Xc8" secondAttribute="leading" id="WYj-xH-34J"/>
                     <constraint firstItem="0TZ-ds-kGc" firstAttribute="centerY" secondItem="dOE-xt-RE6" secondAttribute="centerY" id="X7W-1F-s7S"/>
                     <constraint firstItem="eW6-TI-qSP" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="cBn-A4-0LT" secondAttribute="trailing" constant="4" id="XDD-eM-I93"/>
+                    <constraint firstItem="8Cu-wW-0UW" firstAttribute="leading" secondItem="2sG-Yy-GXs" secondAttribute="leading" constant="26" id="aQD-qr-Xh1"/>
                     <constraint firstAttribute="bottom" secondItem="dOE-xt-RE6" secondAttribute="bottom" constant="16" id="gHE-Qq-sjA"/>
                     <constraint firstItem="E5g-lX-TIX" firstAttribute="centerY" secondItem="dOE-xt-RE6" secondAttribute="centerY" id="gYI-d8-HQz"/>
                     <constraint firstItem="Otd-fE-lW1" firstAttribute="trailing" secondItem="6Ds-PF-Cu9" secondAttribute="trailing" id="oct-Oz-KgZ"/>
                     <constraint firstItem="07T-CQ-Xc8" firstAttribute="leading" secondItem="2sG-Yy-GXs" secondAttribute="leading" constant="24" id="pAf-4k-qc0"/>
                     <constraint firstItem="07T-CQ-Xc8" firstAttribute="top" secondItem="2sG-Yy-GXs" secondAttribute="top" constant="16" id="pJn-f4-TgV"/>
-                    <constraint firstItem="cBn-A4-0LT" firstAttribute="top" secondItem="J9V-fZ-mih" secondAttribute="bottom" constant="16" id="w0E-lx-hCq"/>
+                    <constraint firstItem="cBn-A4-0LT" firstAttribute="top" secondItem="J9V-fZ-mih" secondAttribute="bottom" constant="52" id="w0E-lx-hCq"/>
                     <constraint firstItem="cBn-A4-0LT" firstAttribute="leading" secondItem="07T-CQ-Xc8" secondAttribute="leading" id="yYV-9g-ADn"/>
                 </constraints>
             </collectionViewCellContentView>
-            <size key="customSize" width="414" height="360"/>
+            <size key="customSize" width="414" height="404"/>
             <connections>
+                <outlet property="descriptionConstraint" destination="NfO-zw-zXd" id="me1-c4-IRX"/>
                 <outlet property="finishDateDescriptionLabel" destination="6Ds-PF-Cu9" id="qkc-u3-8Lr"/>
                 <outlet property="itemCode" destination="cBn-A4-0LT" id="C2p-vt-yda"/>
+                <outlet property="itemCodeConstrains" destination="w0E-lx-hCq" id="uWj-1O-V4s"/>
                 <outlet property="missingStockImage" destination="OC5-nQ-Owx" id="YWW-vK-Gfx"/>
                 <outlet property="numberDescriptionLabel" destination="Vvc-G0-AZZ" id="V2w-Y0-z6g"/>
                 <outlet property="plannedQuantityDescriptionLabel" destination="QUK-zw-22a" id="k4E-Ln-nRA"/>
                 <outlet property="productDescriptionLabel" destination="eW6-TI-qSP" id="fCk-rR-gan"/>
+                <outlet property="qfbName" destination="bCJ-U1-YRX" id="MEO-aq-h3Y"/>
+                <outlet property="qfbNameContainer" destination="8Cu-wW-0UW" id="lns-da-sJ3"/>
                 <outlet property="startDateDescriptionLabel" destination="E5g-lX-TIX" id="61i-Zv-5Bk"/>
             </connections>
-            <point key="canvasLocation" x="731.8840579710145" y="401.78571428571428"/>
+            <point key="canvasLocation" x="731.70731707317077" y="412.88135593220341"/>
         </collectionViewCell>
     </objects>
     <resources>
         <image name="matraz" width="22" height="18.5"/>
+        <image name="matrazOrder" width="17.36400032043457" height="21.915000915527344"/>
     </resources>
 </document>

@@ -76,6 +76,8 @@ struct OmicronColors {
     static let tableColorRow = UIColor.init(red: 192/255, green: 219/255, blue: 243/255, alpha: 1)
     static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
     static let darkGray = UIColor.init(red: 102, green: 106, blue: 109, alpha: 1)
+    static let signColor = UIColor(red: 1.00, green: 0.42, blue: 0.00, alpha: 1.00)
+    static let batchesColor = UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00)
 }
 struct UsersDefaultsConstants {
     static let isLogged = "isLogged"
