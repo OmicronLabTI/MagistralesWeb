@@ -52,5 +52,13 @@ namespace Omicron.SapAdapter.Dtos.DxpModels
         /// ItemCode.
         /// </value>
         public string DeliverySuggestedTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Is Doctor Direction.
+        /// </summary>
+        /// <value>
+        /// ItemCode.
+        /// </value>
+        public int IsDoctorDirection { get; set; }
     }
 }
