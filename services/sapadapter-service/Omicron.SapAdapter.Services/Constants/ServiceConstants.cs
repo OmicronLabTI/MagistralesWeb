@@ -666,6 +666,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const int DigitsForShortShopTransaction = 6;
 
         /// <summary>
+        /// Doctor Address Type.
+        /// </summary>
+        public const string DoctorAddressType = "doctor";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
