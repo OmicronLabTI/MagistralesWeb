@@ -70,7 +70,17 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByUserId(List<string> listIds)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.Userid)).ToListAsync();
+            return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.Userid) || listIds.Contains(x.TecnicId)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="listIds">the list of users.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByUserIdAndStatusAndTecnic(List<string> listIds, List<string> status)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => (listIds.Contains(x.Userid) && status.Contains(x.Status)) || (listIds.Contains(x.TecnicId) && status.Contains(x.StatusForTecnic))).ToListAsync();
         }
 
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByUserIdAndStatus(List<string> listIds, List<string> status)
