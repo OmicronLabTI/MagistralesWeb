@@ -237,6 +237,7 @@ class FinishOrderResponse: HttpResponse {
     }
     override func mapping(map: Map) {
         response <- map["response"]
+        super.mapping(map: map)
     }
 }
 class OrderFinished {

@@ -156,12 +156,17 @@ extension OrderDetailViewModel {
                                       qfbSignature: qfbSignature,
                                       technicalSignature: technicalSignature)
         self.networkManager.finishOrder(finishOrder)
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
+                if res.code != 200 {
+                    self.loading.onNext(false)
+                    self.showAlert.onNext(res.userError ?? "")
+                    return
+                }
                 self.loading.onNext(false)
                 self.backToInboxView.onNext(())
                 self.rootViewModel.needsRefresh = true
-            }, onError: { [weak self] error in
+            }, onError: { [weak self] _ in
                 self?.loading.onNext(false)
             }).disposed(by: self.disposeBag)
     }
