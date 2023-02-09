@@ -243,6 +243,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
             });
 
+            await this.UpdateOrderSignedByReassignment(orders.Where(ts => !string.IsNullOrEmpty(ts.TecnicId)).Select(x => x.Id).Distinct().ToList());
             if (orders.Any())
             {
                 await this.pedidosDao.UpdateUserOrders(orders);
@@ -274,6 +275,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
             await this.pedidosDao.UpdateUserOrders(ordersToUpdate);
+            await this.UpdateOrderSignedByReassignment(orders.Where(ts => !string.IsNullOrEmpty(ts.TecnicId)).Select(x => x.Id).Distinct().ToList());
             _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
             return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
@@ -303,6 +305,22 @@ namespace Omicron.Pedidos.Services.Pedidos
             return isClasificationDZ ?
                 relationOrdersWithUsersDZIsNotOmi.Where(rel => rel.Order.Order.PedidoId.Equals(saleOrderInt)).First().UserId :
                 userSaleOrder.Item1[saleOrderInt];
+        }
+
+        /// <summary>
+        /// Update Order Signed By Reassignment.
+        /// </summary>
+        /// <param name="userModelIds">User model ids.</param>
+        private async Task UpdateOrderSignedByReassignment(List<int> userModelIds)
+        {
+            var orderSignatures = (await this.pedidosDao.GetSignaturesByUserOrderId(userModelIds)).ToList();
+            orderSignatures.ForEach(x =>
+            {
+                x.TechnicalSignature = null;
+                x.QfbSignature = null;
+            });
+
+            await this.pedidosDao.SaveOrderSignatures(orderSignatures);
         }
     }
 }
