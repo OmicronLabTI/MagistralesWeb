@@ -417,7 +417,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> GetQfbOrdersByStatus(string status, string userId)
         {
-            var userOrdersFab = (await this.pedidosDao.GetUserOrderByUserId(new List<string> { userId })).Where(x => x.Status == status && x.IsProductionOrder).ToList();
+            var userOrdersFab = (await this.pedidosDao.GetUserOrderByUserIdAndStatusAndTecnic(new List<string> { userId }, new List<string> { status })).Where(x => x.IsProductionOrder).ToList();
             var ordersFabIds = userOrdersFab.Select(x => x.Productionorderid).ToList();
             return ServiceUtils.CreateResult(true, 200, null, ordersFabIds, null);
         }
@@ -662,6 +662,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 this.GetOrdersSignatures(signature, listSignatureToInsert, listToUpdate, o, newTechSignatureAsByte, newQfbSignatureAsByte);
                 o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
+                o.StatusForTecnic = ServiceConstants.Terminado;
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
             });
 
@@ -686,6 +687,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     tupleValues ??= new OrderWithDetailModel { Detalle = new List<CompleteDetailOrderModel>() };
                     var previousStatus = sale.Status;
                     sale.Status = ServiceShared.CalculateTernary(areInvalidOrders || tupleValues.Detalle.Any(x => string.IsNullOrEmpty(x.Status)), sale.Status, ServiceConstants.Terminado);
+                    sale.StatusForTecnic = sale.Status;
 
                     /** add logs**/
                     if (previousStatus != sale.Status)
@@ -1075,19 +1077,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return (isValidTecnicSign, message);
             }
 
-            if (!orderSignatures.Any())
-            {
-                message = string.Format(ServiceConstants.OrderWithoutTecnicSign, string.Join(",", orders.Select(x => x.Productionorderid)));
-                isValidTecnicSign = false;
-                return (isValidTecnicSign, message);
-            }
-
             var ordersWithoutTecnicSign = orderSignatures.Where(os => os.TechnicalSignature == null).Select(x => x.UserOrderId).ToList();
             var invalidOrdersByTecnicSign = orders.Where(o => ordersWithoutTecnicSign.Contains(o.Id)).ToList();
 
-            if (invalidOrdersByTecnicSign.Any())
+            if (ServiceShared.CalculateOr(!orderSignatures.Any(), invalidOrdersByTecnicSign.Any()))
             {
-                message = string.Format(ServiceConstants.OrderWithoutTecnicSign, string.Join(",", invalidOrdersByTecnicSign.Select(x => x.Productionorderid)));
+                message = ServiceConstants.OrderWithoutTecnicSign;
                 isValidTecnicSign = false;
             }
 

@@ -169,6 +169,8 @@ namespace Omicron.Pedidos.Test
 
                 // Tecnical id
                 new UserOrderModel { Id = 137, Productionorderid = null, Salesorderid = "901", Status = "Planificado", Userid = "abc",  TecnicId = "tecnial", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+                new UserOrderModel { Id = 138, Productionorderid = null, Salesorderid = "902", Status = "Proceso", Userid = "abcquimico",  TecnicId = "tecnicoqfb", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2, StatusForTecnic = "Asignado" },
+                new UserOrderModel { Id = 139, Productionorderid = null, Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
             };
         }
 
