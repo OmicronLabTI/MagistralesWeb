@@ -71,8 +71,13 @@ extension InboxViewModel {
             userId: userID, fabricationOrderId: orderIds, qfbSignature: qfbSignature,
             technicalSignature: technicalSignature)
         networkManager.finishOrder(finishOrder)
-            .subscribe(onNext: { [weak self] _ in
+            .subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
+                if res.code != 200 {
+                    self.loading.onNext(false)
+                    self.showAlert.onNext(res.userError ?? "")
+                    return
+                }
                 self.loading.onNext(false)
                 self.isUserInteractionEnabled.onNext(true)
                 self.refreshDataWhenChangeProcessIsSucces.onNext(())
