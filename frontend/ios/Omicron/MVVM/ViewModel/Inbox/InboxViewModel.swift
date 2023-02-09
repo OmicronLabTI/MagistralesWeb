@@ -155,7 +155,9 @@ class InboxViewModel {
     func sortOrderWithOrderBatchesCompleteByNormalView() -> [Order] {
         var ordering: [Order] = []
         if self.currentSection.statusName == StatusNameConstants.inProcessStatus ||
-            self.currentSection.statusName == StatusNameConstants.reassignedStatus {
+            self.currentSection.statusName == StatusNameConstants.reassignedStatus ||
+            (self.currentSection.statusName == StatusNameConstants.assignedStatus
+                    && rootViewModel.userType == .technical) {
             ordering.append(contentsOf: self.sortOrdersSignBatches())
         } else {
             ordering.append(contentsOf: self.sortByBaseBocumentAscending(orders: self.ordersTemp))
@@ -168,7 +170,8 @@ class InboxViewModel {
         var ordersGroupedAndSorted: [SectionModel<String, Order>] = []
         var dataGroupedByBaseDocument: [String: [Order]] = [:]
         if self.currentSection.statusName == StatusNameConstants.inProcessStatus ||
-            self.currentSection.statusName == StatusNameConstants.reassignedStatus || (self.currentSection.statusName==StatusNameConstants.assignedStatus
+            self.currentSection.statusName == StatusNameConstants.reassignedStatus ||
+            (self.currentSection.statusName == StatusNameConstants.assignedStatus
                     && rootViewModel.userType == .technical) {
             let ordersSign = Dictionary(grouping: self.ordersTemp.filter({
                 $0.technicalSign == true }), by: { "\($0.baseDocument ?? 0)" })
@@ -192,7 +195,7 @@ class InboxViewModel {
         var dataGroupedByShopTransaction: [String: [Order]] = [:]
         if self.currentSection.statusName == StatusNameConstants.inProcessStatus ||
             self.currentSection.statusName == StatusNameConstants.reassignedStatus
-            || (self.currentSection.statusName==StatusNameConstants.assignedStatus
+            || (self.currentSection.statusName == StatusNameConstants.assignedStatus
                 && rootViewModel.userType == .technical) {
             let ordersSign = Dictionary(grouping: self.ordersTemp.filter({
                 $0.technicalSign == true }), by: { $0.shopTransaction ?? "" })

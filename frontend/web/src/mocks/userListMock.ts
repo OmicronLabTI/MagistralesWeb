@@ -14,7 +14,8 @@ export const UserListMock = {
             role: 1,
             userName: 'beni',
             classification: 'MN',
-            tecnicId: null
+            tecnicId: null,
+            technicalRequire: false,
         },
         {
             activo: 1,
@@ -25,7 +26,8 @@ export const UserListMock = {
             role: 2,
             userName: 'gabox',
             classification: 'BE',
-            tecnicId: null
+            tecnicId: null,
+            technicalRequire: false
         },
         {
             activo: 0,
@@ -36,7 +38,8 @@ export const UserListMock = {
             role: 2,
             userName: 'serch',
             classification: 'MG',
-            tecnicId: null
+            tecnicId: null,
+            technicalRequire: false
         }
     ]
 };
