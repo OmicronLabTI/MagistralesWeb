@@ -17,7 +17,6 @@ protocol CardCellDelegate: NSObjectProtocol {
 }
 
 class CardCollectionViewCell: UICollectionViewCell {
-    
     @IBOutlet weak var numberDescriptionLabel: UILabel!
     @IBOutlet weak var baseDocumentDescriptionLabel: UILabel!
     @IBOutlet weak var containerLabel: UILabel!
@@ -45,7 +44,7 @@ class CardCollectionViewCell: UICollectionViewCell {
             self.setColor()
         }
     }
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -54,19 +53,17 @@ class CardCollectionViewCell: UICollectionViewCell {
     }
 
     func setColor() {
-        let textColor =  self.order?.areBatchesComplete ?? false ?
-        UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : .black
         switch self.order?.statusId {
         case 1:
             self.propertyCard(
                 cell: self,
-                borderColor: OmicronColors.assignedStatus,
-                iconName: ImageButtonNames.assigned)
+                borderColor: colorBatchesSign(OmicronColors.assignedStatus),
+                iconName: ImageButtonNames.assigned, orderTextColor: colorBatchesSign(.black))
         case 2:
             self.propertyCard(
                 cell: self,
-                borderColor: borderColorBatchesSign(OmicronColors.processStatus),
-                iconName: ImageButtonNames.inProcess, orderTextColor: textColor)
+                borderColor: colorBatchesSign(OmicronColors.processStatus),
+                iconName: ImageButtonNames.inProcess, orderTextColor: colorBatchesSign(.black))
         case 3:
             self.propertyCard(
                 cell: self,
@@ -80,14 +77,14 @@ class CardCollectionViewCell: UICollectionViewCell {
         case 5:
             self.propertyCard(
                 cell: self,
-                borderColor: borderColorBatchesSign(OmicronColors.reassignedStatus),
+                borderColor: colorBatchesSign(OmicronColors.reassignedStatus),
                 iconName: ImageButtonNames.reasigned,
-                orderTextColor: textColor)
+                orderTextColor: colorBatchesSign(.black))
         default: break
         }
     }
 
-    func borderColorBatchesSign(_ colorDefault: UIColor) -> UIColor {
+    func colorBatchesSign(_ colorDefault: UIColor) -> UIColor {
         let signOk = self.order?.technicalSign ?? false
         let batchesComplete = self.order?.areBatchesComplete ?? false
         if signOk || batchesComplete {
