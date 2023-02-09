@@ -76,8 +76,13 @@ extension LotsViewModel {
                                       qfbSignature: qfbSignature,
                                       technicalSignature: technicalSignature)
         self.networkManager.finishOrder(finishOrder)
-            .subscribe(onNext: { [weak self] _ in
+            .subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
+                if res.code != 200 {
+                    self.loading.onNext(false)
+                    self.showMessage.onNext(res.userError ?? "")
+                    return
+                }
                 self.loading.onNext(false)
                 self.backToInboxView.onNext(())
                 self.rootViewModel.needsRefresh = true
