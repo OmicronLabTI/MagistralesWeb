@@ -141,7 +141,7 @@ namespace Omicron.Pedidos.Services.Utils
                 var orders = sapAdapter.PostSapAdapter(pedidosId, ServiceConstants.GetUsersByOrdersById).Result;
                 var ordersSap = JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(JsonConvert.SerializeObject(orders.Response));
                 var total = ordersSap.Sum(x => x.Quantity);
-                if (total < user.Piezas)
+                if (ServiceShared.CalculateAnd(total < user.Piezas, !user.Classification.Equals(ServiceConstants.UserClassificationDZ)))
                 {
                     validUsers.Add(new AutomaticAssignUserModel
                     {
