@@ -100,7 +100,6 @@ class RootViewController: UIViewController {
                 if data == nil {
                 self.viewTable.alpha = 1.0
                 self.viewTable.isUserInteractionEnabled = true
-                print(self.rootViewModel.sections.count)
                 if self.rootViewModel.sections.count == 0 { return }
                 let section = self.rootViewModel.sections[self.lastRow.row]
                 self.viewTable.selectRow(at: self.lastRow, animated: false, scrollPosition: .none)
