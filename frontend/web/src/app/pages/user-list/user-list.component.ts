@@ -117,7 +117,9 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.dataSource.data.forEach(t => t.isChecked = completed);
     }
 
-
+    getIsSomeChecked(): boolean {
+        return this.dataSource.data.some((user) => user.isChecked);
+    }
     deleteUsers(idUser: string) {
         if (idUser !== CONST_STRING.empty) {
             this.dataSource.data.filter(user => user.id === idUser).forEach(user => user.isChecked = true);

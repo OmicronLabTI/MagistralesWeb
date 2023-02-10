@@ -4,7 +4,7 @@
             <span>Usuarios</span>
         </div>
         <div class="add-user-container">
-            <button mat-raised-button class="ico-col-pri" (click)="deleteUsers('')">
+            <button mat-raised-button class="ico-col-pri" (click)="deleteUsers('')" [disabled]="!getIsSomeChecked()">
                 <img src="assets/icons/delete.svg" alt="edit">
             </button>
 
