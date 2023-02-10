@@ -318,7 +318,7 @@ class InboxViewController: UIViewController {
             showContainersButtons.isHidden = false
         case StatusNameConstants.penddingStatus: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
         case StatusNameConstants.reassignedStatus: self.changePropertyIsHiddenStatusButtons(true, true, false, false)
-        default: self.changePropertyIsHiddenStatusButtons(true, true, true, false)
+        default: self.changePropertyIsHiddenStatusButtons(true, true, true, true)
         }
     }
 
@@ -343,7 +343,7 @@ class InboxViewController: UIViewController {
             self.processButton.isHidden = processButtonIsHidden
             self.finishedButton.isHidden = finishedButtonIsHidden
             self.pendingButton.isHidden = pendingButtonIsHidden
-            self.packageButton.isHidden = packageButtonIsHidden || self.rootViewModel.userType != UserType.technical
+            self.packageButton.isHidden = packageButtonIsHidden
         }
 
     // aqui se detecta cuando se mantuvo presionada la celda para seleccionarla
