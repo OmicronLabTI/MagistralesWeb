@@ -192,5 +192,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="tecnicOrderSignature">the model.</param>
         /// <returns>the result.</returns>
         Task<ResultModel> SignOrdersByTecnic(FinishOrderModel tecnicOrderSignature);
+
+        /// <summary>
+        /// Validate Tecnic Sign By Production Order Id.
+        /// </summary>
+        /// <param name="productionOrderIds">Production Orders id's.</param>
+        /// <returns>Invalid tecnic id.</returns>
+        Task<ResultModel> GetInvalidOrdersByMissingTecnicSign(List<string> productionOrderIds);
     }
 }

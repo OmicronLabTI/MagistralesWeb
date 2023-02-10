@@ -901,5 +901,24 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.IsEmpty(response.UserError);
             Assert.AreEqual(200, response.Code);
         }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetInvalidOrdersByMissingTecnicSign()
+        {
+            // act
+            var response = await this.pedidoFacade.GetInvalidOrdersByMissingTecnicSign(new List<string>());
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsEmpty(response.ExceptionMessage);
+            Assert.IsEmpty(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
     }
 }

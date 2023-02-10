@@ -559,6 +559,19 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Method to get orders active.
+        /// </summary>
+        /// <param name="productionOrderIds">Production Order Ids.</param>
+        /// <returns>INvalid.</returns>
+        [Route("/get/invalid/productionOrders/byMissingTecnicSign")]
+        [HttpPost]
+        public async Task<IActionResult> GetInvalidOrdersByMissingTecnicSign(List<string> productionOrderIds)
+        {
+            var response = await this.pedidoFacade.GetInvalidOrdersByMissingTecnicSign(productionOrderIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
