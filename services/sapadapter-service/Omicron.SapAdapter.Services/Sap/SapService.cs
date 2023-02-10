@@ -714,11 +714,21 @@ namespace Omicron.SapAdapter.Services.Sap
             listErrorsBatches.ListItems.AddRange(resultBatches.Select(b => b));
             listErrorsBatches.ListItems = listErrorsBatches.ListItems.OrderBy(x => x).ToList();
 
+            var validatedOrders = await this.pedidosService.PostPedidos(orderId.Select(x => x.ToString()).ToList(), ServiceConstants.GetInvalidOrdersByMissingTecnicSign);
+            var ordersWithoutTechnicSign = JsonConvert.DeserializeObject<List<string>>(validatedOrders.Response.ToString());
+            var listErrorsSignature = new OrderValidationResponse { Type = ServiceConstants.SignatureAreMissingError, ListItems = new List<string>() };
+
+            if (ordersWithoutTechnicSign.Any())
+            {
+                listErrorsSignature.ListItems.Add(ServiceConstants.OrderWithoutTecnicSign);
+            }
+
             var listErrors = new List<OrderValidationResponse>();
-            if (ServiceShared.CalculateOr(listErrorsBatches.ListItems.Any(), listErrorStock.ListItems.Any()))
+            if (ServiceShared.CalculateOr(listErrorsBatches.ListItems.Any(), listErrorStock.ListItems.Any(), listErrorsSignature.ListItems.Any()))
             {
                 listErrors.Add(listErrorsBatches);
                 listErrors.Add(listErrorStock);
+                listErrors.Add(listErrorsSignature);
                 return ServiceUtils.CreateResult(false, 400, null, listErrors, null, null);
             }
 

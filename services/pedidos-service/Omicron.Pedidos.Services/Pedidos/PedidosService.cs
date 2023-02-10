@@ -643,13 +643,6 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var userModelIds = orders.Select(x => x.Id).Distinct().ToList();
             var orderSignatures = (await this.pedidosDao.GetSignaturesByUserOrderId(userModelIds)).ToList();
-
-            var (isValidTecnicSign, message) = this.ValidateTecnicSign(updateOrderSignature.TechnicalSignature, orders, orderSignatures);
-            if (!isValidTecnicSign)
-            {
-                return ServiceUtils.CreateResult(false, 400, message, null, null);
-            }
-
             var newQfbSignatureAsByte = Convert.FromBase64String(updateOrderSignature.QfbSignature.ValidateIfNull());
             var newTechSignatureAsByte = Convert.FromBase64String(updateOrderSignature.TechnicalSignature.ValidateIfNull());
 
@@ -910,6 +903,30 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, tecnicOrderSignature, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetInvalidOrdersByMissingTecnicSign(List<string> productionOrderIds)
+        {
+            var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(productionOrderIds))
+                .Where(order => !string.IsNullOrEmpty(order.TecnicId)).ToList();
+
+            var orderSignatures = (await this.pedidosDao.GetSignaturesByUserOrderId(orders.Select(x => x.Id).Distinct().ToList())).ToList();
+            var invalidProductionOrderIds = new List<string>();
+            var orderSign = new UserOrderSignatureModel();
+
+            orders.ForEach(order =>
+            {
+                orderSign = orderSignatures.FirstOrDefault(sign => order.Id == sign.UserOrderId);
+                orderSign ??= new UserOrderSignatureModel { TechnicalSignature = null };
+
+                if (orderSign.TechnicalSignature == null)
+                {
+                    invalidProductionOrderIds.Add(order.Productionorderid);
+                }
+            });
+
+            return ServiceUtils.CreateResult(true, 200, null, invalidProductionOrderIds, null);
+        }
+
         /// <summary>
         /// Gets the order updated and the signatures to insert or update.
         /// </summary>
@@ -1062,31 +1079,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             return (isValidQfbs, message);
-        }
-
-        private (bool isValidTecnicSign, string message) ValidateTecnicSign(
-                string technicalSignature,
-                List<UserOrderModel> orders,
-                List<UserOrderSignatureModel> orderSignatures)
-        {
-            var isValidTecnicSign = true;
-            var message = string.Empty;
-
-            if (!string.IsNullOrEmpty(technicalSignature))
-            {
-                return (isValidTecnicSign, message);
-            }
-
-            var ordersWithoutTecnicSign = orderSignatures.Where(os => os.TechnicalSignature == null).Select(x => x.UserOrderId).ToList();
-            var invalidOrdersByTecnicSign = orders.Where(o => ordersWithoutTecnicSign.Contains(o.Id)).ToList();
-
-            if (ServiceShared.CalculateOr(!orderSignatures.Any(), invalidOrdersByTecnicSign.Any()))
-            {
-                message = ServiceConstants.OrderWithoutTecnicSign;
-                isValidTecnicSign = false;
-            }
-
-            return (isValidTecnicSign, message);
         }
     }
 }
