@@ -51,8 +51,10 @@ export class IUserReq {
     classification?: string;
     fullClasification?: string;
     tecnicId: string | null;
+    technicalRequire: boolean;
     constructor() {
         this.isChecked = false;
+        this.technicalRequire = false;
     }
 }
 export interface IAddUserDialogConfig {
