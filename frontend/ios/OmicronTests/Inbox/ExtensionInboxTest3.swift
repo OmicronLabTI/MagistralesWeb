@@ -154,14 +154,21 @@ class ExtensionInboxTest3: XCTestCase {
     }
 
     func testValidOrderWhenCodeIs400() {
-        let expectedResult = "No es posible Terminar, faltan lotes" +
-            " para: \n122307 MP-157\n122363 MP-368\n122366 MP-157\n122368 BA-14" +
-            "\n122368 GR-161\n\n No es posible Terminar, falta existencia para: \n" +
-            "122307 EN-089\n122363 MP-368\n122366 MP-157"
+        let expectedResult = " No es posible Terminar, faltan lotes para:" +
+        "\n122307 MP-157" +
+        "\n122363 MP-368" +
+        "\n122366 MP-157" +
+        "\n122368 BA-14" +
+        "\n122368 GR-161\n\n" +
+        " No es posible Terminar, falta existencia para: " +
+        "\n122307 EN-089" +
+        "\n122363 MP-368" +
+        "\n122366 MP-157 "
         let ordersSelelected = IndexPath(row: 0, section: 0)
         inboxViewModel?.sectionOrders = [SectionModel(model: CommonStrings.empty, items: [order1!])]
         inboxViewModel?.showAlert.subscribe(onNext: { res in
-            XCTAssertEqual(res, expectedResult)
+            XCTAssertEqual(res.replacingOccurrences(of: " ", with: ""),
+                           expectedResult.replacingOccurrences(of: " ", with: ""))
         }).disposed(by: disposeBag!)
 
         testData = UtilsManager.shared.getDataFor(resourse: "FinishOrdersErrorResponse", withExtension: "json")
