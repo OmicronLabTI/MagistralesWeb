@@ -343,6 +343,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// error when batche are missing.
         /// </summary>
+        public const string SignatureAreMissingError = "Signature";
+
+        /// <summary>
+        /// error when batche are missing.
+        /// </summary>
         public const string HasRecipe = "si";
 
         /// <summary>
@@ -669,6 +674,16 @@ namespace Omicron.SapAdapter.Services.Constants
         /// Doctor Address Type.
         /// </summary>
         public const string DoctorAddressType = "doctor";
+
+        /// <summary>
+        /// Doctor Address Type.
+        /// </summary>
+        public const string GetInvalidOrdersByMissingTecnicSign = "get/invalid/productionOrders/byMissingTecnicSign";
+
+        /// <summary>
+        /// Reason unexpected error.
+        /// </summary>
+        public const string OrderWithoutTecnicSign = "No es posible terminar, falta la firma del técnico asignado";
 
         /// <summary>
         /// Gets the status of the order.

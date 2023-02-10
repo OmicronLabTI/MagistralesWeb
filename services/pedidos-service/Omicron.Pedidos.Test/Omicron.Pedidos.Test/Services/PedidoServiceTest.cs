@@ -1265,5 +1265,51 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsNotNull(response);
         }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <param name="productionOrderId">Production Order Id.</param>
+        /// <returns>return nothing.</returns>
+        [Test]
+        [TestCase("223740")]
+        [TestCase("224212")]
+        [TestCase("224211")]
+        [TestCase("224159")]
+        public async Task GetInvalidOrdersByMissingTecnicSign(string productionOrderId)
+        {
+            // arrange
+            var productionOrderIds = new List<string>
+            {
+                productionOrderId,
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+
+            // act
+            var response = await pedidoServiceLocal.GetInvalidOrdersByMissingTecnicSign(productionOrderIds);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.Comments);
+            Assert.IsNull(response.UserError);
+            Assert.IsTrue(response.Success);
+            Assert.AreEqual(200, response.Code);
+
+            if (productionOrderId.Equals("224212") || productionOrderId.Equals("224159"))
+            {
+                Assert.IsNotNull(response.Response);
+            }
+            else
+            {
+                Assert.AreEqual(new List<string>(), response.Response);
+            }
+        }
     }
 }

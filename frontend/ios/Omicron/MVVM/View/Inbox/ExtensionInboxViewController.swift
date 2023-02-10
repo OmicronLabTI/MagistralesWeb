@@ -51,7 +51,6 @@ extension InboxViewController {
             self.normalViewButton.isHidden = isHidden
             self.groupByOrderNumberButton.isHidden = isHidden
             self.groupByShopTransactionButton.isHidden = isHidden
-            self.packageButton.isHidden = isHidden
             self.showMoreIndicators()
             self.goToTop()
         }).disposed(by: self.disposeBag)

@@ -303,5 +303,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.SignOrdersByTecnic(this.mapper.Map<FinishOrderModel>(tecnicOrderSignature)));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInvalidOrdersByMissingTecnicSign(List<string> productionOrderIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.GetInvalidOrdersByMissingTecnicSign(productionOrderIds));
+        }
     }
 }

@@ -182,13 +182,12 @@ extension OrderDetailViewModel {
                 }
                 guard let errors = response.response, errors.count > 0 else { return }
                 var messageConcat = String()
-                for error in errors {
-                    if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
-                        messageConcat = UtilsManager.shared.messageErrorWhenNoBatches(error: error)
-                    } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
-                        let messageError = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
-                        messageConcat = "\(messageConcat) \(messageError)"
-                    }
+                for error in errors where error.listItems?.count ?? 0 > 0 {
+                    let data = UtilsManager.shared.getValidationData(type: error.type ?? .signature)
+                    let messageError = UtilsManager.shared.buildMessageError(error: error,
+                                                                             message: data.error,
+                                                                             lastSeparator: data.separator)
+                    messageConcat = "\(messageConcat) \(messageError)"
                 }
                 self.showAlert.onNext(messageConcat)
             }, onError: { [weak self] _ in
