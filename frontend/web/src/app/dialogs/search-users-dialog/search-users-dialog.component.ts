@@ -102,17 +102,14 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
     this.isCorrectData = true;
   }
   keyDownUsers(event: KeyboardEvent): void {
-    if (event.key === MODAL_FIND_ORDERS.keyEnter && ((this.searchUserForm.get('userNameSe').value !== CONST_STRING.empty
-      && this.searchUserForm.get('userNameSe').value !== null) || (this.searchUserForm.get('firstNameSe').value !== CONST_STRING.empty
-        && this.searchUserForm.get('firstNameSe').value !== null) || (this.searchUserForm.get('lastNameSe').value !== CONST_STRING.empty
-          && this.searchUserForm.get('lastNameSe').value !== null) || (this.searchUserForm.get('userTypeRSe').value !== CONST_STRING.empty
-            && this.searchUserForm.get('userTypeRSe').value !== null) || (this.searchUserForm.get('activoSe').value !== CONST_STRING.empty
-              && this.searchUserForm.get('activoSe').value !== null) || (this.searchUserForm.get('asignableSe').value !== CONST_STRING.empty
-                && this.searchUserForm.get('asignableSe').value !== null) ||
-      (this.searchUserForm.get('classificationQFBSe').value !== CONST_STRING.empty
-        && this.searchUserForm.get('classificationQFBSe').value !== null))) {
+    const controls = ['userNameSe', 'firstNameSe', 'lastNameSe', 'userTypeRSe', 'activoSe', 'asignableSe', 'classificationQFBSe'];
+    if (event.key === MODAL_FIND_ORDERS.keyEnter && this.validateFormHasSomeValue(controls)) {
       this.searchUser();
     }
+  }
+  validateFormHasSomeValue(formControls: string[]): boolean {
+    return formControls.some((control) => this.searchUserForm.get(control).value !== CONST_STRING.empty &&
+      this.searchUserForm.get(control).value !== null);
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
