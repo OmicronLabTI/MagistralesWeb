@@ -199,4 +199,20 @@ describe('DataService', () => {
     const result = service.inputNumbersOnly(event);
     expect(result).toBeTruthy();
   });
+  it('should calculateTernary', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.calculateTernary(true, 1, 2)).toBe(1);
+  });
+  it('should calculateTernary', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.calculateTernary(false, 1, 2)).toBe(2);
+  });
+  it('should calculateAndValueList', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.calculateAndValueList([true, true, false])).toBe(false);
+  });
+  it('should calculateAndValueList', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.calculateAndValueList([true, true, true])).toBe(true);
+  });
 });
