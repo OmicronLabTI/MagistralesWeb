@@ -219,4 +219,13 @@ describe('UserListComponent', () => {
     expect(component.getRol(8)).toBe('REPARTIDOR CAC');
     expect(component.getRol(9)).toBe('TÉCNICO');
   });
+  it('should getIsSomeChecked with true', () => {
+    component.dataSource.data = UserListMock.response;
+    component.dataSource.data[0].isChecked = true;
+    expect(component.getIsSomeChecked()).toBeTruthy();
+  });
+  it('should getIsSomeChecked with false', () => {
+    component.dataSource.data = UserListMock.response;
+    expect(component.getIsSomeChecked()).toBeFalsy();
+  });
 });
