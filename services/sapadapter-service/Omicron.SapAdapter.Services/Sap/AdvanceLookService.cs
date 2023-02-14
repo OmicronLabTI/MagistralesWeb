@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using MediatR;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Dtos.DxpModels;
@@ -25,6 +26,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Doctors;
+    using Omicron.SapAdapter.Services.Mediator.Commands;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
@@ -37,20 +39,13 @@ namespace Omicron.SapAdapter.Services.Sap
     public class AdvanceLookService : IAdvanceLookService
     {
         private readonly ISapDao sapDao;
-
         private readonly IPedidosService pedidosService;
-
         private readonly IAlmacenService almacenService;
-
         private readonly IUsersService usersService;
-
         private readonly ICatalogsService catalogsService;
-
         private readonly IRedisService redisService;
-
-        private readonly IProccessPayments proccessPayments;
-
         private readonly IDoctorService doctorService;
+        private readonly IMediator mediator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AdvanceLookService"/> class.
@@ -61,9 +56,17 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="usersService">The user servie.</param>
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">thre redis service.</param>
-        /// <param name="proccessPayments">the proccess payments.</param>
         /// <param name="doctorService">the doctor service.</param>
-        public AdvanceLookService(ISapDao sapDao, IPedidosService pedidosService, IAlmacenService almacenService, IUsersService usersService, ICatalogsService catalogsService, IRedisService redisService, IProccessPayments proccessPayments, IDoctorService doctorService)
+        /// <param name="mediator">Mediator.</param>
+        public AdvanceLookService(
+            ISapDao sapDao,
+            IPedidosService pedidosService,
+            IAlmacenService almacenService,
+            IUsersService usersService,
+            ICatalogsService catalogsService,
+            IRedisService redisService,
+            IDoctorService doctorService,
+            IMediator mediator)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.pedidosService = pedidosService.ThrowIfNull(nameof(pedidosService));
@@ -71,8 +74,8 @@ namespace Omicron.SapAdapter.Services.Sap
             this.usersService = usersService.ThrowIfNull(nameof(usersService));
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
-            this.proccessPayments = proccessPayments.ThrowIfNull(nameof(proccessPayments));
             this.doctorService = doctorService.ThrowIfNull(nameof(doctorService));
+            this.mediator = mediator.ThrowIfNull(nameof(mediator));
         }
 
         /// <inheritdoc/>
@@ -1219,12 +1222,17 @@ namespace Omicron.SapAdapter.Services.Sap
             return $"{userStored.FirstName.ValidateNull()} {userStored.LastName.ValidateNull()}".Trim();
         }
 
-        private async Task<List<PaymentsDto>> GetPayments(List<CompleteOrderModel> sapSaleOrder, List<DeliverModel> sapDelivery, List<InvoiceHeaderModel> sapInvoicesHeaders)
+        private async Task<List<PaymentsDto>> GetPayments(
+            List<CompleteOrderModel> sapSaleOrder,
+            List<DeliverModel> sapDelivery,
+            List<InvoiceHeaderModel> sapInvoicesHeaders)
         {
             var transactionsIds = sapSaleOrder.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).ToList();
             transactionsIds.AddRange(sapDelivery.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).ToList());
             transactionsIds.AddRange(sapInvoicesHeaders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).ToList());
-            return await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds.Distinct().ToList());
+
+            var reponse = await this.mediator.Send(new PaymentsByTransactionCommand(transactionsIds.Distinct().ToList()));
+            return reponse;
         }
 
         private List<BoxModel> GetBoxesByInvoice(string status, int invoiceid, List<BoxModel> boxes)

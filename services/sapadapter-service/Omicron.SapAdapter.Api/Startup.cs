@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Api
     using System;
     using Elastic.Apm.NetCoreAll;
     using HealthChecks.UI.Client;
+    using MediatR;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
@@ -25,6 +26,7 @@ namespace Omicron.SapAdapter.Api
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Doctors;
+    using Omicron.SapAdapter.Services.Mediator.Handlers;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.User;
@@ -152,6 +154,8 @@ namespace Omicron.SapAdapter.Api
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
             services.AddResponseCompression();
+
+            services.AddMediatR(typeof(PaymentsByTransactionHandler));
         }
 
         /// <summary>

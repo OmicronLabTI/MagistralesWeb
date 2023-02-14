@@ -10,7 +10,9 @@ namespace Omicron.SapAdapter.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
+    using MediatR;
     using Microsoft.EntityFrameworkCore;
     using Moq;
     using NUnit.Framework;
@@ -23,6 +25,7 @@ namespace Omicron.SapAdapter.Test.Services
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Doctors;
+    using Omicron.SapAdapter.Services.Mediator.Commands;
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
@@ -112,10 +115,12 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 new PaymentsDto { CardCode = "C00007", ShippingCostAccepted = 1, TransactionId = "ac901443-c548-4860-9fdc-fa5674847822" },
             };
-            var mockProccessPayments = new Mock<IProccessPayments>();
-            mockProccessPayments
-                .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModel(payments)));
+
+            var mockMediator = new Mock<IMediator>();
+            mockMediator.Setup(m => m.Send(It.IsAny<PaymentsByTransactionCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(payments)
+            .Verifiable("Notification was not sent.");
+
             this.sapDao = new SapDao(this.context, mockLog.Object);
 
             var doctorAddresses = new List<GetDoctorAddressModel>();
@@ -123,7 +128,7 @@ namespace Omicron.SapAdapter.Test.Services
             doctorMock
                 .Setup(s => s.PostDoctors(It.IsAny<List<GetDoctorAddressModel>>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModel(doctorAddresses)));
-            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object, this.catalogService.Object, mockRedis.Object, mockProccessPayments.Object, doctorMock.Object);
+            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object, this.catalogService.Object, mockRedis.Object, doctorMock.Object, mockMediator.Object);
         }
 
         /// <summary>
