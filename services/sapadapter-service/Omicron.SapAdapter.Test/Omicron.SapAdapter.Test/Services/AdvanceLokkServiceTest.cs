@@ -121,14 +121,13 @@ namespace Omicron.SapAdapter.Test.Services
             .ReturnsAsync(payments)
             .Verifiable("Notification was not sent.");
 
+            mockMediator.Setup(m => m.Send(It.IsAny<DoctorDeliveryAddressCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<DoctorDeliveryAddressModel>())
+            .Verifiable("Notification was not sent.");
+
             this.sapDao = new SapDao(this.context, mockLog.Object);
 
-            var doctorAddresses = new List<GetDoctorAddressModel>();
-            var doctorMock = new Mock<IDoctorService>();
-            doctorMock
-                .Setup(s => s.PostDoctors(It.IsAny<List<GetDoctorAddressModel>>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultModel(doctorAddresses)));
-            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object, this.catalogService.Object, mockRedis.Object, doctorMock.Object, mockMediator.Object);
+            this.advanceLookService = new AdvanceLookService(this.sapDao, mockPedidoService.Object, mockAlmacen.Object, userMock.Object, this.catalogService.Object, mockRedis.Object, mockMediator.Object);
         }
 
         /// <summary>

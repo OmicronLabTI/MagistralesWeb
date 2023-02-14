@@ -25,10 +25,8 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
-    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Mediator.Commands;
     using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
@@ -44,7 +42,6 @@ namespace Omicron.SapAdapter.Services.Sap
         private readonly IUsersService usersService;
         private readonly ICatalogsService catalogsService;
         private readonly IRedisService redisService;
-        private readonly IDoctorService doctorService;
         private readonly IMediator mediator;
 
         /// <summary>
@@ -56,7 +53,6 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="usersService">The user servie.</param>
         /// <param name="catalogsService">The catalog service.</param>
         /// <param name="redisService">thre redis service.</param>
-        /// <param name="doctorService">the doctor service.</param>
         /// <param name="mediator">Mediator.</param>
         public AdvanceLookService(
             ISapDao sapDao,
@@ -65,7 +61,6 @@ namespace Omicron.SapAdapter.Services.Sap
             IUsersService usersService,
             ICatalogsService catalogsService,
             IRedisService redisService,
-            IDoctorService doctorService,
             IMediator mediator)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
@@ -74,7 +69,6 @@ namespace Omicron.SapAdapter.Services.Sap
             this.usersService = usersService.ThrowIfNull(nameof(usersService));
             this.catalogsService = catalogsService.ThrowIfNull(nameof(catalogsService));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
-            this.doctorService = doctorService.ThrowIfNull(nameof(doctorService));
             this.mediator = mediator.ThrowIfNull(nameof(mediator));
         }
 
@@ -314,7 +308,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var addressesToFind = sapDelivery.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.ShippingAddressName }).ToList();
             addressesToFind.AddRange(sapInvoicesHeaders.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.ShippingAddressName }).ToList());
             addressesToFind.AddRange(sapSaleOrder.Select(x => new GetDoctorAddressModel { CardCode = x.Codigo, AddressId = x.ShippingAddressName }).ToList());
-            return await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind.DistinctBy(a => new { a.CardCode, a.AddressId }).ToList());
+            return await this.mediator.Send(new DoctorDeliveryAddressCommand(addressesToFind.DistinctBy(a => new { a.CardCode, a.AddressId }).ToList()));
         }
 
         private async Task<List<UserModel>> GetUsers(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData)
