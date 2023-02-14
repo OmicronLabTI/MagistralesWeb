@@ -60,7 +60,11 @@ describe('AppComponent', () => {
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
       'getIsToSaveAnything',
+      'calculateTernary'
     ]);
+    dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
+      return validation ? firstValue : secondaValue;
+    });
     // ------------ Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>
       ('ObservableService',
@@ -118,7 +122,7 @@ describe('AppComponent', () => {
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
         { provide: PedidosService, useValue: pedidosServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: LocalStorageService, useValue: localStorageServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

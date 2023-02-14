@@ -74,7 +74,11 @@ describe('MaterialRequestComponent', () => {
       ('DataService',
         [
           'setIsToSaveAnything',
+          'calculateTernary'
         ]);
+    dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
+      return validation ? firstValue : secondaValue;
+    });
     messagesServiceSpy.getMessageTitle.and.returnValue('Title');
     localStorageServiceSpy.getUserName.and.returnValue('benny benny');
     localStorageServiceSpy.getUserId.and.returnValue('35642b3a-9471-4b89-9862-8bee6d98c361');

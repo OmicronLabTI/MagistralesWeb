@@ -140,60 +140,84 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
     navigatePage(url: any[]) {
         this.router.navigate(url);
     }
+    getSucessMessage(qfbToPlace: QfbWithNumber): string {
+        return this.dataService.calculateTernary(
+            qfbToPlace.modalType === MODAL_NAMES.placeOrders,
+            this.getMessageFromPlacePedido(qfbToPlace),
+            this.getMessageFromPlaceOrder(qfbToPlace)
+        );
+    }
 
+    getMessageFromPlacePedido(qfbToPlace: QfbWithNumber): string {
+        return this.dataService.calculateTernary(qfbToPlace.isFromReassign,
+            `${Messages.reassignOrder} ${qfbToPlace.userName} ?`,
+            `${Messages.placeOrder} ${qfbToPlace.userName} ?`
+        );
+    }
+    getMessageFromPlaceOrder(qfbToPlace: QfbWithNumber): string {
+        return this.dataService.calculateTernary(qfbToPlace.isFromReassign,
+            `${Messages.placeOrderDetail} ${qfbToPlace.userName} ?`,
+            `${Messages.reassignOrderDetail} ${qfbToPlace.userName} ?`
+        );
+    }
+    showModalPlaceOrderss(qfbToPlace: QfbWithNumber): void {
+        this.messagesService.presentToastCustom(
+            qfbToPlace.modalType === MODAL_NAMES.placeOrders ? !qfbToPlace.isFromReassign ?
+                `${Messages.placeOrder} ${qfbToPlace.userName} ?` :
+                `${Messages.reassignOrder} ${qfbToPlace.userName} ?` :
+                !qfbToPlace.isFromReassign ?
+                    `${Messages.placeOrderDetail} ${qfbToPlace.userName} ?` :
+                    `${Messages.reassignOrderDetail} ${qfbToPlace.userName} ?`,
+            'question',
+            CONST_STRING.empty,
+            true, true)
+            .then((result: any) => {
+                if (result.isConfirmed) {
+                    const placeOrder = new IPlaceOrdersReq();
+                    placeOrder.userLogistic = this.localStorageService.getUserId();
+                    placeOrder.userId = qfbToPlace.userId;
+                    placeOrder.docEntry = qfbToPlace.list;
+                    placeOrder.orderType = qfbToPlace.modalType;
+                    this.pedidosService.postPlaceOrders(placeOrder, qfbToPlace.isFromReassign).subscribe(resPlaceManual => {
+                        this.onSuccessPlaceOrdersHttp(resPlaceManual, qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated);
+                    }, error => this.errorService.httpError(error));
+                } else {
+                    this.createPlaceOrderDialog(qfbToPlace);
+                }
+            });
+    }
+    showAutomaticModalOrder(qfbToPlace: QfbWithNumber): void {
+        this.messagesService.presentToastCustom(
+            Messages.placeOrderAutomatic,
+            'question',
+            CONST_STRING.empty,
+            true, true)
+            .then((result: any) => {
+                if (result.isConfirmed) {
+                    const placeOrdersAutomaticReq = new IPlaceOrdersAutomaticReq();
+                    placeOrdersAutomaticReq.userLogistic = this.localStorageService.getUserId();
+                    placeOrdersAutomaticReq.docEntry = qfbToPlace.list;
+                    this.pedidosService.postPlaceOrderAutomatic(placeOrdersAutomaticReq).subscribe(resultAutomatic => {
+                        this.onSuccessPlaceOrdersHttp(resultAutomatic, qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated);
+                    }, (error: ErrorHttpInterface) => {
+                        if (error.status === HttpStatus.badRequest) {
+                            this.createDialogHttpOhAboutTypePlace(qfbToPlace.modalType,
+                                qfbToPlace.isFromOrderIsolated,
+                                String(error.error));
+                        } else {
+                            this.errorService.httpError(error);
+                        }
+                    });
+                } else {
+                    this.createPlaceOrderDialog(qfbToPlace);
+                }
+            });
+    }
     onSuccessPlaceOrder(qfbToPlace: QfbWithNumber) {
         if (qfbToPlace.userId) {
-            this.messagesService.presentToastCustom(
-                qfbToPlace.modalType === MODAL_NAMES.placeOrders ? !qfbToPlace.isFromReassign ?
-                    `${Messages.placeOrder} ${qfbToPlace.userName} ?` :
-                    `${Messages.reassignOrder} ${qfbToPlace.userName} ?` :
-                    !qfbToPlace.isFromReassign ?
-                        `${Messages.placeOrderDetail} ${qfbToPlace.userName} ?` :
-                        `${Messages.reassignOrderDetail} ${qfbToPlace.userName} ?`,
-                'question',
-                CONST_STRING.empty,
-                true, true)
-                .then((result: any) => {
-                    if (result.isConfirmed) {
-                        const placeOrder = new IPlaceOrdersReq();
-                        placeOrder.userLogistic = this.localStorageService.getUserId();
-                        placeOrder.userId = qfbToPlace.userId;
-                        placeOrder.docEntry = qfbToPlace.list;
-                        placeOrder.orderType = qfbToPlace.modalType;
-                        this.pedidosService.postPlaceOrders(placeOrder, qfbToPlace.isFromReassign).subscribe(resPlaceManual => {
-                            this.onSuccessPlaceOrdersHttp(resPlaceManual, qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated);
-                        }, error => this.errorService.httpError(error));
-                    } else {
-                        this.createPlaceOrderDialog(qfbToPlace);
-                    }
-                });
+            this.showModalPlaceOrderss(qfbToPlace);
         } else if (qfbToPlace.assignType === MODAL_NAMES.assignAutomatic) {
-            this.messagesService.presentToastCustom(
-                Messages.placeOrderAutomatic,
-                'question',
-                CONST_STRING.empty,
-                true, true)
-                .then((result: any) => {
-                    if (result.isConfirmed) {
-                        const placeOrdersAutomaticReq = new IPlaceOrdersAutomaticReq();
-                        placeOrdersAutomaticReq.userLogistic = this.localStorageService.getUserId();
-                        placeOrdersAutomaticReq.docEntry = qfbToPlace.list;
-                        this.pedidosService.postPlaceOrderAutomatic(placeOrdersAutomaticReq).subscribe(resultAutomatic => {
-                            this.onSuccessPlaceOrdersHttp(resultAutomatic, qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated);
-                        }, (error: ErrorHttpInterface) => {
-                            if (error.status === HttpStatus.badRequest) {
-                                this.createDialogHttpOhAboutTypePlace(qfbToPlace.modalType,
-                                    qfbToPlace.isFromOrderIsolated,
-                                    String(error.error));
-                            } else {
-                                this.errorService.httpError(error);
-                            }
-                        });
-                    } else {
-                        this.createPlaceOrderDialog(qfbToPlace);
-                    }
-                });
-
+            this.showAutomaticModalOrder(qfbToPlace);
         } else {
             this.createPlaceOrderDialog(qfbToPlace);
         }
@@ -206,9 +230,9 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
             if (modalType === MODAL_NAMES.placeOrders) {
                 this.observableService.setCallHttpService(HttpServiceTOCall.ORDERS);
                 this.onSuccessGeneralMessage({
-                    title: error === CONST_STRING.empty ? Messages.success : error,
-                    isButtonAccept: error === CONST_STRING.empty ? false : true,
-                    icon: error === CONST_STRING.empty ? 'success' : 'error'
+                    title: this.dataService.calculateTernary(error === CONST_STRING.empty, Messages.success, error),
+                    isButtonAccept: this.dataService.calculateTernary(error === CONST_STRING.empty, false, true),
+                    icon: this.dataService.calculateTernary(error === CONST_STRING.empty, 'success', 'error')
                 });
             } else {
                 this.observableService.setCallHttpService(HttpServiceTOCall.DETAIL_ORDERS);
@@ -324,28 +348,37 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
         dialogRef.afterClosed().subscribe((resultComponents: any) => {
             if (resultComponents && (resultSearchComponentModal.modalType === ComponentSearch.searchComponent
                 || resultSearchComponentModal.modalType === ComponentSearch.addComponent)) {
-                if (resultSearchComponentModal.modalType === ComponentSearch.searchComponent) {
-                    this.observableService.setNewFormulaComponent(resultComponents);
-                }
-                if (resultSearchComponentModal.modalType === ComponentSearch.addComponent) {
-                    this.observableService.setNewMaterialComponent(resultComponents);
-                }
+                this.checkResultModalTypeSearch(resultSearchComponentModal, resultComponents);
             } else if (resultComponents) {
-                this.messagesService.presentToastCustom(Messages.createIsolatedOrder + resultComponents.productoId + '?',
-                    'question', CONST_STRING.empty, true, true)
-                    .then((resultCreateIsolated: any) => {
-                        if (resultCreateIsolated.isConfirmed) {
-                            this.onSuccessDialogClosed(resultComponents);
-                        } else {
-                            this.onSuccessSearchComponentModal({
-                                modalType: resultSearchComponentModal.modalType,
-                                chips: resultComponents.chips
-                            });
-                        }
-                    });
-
+                this.showIsolateOrderModalConfirm(resultSearchComponentModal, resultComponents);
             }
         });
+    }
+    checkResultModalTypeSearch(
+        resultSearchComponentModal: SearchComponentModal,
+        resultComponents: any): void {
+        if (resultSearchComponentModal.modalType === ComponentSearch.searchComponent) {
+            this.observableService.setNewFormulaComponent(resultComponents);
+        }
+        if (resultSearchComponentModal.modalType === ComponentSearch.addComponent) {
+            this.observableService.setNewMaterialComponent(resultComponents);
+        }
+    }
+
+    showIsolateOrderModalConfirm(resultSearchComponentModal: SearchComponentModal, resultComponents: any): void {
+        this.messagesService.presentToastCustom(Messages.createIsolatedOrder + resultComponents.productoId + '?',
+            'question', CONST_STRING.empty, true, true)
+            .then((resultCreateIsolated: any) => {
+                if (resultCreateIsolated.isConfirmed) {
+                    this.onSuccessDialogClosed(resultComponents);
+                } else {
+                    this.onSuccessSearchComponentModal({
+                        modalType: resultSearchComponentModal.modalType,
+                        chips: resultComponents.chips
+                    });
+                }
+            });
+
     }
 
     onSuccessDialogClosed(resultComponents: any) {

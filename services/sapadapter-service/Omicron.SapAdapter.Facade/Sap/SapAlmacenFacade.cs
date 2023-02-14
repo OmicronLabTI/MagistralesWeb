@@ -23,17 +23,11 @@ namespace Omicron.SapAdapter.Facade.Sap
     public class SapAlmacenFacade : ISapAlmacenFacade
     {
         private readonly IMapper mapper;
-
         private readonly ISapAlmacenService almacenService;
-
         private readonly ISapAlmacenDeliveryService sapAlmacenDeliveryService;
-
         private readonly ISapInvoiceService sapInvoiceService;
-
         private readonly IAdvanceLookService advanceLookService;
-
         private readonly IAlmacenOrderDoctorService almacenOrderDoctorService;
-
         private readonly IAlmacenOrderDxpService almacenOrderDxpService;
 
         /// <summary>

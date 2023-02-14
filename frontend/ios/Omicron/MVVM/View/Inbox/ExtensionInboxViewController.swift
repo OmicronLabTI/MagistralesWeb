@@ -133,6 +133,11 @@ extension InboxViewController {
         collectionView.rx.itemSelected.observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] indexPath in
                 guard let self = self else { return }
+                guard self.rootViewModel.userType == .qfb else {
+                    self.collectionView.deselectItem(at: indexPath, animated: false)
+                    return
+                    
+                }
                 guard self.indexPathsSelected.count > 0 else {
                     self.lastRect = self.collectionView.layoutAttributesForItem(at: indexPath)?.frame
                     self.lastIndexPath = indexPath
@@ -205,11 +210,9 @@ extension InboxViewController {
         }
     }
     func detailTapped(order: Order) {
-        if rootViewModel.userType != .technical {
-            self.inboxViewModel.selectedOrder = order
-            self.view.endEditing(true)
-            self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
-        }
+        self.inboxViewModel.selectedOrder = order
+        self.view.endEditing(true)
+        self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
     }
     func showSignatureVC() {
         inboxViewModel.showSignatureVc.subscribe(onNext: { [weak self] titleView in
