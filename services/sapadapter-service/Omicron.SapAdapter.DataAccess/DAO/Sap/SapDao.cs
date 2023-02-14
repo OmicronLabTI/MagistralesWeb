@@ -19,6 +19,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Serilog;
+    using Omicron.SapAdapter.Entities.Model.Wraps;
+    using Omicron.SapAdapter.DataAccess.Extensions;
 
     /// <summary>
     /// Class for the dao.
@@ -46,41 +48,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaIni(DateTime initDate, DateTime endDate)
         {
-            var query = (from order in this.databaseContext.OrderModel
-                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                         into DetalleOrden
-                         from dp in DetalleOrden.DefaultIfEmpty()
-                         join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
-                         join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                         where order.FechaInicio >= initDate && order.FechaInicio <= endDate && producto.IsMagistral == "Y"
-                         select new CompleteOrderModel
-                         {
-                             DocNum = order.DocNum,
-                             Cliente = doctor.AliasName,
-                             Codigo = order.Codigo,
-                             Medico = doctor.AliasName,
-                             AsesorName = asesor.AsesorName,
-                             FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
-                             FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
-                             PedidoStatus = order.PedidoStatus,
-                             AtcEntry = order.AtcEntry,
-                             IsChecked = false,
-                             Detalles = dp,
-                             OrderType = order.OrderType,
-                             Canceled = order.Canceled,
-                             PedidoMuestra = order.PedidoMuestra,
-                             DocNumDxp = order.DocNumDxp,
-                             ShippingAddressName = order.ShippingAddressName,
-                         });
-            return await this.RetryQuery<CompleteOrderModel>(query);
+            var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
+                .Where(s => s.OrderModel.FechaInicio >= initDate && s.OrderModel.FechaInicio <= endDate)
+                .GetCompleteOrdery();
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByIds(List<int> ids)
         {
-            var query = this.GetCompleteOrderyJoinDoctorQuery().Where(x => ids.Contains(x.DocNum));
-            return await this.RetryQuery<CompleteOrderModel>(query);
+            var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
+                .Where(x => ids.Contains(x.OrderModel.DocNum))
+                .GetCompleteOrdery();
+            return await this.RetryQuery(query);
         }
 
         /// <summary>
@@ -89,40 +69,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>get the orders.</returns>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int init, int end)
         {
-            var query = this.GetCompleteOrderyJoinDoctorQuery().Where(order => order.DocNum >= init && order.DocNum <= end);
-            return await this.RetryQuery<CompleteOrderModel>(query);
+            var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
+                .Where(s => s.OrderModel.DocNum >= init && s.OrderModel.DocNum <= end)
+                .GetCompleteOrdery();
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<List<CompleteOrderModel>> GetAllOrdersByDocNumDxp(string docNumDxp)
         {
-            var query = (from order in this.databaseContext.OrderModel
-                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                         join producto in this.databaseContext.ProductoModel on detalle.ProductoId equals producto.ProductoId
-                         join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                         where (order.DocNumDxp == docNumDxp || order.DocNumDxp.Contains(docNumDxp)) && producto.IsMagistral == "Y"
-                         select new CompleteOrderModel
-                         {
-                             DocNum = order.DocNum,
-                             Cliente = doctor.AliasName,
-                             Codigo = order.Codigo,
-                             Medico = doctor.AliasName,
-                             AsesorName = asesor.AsesorName,
-                             FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
-                             FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
-                             PedidoStatus = order.PedidoStatus,
-                             AtcEntry = order.AtcEntry,
-                             IsChecked = false,
-                             Detalles = detalle,
-                             OrderType = order.OrderType,
-                             Canceled = order.Canceled,
-                             PedidoMuestra = order.PedidoMuestra,
-                             DocNumDxp = order.DocNumDxp,
-                             ShippingAddressName = order.ShippingAddressName,
-                         }).AsNoTracking();
-
-            return (await this.RetryQuery<CompleteOrderModel>(query)).ToList();
+            var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
+                .Where(s => s.OrderModel.DocNumDxp == docNumDxp || s.OrderModel.DocNumDxp.Contains(docNumDxp))
+                .GetCompleteOrdery();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         /// <inheritdoc/>
@@ -147,7 +106,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Cliente = order.Medico
                          });
 
-            return await this.RetryQuery<SalesAsesorModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <summary>
@@ -157,7 +116,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<IEnumerable<SalesPersonModel>> GetAsesorWithEmailByIdsFromTheAsesor(List<int> salesPrsonId)
         {
-            return await this.RetryQuery<SalesPersonModel>(this.databaseContext.SalesPersonModel.Where(x => salesPrsonId.Contains(x.AsesorId)));
+            return await this.RetryQuery(this.databaseContext.SalesPersonModel.Where(x => salesPrsonId.Contains(x.AsesorId)));
 
         }
 
@@ -306,45 +265,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return query;
         }
 
-        /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(int orderId)
-        {
-            var query = (from w in this.databaseContext.DetalleFormulaModel
-                         join i in this.databaseContext.ItemWarehouseModel on
-                         new
-                         {
-                             w.ItemCode,
-                             Wharehouse = w.Almacen
-                         }
-                         equals
-                         new
-                         {
-                             i.ItemCode,
-                             Wharehouse = i.WhsCode
-                         }
-                         into DetallePedido
-                         from dp in DetallePedido
-                         join p in this.databaseContext.ProductoModel on w.ItemCode equals p.ProductoId
-                         where w.OrderFabId == orderId
-                         select new CompleteDetalleFormulaModel
-                         {
-                             OrderFabId = w.OrderFabId,
-                             ProductId = w.ItemCode,
-                             Description = p.LargeDescription,
-                             BaseQuantity = w.BaseQuantity,
-                             RequiredQuantity = w.RequiredQty,
-                             Consumed = w.ConsumidoQty,
-                             Available = dp.OnHand - dp.IsCommited + dp.OnOrder,
-                             Unit = w.UnidadCode,
-                             Warehouse = w.Almacen,
-                             PendingQuantity = w.RequiredQty - w.ConsumidoQty,
-                             Stock = p.OnHand,
-                             WarehouseQuantity = dp.OnHand
-                         });
-
-            return await this.RetryQuery<CompleteDetalleFormulaModel>(query);
-        }
-
         /// <summary>
         /// gets the realtion between WOR1, OITM ans OITW.
         /// </summary>
@@ -384,13 +304,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              WarehouseQuantity = dp.OnHand
                          });
 
-            return await this.RetryQuery<CompleteDetalleFormulaModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<DetalleFormulaModel>> GetDetalleFormulaByProdOrdId(List<int> ordersId)
         {
-            return await this.RetryQuery<DetalleFormulaModel>(this.databaseContext.DetalleFormulaModel.Where(x => ordersId.Contains(x.OrderFabId)));
+            return await this.RetryQuery(this.databaseContext.DetalleFormulaModel.Where(x => ordersId.Contains(x.OrderFabId)));
         }
 
         /// <inheritdoc/>
@@ -403,14 +323,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value, string warehouse)
         {
-            var products = await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => x.ProductoId.ToLower().Contains(value)));
+            var products = await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.ProductoId.ToLower().Contains(value)));
             return await this.GetComponentes(products.ToList(), warehouse);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(List<string> value, string warehouse)
         {
-            var products = await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => value.Contains(x.ProductoId.ToLower())));
+            var products = await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => value.Contains(x.ProductoId.ToLower())));
             return await this.GetComponentes(products.ToList(), warehouse);
         }
 
@@ -421,7 +341,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the value.</returns>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value, string warehouse)
         {
-            var products = await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => x.ProductoName.ToLower().Contains(value)));
+            var products = await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.ProductoName.ToLower().Contains(value)));
             return await this.GetComponentes(products.ToList(), warehouse);
         }
 
@@ -447,7 +367,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             Quantity = saleDetail.Quantity,
                             CanceledOrder = saleOrder.Canceled
                         };
-            return await this.RetryQuery<DetallePedidoModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
@@ -465,7 +385,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              OrderFabId = c.OrderFabId,
                          });
 
-            return await this.RetryQuery<CompleteDetalleFormulaModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <summary>
@@ -487,7 +407,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              OrderFabId = c.OrderFabId,
                          });
 
-            return await this.RetryQuery<CompleteDetalleFormulaModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <summary>
@@ -497,7 +417,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<IEnumerable<ProductoModel>> GetProductById(string itemCode)
         {
-            return await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => x.ProductoId == itemCode));
+            return await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.ProductoId == itemCode));
         }
 
         /// <summary>
@@ -541,13 +461,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(string itemCode, int orderId)
         {
-            return await this.RetryQuery<BatchTransacitions>(this.databaseContext.BatchTransacitions.Where(x => x.DocNum == orderId && x.ItemCode.Equals(itemCode)));
+            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => x.DocNum == orderId && x.ItemCode.Equals(itemCode)));
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId)
         {
-            return await this.RetryQuery<BatchTransacitions>(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum)));
+            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum)));
         }
 
         /// <summary>
@@ -557,7 +477,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(List<int> logEntry)
         {
-            return await this.RetryQuery<BatchesTransactionQtyModel>(this.databaseContext.BatchesTransactionQtyModel.Where(x => logEntry.Contains(x.LogEntry)));
+            return await this.RetryQuery(this.databaseContext.BatchesTransactionQtyModel.Where(x => logEntry.Contains(x.LogEntry)));
         }
 
         /// <inheritdoc/>
@@ -606,14 +526,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate)
         {
             var query = this.GetAllOrdersForAlmacenQuery(initDate);
-            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenDxp(DateTime initDate)
         {
             var query = this.GetAllOrdersForAlmacenQuery(initDate).Where(x => !string.IsNullOrEmpty(x.DocNumDxp));
-            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
+            return await this.RetryQuery(query);
         }
 
         public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByListIds(List<int> saleordersIds)
@@ -658,7 +578,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsOmigenomics = order.IsOmigenomics,
                          });
 
-            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
@@ -697,7 +617,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsPackage = order.IsPackage,
                             IsOmigenomics = order.IsOmigenomics,
                         };
-            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
+            return await this.RetryQuery(query);
         }
 
 
@@ -760,13 +680,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsOmigenomics = order.IsOmigenomics,
                          });
 
-            return await this.RetryQuery<CompleteAlmacenOrderModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailBySaleOrder(List<int> ordersId)
         {
-            return (await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => x.BaseEntry.HasValue && ordersId.Contains(x.BaseEntry.Value))));
+            return (await this.RetryQuery(this.databaseContext.DeliveryDetailModel.Where(x => x.BaseEntry.HasValue && ordersId.Contains(x.BaseEntry.Value))));
         }
 
         /// <inheritdoc/>
@@ -788,7 +708,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             Quantity = deliveryDet.Quantity,
                             DocNumDxp = deliverMod.DocNumDxp,
                         };
-            return (await this.RetryQuery<DeliveryDetailModel>(query));
+            return (await this.RetryQuery(query));
         }
 
         /// <inheritdoc/>
@@ -810,7 +730,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ProductoId = deliveryDet.ProductoId,
                             Quantity = deliveryDet.Quantity,
                         };
-            return (await this.RetryQuery<DeliveryDetailModel>(query));
+            return (await this.RetryQuery(query));
         }
 
         /// <inheritdoc/>
@@ -822,26 +742,26 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DeliverModel>> GetDeliveryModelByDocNum(List<int> docuNums)
         {
-            return await this.RetryQuery<DeliverModel>(this.databaseContext.DeliverModel.Where(x => docuNums.Contains(x.DocNum)));
+            return await this.RetryQuery(this.databaseContext.DeliverModel.Where(x => docuNums.Contains(x.DocNum)));
         }
 
         /// <inheritdoc/>
         public async Task<List<DeliverModel>> GetDeliveryModelByDocNumJoinDoctor(List<int> docuNums)
         {
             var query = this.GetDeliveryJoinDoctorQuery().Where(x => docuNums.Contains(x.DocNum));
-            return (await this.RetryQuery<DeliverModel>(query)).ToList();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums)
         {
-            return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => docuNums.Contains(x.PedidoId.Value)));
+            return await this.RetryQuery(this.databaseContext.DetallePedido.Where(x => docuNums.Contains(x.PedidoId.Value)));
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderByInvoiceId(List<int> docNums)
         {
-            return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => docNums.Contains(x.InvoiceId)));
+            return await this.RetryQuery(this.databaseContext.InvoiceHeaderModel.Where(x => docNums.Contains(x.InvoiceId)));
         }
 
         /// <inheritdoc/>
@@ -889,7 +809,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsDeliveredInOffice = invoice.IsDeliveredInOffice,
                          });
 
-            return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         /// <inheritdoc/>
@@ -908,13 +828,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Medico = doctor.AliasName ?? string.Empty,
                          });
 
-            return (await this.RetryQuery<CompleteInvoiceDetailModel>(query)).ToList();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByDocEntry(List<int> docEntry)
         {
-            return await this.RetryQuery<InvoiceDetailModel>(this.databaseContext.InvoiceDetailModel.Where(x => docEntry.Contains(x.InvoiceId)));
+            return await this.RetryQuery(this.databaseContext.InvoiceDetailModel.Where(x => docEntry.Contains(x.InvoiceId)));
         }
 
         /// <inheritdoc/>
@@ -934,13 +854,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ProductoId = invoiceDetail.ProductoId,
                             Quantity = invoiceDetail.Quantity,
                         };
-            return await this.RetryQuery<InvoiceDetailModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNum(List<int> docNum)
         {
-            return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => docNum.Contains(x.DocNum)));
+            return await this.RetryQuery(this.databaseContext.InvoiceHeaderModel.Where(x => docNum.Contains(x.DocNum)));
         }
 
         /// <inheritdoc/>
@@ -991,13 +911,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsDeliveredInOffice = invoice.IsDeliveredInOffice,
                          });
 
-            return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailByDocEntry(List<int> ordersId)
         {
-            return await this.RetryQuery<DeliveryDetailModel>(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.DeliveryId)).Select(x => new DeliveryDetailModel
+            return await this.RetryQuery(this.databaseContext.DeliveryDetailModel.Where(x => ordersId.Contains(x.DeliveryId)).Select(x => new DeliveryDetailModel
             {
                 BaseEntry = x.BaseEntry != null ? x.BaseEntry : 0,
                 Container = x.Container,
@@ -1032,13 +952,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             Quantity = deliveryDet.Quantity,
                             Producto = product
                         };
-            return await this.RetryQuery<DeliveryDetailModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<List<Batches>> GetBatchByProductDistNumber(List<string> productCode, List<string> batchCode)
         {
-            var batches = await this.RetryQuery<Batches>(this.databaseContext.Batches.Where(x => batchCode.Contains(x.DistNumber)));
+            var batches = await this.RetryQuery(this.databaseContext.Batches.Where(x => batchCode.Contains(x.DistNumber)));
 
             return batches.Where(x => productCode.Contains(x.ItemCode)).ToList();
         }
@@ -1046,7 +966,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<Repartidores>> GetDeliveryCompanyById(List<short> ids)
         {
-            return await this.RetryQuery<Repartidores>(this.databaseContext.Repartidores.Where(x => ids.Contains(x.TrnspCode)));
+            return await this.RetryQuery(this.databaseContext.Repartidores.Where(x => ids.Contains(x.TrnspCode)));
         }
 
         /// <inheritdoc/>
@@ -1062,19 +982,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             PedidoId = order.PedidoId,
                         };
 
-            return (await this.RetryQuery<DeliveyJoinOrderModel>(query)).ToList();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<ProductoModel>> GetAllLineProducts()
         {
-            return await this.RetryQuery<ProductoModel>(this.databaseContext.ProductoModel.Where(x => x.IsMagistral == "N" && x.IsLine == "Y"));
+            return await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.IsMagistral == "N" && x.IsLine == "Y"));
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<DetallePedidoModel>> GetDetailsbyDocDate(DateTime initDate, DateTime endDate)
         {
-            return await this.RetryQuery<DetallePedidoModel>(this.databaseContext.DetallePedido.Where(x => x.DocDate >= initDate && x.DocDate <= endDate));
+            return await this.RetryQuery(this.databaseContext.DetallePedido.Where(x => x.DocDate >= initDate && x.DocDate <= endDate));
         }
 
         /// <inheritdoc/>
@@ -1100,25 +1020,25 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsPackage = p.IsPackage,
                          });
 
-            return await this.RetryQuery<ProductoModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<Repartidores>> GetDeliveryCompanies()
         {
-            return await this.RetryQuery<Repartidores>(this.databaseContext.Repartidores.Where(x => !string.IsNullOrEmpty(x.TrnspName)));
+            return await this.RetryQuery(this.databaseContext.Repartidores.Where(x => !string.IsNullOrEmpty(x.TrnspName)));
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<Batches>> GetBatchesByProdcuts(List<string> productsIds)
         {
-            return await this.RetryQuery<Batches>(this.databaseContext.Batches.Where(x => productsIds.Contains(x.ItemCode)));
+            return await this.RetryQuery(this.databaseContext.Batches.Where(x => productsIds.Contains(x.ItemCode)));
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByDocDate(DateTime date)
         {
-            return await this.RetryQuery<InvoiceHeaderModel>(this.databaseContext.InvoiceHeaderModel.Where(x => x.FechaInicio >= date));
+            return await this.RetryQuery(this.databaseContext.InvoiceHeaderModel.Where(x => x.FechaInicio >= date));
         }
 
         /// <inheritdoc/>
@@ -1127,7 +1047,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var query = this.GetDeliveryJoinDoctorQuery()
                             .Where(x => x.FechaInicio >= initDate && x.FechaInicio <= endDate);
 
-            return (await this.RetryQuery<DeliverModel>(query)).ToList();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         /// <inheritdoc/>
@@ -1170,7 +1090,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              UpdateDate = invoice.UpdateDate,
                          });
 
-            return (await this.RetryQuery<InvoiceHeaderModel>(query)).ToList();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByBaseEntryJoinProduct(List<int> baseEntry)
@@ -1190,7 +1110,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             Quantity = invoicedet.Quantity,
                         };
 
-            return await this.RetryQuery<InvoiceDetailModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
@@ -1233,27 +1153,27 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              AsesorId = order.AsesorId,
                          });
 
-            return await this.RetryQuery<CompleteOrderModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByIdsJoinProduct(List<int> ids)
         {
             var query = this.GetAllOrdersWithDetailQuery().Where(x => ids.Contains(x.DocNum));
-            return await this.RetryQuery<CompleteOrderModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersWIthDetailByDocNumDxpJoinProduct(string DocNumDxp)
         {
             var query = this.GetAllOrdersWithDetailQuery().Where(o => o.DocNumDxp.Contains(DocNumDxp) || o.DocNumDxp == DocNumDxp);
-            return await this.RetryQuery<CompleteOrderModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteOrderModel>> GetCountOrdersWIthDetailByDocNumDxpJoinProduct(string DocNumDxp)
         {
-            return await this.RetryQuery<CompleteOrderModel>(this.GetAllOrdersWithDetailQuery().AsNoTracking().Where(x => x.DocNumDxp == DocNumDxp));
+            return await this.RetryQuery(this.GetAllOrdersWithDetailQuery().AsNoTracking().Where(x => x.DocNumDxp == DocNumDxp));
         }
 
         /// <inheritdoc/>
@@ -1291,7 +1211,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsPackage = order.IsPackage,
                          });
 
-            return await this.RetryQuery<OrderModel>(query);
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
@@ -1339,7 +1259,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsOmigenomics = order.IsOmigenomics,
                          });
 
-            return (await this.RetryQuery<CompleteRecepcionPedidoDetailModel>(query)).ToList();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         /// <inheritdoc/>
@@ -1369,7 +1289,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsOmigenomics = order.IsOmigenomics,
                          });
 
-            return (await this.RetryQuery<CompleteDeliveryDetailModel>(query)).ToList();
+            return (await this.RetryQuery(query)).ToList();
         }
 
         /// <summary>
@@ -1552,38 +1472,23 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     });
         }
 
-
-        /// <inheritdoc/>
-        private IQueryable<CompleteOrderModel> GetCompleteOrderyJoinDoctorQuery()
+        private IQueryable<CompleteOrderModelWrap> GetCompleteOrderyJoinDoctorQueryWrap()
         {
-            var query = (from order in this.databaseContext.OrderModel
-                         join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                         into DetalleOrden
-                         from dp in DetalleOrden.DefaultIfEmpty()
-                         join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
-                         join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                         where producto.IsMagistral == "Y"
-                         select new CompleteOrderModel
-                         {
-                             DocNum = order.DocNum,
-                             Cliente = doctor.AliasName,
-                             Codigo = order.Codigo,
-                             Medico = doctor.AliasName,
-                             AsesorName = asesor.AsesorName,
-                             FechaInicio = order.FechaInicio.ToString("dd/MM/yyyy"),
-                             FechaFin = order.FechaFin.ToString("dd/MM/yyyy"),
-                             PedidoStatus = order.PedidoStatus,
-                             AtcEntry = order.AtcEntry,
-                             IsChecked = false,
-                             Detalles = dp,
-                             OrderType = order.OrderType,
-                             Canceled = order.Canceled,
-                             PedidoMuestra = order.PedidoMuestra,
-                             DocNumDxp = order.DocNumDxp,
-                             ShippingAddressName = order.ShippingAddressName,
-                         }).AsNoTracking();
-            return query;
+            return (from order in this.databaseContext.OrderModel
+                        join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                        into DetalleOrden
+                        from dp in DetalleOrden.DefaultIfEmpty()
+                        join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
+                        join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                        join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                        where producto.IsMagistral == "Y"
+                        select new CompleteOrderModelWrap
+                        {
+                            OrderModel = order,
+                            ClientCatalogModel = doctor,
+                            AsesorModel = asesor,
+                            DetallePedidoModel = dp,
+                        }).AsNoTracking();
         }
     }
 }
