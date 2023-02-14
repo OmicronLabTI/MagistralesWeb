@@ -120,5 +120,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>String QFB Name.</value>
         public string QfbName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets if the order has Technical assigned.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool HasTechnicalAssigned { get; set; }
     }
 }

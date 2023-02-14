@@ -494,6 +494,7 @@ namespace Omicron.Pedidos.Services.Utils
                             ShopTransaction = sapOrder.ShopTransaction,
                             TechnicalSign = o.StatusForTecnic == ServiceConstants.SignedStatus,
                             QfbName = o.QfbName,
+                            HasTechnicalAssigned = !string.IsNullOrEmpty(o.TecnicId),
                         };
 
                         ordersDetail.Add(order);

@@ -1046,14 +1046,20 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 listSignatureToInsert.Add(new UserOrderSignatureModel
                 {
-                    TechnicalSignature = ServiceShared.CalculateTernary(tecnicSignatureAsByte.Length > 0, tecnicSignatureAsByte, null),
+                    TechnicalSignature = ServiceShared.CalculateTernary(
+                        ServiceShared.CalculateAnd(tecnicSignatureAsByte.Length > 0, string.IsNullOrEmpty(order.TecnicId)),
+                        tecnicSignatureAsByte,
+                        null),
                     UserOrderId = order.Id,
                     QfbSignature = ServiceShared.CalculateTernary(qfbSignatureAsByte.Length > 0, qfbSignatureAsByte, null),
                 });
             }
             else
             {
-                signature.TechnicalSignature = ServiceShared.CalculateTernary(tecnicSignatureAsByte.Length > 0, tecnicSignatureAsByte, signature.TechnicalSignature);
+                signature.TechnicalSignature = ServiceShared.CalculateTernary(
+                        ServiceShared.CalculateAnd(tecnicSignatureAsByte.Length > 0, string.IsNullOrEmpty(order.TecnicId)),
+                        tecnicSignatureAsByte,
+                        signature.TechnicalSignature);
                 signature.QfbSignature = ServiceShared.CalculateTernary(qfbSignatureAsByte.Length > 0, qfbSignatureAsByte, signature.QfbSignature);
                 listToUpdate.Add(signature);
             }
