@@ -40,7 +40,7 @@ class ComponetsTest: XCTestCase {
             hasMissingStock: false, finishedLabel: false,
             patientName: "NamePatient",
             clientDxp: "clientDxp",
-            shopTransaction: "233r", qfbName: "", technicalSign: true)
+            shopTransaction: "233r", qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         provider = MoyaProvider<ApiService>(
             endpointClosure: customEndpointClosure,
             stubClosure: MoyaProvider.immediatelyStub)
