@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-import { MaterialComponent, RawRequest, RawRequestPost } from '../../model/http/materialReques';
+import { IMaterialRequestRes, MaterialComponent, RawRequest, RawRequestPost } from '../../model/http/materialReques';
 import { MaterialRequestService } from '../../services/material-request.service';
 import {
   ClassNames,
@@ -84,15 +84,17 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       const lengthFailOrders = resultMaterialRequest.response.failedProductionOrderIds.length;
       const lengthOkOrders = resultMaterialRequest.response.productionOrderIds.length;
       if (lengthFailOrders > CONST_NUMBER.zero) {
-        titleStatusOrders = `${Messages.existRequest} ${lengthFailOrders === CONST_NUMBER.one ?
-          Messages.nextOrder : Messages.nextOrders} \n\n`;
+        titleStatusOrders = `${Messages.existRequest} ${this.dataService.calculateTernary(lengthFailOrders === CONST_NUMBER.one,
+          Messages.nextOrder, Messages.nextOrders)} \n\n`;
         titleStatusOrders = `${titleStatusOrders} ${this.getIdsLit(resultMaterialRequest.response.failedProductionOrderIds)} \n\n`;
       }
       if (lengthOkOrders > CONST_NUMBER.zero) {
-        titleStatusOrders = `${titleStatusOrders} ${lengthFailOrders >= CONST_NUMBER.one ?
-          `${Messages.requestOrderWithFailOrders}${lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} `
-          : `${Messages.requestOrdersOnlyOk} ${lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders}`}`;
-        titleStatusOrders = `${titleStatusOrders} \n\n ${this.getIdsLit(resultMaterialRequest.response.productionOrderIds).toString()}`;
+        titleStatusOrders = this.getTitleStatusOrder(
+          titleStatusOrders,
+          lengthFailOrders,
+          lengthOkOrders,
+          resultMaterialRequest
+        );
       }
 
       this.messagesService.presentToastCustom(titleStatusOrders === CONST_STRING.empty ? Messages.thereNoOrderProcess :
@@ -108,6 +110,18 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
         this.goBack();
       }
     }, error => this.errorService.httpError(error));
+  }
+
+  getTitleStatusOrder(
+    titleStatusOrders: string,
+    lengthFailOrders: number,
+    lengthOkOrders: number,
+    resultMaterialRequest: IMaterialRequestRes): string {
+    titleStatusOrders = `${titleStatusOrders} ${lengthFailOrders >= CONST_NUMBER.one ?
+      `${Messages.requestOrderWithFailOrders}${lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders} `
+      : `${Messages.requestOrdersOnlyOk} ${lengthOkOrders === CONST_NUMBER.one ? Messages.nextOrder : Messages.nextOrders}`}`;
+    titleStatusOrders = `${titleStatusOrders} \n\n ${this.getIdsLit(resultMaterialRequest.response.productionOrderIds).toString()}`;
+    return titleStatusOrders;
   }
 
   addNewComponent(): void {

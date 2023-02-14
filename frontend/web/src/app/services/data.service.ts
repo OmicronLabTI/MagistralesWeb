@@ -214,4 +214,7 @@ export class DataService {
   calculateAndValueList(list: boolean[]): boolean {
     return list.every(item => item);
   }
+  calculateOrValueList(list: boolean[]): boolean {
+    return list.some(item => item);
+  }
 }
