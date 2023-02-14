@@ -142,32 +142,40 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
         this.subscriptionForm = this.findOrdersForm.valueChanges.subscribe(formData => {
             if (!this.isBeginInitForm) {
                 this.validateDocNums(formData.docNum, formData.docNumUntil);
-                if (this.withValue(formData.docNum) || this.withValue(formData.docNumUntil)) {
-                    this.isToResetData = false;
-                    this.getDisableForDocNum();
-                } else if (!this.withValue(formData.docNum) && this.withValue(formData.docNumDxp)) {
-                    this.getDisableForDocNumDxp();
-                } else if ((!this.withValue(formData.docNum) && !this.withValue(formData.docNumDxp)) &&
-                    (
-                        (this.withValue(formData.fini) && !this.isEqualDate(new Date(formData.fini), this.defaultStartDate)) ||
-                        (this.withValue(formData.ffin) && !this.isEqualDate(new Date(formData.ffin), this.defaultEndDate)) ||
-                        (this.withValue(formData.dateType) && formData.dateType !== ConstOrders.defaultDateInit) ||
-                        this.withValue(formData.status) || this.withValue(formData.qfb) ||
-                        this.withValue(formData.productCode) || this.withValue(formData.clientName) ||
-                        this.withValue(formData.label) || this.withValue(formData.finlabel)
-                        || this.withValue(formData.orderIncidents)
-                        || this.withValue(formData.clasification)
-                    )) {
-                    this.changeValidatorsForDocNum();
-                } else {
-                    this.enableAllInputs();
-                }
+                this.validateValueChanges(formData);
             }
             this.isBeginInitForm = false;
             this.getMaxDate();
         });
     }
 
+    validateValueChanges(formData: any): void {
+        const firstCondition = this.validateSomeControlHasValue(['docNum', 'docNumUntil'], formData);
+        const secondCondition = this.dataService.calculateAndValueList(
+            [!this.withValue(formData.docNum),
+            this.withValue(formData.docNumDxp)]);
+        const thirdCondition = this.dataService.calculateOrValueList([
+            this.withValue(formData.fini) && !this.isEqualDate(new Date(formData.fini), this.defaultStartDate),
+            this.withValue(formData.ffin) && !this.isEqualDate(new Date(formData.ffin), this.defaultEndDate),
+            this.withValue(formData.dateType) && formData.dateType !== ConstOrders.defaultDateInit,
+            this.validateSomeControlHasValue(['status', 'qfb', 'productCode', 'clientName', 'label',
+                'finlabel', 'orderIncidents', 'clasification'], formData)
+        ]);
+        if (firstCondition) {
+            this.isToResetData = false;
+            this.getDisableForDocNum();
+        } else if (secondCondition) {
+            this.getDisableForDocNumDxp();
+        } else if ((!this.withValue(formData.docNum) && !this.withValue(formData.docNumDxp)) && thirdCondition) {
+            this.changeValidatorsForDocNum();
+        } else {
+            this.enableAllInputs();
+        }
+    }
+
+    validateSomeControlHasValue(controls: string[], formData: any): boolean {
+        return controls.some((control) => this.withValue(formData[control]));
+    }
     isEqualDate(dateToCompare: Date, baseDate: Date) {
         return dateToCompare.getDate() === baseDate.getDate() &&
             dateToCompare.getUTCMonth() === baseDate.getUTCMonth() &&

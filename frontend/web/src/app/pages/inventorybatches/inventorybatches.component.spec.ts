@@ -17,6 +17,7 @@ import { of } from 'rxjs';
 import { CONST_NUMBER } from 'src/app/constants/const';
 import { ObservableService } from 'src/app/services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { DataService } from 'src/app/services/data.service';
 
 describe('InventorybatchesComponent', () => {
   let component: InventorybatchesComponent;
@@ -25,6 +26,7 @@ describe('InventorybatchesComponent', () => {
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
+  let dataServiceSpy: jasmine.SpyObj<DataService>;
   const iLotesFormulaRes = new ILotesFormulaRes();
   const iLotesSaveRes = new ILotesSaveRes();
   const iLotesReq = new ILotesReq();
@@ -40,6 +42,16 @@ describe('InventorybatchesComponent', () => {
       'presentToastCustom',
       'getMessageTitle',
     ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'calculateTernary', 'calculateOrValueList'
+    ]);
+    dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
+      return validation ? firstValue : secondaValue;
+    });
+    dataServiceSpy.calculateOrValueList.and.callFake((list: boolean[]) => {
+      const res = list.some((value) => value === true);
+      return res;
+    });
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
@@ -77,7 +89,8 @@ describe('InventorybatchesComponent', () => {
       declarations: [InventorybatchesComponent],
       providers: [
         DatePipe,
-        { provide: ObservableService, useValue: observableServiceSpy }
+        { provide: ObservableService, useValue: observableServiceSpy },
+        { provide: DataService, useValue: dataServiceSpy },
       ]
     })
       .compileComponents();
@@ -511,10 +524,10 @@ describe('InventorybatchesComponent', () => {
         lotesAsignados: [iLotesAsignadosReq]
       }];
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
-        return Promise.resolve({
-          isConfirmed: true
-        });
+      return Promise.resolve({
+        isConfirmed: true
       });
+    });
     component.buildObjectToSap();
     expect(component.buildObjectToSap).toBeTruthy();
 
