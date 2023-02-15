@@ -437,6 +437,23 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// Get address source.
+        /// </summary>
+        /// <param name="dxpId">Dxp Transaction Id.</param>
+        /// <param name="isDoctorDirectionFromPayments">Is doctor direction from payments table.</param>
+        /// <param name="addressType">Address Type.</param>
+        /// <returns>Address type.</returns>
+        public static bool GetAddressType(string dxpId, bool isDoctorDirectionFromPayments, string addressType)
+        {
+            if (!string.IsNullOrEmpty(dxpId))
+            {
+                return isDoctorDirectionFromPayments;
+            }
+
+            return ServiceShared.CalculateTernary(string.IsNullOrEmpty(addressType), true, addressType.Equals(ServiceConstants.DoctorAddressType));
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>

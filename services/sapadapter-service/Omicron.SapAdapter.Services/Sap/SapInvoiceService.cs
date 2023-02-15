@@ -356,7 +356,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.References = doctor.References;
                 x.DeliveryComments = payment.DeliveryComments;
                 x.DeliverySuggestedTime = payment.DeliverySuggestedTime;
-                x.IsDoctorDirection = this.GetAddressType(x.DocNumDxp, payment.IsDoctorDirection == 1, doctor.AddressType);
+                x.IsDoctorDirection = ServiceUtils.GetAddressType(x.DocNumDxp, payment.IsDoctorDirection == 1, doctor.AddressType);
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
@@ -840,23 +840,6 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceDetails ??= new InvoiceDetailModel { BaseEntry = 0 };
 
             return new Tuple<InvoiceDetailModel, InvoiceHeaderModel>(invoiceDetails, header);
-        }
-
-        /// <summary>
-        /// Get address source.
-        /// </summary>
-        /// <param name="dxpId">Dxp Transaction Id.</param>
-        /// <param name="isDoctorDirectionFromPayments">Is doctor direction from payments table.</param>
-        /// <param name="addressType">Address Type.</param>
-        /// <returns>Address type.</returns>
-        private bool GetAddressType(string dxpId, bool isDoctorDirectionFromPayments, string addressType)
-        {
-            if (!string.IsNullOrEmpty(dxpId))
-            {
-                return isDoctorDirectionFromPayments;
-            }
-
-            return ServiceShared.CalculateTernary(string.IsNullOrEmpty(addressType), true, addressType.Equals(ServiceConstants.DoctorAddressType));
         }
     }
 }
