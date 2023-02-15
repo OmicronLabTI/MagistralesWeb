@@ -31,7 +31,8 @@ class RootViewModel {
     var searchStore = String()
     var needSearch = false
     var orders: [SectionOrder] = []
-    var requireTechnical = false
+    var showTwoModals = false
+    var completeOrderList: [Order] = []
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
     var userType: UserType = UserType.technical
@@ -93,6 +94,13 @@ class RootViewModel {
         })
     }
 
+    func getShowTwoSignatureModals(_ fabricationOrders: [Int]) -> Bool {
+        let selectedOrders = self.completeOrderList.filter {
+            fabricationOrders.contains($0.productionOrderId ?? 0)
+        }
+        return selectedOrders.allSatisfy { !($0.hasTechnicalAssigned ?? false) }
+    }
+
     func sectionOrderSwitched(statusId: Int, orders: [Order]) -> SectionOrder? {
         switch statusId {
         case 1:
@@ -142,7 +150,12 @@ class RootViewModel {
         self.networkManager.getStatusList(userId).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             let sections = self.getSections(res: res)
-            self.requireTechnical = res.response?.requireTechnical ?? false
+            let ordersByStatus: [[Order]] = res.response?.status?.map { $0.orders ?? [] } ?? []
+            var ordersTemp: [Order] = []
+            for orders in ordersByStatus {
+                ordersTemp.append(contentsOf: orders )
+            }
+            self.completeOrderList = ordersTemp
             self.sections = sections
             self.dataStatus.onNext(sections)
             self.orders = sections

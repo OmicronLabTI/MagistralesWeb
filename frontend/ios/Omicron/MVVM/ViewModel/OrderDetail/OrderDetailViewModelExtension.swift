@@ -131,10 +131,10 @@ extension OrderDetailViewModel {
     }
     // Valida si el usuario obtuvo las firmas y finaliza la orden
     func validSignatures() {
-        if rootViewModel.requireTechnical {
-            finishOrderWithTechnical()
-        } else {
+        if rootViewModel.getShowTwoSignatureModals([self.orderId]) {
             finishOrderWithoutTechnical()
+        } else {
+            finishOrderWithTechnical()
         }
     }
     func finishOrderWithTechnical() {

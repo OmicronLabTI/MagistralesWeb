@@ -42,6 +42,7 @@ class OrderDetailViewModel {
     var changeColorLabelsHt = PublishSubject<Void>()
     var catalogGroup = String()
     var itemSelectedDetail: [Int] = []
+    var showTwoModals = false
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
     // MARK: - Init

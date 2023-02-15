@@ -51,21 +51,32 @@ class SignaturePadViewModel {
         case ViewControllerIdentifiers.orderDetailViewController:
             orderDetailVC.qfbSignatureIsGet = true
             orderDetailVC.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
-            callCorrectFunction(orderDetailVC.rootViewModel.requireTechnical,
+            let showTwoModals = orderDetailVC.rootViewModel.getShowTwoSignatureModals([orderDetailVC.orderId])
+
+            callCorrectFunction(!showTwoModals,
                                 requiredFunction: {orderDetailVC.validSignatures()},
                                 qfbFunction: {orderDetailVC.showSignatureView.onNext(
                                     CommonStrings.signatureViewTitleTechnical)})
+
         case ViewControllerIdentifiers.lotsViewController:
             lotsViewModel.qfbSignatureIsGet = true
             lotsViewModel.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
-            callCorrectFunction(lotsViewModel.rootViewModel.requireTechnical,
+            let showTwoModals = lotsViewModel.rootViewModel.getShowTwoSignatureModals([lotsViewModel.orderId])
+
+            callCorrectFunction(!showTwoModals,
                                 requiredFunction: {lotsViewModel.callFinishOrderService()},
                                 qfbFunction: {lotsViewModel.showSignatureView.onNext(
                                     CommonStrings.signatureViewTitleTechnical)})
+
         case ViewControllerIdentifiers.inboxViewController:
             inboxVM.qfbSignatureIsGet = true
             inboxVM.sqfbSignature = data.signature.toBase64() ?? CommonStrings.empty
-            callCorrectFunction(inboxVM.rootViewModel.requireTechnical,
+
+            let ordersFabricationIds = inboxVM.getFabOrderIDs(
+                indexPathOfOrdersSelected: inboxVM.indexPathOfOrdersSelected ?? [])
+            let showTwoModals = inboxVM.rootViewModel.getShowTwoSignatureModals(ordersFabricationIds)
+
+            callCorrectFunction(!showTwoModals,
                                 requiredFunction: {inboxVM.callFinishOrderService()},
                                 qfbFunction: {inboxVM.showSignatureVc.onNext(
                                     CommonStrings.signatureViewTitleTechnical)})
