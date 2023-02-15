@@ -43,33 +43,33 @@ class InboxTest: XCTestCase {
             "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
             hasMissingStock: false, finishedLabel: false, patientName: "NamePatient",
-            clientDxp: "clientDxp", shopTransaction: "emnjkd", qfbName: "", technicalSign: true)
+            clientDxp: "clientDxp", shopTransaction: "emnjkd", qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         order2 = Order( areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284,
             container: "PRINCESS/ATOMIZADOR", tag: "NA", plannedQuantity: 1, startDate: "22/09/2020",
             finishDate: "30/09/2020", descriptionProduct: "Lactico 30% Solución", statusId: 1,
             itemCode: "1027S   30 ML", productCode: "1027S", destiny: "Local", hasMissingStock: false,
             finishedLabel: false, patientName: "NamePatient 1", clientDxp: "clientDxp 1",
-                        shopTransaction: "emnjkd", qfbName: "", technicalSign: true)
+                        shopTransaction: "emnjkd", qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         orderItemCodeEmpty = Order( areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284,
             container: "PRINCESS/ATOMIZADOR", tag: "NA", plannedQuantity: 1, startDate: "22/09/2020",
             finishDate: "30/09/2020", descriptionProduct: "Lactico 30% Solución", statusId: 1, itemCode: "",
             productCode: "1027S", destiny: "Local", hasMissingStock: false, finishedLabel: false,
             patientName: "NamePatient 2", clientDxp: "clientDxp 3", shopTransaction: "emnjkd",
-                                    qfbName: "", technicalSign: true)
+                                    qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         orderTest1 = Order(
             areBatchesComplete: true, productionOrderId: 90006, baseDocument: 60288, container: "Selecciona una...",
             tag: "Selecciona una...", plannedQuantity: 2, startDate: "24/09/2020", finishDate: "25/09/2020",
             descriptionProduct: "Agua de rosas 48%  agua de hamamelis 48%   propilenglicol 4%", statusId: 1,
             itemCode: "1132   120 ML", productCode: nil, destiny: "Local", hasMissingStock: true,
             finishedLabel: false, patientName: "NamePatient 3", clientDxp: "clientDxp 3",
-            shopTransaction: "emnjkd", qfbName: "", technicalSign: true)
+            shopTransaction: "emnjkd", qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         orderTest2 = Order(
             areBatchesComplete: true, productionOrderId: 89997, baseDocument: 60284, container: "PRINCESS/DISCTOP",
             tag: "PERSONALIZADA", plannedQuantity: 1, startDate: "22/09/2020", finishDate: "30/09/2020",
             descriptionProduct: "Aceite de Lima 20%, Vaselina", statusId: 1, itemCode: "2573   30 ML",
             productCode: nil, destiny: "Local", hasMissingStock: false, finishedLabel: false,
             patientName: "NamePatient4", clientDxp: "clientDxp4",
-            shopTransaction: "emnjkd", qfbName: "", technicalSign: true)
+            shopTransaction: "emnjkd", qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         provider = MoyaProvider<ApiService>(
             endpointClosure: customEndpointClosure, stubClosure: MoyaProvider.immediatelyStub)
         statusCode = 200
@@ -128,7 +128,7 @@ class InboxTest: XCTestCase {
                           descriptionProduct: "CREMA BASE PARA RETINOICO", statusId: 1, itemCode: "BA-01",
                           productCode: "BA-01", destiny: "Local", hasMissingStock: false, finishedLabel: false,
                           patientName: "NamePatient", clientDxp: "clientDxp",
-                          shopTransaction: "emnjkd", qfbName: "", technicalSign: true)
+                          shopTransaction: "emnjkd", qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         data["BA-01"] = [order]
         // When
         let sectionModels = inboxViewModel!.groupedWithSimilarityOrWithoutSimilarity(

@@ -50,10 +50,10 @@ extension LotsViewModel {
 
     // Valida si el usuario obtuvo las firmas y finaliza la orden
     func callFinishOrderService() {
-        if self.rootViewModel.requireTechnical {
-            finishOrderWithTechnical()
-        } else {
+        if self.rootViewModel.getShowTwoSignatureModals([self.orderId]) {
             finishOrderWithoutTechnical()
+        } else {
+            finishOrderWithTechnical()
         }
     }
 
