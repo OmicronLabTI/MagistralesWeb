@@ -36,6 +36,17 @@ namespace Omicron.SapAdapter.Api.Filters
 
             private readonly IHostApplicationLifetime lifetime;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="CustomException"/> class.
+            /// </summary>
+            /// <param name="logger">The logger.</param>
+            /// <param name="lifeTime">The lifeTime.</param>
+            public CustomException(ILogger logger, IHostApplicationLifetime lifeTime)
+            {
+                this.logger = logger;
+                this.lifetime = lifeTime;
+            }
+
             public void OnException(ExceptionContext context)
             {
                 string message = string.Empty;
