@@ -177,7 +177,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Status = ServiceShared.CalculateTernary(x.Status.Equals(ServiceConstants.Proceso), ServiceConstants.EnProceso, x.Status);
                 x.FechaOfFin = ServiceShared.GetDateValueOrDefault(userOrder.FinishDate, string.Empty);
                 x.PedidoStatus = ServiceShared.CalculateTernary(pedido == null, ServiceConstants.Abierto, pedido?.Status);
-                x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
+                x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(new List<int> { x.OrdenFabricacionId })).Any(y => y.Stock == 0);
                 x.Comments = pedido?.Comments;
                 x.RealLabel = x.Label;
                 x.Label = ServiceShared.CalculateTernary(x.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()), ServiceConstants.Personalizado, ServiceConstants.Generico);
@@ -942,7 +942,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<List<CompleteDetalleFormulaModel>> GetDetailsByOrder(int orderId)
         {
-            var details = (await this.sapDao.GetDetalleFormula(orderId)).ToList();
+            var details = (await this.sapDao.GetDetalleFormula(new List<int> { orderId })).ToList();
 
             foreach (var detail in details)
             {

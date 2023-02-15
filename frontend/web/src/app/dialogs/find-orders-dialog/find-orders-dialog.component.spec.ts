@@ -59,7 +59,19 @@ describe('FindOrdersDialogComponent', () => {
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
       'getUsers', 'getRoles'
     ]);
-    dataServiceSpy = jasmine.createSpyObj<DataService>('UsersService', ['calculateTernary']);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('UsersService', [
+      'calculateTernary',
+      'calculateAndValueList',
+      'calculateOrValueList']);
+
+    dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
+      const res = list.every((value) => value === true);
+      return res;
+    });
+    dataServiceSpy.calculateOrValueList.and.callFake((list: boolean[]) => {
+      const res = list.some((value) => value === true);
+      return res;
+    });
     userServiceSpy.getRoles.and.callFake(() => {
       return of(RolesMock);
     });

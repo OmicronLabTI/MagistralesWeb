@@ -367,7 +367,7 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Response);
             var response = JsonConvert.DeserializeObject<List<OrdenFabricacionModel>>(result.Response.ToString());
-            Assert.AreEqual(response.Count, 2);
+            Assert.AreEqual(2, response.Count);
         }
 
         /// <summary>

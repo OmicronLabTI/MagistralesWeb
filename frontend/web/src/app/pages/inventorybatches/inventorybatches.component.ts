@@ -147,33 +147,36 @@ export class InventorybatchesComponent implements OnInit {
   }
 
   // tslint:disable-next-line: no-shadowed-variable
-  addLotes(element: ILotesReq) {
+  addLotes(element: ILotesReq): void {
     if ((this.dataSourceDetails.data[this.indexSelected].totalNecesario - element.cantidadSeleccionada) >= CONST_NUMBER.zero) {
       if (element.cantidadSeleccionada === CONST_NUMBER.nulo || element.cantidadSeleccionada <= CONST_NUMBER.zero) {
         this.observableService.setGeneralNotificationMessage(Messages.batchesCantidadSeleccionadaZero);
-      } else {
-        if (element.cantidadDisponible - element.cantidadSeleccionada < CONST_NUMBER.zero) {
-          this.observableService.setGeneralNotificationMessage(Messages.batchesNotAvailableQty);
-          return false;
-        }
-        const objetoNuevo: ILotesAsignadosReq = {
-          numeroLote: element.numeroLote,
-          cantidadSeleccionada: element.cantidadSeleccionada,
-          sysNumber: element.sysNumber,
-          action: CONST_DETAIL_FORMULA.insert,
-          noidb: BOOLEANS.verdadero,
-          isValid: element.isValid
-        };
-        if (this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null) {
-          this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados = [];
-        }
-        this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push(objetoNuevo);
-        this.tableLotesView();
-        element.cantidadDisponible = parseFloat((element
-          .cantidadDisponible - element.cantidadSeleccionada).toFixed(6));
-        this.setTotales(element.cantidadSeleccionada);
-        this.isReadyToSave = true;
+        return;
       }
+      if (element.cantidadDisponible - element.cantidadSeleccionada < CONST_NUMBER.zero) {
+        this.observableService.setGeneralNotificationMessage(Messages.batchesNotAvailableQty);
+        return;
+      }
+      const objetoNuevo: ILotesAsignadosReq = {
+        numeroLote: element.numeroLote,
+        cantidadSeleccionada: element.cantidadSeleccionada,
+        sysNumber: element.sysNumber,
+        action: CONST_DETAIL_FORMULA.insert,
+        noidb: BOOLEANS.verdadero,
+        isValid: element.isValid
+      };
+      this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados = this.dataService.calculateTernary(
+        this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados == null,
+        [],
+        this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados
+      );
+      this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push(objetoNuevo);
+      this.tableLotesView();
+      element.cantidadDisponible = parseFloat((element
+        .cantidadDisponible - element.cantidadSeleccionada).toFixed(6));
+      this.setTotales(element.cantidadSeleccionada);
+      this.isReadyToSave = true;
+
     }
   }
 
@@ -182,38 +185,12 @@ export class InventorybatchesComponent implements OnInit {
     const dataSourceLotesAsignados = this.dataSourceLotesAsignados;
     const indexSelected = this.indexSelected;
     const arrayObjetos: ILotesAsignadosReq[] = [];
-    let objetoLoteAsignado: ILotesAsignadosReq;
     const arrayNoRepetir: string[] = [];
     this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(elementA => {
       if (elementA.action !== CONST_DETAIL_FORMULA.delete) {
         if (!arrayNoRepetir.includes(elementA.numeroLote)) {
           arrayNoRepetir.push(elementA.numeroLote);
-          // tslint:disable-next-line: no-shadowed-variable
-          const arraySum: ILotesSelectedReq[] = dataSourceDetails.data[indexSelected].lotesSeleccionados.filter(element => (
-            element.numeroLote === elementA.numeroLote)
-          );
-          let suma = CONST_NUMBER.zero;
-          if (arraySum.length > CONST_NUMBER.one) {
-            arraySum.forEach(ele => {
-              if (ele.action !== CONST_DETAIL_FORMULA.delete) {
-                suma = suma + ele.cantidadSeleccionada;
-              }
-            });
-            objetoLoteAsignado = {
-              numeroLote: elementA.numeroLote,
-              sysNumber: elementA.sysNumber,
-              cantidadSeleccionada: parseFloat(suma.toFixed(6)),
-              isValid: elementA.isValid
-            };
-          } else {
-            objetoLoteAsignado = {
-              numeroLote: elementA.numeroLote,
-              sysNumber: elementA.sysNumber,
-              cantidadSeleccionada: elementA.cantidadSeleccionada,
-              isValid: elementA.isValid
-            };
-          }
-          arrayObjetos.push(objetoLoteAsignado);
+          arrayObjetos.push(this.getAssignedLot(dataSourceDetails, elementA, indexSelected));
           if (dataSourceDetails.data[indexSelected].lotesAsignados == null) {
             dataSourceDetails.data[indexSelected].lotesAsignados = [];
           }
@@ -223,6 +200,29 @@ export class InventorybatchesComponent implements OnInit {
         }
       }
     });
+  }
+
+  getAssignedLot(
+    dataSourceDetails: MatTableDataSource<ILotesFormulaReq>,
+    elementA: ILotesSelectedReq,
+    indexSelected: number): ILotesAsignadosReq {
+    const arraySum: ILotesSelectedReq[] = dataSourceDetails.data[indexSelected].lotesSeleccionados.
+      filter(element => (element.numeroLote === elementA.numeroLote));
+
+    const lastTotal = arraySum.reduce((total, actualValue) => this.dataService.calculateTernary(
+      actualValue.action !== CONST_DETAIL_FORMULA.delete,
+      total + actualValue.cantidadSeleccionada,
+      total), 0);
+
+    return {
+      numeroLote: elementA.numeroLote,
+      sysNumber: elementA.sysNumber,
+      cantidadSeleccionada: this.dataService.calculateTernary(arraySum.length > CONST_NUMBER.one,
+        parseFloat(lastTotal.toFixed(6)),
+        elementA.cantidadSeleccionada
+      ),
+      isValid: elementA.isValid
+    };
   }
 
   // tslint:disable-next-line: no-shadowed-variable
@@ -248,18 +248,7 @@ export class InventorybatchesComponent implements OnInit {
   // tslint:disable-next-line: no-shadowed-variable
   deleteDetails(element?: ILotesAsignadosReq) {
     if (element !== undefined) {
-      let tomarEnCuenta = false;
-      this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(ele => {
-        if (ele.numeroLote === element.numeroLote) {
-          ele.action = CONST_DETAIL_FORMULA.delete;
-          if (ele.noidb === undefined || ele.noidb === false) {
-            tomarEnCuenta = true;
-          } else {
-            tomarEnCuenta = false;
-            return;
-          }
-        }
-      });
+      const tomarEnCuenta = this.updateBatches(element);
       if (tomarEnCuenta) {
         this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.push({
           numeroLote: element.numeroLote,
@@ -273,6 +262,21 @@ export class InventorybatchesComponent implements OnInit {
     return false;
   }
 
+  updateBatches(element?: ILotesAsignadosReq): boolean {
+    let tomarEnCuenta = false;
+    this.dataSourceDetails.data[this.indexSelected].lotesSeleccionados.forEach(ele => {
+      if (ele.numeroLote === element.numeroLote) {
+        ele.action = CONST_DETAIL_FORMULA.delete;
+        if (this.dataService.calculateOrValueList([ele.noidb === undefined, ele.noidb === false])) {
+          tomarEnCuenta = true;
+        } else {
+          tomarEnCuenta = false;
+          return;
+        }
+      }
+    });
+    return tomarEnCuenta;
+  }
   setSelectedQuantity(cantidadNecesaria?) {
     if (cantidadNecesaria !== undefined) {
       this.dataSourceDetails.data[this.indexSelected].lotes.forEach(ele => {
@@ -321,7 +325,11 @@ export class InventorybatchesComponent implements OnInit {
       if (element.lotesSeleccionados != null) {
         element.lotesSeleccionados.forEach((lote, index) => {
           if (lote.action !== undefined) {
-            if ((lote.noidb === BOOLEANS.falso || lote.noidb === undefined) || (lote.action === CONST_DETAIL_FORMULA.insert)) {
+            const continueValidation = this.dataService.calculateOrValueList([
+              (lote.noidb === BOOLEANS.falso || lote.noidb === undefined),
+              (lote.action === CONST_DETAIL_FORMULA.insert)
+            ]);
+            if (continueValidation) {
               const objectSAP: ILotesToSaveReq = {
                 // tslint:disable-next-line: radix
                 orderId: parseInt(ordenFabricacionId),
@@ -337,6 +345,10 @@ export class InventorybatchesComponent implements OnInit {
         });
       }
     });
+    this.presentToastToCreateObjectToSAP(objectToSave);
+  }
+
+  presentToastToCreateObjectToSAP(objectToSave: ILotesToSaveReq[]): void {
     this.messagesService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then((resultSaveMessage: any) => {
       if (resultSaveMessage.isConfirmed) {
 
@@ -349,10 +361,10 @@ export class InventorybatchesComponent implements OnInit {
           } else {
             this.messagesService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, false).then(
               (resultBatchSave: any) => {
-              if (resultBatchSave.isConfirmed) {
-                window.location.reload();
-              }
-            });
+                if (resultBatchSave.isConfirmed) {
+                  window.location.reload();
+                }
+              });
           }
         }, error => this.errorService.httpError(error));
       }

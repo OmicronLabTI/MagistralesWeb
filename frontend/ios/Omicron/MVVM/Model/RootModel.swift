@@ -98,6 +98,7 @@ class Order {
     var shopTransaction: String?
     var qfbName: String?
     var technicalSign: Bool?
+    var hasTechnicalAssigned: Bool?
     init(areBatchesComplete: Bool?, productionOrderId: Int?, baseDocument: Int?,
          container: String?, tag: String?, plannedQuantity: Decimal?,
          startDate: String?, finishDate: String?, descriptionProduct: String?,
@@ -108,7 +109,8 @@ class Order {
          clientDxp: String?,
          shopTransaction: String?,
          qfbName: String?,
-         technicalSign: Bool?) {
+         technicalSign: Bool?,
+         hasTechnicalAssigned: Bool?) {
         self.areBatchesComplete = areBatchesComplete
         self.productionOrderId = productionOrderId
         self.baseDocument = baseDocument
@@ -129,6 +131,7 @@ class Order {
         self.shopTransaction = shopTransaction
         self.qfbName = qfbName
         self.technicalSign = technicalSign
+        self.hasTechnicalAssigned = hasTechnicalAssigned
     }
     required init?(map: Map) {}
 }
@@ -152,6 +155,7 @@ extension Order: Mappable {
         shopTransaction <- map["shopTransaction"]
         qfbName <- map["qfbName"]
         technicalSign <- map["technicalSign"]
+        hasTechnicalAssigned <- map["hasTechnicalAssigned"]
     }
 }
 struct SectionOrder {

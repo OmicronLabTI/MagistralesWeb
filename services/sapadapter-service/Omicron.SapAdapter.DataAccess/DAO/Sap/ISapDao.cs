@@ -125,13 +125,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(int orderId);
-
-        /// <summary>
-        /// gets the realtion between WOR1, OITM ans OITW.
-        /// </summary>
-        /// <param name="orderId">the order id.</param>
-        /// <returns>the data.</returns>
         Task<IEnumerable<CompleteDetalleFormulaModel>> GetDetalleFormula(List<int> orderId);
 
         /// <summary>
