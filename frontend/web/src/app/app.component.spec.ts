@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, async } from '@angular/core/testing';
@@ -42,22 +42,17 @@ describe('AppComponent', () => {
   const qfbWithNumber = new QfbWithNumber();
   const generalMessage = new GeneralMessage();
   const cancelOrders = new CancelOrders();
-  cancelOrders.list = [{ orderId: 231 }, { orderId: 123 }]
+  cancelOrders.list = [{ orderId: 231 }, { orderId: 123 }];
   const searchComponentModal = new SearchComponentModal();
   const commentsConfig = new CommentsConfig();
 
   beforeEach(async(() => {
     matDialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
-    // matDialog.open.and.callFake(<T, D = any, R = any>(componentOrTemplateRef: ComponentType<T> | TemplateRef<T>, config?: MatDialogConfig<D>): MatDialogRef<T, R> => {
-    //   return {
-    //     afterClosed: () => of(true),
-    //   } as MatDialogRef<T, R>
-    // });
 
     matDialog.open.and.returnValue({
       afterClosed: () => of(true),
     } as MatDialogRef<FindOrdersDialogComponent>);
-  
+
     messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
       'presentToastCustom',
       'getMessageTitle'
@@ -66,8 +61,8 @@ describe('AppComponent', () => {
     messagesServiceSpy.presentToastCustom.and.returnValue(new Promise((resolve, reject) => {
       resolve({
         isConfirmed: true
-      })
-    }))
+      });
+    }));
 
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'postPlaceOrders',
@@ -81,24 +76,24 @@ describe('AppComponent', () => {
 
     pedidosServiceSpy.createIsolatedOrder.and.returnValue(of({
       response: 1
-    }))
+    }));
     pedidosServiceSpy.getQfbsWithOrders.and.callFake(() => of({
       response: []
-    }))
+    }));
 
     pedidosServiceSpy.postPlaceOrders.and.callFake(() => of({
       response: []
-    }))
+    }));
 
     pedidosServiceSpy.postPlaceOrderAutomatic.and.callFake(() => of({
       response: []
-    }))
+    }));
 
     pedidosServiceSpy.putCancelOrders.and.callFake(() => of({
       response: {
         failed: []
       }
-    }))
+    }));
     pedidosServiceSpy.putFinalizeOrders.and.callFake(() => of({
       response: {
         failed: []
@@ -118,11 +113,11 @@ describe('AppComponent', () => {
       'setFiltersActivesOrders',
       'removeFiltersActiveOrders',
     ]);
-    localStorageServiceSpy.getFiltersActivesAsModelOrders.and.returnValue(new ParamsPedidos())
+    localStorageServiceSpy.getFiltersActivesAsModelOrders.and.returnValue(new ParamsPedidos());
 
     routerSpy = jasmine.createSpyObj<Router>('Router', [
       'navigate'
-    ])
+    ]);
 
     localStorageServiceSpy.removeOrderIsolated.and.returnValue();
     localStorageServiceSpy.getOrderIsolated.and.returnValue('orderTest');
@@ -133,7 +128,7 @@ describe('AppComponent', () => {
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
       return validation ? firstValue : secondaValue;
     });
-    dataServiceSpy.getIsToSaveAnything.and.returnValue(false)
+    dataServiceSpy.getIsToSaveAnything.and.returnValue(false);
     // ------------ Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>
       ('ObservableService',
@@ -161,7 +156,7 @@ describe('AppComponent', () => {
           'setNewDataSignature'
         ]
       );
-      
+
     observableServiceSpy.getIsLoading.and.returnValue(of(true));
     observableServiceSpy.getIsLogin.and.returnValue(of(true));
     observableServiceSpy.getGeneralNotificationMessage.and.returnValue(of(''));
@@ -204,7 +199,8 @@ describe('AppComponent', () => {
         { provide: MessagesService, useValue: messagesServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
-        { provide: MatDialog, useValue: matDialog }
+        { provide: MatDialog, useValue: matDialog },
+        { provide: APP_BASE_HREF, useValue: '/' }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -214,7 +210,7 @@ describe('AppComponent', () => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  })
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -222,29 +218,29 @@ describe('AppComponent', () => {
 
 
   it('should go to Page and remove isolate', () => {
-    component.goToPage(['ordenes'])
+    component.goToPage(['ordenes']);
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
 
   it('should go message service', () => {
-    dataServiceSpy.getIsToSaveAnything.and.returnValue(true)
-    component.goToPage(['ordenes'])
+    dataServiceSpy.getIsToSaveAnything.and.returnValue(true);
+    component.goToPage(['ordenes']);
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
 
   it('should end session', () => {
-    component.endSession()
+    component.endSession();
     expect(localStorageServiceSpy.clearSession).toHaveBeenCalled();
 
   });
 
   it('should getSucessMessage', () => {
-    let message = component.getSucessMessage({})
-    expect(component.getSucessMessage({})).toBe(message)
+    const message = component.getSucessMessage({});
+    expect(component.getSucessMessage({})).toBe(message);
   });
 
   it('should getSucessMessage', () => {
-    component.showModalPlaceOrderss({})
+    component.showModalPlaceOrderss({});
   });
 
   it('should createDialogHttpOhAboutTypePlace', () => {
