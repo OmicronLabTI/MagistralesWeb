@@ -99,7 +99,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockPedidoService
-                .Setup(m => m.GetPedidosService(It.IsAny<string>()))
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDtoGetPedidosService()));
 
             mockUserService
@@ -189,7 +189,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockPedidoService
-                .Setup(m => m.GetPedidosService(It.IsAny<string>()))
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockUserService

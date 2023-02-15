@@ -100,7 +100,7 @@ namespace Omicron.SapAdapter.Services.Sap
             if (parameters.ContainsKey(ServiceConstants.FechaFin))
             {
                 var route = $"{ServiceConstants.GetOrderByQuery}?ffin={parameters[ServiceConstants.FechaFin]}";
-                var ordersResult = await this.pedidosService.GetPedidosService(route);
+                var ordersResult = await this.pedidosService.GetUserPedidos(route);
                 userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(ordersResult.Response.ToString());
             }
 
@@ -227,8 +227,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var orderByDxp = ServiceShared.CalculateTernary(orders.Any(x => !string.IsNullOrEmpty(x.DocNumDxp)), (await this.sapDao.GetOrdersByDocNumDxp(orders.Where(y => !string.IsNullOrEmpty(y.DocNumDxp)).Select(x => x.DocNumDxp).Distinct().ToList())).ToList(), new List<OrderModel>());
             orderByDxp.GroupBy(x => x.DocNumDxp).ToList().ForEach(x =>
             {
-                var dictData = x.Select(x => new { x.PedidoId, x.OrderType }).DistinctBy(y => y.PedidoId).ToDictionary(z => z.PedidoId, z => z.OrderType);
-
                 relationshipsDxp.Add(new RelationDxpDocEntry
                 {
                     DxpDocNum = x.Key ?? string.Empty,
@@ -376,9 +374,9 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc />
-        public async Task<ResultModel> GetValidationQuatitiesOrdersFormula(List<int> listIds)
+        public async Task<ResultModel> GetValidationQuatitiesOrdersFormula(List<int> orderIds)
         {
-            var details = (await this.sapDao.GetDetalleFormula(listIds)).ToList();
+            var details = (await this.sapDao.GetDetalleFormula(orderIds)).ToList();
             var detailsWithInvalidQuantities = details.Where(d => d.Consumed != d.RequiredQuantity).ToList();
             return ServiceUtils.CreateResult(true, 200, null, detailsWithInvalidQuantities, null, null);
         }
@@ -758,7 +756,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>List.</returns>
         public async Task<ResultModel> GetPackingRequiredForOrderInAssignedStatus(string userId)
         {
-            var resultOrders = await this.pedidosService.GetPedidosService(string.Format(ServiceConstants.GetOrdersByStatusAndUserId, ServiceConstants.Asignado, userId));
+            var resultOrders = await this.pedidosService.GetUserPedidos(string.Format(ServiceConstants.GetOrdersByStatusAndUserId, ServiceConstants.Asignado, userId));
             var userOrders = JsonConvert.DeserializeObject<List<int>>(JsonConvert.SerializeObject(resultOrders.Response));
             var detailsFormula = (await this.sapDao.GetDetalleFormulaByProdOrdId(userOrders)).Where(x => ServiceShared.CalculateOr(x.ItemCode.Contains("EN"), x.ItemCode.Contains("EM"))).ToList();
             var products = (await this.sapDao.GetProductByIds(detailsFormula.Select(x => x.ItemCode).Distinct().ToList())).ToList();
