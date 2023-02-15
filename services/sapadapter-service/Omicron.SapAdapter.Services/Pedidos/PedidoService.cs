@@ -79,23 +79,5 @@ namespace Omicron.SapAdapter.Services.Pedidos
 
             return result;
         }
-
-        /// <summary>
-        /// Makes a get to pedidos service.
-        /// </summary>
-        /// <param name="route">the route to send.</param>
-        /// <returns>the data.</returns>
-        public async Task<ResultDto> GetPedidosService(string route)
-        {
-            ResultDto result;
-            var url = this.httpClient.BaseAddress + route;
-
-            using (var response = await this.httpClient.GetAsync(url))
-            {
-                result = await ServiceUtils.GetResponse(response, this.logger, "Error peticion pedidos");
-            }
-
-            return result;
-        }
     }
 }
