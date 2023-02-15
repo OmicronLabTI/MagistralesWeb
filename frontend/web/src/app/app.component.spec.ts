@@ -1,28 +1,31 @@
-import { TestBed, async, ComponentFixture } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { AppComponent } from './app.component';
-import { MATERIAL_COMPONENTS } from './app.material';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { PedidosService } from './services/pedidos.service';
-import { DataService } from './services/data.service';
-import { ObservableService } from './services/observable.service';
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
+import { AppComponent } from './app.component';
+import { MATERIAL_COMPONENTS } from './app.material';
+import { AppModule } from './app.module';
+import { ComponentsModule } from './components/components.module';
 import { HttpServiceTOCall, MODAL_NAMES } from './constants/const';
-import { QfbWithNumber } from './model/http/users';
+import { FindOrdersDialogComponent } from './dialogs/find-orders-dialog/find-orders-dialog.component';
 import { GeneralMessage } from './model/device/general';
-import { CancelOrders, SearchComponentModal } from './model/device/orders';
 import { CommentsConfig } from './model/device/incidents.model';
+import { CancelOrders, SearchComponentModal } from './model/device/orders';
+import {
+  ParamsPedidos
+} from './model/http/pedidos';
+import { QfbWithNumber } from './model/http/users';
+import { DataService } from './services/data.service';
+import { ErrorService } from './services/error.service';
 import { LocalStorageService } from './services/local-storage.service';
 import { MessagesService } from './services/messages.service';
-import { Router } from '@angular/router';
-import { ComponentsModule } from './components/components.module';
-import { PlaceOrderDialogComponent } from './dialogs/place-order-dialog/place-order-dialog.component';
-import { AppModule } from './app.module';
-import { OrdersService } from './services/orders.service';
-
+import { ObservableService } from './services/observable.service';
+import { PedidosService } from './services/pedidos.service';
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
@@ -32,6 +35,9 @@ describe('AppComponent', () => {
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorServiceSpy: jasmine.SpyObj<ErrorService>;
+  let matDialog: jasmine.SpyObj<MatDialog>;
+
   const httpServiceTOCall = HttpServiceTOCall.ORDERS;
   const qfbWithNumber = new QfbWithNumber();
   const generalMessage = new GeneralMessage();
@@ -41,6 +47,17 @@ describe('AppComponent', () => {
   const commentsConfig = new CommentsConfig();
 
   beforeEach(async(() => {
+    matDialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+    // matDialog.open.and.callFake(<T, D = any, R = any>(componentOrTemplateRef: ComponentType<T> | TemplateRef<T>, config?: MatDialogConfig<D>): MatDialogRef<T, R> => {
+    //   return {
+    //     afterClosed: () => of(true),
+    //   } as MatDialogRef<T, R>
+    // });
+
+    matDialog.open.and.returnValue({
+      afterClosed: () => of(true),
+    } as MatDialogRef<FindOrdersDialogComponent>);
+  
     messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
       'presentToastCustom',
       'getMessageTitle'
@@ -60,7 +77,11 @@ describe('AppComponent', () => {
       'createIsolatedOrder',
       'getQfbsWithOrders'
     ]);
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
 
+    pedidosServiceSpy.createIsolatedOrder.and.returnValue(of({
+      response: 1
+    }))
     pedidosServiceSpy.getQfbsWithOrders.and.callFake(() => of({
       response: []
     }))
@@ -78,6 +99,11 @@ describe('AppComponent', () => {
         failed: []
       }
     }))
+    pedidosServiceSpy.putFinalizeOrders.and.callFake(() => of({
+      response: {
+        failed: []
+      }
+    }));
 
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'clearSession',
@@ -92,6 +118,7 @@ describe('AppComponent', () => {
       'setFiltersActivesOrders',
       'removeFiltersActiveOrders',
     ]);
+    localStorageServiceSpy.getFiltersActivesAsModelOrders.and.returnValue(new ParamsPedidos())
 
     routerSpy = jasmine.createSpyObj<Router>('Router', [
       'navigate'
@@ -130,9 +157,11 @@ describe('AppComponent', () => {
           'setNewFormulaComponent',
           'setNewMaterialComponent',
           'setNewSearchOrderModal',
-          'setNewCommentsResult'
+          'setNewCommentsResult',
+          'setNewDataSignature'
         ]
       );
+      
     observableServiceSpy.getIsLoading.and.returnValue(of(true));
     observableServiceSpy.getIsLogin.and.returnValue(of(true));
     observableServiceSpy.getGeneralNotificationMessage.and.returnValue(of(''));
@@ -173,7 +202,9 @@ describe('AppComponent', () => {
         { provide: PedidosService, useValue: pedidosServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: MatDialog, useValue: matDialog }
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
