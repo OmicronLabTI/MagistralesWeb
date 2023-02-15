@@ -450,7 +450,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 return isDoctorDirectionFromPayments;
             }
 
-            return ServiceShared.CalculateTernary(string.IsNullOrEmpty(addressType), true, addressType.Equals(ServiceConstants.DoctorAddressType));
+            return ServiceShared.CalculateTernary(string.IsNullOrEmpty(addressType), true, addressType.ValidateNull().Equals(ServiceConstants.DoctorAddressType));
         }
 
         /// <summary>
