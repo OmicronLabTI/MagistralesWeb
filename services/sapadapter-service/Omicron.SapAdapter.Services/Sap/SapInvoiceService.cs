@@ -637,7 +637,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private List<InvoiceDeliveryModel> GetDeliveryModel(List<CompleteDeliveryDetailModel> delivery, List<CompleteInvoiceDetailModel> invoiceDetails, List<UserOrderModel> userOrderModels, List<LineProductsModel> lineProducts)
         {
-            var listToReturn = delivery.DistinctBy(x => x.DocNum).ToList()
+            var listToReturn = delivery.DistinctBy(x => x.DocNum).AsEnumerable()
                 .Select(y =>
                 {
                     var userOrderStatus = userOrderModels.Where(z => ServiceShared.CalculateAnd(z.DeliveryId == y.DocNum, !string.IsNullOrEmpty(z.Productionorderid))).Select(y => y.StatusAlmacen).ToList();
