@@ -10,7 +10,7 @@ export class PlaceOrders {
 }
 export class CancelOrders {
     list: CancelOrderReq[] = [];
-    cancelType: string = "";
+    cancelType = '';
     isFromCancelIsolated?: boolean;
 }
 export class SearchComponentModal {
