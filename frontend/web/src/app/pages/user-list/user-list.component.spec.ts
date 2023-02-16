@@ -41,8 +41,8 @@ describe('UserListComponent', () => {
   let fixture: ComponentFixture<UserListComponent>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let userServiceSpy: jasmine.SpyObj<UsersService>;
-  let dataServiceSpy;
-  let errorServiceSpy;
+  let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let errorServiceSpy: jasmine.SpyObj<ErrorService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
 
   let matDialog: MatDialogMock;
@@ -61,8 +61,11 @@ describe('UserListComponent', () => {
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
-        'getFormattedNumber'
+        'getFormattedNumber', 'calculateTernary'
       ]);
+    dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
+      return validation ? firstValue : secondaValue;
+    });
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return new Promise(resolve => { resolve(''); });
     });
@@ -199,7 +202,7 @@ describe('UserListComponent', () => {
     } as MatDialogRef<typeof component>);
     component.openSearchUsers();
     expect(matDialog.open).toHaveBeenCalled();
-    expect(component.fullQueryString).toBe('status=1&assignable=1&fname=Perez&lname=Perez&user=Juan&role=1&typeQfb=BQ');
+    expect(component.fullQueryString).toBe('user=Juan&fname=Perez&lname=Perez&role=1&status=1&assignable=1&typeQfb=BQ');
   });
   it('should open dialog AddUserDialogComponent', () => {
     spyOn(matDialog, 'open').and.returnValue({
