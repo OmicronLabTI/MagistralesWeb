@@ -291,7 +291,7 @@ namespace Omicron.Usuarios.Services.User
                     }
             }
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToReturn, null, listToReturn.Count);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToReturn.OrderBy(x => x.FirstName), null, listToReturn.Count);
         }
 
         /// <inheritdoc/>
