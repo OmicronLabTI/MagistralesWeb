@@ -187,37 +187,37 @@ export class UserListComponent implements OnInit, OnDestroy {
             }
         });
     }
+    getKeyUserSearchValue(key: string): string {
+        const dictOptions: { [key: string]: string } = {
+            activoSe: 'status',
+            asignableSe: 'assignable',
+            firstNameSe: 'fname',
+            lastNameSe: 'lname',
+            userNameSe: 'user',
+            userTypeRSe: 'role',
+            classificationQFBSe: 'typeQfb',
+            '': ''
+        };
+        return dictOptions[key];
+    }
 
+    validateValue(value: string): boolean {
+        return value !== undefined && value !== CONST_STRING.empty;
+    }
     onSuccessUserResult(searchUsersResult: any) {
         this.fullQueryString = CONST_STRING.empty;
         this.searchUsersData = searchUsersResult;
-        if (this.searchUsersData.activoSe && this.searchUsersData.activoSe !== CONST_STRING.empty) {
-            this.fullQueryString = `status=${this.searchUsersData.activoSe}&`;
-        }
-        if (this.searchUsersData.asignableSe && this.searchUsersData.asignableSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}assignable=${this.searchUsersData.asignableSe}&`;
-        }
-        if (this.searchUsersData.firstNameSe && this.searchUsersData.firstNameSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}fname=${this.searchUsersData.firstNameSe}&`;
-        }
-        if (this.searchUsersData.lastNameSe && this.searchUsersData.lastNameSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}lname=${this.searchUsersData.lastNameSe}&`;
-        }
-        if (this.searchUsersData.userNameSe && this.searchUsersData.userNameSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}user=${this.searchUsersData.userNameSe}&`;
-        }
-        if (this.searchUsersData.userTypeRSe && this.searchUsersData.userTypeRSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}role=${this.searchUsersData.userTypeRSe}&`;
-        }
-        if (this.searchUsersData.classificationQFBSe && this.searchUsersData.classificationQFBSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}typeQfb=${this.searchUsersData.classificationQFBSe}&`;
-        }
+        const keyList = Object.keys(searchUsersResult);
+        this.fullQueryString = keyList.reduce((query, key) =>
+            this.dataService.calculateTernary(this.validateValue(searchUsersResult[key]),
+                `${query}${this.getKeyUserSearchValue(key)}=${searchUsersResult[key]}&`,
+                query),
+            CONST_STRING.empty);
         this.fullQueryString = this.fullQueryString.slice(CONST_NUMBER.zero, CONST_NUMBER.lessOne);
         this.offset = CONST_NUMBER.zero;
         this.limit = CONST_NUMBER.ten;
         this.pageIndex = CONST_NUMBER.zero;
         this.pageSize = CONST_NUMBER.ten;
-
         this.getUsers();
     }
 }
