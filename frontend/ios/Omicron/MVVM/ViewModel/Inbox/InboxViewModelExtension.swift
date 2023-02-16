@@ -371,8 +371,13 @@ extension InboxViewModel {
     }
 
     func groupedByShopTransaction(data: [String?: [Order]]) -> [SectionModel<String, Order>] {
+        var dataAux = data
         var sectionModels: [SectionModel<String, Order>] = []
-        let sections = data.map({ [unowned self] (orders) -> SectionModel<String, Order> in
+        if let empty = dataAux[CommonStrings.empty] {
+            sectionModels.append(SectionModel(model: "\(CommonStrings.ordersWithoutOrder)", items: empty))
+            dataAux.removeValue(forKey: CommonStrings.empty)
+        }
+        let sections = dataAux.map({ [unowned self] (orders) -> SectionModel<String, Order> in
             return SectionModel(
                 model: "\(CommonStrings.shopTransaction): \(orders.key?.suffix(6).uppercased() ?? "")",
                 items: self.sortByShopTransaction(orders: orders.value, shopTransaction: orders.key ?? ""))
