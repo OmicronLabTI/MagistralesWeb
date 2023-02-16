@@ -1172,6 +1172,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Packer = $"{packer.FirstName.ValidateNull()} {packer.LastName.ValidateNull()}".Trim(),
                 DeliveryComments = payment.DeliveryComments,
                 DeliverySuggestedTime = payment.DeliverySuggestedTime,
+                IsDoctorDirection = ServiceUtils.GetAddressType(invoice.DocNumDxp, payment.IsDoctorDirection == 1, deliveryAddress.AddressType),
             };
         }
 

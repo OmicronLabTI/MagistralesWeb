@@ -98,7 +98,7 @@ class RootViewModel {
         let selectedOrders = self.completeOrderList.filter {
             fabricationOrders.contains($0.productionOrderId ?? 0)
         }
-        return selectedOrders.allSatisfy { !($0.hasTechnicalAssigned ?? false) }
+        return !selectedOrders.allSatisfy { $0.hasTechnicalAssigned ?? false}
     }
 
     func sectionOrderSwitched(statusId: Int, orders: [Order]) -> SectionOrder? {

@@ -85,7 +85,7 @@ namespace Omicron.SapAdapter.Test.Services
             var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // act
-            var result = await pedidoService.GetPedidosService("qfbOrders/");
+            var result = await pedidoService.GetUserPedidos("qfbOrders/");
 
             // assert
             Assert.IsNotNull(result);
@@ -130,7 +130,7 @@ namespace Omicron.SapAdapter.Test.Services
             var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // assert
-            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetPedidosService("qfbOrders/"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetUserPedidos("qfbOrders/"));
         }
 
         /// <summary>

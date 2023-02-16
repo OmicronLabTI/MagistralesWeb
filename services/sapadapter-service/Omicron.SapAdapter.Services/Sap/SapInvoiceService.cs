@@ -356,7 +356,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.References = doctor.References;
                 x.DeliveryComments = payment.DeliveryComments;
                 x.DeliverySuggestedTime = payment.DeliverySuggestedTime;
-                x.IsDoctorDirection = this.GetAddressType(x.DocNumDxp, payment.IsDoctorDirection == 1, doctor.AddressType);
+                x.IsDoctorDirection = ServiceUtils.GetAddressType(x.DocNumDxp, payment.IsDoctorDirection == 1, doctor.AddressType);
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
@@ -637,7 +637,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private List<InvoiceDeliveryModel> GetDeliveryModel(List<CompleteDeliveryDetailModel> delivery, List<CompleteInvoiceDetailModel> invoiceDetails, List<UserOrderModel> userOrderModels, List<LineProductsModel> lineProducts)
         {
-            var listToReturn = delivery.DistinctBy(x => x.DocNum).ToList()
+            var listToReturn = delivery.DistinctBy(x => x.DocNum).AsEnumerable()
                 .Select(y =>
                 {
                     var userOrderStatus = userOrderModels.Where(z => ServiceShared.CalculateAnd(z.DeliveryId == y.DocNum, !string.IsNullOrEmpty(z.Productionorderid))).Select(y => y.StatusAlmacen).ToList();
@@ -840,23 +840,6 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceDetails ??= new InvoiceDetailModel { BaseEntry = 0 };
 
             return new Tuple<InvoiceDetailModel, InvoiceHeaderModel>(invoiceDetails, header);
-        }
-
-        /// <summary>
-        /// Get address source.
-        /// </summary>
-        /// <param name="dxpId">Dxp Transaction Id.</param>
-        /// <param name="isDoctorDirectionFromPayments">Is doctor direction from payments table.</param>
-        /// <param name="addressType">Address Type.</param>
-        /// <returns>Address type.</returns>
-        private bool GetAddressType(string dxpId, bool isDoctorDirectionFromPayments, string addressType)
-        {
-            if (!string.IsNullOrEmpty(dxpId))
-            {
-                return isDoctorDirectionFromPayments;
-            }
-
-            return ServiceShared.CalculateTernary(string.IsNullOrEmpty(addressType), true, addressType.Equals(ServiceConstants.DoctorAddressType));
         }
     }
 }

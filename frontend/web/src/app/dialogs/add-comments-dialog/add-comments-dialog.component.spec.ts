@@ -10,20 +10,20 @@ const finishCommentsMock = {
   nativeElement: {
     scrollIntoView: () => { }
   }
-}
+};
 const mockCommentsConfig1 = {
-  comments:"",
+  comments: '',
   isForClose: false,
   isReadyOnly: false,
   isForRefuseOrders: false
-}
+};
 
 const mockCommentsConfig2 = {
-  comments:"",
+  comments: '',
   isForClose: true,
   isReadyOnly: true,
   isForRefuseOrders: true
-}
+};
 describe('AddCommentsDialogComponent', () => {
   let component: AddCommentsDialogComponent;
   let fixture: ComponentFixture<AddCommentsDialogComponent>;
@@ -54,7 +54,7 @@ describe('AddCommentsDialogComponent', () => {
     fixture = TestBed.createComponent(AddCommentsDialogComponent);
     component = fixture.componentInstance;
     component.finishComments = finishCommentsMock;
-    component.commentsConfig = mockCommentsConfig1
+    component.commentsConfig = mockCommentsConfig1;
     fixture.detectChanges();
   });
 
@@ -63,21 +63,21 @@ describe('AddCommentsDialogComponent', () => {
   });
 
   it('should save comments', () => {
-    component.saveComments()
+    component.saveComments();
     expect(component.commentsConfig.isReadyOnly).toBeFalsy();
   });
   it('should save comments config 2', () => {
-    component.commentsConfig = mockCommentsConfig2
-    component.saveComments()
+    component.commentsConfig = mockCommentsConfig2;
+    component.saveComments();
     expect(component.commentsConfig.isReadyOnly).toBeTruthy();
   });
 
   it('should component create config 2', () => {
-    component.commentsConfig = mockCommentsConfig2
-    component.ngOnInit()
+    component.commentsConfig = mockCommentsConfig2;
+    component.ngOnInit();
     expect(component.commentsConfig.isReadyOnly).toBeTruthy();
   });
-  
+
   it('should checkData', () => {
     component.checkData();
     expect(component.isCorrectData).toBeTruthy();

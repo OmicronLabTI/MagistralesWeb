@@ -155,16 +155,18 @@ extension InboxViewModel {
     }
 
     func callFinishOrderService() {
+        if technicalSignatureIsGet && rootViewModel.userType == .technical {
+            packageOrdersService(qfbSignature: "", technicalSignature: technicalSignature)
+            return
+        }
+
         let ordersFabricationIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected ?? [])
         let showTwoModals = rootViewModel.getShowTwoSignatureModals(ordersFabricationIds)
         if qfbSignatureIsGet && technicalSignatureIsGet && showTwoModals {
             finishOrderService(qfbSignature: sqfbSignature, technicalSignature: technicalSignature)
         }
         if qfbSignatureIsGet && !showTwoModals {
-            finishOrderService(qfbSignature: sqfbSignature, technicalSignature: "")
-        }
-        if technicalSignatureIsGet && rootViewModel.userType == .technical {
-            packageOrdersService(qfbSignature: "", technicalSignature: technicalSignature)
+            finishOrderService(qfbSignature: sqfbSignature, technicalSignature: technicalSignature)
         }
     }
 

@@ -17,13 +17,13 @@ namespace Omicron.SapAdapter.DependencyInjection
     using Omicron.SapAdapter.Facade.Sap;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
+    using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Mapping;
+    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.User;
-    using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Utils;
-    using Omicron.SapAdapter.Services.Doctors;
 
     /// <summary>
     /// Class for DependencyInjector.
