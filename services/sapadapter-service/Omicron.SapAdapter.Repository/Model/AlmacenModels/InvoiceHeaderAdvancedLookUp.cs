@@ -236,5 +236,13 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Int TotalPieces.
         /// </value>
         public int TotalPieces { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets is doctor direction.
+        /// </summary>
+        /// <value>
+        /// ItemCode.
+        /// </value>
+        public bool IsDoctorDirection { get; set; }
     }
 }
