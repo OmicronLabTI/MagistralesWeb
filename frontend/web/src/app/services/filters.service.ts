@@ -138,48 +138,23 @@ export class FiltersService {
 
   validateIsWithFilter(resultSearchOrderModal: ParamsPedidos): boolean {
     let isSearchWithFilter = false;
-    if (resultSearchOrderModal.dateType === ConstOrders.defaultDateInit &&
-      ((resultSearchOrderModal.status === '') ||
-        resultSearchOrderModal.qfb === '' ||
-        resultSearchOrderModal.productCode === '' ||
-        resultSearchOrderModal.clientName === '' ||
-        resultSearchOrderModal.label === '' ||
-        resultSearchOrderModal.finlabel === '' ||
-        !resultSearchOrderModal.orderIncidents)
-    ) {
+    const isSomeEmpty = this.isSomeWithValue(resultSearchOrderModal, (key) => resultSearchOrderModal[key] === '');
+    const isSomeNotEmpty = this.isSomeWithValue(resultSearchOrderModal, (key) => resultSearchOrderModal[key] !== '');
+
+    if (this.dataService.calculateAndValueList([resultSearchOrderModal.dateType === ConstOrders.defaultDateInit,
+    (isSomeEmpty || !resultSearchOrderModal.orderIncidents)])) {
       isSearchWithFilter = false;
     }
     if (resultSearchOrderModal.dateType === ConstOrders.defaultDateInit &&
-      ((resultSearchOrderModal.status !== '') ||
-        resultSearchOrderModal.qfb !== '' ||
-        resultSearchOrderModal.productCode !== '' ||
-        resultSearchOrderModal.clientName !== '' ||
-        resultSearchOrderModal.label !== '' ||
-        resultSearchOrderModal.finlabel !== '' ||
-        resultSearchOrderModal.orderIncidents)
-    ) {
+      (isSomeNotEmpty || resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
     if (resultSearchOrderModal.dateType === ConstOrders.dateFinishType &&
-      ((resultSearchOrderModal.status !== '') ||
-        resultSearchOrderModal.qfb !== '' ||
-        resultSearchOrderModal.productCode !== '' ||
-        resultSearchOrderModal.clientName !== '' ||
-        resultSearchOrderModal.label !== '' ||
-        resultSearchOrderModal.finlabel !== '' ||
-        resultSearchOrderModal.orderIncidents)
-    ) {
+      (isSomeNotEmpty || resultSearchOrderModal.orderIncidents)) {
       isSearchWithFilter = true;
     }
-    if (resultSearchOrderModal.dateType === ConstOrders.dateFinishType &&
-      ((resultSearchOrderModal.status === '') ||
-        resultSearchOrderModal.qfb === '' ||
-        resultSearchOrderModal.productCode === '' ||
-        resultSearchOrderModal.clientName === '' ||
-        resultSearchOrderModal.label === '' ||
-        resultSearchOrderModal.finlabel === '' ||
-        !resultSearchOrderModal.orderIncidents)
-    ) {
+    if (this.dataService.calculateAndValueList([resultSearchOrderModal.dateType === ConstOrders.dateFinishType,
+    (isSomeEmpty || !resultSearchOrderModal.orderIncidents)])) {
       isSearchWithFilter = true;
     }
     isSearchWithFilter = this.dataService.calculateTernary(resultSearchOrderModal.docNum !== '',
@@ -188,6 +163,10 @@ export class FiltersService {
     return isSearchWithFilter;
   }
 
+  isSomeWithValue(resultSearchOrderModal: ParamsPedidos, validation: (key: string) => boolean): boolean {
+    const keys = ['status', 'qfb', 'productCode', 'clientName', 'label', 'finlabel'];
+    return keys.some((key) => resultSearchOrderModal[key] && validation(key));
+  }
   getNewDataToFilter(
     resultSearchOrderModal: ParamsPedidos
   ): [ParamsPedidos, string] {
