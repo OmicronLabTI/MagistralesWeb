@@ -22,38 +22,35 @@ export class FiltersService {
     switch (fromToFilter) {
       case FromToFilter.fromOrders:
         return (
-          dataToSearch.filter((t) => t.isChecked && t.pedidoStatus === status)
+          dataToSearch.filter((t) => this.dataService.calculateAndValueList([t.isChecked, t.pedidoStatus === status]))
             .length > 0
         );
       case FromToFilter.fromOrdersReassign:
-        return (
-          dataToSearch.filter(
-            (t) =>
-              t.isChecked &&
-              (t.pedidoStatus === status ||
-                t.pedidoStatus === ConstStatus.terminado)
-          ).length > 0
-        );
+        return (this.getValidationFromOrderReassign(dataToSearch, status).length > 0);
       case FromToFilter.fromOrdersCancel:
         return (
           dataToSearch.filter(
             (t) =>
-              t.isChecked &&
-              t.pedidoStatus !== status &&
-              t.pedidoStatus !== ConstStatus.cancelado &&
-              t.pedidoStatus !== ConstStatus.almacenado &&
-              t.pedidoStatus !== ConstStatus.rechazado
+              this.dataService.calculateAndValueList([
+                t.isChecked,
+                t.pedidoStatus !== status,
+                t.pedidoStatus !== ConstStatus.cancelado,
+                t.pedidoStatus !== ConstStatus.almacenado,
+                t.pedidoStatus !== ConstStatus.rechazado
+              ])
           ).length > 0
         );
       case FromToFilter.fromDetailOrder:
         return (
           dataToSearch.filter(
             (t) =>
-              t.isChecked &&
-              t.status !== status &&
-              t.status !== ConstStatus.cancelado &&
-              t.status !== ConstStatus.abierto &&
-              t.status !== ConstStatus.almacenado
+              this.dataService.calculateAndValueList([
+                t.isChecked,
+                t.status !== status,
+                t.status !== ConstStatus.cancelado,
+                t.status !== ConstStatus.abierto,
+                t.status !== ConstStatus.almacenado
+              ])
           ).length > 0
         );
       case FromToFilter.fromOrderIsolatedReassign:
@@ -64,7 +61,7 @@ export class FiltersService {
               (t.status === status ||
                 t.status === ConstStatus.asignado ||
                 t.status.toLowerCase() ===
-                  ConstStatus.enProceso.toLowerCase() ||
+                ConstStatus.enProceso.toLowerCase() ||
                 t.status === ConstStatus.pendiente ||
                 t.status === ConstStatus.terminado)
           ).length > 0
@@ -73,25 +70,29 @@ export class FiltersService {
         return (
           dataToSearch.filter(
             (t) =>
-              t.isChecked &&
-              t.status !== status &&
-              t.status !== ConstStatus.cancelado &&
-              t.status !== ConstStatus.almacenado
+              this.dataService.calculateAndValueList([
+                t.isChecked,
+                t.status !== status,
+                t.status !== ConstStatus.cancelado,
+                t.status !== ConstStatus.almacenado
+              ])
           ).length > 0
         );
       case FromToFilter.fromOrderDetailLabel:
         return (
           dataToSearch.filter(
             (t) =>
-              t.isChecked &&
-              t.status !== status &&
-              t.status !== ConstStatus.cancelado &&
-              t.finishedLabel !== 1
+              this.dataService.calculateAndValueList([
+                t.isChecked,
+                t.status !== status,
+                t.status !== ConstStatus.cancelado,
+                t.finishedLabel !== 1
+              ])
           ).length > 0
         );
       default:
         return (
-          dataToSearch.filter((t) => t.isChecked && t.status === status)
+          dataToSearch.filter((t) => this.dataService.calculateAndValueList([t.isChecked, t.status === status]))
             .length > 0
         );
     }
@@ -113,22 +114,32 @@ export class FiltersService {
               t.status === ConstStatus.terminado)
         );
       case FromToFilter.fromOrdersReassign:
-        return dataToSearch.filter(
-          (t) =>
-            t.isChecked &&
-            (t.pedidoStatus === status ||
-              t.pedidoStatus === ConstStatus.terminado)
-        );
+        return this.getValidationFromOrderReassign(dataToSearch, status);
       default:
         return dataToSearch.filter((t) => t.isChecked && t.status === status);
     }
   }
+
+  getValidationFromOrderReassign(dataToSearch: any[], status: string): any[] {
+    return dataToSearch.filter(
+      (t) =>
+        t.isChecked &&
+        (t.pedidoStatus === status ||
+          t.pedidoStatus === ConstStatus.terminado)
+    );
+  }
+
   getIsWithFilter(resultSearchOrderModal: ParamsPedidos) {
+    if (resultSearchOrderModal) {
+      return this.validateIsWithFilter(resultSearchOrderModal);
+    }
+    return false;
+  }
+
+  validateIsWithFilter(resultSearchOrderModal: ParamsPedidos): boolean {
     let isSearchWithFilter = false;
-    if (
-      resultSearchOrderModal &&
-      resultSearchOrderModal.dateType === ConstOrders.defaultDateInit &&
-      ((resultSearchOrderModal && resultSearchOrderModal.status === '') ||
+    if (resultSearchOrderModal.dateType === ConstOrders.defaultDateInit &&
+      ((resultSearchOrderModal.status === '') ||
         resultSearchOrderModal.qfb === '' ||
         resultSearchOrderModal.productCode === '' ||
         resultSearchOrderModal.clientName === '' ||
@@ -138,10 +149,8 @@ export class FiltersService {
     ) {
       isSearchWithFilter = false;
     }
-    if (
-      resultSearchOrderModal &&
-      resultSearchOrderModal.dateType === ConstOrders.defaultDateInit &&
-      ((resultSearchOrderModal && resultSearchOrderModal.status !== '') ||
+    if (resultSearchOrderModal.dateType === ConstOrders.defaultDateInit &&
+      ((resultSearchOrderModal.status !== '') ||
         resultSearchOrderModal.qfb !== '' ||
         resultSearchOrderModal.productCode !== '' ||
         resultSearchOrderModal.clientName !== '' ||
@@ -151,10 +160,8 @@ export class FiltersService {
     ) {
       isSearchWithFilter = true;
     }
-    if (
-      resultSearchOrderModal &&
-      resultSearchOrderModal.dateType === ConstOrders.dateFinishType &&
-      ((resultSearchOrderModal && resultSearchOrderModal.status !== '') ||
+    if (resultSearchOrderModal.dateType === ConstOrders.dateFinishType &&
+      ((resultSearchOrderModal.status !== '') ||
         resultSearchOrderModal.qfb !== '' ||
         resultSearchOrderModal.productCode !== '' ||
         resultSearchOrderModal.clientName !== '' ||
@@ -164,10 +171,8 @@ export class FiltersService {
     ) {
       isSearchWithFilter = true;
     }
-    if (
-      resultSearchOrderModal &&
-      resultSearchOrderModal.dateType === ConstOrders.dateFinishType &&
-      ((resultSearchOrderModal && resultSearchOrderModal.status === '') ||
+    if (resultSearchOrderModal.dateType === ConstOrders.dateFinishType &&
+      ((resultSearchOrderModal.status === '') ||
         resultSearchOrderModal.qfb === '' ||
         resultSearchOrderModal.productCode === '' ||
         resultSearchOrderModal.clientName === '' ||
@@ -177,10 +182,9 @@ export class FiltersService {
     ) {
       isSearchWithFilter = true;
     }
-    if (resultSearchOrderModal && resultSearchOrderModal.docNum !== '') {
-      isSearchWithFilter = true;
-    }
-
+    isSearchWithFilter = this.dataService.calculateTernary(resultSearchOrderModal.docNum !== '',
+      true,
+      isSearchWithFilter);
     return isSearchWithFilter;
   }
 
@@ -233,61 +237,69 @@ export class FiltersService {
           filterDataOrders.dateFull = resultSearchOrderModal.dateFull;
         }
       }
-      if (
-        resultSearchOrderModal.status !== '' &&
-        resultSearchOrderModal.status
-      ) {
-        queryString = `${queryString}&status=${resultSearchOrderModal.status}`;
-        filterDataOrders.status = resultSearchOrderModal.status;
-      }
-      if (resultSearchOrderModal.qfb !== '' && resultSearchOrderModal.qfb) {
-        queryString = `${queryString}&qfb=${resultSearchOrderModal.qfb}`;
-        filterDataOrders.qfb = resultSearchOrderModal.qfb;
-      }
-      if (
-        resultSearchOrderModal.productCode !== '' &&
-        resultSearchOrderModal.productCode
-      ) {
-        queryString = `${queryString}&code=${resultSearchOrderModal.productCode}`;
-        filterDataOrders.productCode = resultSearchOrderModal.productCode;
-      }
-      if (
-        resultSearchOrderModal.clientName !== '' &&
-        resultSearchOrderModal.clientName
-      ) {
-        queryString = `${queryString}&cliente=${resultSearchOrderModal.clientName.replace(
-          /\s+/g,
-          ','
-        )}`;
-        filterDataOrders.clientName = resultSearchOrderModal.clientName;
-      }
-      if (resultSearchOrderModal.label !== '' && resultSearchOrderModal.label) {
-        queryString = `${queryString}&label=${resultSearchOrderModal.label}`;
-        filterDataOrders.label = resultSearchOrderModal.label;
-      }
-      if (
-        resultSearchOrderModal.finlabel !== '' &&
-        resultSearchOrderModal.finlabel
-      ) {
-        queryString = `${queryString}&finlabel=${resultSearchOrderModal.finlabel}`;
-        filterDataOrders.finlabel = resultSearchOrderModal.finlabel;
-      }
-      if (
-        resultSearchOrderModal.orderIncidents !== CONST_NUMBER.zero &&
-        resultSearchOrderModal.orderIncidents
-      ) {
-        queryString = `${queryString}&docnum=${resultSearchOrderModal.orderIncidents}`;
-        filterDataOrders.orderIncidents = resultSearchOrderModal.orderIncidents;
-      }
-      if (
-        resultSearchOrderModal.clasification !== '' &&
-        resultSearchOrderModal.clasification
-      ) {
-        queryString = `${queryString}&ordtype=${resultSearchOrderModal.clasification}`;
-        filterDataOrders.clasification = resultSearchOrderModal.clasification;
-      }
+      queryString = this.continueGetDataOrders(resultSearchOrderModal, queryString, filterDataOrders);
     }
-
     return [filterDataOrders, queryString];
+  }
+
+  getValidateHasValue(
+    resultSearchOrderModal: ParamsPedidos,
+    key: string): boolean {
+    return Object.keys(resultSearchOrderModal).includes(key) &&
+      resultSearchOrderModal[key] !== '' &&
+      resultSearchOrderModal[key] !== undefined;
+  }
+
+  getQueryStringAndAssingValue(
+    query: string,
+    resultSearchOrderModal: ParamsPedidos,
+    filterDataOrders: ParamsPedidos,
+    key: string): string {
+    const dictOptions: { [key: string]: string } = {
+      status: 'status',
+      qfb: 'qfb',
+      productCode: 'code',
+      label: 'label',
+      finlabel: 'finlabel',
+      clasification: 'ordtype',
+      '': ''
+    };
+    if (this.getValidateHasValue(resultSearchOrderModal, key)) {
+      filterDataOrders[key] = resultSearchOrderModal[key];
+      return `${query}&${dictOptions[key]}=${resultSearchOrderModal[key]}`;
+    }
+    return query;
+  }
+
+  continueGetDataOrders(
+    resultSearchOrderModal: ParamsPedidos,
+    queryString: string,
+    filterDataOrders: ParamsPedidos): string {
+    const keys = ['status', 'qfb', 'productCode', 'label', 'finlabel', 'clasification'];
+    const completeQuery = keys.reduce((query, key) =>
+      this.getQueryStringAndAssingValue(
+        query,
+        resultSearchOrderModal,
+        filterDataOrders,
+        key), CONST_STRING.empty);
+    queryString = `${queryString}${completeQuery}`;
+    if (
+      resultSearchOrderModal.clientName !== '' &&
+      resultSearchOrderModal.clientName
+    ) {
+      queryString = `${queryString}&cliente=${resultSearchOrderModal.clientName.replace(
+        /\s+/g,
+        ','
+      )}`;
+      filterDataOrders.clientName = resultSearchOrderModal.clientName;
+    }
+    if (
+      resultSearchOrderModal.orderIncidents !== CONST_NUMBER.zero &&
+      resultSearchOrderModal.orderIncidents
+    ) {
+      queryString = `${queryString}&docnum=${resultSearchOrderModal.orderIncidents}`;
+      filterDataOrders.orderIncidents = resultSearchOrderModal.orderIncidents;
+    }
+    return queryString;
   }
 }
