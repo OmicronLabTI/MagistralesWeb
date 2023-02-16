@@ -298,20 +298,21 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   getDataCancel(status: string) {
     return this.dataSource.data.filter
       (t => (t.isChecked && (t.status !== status && t.status !== ConstStatus.almacenado))).map(order => {
-        const cancelOrder = new CancelOrderReq();
-        cancelOrder.orderId = order.ordenFabricacionId;
-        return cancelOrder;
+        return this.getCancelOrderReq(order.ordenFabricacionId);
       });
   }
   getDataCancelFinalize(status: string, isFromFinalize: boolean = false) {
     return this.dataSource.data.filter
       (t => (t.isChecked && (isFromFinalize ? t.status === status : t.status !== status))).map(order => {
-        const cancelOrder = new CancelOrderReq();
-        cancelOrder.orderId = order.ordenFabricacionId;
-        return cancelOrder;
+        return this.getCancelOrderReq(order.ordenFabricacionId);
       });
   }
 
+  getCancelOrderReq(ordenFabricacionId: number): CancelOrderReq {
+    const cancelOrder = new CancelOrderReq();
+    cancelOrder.orderId = ordenFabricacionId;
+    return cancelOrder;
+  }
   addCommentsDialog() {
     if (!this.isCorrectToAddComments) {
       this.observableService.setOpenCommentsDialog({ comments: this.dataSource.data[0].comments });
@@ -360,7 +361,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
         .map(order => {
           const labelToFinish = new LabelToFinish();
           labelToFinish.orderId = order.ordenFabricacionId;
-          labelToFinish.checked = !isFromRemoveSignature;
+          labelToFinish.checked = false;
           return labelToFinish;
         });
     } else {
