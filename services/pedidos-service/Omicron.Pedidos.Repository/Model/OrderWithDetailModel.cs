@@ -32,31 +32,13 @@ namespace Omicron.Pedidos.Entities.Model
         /// Conver instance to list of user order models.
         /// </summary>
         /// <returns>User order models.</returns>
-        public List<CompleteDetailOrderModel> CloneDetail()
-        {
-            var clone = new List<CompleteDetailOrderModel>();
-
-            return clone;
-        }
-
-        /// <summary>
-        /// Conver instance to list of user order models.
-        /// </summary>
-        /// <returns>User order models.</returns>
         public List<UserOrderModel> ToUserOrderModels()
         {
-            var userOrderModels = new List<UserOrderModel>();
-            userOrderModels.Add(new UserOrderModel
-            {
-                Salesorderid = this.Order.DocNum.ToString(),
-            });
-
-            userOrderModels = this.Detalle.Select(x => new UserOrderModel
+            return this.Detalle.Select(x => new UserOrderModel
             {
                 Salesorderid = this.Order.DocNum.ToString(),
                 Productionorderid = x.OrdenFabricacionId.ToString(),
             }).ToList();
-            return userOrderModels;
         }
     }
 }
