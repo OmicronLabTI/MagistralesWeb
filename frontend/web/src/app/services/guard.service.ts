@@ -45,6 +45,6 @@ export class GuardService implements CanActivate {
       this.router.navigate(route);
       return pass;
     }
-    return pass;
+    return true;
   }
 }
