@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { ILotesFormulaReq, ILotesReq, ILotesSelectedReq, ILotesAsignadosReq, ILotesToSaveReq } from 'src/app/model/http/lotesformula';
+import {
+  ILotesFormulaReq, ILotesReq, ILotesSelectedReq,
+  ILotesAsignadosReq, ILotesToSaveReq,
+  ILotesSaveRes
+} from 'src/app/model/http/lotesformula';
 import { MatTableDataSource } from '@angular/material';
 import { BatchesService } from 'src/app/services/batches.service';
 import {
@@ -319,56 +323,74 @@ export class InventorybatchesComponent implements OnInit {
     let objectToSave = this.objectToSave;
     objectToSave = [];
     const ordenFabricacionId = this.ordenFabricacionId;
-    const areBatchesCompleteSubmit = this.dataSourceDetails.data.map(data => data.totalNecesario).every(quantity => quantity === 0);
+    const areBatchesCompleteSubmit = this.getAreBatchesCompleteSubmit();
     // tslint:disable-next-line: no-shadowed-variable
     this.dataSourceDetails.data.forEach(element => {
       if (element.lotesSeleccionados != null) {
-        element.lotesSeleccionados.forEach((lote, index) => {
-          if (lote.action !== undefined) {
-            const continueValidation = this.dataService.calculateOrValueList([
-              (lote.noidb === BOOLEANS.falso || lote.noidb === undefined),
-              (lote.action === CONST_DETAIL_FORMULA.insert)
-            ]);
-            if (continueValidation) {
-              const objectSAP: ILotesToSaveReq = {
-                // tslint:disable-next-line: radix
-                orderId: parseInt(ordenFabricacionId),
-                itemCode: element.codigoProducto,
-                assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(6)),
-                action: lote.action,
-                batchNumber: lote.numeroLote,
-                areBatchesComplete: areBatchesCompleteSubmit ? 1 : 0,
-              };
-              objectToSave.push(objectSAP);
-            }
-          }
-        });
+        this.buildObject(element,
+          ordenFabricacionId,
+          areBatchesCompleteSubmit,
+          objectToSave);
       }
     });
     this.presentToastToCreateObjectToSAP(objectToSave);
   }
 
+  getAreBatchesCompleteSubmit(): boolean {
+    return this.dataSourceDetails.data.map(data => data.totalNecesario).every(quantity => quantity === 0);
+  }
+
+  buildObject(
+    element: ILotesFormulaReq,
+    ordenFabricacionId: string,
+    areBatchesCompleteSubmit: boolean,
+    objectToSave: ILotesToSaveReq[]): void {
+    element.lotesSeleccionados.forEach((lote) => {
+      if (lote.action !== undefined) {
+        const continueValidation = this.dataService.calculateOrValueList([
+          (lote.noidb === BOOLEANS.falso || lote.noidb === undefined),
+          (lote.action === CONST_DETAIL_FORMULA.insert)
+        ]);
+        if (continueValidation) {
+          const objectSAP: ILotesToSaveReq = {
+            // tslint:disable-next-line: radix
+            orderId: parseInt(ordenFabricacionId),
+            itemCode: element.codigoProducto,
+            assignedQty: parseFloat(lote.cantidadSeleccionada.toFixed(6)),
+            action: lote.action,
+            batchNumber: lote.numeroLote,
+            areBatchesComplete: this.dataService.calculateTernary(areBatchesCompleteSubmit, 1, 0),
+          };
+          objectToSave.push(objectSAP);
+        }
+      }
+    });
+  }
+
   presentToastToCreateObjectToSAP(objectToSave: ILotesToSaveReq[]): void {
     this.messagesService.presentToastCustom(Messages.saveBatches, 'question', '', true, true).then((resultSaveMessage: any) => {
       if (resultSaveMessage.isConfirmed) {
-
         this.batchesService.updateBatches(objectToSave).subscribe(resultSaveBatches => {
-          if (resultSaveBatches.success && resultSaveBatches.response.length > 0) {
-            const titleFinalizeWithError = this.messagesService.getMessageTitle(
-              resultSaveBatches.response, MessageType.saveBatches);
-            this.messagesService.presentToastCustom(titleFinalizeWithError, 'error',
-              Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
-          } else {
-            this.messagesService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, false).then(
-              (resultBatchSave: any) => {
-                if (resultBatchSave.isConfirmed) {
-                  window.location.reload();
-                }
-              });
-          }
+          this.validateUpdateBatchesResponse(resultSaveBatches);
         }, error => this.errorService.httpError(error));
       }
     });
+  }
+
+  validateUpdateBatchesResponse(resultSaveBatches: ILotesSaveRes): void {
+    if (resultSaveBatches.success && resultSaveBatches.response.length > 0) {
+      const titleFinalizeWithError = this.messagesService.getMessageTitle(
+        resultSaveBatches.response, MessageType.saveBatches);
+      this.messagesService.presentToastCustom(titleFinalizeWithError, 'error',
+        Messages.errorToAssignOrderAutomaticSubtitle, true, false, ClassNames.popupCustom);
+    } else {
+      this.messagesService.presentToastCustom(Messages.successBatchesSave, 'success', '', true, false).then(
+        (resultBatchSave: any) => {
+          if (resultBatchSave.isConfirmed) {
+            window.location.reload();
+          }
+        });
+    }
   }
 
   goToDetailOrder(urlPath: (string | number)[]) {
