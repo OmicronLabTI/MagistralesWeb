@@ -100,7 +100,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             relationships ??= new List<RelationDxpDocEntryModel>();
 
             var sapOrderTypes = ordersSap.Select(x => x.Order.OrderType).Distinct().ToList();
-            var users = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
+            var allUsers = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
+            var users = allUsers;
 
             var builder = new DzIsNotOmigenomicsBuilder(orders, users, ordersSap);
             var relationOrdersWithUsersDZIsNotOmi = builder.AssignOrdersToUsersDZIsNotOmi();
@@ -140,7 +141,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             bool isOnlyClasificationDZ = ServiceShared.CalculateAnd(relationOrdersWithUsersDZIsNotOmi.Any(), !ordersSap.Any());
 
             var validQfbs = userSaleOrder.Item1.Where(x => userOrdersToUpdate.Select(uo => int.Parse(uo.Salesorderid)).Distinct().Contains(x.Key));
-            var invalidQfbs = users.Where(user => validQfbs.Select(vq => vq.Value).Contains(user.Id) &&
+            var invalidQfbs = allUsers.Where(user => validQfbs.Select(vq => vq.Value).Contains(user.Id) &&
                 user.TechnicalRequire && string.IsNullOrEmpty(user.TecnicId)).ToList();
 
             if (invalidQfbs.Any())
@@ -162,7 +163,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.Status = ServiceShared.CalculateTernary(asignable, ServiceConstants.Asignado, x.Status);
                     x.Status = ServiceShared.CalculateTernary(isHeader, ServiceConstants.Liberado, x.Status);
                     x.Userid = this.GetUserId(isHeader, relationOrdersWithUsersDZIsNotOmi, userSaleOrder, saleOrderInt, isClasificationDZ, isOnlyClasificationDZ, productionId);
-                    x.TecnicId = users.FirstOrDefault(user => user.Id == x.Userid)?.TecnicId;
+                    x.TecnicId = allUsers.FirstOrDefault(user => user.Id == x.Userid)?.TecnicId;
                     x.StatusForTecnic = x.Status;
                     if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                     {
