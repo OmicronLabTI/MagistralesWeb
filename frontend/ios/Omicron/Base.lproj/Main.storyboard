@@ -485,7 +485,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="jvd-x1-pDp">
-                                <rect key="frame" x="0.0" y="204" width="375" height="490"/>
+                                <rect key="frame" x="0.0" y="204" width="375" height="460"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="RootTableViewCell" id="BKn-rr-W8E" customClass="RootTableViewCell" customModule="OmicronDEV" customModuleProvider="target">
@@ -542,7 +542,7 @@
                                 </prototypes>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rTK-En-AVz">
-                                <rect key="frame" x="0.0" y="924" width="375" height="60"/>
+                                <rect key="frame" x="0.0" y="894" width="375" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="98U-Y3-Ys1"/>
                                 </constraints>
@@ -555,7 +555,7 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="451-gI-FyL">
-                                <rect key="frame" x="0.0" y="694" width="375" height="230"/>
+                                <rect key="frame" x="0.0" y="664" width="375" height="230"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sy3-KI-kfJ">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
@@ -601,7 +601,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5vT-ol-TNO">
-                                <rect key="frame" x="0.0" y="984" width="375" height="20"/>
+                                <rect key="frame" x="0.0" y="954" width="375" height="20"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bXg-6u-GPV">
                                         <rect key="frame" x="20" y="0.0" width="355" height="20"/>
@@ -625,7 +625,7 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="E1u-Ib-UTS" secondAttribute="trailing" constant="16" id="08j-yn-PUl"/>
                             <constraint firstItem="n8u-MI-M41" firstAttribute="trailing" secondItem="rTK-En-AVz" secondAttribute="trailing" id="3fY-Hv-opi"/>
-                            <constraint firstItem="n8u-MI-M41" firstAttribute="bottom" secondItem="5vT-ol-TNO" secondAttribute="bottom" id="5ah-n8-yiK"/>
+                            <constraint firstItem="n8u-MI-M41" firstAttribute="bottom" secondItem="5vT-ol-TNO" secondAttribute="bottom" constant="30" id="5ah-n8-yiK"/>
                             <constraint firstItem="n8u-MI-M41" firstAttribute="trailing" secondItem="5vT-ol-TNO" secondAttribute="trailing" id="BSQ-co-Opx"/>
                             <constraint firstItem="rTK-En-AVz" firstAttribute="top" secondItem="451-gI-FyL" secondAttribute="bottom" id="ESy-MM-mGq"/>
                             <constraint firstItem="n8u-MI-M41" firstAttribute="trailing" secondItem="td9-LR-utg" secondAttribute="trailing" constant="16" id="JCT-O6-oxJ"/>
@@ -9012,7 +9012,7 @@ AAW0EA
 </mutableData>
         </image>
         <image name="pieChart" width="512" height="512"/>
-        <image name="shopTransaction" width="21.371999740600586" height="23.152999877929688"/>
+        <image name="shopTransaction" width="21.799999237060547" height="23.5"/>
         <image name="square.and.arrow.down.on.square" catalog="system" width="122" height="128"/>
         <systemColor name="darkTextColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
