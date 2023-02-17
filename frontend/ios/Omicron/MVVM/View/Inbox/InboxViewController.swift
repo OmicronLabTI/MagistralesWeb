@@ -250,8 +250,8 @@ class InboxViewController: UIViewController {
         UtilsManager.shared.setStyleButtonStatus(
             button: self.packageButton,
             title: StatusNameConstants.package,
-            color: OmicronColors.packageButton,
-            titleColor: OmicronColors.packageButton)
+            color: OmicronColors.signColor,
+            titleColor: OmicronColors.signColor)
     }
     func extensionInitComponents() {
         self.similarityViewButton.setTitle("", for: .normal)
