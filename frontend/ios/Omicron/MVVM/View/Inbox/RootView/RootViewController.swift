@@ -20,6 +20,7 @@ class RootViewController: UIViewController {
     @IBOutlet weak var kpiButton: UIButton!
     @IBOutlet weak var kpiButtonViewContain: UIView!
     @IBOutlet weak var versionLabel: UILabel!
+    @IBOutlet weak var rolLabel: UILabel!
 
     @IBAction func logoutAction(_ sender: UIButton) {
         isLogOut = true
@@ -69,6 +70,7 @@ class RootViewController: UIViewController {
             NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17.0)
         ]))
         navLabel.attributedText = navTitle
+        self.rolLabel.text = rootViewModel.userType == .qfb ? "QUÍMICO": "TÉCNICO"
         self.navigationItem.titleView = navLabel
     }
     func viewModelBinding() {

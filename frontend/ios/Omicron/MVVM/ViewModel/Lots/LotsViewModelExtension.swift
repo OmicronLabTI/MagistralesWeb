@@ -129,11 +129,16 @@ extension LotsViewModel {
             userId: Persistence.shared.getUserData()?.id ?? String(),
             orderId: self.orderId, status: CommonStrings.pending, userType: rootViewModel.userType.rawValue)
         self.networkManager.changeStatusOrder([orderToChageStatus])
-            .subscribe(onNext: { [weak self] _ in
+            .subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
+                if res.code == 200 {
+                    self.loading.onNext(false)
+                    self.backToInboxView.onNext(())
+                    self.rootViewModel.needsRefresh = true
+                    return
+                }
                 self.loading.onNext(false)
-                self.backToInboxView.onNext(())
-                self.rootViewModel.needsRefresh = true
+                self.showMessage.onNext(res.userError ?? CommonStrings.errorToChangeStatus)
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)
