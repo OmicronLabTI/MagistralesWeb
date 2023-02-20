@@ -330,7 +330,7 @@ namespace Omicron.Pedidos.Test.Services
             var mockUsers = new Mock<IUsersService>();
             mockUsers
                 .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetUsersByRoleWithDZ(true)));
+                .Returns(Task.FromResult(this.GetUsersByRoleWithDZ(true, null)));
 
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
             mockSaDiApiLocal

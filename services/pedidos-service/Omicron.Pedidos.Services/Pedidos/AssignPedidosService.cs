@@ -139,16 +139,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosStringUpdate)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
             bool isOnlyClasificationDZ = ServiceShared.CalculateAnd(relationOrdersWithUsersDZIsNotOmi.Any(), !ordersSap.Any());
-
-            var validQfbs = userSaleOrder.Item1.Where(x => userOrdersToUpdate.Select(uo => int.Parse(uo.Salesorderid)).Distinct().Contains(x.Key));
-            var invalidQfbs = allUsers.Where(user => validQfbs.Select(vq => vq.Value).Contains(user.Id) &&
-                user.TechnicalRequire && string.IsNullOrEmpty(user.TecnicId)).ToList();
-
-            if (invalidQfbs.Any())
-            {
-                throw new CustomServiceException(string.Format(ServiceConstants.QfbWithoutTecnic, string.Join(",", invalidQfbs.Select(x => $"{x.FirstName} {x.LastName}"))), HttpStatusCode.BadRequest);
-            }
-
+            var invalidQfbs = new List<UserModel>();
             userOrdersToUpdate.ForEach(x =>
             {
                 bool isHeader = string.IsNullOrEmpty(x.Productionorderid);
@@ -163,6 +154,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.Status = ServiceShared.CalculateTernary(asignable, ServiceConstants.Asignado, x.Status);
                     x.Status = ServiceShared.CalculateTernary(isHeader, ServiceConstants.Liberado, x.Status);
                     x.Userid = this.GetUserId(isHeader, relationOrdersWithUsersDZIsNotOmi, userSaleOrder, saleOrderInt, isClasificationDZ, isOnlyClasificationDZ, productionId);
+                    this.CalculateInvalidUsers(invalidQfbs, allUsers, x.Userid);
                     x.TecnicId = allUsers.FirstOrDefault(user => user.Id == x.Userid)?.TecnicId;
                     x.StatusForTecnic = x.Status;
                     if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
@@ -176,6 +168,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                     }
                 }
             });
+
+            if (invalidQfbs.Any())
+            {
+                throw new CustomServiceException(string.Format(ServiceConstants.QfbWithoutTecnic, string.Join(",", invalidQfbs.Distinct().Select(x => $"{x.FirstName} {x.LastName}"))), HttpStatusCode.BadRequest);
+            }
 
             await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
             _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
@@ -322,6 +319,21 @@ namespace Omicron.Pedidos.Services.Pedidos
             });
 
             await this.pedidosDao.SaveOrderSignatures(orderSignatures);
+        }
+
+        private void CalculateInvalidUsers(List<UserModel> invalidQfbs, List<UserModel> allUsers, string userid)
+        {
+            var invalidUser = allUsers.Where(user => ServiceShared.CalculateAnd(user.Id.Equals(userid), user.TechnicalRequire, string.IsNullOrEmpty(user.TecnicId))).ToList();
+
+            if (!invalidUser.Any())
+            {
+                return;
+            }
+
+            if (!invalidQfbs.Any(invuser => invalidUser.Select(x => x.Id).Contains(invuser.Id)))
+            {
+                invalidQfbs.AddRange(invalidUser);
+            }
         }
     }
 }
