@@ -468,13 +468,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="E1u-Ib-UTS">
-                                <rect key="frame" x="16" y="74" width="343" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="IXV-I1-x8H"/>
-                                </constraints>
-                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                            </searchBar>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TECNICO" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Fj-BG-QzI">
+                                <rect key="frame" x="16" y="60" width="343" height="32"/>
+                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="14"/>
+                                <color key="textColor" systemColor="tintColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mis órdenes" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="td9-LR-utg">
                                 <rect key="frame" x="16" y="154" width="343" height="50"/>
                                 <constraints>
@@ -506,15 +505,15 @@
                                                             <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WoL-j6-cRa">
-                                                            <rect key="frame" x="40" y="0.0" width="194" height="50.5"/>
+                                                            <rect key="frame" x="40" y="0.0" width="72.5" height="50.5"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cLS-uc-pZe">
-                                                            <rect key="frame" x="254" y="0.0" width="100" height="50.5"/>
+                                                            <rect key="frame" x="132.5" y="0.0" width="221.5" height="50.5"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="100" id="6Zm-96-k4h"/>
+                                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="6Zm-96-k4h"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="textColor"/>
@@ -578,6 +577,7 @@
                                         <color key="backgroundColor" red="0.91371434929999995" green="0.91371971370000005" blue="0.91373366119999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <constraints>
                                             <constraint firstItem="jw8-7L-HTR" firstAttribute="centerY" secondItem="Sy3-KI-kfJ" secondAttribute="centerY" id="6wO-zA-MWM"/>
+                                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="jw8-7L-HTR" secondAttribute="trailing" constant="20" symbolic="YES" id="9kN-vl-N55"/>
                                             <constraint firstAttribute="height" constant="100" id="I2Q-o9-PHX"/>
                                             <constraint firstItem="jw8-7L-HTR" firstAttribute="leading" secondItem="YXN-N1-i0Q" secondAttribute="trailing" constant="16" id="O6s-Gn-Uci"/>
                                             <constraint firstItem="YXN-N1-i0Q" firstAttribute="centerY" secondItem="Sy3-KI-kfJ" secondAttribute="centerY" id="VU4-25-QMs"/>
@@ -619,6 +619,13 @@
                                     <constraint firstAttribute="trailing" secondItem="bXg-6u-GPV" secondAttribute="trailing" id="wQF-7G-EDB"/>
                                 </constraints>
                             </view>
+                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="E1u-Ib-UTS">
+                                <rect key="frame" x="16" y="105" width="343" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="IXV-I1-x8H"/>
+                                </constraints>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                            </searchBar>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="n8u-MI-M41"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -626,7 +633,9 @@
                             <constraint firstAttribute="trailing" secondItem="E1u-Ib-UTS" secondAttribute="trailing" constant="16" id="08j-yn-PUl"/>
                             <constraint firstItem="n8u-MI-M41" firstAttribute="trailing" secondItem="rTK-En-AVz" secondAttribute="trailing" id="3fY-Hv-opi"/>
                             <constraint firstItem="n8u-MI-M41" firstAttribute="bottom" secondItem="5vT-ol-TNO" secondAttribute="bottom" constant="30" id="5ah-n8-yiK"/>
+                            <constraint firstItem="E1u-Ib-UTS" firstAttribute="top" secondItem="4Fj-BG-QzI" secondAttribute="bottom" constant="13" id="6JJ-QG-vSy"/>
                             <constraint firstItem="n8u-MI-M41" firstAttribute="trailing" secondItem="5vT-ol-TNO" secondAttribute="trailing" id="BSQ-co-Opx"/>
+                            <constraint firstItem="4Fj-BG-QzI" firstAttribute="leading" secondItem="E1u-Ib-UTS" secondAttribute="leading" id="DHu-xw-lM3"/>
                             <constraint firstItem="rTK-En-AVz" firstAttribute="top" secondItem="451-gI-FyL" secondAttribute="bottom" id="ESy-MM-mGq"/>
                             <constraint firstItem="n8u-MI-M41" firstAttribute="trailing" secondItem="td9-LR-utg" secondAttribute="trailing" constant="16" id="JCT-O6-oxJ"/>
                             <constraint firstItem="jvd-x1-pDp" firstAttribute="leading" secondItem="n8u-MI-M41" secondAttribute="leading" id="LN4-C4-hWi"/>
@@ -634,14 +643,16 @@
                             <constraint firstItem="jvd-x1-pDp" firstAttribute="top" secondItem="td9-LR-utg" secondAttribute="bottom" id="RhC-H3-xAj"/>
                             <constraint firstItem="5vT-ol-TNO" firstAttribute="leading" secondItem="n8u-MI-M41" secondAttribute="leading" id="Tol-Nd-rQP"/>
                             <constraint firstItem="n8u-MI-M41" firstAttribute="trailing" secondItem="jvd-x1-pDp" secondAttribute="trailing" id="dYM-N0-rGj"/>
+                            <constraint firstItem="4Fj-BG-QzI" firstAttribute="trailing" secondItem="E1u-Ib-UTS" secondAttribute="trailing" id="fPX-MX-fFT"/>
                             <constraint firstItem="451-gI-FyL" firstAttribute="leading" secondItem="n8u-MI-M41" secondAttribute="leading" id="gDJ-53-Zcd"/>
                             <constraint firstItem="5vT-ol-TNO" firstAttribute="top" secondItem="rTK-En-AVz" secondAttribute="bottom" id="iTD-hc-aq7"/>
                             <constraint firstItem="rTK-En-AVz" firstAttribute="leading" secondItem="n8u-MI-M41" secondAttribute="leading" id="jom-28-17K"/>
-                            <constraint firstItem="E1u-Ib-UTS" firstAttribute="top" secondItem="n8u-MI-M41" secondAttribute="top" id="qDf-3U-9SX"/>
+                            <constraint firstItem="E1u-Ib-UTS" firstAttribute="top" secondItem="n8u-MI-M41" secondAttribute="top" constant="31" id="qDf-3U-9SX"/>
                             <constraint firstItem="td9-LR-utg" firstAttribute="leading" secondItem="n8u-MI-M41" secondAttribute="leading" constant="16" id="qFr-Hk-yes"/>
                             <constraint firstItem="E1u-Ib-UTS" firstAttribute="leading" secondItem="n8u-MI-M41" secondAttribute="leading" constant="16" id="sWu-FL-VPA"/>
-                            <constraint firstItem="td9-LR-utg" firstAttribute="top" secondItem="E1u-Ib-UTS" secondAttribute="bottom" constant="30" id="wa6-eZ-9vq"/>
+                            <constraint firstItem="td9-LR-utg" firstAttribute="top" secondItem="E1u-Ib-UTS" secondAttribute="bottom" constant="-1" id="wa6-eZ-9vq"/>
                             <constraint firstItem="451-gI-FyL" firstAttribute="top" secondItem="jvd-x1-pDp" secondAttribute="bottom" id="z1j-6U-N5u"/>
+                            <constraint firstItem="4Fj-BG-QzI" firstAttribute="top" secondItem="n8u-MI-M41" secondAttribute="top" constant="-14" id="zd0-o8-GTs"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="mbD-WA-Ddf"/>
@@ -650,6 +661,7 @@
                         <outlet property="kpiButtonViewContain" destination="451-gI-FyL" id="iNT-Ap-PQm"/>
                         <outlet property="logoutButton" destination="rTK-En-AVz" id="njH-Ev-wtv"/>
                         <outlet property="myOrdesLabel" destination="td9-LR-utg" id="idE-eQ-IxK"/>
+                        <outlet property="rolLabel" destination="4Fj-BG-QzI" id="8FR-jf-inG"/>
                         <outlet property="searchOrdesSearchBar" destination="E1u-Ib-UTS" id="MvP-pA-rz8"/>
                         <outlet property="versionLabel" destination="bXg-6u-GPV" id="Ld3-un-kTn"/>
                         <outlet property="viewTable" destination="jvd-x1-pDp" id="5Sk-PM-Tc5"/>
@@ -9028,6 +9040,9 @@ AAW0EA
         </systemColor>
         <systemColor name="systemGrayColor">
             <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="tintColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
