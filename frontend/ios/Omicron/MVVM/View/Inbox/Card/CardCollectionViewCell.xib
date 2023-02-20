@@ -48,7 +48,7 @@
                         </subviews>
                     </stackView>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uvP-QQ-2uF">
-                        <rect key="frame" x="24" y="56" width="658" height="20"/>
+                        <rect key="frame" x="24" y="50" width="658" height="20"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="matrazOrder" translatesAutoresizingMaskIntoConstraints="NO" id="d5i-dI-hvV">
                                 <rect key="frame" x="0.0" y="0.0" width="17" height="20"/>
@@ -245,7 +245,7 @@
                     <constraint firstItem="cgC-iG-hOi" firstAttribute="firstBaseline" secondItem="D0m-qX-4KH" secondAttribute="baseline" constant="-7" id="qc8-bb-5xK"/>
                     <constraint firstItem="arj-xW-G55" firstAttribute="centerY" secondItem="apl-w1-wNf" secondAttribute="centerY" id="vxC-16-TIO"/>
                     <constraint firstItem="KP2-PL-EKx" firstAttribute="leading" secondItem="msz-O0-DSu" secondAttribute="trailing" id="wSi-q7-N1y"/>
-                    <constraint firstItem="uvP-QQ-2uF" firstAttribute="top" secondItem="msz-O0-DSu" secondAttribute="bottom" constant="16" id="wlZ-6r-YQm"/>
+                    <constraint firstItem="uvP-QQ-2uF" firstAttribute="top" secondItem="msz-O0-DSu" secondAttribute="bottom" constant="10" id="wlZ-6r-YQm"/>
                     <constraint firstItem="WSM-nT-8rP" firstAttribute="leading" secondItem="msz-O0-DSu" secondAttribute="leading" id="y8m-eK-SQE"/>
                     <constraint firstAttribute="trailing" secondItem="gV2-Wy-O4k" secondAttribute="trailing" constant="65.5" id="yjz-a7-3GQ"/>
                 </constraints>
