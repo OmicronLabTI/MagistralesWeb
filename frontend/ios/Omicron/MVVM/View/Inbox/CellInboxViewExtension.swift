@@ -68,8 +68,8 @@ extension InboxViewController: CardCellDelegate {
         cell.patientListButton.isHidden = !groupByOrderNumberButton.isEnabled && !rootViewModel.needSearch
         cell.qfbNameContainer.isHidden = rootViewModel.userType != .technical
         cell.qfbName.text = "Quím. \(element.qfbName ?? "")"
-        cell.itemCodeConstrains.constant = rootViewModel.userType != .technical ? 16 : 52
-        cell.descriptionConstraint.constant = rootViewModel.userType != .technical ? 16 : 52
+        cell.itemCodeConstrains.constant = rootViewModel.userType != .technical ? 16 : 32
+        cell.descriptionConstraint.constant = rootViewModel.userType != .technical ? 16 : 32
         return cell
     }
 
