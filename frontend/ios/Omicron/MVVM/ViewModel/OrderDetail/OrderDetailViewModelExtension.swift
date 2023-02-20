@@ -49,10 +49,14 @@ extension OrderDetailViewModel {
             status: status,
             userType: rootViewModel.userType.rawValue)
         self.networkManager.changeStatusOrder([changeStatus])
-            .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
-            self?.rootViewModel.needsRefresh = true
+            .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
             self?.loading.onNext(false)
-            self?.backToInboxView.onNext(())
+            if res.code == 200 {
+                self?.rootViewModel.needsRefresh = true
+                self?.backToInboxView.onNext(())
+                return
+            }
+            self?.showAlert.onNext(res.userError ?? CommonStrings.errorToChangeStatus)
         }, onError: { [weak self] error in
             self?.loading.onNext(false)
             self?.showAlert.onNext(CommonStrings.errorToChangeStatus)
