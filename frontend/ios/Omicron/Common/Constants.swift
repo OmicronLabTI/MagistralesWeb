@@ -23,8 +23,8 @@ struct Constants {
         case assignedBatches = "Hubo un error al asignar los siguientes lotes"
         case assignedBatchesTryAgain = "Hubo un error al asignar los lotes, por favor intentar de nuevo"
         case loadOrdersDetail = "Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo"
-        case invalidSapOrderId = "Hay Ordenes de Fabricación seleccionadas de diferente pedido, favor de seleccionar del mismo pedido para poder continuar"
-  
+        case invalidSapOrderId =
+"Hay Ordenes de Fabricación seleccionadas de diferente pedido, favor de seleccionar del mismo pedido para poder continuar"
     }
     enum Tags: Int {
         case loading = 101
