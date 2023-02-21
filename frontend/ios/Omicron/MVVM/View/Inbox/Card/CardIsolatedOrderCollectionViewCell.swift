@@ -96,10 +96,10 @@ class CardIsolatedOrderCollectionViewCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                layer.borderWidth = CGFloat(10)
-                missingStockImage.layer.borderWidth = 3
+                layer.borderWidth = CGFloat(8)
+                missingStockImage.layer.borderWidth = 2
             } else {
-                layer.borderWidth = CGFloat(4)
+                layer.borderWidth = CGFloat(2)
                 missingStockImage.layer.borderWidth = 1
             }
         }
