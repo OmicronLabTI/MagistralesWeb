@@ -636,15 +636,16 @@ namespace Omicron.Pedidos.Test
         /// gets the users by role.
         /// </summary>
         /// <param name="technicalRequire">Is Technical Require.</param>
+        /// <param name="tecnicId">Tecnic id.</param>
         /// <returns>the users.</returns>
-        public ResultModel GetUsersByRoleWithDZ(bool technicalRequire = false)
+        public ResultModel GetUsersByRoleWithDZ(bool technicalRequire = false, string tecnicId = "8c426e2d-0615-4516-a94c-a79e5c11ae4d")
         {
             var users = new List<UserModel>
             {
                 new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MN", TechnicalRequire = true, TecnicId = "8c426e2d-0615-4516-a94c-a79e5c11ae4d" },
                 new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "BE", TechnicalRequire = true, TecnicId = "8c426e2d-0615-4516-a94c-a79e5c11ae4d" },
                 new UserModel { Id = "abcde", Activo = 1, FirstName = "Magistrales", LastName = "Magistrales", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MG", TechnicalRequire = technicalRequire },
-                new UserModel { Id = "abcdef", Activo = 1, FirstName = "Test DZ 1", LastName = "Test DZ 1", Password = "pass", Role = 2, UserName = "gus1", Piezas = 0, Asignable = 1, Classification = "DZ", TechnicalRequire = true, TecnicId = "8c426e2d-0615-4516-a94c-a79e5c11ae4d" },
+                new UserModel { Id = "abcdef", Activo = 1, FirstName = "Test DZ 1", LastName = "Test DZ 1", Password = "pass", Role = 2, UserName = "gus1", Piezas = 0, Asignable = 1, Classification = "DZ", TechnicalRequire = technicalRequire, TecnicId = tecnicId },
             };
 
             return new ResultModel
