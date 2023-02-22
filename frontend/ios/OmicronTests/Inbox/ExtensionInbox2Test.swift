@@ -27,14 +27,14 @@ class ExtensionInbox2Test: XCTestCase {
         rootViewModel = RootViewModel()
         disposeBag = DisposeBag()
         order1 = Order(
-            areBatchesComplete: true, productionOrderId: 89284, baseDocument: 60067, container: "",
-            tag: "Selecciona una...", plannedQuantity: 1, startDate: "27/08/2020", finishDate: "06/09/2020",
-            descriptionProduct: "Aceite de Arbol de Te 0.3%, Alantoina 0.3%, Citrico 0.2%, " +
-            "Extracto de Te Verde 3%, Extracto de Pepino 3%, Glicerina 3%, Hamamelis 3%, Hialuronico 3%, " +
-            "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
-            statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
-            hasMissingStock: false, finishedLabel: false, patientName: "NamePatient",
-            clientDxp: "clientDxp", shopTransaction: "emnjkd", qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
+        areBatchesComplete: true, productionOrderId: 89284, baseDocument: 60067, container: "",
+        tag: "Selecciona una...", plannedQuantity: 1, startDate: "27/08/2020", finishDate: "06/09/2020",
+        descriptionProduct: "Aceite de Arbol de Te 0.3%, Alantoina 0.3%, Citrico 0.2%, " +
+        "Extracto de Te Verde 3%, Extracto de Pepino 3%, Glicerina 3%, Hamamelis 3%, Hialuronico 3%, " +
+        "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion", statusId: 1,
+        itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo", hasMissingStock: false,
+        finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd",
+        qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         order2 = Order(
             areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284, container: "PRINCESS/ATOMIZADOR",
             tag: "NA", plannedQuantity: 1, startDate: "22/09/2020", finishDate: "30/09/2020",
