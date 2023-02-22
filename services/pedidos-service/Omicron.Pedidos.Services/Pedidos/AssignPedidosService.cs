@@ -129,12 +129,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                             Status = ServiceConstants.StatusSapLiberado,
                         }))).ToList();
 
-            var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdateSAP, ServiceConstants.UpdateFabOrder);
-            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
-            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
-            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
-            var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
-
             var pedidosStringUpdate = pedidosString.Concat(relationOrdersWithUsersDZIsNotOmi.Select(x => x.Order.Order.DocNum.ToString())).Distinct().ToList();
             var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosStringUpdate)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
@@ -173,6 +167,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 throw new CustomServiceException(string.Format(ServiceConstants.QfbWithoutTecnic, string.Join(",", invalidQfbs.Distinct().Select(x => $"{x.FirstName} {x.LastName}"))), HttpStatusCode.BadRequest);
             }
+
+            var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdateSAP, ServiceConstants.UpdateFabOrder);
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
+            var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
+            var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
+            var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
 
             await this.pedidosDao.UpdateUserOrders(userOrdersToUpdate);
             _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
@@ -323,7 +323,12 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private void CalculateInvalidUsers(List<UserModel> invalidQfbs, List<UserModel> allUsers, string userid)
         {
-            var invalidUser = allUsers.Where(user => ServiceShared.CalculateAnd(user.Id.Equals(userid), user.TechnicalRequire, string.IsNullOrEmpty(user.TecnicId))).ToList();
+            var invalidUser = allUsers.Where(user =>
+                                                ServiceShared.CalculateAnd(
+                                                    user.Id.Equals(userid),
+                                                    user.TechnicalRequire,
+                                                    string.IsNullOrEmpty(user.TecnicId)))
+                              .ToList();
 
             if (!invalidUser.Any())
             {
