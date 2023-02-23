@@ -288,6 +288,33 @@ namespace Omicron.Pedidos.Entities.Model
         public string StatusForTecnic { get; set; }
 
         /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("assignmentdate")]
+        public DateTime? AssignmentDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("packingdate")]
+        public DateTime? PackingDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("reassignmentdate")]
+        public DateTime? ReassignmentDate { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

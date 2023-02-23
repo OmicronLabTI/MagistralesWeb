@@ -68,6 +68,7 @@ namespace Omicron.Pedidos.Services.Utils
                 x.Userid = assignModel.UserId;
                 x.TecnicId = qfbInfoValidated.TecnicId;
                 x.StatusForTecnic = x.Status;
+                x.AssignmentDate = DateTime.Now;
                 /** add logs**/
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
             });
@@ -115,7 +116,7 @@ namespace Omicron.Pedidos.Services.Utils
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
             var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
 
-            var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic, qfbInfoValidated.TecnicId);
+            var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic, qfbInfoValidated.TecnicId, true);
             userOrdersByProd = getUpdateUserOrderModel.Item1;
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
@@ -233,8 +234,9 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="statusOrder">Status for the order fab.</param>
         /// <param name="userLogistic">user modificate.</param>
         /// <param name="tecnicId">Tecnic id.</param>
+        /// <param name="isFromAssignOrder">Is from assignOrder.</param>
         /// <returns>the data.</returns>
-        public static Tuple<List<UserOrderModel>, List<SalesLogs>> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, List<OrderWithDetailModel> sapOrders, string user, string statusOrder, string userLogistic, string tecnicId)
+        public static Tuple<List<UserOrderModel>, List<SalesLogs>> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, List<OrderWithDetailModel> sapOrders, string user, string statusOrder, string userLogistic, string tecnicId, bool isFromAssignOrder)
         {
             var listToUpdate = new List<UserOrderModel>();
             var listOrderLogToInsert = new List<SalesLogs>();
@@ -254,6 +256,8 @@ namespace Omicron.Pedidos.Services.Utils
                         o.Status = statusOrder;
                         o.TecnicId = tecnicId;
                         o.StatusForTecnic = statusOrder;
+                        o.ReassignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, o.ReassignmentDate, DateTime.Now);
+                        o.AssignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, DateTime.Now, o.AssignmentDate);
                         listToUpdate.Add(o);
                         /** add logs**/
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { o }));
@@ -266,6 +270,8 @@ namespace Omicron.Pedidos.Services.Utils
                         pedido.Userid = user;
                         pedido.TecnicId = tecnicId;
                         pedido.StatusForTecnic = pedido.Status;
+                        pedido.ReassignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, pedido.ReassignmentDate, DateTime.Now);
+                        pedido.AssignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, DateTime.Now, pedido.AssignmentDate);
                         listToUpdate.Add(pedido);
                         if (!missing)
                         {

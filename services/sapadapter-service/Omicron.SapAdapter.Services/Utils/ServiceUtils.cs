@@ -500,15 +500,10 @@ namespace Omicron.SapAdapter.Services.Utils
                 return orderModels = orderModels.Where(x => x.OrderType.Equals(classification)).ToList();
             }
 
-            var subOrderTypesToLook = ServiceShared.CalculateTernary(
-                classification.Equals(ServiceConstants.OrderTypeMixed),
-                ServiceConstants.MixedSubOrderTypes,
-                new List<string> { classification });
-
             return orderModels.Where(x =>
                  ServiceShared.CalculateOr(
                      x.OrderType.Equals(classification),
-                     ServiceShared.CalculateAnd(subOrderTypesToLook.Contains(x.SubOrderType), x.OrderType.Equals(ServiceConstants.OrderTypeMU)))).ToList();
+                     ServiceShared.CalculateAnd(x.SubOrderType.Equals(classification), x.OrderType.Equals(ServiceConstants.OrderTypeMU)))).ToList();
         }
     }
 }

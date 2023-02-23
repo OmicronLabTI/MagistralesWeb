@@ -652,6 +652,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 o.FinishDate = DateTime.Now;
                 o.Status = ServiceConstants.Terminado;
                 o.StatusForTecnic = ServiceConstants.Terminado;
+                o.PackingDate = ServiceShared.CalculateTernary(o.PackingDate.HasValue, o.PackingDate, DateTime.Now);
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(updateOrderSignature.UserId, new List<UserOrderModel> { o }));
             });
 
@@ -889,6 +890,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var signature = orderSignatures.FirstOrDefault(x => x.UserOrderId == order.Id);
                 this.GetOrdersSignatures(signature, listSignatureToInsert, listToUpdate, order, tecnicSignatureAsByte, qfbSignatureAsByte, true);
                 order.StatusForTecnic = ServiceConstants.SignedStatus;
+                order.PackingDate = DateTime.Now;
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(tecnicOrderSignature.UserId, new List<UserOrderModel> { order }));
             });
 
