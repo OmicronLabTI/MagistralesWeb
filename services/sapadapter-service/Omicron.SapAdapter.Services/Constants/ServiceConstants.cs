@@ -571,11 +571,6 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string OrderTypeMU = "MU";
 
         /// <summary>
-        /// Order Type Mixed.
-        /// </summary>
-        public const string OrderTypeMixed = "MX";
-
-        /// <summary>
         /// the insert value.
         /// </summary>
         public const string Maquila = "Maquila";
@@ -902,19 +897,6 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             Almacenado,
             Empaquetado,
-        };
-
-        /// <summary>
-        /// Gets the Mixed Sub Order Types.
-        /// </summary>
-        /// <value>
-        /// the status.
-        /// </value>
-        public static List<string> MixedSubOrderTypes { get; } = new List<string>
-        {
-            "MG",
-            "MN",
-            "BE",
         };
     }
 }
