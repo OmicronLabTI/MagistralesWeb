@@ -1034,4 +1034,17 @@
 			<column name="statusfortecnic" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
+    <changeSet author="jarturoep" id="changelog-1.111">
+      <addColumn tableName="usersorders">
+        <column name="assignmentdate" type="timestamp">
+          <constraints nullable="true" primaryKey="false" unique="false" />
+        </column>
+        <column name="packingdate" type="timestamp">
+          <constraints nullable="true" primaryKey="false" unique="false" />
+        </column>
+        <column name="reassignmentdate" type="timestamp">
+          <constraints nullable="true" primaryKey="false" unique="false" />
+        </column>
+      </addColumn>
+    </changeSet>
 </databaseChangeLog>

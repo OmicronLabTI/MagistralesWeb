@@ -151,6 +151,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     this.CalculateInvalidUsers(invalidQfbs, allUsers, x.Userid);
                     x.TecnicId = allUsers.FirstOrDefault(user => user.Id == x.Userid)?.TecnicId;
                     x.StatusForTecnic = x.Status;
+                    x.AssignmentDate = DateTime.Now;
                     if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                     {
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(assignModel.UserLogistic, new List<UserOrderModel> { x }));
@@ -228,6 +229,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.Userid = assign.UserId;
                 x.TecnicId = qfbInfoValidated.TecnicId;
                 x.StatusForTecnic = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
+                x.ReassignmentDate = DateTime.Now;
                 if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                 {
                     /** add logs**/
@@ -268,7 +270,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
             var sapOrders = ServiceShared.CalculateTernary(listSalesNumber.Any(), await ServiceUtils.GetOrdersWithFabOrders(this.sapAdapter, listSalesNumber), new List<OrderWithDetailModel>());
 
-            var getUpdateUserOrderModel = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic, qfbInfoValidated.TecnicId);
+            var getUpdateUserOrderModel = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic, qfbInfoValidated.TecnicId, false);
             var ordersToUpdate = getUpdateUserOrderModel.Item1;
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
