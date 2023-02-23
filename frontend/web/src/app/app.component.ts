@@ -201,9 +201,7 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
                         this.onSuccessPlaceOrdersHttp(resultAutomatic, qfbToPlace.modalType, qfbToPlace.isFromOrderIsolated);
                     }, (error: ErrorHttpInterface) => {
                         if (error.status === HttpStatus.badRequest) {
-                            this.createDialogHttpOhAboutTypePlace(qfbToPlace.modalType,
-                                qfbToPlace.isFromOrderIsolated,
-                                String(error.error));
+                            this.messagesService.presentToastCustom(String(error.error), 'error', null, true, false, null);
                         } else {
                             this.errorService.httpError(error);
                         }
