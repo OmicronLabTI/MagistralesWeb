@@ -230,6 +230,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.TecnicId = qfbInfoValidated.TecnicId;
                 x.StatusForTecnic = ServiceShared.CalculateTernary(string.IsNullOrEmpty(x.Productionorderid), ServiceConstants.Liberado, ServiceConstants.Reasignado);
                 x.ReassignmentDate = DateTime.Now;
+                x.PackingDate = null;
                 if (ServiceShared.CalculateAnd(previousStatus != x.Status, x.IsSalesOrder))
                 {
                     /** add logs**/
