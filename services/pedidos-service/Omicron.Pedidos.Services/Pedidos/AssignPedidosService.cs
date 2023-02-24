@@ -70,7 +70,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(new List<string> { manualAssign.UserId }, this.userService)).FirstOrDefault();
             qfbInfoValidated ??= new QfbTecnicInfoDto();
 
-            if (ServiceShared.CalculateOr(!qfbInfoValidated.IsValidTecnic, !qfbInfoValidated.IsValidQfb))
+            if (!qfbInfoValidated.IsValidTecnic)
             {
                 return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{qfbInfoValidated.QfbFirstName} {qfbInfoValidated.QfbLastName}"), null, null);
             }
@@ -197,7 +197,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(new List<string> { manualAssign.UserId }, this.userService)).FirstOrDefault();
             qfbInfoValidated ??= new QfbTecnicInfoDto();
-            if (ServiceShared.CalculateOr(!qfbInfoValidated.IsValidTecnic, !qfbInfoValidated.IsValidQfb))
+            if (!qfbInfoValidated.IsValidTecnic)
             {
                 return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{qfbInfoValidated.QfbFirstName} {qfbInfoValidated.QfbLastName}"), null, null);
             }
