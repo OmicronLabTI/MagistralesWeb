@@ -67,6 +67,14 @@ namespace Omicron.Pedidos.Dtos.Models
         /// <value>
         /// Int Id.
         /// </value>
-        public bool IsValidQfb { get; set; }
+        public bool IsValidQfbConfiguration { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets is tecnic required.
+        /// </summary>
+        /// <value>
+        /// Int Id.
+        /// </value>
+        public bool IsValidTecnicConfiguration { get; set; }
     }
 }

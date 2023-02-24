@@ -692,7 +692,7 @@ namespace Omicron.Pedidos.Test
                     QfbLastName = "Pérez",
                     QfbId = "abc",
                     TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b801",
-                    IsValidQfb = true,
+                    IsValidQfbConfiguration = true,
                 },
             };
 
