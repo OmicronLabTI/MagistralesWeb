@@ -312,7 +312,8 @@ namespace Omicron.Usuarios.Services.User
                     IsTecnicRequired = qfbUser.TechnicalRequire,
                     IsValidTecnic = true,
                     TecnicId = qfbUser.TecnicId,
-                    IsValidQfb = true,
+                    IsValidQfbConfiguration = true,
+                    IsValidTecnicConfiguration = true,
                 };
 
                 qfbsInfoList.Add(this.QfbInfoValidator(qfbInfo, qfbUser, tecnicUsers));
@@ -381,28 +382,14 @@ namespace Omicron.Usuarios.Services.User
         /// <returns>Qfb validated info.</returns>
         private QfbTecnicInfoDto QfbInfoValidator(QfbTecnicInfoDto qfbInfo, UserModel qfbUser, List<UserModel> tecnicUsers)
         {
-            if (ServiceUtils.CalculateOr(qfbUser.Deleted, qfbUser.Activo == 0, qfbUser.Asignable == 0))
-            {
-                qfbInfo.IsValidQfb = false;
-                return qfbInfo;
-            }
+            qfbInfo.IsValidQfbConfiguration = ServiceUtils.CalculateAnd(!qfbUser.Deleted, qfbUser.Activo == 1, qfbUser.Asignable == 1);
+            qfbInfo.IsValidTecnic = !qfbInfo.IsTecnicRequired || !string.IsNullOrEmpty(qfbInfo.TecnicId);
 
-            if (!qfbInfo.IsTecnicRequired)
+            if (qfbInfo.IsTecnicRequired)
             {
-                return qfbInfo;
-            }
-
-            if (ServiceUtils.CalculateAnd(qfbInfo.IsTecnicRequired, string.IsNullOrEmpty(qfbInfo.TecnicId)))
-            {
-                qfbInfo.IsValidTecnic = false;
-                return qfbInfo;
-            }
-
-            var tecnicInfoDetail = tecnicUsers.FirstOrDefault(tecnic => qfbUser.TecnicId.Equals(tecnic.Id));
-            tecnicInfoDetail ??= new UserModel { Activo = 0, Asignable = 0, Deleted = false };
-            if (ServiceUtils.CalculateOr(tecnicInfoDetail.Activo == 0, tecnicInfoDetail.Deleted, tecnicInfoDetail.Asignable == 0))
-            {
-                qfbInfo.IsValidTecnic = false;
+                var tecnicInfoDetail = tecnicUsers.FirstOrDefault(tecnic => qfbUser.TecnicId == tecnic.Id);
+                tecnicInfoDetail ??= new UserModel { Activo = 0, Asignable = 0, Deleted = false };
+                qfbInfo.IsValidTecnicConfiguration = ServiceUtils.CalculateAnd(tecnicInfoDetail.Activo == 1, !tecnicInfoDetail.Deleted, tecnicInfoDetail.Asignable == 1);
             }
 
             return qfbInfo;
