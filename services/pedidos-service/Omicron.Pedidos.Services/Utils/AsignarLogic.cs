@@ -258,6 +258,7 @@ namespace Omicron.Pedidos.Services.Utils
                         o.StatusForTecnic = statusOrder;
                         o.ReassignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, o.ReassignmentDate, DateTime.Now);
                         o.AssignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, DateTime.Now, o.AssignmentDate);
+                        o.PackingDate = ServiceShared.CalculateTernary(isFromAssignOrder, o.PackingDate, null);
                         listToUpdate.Add(o);
                         /** add logs**/
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { o }));

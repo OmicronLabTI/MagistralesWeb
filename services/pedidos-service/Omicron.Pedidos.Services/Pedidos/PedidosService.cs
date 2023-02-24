@@ -1075,7 +1075,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(updateStatusOrder.Select(x => x.UserId).ToList(), this.userService)).ToList();
-            var invalidQfbs = qfbInfoValidated.Where(qfb => ServiceShared.CalculateOr(!qfb.IsValidQfb, !qfb.IsValidTecnic));
+            var invalidQfbs = qfbInfoValidated.Where(qfb => !qfb.IsValidTecnic);
 
             if (invalidQfbs.Any())
             {
