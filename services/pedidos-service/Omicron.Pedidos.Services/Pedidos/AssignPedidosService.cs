@@ -109,7 +109,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             users = ServiceShared.CalculateTernary(sapOrderTypes.Contains(ServiceConstants.Mix), users, users.Where(x => sapOrderTypes.Contains(x.Classification)).ToList());
             var userOrders = (await this.pedidosDao.GetUserOrderByUserIdAndNotInStatus(users.Select(x => x.Id).ToList(), invalidStatus)).ToList();
             var validUsers = AsignarLogic.GetValidUsersByLoad(users, userOrders, this.sapAdapter);
-            if (!validUsers.Any())
+            bool isOnlyClasificationDZ = ServiceShared.CalculateAnd(relationOrdersWithUsersDZIsNotOmi.Any(), !ordersSap.Any());
+
+            if (ServiceShared.CalculateAnd(!validUsers.Any(), !isOnlyClasificationDZ))
             {
                 throw new CustomServiceException(ServiceConstants.ErrorQfbAutomatico, HttpStatusCode.BadRequest);
             }
@@ -132,7 +134,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             var pedidosStringUpdate = pedidosString.Concat(relationOrdersWithUsersDZIsNotOmi.Select(x => x.Order.Order.DocNum.ToString())).Distinct().ToList();
             var userOrdersToUpdate = (await this.pedidosDao.GetUserOrderBySaleOrder(pedidosStringUpdate)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
-            bool isOnlyClasificationDZ = ServiceShared.CalculateAnd(relationOrdersWithUsersDZIsNotOmi.Any(), !ordersSap.Any());
             var invalidQfbs = new List<UserModel>();
             userOrdersToUpdate.ForEach(x =>
             {
