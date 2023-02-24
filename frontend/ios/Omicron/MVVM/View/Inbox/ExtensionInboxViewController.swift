@@ -56,17 +56,12 @@ extension InboxViewController {
         }).disposed(by: self.disposeBag)
         // retorna mensaje si no hay card para cada status
         inboxViewModel.title
-            .withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, data in
+            .withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, _ in
                 guard let self = self else { return }
                 let statusId = self.inboxViewModel.getStatusId(name: title)
-                var message = String()
-                if let orders = data.first {
-                    if orders.items.count == 0 && statusId != -1 {
-                        message = "No tienes órdenes \(title)"
-                    }
-                } else {
-                    message = "No tienes órdenes \(title)"
-                }
+                var message = self.inboxViewModel.ordersTemp.count == 0 ?
+                    "No tienes órdenes \(title)" :
+                    String()
                 self.collectionView.setEmptyMessage(message)
             }).subscribe().disposed(by: disposeBag)
     }
