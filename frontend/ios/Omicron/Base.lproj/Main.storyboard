@@ -484,7 +484,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="jvd-x1-pDp">
-                                <rect key="frame" x="0.0" y="204" width="375" height="460"/>
+                                <rect key="frame" x="0.0" y="204" width="375" height="526"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="RootTableViewCell" id="BKn-rr-W8E" customClass="RootTableViewCell" customModule="OmicronDEV" customModuleProvider="target">
@@ -554,7 +554,7 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="451-gI-FyL">
-                                <rect key="frame" x="0.0" y="664" width="375" height="230"/>
+                                <rect key="frame" x="0.0" y="724" width="375" height="170"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sy3-KI-kfJ">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
@@ -591,7 +591,7 @@
                                 <color key="backgroundColor" red="0.91371434929999995" green="0.91371971370000005" blue="0.91373366119999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
                                     <constraint firstItem="MJA-Dp-sSe" firstAttribute="height" secondItem="Sy3-KI-kfJ" secondAttribute="height" id="RQc-4i-lgP"/>
-                                    <constraint firstAttribute="height" constant="230" id="WSi-Id-PoW"/>
+                                    <constraint firstAttribute="height" constant="170" id="WSi-Id-PoW"/>
                                     <constraint firstItem="Sy3-KI-kfJ" firstAttribute="top" secondItem="451-gI-FyL" secondAttribute="top" id="Wi5-xe-zuz"/>
                                     <constraint firstItem="MJA-Dp-sSe" firstAttribute="centerY" secondItem="Sy3-KI-kfJ" secondAttribute="centerY" id="X8k-Ba-FLi"/>
                                     <constraint firstItem="Sy3-KI-kfJ" firstAttribute="leading" secondItem="451-gI-FyL" secondAttribute="leading" id="Y4Q-c4-Jc4"/>
@@ -651,7 +651,7 @@
                             <constraint firstItem="td9-LR-utg" firstAttribute="leading" secondItem="n8u-MI-M41" secondAttribute="leading" constant="16" id="qFr-Hk-yes"/>
                             <constraint firstItem="E1u-Ib-UTS" firstAttribute="leading" secondItem="n8u-MI-M41" secondAttribute="leading" constant="16" id="sWu-FL-VPA"/>
                             <constraint firstItem="td9-LR-utg" firstAttribute="top" secondItem="E1u-Ib-UTS" secondAttribute="bottom" constant="-1" id="wa6-eZ-9vq"/>
-                            <constraint firstItem="451-gI-FyL" firstAttribute="top" secondItem="jvd-x1-pDp" secondAttribute="bottom" id="z1j-6U-N5u"/>
+                            <constraint firstItem="451-gI-FyL" firstAttribute="top" secondItem="jvd-x1-pDp" secondAttribute="bottom" constant="-6" id="z1j-6U-N5u"/>
                             <constraint firstItem="4Fj-BG-QzI" firstAttribute="top" secondItem="n8u-MI-M41" secondAttribute="top" constant="-14" id="zd0-o8-GTs"/>
                         </constraints>
                     </view>
