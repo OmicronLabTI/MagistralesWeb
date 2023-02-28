@@ -716,18 +716,30 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var result = await this.sapAdapter.GetSapAdapter(route);
                 productionOrderId = int.Parse(result.Response.ToString() ?? throw new InvalidOperationException());
 
-                UserOrderModel newProductionOrder = new UserOrderModel();
-                newProductionOrder.Salesorderid = string.Empty;
-                newProductionOrder.Productionorderid = productionOrderId.ToString();
-                newProductionOrder.CreatorUserId = isolatedFabOrder.UserId;
-                newProductionOrder.CreationDate = DateTime.Now.FormatedLargeDate();
-                newProductionOrder.Status = ServiceConstants.Planificado;
-                newProductionOrder.PlanningDate = DateTime.Now;
+                UserOrderModel newProductionOrder = new UserOrderModel
+                {
+                    Salesorderid = string.Empty,
+                    Productionorderid = productionOrderId.ToString(),
+                    CreatorUserId = isolatedFabOrder.UserId,
+                    CreationDate = DateTime.Now.FormatedLargeDate(),
+                    Status = ServiceConstants.Planificado,
+                    PlanningDate = DateTime.Now,
+                };
 
                 /** add logs**/
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(isolatedFabOrder.UserId, new List<UserOrderModel> { newProductionOrder }));
                 await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
                 _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            }
+
+            if (ServiceShared.CalculateAnd(!string.IsNullOrEmpty(resultMessage.Key), isolatedFabOrder.IsFromQfbProfile))
+            {
+                await AsignarLogic.AssignOrder(
+                    new ManualAssignModel { DocEntry = new List<int> { productionOrderId }, UserId = isolatedFabOrder.UserId, UserLogistic = isolatedFabOrder.UserId },
+                    this.pedidosDao,
+                    this.sapDiApi,
+                    this.sapAdapter,
+                    this.kafkaConnector);
             }
 
             return ServiceUtils.CreateResult(true, 200, resultMessage.Value, productionOrderId, null);
