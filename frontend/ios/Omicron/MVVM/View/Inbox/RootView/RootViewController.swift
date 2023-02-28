@@ -21,6 +21,8 @@ class RootViewController: UIViewController {
     @IBOutlet weak var kpiButtonViewContain: UIView!
     @IBOutlet weak var versionLabel: UILabel!
     @IBOutlet weak var rolLabel: UILabel!
+    @IBOutlet weak var createBulk: UIButton!
+    @IBOutlet weak var createSupplies: UIButton!
 
     @IBAction func logoutAction(_ sender: UIButton) {
         isLogOut = true
