@@ -678,6 +678,8 @@
                     </view>
                     <navigationItem key="navigationItem" id="mbD-WA-Ddf"/>
                     <connections>
+                        <outlet property="createBulk" destination="ASZ-oG-NUG" id="CnX-mG-oL1"/>
+                        <outlet property="createSupplies" destination="x7g-ev-WuQ" id="Awp-jp-JXY"/>
                         <outlet property="kpiButton" destination="MJA-Dp-sSe" id="Vmq-QL-nla"/>
                         <outlet property="kpiButtonViewContain" destination="451-gI-FyL" id="iNT-Ap-PQm"/>
                         <outlet property="logoutButton" destination="rTK-En-AVz" id="njH-Ev-wtv"/>
@@ -1566,11 +1568,11 @@
                                                 <rect key="frame" x="0.0" y="311.5" width="450" height="128"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="HmA-px-9Se" id="MyE-ny-kJf">
-                                                    <rect key="frame" x="0.0" y="0.0" width="600" height="128"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="450" height="128"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="d9u-AN-XKh">
-                                                            <rect key="frame" x="8" y="0.0" width="584" height="128"/>
+                                                            <rect key="frame" x="8" y="0.0" width="434" height="128"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
                                                             <nil key="textColor"/>
