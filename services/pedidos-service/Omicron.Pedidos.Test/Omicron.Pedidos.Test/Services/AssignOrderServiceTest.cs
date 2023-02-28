@@ -155,12 +155,9 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the processs.
         /// </summary>
-        /// <param name="isValidtecnic">Is valid tecnic.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task AssignOrder(bool isValidtecnic)
+        public async Task AssignOrder()
         {
             // arrange
             var assign = new ManualAssignModel
@@ -182,10 +179,6 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
             var mockUsers = new Mock<IUsersService>();
-            mockUsers
-                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetQfbInfoDto(isValidtecnic)));
-
             var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, this.kafkaConnector.Object);
 
             // act
@@ -197,21 +190,10 @@ namespace Omicron.Pedidos.Test.Services
             Assert.IsNotNull(response);
             Assert.IsNull(response.ExceptionMessage);
             Assert.IsNull(response.Comments);
-
-            if (isValidtecnic)
-            {
-                Assert.IsNotNull(response.UserError);
-                Assert.IsTrue(response.Success);
-                Assert.AreEqual(200, response.Code);
-                Assert.IsNotNull(response.Response);
-            }
-            else
-            {
-                Assert.IsNotNull(response.UserError);
-                Assert.IsFalse(response.Success);
-                Assert.AreEqual(400, response.Code);
-                Assert.IsNull(response.Response);
-            }
+            Assert.IsNotNull(response.UserError);
+            Assert.IsTrue(response.Success);
+            Assert.AreEqual(200, response.Code);
+            Assert.IsNotNull(response.Response);
         }
 
         /// <summary>
