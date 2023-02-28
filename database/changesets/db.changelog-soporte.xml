@@ -27,4 +27,16 @@
 			<column name="field" value="CardCodeResponsibleMedic" />
 		</insert>
 	</changeSet>
+	<changeSet author="jcastillo" id="changelog-1.2">
+		<insert tableName="parameters">
+			<column name="value" value="C00111" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
+		</insert>
+		<insert tableName="parameters">
+			<column name="value" value="C00299" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>
