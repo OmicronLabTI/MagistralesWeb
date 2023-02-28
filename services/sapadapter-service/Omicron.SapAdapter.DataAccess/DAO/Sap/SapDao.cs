@@ -143,6 +143,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          into DetallePedido
                          from dp in DetallePedido.DefaultIfEmpty()
                          join p in this.databaseContext.ProductoModel on d.ProductoId equals p.ProductoId
+                         join firm in this.databaseContext.ProductFirmModel on p.ProductFirmCode equals firm.ProductFirmCode
+                         into productFirm
+                         from fm in productFirm.DefaultIfEmpty()
                          join ped in this.databaseContext.OrderModel on d.PedidoId equals ped.PedidoId
                          join g in this.databaseContext.CatalogProductModel on p.ProductGroupId equals g.ProductGroupId
                          where p.IsMagistral == "Y"
@@ -166,6 +169,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              PedidoId = d.PedidoId ?? 0,
                              CatalogGroup = g.CatalogName,
                              IsOmigenomics = g.CatalogName.ToLower() == "omigenomics",
+                             ProductFirmName = fm.ProductFirmName ?? string.Empty,
                          }).AsNoTracking();
 
             return await this.RetryQuery(query);
