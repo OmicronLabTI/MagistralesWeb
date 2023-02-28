@@ -466,8 +466,17 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
 
+            var userId = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.ParameterUserId, string.Empty);
+            warehouse = await this.CalculateWarehouse(userId, warehouse);
+
             var produtOrdered = listValues.OrderBy(o => o.ProductId).ToList();
             var productToReturn = produtOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
+
+            productToReturn.ForEach(pr =>
+            {
+                pr.Warehouse = warehouse;
+            });
+
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count);
         }
 
@@ -812,8 +821,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<List<UserModel>> GetUsers(List<UserOrderModel> userOrders)
         {
             var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
-            var users = await this.usersService.GetUsersById(userIDs, ServiceConstants.GetUsersById);
-            return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+            return await this.GetUsersById(userIDs);
         }
 
         private async Task<List<DoctorPrescriptionInfoModel>> GetDoctors(List<string> cardCodes, string url)
@@ -968,6 +976,37 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(licenseName), licenseName, pedidoLocal.Medico);
+        }
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        /// <param name="userIds">Users id.</param>
+        /// <returns>User model.</returns>
+        private async Task<List<UserModel>> GetUsersById(List<string> userIds)
+        {
+            var users = await this.usersService.GetUsersById(userIds, ServiceConstants.GetUsersById);
+            return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+        }
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        /// <param name="userId">User id.</param>
+        /// <param name="warehouse">Current warehouse.</param>
+        /// <returns>User model.</returns>
+        private async Task<string> CalculateWarehouse(string userId, string warehouse)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return warehouse;
+            }
+
+            var usersResponse = await this.usersService.GetUsersById(new List<string> { userId }, ServiceConstants.GetUsersById);
+            var users = JsonConvert.DeserializeObject<List<UserModel>>(usersResponse.Response.ToString());
+            var user = users.FirstOrDefault(u => u.Role == ServiceConstants.QfbUserRole);
+            user ??= new UserModel { Classification = warehouse };
+            return user.Classification;
         }
     }
 }

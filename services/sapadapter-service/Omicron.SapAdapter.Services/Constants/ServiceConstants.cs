@@ -686,6 +686,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string OrderWithoutTecnicSign = "No es posible terminar, falta la firma del técnico asignado";
 
         /// <summary>
+        /// Parameter user id.
+        /// </summary>
+        public const string ParameterUserId = "userId";
+
+        /// <summary>
+        /// Qfb user role.
+        /// </summary>
+        public const int QfbUserRole = 2;
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

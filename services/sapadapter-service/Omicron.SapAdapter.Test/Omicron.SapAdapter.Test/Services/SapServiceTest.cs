@@ -441,9 +441,13 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Get the order with details.
         /// </summary>
+        /// <param name="userId">User id.</param>
         /// <returns>the data.</returns>
         [Test]
-        public async Task GetComponents()
+        [TestCase("35642b3a-9471-4b89-9862-8bee6d98c361")]
+        [TestCase("db106faf-ef03-4c2e-9b7c-be0c7da8c0b7")]
+        [TestCase("")]
+        public async Task GetComponents(string userId)
         {
             // arrange
             var paramsDict = new Dictionary<string, string>
@@ -452,6 +456,11 @@ namespace Omicron.SapAdapter.Test.Services
                 { "limit", "10" },
                 { "chips", "Abc,pirina" },
             };
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                paramsDict["userId"] = userId;
+            }
 
             // act
             var result = await this.sapService.GetComponents(paramsDict);
