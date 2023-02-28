@@ -158,5 +158,13 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>IsOmigenomics.</value>
         public bool IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets ProductFirmName.
+        /// </summary>
+        /// <value>
+        /// string ProductFirmName.
+        /// </value>
+        public string ProductFirmName { get; set; }
     }
 }

@@ -11,7 +11,6 @@ namespace Omicron.Pedidos.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
@@ -21,7 +20,6 @@ namespace Omicron.Pedidos.Services.Utils
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
-    using Omicron.Pedidos.Services.User;
 
     /// <summary>
     /// Logic To assign orders.
@@ -33,7 +31,10 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="detail">detail.</param>
         /// <returns>Boolean.</returns>
-        public static bool IsDzAndIsNotOmigenomics(CompleteDetailOrderModel detail) => detail.CodigoProducto.ToUpper().StartsWith("DZ ") && !detail.IsOmigenomics;
+        public static bool IsDzAndIsNotOmigenomics(CompleteDetailOrderModel detail)
+            => detail.CodigoProducto.ToUpper().StartsWith("DZ ") &&
+            !detail.IsOmigenomics &&
+            ServiceConstants.SignaturesToAssignProductsDZ.Contains(detail.ProductFirmName.ToLower());
 
         /// <summary>
         /// makes the logic to assign a pedido.

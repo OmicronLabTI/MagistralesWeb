@@ -102,6 +102,9 @@ namespace Omicron.SapAdapter.Entities.Context
         /// <inheritdoc/>
         public virtual DbSet<CatalogProductModel> CatalogProductModel { get; set; }
 
+        /// <inheritdoc/>
+        public virtual DbSet<ProductFirmModel> ProductFirmModel { get; set; }
+
         /// <summary>
         /// model creating.
         /// </summary>

@@ -104,5 +104,21 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>IsOmigenomics.</value>
         public bool IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets CatalogGroup.
+        /// </summary>
+        /// <value>\
+        /// String CatalogGroup.
+        /// </value>
+        public string CatalogGroup { get; set; }
+
+        /// <summary>
+        /// Gets or sets ProductFirmName.
+        /// </summary>
+        /// <value>\
+        /// String ProductFirmName.
+        /// </value>
+        public string ProductFirmName { get; set; }
     }
 }
