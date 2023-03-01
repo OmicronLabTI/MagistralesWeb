@@ -59,7 +59,7 @@ class ContainerViewController: UIViewController {
             .bind(to: tableView.rx.items(
                 cellIdentifier: "container_cell",
                 cellType: ContainerTableViewCell.self
-            )) { _, data, cell in
+            )) { index, data, cell in
                 cell.containerLabel.text = data.codeItem
                 cell.quantityLabel.text = data.unit == CommonStrings.piece ?
                                                 String(format: "%.0f", data.quantity ?? 0.0) :

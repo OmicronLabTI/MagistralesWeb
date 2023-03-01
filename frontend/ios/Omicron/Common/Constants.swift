@@ -61,6 +61,8 @@ struct ViewControllerIdentifiers {
     static let showErrorViewController = "showError"
     static let mostCommonComponentsTableViewCell = "MostCommonComponentsTableViewCell"
     static let patientListViewController = "PatientListViewController"
+    static let supplieViewController = "SupplieViewController"
+    static let supplieTableViewCell = "SupplieTableViewCell"
 }
 struct OmicronColors {
     static let blue = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
@@ -77,6 +79,7 @@ struct OmicronColors {
     static let darkGray = UIColor.init(red: 102, green: 106, blue: 109, alpha: 1)
     static let signColor = UIColor(red: 1.00, green: 0.42, blue: 0.00, alpha: 1.00)
     static let batchesColor = UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00)
+    static let primaryBlue = UIColor(red: 19/255, green: 121/255, blue: 253/255, alpha: 1.00)
 }
 struct UsersDefaultsConstants {
     static let isLogged = "isLogged"
@@ -211,6 +214,8 @@ struct StatusNameConstants {
     static let save = "Guardar"
     static let seeLots = "Ver Lotes"
     static let package = "Envasar"
+    static let deleteMultiComponents = "Eliminar componente"
+    static let sendToStore = "Enviar a almacén"
 }
 struct ImageButtonNames {
     static let assigned = "showAssignedDetailButton.png"

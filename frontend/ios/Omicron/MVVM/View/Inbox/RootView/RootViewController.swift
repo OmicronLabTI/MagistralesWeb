@@ -50,6 +50,9 @@ class RootViewController: UIViewController {
         super.viewWillAppear(true)
         self.rootViewModel.getOrders()
     }
+    @IBAction func createSupplieDidPressed(_ sender: Any) {
+        inboxViewModel.goToSupplies()
+    }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.searchOrdesSearchBar.text = String()

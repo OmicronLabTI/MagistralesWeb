@@ -14,11 +14,13 @@ class ComponentRequest: Codable {
     var limit: Int?
     var chips: [String]?
     var catalogGroup: String
-    init(offset: Int?, limit: Int?, chips: [String]?, catalogGroup: String) {
+    var userId: String
+    init(offset: Int?, limit: Int?, chips: [String]?, catalogGroup: String, userId: String) {
         self.offset = offset
         self.limit = limit
         self.chips = chips
         self.catalogGroup = catalogGroup
+        self.userId = userId
     }
     func toDictionary() -> [String: Any] {
         var dict = [String: Any]()
@@ -27,7 +29,7 @@ class ComponentRequest: Codable {
             if let key = child.label {
                 if let arr = child.value as? [String] {
                     dict[key] = arr.joined(separator: ",")
-                } else {
+                } else if (child.value is String) && (child.value as? String != "") || !(child.value is String) {
                     dict[key] = child.value
                 }
             }
@@ -106,3 +108,9 @@ class CommonComponentRequest {
         return dict
     }
 }
+
+enum TypeComponentsOpenDialog: String {
+    case supplies = "Supplies"
+    case detailOrder = "DetailOrder"
+}
+

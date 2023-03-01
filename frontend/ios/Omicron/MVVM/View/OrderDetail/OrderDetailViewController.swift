@@ -84,6 +84,7 @@ class OrderDetailViewController: UIViewController {
         commentsVC?.modalTransitionStyle = .crossDissolve
         self.present(commentsVC ?? CommentsViewController(), animated: true, completion: nil)
     }
+    // click boton de agregar componente
     func goToComponentsViewController() {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let componentsVC = storyboard.instantiateViewController(
