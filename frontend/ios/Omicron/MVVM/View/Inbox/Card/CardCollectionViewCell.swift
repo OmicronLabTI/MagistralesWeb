@@ -14,11 +14,9 @@ protocol CardCellDelegate: NSObjectProtocol {
     func detailTapped(order: Order)
     func patientList(order: Order)
     func downloadPdf(id: Int)
-    
 }
 
 class CardCollectionViewCell: UICollectionViewCell {
-
     @IBOutlet weak var numberDescriptionLabel: UILabel!
     @IBOutlet weak var baseDocumentDescriptionLabel: UILabel!
     @IBOutlet weak var containerLabel: UILabel!
@@ -34,6 +32,10 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var manufacturingOrder: UILabel!
     @IBOutlet weak var patientListButton: UIButton!
     @IBOutlet weak var pdfDownloadButton: UIButton!
+    @IBOutlet weak var qfbName: UILabel!
+    @IBOutlet weak var qfbNameContainer: UIView!
+    @IBOutlet weak var itemCodeConstrains: NSLayoutConstraint!
+    @IBOutlet weak var descriptionConstraint: NSLayoutConstraint!
     weak var delegate: CardCellDelegate?
     var row: Int = -1
 
@@ -51,21 +53,17 @@ class CardCollectionViewCell: UICollectionViewCell {
     }
 
     func setColor() {
-        let textColor =  self.order?.areBatchesComplete ?? false ?
-            UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : .black
         switch self.order?.statusId {
         case 1:
             self.propertyCard(
                 cell: self,
-                borderColor: OmicronColors.assignedStatus,
-                iconName: ImageButtonNames.assigned)
+                borderColor: colorBatchesSign(OmicronColors.assignedStatus),
+                iconName: ImageButtonNames.assigned, orderTextColor: colorBatchesSign(.black))
         case 2:
-            let borderColor: UIColor = self.order?.areBatchesComplete ?? false ?
-                UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : OmicronColors.processStatus
             self.propertyCard(
                 cell: self,
-                borderColor: borderColor,
-                iconName: ImageButtonNames.inProcess, orderTextColor: textColor)
+                borderColor: colorBatchesSign(OmicronColors.processStatus),
+                iconName: ImageButtonNames.inProcess, orderTextColor: colorBatchesSign(.black))
         case 3:
             self.propertyCard(
                 cell: self,
@@ -77,15 +75,22 @@ class CardCollectionViewCell: UICollectionViewCell {
                 borderColor: OmicronColors.finishedStatus,
                 iconName: ImageButtonNames.finished)
         case 5:
-            let borderColor: UIColor = self.order?.areBatchesComplete ?? false ?
-                UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00) : OmicronColors.reassignedStatus
             self.propertyCard(
                 cell: self,
-                borderColor: borderColor,
+                borderColor: colorBatchesSign(OmicronColors.reassignedStatus),
                 iconName: ImageButtonNames.reasigned,
-                orderTextColor: textColor)
+                orderTextColor: colorBatchesSign(.black))
         default: break
         }
+    }
+
+    func colorBatchesSign(_ colorDefault: UIColor) -> UIColor {
+        let signOk = self.order?.technicalSign ?? false
+        let batchesComplete = self.order?.areBatchesComplete ?? false
+        if signOk || batchesComplete {
+            return signOk ? OmicronColors.signColor : OmicronColors.batchesColor
+        }
+        return colorDefault
     }
 
     func propertyCard(cell: CardCollectionViewCell, borderColor: UIColor, iconName: String,
@@ -99,16 +104,16 @@ class CardCollectionViewCell: UICollectionViewCell {
     func assignedStyleCard(color: CGColor) {
         layer.cornerRadius = CGFloat(20)
         layer.borderColor = color
-        layer.borderWidth = CGFloat(1)
+        layer.borderWidth = CGFloat(4)
     }
 
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                layer.borderWidth = CGFloat(5)
-                missingStockImage.layer.borderWidth = 3
+                layer.borderWidth = CGFloat(8)
+                missingStockImage.layer.borderWidth = 2
             } else {
-                layer.borderWidth = CGFloat(1)
+                layer.borderWidth = CGFloat(2)
                 missingStockImage.layer.borderWidth = 1
             }
         }
@@ -124,12 +129,11 @@ class CardCollectionViewCell: UICollectionViewCell {
         guard let order = self.order else { return }
         self.delegate?.downloadPdf(id: Int(order.baseDocument!))
     }
-    
+
     func detail() {
         guard let order = self.order else { return }
         self.delegate?.detailTapped(order: order)
     }
-    
 
     private func makeRoundedMissingStockImage() {
         missingStockImage.layer.borderWidth = 1

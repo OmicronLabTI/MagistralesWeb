@@ -28,13 +28,19 @@ extension InboxViewModel {
 
     func changeStatusService(_ orders: [ChangeStatusRequest]) {
         networkManager.changeStatusOrder(orders)
-            .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] _ in
+            .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
                 guard let self = self else { return }
-                self.processButtonIsEnable.onNext(false)
-                self.pendingButtonIsEnable.onNext(false)
-                self.rootViewModel.needsRefresh = true
+                if res.code == 200 {
+                    self.processButtonIsEnable.onNext(false)
+                    self.pendingButtonIsEnable.onNext(false)
+                    self.rootViewModel.needsRefresh = true
+                    self.loading.onNext(false)
+                    self.refreshDataWhenChangeProcessIsSucces.onNext(())
+                    return
+                }
                 self.loading.onNext(false)
-                self.refreshDataWhenChangeProcessIsSucces.onNext(())
+                self.showAlert.onNext(res.userError ?? CommonStrings.errorToChangeStatus)
+                self.processButtonIsEnable.onNext(true)
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)
@@ -56,10 +62,22 @@ extension InboxViewModel {
         }).disposed(by: disposeBag)
     }
 
-    func finisOrderService(_ finishOrder: FinishOrder) {
+    func finishOrderService(qfbSignature: String, technicalSignature: String) {
+        loading.onNext(true)
+        guard let userID = Persistence.shared.getUserData()?.id,
+              let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
+        let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
+        let finishOrder = FinishOrder(
+            userId: userID, fabricationOrderId: orderIds, qfbSignature: qfbSignature,
+            technicalSignature: technicalSignature)
         networkManager.finishOrder(finishOrder)
-            .subscribe(onNext: { [weak self] _ in
+            .subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
+                if res.code != 200 {
+                    self.loading.onNext(false)
+                    self.showAlert.onNext(res.userError ?? "")
+                    return
+                }
                 self.loading.onNext(false)
                 self.isUserInteractionEnabled.onNext(true)
                 self.refreshDataWhenChangeProcessIsSucces.onNext(())
@@ -81,13 +99,12 @@ extension InboxViewModel {
             }
             guard let errors = response.response, errors.count > 0 else { return }
             var messageConcat = String()
-            for error in errors {
-                if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
-                    messageConcat = UtilsManager.shared.messageErrorWhenNoBatches(error: error)
-                } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
-                    let errorMessage = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
-                    messageConcat = "\(messageConcat) \(errorMessage)"
-                }
+            for error in errors where error.listItems?.count ?? 0 > 0 {
+                let data = UtilsManager.shared.getValidationData(type: error.type ?? .signature)
+                let messageError = UtilsManager.shared.buildMessageError(error: error,
+                                                                         message: data.error,
+                                                                         lastSeparator: data.separator)
+                messageConcat = "\(messageConcat) \(messageError)"
             }
             self.showAlert.onNext(messageConcat)
         }, onError: { [weak self] _ in
@@ -99,22 +116,22 @@ extension InboxViewModel {
 
     func getStatusName(index: Int) -> String {
         switch index {
-        case 0: return StatusNameConstants.assignedStatus
-        case 1: return StatusNameConstants.inProcessStatus
-        case 2: return StatusNameConstants.penddingStatus
-        case 3: return StatusNameConstants.finishedStatus
-        case 4: return StatusNameConstants.reassignedStatus
+        case 1: return StatusNameConstants.assignedStatus
+        case 2: return StatusNameConstants.inProcessStatus
+        case 3: return StatusNameConstants.penddingStatus
+        case 4: return StatusNameConstants.finishedStatus
+        case 5: return StatusNameConstants.reassignedStatus
         default: return CommonStrings.empty
         }
     }
 
     func getStatusId(name: String) -> Int {
         switch name {
-        case StatusNameConstants.assignedStatus: return 0
-        case StatusNameConstants.inProcessStatus: return 1
-        case StatusNameConstants.penddingStatus: return 2
-        case StatusNameConstants.finishedStatus: return 3
-        case StatusNameConstants.reassignedStatus: return 4
+        case StatusNameConstants.assignedStatus: return 1
+        case StatusNameConstants.inProcessStatus: return 2
+        case StatusNameConstants.penddingStatus: return 3
+        case StatusNameConstants.finishedStatus: return 4
+        case StatusNameConstants.reassignedStatus: return 5
         default: return -1
         }
     }
@@ -138,17 +155,45 @@ extension InboxViewModel {
     }
 
     func callFinishOrderService() {
-        if qfbSignatureIsGet && technicalSignatureIsGet {
-            loading.onNext(true)
-            guard let userID = Persistence.shared.getUserData()?.id,
-                  let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
-            let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
-            let finishOrder = FinishOrder(
-                userId: userID, fabricationOrderId: orderIds, qfbSignature: sqfbSignature,
-                technicalSignature: technicalSignature)
-
-            finisOrderService(finishOrder)
+        if technicalSignatureIsGet && rootViewModel.userType == .technical {
+            packageOrdersService(qfbSignature: "", technicalSignature: technicalSignature)
+            return
         }
+
+        let ordersFabricationIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected ?? [])
+        let showTwoModals = rootViewModel.getShowTwoSignatureModals(ordersFabricationIds)
+        if qfbSignatureIsGet && technicalSignatureIsGet && showTwoModals {
+            finishOrderService(qfbSignature: sqfbSignature, technicalSignature: technicalSignature)
+        }
+        if qfbSignatureIsGet && !showTwoModals {
+            finishOrderService(qfbSignature: sqfbSignature, technicalSignature: technicalSignature)
+        }
+    }
+
+    func packageOrdersService(qfbSignature: String, technicalSignature: String) {
+        loading.onNext(true)
+        guard let userID = Persistence.shared.getUserData()?.id,
+              let indexPathOfOrdersSelected = indexPathOfOrdersSelected else { return }
+        let orderIds = getFabOrderIDs(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
+        let packageOrder = FinishOrder(
+            userId: userID, fabricationOrderId: orderIds, qfbSignature: qfbSignature,
+            technicalSignature: technicalSignature)
+        networkManager.packageOrders(packageOrder)
+            .subscribe(onNext: { [weak self] res in
+                guard let self = self else { return }
+                if res.code == 200 {
+                    self.loading.onNext(false)
+                    self.isUserInteractionEnabled.onNext(true)
+                    self.refreshDataWhenChangeProcessIsSucces.onNext(())
+                    return
+                }
+                self.loading.onNext(false)
+                self.showAlert.onNext(res.userError ?? CommonStrings.errorPackageOrders)
+            }, onError: { [weak self] _ in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showAlert.onNext(CommonStrings.errorPackageOrders)
+            }).disposed(by: disposeBag)
     }
 
     func validOrders(
@@ -168,6 +213,30 @@ extension InboxViewModel {
             fabOrderIDs.append(orderId ?? 0)
         }
         return fabOrderIDs
+    }
+    func ordersHasBatchesCompleted(indexPathOfOrdersSelected: [IndexPath]) -> Bool {
+        guard indexPathOfOrdersSelected.count > 0 else { return false }
+        return getFabOrders(indexPathOfOrdersSelected:
+                                indexPathOfOrdersSelected).allSatisfy { $0.areBatchesComplete ?? false }
+    }
+    func getFabOrders(indexPathOfOrdersSelected: [IndexPath]) -> [Order] {
+        guard indexPathOfOrdersSelected.count > 0 else { return []}
+        var orders = [Order]()
+        indexPathOfOrdersSelected.forEach { [weak self] (indexPath) in
+            if let order = self?.sectionOrders[indexPath.section].items[indexPath.row] {
+                orders.append(order)
+            }
+        }
+        return orders
+    }
+
+    func validateSelectedOrdersAreSameSAPId(indexPathOfOrdersSelected: [IndexPath]) -> Bool {
+        guard indexPathOfOrdersSelected.count > 0 else { return false }
+        let fabOrders = getFabOrders(indexPathOfOrdersSelected: indexPathOfOrdersSelected)
+        let sapOrdersList = fabOrders.map { $0.baseDocument }
+        return sapOrdersList.allSatisfy { item in
+            sapOrdersList.filter { sapOrderId in sapOrderId == item }.count == sapOrdersList.count
+        }
     }
 
     // Cambia el estatus de una orden a proceso o pendiente
@@ -192,7 +261,7 @@ extension InboxViewModel {
             let card = self.sectionOrders[index.section].items[index.row]
             let order = ChangeStatusRequest(
                 userId: (Persistence.shared.getUserData()?.id) ?? CommonStrings.empty,
-                orderId: card.productionOrderId ?? 0, status: status)
+                orderId: card.productionOrderId ?? 0, status: status, userType: rootViewModel.userType.rawValue)
             orders.append(order)
         }
         changeStatusService(orders)

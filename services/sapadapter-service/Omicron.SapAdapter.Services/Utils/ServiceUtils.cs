@@ -131,7 +131,8 @@ namespace Omicron.SapAdapter.Services.Utils
                 elementToSave.FinishedLabel = order?.FinishedLabel ?? 0;
                 elementToSave.Detalles = null;
                 elementToSave.FechaFin = ServiceShared.GetDateValueOrDefault(order?.CloseDate, string.Empty);
-                elementToSave.OrderType = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(elementToSave.PedidoMuestra) && elementToSave.PedidoMuestra == ServiceConstants.IsSampleOrder, ServiceConstants.OrderTypeMU, elementToSave?.OrderType);
+                elementToSave.SubOrderType = elementToSave?.OrderType;
+                elementToSave.OrderType = ServiceShared.CalculateTernary(ServiceShared.CalculateAnd(!string.IsNullOrEmpty(elementToSave.PedidoMuestra), elementToSave.PedidoMuestra == ServiceConstants.IsSampleOrder), ServiceConstants.OrderTypeMU, elementToSave?.OrderType);
 
                 var user = users.FirstOrDefault(y => y.Id.Equals(elementToSave.Qfb));
                 elementToSave.Qfb = ServiceShared.CalculateTernary(user == null, string.Empty, $"{user?.FirstName} {user?.LastName}");
@@ -184,7 +185,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             if (parameters.ContainsKey(ServiceConstants.OrderType))
             {
-                orderModels = orderModels.Where(x => x.OrderType == parameters[ServiceConstants.OrderType]).ToList();
+                orderModels = GetOrdersByClassificationAndMu(parameters[ServiceConstants.OrderType], orderModels);
             }
 
             return orderModels;
@@ -437,6 +438,23 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// Get address source.
+        /// </summary>
+        /// <param name="dxpId">Dxp Transaction Id.</param>
+        /// <param name="isDoctorDirectionFromPayments">Is doctor direction from payments table.</param>
+        /// <param name="addressType">Address Type.</param>
+        /// <returns>Address type.</returns>
+        public static bool GetAddressType(string dxpId, bool isDoctorDirectionFromPayments, string addressType)
+        {
+            if (!string.IsNullOrEmpty(dxpId))
+            {
+                return isDoctorDirectionFromPayments;
+            }
+
+            return ServiceShared.CalculateTernary(string.IsNullOrEmpty(addressType), true, addressType.ValidateNull().Equals(ServiceConstants.DoctorAddressType));
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>
@@ -473,6 +491,19 @@ namespace Omicron.SapAdapter.Services.Utils
             });
 
             return dateArrayNum;
+        }
+
+        private static List<CompleteOrderModel> GetOrdersByClassificationAndMu(string classification, List<CompleteOrderModel> orderModels)
+        {
+            if (classification.Equals(ServiceConstants.OrderTypeMQ))
+            {
+                return orderModels = orderModels.Where(x => x.OrderType.Equals(classification)).ToList();
+            }
+
+            return orderModels.Where(x =>
+                 ServiceShared.CalculateOr(
+                     x.OrderType.Equals(classification),
+                     ServiceShared.CalculateAnd(x.SubOrderType.Equals(classification), x.OrderType.Equals(ServiceConstants.OrderTypeMU)))).ToList();
         }
     }
 }

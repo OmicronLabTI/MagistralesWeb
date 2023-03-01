@@ -41,7 +41,7 @@ public class AuthServiceImpl implements IAuthService {
             throw new UnAuthorizedException(ErrorMessages.PERFIL_INCORRECTO);
         }
 
-        boolean isAbleToApp = securityDO.getRole() == 2;
+        boolean isAbleToApp = securityDO.getRole() == 2 || securityDO.getRole() == 9;
         boolean isAbleToAppAlmacen = securityDO.getRole() == 5;
         boolean isAbleToWebDelivery = securityDO.getRole() == 6 || securityDO.getRole() == 8;
         boolean isAbleToWebMagistral = securityDO.getRole() == 1 || securityDO.getRole() == 3 || securityDO.getRole() == 4 || securityDO.getRole() == 5 || securityDO.getRole() == 7;

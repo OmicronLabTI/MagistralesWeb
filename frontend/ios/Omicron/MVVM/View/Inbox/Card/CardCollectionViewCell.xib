@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -22,17 +22,17 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="card" id="lZH-Hm-Vh8" customClass="CardCollectionViewCell" customModule="OmicronDEV" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="700" height="180"/>
+            <rect key="frame" x="0.0" y="0.0" width="706" height="269"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Z1p-TG-JFi">
-                <rect key="frame" x="0.0" y="0.0" width="700" height="180"/>
+                <rect key="frame" x="0.0" y="0.0" width="706" height="269"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="bottom" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="msz-O0-DSu">
-                        <rect key="frame" x="24" y="16" width="249" height="25.5"/>
+                        <rect key="frame" x="24" y="16" width="239.5" height="24"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="matraz" translatesAutoresizingMaskIntoConstraints="NO" id="1lY-Pu-5LY">
-                                <rect key="frame" x="0.0" y="1.5" width="24" height="24"/>
+                                <rect key="frame" x="0.0" y="0.0" width="24" height="24"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="19K-5l-zk0"/>
@@ -40,24 +40,48 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Orden de fabricación: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UWM-2P-h2N">
-                                <rect key="frame" x="40" y="0.0" width="209" height="25.5"/>
-                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="21"/>
+                                <rect key="frame" x="40" y="0.0" width="199.5" height="24"/>
+                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                     </stackView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uvP-QQ-2uF">
+                        <rect key="frame" x="24" y="50" width="658" height="20"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="matrazOrder" translatesAutoresizingMaskIntoConstraints="NO" id="d5i-dI-hvV">
+                                <rect key="frame" x="0.0" y="0.0" width="17" height="20"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Quím. Fabián Moreno Pérez" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cns-St-njR">
+                                <rect key="frame" x="22" y="0.0" width="160" height="20"/>
+                                <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="d5i-dI-hvV" firstAttribute="leading" secondItem="uvP-QQ-2uF" secondAttribute="leading" id="LgC-lg-ZkE"/>
+                            <constraint firstAttribute="bottom" secondItem="Cns-St-njR" secondAttribute="bottom" id="VNI-T4-ne5"/>
+                            <constraint firstItem="Cns-St-njR" firstAttribute="leading" secondItem="d5i-dI-hvV" secondAttribute="trailing" constant="5" id="W3Z-uY-3ST"/>
+                            <constraint firstItem="Cns-St-njR" firstAttribute="top" secondItem="uvP-QQ-2uF" secondAttribute="top" id="ZGR-Y1-k8K"/>
+                            <constraint firstItem="d5i-dI-hvV" firstAttribute="top" secondItem="uvP-QQ-2uF" secondAttribute="top" id="bx2-lq-nU0"/>
+                            <constraint firstAttribute="height" constant="20" id="io3-9v-H4x"/>
+                            <constraint firstAttribute="bottom" secondItem="d5i-dI-hvV" secondAttribute="bottom" id="qu5-Bl-d5f"/>
+                        </constraints>
+                    </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="ALQUITRÁN DE PINO 6%, KETOKONAZOL 2%, MENTOL 0.1%, SALICILICO 3%" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bDd-OS-jWR">
-                        <rect key="frame" x="146" y="57.5" width="530" height="43"/>
+                        <rect key="frame" x="152" y="92" width="530" height="41"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="530" id="glA-7C-tIZ"/>
                         </constraints>
-                        <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="18"/>
+                        <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DERMAZONE" lineBreakMode="clip" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9J6-L8-1Gq">
-                        <rect key="frame" x="378" y="108" width="215" height="40"/>
+                        <rect key="frame" x="384" y="140.5" width="215" height="40"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="215" id="7Ll-c4-Kof"/>
                         </constraints>
@@ -66,37 +90,37 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D0m-qX-4KH">
-                        <rect key="frame" x="668" y="114.5" width="8" height="17"/>
+                        <rect key="frame" x="674" y="147" width="8" height="17"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="04/02/2021" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="apl-w1-wNf">
-                        <rect key="frame" x="203" y="147.5" width="72" height="16.5"/>
+                        <rect key="frame" x="203" y="236.5" width="72" height="16.5"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fecha orden de fabricación: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WSM-nT-8rP">
-                        <rect key="frame" x="24" y="147.5" width="179" height="16.5"/>
+                        <rect key="frame" x="24" y="236.5" width="179" height="16.5"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="04/02/2021" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="71u-dI-nkq">
-                        <rect key="frame" x="604" y="147.5" width="72" height="16.5"/>
+                        <rect key="frame" x="610" y="236.5" width="72" height="16.5"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fecha de creación: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vne-uG-983">
-                        <rect key="frame" x="480.5" y="147.5" width="123.5" height="16.5"/>
+                        <rect key="frame" x="486.5" y="236.5" width="123.5" height="16.5"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ESPECIAL" lineBreakMode="clip" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cgC-iG-hOi">
-                        <rect key="frame" x="77.5" y="108" width="248" height="40"/>
+                        <rect key="frame" x="77.5" y="140.5" width="248" height="40"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="248" id="eUu-JF-urw"/>
                         </constraints>
@@ -105,31 +129,31 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cantidad: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TO5-ft-mtb">
-                        <rect key="frame" x="603" y="115" width="65" height="16"/>
+                        <rect key="frame" x="609" y="147.5" width="65" height="16"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="141248" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KP2-PL-EKx">
-                        <rect key="frame" x="273" y="16" width="73.5" height="25.5"/>
-                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="21"/>
+                        <rect key="frame" x="263.5" y="16" width="70" height="24"/>
+                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="20"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Local" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ha2-fp-u4o">
-                        <rect key="frame" x="378" y="147.5" width="34" height="16.5"/>
+                        <rect key="frame" x="381" y="236.5" width="34" height="16.5"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="GR-233" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L0g-X3-GyH">
-                        <rect key="frame" x="24" y="57.5" width="66.5" height="21.5"/>
-                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="18"/>
+                        <rect key="frame" x="24" y="92" width="62.5" height="20.5"/>
+                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Destino: " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="arj-xW-G55">
-                        <rect key="frame" x="322.5" y="147.5" width="55.5" height="16.5"/>
+                        <rect key="frame" x="325.5" y="236.5" width="55.5" height="16.5"/>
                         <fontDescription key="fontDescription" name="SFProDisplay-Light" family="SF Pro Display" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -144,22 +168,22 @@
                         </connections>
                     </button>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="60267" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gV2-Wy-O4k">
-                        <rect key="frame" x="569" y="17" width="65.5" height="25.5"/>
-                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="21"/>
+                        <rect key="frame" x="578" y="17" width="62.5" height="24"/>
+                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="20"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pedido: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tq0-m6-ZyW">
-                        <rect key="frame" x="492.5" y="17" width="76.5" height="25.5"/>
-                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="21"/>
+                        <rect key="frame" x="505" y="17" width="73" height="24"/>
+                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="20"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="envase" translatesAutoresizingMaskIntoConstraints="NO" id="dI9-gd-SMG">
-                        <rect key="frame" x="51.5" y="108" width="17.5" height="30"/>
+                        <rect key="frame" x="51.5" y="140.5" width="17.5" height="30"/>
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="etiqueta" translatesAutoresizingMaskIntoConstraints="NO" id="ehM-4S-y0G">
-                        <rect key="frame" x="334" y="113" width="33" height="24"/>
+                        <rect key="frame" x="340" y="145.5" width="33" height="24"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="24" id="HRd-Cc-4sI"/>
                             <constraint firstAttribute="width" constant="33" id="yfg-03-YJi"/>
@@ -184,6 +208,7 @@
                     <constraint firstItem="Ha2-fp-u4o" firstAttribute="leading" secondItem="arj-xW-G55" secondAttribute="trailing" id="49o-xJ-90L"/>
                     <constraint firstItem="bDd-OS-jWR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="L0g-X3-GyH" secondAttribute="trailing" constant="4" id="6IV-nB-f9n"/>
                     <constraint firstItem="ehM-4S-y0G" firstAttribute="centerY" secondItem="cgC-iG-hOi" secondAttribute="centerY" constant="-3" id="BFK-4R-aeH"/>
+                    <constraint firstAttribute="trailing" secondItem="uvP-QQ-2uF" secondAttribute="trailing" constant="24" id="Df7-wi-lHv"/>
                     <constraint firstItem="TO5-ft-mtb" firstAttribute="centerY" secondItem="ehM-4S-y0G" secondAttribute="centerY" constant="-2" id="DiE-r1-s3N"/>
                     <constraint firstItem="apl-w1-wNf" firstAttribute="leading" secondItem="WSM-nT-8rP" secondAttribute="trailing" id="GOC-Fi-Ys0"/>
                     <constraint firstItem="msz-O0-DSu" firstAttribute="top" secondItem="Z1p-TG-JFi" secondAttribute="top" constant="16" id="HXm-yW-8AB"/>
@@ -195,9 +220,10 @@
                     <constraint firstItem="cgC-iG-hOi" firstAttribute="leading" secondItem="dI9-gd-SMG" secondAttribute="trailing" constant="8.5" id="Q2n-wZ-uZY"/>
                     <constraint firstItem="KP2-PL-EKx" firstAttribute="centerY" secondItem="msz-O0-DSu" secondAttribute="centerY" id="QCk-z8-AYA"/>
                     <constraint firstItem="71u-dI-nkq" firstAttribute="leading" secondItem="Vne-uG-983" secondAttribute="trailing" id="Sba-KW-RBf"/>
-                    <constraint firstItem="L0g-X3-GyH" firstAttribute="top" secondItem="UWM-2P-h2N" secondAttribute="bottom" constant="16" id="T0V-j3-mNg"/>
+                    <constraint firstItem="L0g-X3-GyH" firstAttribute="top" secondItem="msz-O0-DSu" secondAttribute="bottom" constant="52" id="T0V-j3-mNg"/>
                     <constraint firstItem="ehM-4S-y0G" firstAttribute="top" secondItem="bDd-OS-jWR" secondAttribute="bottom" constant="12.5" id="Uk1-hj-bwm"/>
                     <constraint firstItem="L0g-X3-GyH" firstAttribute="leading" secondItem="msz-O0-DSu" secondAttribute="leading" id="WWu-I9-Unw"/>
+                    <constraint firstItem="uvP-QQ-2uF" firstAttribute="leading" secondItem="Z1p-TG-JFi" secondAttribute="leading" constant="24" id="Wg1-2R-Zvs"/>
                     <constraint firstItem="71u-dI-nkq" firstAttribute="centerY" secondItem="WSM-nT-8rP" secondAttribute="centerY" id="XQy-Pu-05S"/>
                     <constraint firstItem="TO5-ft-mtb" firstAttribute="leading" secondItem="9J6-L8-1Gq" secondAttribute="trailing" constant="10" id="Xj5-t9-lmP"/>
                     <constraint firstItem="Tq0-m6-ZyW" firstAttribute="centerY" secondItem="gV2-Wy-O4k" secondAttribute="centerY" id="ZYM-id-xFX"/>
@@ -213,23 +239,26 @@
                     <constraint firstItem="cgC-iG-hOi" firstAttribute="leading" secondItem="Z1p-TG-JFi" secondAttribute="leading" constant="77.5" id="jQu-6S-oNi"/>
                     <constraint firstItem="msz-O0-DSu" firstAttribute="leading" secondItem="Z1p-TG-JFi" secondAttribute="leading" constant="24" id="kAT-Hs-a9O"/>
                     <constraint firstItem="TO5-ft-mtb" firstAttribute="centerY" secondItem="D0m-qX-4KH" secondAttribute="centerY" id="l1X-br-Ztc"/>
-                    <constraint firstItem="bDd-OS-jWR" firstAttribute="top" secondItem="msz-O0-DSu" secondAttribute="bottom" constant="16" id="l7n-G9-eSa"/>
+                    <constraint firstItem="bDd-OS-jWR" firstAttribute="top" secondItem="msz-O0-DSu" secondAttribute="bottom" constant="52" id="l7n-G9-eSa"/>
                     <constraint firstItem="apl-w1-wNf" firstAttribute="centerY" secondItem="WSM-nT-8rP" secondAttribute="centerY" id="lgM-qi-Pom"/>
                     <constraint firstItem="TO5-ft-mtb" firstAttribute="top" secondItem="bDd-OS-jWR" secondAttribute="bottom" constant="14.5" id="mTp-l7-vCM"/>
                     <constraint firstItem="cgC-iG-hOi" firstAttribute="firstBaseline" secondItem="D0m-qX-4KH" secondAttribute="baseline" constant="-7" id="qc8-bb-5xK"/>
                     <constraint firstItem="arj-xW-G55" firstAttribute="centerY" secondItem="apl-w1-wNf" secondAttribute="centerY" id="vxC-16-TIO"/>
                     <constraint firstItem="KP2-PL-EKx" firstAttribute="leading" secondItem="msz-O0-DSu" secondAttribute="trailing" id="wSi-q7-N1y"/>
+                    <constraint firstItem="uvP-QQ-2uF" firstAttribute="top" secondItem="msz-O0-DSu" secondAttribute="bottom" constant="10" id="wlZ-6r-YQm"/>
                     <constraint firstItem="WSM-nT-8rP" firstAttribute="leading" secondItem="msz-O0-DSu" secondAttribute="leading" id="y8m-eK-SQE"/>
                     <constraint firstAttribute="trailing" secondItem="gV2-Wy-O4k" secondAttribute="trailing" constant="65.5" id="yjz-a7-3GQ"/>
                 </constraints>
             </collectionViewCellContentView>
-            <size key="customSize" width="414" height="360"/>
+            <size key="customSize" width="420" height="449"/>
             <connections>
                 <outlet property="baseDocumentDescriptionLabel" destination="gV2-Wy-O4k" id="UI5-Wa-JNC"/>
                 <outlet property="containerLabel" destination="cgC-iG-hOi" id="oRk-lS-CyJ"/>
+                <outlet property="descriptionConstraint" destination="l7n-G9-eSa" id="Av8-or-Lkz"/>
                 <outlet property="destiny" destination="Ha2-fp-u4o" id="Wo8-8U-oWv"/>
                 <outlet property="finishDateDescriptionLabel" destination="71u-dI-nkq" id="0Na-MU-NfV"/>
                 <outlet property="itemCode" destination="L0g-X3-GyH" id="GXg-yM-ze0"/>
+                <outlet property="itemCodeConstrains" destination="T0V-j3-mNg" id="ckP-T3-Xce"/>
                 <outlet property="manufacturingOrder" destination="UWM-2P-h2N" id="3Fk-so-JHs"/>
                 <outlet property="missingStockImage" destination="1lY-Pu-5LY" id="wPD-F7-Jr0"/>
                 <outlet property="numberDescriptionLabel" destination="KP2-PL-EKx" id="sYm-gD-hEZ"/>
@@ -238,10 +267,12 @@
                 <outlet property="pdfDownloadButton" destination="tEo-A3-ajS" id="bae-Jh-gBm"/>
                 <outlet property="plannedQuantityDescriptionLabel" destination="D0m-qX-4KH" id="elS-Cj-4q9"/>
                 <outlet property="productDescriptionLabel" destination="bDd-OS-jWR" id="y5K-At-0k1"/>
+                <outlet property="qfbName" destination="Cns-St-njR" id="Kuk-ky-bE1"/>
+                <outlet property="qfbNameContainer" destination="uvP-QQ-2uF" id="ozj-2Z-Usv"/>
                 <outlet property="startDateDescriptionLabel" destination="apl-w1-wNf" id="bsh-nH-qKi"/>
                 <outlet property="tagDescriptionLabel" destination="9J6-L8-1Gq" id="BT3-lA-yxs"/>
             </connections>
-            <point key="canvasLocation" x="860.48780487804879" y="168.30508474576271"/>
+            <point key="canvasLocation" x="858.29268292682923" y="190.93220338983051"/>
         </collectionViewCell>
     </objects>
     <resources>
@@ -249,6 +280,7 @@
         <image name="envase" width="17.659999847412109" height="21.031999588012695"/>
         <image name="etiqueta" width="22.52400016784668" height="22.455999374389648"/>
         <image name="matraz" width="22" height="18.5"/>
+        <image name="matrazOrder" width="17.36400032043457" height="21.915000915527344"/>
         <image name="patientName" width="19.434000015258789" height="14"/>
     </resources>
 </document>

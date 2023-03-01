@@ -18,6 +18,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     using NUnit.Framework;
     using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Usuarios.DataAccess.DAO.User;
+    using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Context;
     using Omicron.Usuarios.Entities.Model;
     using Omicron.Usuarios.Services.Constants;
@@ -106,7 +107,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             // Arrange
             var user = this.GetUserDto();
-            user.Id = "12";
+            user.Id = "100";
 
             // Act
             var result = await this.userServices.InsertUser(user);
@@ -232,6 +233,40 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// Updates the user.
         /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task UpdateTechnicalUser()
+        {
+            // arrange
+            var user = new UserModel { Id = "11", FirstName = "TecnicoPrueba Update", LastName = "TecnicoPrueba Update Apellido", UserName = "TecnicoPrueba Update", Password = "QXhpdHkyMDIw", Role = 9, Activo = 1, Piezas = 200, Asignable = 0, Deleted = false, };
+
+            // act
+            var response = await this.userServices.UpdateUser(user);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Updates the user technical Role.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+        public async Task UpdateTechnicalUserRole()
+        {
+            // arrange
+            var user = new UserModel { Id = "13", FirstName = "TecnicoPrueba Update Role", LastName = "TecnicoPrueba Update Apellido Role", UserName = "TecnicoPruebaUpdateRole", Password = "QXhpdHkyMDIw", Role = 2, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, };
+
+            // act
+            var response = await this.userServices.UpdateUser(user);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
         [Test]
         public void UpdateUserUserNotExist()
         {
@@ -328,6 +363,75 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             Assert.IsNotNull(data.CountTotalPieces);
             Assert.IsNotNull(data.UserId);
             Assert.IsNotNull(data.UserName);
+        }
+
+        /// <summary>
+        /// test to get all tecnic users.
+        /// </summary>
+        /// <returns>returns list of users.</returns>
+        [Test]
+        public async Task GetAllUsersTecnics()
+        {
+            // act
+            var response = await this.userServices.GetUsersTecnic();
+
+            // Assert
+            Assert.IsNotNull(response.Response);
+        }
+
+        /// <summary>
+        /// test to get all tecnic users.
+        /// </summary>
+        /// <param name="id">Id User to get relation with tecnic.</param>
+        /// <returns>returns list of users.</returns>
+        [Test]
+        [TestCase("9")]
+        [TestCase("8")]
+        [TestCase("Noexiste")]
+        [TestCase("10")]
+        public async Task GetRelationalUserInfor(string id)
+        {
+            // act
+            var response = await this.userServices.GetRelationalUserInfor(id);
+
+            // Assert
+            if (id.Equals("Noexiste") || id.Equals("10"))
+            {
+                Assert.Null(response.Comments);
+            }
+            else
+            {
+                Assert.NotNull(response.Comments);
+            }
+        }
+
+        /// <summary>
+        /// Updates the user.
+        /// </summary>
+        /// <returns>the user.</returns>
+        [Test]
+
+        public async Task GetQfbInfoByIds()
+        {
+            var qfbIds = new List<string>
+            {
+                "6bc7f8a8-8617-43ac-a804-79cf9667b801",
+                "6bc7f8a8-8617-43ac-a804-79cf9667b802",
+                "6bc7f8a8-8617-43ac-a804-79cf9667b803",
+                "6bc7f8a8-8617-43ac-a804-79cf9667b804",
+                "6bc7f8a8-8617-43ac-a804-79cf9667b807",
+            };
+
+            // act
+            var response = await this.userServices.GetQfbInfoByIds(qfbIds);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.Success);
+            Assert.AreEqual(response.Code, 200);
+            Assert.IsNull(response.Comments);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.UserError);
         }
     }
 }

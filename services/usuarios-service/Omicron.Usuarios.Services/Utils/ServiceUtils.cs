@@ -55,10 +55,30 @@ namespace Omicron.Usuarios.Services.Utils
             users = criteria.ContainsKey(ServiceConstants.FirstName) ? users.Where(x => x.FirstName.ToLower().Contains(criteria[ServiceConstants.FirstName].ToLower())).ToList() : users;
             users = criteria.ContainsKey(ServiceConstants.LastName) ? users.Where(x => x.LastName.ToLower().Contains(criteria[ServiceConstants.LastName].ToLower())).ToList() : users;
             users = criteria.ContainsKey(ServiceConstants.Role) ? users.Where(x => x.Role.ToString() == criteria[ServiceConstants.Role]).ToList() : users;
-            users = criteria.ContainsKey(ServiceConstants.Assignable) ? users.Where(x => x.Asignable.ToString() == criteria[ServiceConstants.Assignable] && x.Role == ServiceConstants.RoleQfb).ToList() : users;
+            users = criteria.ContainsKey(ServiceConstants.Assignable) ? users.Where(x => x.Asignable.ToString() == criteria[ServiceConstants.Assignable] && (x.Role == ServiceConstants.RoleQfb || x.Role == ServiceConstants.RoleTecnic)).ToList() : users;
             users = criteria.ContainsKey(ServiceConstants.Status) ? users.Where(x => x.Activo.ToString() == criteria[ServiceConstants.Status]).ToList() : users;
             users = criteria.ContainsKey(ServiceConstants.TypeQfb) ? users.Where(x => x.Classification == criteria[ServiceConstants.TypeQfb]).ToList() : users;
             return users;
+        }
+
+        /// <summary>
+        /// Calculates the left and right with and AND.
+        /// </summary>
+        /// <param name="list">List of bools..</param>
+        /// <returns>the data.</returns>
+        public static bool CalculateAnd(params bool[] list)
+        {
+            return list.All(element => element);
+        }
+
+        /// <summary>
+        /// Calculates the left and right with and OR.
+        /// </summary>
+        /// <param name="list">List of bools..</param>
+        /// <returns>the data.</returns>
+        public static bool CalculateOr(params bool[] list)
+        {
+            return list.Any(element => element);
         }
     }
 }

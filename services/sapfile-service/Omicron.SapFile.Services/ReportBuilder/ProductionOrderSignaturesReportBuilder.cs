@@ -129,11 +129,20 @@ namespace Omicron.SapFile.Services.ReportBuilder
             // QFB name
             dataRowName.Cells[0].ChildObjects.Clear();
             dataRowName.Cells[0].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
-            
+
             Paragraph cellContent = dataRowName.Cells[0].AddParagraph();
             cellContent.Format.HorizontalAlignment = HorizontalAlignment.Center;
             cellContent.AppendText(this.order.QfbName);
             cellContent.ApplyStyle(STYLEBLACKTEXT);
+
+            // Technical name
+            dataRowName.Cells[2].ChildObjects.Clear();
+            dataRowName.Cells[2].CellFormat.VerticalAlignment = VerticalAlignment.Middle;
+
+            Paragraph cellContentTecnical = dataRowName.Cells[2].AddParagraph();
+            cellContentTecnical.Format.HorizontalAlignment = HorizontalAlignment.Center;
+            cellContentTecnical.AppendText(this.order.TechnicalName);
+            cellContentTecnical.ApplyStyle(STYLEBLACKTEXT);
 
             if (!string.IsNullOrEmpty(this.order.DesignerName))
             {

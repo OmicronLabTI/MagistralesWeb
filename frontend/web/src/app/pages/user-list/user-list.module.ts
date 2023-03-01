@@ -7,18 +7,19 @@ import {AddUserDialogComponent} from '../../dialogs/add-user-dialog/add-user-dia
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import {FaborderListModule} from '../faborders-list/faborder-list.module';
 import {SearchUsersDialogComponent} from '../../dialogs/search-users-dialog/search-users-dialog.component';
+import { WorkTeamComponent } from 'src/app/dialogs/work-team/work-team.component';
 
 
 @NgModule({
-  declarations: [UserListComponent, AddUserDialogComponent, SearchUsersDialogComponent],
+  declarations: [UserListComponent, AddUserDialogComponent, SearchUsersDialogComponent, WorkTeamComponent],
     imports: [
         CommonModule,
         UserListRoutingModule,
         ReactiveFormsModule,
         FormsModule,
         MATERIAL_COMPONENTS,
-        FaborderListModule
+        FaborderListModule,
     ],
-    entryComponents: [AddUserDialogComponent, SearchUsersDialogComponent],
+    entryComponents: [AddUserDialogComponent, SearchUsersDialogComponent, WorkTeamComponent],
 })
 export class UserListModule { }

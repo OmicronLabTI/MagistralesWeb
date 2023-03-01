@@ -25,13 +25,13 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.Redis;
+    using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
-    using Omicron.Pedidos.Services.Reporting;
-    using Omicron.Pedidos.Services.Redis;
 
     /// <summary>
     /// class for the test.
@@ -183,6 +183,44 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>return nothing.</returns>
         [Test]
+        public async Task GetFabOrderByTcnicID()
+        {
+            // arrange
+            var id = "tecnic";
+
+            var localSapAdapter = new Mock<ISapAdapter>();
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetListFormulaDetalle()));
+
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            this.usersService = new Mock<IUsersService>();
+
+            this.usersService
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUserModel(true)));
+
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var pedidosServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+
+            // act
+            var response = await pedidosServiceLocal.GetFabOrderByUserId(id);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
         public async Task GetUserOrdersByUserId()
         {
             // arrange
@@ -198,13 +236,17 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the processs.
         /// </summary>
+        /// <param name="iduser">User Id.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task GetQfbOrdersByStatus()
+        [TestCase("abcquimico")]
+        [TestCase("abcquimicocd")]
+        [TestCase("tecnicoqfb")]
+        [TestCase("tecnicoqfb2")]
+        public async Task GetQfbOrdersByStatus(string iduser)
         {
             // arrange
             var status = "Asignado";
-            var iduser = "abc-cde";
 
             // act
             var response = await this.pedidosService.GetQfbOrdersByStatus(status, iduser);
@@ -254,41 +296,101 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the processs.
         /// </summary>
+        /// <param name="userRoleType">User role type.</param>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task UpdateUserOrderStatus()
+        [TestCase(2, false)]
+        [TestCase(2, true)]
+        [TestCase(9, true)]
+        public async Task UpdateUserOrderStatus(int userRoleType, bool isValidtecnic)
         {
             // arrange
             var components = new List<UpdateStatusOrderModel>
             {
-                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 100, Status = "Proceso" },
+                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 100, Status = "Proceso", UserRoleType = userRoleType },
             };
 
+            var mockUsers = new Mock<IUsersService>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbInfoDto(isValidtecnic)));
+
+            var pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+
             // act
-            var response = await this.pedidosService.UpdateStatusOrder(components);
+            var response = await pedidosService.UpdateStatusOrder(components);
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsNull(response.Comments);
+
+            if (isValidtecnic)
+            {
+                Assert.IsNull(response.UserError);
+                Assert.IsTrue(response.Success);
+                Assert.AreEqual(200, response.Code);
+                Assert.IsNotNull(response.Response);
+            }
+            else
+            {
+                Assert.IsNotNull(response.UserError);
+                Assert.IsFalse(response.Success);
+                Assert.AreEqual(400, response.Code);
+                Assert.IsNull(response.Response);
+            }
         }
 
         /// <summary>
         /// the processs.
         /// </summary>
+        /// <param name="userRoleType">User role type.</param>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task UpdateUserOrderStatusEntregado()
+        [TestCase(2, false)]
+        [TestCase(2, true)]
+        [TestCase(9, true)]
+        public async Task UpdateUserOrderStatusEntregado(int userRoleType, bool isValidtecnic)
         {
             // arrange
             var components = new List<UpdateStatusOrderModel>
             {
-                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 301, Status = "Entregado" },
+                new UpdateStatusOrderModel { UserId = "abcc", OrderId = 301, Status = "Entregado", UserRoleType = userRoleType },
             };
 
+            var mockUsers = new Mock<IUsersService>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbInfoDto(isValidtecnic)));
+
+            var pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+
             // act
-            var response = await this.pedidosService.UpdateStatusOrder(components);
+            var response = await pedidosService.UpdateStatusOrder(components);
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsNull(response.Comments);
+
+            if (isValidtecnic)
+            {
+                Assert.IsNull(response.UserError);
+                Assert.IsTrue(response.Success);
+                Assert.AreEqual(200, response.Code);
+                Assert.IsNotNull(response.Response);
+            }
+            else
+            {
+                Assert.IsNotNull(response.UserError);
+                Assert.IsFalse(response.Success);
+                Assert.AreEqual(400, response.Code);
+                Assert.IsNull(response.Response);
+            }
         }
 
         /// <summary>
@@ -305,7 +407,17 @@ namespace Omicron.Pedidos.Test.Services
             };
 
             // act
-            var response = await this.pedidosService.UpdateStatusOrder(components);
+            var mockUsers = new Mock<IUsersService>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbInfoDto(true)));
+
+            var pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+
+            // act
+            var response = await pedidosService.UpdateStatusOrder(components);
 
             // assert
             Assert.IsNotNull(response);
@@ -326,7 +438,17 @@ namespace Omicron.Pedidos.Test.Services
             };
 
             // act
-            var response = await this.pedidosService.UpdateStatusOrder(components);
+            var mockUsers = new Mock<IUsersService>();
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetQfbInfoDto(true)));
+
+            var pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+
+            // act
+            var response = await pedidosService.UpdateStatusOrder(components);
 
             // assert
             Assert.IsNotNull(response);
@@ -451,16 +573,20 @@ namespace Omicron.Pedidos.Test.Services
         /// <summary>
         /// the processs.
         /// </summary>
+        /// <param name="qfbSignature">Qfb signature.</param>
+        /// <param name="technicalSignature">Technical Signature.</param>
         /// <returns>return nothing.</returns>
         [Test]
-        public async Task FinishOrder()
+        [TestCase("QXhpdHkyMDIw", null)]
+        [TestCase("QXhpdHkyMDIw", "QXhpdHkyMDIw")]
+        public async Task FinishOrder(string qfbSignature, string technicalSignature)
         {
             // arrange
             var update = new FinishOrderModel
             {
                 FabricationOrderId = new List<int> { 100 },
-                TechnicalSignature = "QXhpdHkyMDIw",
-                QfbSignature = "QXhpdHkyMDIw",
+                TechnicalSignature = technicalSignature,
+                QfbSignature = qfbSignature,
                 UserId = "abc",
             };
 
@@ -1109,6 +1235,81 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task SignOrdersByTecnic()
+        {
+            // arrange
+            var update = new FinishOrderModel
+            {
+                FabricationOrderId = new List<int> { 100, 200 },
+                TechnicalSignature = "QXhpdHkyMDIw",
+                UserId = "abc",
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+
+            // act
+            var response = await pedidoServiceLocal.SignOrdersByTecnic(update);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <param name="productionOrderId">Production Order Id.</param>
+        /// <returns>return nothing.</returns>
+        [Test]
+        [TestCase("223740")]
+        [TestCase("224212")]
+        [TestCase("224211")]
+        [TestCase("224159")]
+        public async Task GetInvalidOrdersByMissingTecnicSign(string productionOrderId)
+        {
+            // arrange
+            var productionOrderIds = new List<string>
+            {
+                productionOrderId,
+            };
+
+            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var mockUsers = new Mock<IUsersService>();
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockSapFile = new Mock<ISapFileService>();
+
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+
+            // act
+            var response = await pedidoServiceLocal.GetInvalidOrdersByMissingTecnicSign(productionOrderIds);
+
+            // assert
+            Assert.IsNotNull(response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.Comments);
+            Assert.IsNull(response.UserError);
+            Assert.IsTrue(response.Success);
+            Assert.AreEqual(200, response.Code);
+
+            if (productionOrderId.Equals("224212") || productionOrderId.Equals("224159"))
+            {
+                Assert.IsNotNull(response.Response);
+            }
+            else
+            {
+                Assert.AreEqual(new List<string>(), response.Response);
+            }
         }
     }
 }

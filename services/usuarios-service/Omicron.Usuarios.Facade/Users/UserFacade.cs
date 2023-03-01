@@ -136,5 +136,34 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         {
             return this.mapper.Map<ResultDto>(await this.usersService.GetActiveQfbWithOrcerCount());
         }
+
+        /// <summary>
+        /// Gets all tecnic user.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> GetUsersTecnic()
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.GetUsersTecnic());
+        }
+
+        /// <summary>
+        /// Gets relation user info.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> GetRelationUserInfo(string id)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.GetRelationalUserInfor(id));
+        }
+
+        /// <summary>
+        /// Method to get qfb's info by Id.
+        /// </summary>
+        /// <param name="qfbIds">Qfb id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultDto> GetQfbInfoByIds(List<string> qfbIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.usersService.GetQfbInfoByIds(qfbIds));
+        }
     }
 }

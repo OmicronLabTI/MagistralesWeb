@@ -99,7 +99,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockPedidoService
-                .Setup(m => m.GetPedidosService(It.IsAny<string>()))
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDtoGetPedidosService()));
 
             mockUserService
@@ -189,7 +189,7 @@ namespace Omicron.SapAdapter.Test.Services
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockPedidoService
-                .Setup(m => m.GetPedidosService(It.IsAny<string>()))
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
 
             mockUserService
@@ -367,7 +367,7 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Response);
             var response = JsonConvert.DeserializeObject<List<OrdenFabricacionModel>>(result.Response.ToString());
-            Assert.AreEqual(response.Count, 2);
+            Assert.AreEqual(2, response.Count);
         }
 
         /// <summary>
@@ -977,18 +977,54 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Test to get recipes.
         /// </summary>
+        /// <param name="pedidosReturnsError">Pedidos returns error.</param>
+        /// <param name="pedidoId">Pedido id.</param>
         /// <returns>The data.</returns>
         [Test]
-        public async Task ValidateOrder()
+        [TestCase(true, 200)]
+        [TestCase(false, 2000)]
+        public async Task ValidateOrder(bool pedidosReturnsError, int pedidoId)
         {
             // arrange
-            var order = new List<int> { 200 };
+            var order = new List<int> { 2000 };
+
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockLog = new Mock<ILogger>();
+            var mockDoctor = new Mock<IDoctorService>();
+
+            mockPedidoService
+                .Setup(m => m.PostPedidos(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetInvalidOrdersByMissingTecnicSign(pedidosReturnsError, pedidoId.ToString())));
+
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            this.sapService = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
 
             // act
             var response = await this.sapService.ValidateOrder(order);
 
             // assert
             Assert.IsNotNull(response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.Comments);
+            Assert.IsNull(response.UserError);
+
+            if (pedidosReturnsError)
+            {
+                Assert.IsFalse(response.Success);
+                Assert.AreEqual(400, response.Code);
+                Assert.IsNotNull(response.Response);
+                Assert.IsInstanceOf<List<OrderValidationResponse>>(response.Response);
+            }
+            else
+            {
+                Assert.IsTrue(response.Success);
+                Assert.AreEqual(200, response.Code);
+                Assert.IsNull(response.Response);
+            }
         }
 
         /// <summary>

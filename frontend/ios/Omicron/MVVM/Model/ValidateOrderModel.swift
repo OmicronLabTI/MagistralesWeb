@@ -42,4 +42,5 @@ extension ValidateOrder: Mappable {
 enum TypeError: String {
     case batches = "Batches"
     case stock = "Stock"
+    case signature = "Signature"
 }

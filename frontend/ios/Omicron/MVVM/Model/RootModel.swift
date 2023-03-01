@@ -55,11 +55,13 @@ class StatusResponse: HttpResponse {
 }
 class Status {
     var status: [StatusDetail]?
+    var requireTechnical: Bool?
     required init?(map: Map) {}
 }
 extension Status: Mappable {
     func mapping(map: Map) {
         self.status <- map["status"]
+        self.requireTechnical <- map["requireTechnical"]
     }
 }
 class StatusDetail {
@@ -94,12 +96,21 @@ class Order {
     var patientName: String?
     var clientDxp: String?
     var shopTransaction: String?
+    var qfbName: String?
+    var technicalSign: Bool?
+    var hasTechnicalAssigned: Bool?
     init(areBatchesComplete: Bool?, productionOrderId: Int?, baseDocument: Int?,
          container: String?, tag: String?, plannedQuantity: Decimal?,
          startDate: String?, finishDate: String?, descriptionProduct: String?,
          statusId: Int?, itemCode: String?,
          productCode: String?, destiny: String?,
-         hasMissingStock: Bool, finishedLabel: Bool, patientName: String?, clientDxp: String?, shopTransaction: String?) {
+         hasMissingStock: Bool, finishedLabel: Bool,
+         patientName: String?,
+         clientDxp: String?,
+         shopTransaction: String?,
+         qfbName: String?,
+         technicalSign: Bool?,
+         hasTechnicalAssigned: Bool?) {
         self.areBatchesComplete = areBatchesComplete
         self.productionOrderId = productionOrderId
         self.baseDocument = baseDocument
@@ -118,6 +129,9 @@ class Order {
         self.patientName = patientName
         self.clientDxp = clientDxp
         self.shopTransaction = shopTransaction
+        self.qfbName = qfbName
+        self.technicalSign = technicalSign
+        self.hasTechnicalAssigned = hasTechnicalAssigned
     }
     required init?(map: Map) {}
 }
@@ -139,6 +153,9 @@ extension Order: Mappable {
         clientDxp <- map["clientDxp"]
         areBatchesComplete <- map["areBatchesComplete"]
         shopTransaction <- map["shopTransaction"]
+        qfbName <- map["qfbName"]
+        technicalSign <- map["technicalSign"]
+        hasTechnicalAssigned <- map["hasTechnicalAssigned"]
     }
 }
 struct SectionOrder {

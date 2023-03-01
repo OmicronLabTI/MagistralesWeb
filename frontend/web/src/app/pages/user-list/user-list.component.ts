@@ -14,6 +14,8 @@ import { Subscription } from 'rxjs';
 import { SearchUsersDialogComponent } from '../../dialogs/search-users-dialog/search-users-dialog.component';
 import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { WorkTeamComponent } from 'src/app/dialogs/work-team/work-team.component';
+import { WorkTeamDialogConfig } from 'src/app/model/device/workteam.model';
 
 @Component({
     selector: 'app-user-list',
@@ -68,6 +70,21 @@ export class UserListComponent implements OnInit, OnDestroy {
         return dictOptions[type];
     }
 
+    getRol(typeRol: number): string {
+        const dictOptions: { [key: number]: string } = {
+            2: 'QFB',
+            1: 'ADMINISTRADOR',
+            3: 'LOGÍSTICA',
+            4: 'DISEÑO',
+            5: 'ALMACÉN',
+            6: 'REPARTIDOR',
+            7: 'INCIDENCIAS',
+            8: 'REPARTIDOR CAC',
+            9: 'TÉCNICO',
+        };
+        return dictOptions[typeRol];
+    }
+
     getUsers() {
         this.usersService.getUsers(`?${this.fullQueryString}&offset=${this.offset}&limit=${this.limit}`).subscribe(userRes => {
 
@@ -100,7 +117,9 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.dataSource.data.forEach(t => t.isChecked = completed);
     }
 
-
+    getIsSomeChecked(): boolean {
+        return this.dataSource.data.some((user) => user.isChecked);
+    }
     deleteUsers(idUser: string) {
         if (idUser !== CONST_STRING.empty) {
             this.dataSource.data.filter(user => user.id === idUser).forEach(user => user.isChecked = true);
@@ -131,9 +150,17 @@ export class UserListComponent implements OnInit, OnDestroy {
                 userToEditM: userId !== CONST_STRING.empty ? this.dataSource.data.filter(user => user.id === userId)[0] : {}
             }
         });
-
     }
 
+    openWorkFlowDialog(user: IUserReq): void {
+        const data = new WorkTeamDialogConfig();
+        data.title = user.role === 2 ? 'TÉCNICO' : 'QUÍMICO (S)';
+        data.id = user.id;
+        this.dialog.open(WorkTeamComponent, {
+            panelClass: 'custom-dialog-container',
+            data
+        });
+    }
     changeDataEvent(event: PageEvent) {
         this.pageSize = event.pageSize;
         this.offset = (event.pageSize * (event.pageIndex));
@@ -160,37 +187,37 @@ export class UserListComponent implements OnInit, OnDestroy {
             }
         });
     }
+    getKeyUserSearchValue(key: string): string {
+        const dictOptions: { [key: string]: string } = {
+            activoSe: 'status',
+            asignableSe: 'assignable',
+            firstNameSe: 'fname',
+            lastNameSe: 'lname',
+            userNameSe: 'user',
+            userTypeRSe: 'role',
+            classificationQFBSe: 'typeQfb',
+            '': ''
+        };
+        return dictOptions[key];
+    }
 
+    validateValue(value: string): boolean {
+        return value !== undefined && value !== CONST_STRING.empty;
+    }
     onSuccessUserResult(searchUsersResult: any) {
         this.fullQueryString = CONST_STRING.empty;
         this.searchUsersData = searchUsersResult;
-        if (this.searchUsersData.activoSe && this.searchUsersData.activoSe !== CONST_STRING.empty) {
-            this.fullQueryString = `status=${this.searchUsersData.activoSe}&`;
-        }
-        if (this.searchUsersData.asignableSe && this.searchUsersData.asignableSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}assignable=${this.searchUsersData.asignableSe}&`;
-        }
-        if (this.searchUsersData.firstNameSe && this.searchUsersData.firstNameSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}fname=${this.searchUsersData.firstNameSe}&`;
-        }
-        if (this.searchUsersData.lastNameSe && this.searchUsersData.lastNameSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}lname=${this.searchUsersData.lastNameSe}&`;
-        }
-        if (this.searchUsersData.userNameSe && this.searchUsersData.userNameSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}user=${this.searchUsersData.userNameSe}&`;
-        }
-        if (this.searchUsersData.userTypeRSe && this.searchUsersData.userTypeRSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}role=${this.searchUsersData.userTypeRSe}&`;
-        }
-        if (this.searchUsersData.classificationQFBSe && this.searchUsersData.classificationQFBSe !== CONST_STRING.empty) {
-            this.fullQueryString = `${this.fullQueryString}typeQfb=${this.searchUsersData.classificationQFBSe}&`;
-        }
+        const keyList = Object.keys(searchUsersResult);
+        this.fullQueryString = keyList.reduce((query, key) =>
+            this.dataService.calculateTernary(this.validateValue(searchUsersResult[key]),
+                `${query}${this.getKeyUserSearchValue(key)}=${searchUsersResult[key]}&`,
+                query),
+            CONST_STRING.empty);
         this.fullQueryString = this.fullQueryString.slice(CONST_NUMBER.zero, CONST_NUMBER.lessOne);
         this.offset = CONST_NUMBER.zero;
         this.limit = CONST_NUMBER.ten;
         this.pageIndex = CONST_NUMBER.zero;
         this.pageSize = CONST_NUMBER.ten;
-
         this.getUsers();
     }
 }

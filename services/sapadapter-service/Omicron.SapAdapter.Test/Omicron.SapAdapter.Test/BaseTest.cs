@@ -900,5 +900,31 @@ namespace Omicron.SapAdapter.Test
                 new OrdenFabricacionModel { ProductoId = "150   60 ML", OrdenId = 122826, PostDate = DateTime.Now, Quantity = 10, Status = "L", PedidoId = 84517, User = 1, Type = "S", OriginType = "M", CardCode = "CardCode", CompleteQuantity = 10, CreatedDate = DateTime.Today.AddDays(1), DataSource = "O", DueDate = DateTime.Now, ProdName = "Prodname", StartDate = DateTime.Now, Unit = "KG", Wharehouse = "PT" },
             };
         }
+
+        /// <summary>
+        /// gets the resultdto for getuserpedidos.
+        /// </summary>
+        /// <param name="returnsError">Indicates if pedidos services returns an error.</param>
+        /// <param name="pedidoId">Pedido id.</param>
+        /// <returns>the data.</returns>
+        public ResultDto GetInvalidOrdersByMissingTecnicSign(bool returnsError, string pedidoId)
+        {
+            var listUsers = new List<string>();
+
+            if (returnsError)
+            {
+                listUsers.Add(pedidoId);
+            }
+
+            return new ResultDto
+            {
+                Response = JsonConvert.SerializeObject(listUsers),
+                Code = 200,
+                Comments = string.Empty,
+                ExceptionMessage = string.Empty,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
     }
 }

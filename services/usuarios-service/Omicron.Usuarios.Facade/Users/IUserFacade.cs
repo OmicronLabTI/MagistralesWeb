@@ -53,6 +53,19 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         Task<ResultDto> GetUsers(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Gets all the tecnic user.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetUsersTecnic();
+
+        /// <summary>
+        /// Gets relation user info.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetRelationUserInfo(string id);
+
+        /// <summary>
         /// deletes the user.
         /// </summary>
         /// <param name="listIds">the list of ids.</param>
@@ -84,7 +97,7 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// the list ids.
         /// </summary>
         /// <param name="listIds">the users.</param>
-        /// <returns>the users.</returns>
+        /// <returns>the users by id.</returns>
         Task<ResultDto> GetUsersById(List<string> listIds);
 
         /// <summary>
@@ -92,5 +105,12 @@ namespace Omicron.Usuarios.Facade.Catalogs.Users
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> GetQfbWithOrderCount();
+
+        /// <summary>
+        /// Method to get qfbs info by Id.
+        /// </summary>
+        /// <param name="qfbIds">Qfb ids.</param>
+        /// <returns>User Model.</returns>
+        Task<ResultDto> GetQfbInfoByIds(List<string> qfbIds);
     }
 }

@@ -27,6 +27,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
+import { MatMenuModule, MatTooltipModule } from '@angular/material';
 export class MatDialogMock {
   open() {
     return {
@@ -40,8 +41,8 @@ describe('UserListComponent', () => {
   let fixture: ComponentFixture<UserListComponent>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
   let userServiceSpy: jasmine.SpyObj<UsersService>;
-  let dataServiceSpy;
-  let errorServiceSpy;
+  let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let errorServiceSpy: jasmine.SpyObj<ErrorService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
 
   let matDialog: MatDialogMock;
@@ -60,8 +61,11 @@ describe('UserListComponent', () => {
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
-        'getFormattedNumber'
+        'getFormattedNumber', 'calculateTernary'
       ]);
+    dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
+      return validation ? firstValue : secondaValue;
+    });
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return new Promise(resolve => { resolve(''); });
     });
@@ -95,7 +99,9 @@ describe('UserListComponent', () => {
         ReactiveFormsModule,
         MatInputModule,
         MatSelectModule,
-        RouterTestingModule],
+        RouterTestingModule,
+        MatMenuModule,
+        MatTooltipModule],
       declarations: [UserListComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [DatePipe,
@@ -196,7 +202,7 @@ describe('UserListComponent', () => {
     } as MatDialogRef<typeof component>);
     component.openSearchUsers();
     expect(matDialog.open).toHaveBeenCalled();
-    expect(component.fullQueryString).toBe('status=1&assignable=1&fname=Perez&lname=Perez&user=Juan&role=1&typeQfb=BQ');
+    expect(component.fullQueryString).toBe('user=Juan&fname=Perez&lname=Perez&role=1&status=1&assignable=1&typeQfb=BQ');
   });
   it('should open dialog AddUserDialogComponent', () => {
     spyOn(matDialog, 'open').and.returnValue({
@@ -204,5 +210,25 @@ describe('UserListComponent', () => {
     } as MatDialogRef<typeof component>);
     component.openDialog('', 'da423-sdf34-23');
     expect(matDialog.open).toHaveBeenCalled();
+  });
+  it('should get roles', () => {
+    expect(component.getRol(2)).toBe('QFB');
+    expect(component.getRol(1)).toBe('ADMINISTRADOR');
+    expect(component.getRol(3)).toBe('LOGÍSTICA');
+    expect(component.getRol(4)).toBe('DISEÑO');
+    expect(component.getRol(5)).toBe('ALMACÉN');
+    expect(component.getRol(6)).toBe('REPARTIDOR');
+    expect(component.getRol(7)).toBe('INCIDENCIAS');
+    expect(component.getRol(8)).toBe('REPARTIDOR CAC');
+    expect(component.getRol(9)).toBe('TÉCNICO');
+  });
+  it('should getIsSomeChecked with true', () => {
+    component.dataSource.data = UserListMock.response;
+    component.dataSource.data[0].isChecked = true;
+    expect(component.getIsSomeChecked()).toBeTruthy();
+  });
+  it('should getIsSomeChecked with false', () => {
+    component.dataSource.data = UserListMock.response;
+    expect(component.getIsSomeChecked()).toBeFalsy();
   });
 });

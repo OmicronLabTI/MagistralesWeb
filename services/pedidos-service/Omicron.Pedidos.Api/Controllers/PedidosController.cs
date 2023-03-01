@@ -546,6 +546,32 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Sign Orders By Tecnic.
+        /// </summary>
+        /// <param name="tecnicOrderSignature">Orders to cancel.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/tecnic/signorder")]
+        [HttpPost]
+        public async Task<IActionResult> SignOrdersByTecnic(FinishOrderDto tecnicOrderSignature)
+        {
+            var response = await this.pedidoFacade.SignOrdersByTecnic(tecnicOrderSignature);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Method to get orders active.
+        /// </summary>
+        /// <param name="productionOrderIds">Production Order Ids.</param>
+        /// <returns>INvalid.</returns>
+        [Route("/get/invalid/productionOrders/byMissingTecnicSign")]
+        [HttpPost]
+        public async Task<IActionResult> GetInvalidOrdersByMissingTecnicSign(List<string> productionOrderIds)
+        {
+            var response = await this.pedidoFacade.GetInvalidOrdersByMissingTecnicSign(productionOrderIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>

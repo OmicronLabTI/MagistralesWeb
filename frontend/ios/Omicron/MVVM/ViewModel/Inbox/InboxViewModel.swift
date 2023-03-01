@@ -75,7 +75,6 @@ class InboxViewModel {
         groupByOrderNumberButtonDidTapBinding()
         //  Action para ordenado por shopTransaction
         groupByShopTransactionButtonDidTapBinding()
-        
         initExtension()
     }
 
@@ -156,13 +155,10 @@ class InboxViewModel {
     func sortOrderWithOrderBatchesCompleteByNormalView() -> [Order] {
         var ordering: [Order] = []
         if self.currentSection.statusName == StatusNameConstants.inProcessStatus ||
-            self.currentSection.statusName == StatusNameConstants.reassignedStatus {
-            let orderReadyToFinished =
-                self.sortByBaseBocumentAscending(orders: self.ordersTemp.filter({$0.areBatchesComplete == true}))
-            let ordersNotReadyToFinished =
-                self.sortByBaseBocumentAscending(orders: self.ordersTemp.filter({$0.areBatchesComplete == false}))
-            ordering.append(contentsOf: orderReadyToFinished)
-            ordering.append(contentsOf: ordersNotReadyToFinished)
+            self.currentSection.statusName == StatusNameConstants.reassignedStatus ||
+            (self.currentSection.statusName == StatusNameConstants.assignedStatus
+                    && rootViewModel.userType == .technical) {
+            ordering.append(contentsOf: self.sortOrdersSignBatches())
         } else {
             ordering.append(contentsOf: self.sortByBaseBocumentAscending(orders: self.ordersTemp))
         }
@@ -174,17 +170,18 @@ class InboxViewModel {
         var ordersGroupedAndSorted: [SectionModel<String, Order>] = []
         var dataGroupedByBaseDocument: [String: [Order]] = [:]
         if self.currentSection.statusName == StatusNameConstants.inProcessStatus ||
-            self.currentSection.statusName == StatusNameConstants.reassignedStatus {
-            let ordersReadyToFinish =
-                Dictionary(grouping:
-                            self.ordersTemp
-                            .filter({ $0.areBatchesComplete == true}), by: { "\($0.baseDocument ?? 0)" })
-            let ordersNotReadyToFinish =
-                Dictionary(
-                    grouping: self.ordersTemp
-                        .filter({ $0.areBatchesComplete == false}), by: { "\($0.baseDocument ?? 0)" })
-            ordersGroupedAndSorted.append(contentsOf: self.groupedByOrderNumber(data: ordersReadyToFinish))
-            ordersGroupedAndSorted.append(contentsOf: self.groupedByOrderNumber(data: ordersNotReadyToFinish))
+            self.currentSection.statusName == StatusNameConstants.reassignedStatus ||
+            (self.currentSection.statusName == StatusNameConstants.assignedStatus
+                    && rootViewModel.userType == .technical) {
+            let ordersSign = Dictionary(grouping: self.ordersTemp.filter({
+                $0.technicalSign == true }), by: { "\($0.baseDocument ?? 0)" })
+            let ordersBatches = Dictionary(grouping: self.ordersTemp.filter({
+                $0.areBatchesComplete == true && $0.technicalSign == false  }), by: { "\($0.baseDocument ?? 0)" })
+            let ordersNotBatchesSignal = Dictionary(grouping: self.ordersTemp.filter({
+                $0.areBatchesComplete == false && $0.technicalSign == false }), by: { "\($0.baseDocument ?? 0)" })
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByOrderNumber(data: ordersSign))
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByOrderNumber(data: ordersBatches))
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByOrderNumber(data: ordersNotBatchesSignal))
         } else {
             dataGroupedByBaseDocument = Dictionary(grouping: self.ordersTemp,
                                                    by: { "\($0.baseDocument ?? 0)" })
@@ -192,23 +189,23 @@ class InboxViewModel {
         }
         return ordersGroupedAndSorted
     }
-    
     // Short by ShopTransaccion
     func sortOrderShopTransactionView() -> [SectionModel<String, Order>] {
         var ordersGroupedAndSorted: [SectionModel<String, Order>] = []
         var dataGroupedByShopTransaction: [String: [Order]] = [:]
         if self.currentSection.statusName == StatusNameConstants.inProcessStatus ||
-            self.currentSection.statusName == StatusNameConstants.reassignedStatus {
-            let ordersReadyToFinish =
-                Dictionary(grouping:
-                            self.ordersTemp
-                            .filter({ $0.areBatchesComplete == true}), by: { $0.shopTransaction ?? "" })
-            let ordersNotReadyToFinish =
-                Dictionary(
-                    grouping: self.ordersTemp
-                        .filter({ $0.areBatchesComplete == false}), by: { $0.shopTransaction ?? "" })
-            ordersGroupedAndSorted.append(contentsOf: self.groupedByShopTransaction(data: ordersReadyToFinish))
-            ordersGroupedAndSorted.append(contentsOf: self.groupedByShopTransaction(data: ordersNotReadyToFinish))
+            self.currentSection.statusName == StatusNameConstants.reassignedStatus
+            || (self.currentSection.statusName == StatusNameConstants.assignedStatus
+                && rootViewModel.userType == .technical) {
+            let ordersSign = Dictionary(grouping: self.ordersTemp.filter({
+                $0.technicalSign == true }), by: { $0.shopTransaction ?? "" })
+            let ordersBatches = Dictionary(grouping: self.ordersTemp.filter({
+                $0.areBatchesComplete == true && $0.technicalSign == false  }), by: { $0.shopTransaction ?? "" })
+            let ordersNotBatchesSignal = Dictionary(grouping: self.ordersTemp.filter({
+                $0.areBatchesComplete == false && $0.technicalSign == false }), by: { $0.shopTransaction ?? "" })
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByShopTransaction(data: ordersSign))
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByShopTransaction(data: ordersBatches))
+            ordersGroupedAndSorted.append(contentsOf: self.groupedByShopTransaction(data: ordersNotBatchesSignal))
         } else {
             dataGroupedByShopTransaction = Dictionary(grouping: self.ordersTemp,
                                                    by: { $0.shopTransaction ?? "" })
@@ -217,9 +214,19 @@ class InboxViewModel {
         return ordersGroupedAndSorted
     }
 
+    func sortOrdersSignBatches() -> [Order] {
+        let ordersSign = self.ordersTemp.filter({
+            $0.technicalSign == true })
+        let ordersBatches = self.ordersTemp.filter({
+            $0.areBatchesComplete == true && $0.technicalSign == false  })
+        let ordersNotBatchesSignal = self.ordersTemp.filter({
+            $0.areBatchesComplete == false && $0.technicalSign == false })
+        return ordersSign + ordersBatches + ordersNotBatchesSignal
+    }
+
     // Se agrupan ordenes por similitud o sin similitud
     func groupedWithSimilarityOrWithoutSimilarity(
-        data: [String? : [Order]], titleForOrdersWithoutSimilarity: String,
+        data: [String?: [Order]], titleForOrdersWithoutSimilarity: String,
         titleForOrdersWithSimilarity: String) -> [SectionModel<String, Order>] {
         var sectionModels: [SectionModel<String, Order>] = []
         // Se extraen las ordenes que contengan más de una coincidencia por código de producto

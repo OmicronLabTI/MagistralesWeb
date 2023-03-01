@@ -56,21 +56,16 @@ extension InboxViewController {
         }).disposed(by: self.disposeBag)
         // retorna mensaje si no hay card para cada status
         inboxViewModel.title
-            .withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, data in
+            .withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, _ in
                 guard let self = self else { return }
                 let statusId = self.inboxViewModel.getStatusId(name: title)
-                var message = String()
-                if let orders = data.first {
-                    if orders.items.count == 0 && statusId != -1 {
-                        message = "No tienes órdenes \(title)"
-                    }
-                } else {
-                    message = "No tienes órdenes \(title)"
-                }
+                var message = self.inboxViewModel.ordersTemp.count == 0 ?
+                    "No tienes órdenes \(title)" :
+                    String()
                 self.collectionView.setEmptyMessage(message)
             }).subscribe().disposed(by: disposeBag)
     }
-    
+
     func registerCellsOfCollectionView() {
         collectionView.register(
             UINib(
@@ -134,6 +129,7 @@ extension InboxViewController {
             .subscribe(onNext: { [weak self] indexPath in
                 guard let self = self else { return }
                 guard self.indexPathsSelected.count > 0 else {
+                    self.collectionView.deselectItem(at: indexPath, animated: false)
                     self.lastRect = self.collectionView.layoutAttributesForItem(at: indexPath)?.frame
                     self.lastIndexPath = indexPath
                     let orders = self.inboxViewModel.sectionOrders
@@ -190,6 +186,8 @@ extension InboxViewController {
             processButton.isEnabled = true
             pendingButton.isEnabled = true
             finishedButton.isEnabled = true
+            packageButton.isEnabled = self.inboxViewModel.ordersHasBatchesCompleted(
+                indexPathOfOrdersSelected: indexPathsSelected)
         } else {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
                 guard let self = self else { return }
@@ -199,16 +197,16 @@ extension InboxViewController {
             processButton.isEnabled = false
             pendingButton.isEnabled = false
             finishedButton.isEnabled = false
+            packageButton.isEnabled = false
         }
-
     }
-    
     func detailTapped(order: Order) {
-        self.inboxViewModel.selectedOrder = order
-        self.view.endEditing(true)
-        self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
+        if self.rootViewModel.userType == .qfb {
+            self.inboxViewModel.selectedOrder = order
+            self.view.endEditing(true)
+            self.performSegue(withIdentifier: ViewControllerIdentifiers.orderDetailViewController, sender: nil)
+        }
     }
-    
     func showSignatureVC() {
         inboxViewModel.showSignatureVc.subscribe(onNext: { [weak self] titleView in
             guard let self = self else { return }
@@ -244,7 +242,6 @@ extension InboxViewController {
         let stringNames = namesNoRepeat.joined(separator: ",")
         return stringNames.components(separatedBy: ",").filter({!$0.isEmpty})
     }
-    
     func updateRemoveViewColor(title: String) -> UIColor {
         switch title {
         case StatusNameConstants.assignedStatus:

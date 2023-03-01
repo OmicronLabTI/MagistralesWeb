@@ -18,7 +18,9 @@ class RootViewController: UIViewController {
     @IBOutlet weak var searchOrdesSearchBar: UISearchBar!
     @IBOutlet weak var logoutButton: UIButton!
     @IBOutlet weak var kpiButton: UIButton!
+    @IBOutlet weak var kpiButtonViewContain: UIView!
     @IBOutlet weak var versionLabel: UILabel!
+    @IBOutlet weak var rolLabel: UILabel!
 
     @IBAction func logoutAction(_ sender: UIButton) {
         isLogOut = true
@@ -68,6 +70,7 @@ class RootViewController: UIViewController {
             NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17.0)
         ]))
         navLabel.attributedText = navTitle
+        self.rolLabel.text = rootViewModel.userType == .qfb ? "QUÍMICO": "TÉCNICO"
         self.navigationItem.titleView = navLabel
     }
     func viewModelBinding() {
@@ -83,6 +86,7 @@ class RootViewController: UIViewController {
             self.lastRow = indexPath
         }).disposed(by: disposeBag)
         viewTable.rx.itemSelected.bind(to: self.rootViewModel.selectedRow).disposed(by: disposeBag)
+
         // Búsqueda de órdenes
         self.searchOrdesSearchBar.rx.text.orEmpty.bind(to: self.rootViewModel.searchFilter).disposed(by: disposeBag)
         inboxViewModel.deselectRow.observeOn(MainScheduler.instance)
@@ -90,6 +94,7 @@ class RootViewController: UIViewController {
             guard let self = self else { return }
             self.viewTable.deselectRow(at: self.lastRow, animated: false)
         }).disposed(by: disposeBag)
+
         self.rootViewModel.dataFilter
             .withLatestFrom(self.rootViewModel.selectedRow, resultSelector: { [weak self] data, lastRow in
             guard let self = self else { return }
@@ -97,7 +102,6 @@ class RootViewController: UIViewController {
                 if data == nil {
                 self.viewTable.alpha = 1.0
                 self.viewTable.isUserInteractionEnabled = true
-                print(self.rootViewModel.sections.count)
                 if self.rootViewModel.sections.count == 0 { return }
                 let section = self.rootViewModel.sections[self.lastRow.row]
                 self.viewTable.selectRow(at: self.lastRow, animated: false, scrollPosition: .none)
@@ -152,6 +156,7 @@ class RootViewController: UIViewController {
     func rootViewModelBinding2() {
         logoutButton.rx.tap.bind(to: rootViewModel.logoutDidTap).disposed(by: disposeBag)
         kpiButton.rx.tap.bind(to: inboxViewModel.viewKPIDidPressed).disposed(by: disposeBag)
+        kpiButtonViewContain.isHidden = rootViewModel.userType == .technical
         // Selecciona el primer elemento de estatus cuando termina la carga de datos
         self.rootViewModel.refreshSelection.withLatestFrom(self.rootViewModel.selectedRow)
             .subscribe(onNext: { [weak self] row in

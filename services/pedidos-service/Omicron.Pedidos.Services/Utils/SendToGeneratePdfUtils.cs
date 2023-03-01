@@ -37,7 +37,14 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="usersService">the user service.</param>
         /// <param name="onlyFinalized">if only applies to finalized.</param>
         /// <returns>the data.</returns>
-        public static async Task<Task<ResultModel>> CreateModelGeneratePdf(List<int> ordersId, List<int> fabOrdersId, ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapFileService sapFileService, IUsersService usersService, bool onlyFinalized)
+        public static async Task<Task<ResultModel>> CreateModelGeneratePdf(
+            List<int> ordersId,
+            List<int> fabOrdersId,
+            ISapAdapter sapAdapter,
+            IPedidosDao pedidosDao,
+            ISapFileService sapFileService,
+            IUsersService usersService,
+            bool onlyFinalized)
         {
             var listOrdersWithDetail = new List<OrderWithDetailModel>();
             var listFabOrders = new List<FabricacionOrderModel>();
@@ -69,6 +76,10 @@ namespace Omicron.Pedidos.Services.Utils
 
             var designerIds = orderSignature.Where(x => !string.IsNullOrEmpty(x.DesignerId)).Select(x => x.DesignerId).ToList();
             userIds.AddRange(designerIds);
+
+            var tecnicIds = listUserOrders.Where(x => !string.IsNullOrEmpty(x.TecnicId)).Select(x => x.TecnicId).DistinctBy(x => x).ToList();
+            userIds.AddRange(tecnicIds);
+
             var users = await GetUsers(userIds, usersService);
 
             listToSend.AddRange(GetModelsBySaleOrders(listOrdersWithDetail, recipes, users, orderSignature, listUserOrders));
@@ -86,7 +97,12 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="signatures">the signatures.</param>
         /// <param name="userOrders">the userOrders.</param>
         /// <returns>the data.</returns>
-        private static List<FinalizaGeneratePdfModel> GetModelsBySaleOrders(List<OrderWithDetailModel> ordersWithDetail, List<OrderRecipeModel> recipes, List<UserModel> users, List<UserOrderSignatureModel> signatures, List<UserOrderModel> userOrders)
+        private static List<FinalizaGeneratePdfModel> GetModelsBySaleOrders(
+            List<OrderWithDetailModel> ordersWithDetail,
+            List<OrderRecipeModel> recipes,
+            List<UserModel> users,
+            List<UserOrderSignatureModel> signatures,
+            List<UserOrderModel> userOrders)
         {
             var listToReturn = new List<FinalizaGeneratePdfModel>();
             foreach (var order in ordersWithDetail)
@@ -123,6 +139,14 @@ namespace Omicron.Pedidos.Services.Utils
                     var designerId = signaturesByOrder == null || signaturesByOrder.DesignerId == null ? string.Empty : signaturesByOrder.DesignerId;
                     var designer = users.FirstOrDefault(x => x.Id.Equals(designerId));
 
+                    var tecnical = users.FirstOrDefault(x => x.Id.Equals(userOrder.TecnicId));
+
+                    var qfbName = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+                    var tecnicalName = tecnical == null ? qfbName : $"{tecnical.FirstName} {tecnical.LastName}";
+
+                    var qfbSignature = signaturesByOrder?.QfbSignature == null ? new byte[0] : signaturesByOrder.QfbSignature;
+                    var technicalSignature = signaturesByOrder?.TechnicalSignature == null ? qfbSignature : signaturesByOrder.TechnicalSignature;
+
                     var model = new FinalizaGeneratePdfModel
                     {
                         CreateDate = detail.CreatedDate.HasValue ? detail.CreatedDate.Value.ToString("dd/MM/yyyy") : DateTime.Now.ToString("dd/MM/yyyy"),
@@ -130,14 +154,15 @@ namespace Omicron.Pedidos.Services.Utils
                         ItemCode = detail.CodigoProducto,
                         MedicName = NormalizeMedicName(order.Order.Medico),
                         OrderId = order.Order.PedidoId,
-                        QfbName = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
-                        QfbSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.QfbSignature,
-                        RecipeRoute = recipe == null ? new List<string>() : recipe,
+                        QfbName = qfbName,
+                        QfbSignature = qfbSignature,
+                        RecipeRoute = recipe ?? new List<string>(),
                         SaleOrderCreateDate = order.Order.FechaInicio.ToString("dd/MM/yyyy"),
-                        TechnicalSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.TechnicalSignature,
+                        TechnicalSignature = technicalSignature,
                         UserOrderId = userOrder.Id,
                         DesignerName = designer == null ? string.Empty : $"{designer.FirstName} {designer.LastName}",
                         DesignerSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.DesignerSignature,
+                        TechnicalName = tecnicalName,
                     };
 
                     listToReturn.Add(model);
@@ -171,6 +196,13 @@ namespace Omicron.Pedidos.Services.Utils
 
                 var signaturesByOrder = signatures.FirstOrDefault(x => x.UserOrderId == userOrder.Id);
                 var user = users.FirstOrDefault(x => x.Id.Equals(userOrder.Userid));
+                var tecnical = users.FirstOrDefault(x => x.Id.Equals(userOrder.TecnicId));
+
+                var qfbName = user == null ? string.Empty : $"{user.FirstName} {user.LastName}";
+                var tecnicalName = tecnical == null ? qfbName : $"{tecnical.FirstName} {tecnical.LastName}";
+
+                var qfbSignature = signaturesByOrder?.QfbSignature == null ? new byte[0] : signaturesByOrder.QfbSignature;
+                var technicalSignature = signaturesByOrder?.TechnicalSignature == null ? qfbSignature : signaturesByOrder.TechnicalSignature;
 
                 var model = new FinalizaGeneratePdfModel
                 {
@@ -178,14 +210,15 @@ namespace Omicron.Pedidos.Services.Utils
                     FabOrderId = order.OrdenId,
                     ItemCode = order.ProductoId,
                     OrderId = 0,
-                    QfbName = user == null ? string.Empty : $"{user.FirstName} {user.LastName}",
-                    QfbSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.QfbSignature,
+                    QfbName = qfbName,
+                    QfbSignature = qfbSignature,
                     RecipeRoute = new List<string>(),
                     SaleOrderCreateDate = string.Empty,
-                    TechnicalSignature = signaturesByOrder == null ? new byte[0] : signaturesByOrder.TechnicalSignature,
+                    TechnicalSignature = technicalSignature,
                     UserOrderId = userOrder.Id,
                     DesignerSignature = new byte[0],
                     DesignerName = string.Empty,
+                    TechnicalName = tecnicalName,
                 };
 
                 listToReturn.Add(model);

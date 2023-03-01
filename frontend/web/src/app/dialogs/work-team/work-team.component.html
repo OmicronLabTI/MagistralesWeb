@@ -1,0 +1,15 @@
+<div class="work-team-dialog">
+    <div class="title">
+        <p>{{ data.title }}</p>
+    </div>
+    <div class="work-team">
+        <div class="work-team-user" *ngFor="let user of users">
+            <p>{{ user }}</p>
+        </div>
+    </div>
+    <div class="button-content">
+        <button mat-raised-button class="button-blue-user-list" mat-dialog-close>
+            Aceptar
+        </button>
+    </div>
+</div>
