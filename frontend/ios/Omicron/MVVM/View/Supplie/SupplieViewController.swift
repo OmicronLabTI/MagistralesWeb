@@ -109,8 +109,8 @@ class SupplieViewController: UIViewController {
         observationsField.delegate = self
         UtilsManager.shared.setStyleButtonStatus(button: self.deleteComponents,
                                                  title: StatusNameConstants.deleteMultiComponents,
-                                                 color: OmicronColors.primaryBlue,
-                                                 titleColor: OmicronColors.primaryBlue)
+                                                 color: OmicronColors.processStatus,
+                                                 titleColor: OmicronColors.processStatus)
 
         UtilsManager.shared.setStyleButtonStatus(button: self.addComponent,
                                                  title: StatusNameConstants.addComponent,

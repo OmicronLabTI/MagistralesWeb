@@ -221,6 +221,8 @@ class RootViewController: UIViewController {
                                                  color: OmicronColors.primaryBlue,
                                                  backgroudColor: OmicronColors.primaryBlue,
                                                  titleColor: .white)
+        self.createBulk.isHidden = rootViewModel.userType != .qfb
+        self.createSupplies.isHidden = rootViewModel.userType != .qfb
     }
 
     private func getUserInfo() -> String {
