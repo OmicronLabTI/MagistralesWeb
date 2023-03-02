@@ -2832,14 +2832,14 @@
                                                         <rect key="frame" x="0.0" y="36" width="970.5" height="724"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <prototypes>
-                                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SupplieTableViewCell" id="4xl-hd-FGe" customClass="SupplieTableViewCell" customModule="OmicronDEV" customModuleProvider="target">
+                                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="SupplieTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SupplieTableViewCell" id="4xl-hd-FGe" customClass="SupplieTableViewCell" customModule="OmicronDEV" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="50" width="970.5" height="40.5"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4xl-hd-FGe" id="iUJ-2Q-OMo" customClass="SupplieTableViewCell" customModule="OmicronDEV" customModuleProvider="target">
                                                                     <rect key="frame" x="0.0" y="0.0" width="970.5" height="40.5"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                     <subviews>
-                                                                        <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="rAu-Ci-fBI">
+                                                                        <stackView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="rAu-Ci-fBI">
                                                                             <rect key="frame" x="0.0" y="0.0" width="970.5" height="40.5"/>
                                                                             <subviews>
                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="esD-LX-YGk">
@@ -2945,18 +2945,20 @@
                                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DeW-Mh-3Je" userLabel="observaciones">
                                                 <rect key="frame" x="0.0" y="910" width="970.5" height="0.0"/>
                                                 <subviews>
-                                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="top" borderStyle="roundedRect" placeholder="Deja tu comentario aquí" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="NPQ-3s-Iy2">
+                                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ySk-J5-1gt">
                                                         <rect key="frame" x="0.0" y="0.0" width="970.5" height="0.0"/>
+                                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                        <color key="textColor" systemColor="labelColor"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                        <textInputTraits key="textInputTraits"/>
-                                                    </textField>
+                                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    </textView>
                                                 </subviews>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="bottom" secondItem="NPQ-3s-Iy2" secondAttribute="bottom" id="7mx-BC-Juk"/>
-                                                    <constraint firstAttribute="trailing" secondItem="NPQ-3s-Iy2" secondAttribute="trailing" id="NCa-yM-k3w"/>
-                                                    <constraint firstItem="NPQ-3s-Iy2" firstAttribute="top" secondItem="DeW-Mh-3Je" secondAttribute="top" id="PsP-ip-DMi"/>
-                                                    <constraint firstItem="NPQ-3s-Iy2" firstAttribute="leading" secondItem="DeW-Mh-3Je" secondAttribute="leading" id="sWi-66-UZO"/>
+                                                    <constraint firstAttribute="bottom" secondItem="ySk-J5-1gt" secondAttribute="bottom" id="Jb1-y2-QmS"/>
+                                                    <constraint firstAttribute="trailing" secondItem="ySk-J5-1gt" secondAttribute="trailing" id="Pny-TD-S4a"/>
+                                                    <constraint firstItem="ySk-J5-1gt" firstAttribute="leading" secondItem="DeW-Mh-3Je" secondAttribute="leading" id="hpT-Bg-qSh"/>
+                                                    <constraint firstItem="ySk-J5-1gt" firstAttribute="top" secondItem="DeW-Mh-3Je" secondAttribute="top" id="wkV-JA-Lwj"/>
                                                 </constraints>
                                             </view>
                                         </subviews>
@@ -2996,6 +2998,7 @@
                         <outlet property="addComponent" destination="SWa-Z2-O5N" id="4g7-0i-vXf"/>
                         <outlet property="componentsView" destination="XIY-TD-jjV" id="3kM-2h-omB"/>
                         <outlet property="deleteComponents" destination="akq-E0-1zF" id="KmU-76-Iid"/>
+                        <outlet property="observationsField" destination="ySk-J5-1gt" id="Z53-mh-M3C"/>
                         <outlet property="observationsView" destination="DeW-Mh-3Je" id="ARk-KI-bra"/>
                         <outlet property="sendToStore" destination="V6X-is-iwr" id="06c-vd-XMc"/>
                         <outlet property="showComponents" destination="JHN-UU-CCI" id="ZyR-YU-7Sv"/>

@@ -21,7 +21,7 @@ class SupplieViewController: UIViewController {
     @IBOutlet weak var componentsView: UIView!
     @IBOutlet weak var observationsView: UIView!
     @IBOutlet weak var tableComponents: UITableView!
-    
+    @IBOutlet weak var observationsField: UITextView!
     @Injected var supplieViewModel: SupplieViewModel
 
     var supplieList: [ComponentO] = []
@@ -35,11 +35,36 @@ class SupplieViewController: UIViewController {
         initNavigationBar()
     }
     func initNavigationBar() {
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Atrás", style: .plain, target: self, action: #selector(backBtnAction(_:)))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Mis órdenes",
+                                                                style: .plain,
+                                                                target: self,
+                                                                action: #selector(backBtnAction(_:)))
     }
 
     @objc func backBtnAction(_ sender: UIBarButtonItem) {
-        
+        if supplieList.count == 0 {
+            returnBack()
+            return
+        }
+        self.presentConfirmDialog()
+    }
+    func returnBack() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    func presentConfirmDialog() {
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+        let okAction = UIAlertAction(title: CommonStrings.OKConst,
+                                     style: .default, handler: { [weak self] _ in self?.resetValues()})
+        AlertManager.shared.showAlert(title: "Atención",
+                                      message: CommonStrings.confirmExit,
+                                      actions: [cancelAction, okAction],
+                                      view: self)
+    }
+    func resetValues() {
+        supplieList = []
+        supplieViewModel.supplieList = []
+        supplieViewModel.selectedComponentsToDelete = []
+        returnBack()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -81,6 +106,7 @@ class SupplieViewController: UIViewController {
         tableComponents.rowHeight = UITableView.automaticDimension
         sendToStore.isEnabled = false
         deleteComponents.isEnabled = false
+        observationsField.delegate = self
         UtilsManager.shared.setStyleButtonStatus(button: self.deleteComponents,
                                                  title: StatusNameConstants.deleteMultiComponents,
                                                  color: OmicronColors.primaryBlue,
@@ -92,6 +118,9 @@ class SupplieViewController: UIViewController {
                                                  titleColor: OmicronColors.primaryBlue)
         setBlueButtonStyle()
         changeView(false)
+        observationsField.layer.borderWidth = 1
+        observationsField.layer.cornerRadius = 10
+        observationsField.layer.borderColor = OmicronColors.disabledButton.cgColor
     }
 
     func setBlueButtonStyle() {
@@ -140,8 +169,13 @@ class SupplieViewController: UIViewController {
         changeBGButton(button: sendToStore, backgroundColor: color)
     }
     func bindAlertDialog() {
-        supplieViewModel.showSuccessAlert.subscribe(onNext: { [weak self] msg in
-            AlertManager.shared.showAlert(title: "", message: msg, actions: nil, view: self)
+        supplieViewModel.showSuccessAlert.subscribe(onNext: { [weak self] alert in
+            AlertManager.shared.showAlert(title: alert.title,
+                                          message: alert.msg,
+                                          actions: nil,
+                                          view: self,
+                                          autoDismiss: alert.autoDismiss,
+                                          dismissTime: 2)
         }).disposed(by: disposeBag)
     }
 }

@@ -88,8 +88,8 @@ class ComponentsViewController: UIViewController {
         self.navigationController?.pushViewController(compFormVC, animated: true)
     }
     func closeSelection(data: ComponentO) {
+        self.dismiss(animated: false, completion: nil)
         supplieViewModel.addComponent.onNext(data)
-        self.dismiss(animated: true, completion: nil)
     }
     func viewModelBinding2() {
         self.componentsViewModel.dataResults.map({ data -> Bool in
