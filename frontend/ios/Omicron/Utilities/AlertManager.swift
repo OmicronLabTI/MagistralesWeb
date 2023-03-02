@@ -24,7 +24,7 @@ class AlertManager {
             let okAction = UIAlertAction(title: "Aceptar", style: .default, handler: nil)
             alert.addAction(okAction)
         }
-        if  autoDismiss == false  {
+        if  autoDismiss == true && (dismissTime ?? 0) > 0 {
             view?.present(alert,
                           animated: true,
                           completion: {Timer.scheduledTimer(withTimeInterval: TimeInterval(dismissTime ?? 0),

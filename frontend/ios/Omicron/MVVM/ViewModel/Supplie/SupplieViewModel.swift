@@ -31,9 +31,10 @@ class SupplieViewModel {
             guard let self = self else { return }
             let exists = self.supplieList.firstIndex(where: { $0.productId == supplie.productId })
             if exists != nil {
+                let productId = supplie.productId ?? ""
                 self.showSuccessAlert.onNext((
                     title: "Error",
-                    msg: "El componente \(supplie.productId) ya existe para esta solicitud",
+                    msg: "El componente \(productId) ya existe para esta solicitud",
                     autoDismiss: true))
                 return
             }
@@ -59,7 +60,7 @@ class SupplieViewModel {
         self.selectedButtonIsEnable.onNext(selectedComponentsToDelete.count > 0)
         self.showSuccessAlert.onNext((title: "Error",
                                       msg: "Los componentes se han eliminado correctamente",
-                                      autoDismiss: false))
+                                      autoDismiss: true))
     }
     func validateItemsToDelete(itemCode: String) {
         let existIndex = selectedComponentsToDelete.firstIndex(where: { $0 == itemCode })
