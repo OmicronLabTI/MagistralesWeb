@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1122026929AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
+		1122026A29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
+		1122026B29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
+		1122026C29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
 		1142E19029AE623E008651D1 /* SupplieViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1142E18F29AE623E008651D1 /* SupplieViewController.swift */; };
 		1142E19129AE623E008651D1 /* SupplieViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1142E18F29AE623E008651D1 /* SupplieViewController.swift */; };
 		1142E19229AE623E008651D1 /* SupplieViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1142E18F29AE623E008651D1 /* SupplieViewController.swift */; };
@@ -512,6 +516,7 @@
 
 /* Begin PBXFileReference section */
 		0A4BE9F3CB565F9C5BB8E3F8 /* Pods-Omicron.qa.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron.qa.xcconfig"; path = "Target Support Files/Pods-Omicron/Pods-Omicron.qa.xcconfig"; sourceTree = "<group>"; };
+		1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCellExtension.swift; sourceTree = "<group>"; };
 		1142E18F29AE623E008651D1 /* SupplieViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewController.swift; sourceTree = "<group>"; };
 		1142E19529AE626C008651D1 /* SupplieViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewModel.swift; sourceTree = "<group>"; };
 		11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewControllerExtension.swift; sourceTree = "<group>"; };
@@ -749,6 +754,7 @@
 				1142E18F29AE623E008651D1 /* SupplieViewController.swift */,
 				11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */,
 				11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */,
+				1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */,
 			);
 			path = Supplie;
 			sourceTree = "<group>";
@@ -2141,6 +2147,7 @@
 				490B69AC268E98ED00DBE9F1 /* SnapCollectionView.swift in Sources */,
 				490B69AD268E98ED00DBE9F1 /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D529AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
+				1122026C29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */,
 				490B69AE268E98ED00DBE9F1 /* ContainerViewModel.swift in Sources */,
 				490B69AF268E98ED00DBE9F1 /* NetworkModel.swift in Sources */,
 				490B69B0268E98ED00DBE9F1 /* LotsModel.swift in Sources */,
@@ -2228,6 +2235,7 @@
 				382707C125F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
 				49CF65ED25F2D4AB002CD598 /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D329AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
+				1122026A29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */,
 				49CF65EE25F2D4AB002CD598 /* ContainerViewModel.swift in Sources */,
 				49CF65EF25F2D4AB002CD598 /* NetworkModel.swift in Sources */,
 				49CF65F025F2D4AB002CD598 /* LotsModel.swift in Sources */,
@@ -2315,6 +2323,7 @@
 				382707C225F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
 				49CF667025F2D821002CD598 /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D429AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
+				1122026B29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */,
 				49CF667125F2D821002CD598 /* ContainerViewModel.swift in Sources */,
 				49CF667225F2D821002CD598 /* NetworkModel.swift in Sources */,
 				49CF667325F2D821002CD598 /* LotsModel.swift in Sources */,
@@ -2402,6 +2411,7 @@
 				382707C025F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
 				7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D229AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
+				1122026929AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */,
 				381B3BD525E0316B0077F764 /* ContainerViewModel.swift in Sources */,
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
 				7C9118FF24EF1CF200E2571A /* LotsModel.swift in Sources */,

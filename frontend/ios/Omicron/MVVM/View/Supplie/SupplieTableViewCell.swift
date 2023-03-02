@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SupplieTableViewCell: UITableViewCell {
+class SupplieTableViewCell: UITableViewCell  {
 
     @IBOutlet weak var idLabel: UILabel!
     @IBOutlet weak var codeLabel: UILabel!
@@ -18,16 +18,26 @@ class SupplieTableViewCell: UITableViewCell {
     @IBOutlet weak var unityLabel: UILabel!
     var index = 0
     var supplie: ComponentO = ComponentO()
+    var textColor: UIColor = .black
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        quantityTextField.delegate = self
         // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+        let textColor = selected ? .white : self.textColor
+        self.updateTextColor(color: textColor)
+    }
 
-        // Configure the view for the selected state
+    func updateTextColor(color: UIColor) {
+        idLabel.textColor = color
+        codeLabel.textColor = color
+        descriptionLabel.textColor = color
+        storeDestinationLabel.textColor = color
+        unityLabel.textColor = color
     }
 
 }
