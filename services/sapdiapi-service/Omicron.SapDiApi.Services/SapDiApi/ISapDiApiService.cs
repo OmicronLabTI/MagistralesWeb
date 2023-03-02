@@ -74,6 +74,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         Task<ResultModel> UpdateTracking(SendPackageModel sendPackage);
 
         /// <summary>
+        /// The method for transfer request.
+        /// </summary>
+        /// <param name="transferRequestHeader">the transfer Request.</param>
+        /// <returns>the result.</returns>
+        ResultModel CreateTransferRequest(List<TransferRequestHeaderModel> transferRequestHeader);
+
+        /// <summary>
         /// Connects to SAP.
         /// </summary>
         /// <returns>the connection.</returns>
