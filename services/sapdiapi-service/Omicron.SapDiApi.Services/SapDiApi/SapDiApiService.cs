@@ -579,6 +579,54 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
         }
+        /// <inheritdoc/>
+        public ResultModel CreateTransferRequest(List<TransferRequestHeaderModel> transferRequestHeader)
+        {
+            _loggerProxy.Info($"The next transfer requests will be created: {JsonConvert.SerializeObject(transferRequestHeader)}");
+            var result = new List<TransferRequestResult>();
+            foreach (var transferRequest in transferRequestHeader)
+            {
+                try
+                {
+                    var sapTransferRequest = (StockTransfer)company.GetBusinessObject(BoObjectTypes.oInventoryTransferRequest);
+                    sapTransferRequest.JournalMemo = transferRequest.UserInfo;
+                    sapTransferRequest.DocDate = DateTime.Now;
+
+                    for (var i = 0; i < transferRequest.TransferRequestDetail.Count; i++)
+                    {
+                        sapTransferRequest.Lines.SetCurrentLine(i);
+                        sapTransferRequest.Lines.ItemCode = transferRequest.TransferRequestDetail[i].ItemCode;
+                        sapTransferRequest.Lines.Quantity = transferRequest.TransferRequestDetail[i].Quantity;
+                        sapTransferRequest.Lines.FromWarehouseCode = transferRequest.TransferRequestDetail[i].SourceWarehosue;
+                        sapTransferRequest.Lines.WarehouseCode = transferRequest.TransferRequestDetail[i].TargetWarehosue;
+                        sapTransferRequest.Lines.Add();
+                    }
+
+                    var resultAdd = sapTransferRequest.Add();
+
+                    if (resultAdd != 0)
+                    {
+                        company.GetLastError(out int errorCode, out string errMsg);
+                        _loggerProxy.Info($"The transer request was tried to be created: {errorCode} - {errMsg} - {JsonConvert.SerializeObject(transferRequest)}");
+                        result.Add(new TransferRequestResult { UserInfo = transferRequest.UserInfo, Error = string.Format("{0}-{1}-{2}", ServiceConstants.ErrorTransferRequest, errorCode.ToString(), errMsg) });
+
+                    }
+
+                    company.GetNewObjectCode(out var transferRequestId);
+                    _loggerProxy.Info($"The transfer request {transferRequestId} was created {JsonConvert.SerializeObject(transferRequest)}");
+                    result.Add(new TransferRequestResult { UserInfo = transferRequest.UserInfo, TransferRequestId = int.Parse(transferRequestId) });
+
+                }
+                catch (Exception ex)
+                {
+                    _loggerProxy.Info($"There was an error while creating the transfer request {ex.Message} - {ex.StackTrace} - {JsonConvert.SerializeObject(transferRequest)}");
+                    result.Add(new TransferRequestResult { UserInfo = transferRequest.UserInfo, Error = string.Format("{0}-{1}-{2}", ServiceConstants.ErrorTransferRequest, ex.Message, ex.StackTrace) });
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, result, null);
+        }
+
 
         /// <summary>
         /// sets the data to update.

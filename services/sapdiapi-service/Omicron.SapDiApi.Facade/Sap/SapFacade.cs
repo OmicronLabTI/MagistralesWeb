@@ -199,5 +199,10 @@ namespace Omicron.SapDiApi.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.advisorProfileService.UpdateAdvisorProfileInfo(this.mapper.Map<AdvisorProfileModel>(profileDto)));
         }
+
+        public ResultDto CreateTransferRequest(List<TransferRequestHeaderDto> transferRequestHeader)
+        {
+            return this.mapper.Map<ResultDto>(this.sapDiApiService.CreateTransferRequest(this.mapper.Map<List<TransferRequestHeaderModel>>(transferRequestHeader)));
+        }
     }
 }

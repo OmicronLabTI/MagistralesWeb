@@ -311,6 +311,13 @@
             <param name="profileDto">Advisor profile info.</param>
             <returns>Operation result.</returns>
         </member>
+        <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.CreateTransferRequest(System.Collections.Generic.List{Omicron.SapDiApi.Dtos.Models.TransferRequestHeaderDto})">
+            <summary>
+            Transfer Request.
+            </summary>
+            <param name="transferRequestHeader">Transfer Request.</param>
+            <returns>Operation result.</returns>
+        </member>
         <member name="M:Omicron.SapDiApi.Api.Controllers.SapDiApiController.GetConnection">
             <summary>
             the ping pong.
