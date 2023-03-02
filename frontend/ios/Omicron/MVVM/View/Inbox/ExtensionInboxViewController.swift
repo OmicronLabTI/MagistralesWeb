@@ -23,7 +23,7 @@ extension InboxViewController {
         inboxViewModel.normalViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
             self.normalViewButton.isEnabled = isEnabled
-            self.heigthCollectionViewConstraint.constant = isEnabled ? 8 : -60
+            self.heigthCollectionViewConstraint.constant = 8
             self.showMoreIndicators()
             self.goToTop()
         }).disposed(by: self.disposeBag)
