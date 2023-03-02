@@ -21,16 +21,26 @@ class SupplieViewModel {
     var selectedComponentsToDelete: [String] = []
     let selectedButtonIsEnable = PublishSubject<Bool>()
     let deleteComponents = PublishSubject<Void>()
-    let showSuccessAlert = PublishSubject<String>()
-
+    var showSuccessAlert: PublishSubject<(title: String, msg: String, autoDismiss: Bool)> =
+    PublishSubject<(title: String, msg: String, autoDismiss: Bool)>()
     init() {
         bindProperties()
     }
     func bindProperties() {
         self.addComponent.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] supplie in
             guard let self = self else { return }
+            let exists = self.supplieList.firstIndex(where: { $0.productId == supplie.productId })
+            if exists != nil {
+                self.showSuccessAlert.onNext((
+                    title: "Error",
+                    msg: "El componente \(supplie.productId) ya existe para esta solicitud",
+                    autoDismiss: true))
+                return
+            }
             self.supplieList.insert(supplie, at: 0)
             self.componentsList.onNext(self.supplieList)
+            self.selectedComponentsToDelete = []
+            self.selectedButtonIsEnable.onNext(self.selectedComponentsToDelete.count > 0)
         }).disposed(by: disposeBag)
         self.deleteComponents.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
@@ -47,7 +57,9 @@ class SupplieViewModel {
         componentsList.onNext(self.supplieList)
         selectedComponentsToDelete = []
         self.selectedButtonIsEnable.onNext(selectedComponentsToDelete.count > 0)
-        self.showSuccessAlert.onNext("Los componentes se han eliminado correctamente")
+        self.showSuccessAlert.onNext((title: "Error",
+                                      msg: "Los componentes se han eliminado correctamente",
+                                      autoDismiss: false))
     }
     func validateItemsToDelete(itemCode: String) {
         let existIndex = selectedComponentsToDelete.firstIndex(where: { $0 == itemCode })

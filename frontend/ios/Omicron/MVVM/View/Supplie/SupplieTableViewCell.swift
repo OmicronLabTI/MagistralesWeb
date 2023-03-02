@@ -8,8 +8,7 @@
 
 import UIKit
 
-class SupplieTableViewCell: UITableViewCell  {
-
+class SupplieTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var idLabel: UILabel!
     @IBOutlet weak var codeLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!

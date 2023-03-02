@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-extension SupplieViewController: UITableViewDelegate, UITableViewDataSource {
+extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UITextViewDelegate {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return supplieList.count
@@ -56,6 +56,9 @@ extension SupplieViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.backgroundColor = .white
         }
+    }
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        return textView.text.count + text.count - range.length <= 500
     }
 
 }
