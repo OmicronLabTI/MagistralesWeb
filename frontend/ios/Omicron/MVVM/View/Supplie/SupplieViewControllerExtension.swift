@@ -49,7 +49,7 @@ extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UIT
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let customView = UIView()
-        customView.backgroundColor = OmicronColors.blue
+        customView.backgroundColor = OmicronColors.processStatus
         cell.selectedBackgroundView = customView
         if indexPath.row%2 == 0 {
             cell.backgroundColor = OmicronColors.tableColorRow

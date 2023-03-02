@@ -109,8 +109,7 @@ class ComponentsViewController: UIViewController {
         self.tagsView.delegate = self
         self.tagsView.tagBackgroundColor = OmicronColors.blue
         self.tagsView.bounds = self.tagsView.bounds.inset(by: UIEdgeInsets(top: 0, left: -10, bottom: 0, right: 20))
-        self.mostCommontTableView.isHidden = self.typeOpen != .detailOrder
-        self.heightMostCommonTableConstraint.constant = self.typeOpen == .detailOrder ? 200 : 0
+        self.heightMostCommonTableConstraint.constant = 200
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: CommonStrings.cancel, style: .plain, target: self,
             action: #selector(ComponentsViewController.cancelButtonTap(sender:)))
