@@ -218,6 +218,8 @@ struct StatusNameConstants {
     static let package = "Envasar"
     static let deleteMultiComponents = "Eliminar componente"
     static let sendToStore = "Enviar a almacén"
+    static let getSupplies = "Solicitar insumos"
+    static let createBulk = "Crear granel"
 }
 struct ImageButtonNames {
     static let assigned = "showAssignedDetailButton.png"

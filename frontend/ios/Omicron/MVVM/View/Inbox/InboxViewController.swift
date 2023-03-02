@@ -64,6 +64,7 @@ class InboxViewController: UIViewController {
         lpgr.delaysTouchesBegan = true
         self.collectionView.addGestureRecognizer(lpgr)
         removeOrdersSelectedView.layer.cornerRadius = removeOrdersSelectedView.frame.width / 2
+        removeOrdersSelectedView.layer.zPosition = 1
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -273,7 +274,7 @@ class InboxViewController: UIViewController {
         layout.itemSize = CGSize(width: 700, height: size)
         layout.minimumLineSpacing = 16
         collectionView.setCollectionViewLayout(layout, animated: true)
-        //heigthCollectionViewConstraint.constant = -60
+        heigthCollectionViewConstraint.constant = 8
         inboxViewModel.resetData.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] in
             guard let self = self else { return }
             self.indexPathsSelected.removeAll()
