@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Resolver
 
 class SupplieTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var idLabel: UILabel!
@@ -15,13 +16,15 @@ class SupplieTableViewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var quantityTextField: UITextField!
     @IBOutlet weak var storeDestinationLabel: UILabel!
     @IBOutlet weak var unityLabel: UILabel!
+    @Injected var supplieViewModel: SupplieViewModel
     var index = 0
-    var supplie: ComponentO = ComponentO()
+    var supplie: Supplie = Supplie()
     var textColor: UIColor = .black
 
     override func awakeFromNib() {
         super.awakeFromNib()
         quantityTextField.delegate = self
+        quantityTextField.keyboardType = .decimalPad
         // Initialization code
     }
 
