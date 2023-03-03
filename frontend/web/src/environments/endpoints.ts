@@ -74,7 +74,8 @@ export const Endpoints = {
     graphWarehouse: `${environment.baseUrl}/api/almacen/graphs`,
     incidentsList: `${environment.baseUrl}/api/almacen/incidents`,
     changeStatus: `${environment.baseUrl}/api/almacen/incidents`
-  }
+  },
+  destination: `${environment.baseUrl}/api/catalogos/params/contains/field?DestinationWarehouse=DestinationWarehouse`
 };
 export const TokenExcludedEndpoints = [
   '/api/oauth/oauthrs',

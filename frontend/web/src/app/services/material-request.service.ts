@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
-import {IMaterialPostRes, IMaterialRequestRes, RawRequestPost} from '../model/http/materialReques';
+import {DestinationStoreResponse, IMaterialPostRes, IMaterialRequestRes, RawRequestPost} from '../model/http/materialReques';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,5 +16,8 @@ export class MaterialRequestService {
   }
   postMaterialRequest(materialRequest: RawRequestPost) {
     return this.consumeService.httpPost<IMaterialPostRes>(Endpoints.materialRequest.postMaterialRequest, materialRequest);
+  }
+  getDestinationStore(): Observable<DestinationStoreResponse> {
+    return this.consumeService.httpGet<DestinationStoreResponse>(Endpoints.destination);
   }
 }
