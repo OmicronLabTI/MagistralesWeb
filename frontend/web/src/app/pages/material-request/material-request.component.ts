@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-import { IMaterialRequestRes, MaterialComponent, RawRequest, RawRequestPost } from '../../model/http/materialReques';
+import { DestinationStore, IMaterialRequestRes, MaterialComponent, RawRequest, RawRequestPost } from '../../model/http/materialReques';
 import { MaterialRequestService } from '../../services/material-request.service';
 import {
   ClassNames,
@@ -31,7 +31,7 @@ import { MessagesService } from 'src/app/services/messages.service';
 export class MaterialRequestComponent implements OnInit, OnDestroy {
   dataToRequest = {};
   displayedColumns: string[] = [
-    'check', 'code', 'component', 'requestQuantity', 'unit'
+    'check', 'code', 'component', 'requestQuantity', 'destinationStore', 'unit'
   ];
   dataSource = new MatTableDataSource<MaterialComponent>();
   comments = CONST_STRING.empty;
@@ -43,6 +43,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   isThereToDelete = false;
   isToDownload = false;
   isFreeRequest = false;
+  listStore: DestinationStore[] = [];
   constructor(
     private materialReService: MaterialRequestService,
     private errorService: ErrorService,
@@ -61,13 +62,15 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.dataToRequest = params.get('requests');
       this.isOrder = Number(params.get('isOrder')) === CONST_NUMBER.one;
       this.isFreeRequest = Number(this.dataToRequest) === CONST_NUMBER.zero;
-
+      this.getDestination();
       this.validateRequest();
     });
     this.subscription.add(this.observableService.getNewMaterialComponent().subscribe(resultNewMaterialComponent => {
       this.dataSource.data = [...this.dataSource.data, {
         ...resultNewMaterialComponent,
-        id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one
+        id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one,
+        warehouse: CONST_STRING.empty,
+        isLabel: resultNewMaterialComponent.isLabel
       }];
       this.checkIsCorrectData();
       this.checkToDownload();
@@ -77,6 +80,12 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.oldData.signature = newDataSignature;
       this.checkIsCorrectData();
     }));
+  }
+
+  getDestination(): void {
+    this.materialReService.getDestinationStore().subscribe((res) => {
+      this.listStore = res.response;
+    }, error => this.errorService.httpError(error));
   }
   getPreMaterialRequestH(): void {
     let titleStatusOrders = CONST_STRING.empty;
@@ -187,11 +196,14 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   checkIsCorrectData(): void {
-    this.isCorrectData = this.isCorrectData = this.dataSource.data.filter(order => order.productId === CONST_STRING.empty
+    this.isCorrectData = this.dataSource.data.filter(order => order.productId === CONST_STRING.empty
       || order.requestQuantity === null || order.description === CONST_STRING.empty
-      || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature;
+      || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature && this.getValidateAllHasDestination();
   }
 
+  getValidateAllHasDestination(): boolean {
+    return this.dataSource.data.every((item) => item.warehouse !== CONST_STRING.empty);
+  }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
