@@ -9,6 +9,7 @@
 namespace Omicron.LeadToCash.Resources.Exceptions
 {
     using System;
+    using System.Net;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -39,6 +40,16 @@ namespace Omicron.LeadToCash.Resources.Exceptions
         /// <param name="innerException">Inner Exception.</param>
         public CustomServiceException(string message, Exception innerException)
             : base(message, innerException)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomServiceException"/> class.
+        /// </summary>
+        /// <param name="message">the message.</param>
+        /// <param name="status">the statucs code.</param>
+        public CustomServiceException(string message, HttpStatusCode status)
+            : base(message)
         {
         }
     }
