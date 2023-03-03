@@ -50,6 +50,9 @@ class RootViewController: UIViewController {
         super.viewWillAppear(true)
         self.rootViewModel.getOrders()
     }
+    @IBAction func createSupplieDidPressed(_ sender: Any) {
+        inboxViewModel.goToSupplies()
+    }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.searchOrdesSearchBar.text = String()
@@ -209,7 +212,19 @@ class RootViewController: UIViewController {
                 textToBold: "Versión: ")
         self.versionLabel.textColor = OmicronColors.blue
         self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
+        UtilsManager.shared.setStyleButtonStatus(button: self.createSupplies,
+                                                 title: StatusNameConstants.getSupplies,
+                                                 color: OmicronColors.primaryBlue,
+                                                 titleColor: OmicronColors.primaryBlue)
+        UtilsManager.shared.setStyleButtonStatus(button: self.createBulk,
+                                                 title: StatusNameConstants.createBulk,
+                                                 color: OmicronColors.primaryBlue,
+                                                 backgroudColor: OmicronColors.primaryBlue,
+                                                 titleColor: .white)
+        self.createBulk.isHidden = rootViewModel.userType != .qfb
+        self.createSupplies.isHidden = rootViewModel.userType != .qfb
     }
+
     private func getUserInfo() -> String {
         guard let userInfo =  Persistence.shared.getUserData() else { return "" }
         return "\(userInfo.firstName!) \(userInfo.lastName!)"
