@@ -31,6 +31,7 @@
 		11ACB7D829AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */; };
 		11ACB7D929AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */; };
 		11ACB7DA29AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */; };
+		11E7879C29B65AC100B888C6 /* SuppliesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E7879B29B65AC100B888C6 /* SuppliesTest.swift */; };
 		1E07D8CE251A5C5400DF2979 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8CD251A5C5400DF2979 /* Extensions.swift */; };
 		1E07D8D2251AA0C900DF2979 /* KPITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */; };
 		1E1C019E250EA43800CA6263 /* HeaderCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C019D250EA43800CA6263 /* HeaderCollectionViewCell.xib */; };
@@ -526,6 +527,7 @@
 		115FD8C929B2791200762C3E /* createSupplie.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = createSupplie.json; sourceTree = "<group>"; };
 		11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewControllerExtension.swift; sourceTree = "<group>"; };
 		11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCell.swift; sourceTree = "<group>"; };
+		11E7879B29B65AC100B888C6 /* SuppliesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuppliesTest.swift; sourceTree = "<group>"; };
 		1321C32813E9F154A27FD4BA /* Pods-OmicronTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OmicronTests.debug.xcconfig"; path = "Target Support Files/Pods-OmicronTests/Pods-OmicronTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1E07D8CD251A5C5400DF2979 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KPITableViewCell.swift; sourceTree = "<group>"; };
@@ -770,6 +772,14 @@
 				1142E19529AE626C008651D1 /* SupplieViewModel.swift */,
 			);
 			path = Supplie;
+			sourceTree = "<group>";
+		};
+		11E7879A29B65A9000B888C6 /* Supplies */ = {
+			isa = PBXGroup;
+			children = (
+				11E7879B29B65AC100B888C6 /* SuppliesTest.swift */,
+			);
+			path = Supplies;
 			sourceTree = "<group>";
 		};
 		1EF03223251938970040DC65 /* Chart */ = {
@@ -1213,6 +1223,7 @@
 		98015CC524AFBC6D00E7772F /* OmicronTests */ = {
 			isa = PBXGroup;
 			children = (
+				11E7879A29B65A9000B888C6 /* Supplies */,
 				4993351127F25DBD00CEBDC2 /* Batches */,
 				4993351027F25D9700CEBDC2 /* Inbox */,
 				4993350B27F22FDA00CEBDC2 /* Components */,
@@ -2450,6 +2461,7 @@
 				4993350F27F234CE00CEBDC2 /* OrderDetailTestExtension.swift in Sources */,
 				1E72B27C251B9C20009F56FC /* SignaturePadTest.swift in Sources */,
 				7C75C32E24DC6B4900CBA3C3 /* InboxTest.swift in Sources */,
+				11E7879C29B65AC100B888C6 /* SuppliesTest.swift in Sources */,
 				98015CC724AFBC6D00E7772F /* LoginTest.swift in Sources */,
 				1E72B278251B9BEC009F56FC /* ChartTest.swift in Sources */,
 				7C56BDFC24EDD6720039B2E7 /* UtilsTest.swift in Sources */,

@@ -50,6 +50,7 @@ class SupplieViewModel {
             self.selectedButtonIsEnable.onNext(self.selectedComponentsToDelete.count > 0)
             self.validateSendToStoreIsEnabled()
         }).disposed(by: disposeBag)
+
         self.deleteComponents.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.deleteSelectedComponents()
@@ -104,7 +105,7 @@ class SupplieViewModel {
         }
     }
     func generateErrorMessage(errors: [ProductionOrder?]) -> String {
-        return errors.reduce(String(), { result, error in
+        return errors.reduce(String(), { _, error in
             let id = error?.productionOrderId ?? 0
             return "Ya se ha generado una solicitud para la orden \(id) \n"
         })
