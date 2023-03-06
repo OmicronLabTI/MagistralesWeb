@@ -245,8 +245,12 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
   downloadPreview(): void {
     this.setModelData();
-    this.fileDownloaderServie.downloadFile(
-      this.reportingService.downloadPreviewRawMaterialRequest(this.oldData), FileTypeContentEnum.PDF, this.getFileNamePreview());
+    this.reportingService.downloadPreviewMaterial(this.oldData).subscribe((res) => {
+      const listOfBlobs = res.response;
+      listOfBlobs.forEach((blob) => {
+        this.fileDownloaderServie.downloadFileResult(blob, FileTypeContentEnum.PDF, this.getFileNamePreview());
+      });
+    });
   }
 
   private setModelData(): void {
@@ -263,7 +267,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       `Solicitud_MP_${this.getStringNumberTwoDigits(date.getDate())}-
       ${this.getStringNumberTwoDigits(date.getMonth() + 1)}-
       ${date.getFullYear()}_${date.getHours()}_
-      ${date.getMinutes()}_PREVIEW.pdf`;
+      ${date.getTime()}_PREVIEW.pdf`;
     return fileName;
   }
 
