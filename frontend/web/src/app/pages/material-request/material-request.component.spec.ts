@@ -41,7 +41,7 @@ describe('MaterialRequestComponent', () => {
 
   const getPreMaterialRequestMock = MaterialRequestMock;
   const postMaterialRequestMock = MaterialPostResMock;
-  const blobResponse = new HttpResponse<Blob>();
+  const blobResponse = new Blob();
   const locationStub = {
     back: jasmine.createSpy('back')
   };
@@ -110,16 +110,18 @@ describe('MaterialRequestComponent', () => {
     localStorageServiceSpy.getUserId.and.returnValue('35642b3a-9471-4b89-9862-8bee6d98c361');
     // -------------------- FileDownloaderService
     fileDownloaderServiceSpy = jasmine.createSpyObj<FileDownloaderService>
-      ('FileDownloaderService', ['downloadFile']);
+      ('FileDownloaderService', ['downloadFileResult']);
 
     //  -------------------- ReportingService
     reportingServiceSpy = jasmine.createSpyObj<ReportingService>
       ('ReportingService',
         [
-          'downloadPreviewRawMaterialRequest'
+          'downloadPreviewMaterial'
         ]
       );
-    reportingServiceSpy.downloadPreviewRawMaterialRequest.and.returnValue(of(blobResponse));
+    reportingServiceSpy.downloadPreviewMaterial.and.returnValue(of({
+      response: [blobResponse]
+    }));
 
     // -------------------- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
@@ -253,7 +255,10 @@ describe('MaterialRequestComponent', () => {
     expect(dataServiceSpy.setIsToSaveAnything).toHaveBeenCalled();
   });
   it('should download Preview', () => {
+    reportingServiceSpy.downloadPreviewMaterial.and.returnValue(of({
+      response: [blobResponse]
+    }));
     component.downloadPreview();
-    expect(fileDownloaderServiceSpy.downloadFile).toHaveBeenCalled();
+    expect(fileDownloaderServiceSpy.downloadFileResult).toHaveBeenCalled();
   });
 });
