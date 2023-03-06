@@ -1341,6 +1341,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     Warehouse = warehouse,
                     Stock = p.OnHand,
                     WarehouseQuantity = datoToAssign.OnHand,
+                    IsLabel = !string.IsNullOrEmpty(p.IsLabel) && p.IsLabel.ToUpper() == "Y",
                 });
             });
 
@@ -1479,20 +1480,20 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         private IQueryable<CompleteOrderModelWrap> GetCompleteOrderyJoinDoctorQueryWrap()
         {
             return (from order in this.databaseContext.OrderModel
-                        join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                        into DetalleOrden
-                        from dp in DetalleOrden.DefaultIfEmpty()
-                        join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
-                        join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
-                        join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                        where producto.IsMagistral == "Y"
-                        select new CompleteOrderModelWrap
-                        {
-                            OrderModel = order,
-                            ClientCatalogModel = doctor,
-                            AsesorModel = asesor,
-                            DetallePedidoModel = dp,
-                        }).AsNoTracking();
+                    join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
+                    into DetalleOrden
+                    from dp in DetalleOrden.DefaultIfEmpty()
+                    join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
+                    join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                    join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
+                    where producto.IsMagistral == "Y"
+                    select new CompleteOrderModelWrap
+                    {
+                        OrderModel = order,
+                        ClientCatalogModel = doctor,
+                        AsesorModel = asesor,
+                        DetallePedidoModel = dp,
+                    }).AsNoTracking();
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Omicron.Warehouses.Services.Clients
                     var resultModel = await this.PostAsync(request, EndPointConstants.SubmitRawMaterialRequest);
                     result = bool.Parse(resultModel.Response.ToString());
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     result = false;
                 }
