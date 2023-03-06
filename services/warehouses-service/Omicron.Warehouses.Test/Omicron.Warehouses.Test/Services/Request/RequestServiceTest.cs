@@ -138,6 +138,7 @@ namespace Omicron.Warehouses.Test.Services.Request
         {
             // arrange
             var request = AutoFixtureProvider.Create<RawMaterialRequestModel>();
+            request.Id = 101;
             request.ProductionOrderIds = new List<int> { 2 };
             request.OrderedProducts = AutoFixtureProvider.CreateList<RawMaterialRequestDetailModel>(3);
 
