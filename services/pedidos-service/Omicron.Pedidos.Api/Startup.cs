@@ -28,6 +28,7 @@ namespace Omicron.Pedidos.Api
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.User;
     using Prometheus;
+    using Serilog;
     using StackExchange.Redis;
 
     /// <summary>
