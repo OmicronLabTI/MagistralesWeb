@@ -22,7 +22,7 @@ extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UIT
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ViewControllerIdentifiers.supplieTableViewCell,
             for: indexPath) as? SupplieTableViewCell
         else { return SupplieTableViewCell() }
-        let supplie: ComponentO = supplieList[indexPath.row]
+        let supplie: Supplie = supplieList[indexPath.row]
         supplieList = []
         cell.idLabel?.text = String(indexPath.row)
         cell.codeLabel?.text = supplie.productId
