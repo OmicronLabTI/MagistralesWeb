@@ -28,6 +28,7 @@ class SupplieViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        resetInfo()
         setupUI()
         bindTableData()
         bindDeleteButton()
@@ -59,6 +60,14 @@ class SupplieViewController: UIViewController {
                                                                 style: .plain,
                                                                 target: self,
                                                                 action: #selector(backBtnAction(_:)))
+    }
+    func resetInfo() {
+        observationsField.text = String()
+        supplieList = []
+        supplieViewModel.supplieList = []
+        supplieViewModel.selectedComponentsToDelete = []
+        tableComponents.dataSource = [] as? any UITableViewDataSource
+        tableComponents.reloadData()
     }
     @IBAction func showComponents(_ sender: Any) {
         changeView(false)
@@ -102,12 +111,7 @@ class SupplieViewController: UIViewController {
                                       view: self)
     }
     func resetValues() {
-        observationsField.text = String()
-        supplieList = []
-        supplieViewModel.supplieList = []
-        supplieViewModel.selectedComponentsToDelete = []
-        tableComponents.dataSource = [] as? any UITableViewDataSource
-        tableComponents.reloadData()
+        resetInfo()
         returnBack()
     }
     override func viewDidAppear(_ animated: Bool) {

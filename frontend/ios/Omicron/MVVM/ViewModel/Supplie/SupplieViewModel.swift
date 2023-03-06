@@ -15,8 +15,8 @@ class SupplieViewModel {
     var disposeBag: DisposeBag = DisposeBag()
     var supplieList: [Supplie] = []
     @Injected var networkManager: NetworkManager
-    var componentsList = BehaviorSubject<[Supplie]>(value: [])
-    var componentsListToDelete = BehaviorSubject<[String]>(value: [])
+    var componentsList = PublishSubject<[Supplie]>()
+    var componentsListToDelete = PublishSubject<[String]>()
     let addComponent = PublishSubject<ComponentO>()
     var selectedComponentsToDelete: [String] = []
     let selectedButtonIsEnable = PublishSubject<Bool>()
