@@ -104,6 +104,8 @@
     <Compile Include="Models\ResultDto.cs" />
     <Compile Include="Models\CreateIsolatedFabOrderDto.cs" />
     <Compile Include="Models\SendPackageDto.cs" />
+    <Compile Include="Models\TransferRequestDetailDto.cs" />
+    <Compile Include="Models\TransferRequestHeaderDto.cs" />
     <Compile Include="Models\UpdateFabOrderDto.cs" />
     <Compile Include="Models\UpdateFormulaDto.cs" />
     <Compile Include="Models\CancelOrderDto.cs" />

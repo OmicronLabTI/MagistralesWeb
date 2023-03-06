@@ -21,6 +21,9 @@ class ComponentsViewController: UIViewController {
     @IBOutlet weak var mostCommontTableView: UITableView!
     @IBOutlet weak var heightMostCommonTableConstraint: NSLayoutConstraint!
     @Injected var componentsViewModel: ComponentsViewModel
+    @Injected var supplieViewModel: SupplieViewModel
+
+    var typeOpen = TypeComponentsOpenDialog.detailOrder
     var disposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,16 +56,17 @@ class ComponentsViewController: UIViewController {
                 actions: nil,
                 view: self)
         }).disposed(by: disposeBag)
+        // se refresca la tabla despues del filtrado con chips y la respuesta del servicio
         self.componentsViewModel.dataResults.bind(to: tableView.rx.items(
             cellIdentifier: ViewControllerIdentifiers.componentsTableViewCell,
             cellType: ComponentsTableViewCell.self)) { _, data, cell in
                 cell.productCodeLabel.text = data.productId
                 cell.descriptionLabel.text = data.description?.uppercased()
         }.disposed(by: disposeBag)
+        // se selecciona un elemento de la tabla
         self.tableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
-            self?.componentsViewModel.selectedComponent.onNext(data)
-            let compFormVC = ComponentFormViewController()
-            self?.navigationController?.pushViewController(compFormVC, animated: true)
+            self!.continueItemSelected(data)
+
         }).disposed(by: disposeBag)
         self.componentsViewModel.loading.subscribe(onNext: {loading in
             if loading {
@@ -71,6 +75,21 @@ class ComponentsViewController: UIViewController {
             }
             LottieManager.shared.hideLoading()
         }).disposed(by: disposeBag)
+    }
+    func continueItemSelected(_ data: ComponentO) {
+        switch typeOpen {
+        case .detailOrder: createFormView(data: data)
+        case .supplies: closeSelection(data: data)
+        }
+    }
+    func createFormView(data: ComponentO) {
+        self.componentsViewModel.selectedComponent.onNext(data)
+        let compFormVC = ComponentFormViewController()
+        self.navigationController?.pushViewController(compFormVC, animated: true)
+    }
+    func closeSelection(data: ComponentO) {
+        self.dismiss(animated: false, completion: nil)
+        supplieViewModel.addComponent.onNext(data)
     }
     func viewModelBinding2() {
         self.componentsViewModel.dataResults.map({ data -> Bool in
@@ -81,6 +100,7 @@ class ComponentsViewController: UIViewController {
         }).asDriver(onErrorJustReturn: true).drive(noResultsLabel.rx.isHidden).disposed(by: disposeBag)
     }
     func initComponents() {
+        self.componentsViewModel.typeOpen = self.typeOpen
         self.title = CommonStrings.addComponentTitle
         self.isModalInPresentation = true
         self.tableView.delegate = self
@@ -89,6 +109,7 @@ class ComponentsViewController: UIViewController {
         self.tagsView.delegate = self
         self.tagsView.tagBackgroundColor = OmicronColors.blue
         self.tagsView.bounds = self.tagsView.bounds.inset(by: UIEdgeInsets(top: 0, left: -10, bottom: 0, right: 20))
+        self.heightMostCommonTableConstraint.constant = 200
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: CommonStrings.cancel, style: .plain, target: self,
             action: #selector(ComponentsViewController.cancelButtonTap(sender:)))

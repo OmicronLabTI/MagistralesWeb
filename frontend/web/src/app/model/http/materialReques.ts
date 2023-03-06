@@ -1,3 +1,4 @@
+import { CONST_NUMBER, CONST_STRING } from 'src/app/constants/const';
 import {BaseResponseHttp} from './commons';
 
 export class IMaterialRequestRes extends BaseResponseHttp {
@@ -20,7 +21,7 @@ export class RawRequest {
     orderedProducts: MaterialComponent[];
     creationUserId?: any;
     creationDate?: any;
-
+    isLabel?: boolean;
 }
 export class MaterialComponent {
     id: number;
@@ -31,6 +32,8 @@ export class MaterialComponent {
     unit: string;
     isWithError?: boolean;
     isChecked?: boolean;
+    warehouse?: string;
+    isLabel?: boolean;
 }
 
 export class RawRequestPost {
@@ -41,4 +44,21 @@ export class RawRequestPost {
 export class RawRequestError {
     productionOrderId: number;
     reason: string;
+}
+
+export interface DestinationStoreResponse extends BaseResponseHttp {
+    response: DestinationStore[];
+}
+
+export class DestinationStore {
+    id: number;
+    value: string;
+    type: string;
+    field: string;
+    constructor() {
+        this.id = CONST_NUMBER.zero;
+        this.value = CONST_STRING.empty;
+        this.type = CONST_STRING.empty;
+        this.field = CONST_STRING.empty;
+    }
 }

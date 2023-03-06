@@ -24,5 +24,11 @@ namespace Omicron.Pedidos.Dtos.Models
         /// </summary>
         /// <value>The product code.</value>
         public string ProductCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is from qfb profile.
+        /// </summary>
+        /// <value>Is from qfb profile.</value>
+        public bool IsFromQfbProfile { get; set; }
     }
 }

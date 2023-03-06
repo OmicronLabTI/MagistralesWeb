@@ -1074,13 +1074,14 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// List of thw status for the orders.
         /// </value>
-        public static List<string> ListStatusOrdenesForQfbCount { get; } = new List<string>
-        {
-            Asignado,
-            Proceso,
-            Pendiente,
-            Reasignado,
-        };
+        public static List<string> ListStatusOrdenesForQfbCount
+            => new List<string>
+            {
+                Asignado,
+                Proceso,
+                Pendiente,
+                Reasignado,
+            };
 
         /// <summary>
         /// Gets the clasification user DZ.
@@ -1096,6 +1097,19 @@ namespace Omicron.Pedidos.Services.Constants
         /// <value>
         /// String ErrorUsersDZAutomatico.
         /// </value>
-        public static string ErrorUsersDZAutomatico => "No hay químico asignado para atender los productos Dermazone, favor de configurar un usuario o asignarlos manualmente";
+        public static string ErrorUsersDZAutomatico
+            => "No hay químico asignado para atender los productos Dermazone, favor de configurar un usuario o asignarlos manualmente";
+
+        /// <summary>
+        /// Gets list of signatures to assign products DZ in lowercase.
+        /// </summary>
+        /// <value>
+        /// String SignaturesToAssignProductsDZ.
+        /// </value>
+        public static List<string> SignaturesToAssignProductsDZ
+            => new List<string>
+            {
+                "dermazone",
+            };
     }
 }

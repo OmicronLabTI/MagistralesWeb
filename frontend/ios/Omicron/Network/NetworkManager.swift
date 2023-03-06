@@ -192,6 +192,12 @@ class NetworkManager: SessionProtocol {
         let res: Observable<ContainerResponse> = makeRequest(request: req)
         return res
     }
+    
+    func createComponentsOrder(_ data: SendToStoreRequest) -> Observable<CreateComponentsOrderResponse> {
+        let req: ApiService = ApiService.createComponents(data: data)
+        let res: Observable<CreateComponentsOrderResponse> = makeRequest(request: req)
+        return res
+    }
 
     private func makeRequest<T: BaseMappable>(
         request: ApiService, needsVPN: Bool = false) -> Observable<T> {

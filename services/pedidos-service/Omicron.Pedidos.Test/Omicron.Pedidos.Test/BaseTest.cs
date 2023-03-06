@@ -287,6 +287,7 @@ namespace Omicron.Pedidos.Test
                     CreatedDate = DateTime.Now,
                     Label = "Pesonalizada",
                     IsOmigenomics = false,
+                    ProductFirmName = string.Empty,
                 },
             };
 
@@ -341,6 +342,7 @@ namespace Omicron.Pedidos.Test
                     CreatedDate = DateTime.Now,
                     Label = "Pesonalizada",
                     IsOmigenomics = false,
+                    ProductFirmName = string.Empty,
                 });
 
             var listOrders = Enumerable.Range(1, 7)

@@ -290,6 +290,19 @@ namespace Omicron.SapDiApi.Api.Controllers
         }
 
         /// <summary>
+        /// Transfer Request.
+        /// </summary>
+        /// <param name="transferRequestHeader">Transfer Request.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("create/transferrequest")]
+        public IHttpActionResult CreateTransferRequest([FromBody] List<TransferRequestHeaderDto> transferRequestHeader)
+        {
+            var result = this.sapFacade.CreateTransferRequest(transferRequestHeader);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>

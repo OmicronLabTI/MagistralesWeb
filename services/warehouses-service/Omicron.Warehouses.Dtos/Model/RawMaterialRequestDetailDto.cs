@@ -43,5 +43,17 @@ namespace Omicron.Warehouses.Dtos.Model
         /// </summary>
         /// <value>The measurement unit.</value>
         public string Unit { get; set; }
+
+        /// <summary>
+        /// Gets or sets measurement of unit.
+        /// </summary>
+        /// <value>The measurement unit.</value>
+        public string Warehouse { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool IsLabel { get; set; }
     }
 }

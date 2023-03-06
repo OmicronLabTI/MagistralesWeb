@@ -72,6 +72,8 @@ namespace Omicron.SapDiApi.Api.Configuration
                 cfg.CreateMap<ShoppingCartItemDto, ShoppingCartItemModel>();
                 cfg.CreateMap<CreateSaleOrderDto, CreateSaleOrderModel>();
                 cfg.CreateMap<AdvisorProfileDto, AdvisorProfileModel>();
+                cfg.CreateMap<TransferRequestDetailDto, TransferRequestDetailModel>();
+                cfg.CreateMap<TransferRequestHeaderDto, TransferRequestHeaderModel>();
             });
             container.RegisterInstance<IMapper>(mappingConfig.CreateMapper());
 

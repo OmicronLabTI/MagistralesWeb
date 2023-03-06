@@ -277,6 +277,11 @@ namespace Omicron.SapDiApi.Services.Constants
         public const string QueryToGetPrescriptionId = "SELECT AbsEntry, FileName from  atc1 where FileName = '{0}' and FileExt = 'pdf'";
 
         /// <summary>
+        /// error while create transfer request.
+        /// </summary>
+        public const string ErrorTransferRequest = "ErrorTransferRequest";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -28,6 +28,7 @@ class ComponentsViewModel {
     @Injected var inboxViewModel: InboxViewModel
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var networkManager: NetworkManager
+    var typeOpen = TypeComponentsOpenDialog.detailOrder
 
     init() {
         searchDidTapBinding()
@@ -115,12 +116,16 @@ class ComponentsViewModel {
             }).disposed(by: disposeBag)
     }
     func getComponents(chips: [String]) {
-        let catalogGroup = orderDetailViewModel.getCatalogGroup()
+        let catalogGroup = typeOpen == .detailOrder ?
+            orderDetailViewModel.getCatalogGroup() :
+            ""
+        let userId = Persistence.shared.getUserData()?.id ?? ""
         let request = ComponentRequest(
             offset: Constants.Components.offset.rawValue,
             limit: Constants.Components.limit.rawValue,
             chips: chips,
-            catalogGroup: catalogGroup)
+            catalogGroup: catalogGroup,
+            userId: typeOpen != .detailOrder ? userId : "")
         loading.onNext(true)
         self.networkManager.getComponents(request).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }

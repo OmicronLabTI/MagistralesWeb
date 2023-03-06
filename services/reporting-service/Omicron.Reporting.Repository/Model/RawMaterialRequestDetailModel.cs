@@ -51,5 +51,17 @@ namespace Omicron.Reporting.Entities.Model
         /// </summary>
         /// <value>The base quantity.</value>
         public decimal RequestQuantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Warehouse.
+        /// </summary>
+        /// <value>The measurement unit.</value>
+        public string Warehouse { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool IsLabel { get; set; }
     }
 }
