@@ -138,10 +138,10 @@ class SupplieViewModel {
         componentsList.onNext(self.supplieList)
         selectedComponentsToDelete = []
         self.selectedButtonIsEnable.onNext(selectedComponentsToDelete.count > 0)
+        self.validateSendToStoreIsEnabled()
         self.showSuccessAlert.onNext((title: "Eliminados",
                                       msg: "Los componentes se han eliminado correctamente",
                                       autoDismiss: true))
-        self.validateSendToStoreIsEnabled()
     }
     func validateItemsToDelete(itemCode: String) {
         let existIndex = selectedComponentsToDelete.firstIndex(where: { $0 == itemCode })
@@ -162,6 +162,7 @@ class SupplieViewModel {
         validateSendToStoreIsEnabled()
     }
     func validateSendToStoreIsEnabled() {
-        isSendToStoreEnabled.onNext(supplieList.allSatisfy { ($0.requestQuantity ?? 0) > 0 })
+        let allHasQuantity = supplieList.allSatisfy { ($0.requestQuantity ?? 0) > 0 }
+        isSendToStoreEnabled.onNext(allHasQuantity && supplieList.count > 0)
     }
 }
