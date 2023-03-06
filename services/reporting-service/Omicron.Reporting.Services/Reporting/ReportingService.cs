@@ -78,10 +78,12 @@ namespace Omicron.Reporting.Services
             var createdFileNames = new List<string>();
             var fileName = string.Empty;
             var isLabelProducts = false;
+            var allProducts = request.OrderedProducts;
+
             foreach (var category in ServiceConstants.LabelProductCategory)
             {
                 isLabelProducts = category == ServiceConstants.LabelProduct;
-                var products = request.OrderedProducts.Where(op => op.IsLabel == isLabelProducts).ToList();
+                var products = allProducts.Where(op => op.IsLabel == isLabelProducts).ToList();
                 if (products.Any())
                 {
                     request.OrderedProducts = products;
@@ -90,7 +92,7 @@ namespace Omicron.Reporting.Services
                 }
             }
 
-            return new ResultModel { Success = true, Code = 200, Response = mailStatus, Comments = createdFileNames };
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus, Comments = createdFileNames.Where(x => !string.IsNullOrEmpty(x)).ToList() };
         }
 
         /// <inheritdoc/>
@@ -579,6 +581,12 @@ namespace Omicron.Reporting.Services
             return (string.Join(";", mailTo), string.Join(";", copyMails));
         }
 
+        /// <summary>
+        /// Submit Raw Material Request Pdf By Label Product Category.
+        /// </summary>
+        /// <param name="request">request.</param>
+        /// <param name="isLabel">is label.</param>
+        /// <returns>Result.</returns>
         private async Task<(bool, string)> SubmitRawMaterialRequestPdfByLabelProductCategory(RawMaterialRequestModel request, bool isLabel)
         {
             (bool isSuccessful, int transferRequestId) = await this.CreateRawMaterialRequestOnDiApi(request);
@@ -598,6 +606,11 @@ namespace Omicron.Reporting.Services
             return (mailStatus, file.FileName);
         }
 
+        /// <summary>
+        /// Create Raw Material Request On DiApi.
+        /// </summary>
+        /// <param name="request">Request.</param>
+        /// <returns>Result.</returns>
         private async Task<(bool, int)> CreateRawMaterialRequestOnDiApi(RawMaterialRequestModel request)
         {
             var isSuccessful = false;
