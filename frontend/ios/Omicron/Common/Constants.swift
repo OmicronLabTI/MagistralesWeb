@@ -196,6 +196,7 @@ struct CommonStrings {
     static let noChanges = "No se han realizado modificaciones de lotes"
     static let processSuccess = "Proceso realizado correctamente"
     static let confirmExit = "Se perderá la información si sale de la pantalla de solicitud de insumos ¿Desea continuar?"
+    static let errorComponents = "Por el momento no es posible crear la solicitud, por favor intenta más tarde"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"

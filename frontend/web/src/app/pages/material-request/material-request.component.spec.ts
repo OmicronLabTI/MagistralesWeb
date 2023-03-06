@@ -17,7 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatInputModule } from '@angular/material';
+import { MatInputModule, MatSelectModule } from '@angular/material';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
@@ -57,8 +57,33 @@ describe('MaterialRequestComponent', () => {
       ('MaterialRequestService',
         [
           'getPreMaterialRequest',
-          'postMaterialRequest'
+          'postMaterialRequest',
+          'getDestinationStore'
         ]);
+    materialReServiceSpy.getDestinationStore.and.returnValue(
+      of({
+        response: [
+          {
+            id: 50,
+            value: 'MG',
+            type: 'string',
+            field: 'DestinationWarehouse'
+          },
+          {
+            id: 51,
+            value: 'BE',
+            type: 'string',
+            field: 'DestinationWarehouse'
+          },
+          {
+            id: 52,
+            value: 'MN',
+            type: 'string',
+            field: 'DestinationWarehouse'
+          }
+        ]
+      })
+    );
     materialReServiceSpy.getPreMaterialRequest.and.returnValue(of(getPreMaterialRequestMock));
     materialReServiceSpy.postMaterialRequest.and.returnValue(of(postMaterialRequestMock));
 
@@ -68,6 +93,7 @@ describe('MaterialRequestComponent', () => {
       'getUserId',
       'getUserName',
     ]);
+
 
     // ------------------ DataService
     dataServiceSpy = jasmine.createSpyObj<DataService>
@@ -121,6 +147,7 @@ describe('MaterialRequestComponent', () => {
         RouterTestingModule,
         BrowserAnimationsModule,
         MatInputModule,
+        MatSelectModule
       ],
       providers: [
         { provide: MaterialRequestService, useValue: materialReServiceSpy },

@@ -116,7 +116,9 @@ class ComponentsViewModel {
             }).disposed(by: disposeBag)
     }
     func getComponents(chips: [String]) {
-        let catalogGroup = orderDetailViewModel.getCatalogGroup()
+        let catalogGroup = typeOpen == .detailOrder ?
+            orderDetailViewModel.getCatalogGroup() :
+            ""
         let userId = Persistence.shared.getUserData()?.id ?? ""
         let request = ComponentRequest(
             offset: Constants.Components.offset.rawValue,

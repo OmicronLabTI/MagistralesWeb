@@ -19,6 +19,10 @@
 		1142E19729AE626C008651D1 /* SupplieViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1142E19529AE626C008651D1 /* SupplieViewModel.swift */; };
 		1142E19829AE626C008651D1 /* SupplieViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1142E19529AE626C008651D1 /* SupplieViewModel.swift */; };
 		1142E19929AE626C008651D1 /* SupplieViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1142E19529AE626C008651D1 /* SupplieViewModel.swift */; };
+		115FD8CA29B2791200762C3E /* createSupplie.json in Resources */ = {isa = PBXBuildFile; fileRef = 115FD8C929B2791200762C3E /* createSupplie.json */; };
+		115FD8CB29B2791200762C3E /* createSupplie.json in Resources */ = {isa = PBXBuildFile; fileRef = 115FD8C929B2791200762C3E /* createSupplie.json */; };
+		115FD8CC29B2791200762C3E /* createSupplie.json in Resources */ = {isa = PBXBuildFile; fileRef = 115FD8C929B2791200762C3E /* createSupplie.json */; };
+		115FD8CD29B2791200762C3E /* createSupplie.json in Resources */ = {isa = PBXBuildFile; fileRef = 115FD8C929B2791200762C3E /* createSupplie.json */; };
 		11ACB7D229AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
 		11ACB7D329AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
 		11ACB7D429AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
@@ -519,6 +523,7 @@
 		1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCellExtension.swift; sourceTree = "<group>"; };
 		1142E18F29AE623E008651D1 /* SupplieViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewController.swift; sourceTree = "<group>"; };
 		1142E19529AE626C008651D1 /* SupplieViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewModel.swift; sourceTree = "<group>"; };
+		115FD8C929B2791200762C3E /* createSupplie.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = createSupplie.json; sourceTree = "<group>"; };
 		11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewControllerExtension.swift; sourceTree = "<group>"; };
 		11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCell.swift; sourceTree = "<group>"; };
 		1321C32813E9F154A27FD4BA /* Pods-OmicronTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OmicronTests.debug.xcconfig"; path = "Target Support Files/Pods-OmicronTests/Pods-OmicronTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1256,6 +1261,7 @@
 				49C082C325E5C193000ED4FA /* PostOrderPDF.json */,
 				4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */,
 				49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */,
+				115FD8C929B2791200762C3E /* createSupplie.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -1568,6 +1574,7 @@
 				490B69D2268E98ED00DBE9F1 /* login.json in Resources */,
 				490B69D3268E98ED00DBE9F1 /* PostOrderPDF.json in Resources */,
 				490B69D4268E98ED00DBE9F1 /* Main.storyboard in Resources */,
+				115FD8CD29B2791200762C3E /* createSupplie.json in Resources */,
 				490B69D5268E98ED00DBE9F1 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				490B69D6268E98ED00DBE9F1 /* FinishOrdersErrorResponse.json in Resources */,
 				494EA4FA273A67840077BB5B /* GoogleService-Info.plist in Resources */,
@@ -1601,6 +1608,7 @@
 				49CF660D25F2D4AB002CD598 /* orderDetail.json in Resources */,
 				49CF660E25F2D4AB002CD598 /* SendBatchToServerNoEmptyResponse.json in Resources */,
 				49CF660F25F2D4AB002CD598 /* container.json in Resources */,
+				115FD8CB29B2791200762C3E /* createSupplie.json in Resources */,
 				49CF661025F2D4AB002CD598 /* updateOrDeleteItemOfTable.json in Resources */,
 				49CF661125F2D4AB002CD598 /* HeaderCollectionViewCell.xib in Resources */,
 				49CF661225F2D4AB002CD598 /* Status.json in Resources */,
@@ -1647,6 +1655,7 @@
 				49CF669525F2D821002CD598 /* Status.json in Resources */,
 				49CF669625F2D821002CD598 /* login.json in Resources */,
 				49CF669725F2D821002CD598 /* PostOrderPDF.json in Resources */,
+				115FD8CC29B2791200762C3E /* createSupplie.json in Resources */,
 				49CF669825F2D821002CD598 /* Main.storyboard in Resources */,
 				49CF669925F2D821002CD598 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				49CF669A25F2D821002CD598 /* FinishOrdersErrorResponse.json in Resources */,
@@ -1665,6 +1674,7 @@
 				7C55E5C324D4A4A2008F7AED /* SF-Pro-Display-Medium.otf in Resources */,
 				388172AB25D1A5940089B8C8 /* SF-Pro-Display-Semibold.ttf in Resources */,
 				98A0E611271E142A00950AD2 /* Omicron-QA.plist in Resources */,
+				115FD8CA29B2791200762C3E /* createSupplie.json in Resources */,
 				98A0E612271E142A00950AD2 /* Omicron-DEV.plist in Resources */,
 				7C5DFB0C251C1B580041B2AC /* finishedOrderResponse.json in Resources */,
 				1EC2920B254B4C9F002FD4E3 /* connect.json in Resources */,
@@ -2611,7 +2621,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 72;
+				CURRENT_PROJECT_VERSION = 73;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2834,7 +2844,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 72;
+				CURRENT_PROJECT_VERSION = 73;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2860,7 +2870,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 72;
+				CURRENT_PROJECT_VERSION = 73;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3045,7 +3055,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 72;
+				CURRENT_PROJECT_VERSION = 73;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
