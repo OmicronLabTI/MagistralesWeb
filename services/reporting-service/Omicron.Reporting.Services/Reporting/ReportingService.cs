@@ -625,7 +625,7 @@ namespace Omicron.Reporting.Services
                         ItemCode = op.ProductId,
                         Quantity = decimal.ToDouble(op.RequestQuantity),
                         SourceWarehosue = ServiceConstants.WareHouseMp,
-                        TargetWarehosue = op.Warehouse,
+                        TargetWarehosue = CommonCall.CalculateTernary(op.Warehouse == ServiceConstants.WarehouseDz, ServiceConstants.WarehouseMg, op.Warehouse),
                     }).ToList(),
             };
 
