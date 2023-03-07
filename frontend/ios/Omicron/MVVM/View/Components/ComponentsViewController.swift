@@ -66,7 +66,6 @@ class ComponentsViewController: UIViewController {
         // se selecciona un elemento de la tabla
         self.tableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
             self!.continueItemSelected(data)
-
         }).disposed(by: disposeBag)
         self.componentsViewModel.loading.subscribe(onNext: {loading in
             if loading {
@@ -136,9 +135,7 @@ class ComponentsViewController: UIViewController {
 
     private func itemSelectedOfMostCommonComponentsTable() {
         self.mostCommontTableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
-            self?.componentsViewModel.selectedComponent.onNext(data)
-            let compFormVC = ComponentFormViewController()
-            self?.navigationController?.pushViewController(compFormVC, animated: true)
+            self!.continueItemSelected(data)
         }).disposed(by: disposeBag)
     }
 }
