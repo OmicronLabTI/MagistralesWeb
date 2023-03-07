@@ -336,7 +336,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var saleOrders = deliveries.Where(y => y.InvoiceId.HasValue && y.InvoiceId == x.InvoiceId).ToList();
 
                 var doctor = doctorData.FirstOrDefault(y => y.DoctorId == x.CardCode && y.AddressId == x.ShippingAddressName);
-                doctor ??= new DoctorDeliveryAddressModel { Contact = x.Medico, BetweenStreets = string.Empty, EtablishmentName = string.Empty, References = string.Empty };
+                doctor ??= new DoctorDeliveryAddressModel { Contact = x.Medico, BetweenStreets = string.Empty, EtablishmentName = string.Empty, References = string.Empty, AddressType = string.Empty };
 
                 var prescriptionData = doctorPrescription.FirstOrDefault(y => y.CardCode == x.CardCode);
                 prescriptionData ??= new DoctorPrescriptionInfoModel { DoctorName = x.Medico };
@@ -356,6 +356,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.References = doctor.References;
                 x.DeliveryComments = payment.DeliveryComments;
                 x.DeliverySuggestedTime = payment.DeliverySuggestedTime;
+                x.IsDoctorDirection = ServiceUtils.GetAddressType(x.DocNumDxp, payment.IsDoctorDirection == 1, doctor.AddressType);
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoiceHeaderOrdered, null, total);
@@ -636,7 +637,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private List<InvoiceDeliveryModel> GetDeliveryModel(List<CompleteDeliveryDetailModel> delivery, List<CompleteInvoiceDetailModel> invoiceDetails, List<UserOrderModel> userOrderModels, List<LineProductsModel> lineProducts)
         {
-            var listToReturn = delivery.DistinctBy(x => x.DocNum).ToList()
+            var listToReturn = delivery.DistinctBy(x => x.DocNum).AsEnumerable()
                 .Select(y =>
                 {
                     var userOrderStatus = userOrderModels.Where(z => ServiceShared.CalculateAnd(z.DeliveryId == y.DocNum, !string.IsNullOrEmpty(z.Productionorderid))).Select(y => y.StatusAlmacen).ToList();

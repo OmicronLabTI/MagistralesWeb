@@ -16,6 +16,30 @@ namespace Omicron.Pedidos.Entities.Enums
         /// <summary>
         /// Enum for the status.
         /// </summary>
+        public enum StatusTecnic
+        {
+            /// <summary>
+            /// Gets or sets status Asignaodo.
+            /// </summary>
+            /// <value>The code.</value>
+            Asignado = 1,
+
+            /// <summary>
+            /// Gets or sets status pendiente.
+            /// </summary>
+            /// <value>The code.</value>
+            Pendiente = 3,
+
+            /// <summary>
+            /// Gets or sets stauts reasignado.
+            /// </summary>
+            /// <value>The code.</value>
+            Reasignado = 5,
+        }
+
+        /// <summary>
+        /// Enum for the status.
+        /// </summary>
         public enum Status
         {
             /// <summary>

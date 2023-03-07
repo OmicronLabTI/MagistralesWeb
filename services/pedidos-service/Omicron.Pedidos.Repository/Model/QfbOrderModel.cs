@@ -20,5 +20,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public List<QfbOrderDetail> Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether require technical.
+        /// </summary>
+        /// <value>Require Technical.</value>
+        public bool RequireTechnical { get; set; }
     }
 }

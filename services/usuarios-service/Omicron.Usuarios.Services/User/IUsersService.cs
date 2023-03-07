@@ -10,6 +10,7 @@ namespace Omicron.Usuarios.Services.User
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.Usuarios.Dtos.Models;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Model;
 
@@ -53,6 +54,19 @@ namespace Omicron.Usuarios.Services.User
         Task<ResultModel> GetUsers(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Gets all tecnic users.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetUsersTecnic();
+
+        /// <summary>
+        /// Gets relation user info.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultModel> GetRelationalUserInfor(string id);
+
+        /// <summary>
         /// Deletes the user logically.
         /// </summary>
         /// <param name="listIds">the list ids.</param>
@@ -92,5 +106,12 @@ namespace Omicron.Usuarios.Services.User
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultModel> GetActiveQfbWithOrcerCount();
+
+        /// <summary>
+        /// Method to get qfb's info by Id.
+        /// </summary>
+        /// <param name="qfbIds">Qfb ids.</param>
+        /// <returns>User Model.</returns>
+        Task<ResultModel> GetQfbInfoByIds(List<string> qfbIds);
     }
 }

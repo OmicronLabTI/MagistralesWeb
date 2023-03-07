@@ -29,36 +29,42 @@ class ExtensionInboxTest: XCTestCase {
         disposeBag = DisposeBag()
         order1 = Order(
             areBatchesComplete: true, productionOrderId: 89284, baseDocument: 60067, container: "",
-            tag: "Selecciona una...", plannedQuantity: 1, startDate: "27/08/2020",
-            finishDate: "06/09/2020",
+            tag: "Selecciona una...", plannedQuantity: 1, startDate: "27/08/2020", finishDate: "06/09/2020",
             descriptionProduct: "Aceite de Arbol de Te 0.3%, Alantoina 0.3%, Citrico 0.2%, " +
             "Extracto de Te Verde 3%, Extracto de Pepino 3%, Glicerina 3%, Hamamelis 3%, Hialuronico 3%, " +
             "Menta Piperita 0.02%, Niacinamida 2%, Pantenol 0.5%,  Salicilico 0.5%, Urea 5%, Solucion",
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
-            hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd")
+            hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp",
+            shopTransaction: "emnjkd", qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         order2 = Order(
             areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284, container: "PRINCESS/ATOMIZADOR",
             tag: "NA", plannedQuantity: 1, startDate: "22/09/2020", finishDate: "30/09/2020",
             descriptionProduct: "Lactico 30% Solución", statusId: 1, itemCode: "1027S   30 ML",
-            productCode: "1027S", destiny: "Local", hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd")
+            productCode: "1027S", destiny: "Local", hasMissingStock: false, finishedLabel: false,
+            patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd",
+            qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         orderItemCodeEmpty = Order(
             areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284,
-            container: "PRINCESS/ATOMIZADOR", tag: "NA",
-            plannedQuantity: 1, startDate: "22/09/2020",
-            finishDate: "30/09/2020", descriptionProduct: "Lactico 30% Solución",
-            statusId: 1, itemCode: "", productCode: "1027S", destiny: "Local",
-            hasMissingStock: false, finishedLabel: false,  patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd")
+            container: "PRINCESS/ATOMIZADOR", tag: "NA", plannedQuantity: 1, startDate: "22/09/2020",
+            finishDate: "30/09/2020", descriptionProduct: "Lactico 30% Solución", statusId: 1, itemCode: "",
+            productCode: "1027S", destiny: "Local", hasMissingStock: false, finishedLabel: false,
+            patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd",
+            qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         orderTest1 = Order(
             areBatchesComplete: true, productionOrderId: 90006, baseDocument: 60288, container: "Selecciona una...",
             tag: "Selecciona una...", plannedQuantity: 2, startDate: "24/09/2020", finishDate: "25/09/2020",
             descriptionProduct: "Agua de rosas 48%  agua de hamamelis 48%   propilenglicol 4%",
             statusId: 1, itemCode: "1132   120 ML", productCode: nil, destiny: "Local",
-            hasMissingStock: true, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd")
+            hasMissingStock: true, finishedLabel: false, patientName: "NamePatient",
+            clientDxp: "clientDxp", shopTransaction: "emnjkd",
+            qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
         orderTest2 = Order(
             areBatchesComplete: true, productionOrderId: 89997, baseDocument: 60284, container: "PRINCESS/DISCTOP",
             tag: "PERSONALIZADA", plannedQuantity: 1, startDate: "22/09/2020", finishDate: "30/09/2020",
             descriptionProduct: "Aceite de Lima 20%, Vaselina", statusId: 1, itemCode: "2573   30 ML",
-            productCode: nil, destiny: "Local", hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd")
+            productCode: nil, destiny: "Local", hasMissingStock: false, finishedLabel: false,
+            patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd",
+            qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
     }
 
     override func tearDownWithError() throws {
@@ -85,7 +91,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnEmpty() {
         // Given
-        let index = 5
+        let index = 6
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -93,7 +99,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnAssignedStatus() {
         // Given
-        let index = 0
+        let index = 1
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -101,7 +107,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnProcessStatus() {
         // Given
-        let index = 1
+        let index = 2
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -109,7 +115,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnPendingStatus() {
         // Given
-        let index = 2
+        let index = 3
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -117,7 +123,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnFinishedStatus() {
         // Given
-        let index = 3
+        let index = 4
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -125,7 +131,7 @@ class ExtensionInboxTest: XCTestCase {
     }
     func testGetStatusNameShouldReturnReassinedStatus() {
         // Given
-        let index = 4
+        let index = 5
         // When
         let status = inboxViewModel!.getStatusName(index: index)
         // Then
@@ -145,7 +151,7 @@ class ExtensionInboxTest: XCTestCase {
         // Then
         let status = inboxViewModel!.getStatusId(name: name)
         // When
-        XCTAssertEqual(status, 0)
+        XCTAssertEqual(status, 1)
     }
     func testGetStatusIdShouldBeProcessStatus() {
         // Given

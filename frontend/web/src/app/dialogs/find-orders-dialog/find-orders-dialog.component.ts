@@ -30,14 +30,15 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     defaultEndDate: Date;
     isWithError = true;
     isLessDocNumUntil = true;
-    constructor(private formBuilder: FormBuilder,
-                @Inject(MAT_DIALOG_DATA) public filterData: any,
-                private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
-                private ordersServices: PedidosService,
-                private errorService: ErrorService,
-                private usersService: UsersService,
-                public dataService: DataService,
-                public localStorageService: LocalStorageService) {
+    constructor(
+        private formBuilder: FormBuilder,
+        @Inject(MAT_DIALOG_DATA) public filterData: any,
+        private dialogRef: MatDialogRef<FindOrdersDialogComponent>,
+        private ordersServices: PedidosService,
+        private errorService: ErrorService,
+        private usersService: UsersService,
+        public dataService: DataService,
+        public localStorageService: LocalStorageService) {
         this.isFromSearchOrders = this.filterData.modalType === ConstOrders.modalOrders;
         this.fullDate = this.filterData.filterOrdersData.dateFull.split('-');
         this.findOrdersForm = this.formBuilder.group({
@@ -84,8 +85,15 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                 this.dialogRef.close();
                 this.errorService.httpError(error);
             });
-
-        this.findOrdersForm.get('docNum').setValue(this.filterData.filterOrdersData.docNum ? this.filterData.filterOrdersData.docNum : '');
+        this.setFormValues();
+        this.getMaxDate();
+        this.formValueChangesSubscription();
+    }
+    setFormValues(): void {
+        this.findOrdersForm.get('docNum').setValue(this.dataService.calculateTernary(
+            this.filterData.filterOrdersData.docNum,
+            this.filterData.filterOrdersData.docNum,
+            ''));
         const initDateTrans = this.fullDate[0].split('/');
         const finishDateTrans = this.fullDate[1].split('/');
 
@@ -94,30 +102,33 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
 
         this.findOrdersForm.get('fini').setValue(this.defaultStartDate);
         this.findOrdersForm.get('ffin').setValue(this.defaultEndDate);
-
-        this.findOrdersForm.get('dateType').setValue(this.filterData.filterOrdersData.dateType ?
-            this.filterData.filterOrdersData.dateType : ConstOrders.defaultDateInit);
-        this.findOrdersForm.get('status').setValue(this.filterData.filterOrdersData.status ? this.filterData.filterOrdersData.status : '');
-        this.findOrdersForm.get('productCode').setValue(this.filterData.filterOrdersData.productCode ?
-            this.filterData.filterOrdersData.productCode : '');
-        this.findOrdersForm.get('clientName').setValue(this.filterData.filterOrdersData.clientName ?
-            this.filterData.filterOrdersData.clientName : '');
-        this.findOrdersForm.get('label').setValue(this.filterData.filterOrdersData.label ?
-            this.filterData.filterOrdersData.label : '');
-        this.findOrdersForm.get('finlabel').setValue(this.filterData.filterOrdersData.finlabel ?
-            this.filterData.filterOrdersData.finlabel : '');
-        this.findOrdersForm.get('orderIncidents').setValue(this.filterData.filterOrdersData.orderIncidents ?
-            this.filterData.filterOrdersData.orderIncidents : '');
-        this.findOrdersForm.get('clasification').setValue(this.filterData.filterOrdersData.clasification ?
-            this.filterData.filterOrdersData.clasification : '');
-        this.findOrdersForm.get('docNumUntil').setValue(this.filterData.filterOrdersData.docNumUntil ?
-            this.filterData.filterOrdersData.docNumUntil : '');
-        this.findOrdersForm.get('docNumDxp').setValue(this.filterData.filterOrdersData.docNumDxp ?
-            this.filterData.filterOrdersData.docNumDxp : '');
+        this.findOrdersForm.get('dateType').setValue(this.dataService.calculateTernary(
+            this.filterData.filterOrdersData.dateType !== undefined,
+            this.filterData.filterOrdersData.dateType,
+            ConstOrders.defaultDateInit));
+        this.findOrdersForm.get('status').setValue(this.dataService.calculateTernary(this.filterData.filterOrdersData.status,
+            this.filterData.filterOrdersData.status, ''));
+        this.findOrdersForm.get('productCode').setValue(this.dataService.calculateTernary(this.filterData.filterOrdersData.productCode,
+            this.filterData.filterOrdersData.productCode, ''));
+        this.findOrdersForm.get('clientName').setValue(this.dataService.calculateTernary(this.filterData.filterOrdersData.clientName,
+            this.filterData.filterOrdersData.clientName, ''));
+        this.findOrdersForm.get('label').setValue(this.dataService.calculateTernary(this.filterData.filterOrdersData.label,
+            this.filterData.filterOrdersData.label, ''));
+        this.findOrdersForm.get('finlabel').setValue(this.dataService.calculateTernary(this.filterData.filterOrdersData.finlabel,
+            this.filterData.filterOrdersData.finlabel, ''));
+        this.findOrdersForm.get('orderIncidents').setValue(this.dataService.calculateTernary(
+            this.filterData.filterOrdersData.orderIncidents,
+            this.filterData.filterOrdersData.orderIncidents,
+            ''));
+        this.findOrdersForm.get('clasification').setValue(this.dataService.calculateTernary(this.filterData.filterOrdersData.clasification,
+            this.filterData.filterOrdersData.clasification, ''));
+        this.findOrdersForm.get('docNumUntil').setValue(this.dataService.calculateTernary(this.filterData.filterOrdersData.docNumUntil,
+            this.filterData.filterOrdersData.docNumUntil, ''));
+        this.findOrdersForm.get('docNumDxp').setValue(this.dataService.calculateTernary(this.filterData.filterOrdersData.docNumDxp,
+            this.filterData.filterOrdersData.docNumDxp, ''));
         if (!this.filterData.filterOrdersData.docNum) {
             this.findOrdersForm.get('docNumUntil').disable({ onlySelf: true, emitEvent: false });
         }
-
         if (this.filterData.filterOrdersData.docNum) {
             this.getDisableForDocNum();
         } else if (this.filterData.filterOrdersData.docNumDxp) {
@@ -126,36 +137,45 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
             || this.filterData.filterOrdersData.clasification) {
             this.getDisableOnlyForDocNum();
         }
-        this.getMaxDate();
+    }
+    formValueChangesSubscription(): void {
         this.subscriptionForm = this.findOrdersForm.valueChanges.subscribe(formData => {
             if (!this.isBeginInitForm) {
                 this.validateDocNums(formData.docNum, formData.docNumUntil);
-                if (this.withValue(formData.docNum) || this.withValue(formData.docNumUntil)) {
-                    this.isToResetData = false;
-                    this.getDisableForDocNum();
-                } else if (!this.withValue(formData.docNum) && this.withValue(formData.docNumDxp)) {
-                    this.getDisableForDocNumDxp();
-                } else if ((!this.withValue(formData.docNum) && !this.withValue(formData.docNumDxp)) &&
-                    (
-                        (this.withValue(formData.fini) && !this.isEqualDate(new Date(formData.fini), this.defaultStartDate)) ||
-                        (this.withValue(formData.ffin) && !this.isEqualDate(new Date(formData.ffin), this.defaultEndDate)) ||
-                        (this.withValue(formData.dateType) && formData.dateType !== ConstOrders.defaultDateInit) ||
-                        this.withValue(formData.status) || this.withValue(formData.qfb) ||
-                        this.withValue(formData.productCode) || this.withValue(formData.clientName) ||
-                        this.withValue(formData.label) || this.withValue(formData.finlabel)
-                        || this.withValue(formData.orderIncidents)
-                        || this.withValue(formData.clasification)
-                    )) {
-                    this.changeValidatorsForDocNum();
-                } else {
-                    this.enableAllInputs();
-                }
+                this.validateValueChanges(formData);
             }
             this.isBeginInitForm = false;
             this.getMaxDate();
         });
     }
 
+    validateValueChanges(formData: any): void {
+        const firstCondition = this.validateSomeControlHasValue(['docNum', 'docNumUntil'], formData);
+        const secondCondition = this.dataService.calculateAndValueList(
+            [!this.withValue(formData.docNum),
+            this.withValue(formData.docNumDxp)]);
+        const thirdCondition = this.dataService.calculateOrValueList([
+            this.withValue(formData.fini) && !this.isEqualDate(new Date(formData.fini), this.defaultStartDate),
+            this.withValue(formData.ffin) && !this.isEqualDate(new Date(formData.ffin), this.defaultEndDate),
+            this.withValue(formData.dateType) && formData.dateType !== ConstOrders.defaultDateInit,
+            this.validateSomeControlHasValue(['status', 'qfb', 'productCode', 'clientName', 'label',
+                'finlabel', 'orderIncidents', 'clasification'], formData)
+        ]);
+        if (firstCondition) {
+            this.isToResetData = false;
+            this.getDisableForDocNum();
+        } else if (secondCondition) {
+            this.getDisableForDocNumDxp();
+        } else if ((!this.withValue(formData.docNum) && !this.withValue(formData.docNumDxp)) && thirdCondition) {
+            this.changeValidatorsForDocNum();
+        } else {
+            this.enableAllInputs();
+        }
+    }
+
+    validateSomeControlHasValue(controls: string[], formData: any): boolean {
+        return controls.some((control) => this.withValue(formData[control]));
+    }
     isEqualDate(dateToCompare: Date, baseDate: Date) {
         return dateToCompare.getDate() === baseDate.getDate() &&
             dateToCompare.getUTCMonth() === baseDate.getUTCMonth() &&
@@ -274,22 +294,16 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     keyDownFunction(event: KeyboardEvent) {
-        if (event.key === MODAL_FIND_ORDERS.keyEnter && (
-            (this.findOrdersForm.get('docNum').value !== CONST_STRING.empty && this.findOrdersForm.get('docNum').value !== null) ||
-            (this.findOrdersForm.get('productCode').value !== CONST_STRING.empty &&
-                this.findOrdersForm.get('productCode').value !== null) ||
-            (this.findOrdersForm.get('clientName').value !== CONST_STRING.empty && this.findOrdersForm.get('clientName').value !== null) ||
-            (this.findOrdersForm.get('label').value !== CONST_STRING.empty && this.findOrdersForm.get('label').value !== null) ||
-            (this.findOrdersForm.get('finlabel').value !== CONST_STRING.empty && this.findOrdersForm.get('finlabel').value !== null) ||
-            (this.findOrdersForm.get('orderIncidents').value !== CONST_STRING.empty &&
-                this.findOrdersForm.get('orderIncidents').value !== null) ||
-            (this.findOrdersForm.get('docNumUntil').value !== CONST_STRING.empty &&
-                this.findOrdersForm.get('docNumUntil').value !== null) ||
-            (this.findOrdersForm.get('clasification').value !== CONST_STRING.empty &&
-                this.findOrdersForm.get('clasification').value !== null) ||
-            (this.findOrdersForm.get('docNumDxp').value !== CONST_STRING.empty && this.findOrdersForm.get('docNumDxp').value !== null))) {
+        const controls = ['docNum', 'productCode', 'clientName', 'label', 'finlabel',
+            'orderIncidents', 'docNumUntil', 'clasification', 'docNumDxp'];
+        if (event.key === MODAL_FIND_ORDERS.keyEnter && this.validateFormHasSomeValue(controls)) {
             this.searchOrders();
         }
+    }
+
+    validateFormHasSomeValue(formControls: string[]): boolean {
+        return formControls.some((control) => this.findOrdersForm.get(control).value !== CONST_STRING.empty &&
+            this.findOrdersForm.get(control).value !== null);
     }
 
     trimFilterValues() {

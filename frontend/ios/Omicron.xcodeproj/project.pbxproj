@@ -463,6 +463,14 @@
 		F363D76D29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F363D76B29820CA900113F3A /* HeaderInboxViewExtension.swift */; };
 		F363D76E29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F363D76B29820CA900113F3A /* HeaderInboxViewExtension.swift */; };
 		F363D76F29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F363D76B29820CA900113F3A /* HeaderInboxViewExtension.swift */; };
+		F3D21DEB298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEA298A4F610099B94A /* OrderDetailViewControllerExtension.swift */; };
+		F3D21DEC298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEA298A4F610099B94A /* OrderDetailViewControllerExtension.swift */; };
+		F3D21DED298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEA298A4F610099B94A /* OrderDetailViewControllerExtension.swift */; };
+		F3D21DEE298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEA298A4F610099B94A /* OrderDetailViewControllerExtension.swift */; };
+		F3D21DF0298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEF298A53490099B94A /* OrderDetailViewModelExtension.swift */; };
+		F3D21DF1298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEF298A53490099B94A /* OrderDetailViewModelExtension.swift */; };
+		F3D21DF2298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEF298A53490099B94A /* OrderDetailViewModelExtension.swift */; };
+		F3D21DF3298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEF298A53490099B94A /* OrderDetailViewModelExtension.swift */; };
 		F3FCD16A29822B57005D560F /* CellInboxViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FCD16929822B57005D560F /* CellInboxViewExtension.swift */; };
 		F3FCD16D29822EBF005D560F /* CellInboxViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FCD16929822B57005D560F /* CellInboxViewExtension.swift */; };
 		F3FCD16E29822EC0005D560F /* CellInboxViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FCD16929822B57005D560F /* CellInboxViewExtension.swift */; };
@@ -657,6 +665,8 @@
 		F0CBBFD1976BF4AA67598A8F /* Pods-Omicron-OmicronQA.uat.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronQA.uat.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronQA/Pods-Omicron-OmicronQA.uat.xcconfig"; sourceTree = "<group>"; };
 		F363D7662981F00500113F3A /* PatientListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientListModel.swift; sourceTree = "<group>"; };
 		F363D76B29820CA900113F3A /* HeaderInboxViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderInboxViewExtension.swift; sourceTree = "<group>"; };
+		F3D21DEA298A4F610099B94A /* OrderDetailViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewControllerExtension.swift; sourceTree = "<group>"; };
+		F3D21DEF298A53490099B94A /* OrderDetailViewModelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewModelExtension.swift; sourceTree = "<group>"; };
 		F3FCD16929822B57005D560F /* CellInboxViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellInboxViewExtension.swift; sourceTree = "<group>"; };
 		FE59331B9245416D467CEBC1 /* Pods-Omicron-Omicron QA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-Omicron QA.release.xcconfig"; path = "Target Support Files/Pods-Omicron-Omicron QA/Pods-Omicron-Omicron QA.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -859,6 +869,7 @@
 			isa = PBXGroup;
 			children = (
 				7CB6332324DDCBC90055425C /* OrderDetailViewModel.swift */,
+				F3D21DEF298A53490099B94A /* OrderDetailViewModelExtension.swift */,
 			);
 			path = OrderDetail;
 			sourceTree = "<group>";
@@ -1048,6 +1059,7 @@
 				7CB6735D24E1D4D60072F2F6 /* CustomCell */,
 				7CB6332124DDCBAE0055425C /* OrderDetailViewController.swift */,
 				7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */,
+				F3D21DEA298A4F610099B94A /* OrderDetailViewControllerExtension.swift */,
 			);
 			path = OrderDetail;
 			sourceTree = "<group>";
@@ -2034,6 +2046,7 @@
 				490B6981268E98ED00DBE9F1 /* ChartCollectionViewCell.swift in Sources */,
 				490B6982268E98ED00DBE9F1 /* Utils.swift in Sources */,
 				490B6983268E98ED00DBE9F1 /* FileManager.swift in Sources */,
+				F3D21DF3298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
 				490B6984268E98ED00DBE9F1 /* SignaturePadViewModel.swift in Sources */,
 				F3FCD16F29822EC1005D560F /* CellInboxViewExtension.swift in Sources */,
 				490B6985268E98ED00DBE9F1 /* RootViewModel.swift in Sources */,
@@ -2060,6 +2073,7 @@
 				490B6997268E98ED00DBE9F1 /* ComponentsModel.swift in Sources */,
 				490B6998268E98ED00DBE9F1 /* SignaturePadModel.swift in Sources */,
 				490B6999268E98ED00DBE9F1 /* Constants.swift in Sources */,
+				F3D21DEE298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
 				490B699A268E98ED00DBE9F1 /* ComponentsViewController.swift in Sources */,
 				490B699B268E98ED00DBE9F1 /* OrderDetailModel.swift in Sources */,
 				490B699C268E98ED00DBE9F1 /* ChartViewModel.swift in Sources */,
@@ -2115,6 +2129,7 @@
 				383DD58A25F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
 				49CF65C325F2D4AB002CD598 /* Utils.swift in Sources */,
 				49CF65C425F2D4AB002CD598 /* FileManager.swift in Sources */,
+				F3D21DF1298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
 				49CF65C525F2D4AB002CD598 /* SignaturePadViewModel.swift in Sources */,
 				F3FCD16D29822EBF005D560F /* CellInboxViewExtension.swift in Sources */,
 				49CF65C625F2D4AB002CD598 /* RootViewModel.swift in Sources */,
@@ -2141,6 +2156,7 @@
 				49CF65D825F2D4AB002CD598 /* ComponentsModel.swift in Sources */,
 				49CF65D925F2D4AB002CD598 /* SignaturePadModel.swift in Sources */,
 				49CF65DA25F2D4AB002CD598 /* Constants.swift in Sources */,
+				F3D21DEC298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
 				49CF65DB25F2D4AB002CD598 /* ComponentsViewController.swift in Sources */,
 				49CF65DC25F2D4AB002CD598 /* OrderDetailModel.swift in Sources */,
 				49CF65DD25F2D4AB002CD598 /* ChartViewModel.swift in Sources */,
@@ -2196,6 +2212,7 @@
 				383DD58B25F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
 				49CF664625F2D821002CD598 /* Utils.swift in Sources */,
 				49CF664725F2D821002CD598 /* FileManager.swift in Sources */,
+				F3D21DF2298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
 				49CF664825F2D821002CD598 /* SignaturePadViewModel.swift in Sources */,
 				F3FCD16E29822EC0005D560F /* CellInboxViewExtension.swift in Sources */,
 				49CF664925F2D821002CD598 /* RootViewModel.swift in Sources */,
@@ -2222,6 +2239,7 @@
 				49CF665B25F2D821002CD598 /* ComponentsModel.swift in Sources */,
 				49CF665C25F2D821002CD598 /* SignaturePadModel.swift in Sources */,
 				49CF665D25F2D821002CD598 /* Constants.swift in Sources */,
+				F3D21DED298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
 				49CF665E25F2D821002CD598 /* ComponentsViewController.swift in Sources */,
 				49CF665F25F2D821002CD598 /* OrderDetailModel.swift in Sources */,
 				49CF666025F2D821002CD598 /* ChartViewModel.swift in Sources */,
@@ -2277,6 +2295,7 @@
 				383DD58925F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
 				7CB6332824DDEE3F0055425C /* Utils.swift in Sources */,
 				7CCC6A4824F880E200ACBBE8 /* FileManager.swift in Sources */,
+				F3D21DF0298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
 				7CF2EA3A24F6C6500005602F /* SignaturePadViewModel.swift in Sources */,
 				F3FCD16A29822B57005D560F /* CellInboxViewExtension.swift in Sources */,
 				7C844BAC24D2839400D26B96 /* RootViewModel.swift in Sources */,
@@ -2303,6 +2322,7 @@
 				987BDFE4250986A700D9C6E4 /* ComponentsModel.swift in Sources */,
 				7CF2EA3C24F6C66B0005602F /* SignaturePadModel.swift in Sources */,
 				98C8C03C24AFCC7B00018A88 /* Constants.swift in Sources */,
+				F3D21DEB298A4F610099B94A /* OrderDetailViewControllerExtension.swift in Sources */,
 				987BDFE02509869200D9C6E4 /* ComponentsViewController.swift in Sources */,
 				7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */,
 				1EF032222519388C0040DC65 /* ChartViewModel.swift in Sources */,
@@ -2475,7 +2495,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.1.14;
+				CURRENT_PROJECT_VERSION = 1.1.15;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -2525,7 +2545,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 47;
+				CURRENT_PROJECT_VERSION = 72;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2600,7 +2620,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -2625,7 +2645,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -2650,7 +2670,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -2675,7 +2695,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -2748,7 +2768,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 47;
+				CURRENT_PROJECT_VERSION = 72;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2774,7 +2794,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 47;
+				CURRENT_PROJECT_VERSION = 72;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2860,7 +2880,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.1.14;
+				CURRENT_PROJECT_VERSION = 1.1.15;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -2959,7 +2979,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 47;
+				CURRENT_PROJECT_VERSION = 72;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3099,7 +3119,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.1.14;
+				CURRENT_PROJECT_VERSION = 1.1.15;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -3124,7 +3144,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.1.14;
+				CURRENT_PROJECT_VERSION = 1.1.15;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

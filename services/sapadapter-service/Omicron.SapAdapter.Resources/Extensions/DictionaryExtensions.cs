@@ -85,7 +85,7 @@ namespace Omicron.SapAdapter.Resources.Extensions
             {
                 value = dictionary.Get<T, TU, TV>(key);
             }
-            catch (Exception ex)
+            catch
             {
                 value = defaultValue;
             }

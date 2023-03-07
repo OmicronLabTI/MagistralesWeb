@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Test
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Newtonsoft.Json;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Dtos.User;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
@@ -165,6 +166,17 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 134, Productionorderid = null, Salesorderid = "900", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
                 new UserOrderModel { Id = 135, Productionorderid = "901", Salesorderid = "901", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1 },
                 new UserOrderModel { Id = 136, Productionorderid = null, Salesorderid = "901", Status = "Planificado", Userid = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+
+                // Tecnical id
+                new UserOrderModel { Id = 137, Productionorderid = null, Salesorderid = "901", Status = "Planificado", Userid = "abc",  TecnicId = "tecnial", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+                new UserOrderModel { Id = 138, Productionorderid = null, Salesorderid = "902", Status = "Proceso", Userid = "abcquimico",  TecnicId = "tecnicoqfb", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2, StatusForTecnic = "Asignado" },
+                new UserOrderModel { Id = 139, Productionorderid = null, Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
+
+                // Test For signed orders
+                new UserOrderModel { Id = 140, Productionorderid = "223740", Salesorderid = "901", Status = "Planificado", Userid = "abc",  TecnicId = null, Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2 },
+                new UserOrderModel { Id = 141, Productionorderid = "224212", Salesorderid = "902", Status = "Proceso", Userid = "abcquimico",  TecnicId = "tecnicoqfb", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2, StatusForTecnic = "Asignado" },
+                new UserOrderModel { Id = 142, Productionorderid = "224211", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
+                new UserOrderModel { Id = 143, Productionorderid = "224159", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
             };
         }
 
@@ -205,6 +217,8 @@ namespace Omicron.Pedidos.Test
             return new List<UserOrderSignatureModel>
             {
                 new UserOrderSignatureModel { Id = 1000, LogisticSignature = null, TechnicalSignature = null, UserOrderId = 1 },
+                new UserOrderSignatureModel { Id = 1, LogisticSignature = null, TechnicalSignature = Convert.FromBase64String("aG9sYQ=="), UserOrderId = 142 },
+                new UserOrderSignatureModel { Id = 2, LogisticSignature = null, TechnicalSignature = null, UserOrderId = 143 },
             };
         }
 
@@ -415,13 +429,25 @@ namespace Omicron.Pedidos.Test
         /// <summary>
         /// Gets user Dto.
         /// </summary>
+        /// <param name="isTecnic">Is tecnic.</param>
         /// <returns>the user.</returns>
-        public ResultModel GetResultUserModel()
+        public ResultModel GetResultUserModel(bool isTecnic = false)
         {
-            var listUsers = new List<UserModel>
+            List<UserModel> listUsers;
+            if (isTecnic)
             {
-                new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1 },
-            };
+                listUsers = new List<UserModel>
+                {
+                    new UserModel { Activo = 1, FirstName = "Sutano", Id = "tecnic", LastName = "Lope", Password = "as", Role = 9, UserName = "sutan", Piezas = 1000, Asignable = 1 },
+                };
+            }
+            else
+            {
+                listUsers = new List<UserModel>
+                {
+                    new UserModel { Activo = 1, FirstName = "Sutano", Id = "abc", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1, TechnicalRequire = true },
+                };
+            }
 
             return new ResultModel
             {
@@ -609,15 +635,17 @@ namespace Omicron.Pedidos.Test
         /// <summary>
         /// gets the users by role.
         /// </summary>
+        /// <param name="technicalRequire">Is Technical Require.</param>
+        /// <param name="tecnicId">Tecnic id.</param>
         /// <returns>the users.</returns>
-        public ResultModel GetUsersByRoleWithDZ()
+        public ResultModel GetUsersByRoleWithDZ(bool technicalRequire = false, string tecnicId = "8c426e2d-0615-4516-a94c-a79e5c11ae4d")
         {
             var users = new List<UserModel>
             {
-                new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MN" },
-                new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "BE" },
-                new UserModel { Id = "abcde", Activo = 1, FirstName = "Magistrales", LastName = "Magistrales", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MG" },
-                new UserModel { Id = "abcdef", Activo = 1, FirstName = "Test DZ 1", LastName = "Test DZ 1", Password = "pass", Role = 2, UserName = "gus1", Piezas = 0, Asignable = 1, Classification = "DZ" },
+                new UserModel { Id = "abc", Activo = 1, FirstName = "Gustavo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MN", TechnicalRequire = true, TecnicId = "8c426e2d-0615-4516-a94c-a79e5c11ae4d" },
+                new UserModel { Id = "abcd", Activo = 1, FirstName = "Hugo", LastName = "Ramirez", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "BE", TechnicalRequire = true, TecnicId = "8c426e2d-0615-4516-a94c-a79e5c11ae4d" },
+                new UserModel { Id = "abcde", Activo = 1, FirstName = "Magistrales", LastName = "Magistrales", Password = "pass", Role = 2, UserName = "gus1", Piezas = 1000, Asignable = 1, Classification = "MG", TechnicalRequire = technicalRequire },
+                new UserModel { Id = "abcdef", Activo = 1, FirstName = "Test DZ 1", LastName = "Test DZ 1", Password = "pass", Role = 2, UserName = "gus1", Piezas = 0, Asignable = 1, Classification = "DZ", TechnicalRequire = technicalRequire, TecnicId = tecnicId },
             };
 
             return new ResultModel
@@ -642,6 +670,37 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = JsonConvert.SerializeObject(dataToSend),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// gets the users by role.
+        /// </summary>
+        /// <param name="isValidtecnic">Is valid tecnic.</param>
+        /// <returns>the users.</returns>
+        public ResultModel GetQfbInfoDto(bool isValidtecnic)
+        {
+            var qfbValidatedInfo = new List<QfbTecnicInfoDto>
+            {
+                new QfbTecnicInfoDto
+                {
+                    IsTecnicRequired = true,
+                    IsValidTecnic = isValidtecnic,
+                    QfbFirstName = "Juan",
+                    QfbLastName = "Pérez",
+                    QfbId = "abc",
+                    TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b801",
+                    IsValidQfbConfiguration = true,
+                },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = qfbValidatedInfo,
                 Success = true,
                 UserError = string.Empty,
             };

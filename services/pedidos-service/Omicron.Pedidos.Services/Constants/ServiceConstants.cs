@@ -126,6 +126,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string OrdenVentaPlan = "Orden de venta planificada";
 
         /// <summary>
+        /// status planificada.
+        /// </summary>
+        public const string SignedStatus = "Firmado";
+
+        /// <summary>
         /// when the order goes to Proceso.
         /// </summary>
         public const string OrdenProceso = "La orden {0} paso a Proceso";
@@ -884,6 +889,21 @@ namespace Omicron.Pedidos.Services.Constants
         /// the order containe.
         /// </summary>
         public const string FailConsumedQuantity = "No coincide la cantidad requerida con la cantidad consumida de la siguiente orden {0}";
+
+        /// <summary>
+        /// Gets the users by role from user service.
+        /// </summary>
+        public const string GetQfbInfoById = "getqfb/info/byids";
+
+        /// <summary>
+        /// Reason unexpected error.
+        /// </summary>
+        public const string QfbWithoutTecnic = "El químico {0} no tiene un técnico activo asignado, favor de realizar la asignación para poder continuar";
+
+        /// <summary>
+        /// Reason unexpected error.
+        /// </summary>
+        public const string OrderWithoutTecnicSign = "No es posible terminar, falta la firma del técnico asignado";
 
         /// <summary>
         /// Gets the status of the order.

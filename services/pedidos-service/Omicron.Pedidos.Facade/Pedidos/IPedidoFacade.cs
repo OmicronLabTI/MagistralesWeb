@@ -270,5 +270,19 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> DeleteFiles();
+
+        /// <summary>
+        /// Sign orders by tecnic.
+        /// </summary>
+        /// <param name="tecnicOrderSignature">the model.</param>
+        /// <returns>the result.</returns>
+        Task<ResultDto> SignOrdersByTecnic(FinishOrderDto tecnicOrderSignature);
+
+        /// <summary>
+        /// Validate Tecnic Sign By Production Order Id.
+        /// </summary>
+        /// <param name="productionOrderIds">Production Orders id's.</param>
+        /// <returns>Invalid Productions orders ids by technic sign.</returns>
+        Task<ResultDto> GetInvalidOrdersByMissingTecnicSign(List<string> productionOrderIds);
     }
 }

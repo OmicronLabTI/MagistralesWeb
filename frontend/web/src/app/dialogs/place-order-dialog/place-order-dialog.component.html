@@ -1,83 +1,97 @@
 <div [ngClass]="isPlaceManual ? 'place-order-container-with-data' : 'place-order-container-no-data'">
     <mat-card class="add-user-card">
-        <mat-card-header [ngClass]="isPlaceManual ? 'height-with-data ' : 'height-no-data '" class="card-header-container-custom">
+        <mat-card-header [ngClass]="isPlaceManual ? 'height-with-data ' : 'height-no-data '"
+            class="card-header-container-custom">
             <mat-card-title class="font-style-omicron">
-                <span *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length === 1">
+                <span
+                    *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length === 1">
                     {{placeData.placeOrdersData.isFromReassign ? 'Reasigna' : 'Asigna'}} el pedido
                 </span>
-                <span *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length > 1">
+                <span
+                    *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && placeData.placeOrdersData.list.length > 1">
                     {{placeData.placeOrdersData.isFromReassign ? 'Reasigna' : 'Asigna'}} los pedidos
                 </span>
-                <span *ngIf="placeData.placeOrdersData.modalType === 'Orden' && placeData.placeOrdersData.list.length === 1">
+                <span
+                    *ngIf="placeData.placeOrdersData.modalType === 'Orden' && placeData.placeOrdersData.list.length === 1">
                     {{placeData.placeOrdersData.isFromReassign ? 'Reasigna' : 'Asigna'}} la orden
                 </span>
-                <span *ngIf="placeData.placeOrdersData.modalType === 'Orden' && placeData.placeOrdersData.list.length > 1">
-                    {{placeData.placeOrdersData.isFromReassign ? 'Reasigna' : 'Asigna'}} las ordenes
+                <span
+                    *ngIf="placeData.placeOrdersData.modalType === 'Orden' && placeData.placeOrdersData.list.length > 1">
+                    {{placeData.placeOrdersData.isFromReassign ? 'Reasigna' : 'Asigna'}} las órdenes
                 </span>
             </mat-card-title>
             <mat-icon mat-dialog-close class="cursor-pointer">clear</mat-icon>
         </mat-card-header>
         <mat-card-content class="content-card-container-custom">
-        <div class="options-content">
-            <div class="classification-filter-qfb">
-                <button mat-button *ngIf="isPlaceManual" [ngClass]="currentQfbType !== 'mg' ? 'disable-button' : ''" class="with-qfb-classification background-color-mg margin-right-button"
-                         (click)="changeTypeQfb('mg')" >MG</button>
-                <button mat-button *ngIf="isPlaceManual" class="with-qfb-classification background-color-mn margin-right-button"
-                        [ngClass]="currentQfbType !== 'mn' ? 'disable-button' : ''" (click)="changeTypeQfb('mn')" >MN</button>
-                <button mat-button *ngIf="isPlaceManual" class="with-qfb-classification background-color-be "
-                        [ngClass]="currentQfbType !== 'be' ? 'disable-button' : ''"  (click)="changeTypeQfb('be')" >BE</button>
-            </div>
-            <button mat-button class="btn-add-modal btn-manual-place btn--modal margin-right-button" (click)="changePlaceManual()" >Manual</button>
-            <button *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && !placeData.placeOrdersData.isFromReassign"
+            <div class="options-content">
+                <div class="classification-filter-qfb">
+                    <button mat-button *ngIf="isPlaceManual" [ngClass]="currentQfbType !== 'mg' ? 'disable-button' : ''"
+                        class="with-qfb-classification background-color-mg margin-right-button"
+                        (click)="changeTypeQfb('mg')">MG</button>
+                    <button mat-button *ngIf="isPlaceManual"
+                        class="with-qfb-classification background-color-mn margin-right-button"
+                        [ngClass]="currentQfbType !== 'mn' ? 'disable-button' : ''"
+                        (click)="changeTypeQfb('mn')">MN</button>
+                    <button mat-button *ngIf="isPlaceManual" class="with-qfb-classification background-color-be margin-right-button"
+                        [ngClass]="currentQfbType !== 'be' ? 'disable-button' : ''"
+                        (click)="changeTypeQfb('be')">BE</button>
+                    <button mat-button *ngIf="isPlaceManual" class="with-qfb-classification background-color-dz "
+                        [ngClass]="currentQfbType !== 'dz' ? 'disable-button' : ''"
+                        (click)="changeTypeQfb('dz')">DZ</button>
+                </div>
+                <button mat-button class="btn-add-modal btn-manual-place btn--modal margin-right-button"
+                    (click)="changePlaceManual()">Manual</button>
+                <button
+                    *ngIf="placeData.placeOrdersData.modalType === 'Pedido' && !placeData.placeOrdersData.isFromReassign"
                     mat-button class="btn-add-modal btn-manual-place btn--modal"
-                    (click)="placeOrderAutomatic()"
-                    >Automático</button>
-        </div>
-          <div class="qfbs-container scroll-visible" *ngIf="isPlaceManual">
-              <div class="qfb-with-orders position-fixed">
-                  <mat-card class="mat-card-custom">
-                      <div class="qfb-name color-like-table">
-                          <span class="margin-left-options">
-                              NOMBRE DEL QFB
-                          </span>
-                      </div>
-                      <div class="orders-number color-like-table">
-                          PEDIDOS
-                      </div>
-                      <div class="orders-number color-like-table">
-                          ÓRDENES
-                      </div>
-                      <div class="orders-number color-like-table">
-                          PIEZAS
-                      </div>
-                  </mat-card>
-              </div>
-              <div class="qfb-with-orders border-custom-qfb" *ngFor="let qfb of currentQfbs">
-                  <mat-card [ngClass]="idQfbSelected === qfb.userId ? 'qfb-selected' : ''" class="mat-card-custom" (click)="placeOrder(qfb.userId, qfb.userName)">
-                      <div class="qfb-name">
-                          <span class="margin-left-options">
-                              {{qfb.userName}}
-                          </span>
-                      </div>
-                      <div class="orders-number">
-                          <div class="numbers-qfb-container style-number-custom color-pedidos">
-                              {{qfb.countTotalOrders}}
-                          </div>
+                    (click)="placeOrderAutomatic()">Automático</button>
+            </div>
+            <div class="qfbs-container scroll-visible" *ngIf="isPlaceManual">
+                <div class="qfb-with-orders position-fixed">
+                    <mat-card class="mat-card-custom">
+                        <div class="qfb-name color-like-table">
+                            <span class="margin-left-options">
+                                NOMBRE DEL QFB
+                            </span>
+                        </div>
+                        <div class="orders-number color-like-table">
+                            PEDIDOS
+                        </div>
+                        <div class="orders-number color-like-table">
+                            ÓRDENES
+                        </div>
+                        <div class="orders-number color-like-table">
+                            PIEZAS
+                        </div>
+                    </mat-card>
+                </div>
+                <div class="qfb-with-orders border-custom-qfb" *ngFor="let qfb of currentQfbs">
+                    <mat-card [ngClass]="idQfbSelected === qfb.userId ? 'qfb-selected' : ''" class="mat-card-custom"
+                        (click)="placeOrder(qfb.userId, qfb.userName)">
+                        <div class="qfb-name">
+                            <span class="margin-left-options">
+                                {{qfb.userName}}
+                            </span>
+                        </div>
+                        <div class="orders-number">
+                            <div class="numbers-qfb-container style-number-custom color-pedidos">
+                                {{qfb.countTotalOrders}}
+                            </div>
 
-                      </div>
-                      <div class="orders-number">
-                          <div class="numbers-qfb-container style-number-custom color-orders">
-                            {{qfb.countTotalFabOrders}}
-                          </div>
-                      </div>
-                      <div class="orders-number">
-                          <div class="numbers-qfb-container style-number-custom color-piezas">
-                             {{qfb.countTotalPieces}}
-                          </div>
-                      </div>
-                  </mat-card>
-              </div>
-          </div>
+                        </div>
+                        <div class="orders-number">
+                            <div class="numbers-qfb-container style-number-custom color-orders">
+                                {{qfb.countTotalFabOrders}}
+                            </div>
+                        </div>
+                        <div class="orders-number">
+                            <div class="numbers-qfb-container style-number-custom color-piezas">
+                                {{qfb.countTotalPieces}}
+                            </div>
+                        </div>
+                    </mat-card>
+                </div>
+            </div>
         </mat-card-content>
     </mat-card>
 </div>

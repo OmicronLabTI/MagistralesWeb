@@ -76,7 +76,20 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
-                    <div class="form-field">
+                    <div class="form-field" *ngIf="addUserForm.get('userTypeR')?.value === '9'">
+                        <mat-form-field appearance="outline" class="custom-field magin-top-field">
+                            <mat-label>Selecciona asignación</mat-label>
+                            <mat-select formControlName="asignable">
+                                <mat-option value="1">Encendido</mat-option>
+                                <mat-option value="0">Apagado</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="!addUserForm?.controls.asignable?.errors?.required">
+                                Asignación es <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="form-field" *ngIf="addUserForm.get('userTypeR')?.value !== '9'">
                         <mat-form-field class="custom-field">
                             <input matInput formControlName="piezas" placeholder="Piezas máximas" class="height-input"
                                 type="text" pattern="[0-9]*" maxlength="5"
@@ -91,7 +104,7 @@
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="row-form-user">
+                <div class="row-form-user" *ngIf="addUserForm.get('userTypeR')?.value !== '9'">
                     <div class="form-field">
                         <mat-form-field appearance="outline" class="custom-field magin-top-field">
                             <mat-label>Selecciona clasificación</mat-label>
@@ -120,6 +133,35 @@
                         </mat-form-field>
                     </div>
                 </div>
+                <div class="row-form-user" *ngIf="addUserForm.get('userTypeR')?.value === '2'">
+                    <div class="form-field">
+                        <mat-form-field appearance="outline" class="custom-field magin-top-field">
+                            <mat-label>Requiere Técnico</mat-label>
+                            <mat-select formControlName="requireTechnical">
+                                <mat-option value="1">Si</mat-option>
+                                <mat-option value="0">No</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="addUserForm?.controls.requireTechnical?.errors?.required">
+                                Opción <strong>requerida</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-field">
+                        <mat-form-field appearance="outline" class="custom-field magin-top-field">
+                            <mat-label>Selecciona un técnico</mat-label>
+                            <mat-select formControlName="technical">
+                                <ng-container *ngFor="let technical of technicalUser">
+                                    <mat-option [value]="technical.id">
+                                        {{ technical.firstName }} {{ technical.lastName }}
+                                    </mat-option>
+                                </ng-container>
+                            </mat-select>
+                            <mat-error *ngIf="addUserForm.controls.technical.hasError('required')">
+                                Técnico <strong>requerido</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
                 <div class="row-form-user-status" *ngIf="isForEditModal">
                     <div class="form-field">
                         <mat-form-field appearance="outline" class="custom-field magin-top-field">
@@ -139,7 +181,7 @@
         </mat-card-content>
         <mat-card-actions class="options-footer">
             <button mat-button mat-dialog-close class="btn-cancel-modal btn--modal">Cancelar</button>
-            <button mat-button class="btn-add-modal btn--modal" [disabled]="addUserForm.invalid" (click)="saveUser()">
+            <button mat-button class="btn-add-modal btn--modal" [disabled]="addUserForm.invalid" (click)="save()">
                 <span *ngIf="!isForEditModal">Agregar</span>
                 <span *ngIf="isForEditModal">Guardar</span>
             </button>

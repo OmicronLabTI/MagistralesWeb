@@ -43,25 +43,6 @@ export class DataService {
 
 
   openNewTapByUrl(url: string, typeToSeeTap: TypeToSeeTap, orderId?: number) {
-    // let tapTitle = CONST_STRING.empty;
-    // switch (typeToSeeTap) {
-    //  case TypeToSeeTap.order:
-    //    tapTitle = `Pedido ${orderId}`;
-    //    break;
-    //  case TypeToSeeTap.receipt:
-    //    tapTitle = `Receta pedido ${orderId}`;
-    //    break;
-    // }
-    // const prntWin = window.open();
-    // prntWin.document.write('<html><head><title>' + tapTitle + '</title></head><body style="background-color: rgb(60, 61, 62)">'
-    //     + '<embed width="100%" height="100%" name="plugin" src="' + url + '" '
-    //     + 'type="application/pdf" internalinstanceid="21" /></body></html>');
-    // prntWin.document.close();
-    // const link = document.createElement('a');
-    // link.target = '_blank';
-    // link.href = url;
-    // link.click();
-    // link.remove();
     window.open(url, '_blank');
   }
 
@@ -222,5 +203,18 @@ export class DataService {
   }
   inputNumbersOnly(event): boolean {
     return CONST_USER_DIALOG.patternOnlyNumbers.test(event.key);
+  }
+
+  calculateTernary = <T, U>(
+    validation: boolean,
+    firstValue: T,
+    secondaValue: U
+  ): T | U => (validation ? firstValue : secondaValue)
+
+  calculateAndValueList(list: boolean[]): boolean {
+    return list.every(item => item);
+  }
+  calculateOrValueList(list: boolean[]): boolean {
+    return list.some(item => item);
   }
 }

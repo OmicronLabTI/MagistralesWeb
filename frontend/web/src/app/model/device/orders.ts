@@ -9,8 +9,8 @@ export class PlaceOrders {
      };
 }
 export class CancelOrders {
-    list: CancelOrderReq[];
-    cancelType: string;
+    list: CancelOrderReq[] = [];
+    cancelType = '';
     isFromCancelIsolated?: boolean;
 }
 export class SearchComponentModal {

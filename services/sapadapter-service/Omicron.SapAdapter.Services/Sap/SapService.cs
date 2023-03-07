@@ -100,7 +100,7 @@ namespace Omicron.SapAdapter.Services.Sap
             if (parameters.ContainsKey(ServiceConstants.FechaFin))
             {
                 var route = $"{ServiceConstants.GetOrderByQuery}?ffin={parameters[ServiceConstants.FechaFin]}";
-                var ordersResult = await this.pedidosService.GetPedidosService(route);
+                var ordersResult = await this.pedidosService.GetUserPedidos(route);
                 userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(ordersResult.Response.ToString());
             }
 
@@ -177,7 +177,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 x.Status = ServiceShared.CalculateTernary(x.Status.Equals(ServiceConstants.Proceso), ServiceConstants.EnProceso, x.Status);
                 x.FechaOfFin = ServiceShared.GetDateValueOrDefault(userOrder.FinishDate, string.Empty);
                 x.PedidoStatus = ServiceShared.CalculateTernary(pedido == null, ServiceConstants.Abierto, pedido?.Status);
-                x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(x.OrdenFabricacionId)).Any(y => y.Stock == 0);
+                x.HasMissingStock = x.OrdenFabricacionId != 0 && (await this.sapDao.GetDetalleFormula(new List<int> { x.OrdenFabricacionId })).Any(y => y.Stock == 0);
                 x.Comments = pedido?.Comments;
                 x.RealLabel = x.Label;
                 x.Label = ServiceShared.CalculateTernary(x.Label.ToLower().Equals(ServiceConstants.Personalizado.ToLower()), ServiceConstants.Personalizado, ServiceConstants.Generico);
@@ -227,8 +227,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var orderByDxp = ServiceShared.CalculateTernary(orders.Any(x => !string.IsNullOrEmpty(x.DocNumDxp)), (await this.sapDao.GetOrdersByDocNumDxp(orders.Where(y => !string.IsNullOrEmpty(y.DocNumDxp)).Select(x => x.DocNumDxp).Distinct().ToList())).ToList(), new List<OrderModel>());
             orderByDxp.GroupBy(x => x.DocNumDxp).ToList().ForEach(x =>
             {
-                var dictData = x.Select(x => new { x.PedidoId, x.OrderType }).DistinctBy(y => y.PedidoId).ToDictionary(z => z.PedidoId, z => z.OrderType);
-
                 relationshipsDxp.Add(new RelationDxpDocEntry
                 {
                     DxpDocNum = x.Key ?? string.Empty,
@@ -376,9 +374,9 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc />
-        public async Task<ResultModel> GetValidationQuatitiesOrdersFormula(List<int> listIds)
+        public async Task<ResultModel> GetValidationQuatitiesOrdersFormula(List<int> orderIds)
         {
-            var details = (await this.sapDao.GetDetalleFormula(listIds)).ToList();
+            var details = (await this.sapDao.GetDetalleFormula(orderIds)).ToList();
             var detailsWithInvalidQuantities = details.Where(d => d.Consumed != d.RequiredQuantity).ToList();
             return ServiceUtils.CreateResult(true, 200, null, detailsWithInvalidQuantities, null, null);
         }
@@ -714,11 +712,21 @@ namespace Omicron.SapAdapter.Services.Sap
             listErrorsBatches.ListItems.AddRange(resultBatches.Select(b => b));
             listErrorsBatches.ListItems = listErrorsBatches.ListItems.OrderBy(x => x).ToList();
 
+            var validatedOrders = await this.pedidosService.PostPedidos(orderId.Select(x => x.ToString()).ToList(), ServiceConstants.GetInvalidOrdersByMissingTecnicSign);
+            var ordersWithoutTechnicSign = JsonConvert.DeserializeObject<List<string>>(validatedOrders.Response.ToString());
+            var listErrorsSignature = new OrderValidationResponse { Type = ServiceConstants.SignatureAreMissingError, ListItems = new List<string>() };
+
+            if (ordersWithoutTechnicSign.Any())
+            {
+                listErrorsSignature.ListItems.Add(ServiceConstants.OrderWithoutTecnicSign);
+            }
+
             var listErrors = new List<OrderValidationResponse>();
-            if (ServiceShared.CalculateOr(listErrorsBatches.ListItems.Any(), listErrorStock.ListItems.Any()))
+            if (ServiceShared.CalculateOr(listErrorsBatches.ListItems.Any(), listErrorStock.ListItems.Any(), listErrorsSignature.ListItems.Any()))
             {
                 listErrors.Add(listErrorsBatches);
                 listErrors.Add(listErrorStock);
+                listErrors.Add(listErrorsSignature);
                 return ServiceUtils.CreateResult(false, 400, null, listErrors, null, null);
             }
 
@@ -748,7 +756,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>List.</returns>
         public async Task<ResultModel> GetPackingRequiredForOrderInAssignedStatus(string userId)
         {
-            var resultOrders = await this.pedidosService.GetPedidosService(string.Format(ServiceConstants.GetOrdersByStatusAndUserId, ServiceConstants.Asignado, userId));
+            var resultOrders = await this.pedidosService.GetUserPedidos(string.Format(ServiceConstants.GetOrdersByStatusAndUserId, ServiceConstants.Asignado, userId));
             var userOrders = JsonConvert.DeserializeObject<List<int>>(JsonConvert.SerializeObject(resultOrders.Response));
             var detailsFormula = (await this.sapDao.GetDetalleFormulaByProdOrdId(userOrders)).Where(x => ServiceShared.CalculateOr(x.ItemCode.Contains("EN"), x.ItemCode.Contains("EM"))).ToList();
             var products = (await this.sapDao.GetProductByIds(detailsFormula.Select(x => x.ItemCode).Distinct().ToList())).ToList();
@@ -932,7 +940,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<List<CompleteDetalleFormulaModel>> GetDetailsByOrder(int orderId)
         {
-            var details = (await this.sapDao.GetDetalleFormula(orderId)).ToList();
+            var details = (await this.sapDao.GetDetalleFormula(new List<int> { orderId })).ToList();
 
             foreach (var detail in details)
             {

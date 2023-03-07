@@ -50,25 +50,48 @@ extension LotsViewModel {
 
     // Valida si el usuario obtuvo las firmas y finaliza la orden
     func callFinishOrderService() {
-        if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
-            self.loading.onNext(true)
-            let finishOrder = FinishOrder(
-                userId: Persistence.shared.getUserData()?.id ?? String(), fabricationOrderId: [self.orderId],
-                qfbSignature: self.sqfbSignature, technicalSignature: technicalSignature)
-            self.networkManager.finishOrder(finishOrder)
-                .subscribe(onNext: { [weak self] _ in
-                    guard let self = self else { return }
-                    self.loading.onNext(false)
-                    self.backToInboxView.onNext(())
-                    self.rootViewModel.needsRefresh = true
-                }, onError: {[weak self] error in
-                    self?.loading.onNext(false)
-                    self?.showMessage.onNext(CommonStrings.errorFinishOrder)
-                    print(error.localizedDescription)
-            }).disposed(by: self.disposeBag)
+        if self.rootViewModel.getShowTwoSignatureModals([self.orderId]) {
+            finishOrderWithoutTechnical()
+        } else {
+            finishOrderWithTechnical()
         }
     }
 
+    func finishOrderWithoutTechnical() {
+        if self.technicalSignatureIsGet && self.qfbSignatureIsGet {
+            finishOrderService(qfbSignature: self.sqfbSignature,
+                               technicalSignature: technicalSignature)
+        }
+    }
+    func finishOrderWithTechnical() {
+        if self.qfbSignatureIsGet {
+            finishOrderService(qfbSignature: self.sqfbSignature,
+                               technicalSignature: "")
+        }
+    }
+    func finishOrderService(qfbSignature: String, technicalSignature: String) {
+        self.loading.onNext(true)
+        let finishOrder = FinishOrder(userId: Persistence.shared.getUserData()?.id ?? String(),
+                                      fabricationOrderId: [self.orderId],
+                                      qfbSignature: qfbSignature,
+                                      technicalSignature: technicalSignature)
+        self.networkManager.finishOrder(finishOrder)
+            .subscribe(onNext: { [weak self] res in
+                guard let self = self else { return }
+                if res.code != 200 {
+                    self.loading.onNext(false)
+                    self.showMessage.onNext(res.userError ?? "")
+                    return
+                }
+                self.loading.onNext(false)
+                self.backToInboxView.onNext(())
+                self.rootViewModel.needsRefresh = true
+            }, onError: {[weak self] error in
+                self?.loading.onNext(false)
+                self?.showMessage.onNext(CommonStrings.errorFinishOrder)
+                print(error.localizedDescription)
+        }).disposed(by: self.disposeBag)
+    }
     // Pregunta al server si la orden puede ser finaliada o no
     func validIfOrderCanBeFinalized() {
         self.loading.onNext(true)
@@ -83,13 +106,12 @@ extension LotsViewModel {
                 }
                 guard let errors = response.response, errors.count > 0 else { return }
                 var messageConcat = String()
-                for error in errors {
-                    if error.type == .some(.batches) && error.listItems?.count ?? 0 > 0 {
-                        messageConcat = UtilsManager.shared.messageErrorWhenNoBatches(error: error)
-                    } else if error.type == .some(.stock) && error.listItems?.count ?? 0 > 0 {
-                        let messageError = UtilsManager.shared.messageErrorWhenOutOfStock(error: error)
-                        messageConcat = "\(messageConcat) \(messageError)"
-                    }
+                for error in errors where error.listItems?.count ?? 0 > 0 {
+                    let data = UtilsManager.shared.getValidationData(type: error.type ?? .signature)
+                    let messageError = UtilsManager.shared.buildMessageError(error: error,
+                                                                             message: data.error,
+                                                                             lastSeparator: data.separator)
+                    messageConcat = "\(messageConcat) \(messageError)"
                 }
                 self.showMessage.onNext(messageConcat)
             }, onError: { [weak self] _ in
@@ -105,13 +127,18 @@ extension LotsViewModel {
         self.loading.onNext(true)
         let orderToChageStatus = ChangeStatusRequest(
             userId: Persistence.shared.getUserData()?.id ?? String(),
-            orderId: self.orderId, status: CommonStrings.pending)
+            orderId: self.orderId, status: CommonStrings.pending, userType: rootViewModel.userType.rawValue)
         self.networkManager.changeStatusOrder([orderToChageStatus])
-            .subscribe(onNext: { [weak self] _ in
+            .subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
+                if res.code == 200 {
+                    self.loading.onNext(false)
+                    self.backToInboxView.onNext(())
+                    self.rootViewModel.needsRefresh = true
+                    return
+                }
                 self.loading.onNext(false)
-                self.backToInboxView.onNext(())
-                self.rootViewModel.needsRefresh = true
+                self.showMessage.onNext(res.userError ?? CommonStrings.errorToChangeStatus)
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)

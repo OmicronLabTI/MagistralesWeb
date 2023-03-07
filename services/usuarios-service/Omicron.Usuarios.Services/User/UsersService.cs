@@ -137,6 +137,18 @@ namespace Omicron.Usuarios.Services.User
                 throw new CustomServiceException(ServiceConstants.UserDontExist, HttpStatusCode.BadRequest);
             }
 
+            if (usertoUpdate.Role == ServiceConstants.RoleTecnic && (user.Activo == 0 || user.Asignable == 0 || user.Role != ServiceConstants.RoleTecnic))
+            {
+                var userstremovetecnic = await this.userDao.GetAllUsersAsync();
+                var listusers = userstremovetecnic.Where(x => x.TecnicId == user.Id).ToList();
+                foreach (var users in listusers)
+                {
+                    users.TecnicId = null;
+                }
+
+                var result = await this.userDao.UpdateUsers(listusers);
+            }
+
             var userExist = await this.userDao.GetUserByUserName(user.UserName);
 
             if (userExist != null && userExist.Id != user.Id)
@@ -153,6 +165,8 @@ namespace Omicron.Usuarios.Services.User
             usertoUpdate.Piezas = user.Piezas;
             usertoUpdate.Asignable = user.Asignable;
             usertoUpdate.Classification = user.Classification;
+            usertoUpdate.TecnicId = user.TecnicId;
+            usertoUpdate.TechnicalRequire = user.TechnicalRequire;
 
             var response = await this.userDao.UpdateUser(usertoUpdate);
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, null);
@@ -211,6 +225,104 @@ namespace Omicron.Usuarios.Services.User
         }
 
         /// <summary>
+        /// Get all tecnic users.
+        /// </summary>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> GetUsersTecnic()
+        {
+            var users = (await this.userDao.GetAllUsersAsync()).ToList();
+
+            var usersOrdered = users.Where(x => x.Role == ServiceConstants.RoleTecnic && x.Activo == 1 && x.Asignable == 1).OrderBy(x => x.FirstName).ToList();
+            var listUsers = new List<SimpleUserDto>();
+
+            foreach (var user in usersOrdered)
+            {
+                listUsers.Add(new SimpleUserDto { Id = user.Id, FirstName = user.FirstName, LastName = user.LastName });
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null, listUsers.Count);
+        }
+
+        /// <summary>
+        /// Gets relation user info.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>A <see cref="Task{Result}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<ResultModel> GetRelationalUserInfor(string id)
+        {
+            var user = await this.userDao.GetUserById(id);
+
+            List<SimpleUserDto> listToReturn = new List<SimpleUserDto>();
+
+            if (user == null)
+            {
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
+            }
+
+            switch (user.Role)
+            {
+                case ServiceConstants.RoleTecnic:
+                    {
+                        var users = await this.userDao.GetAllUsersAsync();
+                        var qfbs = users.Where(x => x.TecnicId == id).ToList();
+                        foreach (var qfb in qfbs)
+                        {
+                            listToReturn.Add(new SimpleUserDto { Id = qfb.Id, FirstName = qfb.FirstName, LastName = qfb.LastName });
+                        }
+
+                        break;
+                    }
+
+                default:
+                    {
+                        if (user.TecnicId == null)
+                        {
+                            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null, null);
+                        }
+
+                        var users = await this.userDao.GetAllUsersAsync();
+                        var qfbs = users.Where(x => x.Id == user.TecnicId).ToList();
+                        foreach (var qfb in qfbs)
+                        {
+                            listToReturn.Add(new SimpleUserDto { Id = qfb.Id, FirstName = qfb.FirstName, LastName = qfb.LastName });
+                        }
+
+                        break;
+                    }
+            }
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listToReturn.OrderBy(x => x.FirstName), null, listToReturn.Count);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetQfbInfoByIds(List<string> qfbIds)
+        {
+            var qfbUsers = (await this.userDao.GetUsersById(qfbIds)).ToList();
+            var tecnicUsers = (await this.userDao.GetUsersById(qfbUsers.Select(x => x.TecnicId).ToList())).ToList();
+            QfbTecnicInfoDto qfbInfo;
+            var qfbsInfoList = new List<QfbTecnicInfoDto>();
+
+            qfbUsers.ForEach(qfbUser =>
+            {
+                qfbInfo = new QfbTecnicInfoDto
+                {
+                    QfbId = qfbUser.Id,
+                    QfbFirstName = qfbUser.FirstName,
+                    QfbLastName = qfbUser.LastName,
+                    IsTecnicRequired = qfbUser.TechnicalRequire,
+                    IsValidTecnic = true,
+                    TecnicId = qfbUser.TecnicId,
+                    IsValidQfbConfiguration = true,
+                    IsValidTecnicConfiguration = true,
+                };
+
+                qfbsInfoList.Add(this.QfbInfoValidator(qfbInfo, qfbUser, tecnicUsers));
+            });
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, qfbsInfoList, null, null);
+        }
+
+        /// <summary>
         /// gets the relation between orders and the user.
         /// </summary>
         /// <param name="users">the users.</param>
@@ -259,6 +371,28 @@ namespace Omicron.Usuarios.Services.User
             var ids = orders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(y => int.Parse(y.Productionorderid)).ToList();
             var sapResponse = await this.sapService.PostSapAdapter(ids, ServiceConstants.GetFabOrders);
             return JsonConvert.DeserializeObject<List<FabricacionOrderModel>>(sapResponse.Response.ToString());
+        }
+
+        /// <summary>
+        /// Qfb validator info.
+        /// </summary>
+        /// <param name="qfbInfo">Qfb info start info.</param>
+        /// <param name="qfbUser">Database Qfb info.</param>
+        /// <param name="tecnicUsers">All tecnic users.</param>
+        /// <returns>Qfb validated info.</returns>
+        private QfbTecnicInfoDto QfbInfoValidator(QfbTecnicInfoDto qfbInfo, UserModel qfbUser, List<UserModel> tecnicUsers)
+        {
+            qfbInfo.IsValidQfbConfiguration = ServiceUtils.CalculateAnd(!qfbUser.Deleted, qfbUser.Activo == 1, qfbUser.Asignable == 1);
+            qfbInfo.IsValidTecnic = !qfbInfo.IsTecnicRequired || !string.IsNullOrEmpty(qfbInfo.TecnicId);
+
+            if (qfbInfo.IsTecnicRequired)
+            {
+                var tecnicInfoDetail = tecnicUsers.FirstOrDefault(tecnic => qfbUser.TecnicId == tecnic.Id);
+                tecnicInfoDetail ??= new UserModel { Activo = 0, Asignable = 0, Deleted = false };
+                qfbInfo.IsValidTecnicConfiguration = ServiceUtils.CalculateAnd(tecnicInfoDetail.Activo == 1, !tecnicInfoDetail.Deleted, tecnicInfoDetail.Asignable == 1);
+            }
+
+            return qfbInfo;
         }
     }
 }

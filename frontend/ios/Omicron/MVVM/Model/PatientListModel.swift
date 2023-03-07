@@ -11,7 +11,7 @@ import Foundation
 class PatientListData {
     var title: String = ""
     var list: [String] = []
-    init(title:String, list: [String]){
+    init(title: String, list: [String]) {
         self.title = title
         self.list = list
     }

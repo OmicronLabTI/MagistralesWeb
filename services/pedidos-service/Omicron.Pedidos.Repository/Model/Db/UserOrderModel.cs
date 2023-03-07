@@ -270,6 +270,51 @@ namespace Omicron.Pedidos.Entities.Model
         public int AreBatchesComplete { get; set; }
 
         /// <summary>
+        /// Gets or sets the Tecnic Id.
+        /// </summary>
+        /// <value>
+        /// String tecnic id.
+        /// </value>
+        /// [Column("tecnicid")]
+        [Column("tecnicid")]
+        public string TecnicId { get; set; }
+
+        /// <summary>
+        /// Gets or sets status.
+        /// </summary>
+        /// <value>
+        /// String status.
+        [Column("statusfortecnic")]
+        public string StatusForTecnic { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("assignmentdate")]
+        public DateTime? AssignmentDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("packingdate")]
+        public DateTime? PackingDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        [Column("reassignmentdate")]
+        public DateTime? ReassignmentDate { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>
@@ -292,6 +337,13 @@ namespace Omicron.Pedidos.Entities.Model
         /// Bool is production order.
         [NotMapped]
         public bool IsProductionOrder => !string.IsNullOrEmpty(this.Productionorderid);
+
+        /// <summary>
+        /// Gets or sets QFB Name.
+        /// </summary>
+        /// <value>String QFB Name.</value>
+        [NotMapped]
+        public string QfbName { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether gets.

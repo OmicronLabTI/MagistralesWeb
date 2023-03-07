@@ -62,6 +62,31 @@ namespace Omicron.Usuarios.Api.Controllers
         }
 
         /// <summary>
+        /// Gets all tecnic users.
+        /// </summary>
+        /// <returns>the users.</returns>
+        [HttpGet]
+        [Route("/getUsers/tecnics")]
+        public async Task<IActionResult> GetUsersTecnic()
+        {
+            var response = await this.userFacade.GetUsersTecnic();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets relation user info.
+        /// </summary>
+        /// <param name="id">User Id.</param>
+        /// <returns>the users.</returns>
+        [HttpGet]
+        [Route("/getUsers/inforelation/{id}")]
+        public async Task<IActionResult> GetInfoRelation(string id)
+        {
+            var response = await this.userFacade.GetRelationUserInfo(id);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// gets the qfb.
         /// </summary>
         /// <param name="roleId">the roleId.</param>
@@ -160,6 +185,19 @@ namespace Omicron.Usuarios.Api.Controllers
         {
             var response = await this.userFacade.InsertUser(user);
             return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Method to get qfb info by Id.
+        /// </summary>
+        /// <param name="qfbIds">Qfb idx.</param>
+        /// <returns>User Model.</returns>
+        [Route("/getqfb/info/byids")]
+        [HttpPost]
+        public async Task<IActionResult> GetQfbInfoByIds(List<string> qfbIds)
+        {
+            var result = await this.userFacade.GetQfbInfoByIds(qfbIds);
+            return this.Ok(result);
         }
 
         /// <summary>

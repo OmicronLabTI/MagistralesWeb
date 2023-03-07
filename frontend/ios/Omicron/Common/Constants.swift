@@ -23,6 +23,7 @@ struct Constants {
         case assignedBatches = "Hubo un error al asignar los siguientes lotes"
         case assignedBatchesTryAgain = "Hubo un error al asignar los lotes, por favor intentar de nuevo"
         case loadOrdersDetail = "Hubo un error al cargar el detalle de la orden de fabricación, intentar de nuevo"
+        case invalidSapOrderId = "Hay Órdenes de Fabricación seleccionadas de diferente pedido, favor de seleccionar del mismo pedido para poder continuar"
     }
     enum Tags: Int {
         case loading = 101
@@ -69,10 +70,13 @@ struct OmicronColors {
     static let pendingStatus = UIColor.init(red: 255/255, green: 184/255, blue: 0/255, alpha: 1)
     static let finishedStatus = UIColor.init(red: 28/255, green: 124/255, blue: 213/255, alpha: 1)
     static let reassignedStatus = UIColor.init(red: 186/255, green: 49/255, blue: 237/255, alpha: 1)
+    static let packageButton = UIColor.init(red: 252/255, green: 176/255, blue: 124/255, alpha: 1)
     static let tableStatus = UIColor.init(red: 233/255, green: 233/255, blue: 233/255, alpha: 1)
     static let tableColorRow = UIColor.init(red: 192/255, green: 219/255, blue: 243/255, alpha: 1)
     static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
     static let darkGray = UIColor.init(red: 102, green: 106, blue: 109, alpha: 1)
+    static let signColor = UIColor(red: 1.00, green: 0.42, blue: 0.00, alpha: 1.00)
+    static let batchesColor = UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00)
 }
 struct UsersDefaultsConstants {
     static let isLogged = "isLogged"
@@ -97,7 +101,7 @@ struct CommonStrings {
     static let OKConst = "Aceptar"
     static let cancel = "Cancelar"
     static let shopTransaction = "Pedido OmicronShop"
-    static let searchOrden = "Buscar orden/pedido/fórmula"
+    static let searchOrden = "Buscar /orden/pedido/fórmula"
     static let signatureViewTitleQFB = "Firma del  QFB"
     static let signatureViewTitleTechnical = "Firma del Técnico"
     static let addComponentTitle = "Agregar Componentes"
@@ -170,6 +174,7 @@ struct CommonStrings {
                           "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
     static let errorFinishOrder = "Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo"
     static let errorFinishOrders = "Ocurrió un error al finalizar las ordenes, por favor intentarlo de nuevo"
+    static let errorPackageOrders = "Ocurrió un error al envasar las ordenes, por favor intentarlo de nuevo"
     static let errorPDF = "Por el momento no es posible mostrar el PDF del pedido, intenta más tarde"
     static let zero = "0"
     static let errorUserIdIndexPathOfOrdersSelected = "Hubo un error al obtener userID de UserDefaults u obtener indexPathOfOrdersSelected"
@@ -202,9 +207,10 @@ struct StatusNameConstants {
     static let reassignedStatus = "Reasignado"
     static let finalizedStatus = "Finalizado"
     static let addComponent = "Agregar componente"
-    static let deleteComponents = "Eliminar componentes"
+    static let deleteComponents = "Eliminar"
     static let save = "Guardar"
     static let seeLots = "Ver Lotes"
+    static let package = "Envasar"
 }
 struct ImageButtonNames {
     static let assigned = "showAssignedDetailButton.png"
@@ -269,4 +275,17 @@ enum RegularExpresions: String {
 enum DecimalFormat: String {
     case zero = "%.0f"
     case six = "%6f"
+}
+
+enum StatusOrders: Int {
+    case assigned = 1
+    case inProcess = 2
+    case pendding = 3
+    case finished = 4
+    case reasigned = 5
+}
+
+enum UserType: Int {
+    case technical = 9
+    case qfb = 2
 }

@@ -30,11 +30,21 @@ class RootViewModel {
     var refreshSearch = PublishSubject<String>()
     var searchStore = String()
     var needSearch = false
+    var orders: [SectionOrder] = []
+    var showTwoModals = false
+    var completeOrderList: [Order] = []
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
+    var userType: UserType = UserType.technical
     init() {
         logoutDidTapBinding()
         searchFilterBinding()
+        userData()
+    }
+
+    func userData() {
+        let rol = Persistence.shared.getUserData()?.role ?? UserType.technical.rawValue
+        self.userType = UserType(rawValue: rol)!
     }
     // MARK: - Functions
     func logoutDidTapBinding() {
@@ -71,10 +81,24 @@ class RootViewModel {
             guard let orderId = order.productionOrderId else { return false }
             guard let baseDocument = order.baseDocument else { return false }
             guard let itemCode = order.itemCode else { return false }
+            guard let description = order.descriptionProduct else { return false }
+            var shopTransaction = ""
+            if order.shopTransaction != nil {
+                shopTransaction = String(order.shopTransaction ?? "").suffix(6).uppercased()
+            }
             return String(orderId).contains(text)
                 || String(baseDocument).contains(text)
-            || String(itemCode).contains(text.uppercased())
+                || String(shopTransaction).contains(text.uppercased())
+                || String(itemCode).contains(text.uppercased())
+                || description.uppercased().contains(text.uppercased())
         })
+    }
+
+    func getShowTwoSignatureModals(_ fabricationOrders: [Int]) -> Bool {
+        let selectedOrders = self.completeOrderList.filter {
+            fabricationOrders.contains($0.productionOrderId ?? 0)
+        }
+        return !selectedOrders.allSatisfy { $0.hasTechnicalAssigned ?? false}
     }
 
     func sectionOrderSwitched(statusId: Int, orders: [Order]) -> SectionOrder? {
@@ -126,8 +150,15 @@ class RootViewModel {
         self.networkManager.getStatusList(userId).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             let sections = self.getSections(res: res)
+            let ordersByStatus: [[Order]] = res.response?.status?.map { $0.orders ?? [] } ?? []
+            var ordersTemp: [Order] = []
+            for orders in ordersByStatus {
+                ordersTemp.append(contentsOf: orders )
+            }
+            self.completeOrderList = ordersTemp
             self.sections = sections
             self.dataStatus.onNext(sections)
+            self.orders = sections
             self.refreshSelection.onNext(sections.count)
             self.needRefreshAction()
             self.needIsUpdate(isUpdate: isUpdate)
@@ -160,6 +191,11 @@ class RootViewModel {
     }
 
     func getSections(res: StatusResponse) -> [SectionOrder] {
+        if self.userType == UserType.technical {
+            res.response?.status = res.response?.status?.filter({
+                $0.statusId! != StatusOrders.inProcess.rawValue &&
+                $0.statusId! != StatusOrders.finished.rawValue })
+        }
         return res.response?.status.map({ status in
             return status.map({ detail -> SectionOrder? in
                 let orders = detail.orders ?? []

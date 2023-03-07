@@ -55,6 +55,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// Returns the user order by user id.
         /// </summary>
         /// <param name="listIds">the list of users.</param>
+        /// <param name="status">the list of status.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByUserIdAndStatusAndTecnic(List<string> listIds, List<string>  status);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="listIds">the list of users.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByUserIdAndStatus(List<string> listIds, List<string> status);
 
@@ -328,5 +336,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="fechaFin">the end date.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByPlanningDate(DateTime fechaInicio, DateTime fechaFin);
+
+        /// <summary>
+        /// Returns the user order by tecnic id.
+        /// </summary>
+        /// <param name="listIds">the list of users.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByTecnicId(List<string> listIds);
     }
 }
