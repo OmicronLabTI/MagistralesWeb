@@ -128,6 +128,7 @@ class SupplieViewModel {
         return newSupplie
     }
     func deleteSelectedComponents() {
+        let isSingular = selectedComponentsToDelete.count == 1
         selectedComponentsToDelete.forEach { itemCode in
             let indexToDelete = supplieList.firstIndex(where: { $0.productId == itemCode })
             if indexToDelete != nil {
@@ -138,8 +139,10 @@ class SupplieViewModel {
         selectedComponentsToDelete = []
         self.selectedButtonIsEnable.onNext(selectedComponentsToDelete.count > 0)
         self.validateSendToStoreIsEnabled()
-        self.showSuccessAlert.onNext((title: "Eliminados",
-                                      msg: "Los componentes se han eliminado correctamente",
+        let message = isSingular ? CommonStrings.successDeleteSingular :
+            CommonStrings.successDeletePlural
+        self.showSuccessAlert.onNext((title: isSingular ? "Eliminado" : "Eliminados",
+                                      msg: message,
                                       autoDismiss: true))
     }
     func validateItemsToDelete(itemCode: String) {
