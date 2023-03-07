@@ -17,7 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatInputModule } from '@angular/material';
+import { MatInputModule, MatSelectModule } from '@angular/material';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
@@ -41,7 +41,7 @@ describe('MaterialRequestComponent', () => {
 
   const getPreMaterialRequestMock = MaterialRequestMock;
   const postMaterialRequestMock = MaterialPostResMock;
-  const blobResponse = new HttpResponse<Blob>();
+  const blobResponse = new Blob();
   const locationStub = {
     back: jasmine.createSpy('back')
   };
@@ -57,8 +57,33 @@ describe('MaterialRequestComponent', () => {
       ('MaterialRequestService',
         [
           'getPreMaterialRequest',
-          'postMaterialRequest'
+          'postMaterialRequest',
+          'getDestinationStore'
         ]);
+    materialReServiceSpy.getDestinationStore.and.returnValue(
+      of({
+        response: [
+          {
+            id: 50,
+            value: 'MG',
+            type: 'string',
+            field: 'DestinationWarehouse'
+          },
+          {
+            id: 51,
+            value: 'BE',
+            type: 'string',
+            field: 'DestinationWarehouse'
+          },
+          {
+            id: 52,
+            value: 'MN',
+            type: 'string',
+            field: 'DestinationWarehouse'
+          }
+        ]
+      })
+    );
     materialReServiceSpy.getPreMaterialRequest.and.returnValue(of(getPreMaterialRequestMock));
     materialReServiceSpy.postMaterialRequest.and.returnValue(of(postMaterialRequestMock));
 
@@ -68,6 +93,7 @@ describe('MaterialRequestComponent', () => {
       'getUserId',
       'getUserName',
     ]);
+
 
     // ------------------ DataService
     dataServiceSpy = jasmine.createSpyObj<DataService>
@@ -84,16 +110,18 @@ describe('MaterialRequestComponent', () => {
     localStorageServiceSpy.getUserId.and.returnValue('35642b3a-9471-4b89-9862-8bee6d98c361');
     // -------------------- FileDownloaderService
     fileDownloaderServiceSpy = jasmine.createSpyObj<FileDownloaderService>
-      ('FileDownloaderService', ['downloadFile']);
+      ('FileDownloaderService', ['downloadFileResult']);
 
     //  -------------------- ReportingService
     reportingServiceSpy = jasmine.createSpyObj<ReportingService>
       ('ReportingService',
         [
-          'downloadPreviewRawMaterialRequest'
+          'downloadPreviewMaterial'
         ]
       );
-    reportingServiceSpy.downloadPreviewRawMaterialRequest.and.returnValue(of(blobResponse));
+    reportingServiceSpy.downloadPreviewMaterial.and.returnValue(of({
+      response: [blobResponse]
+    }));
 
     // -------------------- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
@@ -121,6 +149,7 @@ describe('MaterialRequestComponent', () => {
         RouterTestingModule,
         BrowserAnimationsModule,
         MatInputModule,
+        MatSelectModule
       ],
       providers: [
         { provide: MaterialRequestService, useValue: materialReServiceSpy },
@@ -226,7 +255,10 @@ describe('MaterialRequestComponent', () => {
     expect(dataServiceSpy.setIsToSaveAnything).toHaveBeenCalled();
   });
   it('should download Preview', () => {
+    reportingServiceSpy.downloadPreviewMaterial.and.returnValue(of({
+      response: [blobResponse]
+    }));
     component.downloadPreview();
-    expect(fileDownloaderServiceSpy.downloadFile).toHaveBeenCalled();
+    expect(fileDownloaderServiceSpy.downloadFileResult).toHaveBeenCalled();
   });
 });

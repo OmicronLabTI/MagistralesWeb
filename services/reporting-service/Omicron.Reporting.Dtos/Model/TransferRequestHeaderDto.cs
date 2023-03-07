@@ -1,17 +1,19 @@
 ﻿// <summary>
-// <copyright file="TransferRequestResult.cs" company="Axity">
+// <copyright file="TransferRequestHeaderDto.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.SapDiApi.Entities.Models
+namespace Omicron.Reporting.Dtos.Model
 {
+    using System.Collections.Generic;
+
     /// <summary>
-    /// Class for Transfer Request Result.
+    /// Class for Transfer Request Header Dto.
     /// </summary>
-    public class TransferRequestResult
+    public class TransferRequestHeaderDto
     {
         /// <summary>
         /// Gets or sets UserInfo.
@@ -22,19 +24,11 @@ namespace Omicron.SapDiApi.Entities.Models
         public string UserInfo { get; set; }
 
         /// <summary>
-        /// Gets or sets UserInfo.
+        /// Gets or sets TransferRequestDetail.
         /// </summary>
         /// <value>
-        /// String UserInfo.
+        /// String TransferRequestDetail.
         /// </value>
-        public int TransferRequestId { get; set; }
-
-        /// <summary>
-        /// Gets or sets UserInfo.
-        /// </summary>
-        /// <value>
-        /// String UserInfo.
-        /// </value>
-        public string Error { get; set; }
+        public List<TransferRequestDetailDto> TransferRequestDetail { get; set; }
     }
 }

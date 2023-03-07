@@ -448,8 +448,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
             chipValues = ServiceUtils.UndecodeSpecialCaracters(chipValues);
 
-            var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, ServiceConstants.MagistralWareHouse);
-
+            var userId = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.ParameterUserId, string.Empty);
+            var qfbWarehouse = await this.CalculateWarehouse(userId, string.Empty);
+            var alternateWarehouse = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(qfbWarehouse), qfbWarehouse, ServiceConstants.MagistralWareHouse);
+            var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, alternateWarehouse);
+            warehouse ??= alternateWarehouse;
             var firstChip = chipValues.FirstOrDefault().ToLower();
             listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip, warehouse)).ToList());
             listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(firstChip, warehouse)).ToList());
@@ -466,15 +469,12 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(offset, out int offsetNumber);
             int.TryParse(limit, out int limitNumber);
 
-            var userId = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.ParameterUserId, string.Empty);
-            warehouse = await this.CalculateWarehouse(userId, warehouse);
-
             var produtOrdered = listValues.OrderBy(o => o.ProductId).ToList();
             var productToReturn = produtOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
-            productToReturn.ForEach(pr =>
+            productToReturn.ToList().ForEach(pr =>
             {
-                pr.Warehouse = warehouse;
+                pr.Warehouse = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(qfbWarehouse), qfbWarehouse, pr.Warehouse);
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count);

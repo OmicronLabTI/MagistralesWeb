@@ -6,7 +6,7 @@
 // </copyright>
 // </summary>
 
-namespace Omicron.SapDiApi.Entities.Models
+namespace Omicron.Reporting.Dtos.Model
 {
     /// <summary>
     /// Class for Transfer Request Result.

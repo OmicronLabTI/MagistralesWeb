@@ -66,7 +66,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
                 foreach (var orf in pedido.Detalle)
                 {
-                    
+
                     var plannedQty = orf.QtyPlannedDetalle == null ? "0" : orf.QtyPlannedDetalle.ToString();
                     double.TryParse(plannedQty, out double plannedQtyNumber);
 
@@ -191,7 +191,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     {
                         components.MoveNext();
                         continue;
-                    } 
+                    }
 
                     _loggerProxy.Info($"Item to update: { sapItemCode } on line { lineNum }.");
 
@@ -206,7 +206,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             }
 
             var listNotInserted = updateFormula.Components.Where(x => !listIdsUpdated.Contains(x.ProductId));
-            
+
             foreach (var line in listNotInserted)
             {
                 _loggerProxy.Info($"Item to insert: { line.ProductId } on line { counter }.");
@@ -256,7 +256,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
             productionOrderObj.GetByKey(updateFormula.FabOrderId);
             var components = this.ExecuteQuery(ServiceConstants.FindWor1ByDocEntry, updateFormula.FabOrderId);
             var linesToDelete = new List<int>();
-            
+
             if (components.RecordCount != 0)
             {
                 for (var i = 0; i < components.RecordCount; i++)
@@ -285,7 +285,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     components.MoveNext();
                 }
             }
- 
+
             foreach (var lineToDelete in linesToDelete.OrderByDescending(x => x))
             {
                 productionOrderObj.Lines.SetCurrentLine(lineToDelete);
@@ -382,7 +382,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         .GroupBy(z => z.Action)
                         .OrderBy(a => a.Key)
                         .ToList()
-                        .ForEach(sg => 
+                        .ForEach(sg =>
                         {
                             sg
                             .ToList()
@@ -390,23 +390,23 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                             {
                                 productionOrderObj.Lines.BatchNumbers.Add();
                                 productionOrderObj.Lines.BatchNumbers.Quantity = z.Action.Equals(ServiceConstants.DeleteBatch) ? -z.AssignedQty : z.AssignedQty;
-                                productionOrderObj.Lines.BatchNumbers.BatchNumber = z.BatchNumber;                                                                
+                                productionOrderObj.Lines.BatchNumbers.BatchNumber = z.BatchNumber;
                             });
-                            
+
                             var updated = productionOrderObj.Update();
 
                             if (updated != 0)
                             {
                                 lastError = updated;
                             }
-                            
+
                             company.GetLastError(out var error, out var lastMsg);
                             _loggerProxy.Info($"The next Batch was tried to be assign with status {error} - {lastMsg} - {group.Key}-{JsonConvert.SerializeObject(sg)}");
                         });
 
                     dictResult = this.AddResult($"{group.Key}-{itemCode}-{i}", ServiceConstants.ErrorUpdateFabOrd, lastError, company, dictResult);
 
-                    components.MoveNext();                    
+                    components.MoveNext();
                 }
             }
 
@@ -444,13 +444,13 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     }
 
                     this.ValidateRequiredQuantityForRetroactiveIssues(productionOrderId);
-                    
+
                     this.ValidateNewBatches(orderReference.ItemNo, productionOrderConfig.Batches);
 
                     this.CreateoGoodIssueForProductionByOrderId(productionOrderId);
-                    
+
                     this.CreateReceiptFromProductionOrderId(productionOrderId, productionOrderConfig);
-                    
+
                     this.CloseProductionOrder(productionOrderId);
                 }
                 catch (ValidationException ex)
@@ -482,7 +482,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
         {
             var result = new KeyValuePair<string, string>();
             var item = this.GetProductByCode(isolatedFabOrder.ProductCode);
-            
+
             if (item != null)
             {
                 var uniqueId = Guid.NewGuid().ToString();
@@ -543,7 +543,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                     for (var i = 0; i < components.RecordCount; i++)
                     {
                         var name = (string)components.Fields.Item("TrnspName").Value;
-                        var code = components.Fields.Item("TrnspCode").Value;                        
+                        var code = components.Fields.Item("TrnspCode").Value;
 
                         if (name.ToLower().Equals(sendPackage.TransportMode.ToLower()))
                         {
@@ -611,11 +611,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         result.Add(new TransferRequestResult { UserInfo = transferRequest.UserInfo, Error = string.Format("{0}-{1}-{2}", ServiceConstants.ErrorTransferRequest, errorCode.ToString(), errMsg) });
 
                     }
-
-                    company.GetNewObjectCode(out var transferRequestId);
-                    _loggerProxy.Info($"The transfer request {transferRequestId} was created {JsonConvert.SerializeObject(transferRequest)}");
-                    result.Add(new TransferRequestResult { UserInfo = transferRequest.UserInfo, TransferRequestId = int.Parse(transferRequestId) });
-
+                    else
+                    {
+                        company.GetNewObjectCode(out var transferRequestId);
+                        _loggerProxy.Info($"The transfer request {transferRequestId} was created {JsonConvert.SerializeObject(transferRequest)}");
+                        result.Add(new TransferRequestResult { UserInfo = transferRequest.UserInfo, TransferRequestId = int.Parse(transferRequestId) });
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -945,7 +946,7 @@ namespace Omicron.SapDiApi.Services.SapDiApi
 
             return results;
         }
-        
+
         /// <summary>
         /// Execute query.
         /// </summary>

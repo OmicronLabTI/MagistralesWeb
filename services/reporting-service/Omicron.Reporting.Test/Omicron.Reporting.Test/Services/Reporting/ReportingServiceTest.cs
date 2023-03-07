@@ -21,6 +21,7 @@ namespace Omicron.Reporting.Test.Services.Request
     using Omicron.Reporting.Services;
     using Omicron.Reporting.Services.AzureServices;
     using Omicron.Reporting.Services.Clients;
+    using Omicron.Reporting.Services.SapDiApi;
 
     /// <summary>
     /// class for the test.
@@ -72,7 +73,8 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
+            var mockDiApi = new Mock<ISapDiApi>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
 
             // act
             var result = await service.SendEmailForeignPackage(request);
@@ -136,7 +138,8 @@ namespace Omicron.Reporting.Test.Services.Request
                     .Returns(Task.FromResult(It.IsAny<BlobDownloadInfo>()));
             }
 
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
+            var mockDiApi = new Mock<ISapDiApi>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
 
             // act
             var result = await service.SendEmailLocalPackage(request);
@@ -199,7 +202,8 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
+            var mockDiApi = new Mock<ISapDiApi>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
 
             // act
             var result = await service.SendEmailRejectedOrder(request);
@@ -278,7 +282,8 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
+            var mockDiApi = new Mock<ISapDiApi>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
 
             // act
             var result = await service.SendEmailCancelDeliveryOrders(request);
@@ -322,7 +327,8 @@ namespace Omicron.Reporting.Test.Services.Request
             var mockEmail = new Mock<IOmicronMailClient>();
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
+            var mockDiApi = new Mock<ISapDiApi>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
 
             // act
             var result = service.CreateRawMaterialRequestPdf(request, true);
@@ -365,7 +371,8 @@ namespace Omicron.Reporting.Test.Services.Request
             var mockEmail = new Mock<IOmicronMailClient>();
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
+            var mockDiApi = new Mock<ISapDiApi>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
 
             // act
             var result = service.CreateRawMaterialRequestPdf(request, false);
@@ -376,21 +383,40 @@ namespace Omicron.Reporting.Test.Services.Request
         /// <summary>
         /// gets the delivery cancel test.
         /// </summary>
+        /// <param name="hasDiApiError">Has di api errror.</param>
         /// <returns>the orders.</returns>
         [Test]
-        public async Task SubmitRawMaterialRequestPdf()
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task SubmitRawMaterialRequestPdf(bool hasDiApiError)
         {
             // arrange
+            var userId = "123";
+            var userName = "username";
+
             var rawMaterial = new List<RawMaterialRequestDetailModel>()
             {
                 new RawMaterialRequestDetailModel()
                 {
                     Id = 1,
-                    Description = "description",
-                    ProductId = "reve 14",
+                    Description = "SULFATO DE COBRE 5 GR, SOBRES",
+                    ProductId = "1001   12 SB",
                     RequestId = 1,
-                    Unit = "ambar",
+                    Unit = "Paquete",
                     RequestQuantity = 5,
+                    Warehouse = "MG",
+                    IsLabel = true,
+                },
+                new RawMaterialRequestDetailModel()
+                {
+                    Id = 1,
+                    Description = "SULFATO DE COBRE 5 GR, SOBRES",
+                    ProductId = "1001   200 SB",
+                    RequestId = 1,
+                    Unit = null,
+                    RequestQuantity = 5,
+                    Warehouse = "MG",
+                    IsLabel = false,
                 },
             };
             var request = new RawMaterialRequestModel()
@@ -399,33 +425,73 @@ namespace Omicron.Reporting.Test.Services.Request
                 CreationDate = "01/04/2020",
                 CreationUserId = "123",
                 Observations = "ninguno",
-                SigningUserId = "123",
-                SigningUserName = "username",
+                SigningUserId = userId,
+                SigningUserName = userName,
                 ProductionOrderIds = new List<int>() { 1, 2, 3 },
                 OrderedProducts = rawMaterial,
             };
 
+            var resultDiApi = new List<TransferRequestResult>
+            {
+                new TransferRequestResult
+                {
+                    UserInfo = $"{userName}-{userId}",
+                    Error = hasDiApiError ? "Error enviado pro Di Api" : string.Empty,
+                    TransferRequestId = hasDiApiError ? 0 : 756778,
+                },
+            };
+
+            var listParams = new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Field = "SmtpServer", Value = "SmtpServer" },
+                new ParametersModel { Id = 2, Field = "SmtpPort", Value = "1234" },
+                new ParametersModel { Id = 3, Field = "EmailMiddlewarePassword", Value = "EmailMiddlewarePassword" },
+                new ParametersModel { Id = 4, Field = "EmailMiddleware", Value = "EmailMiddleware" },
+                new ParametersModel { Id = 5, Field = "EmailCCDelivery", Value = "EmailCCDelivery" },
+                new ParametersModel { Id = 6, Field = "EmailMiddlewareUser", Value = "EmailMiddlewareUser" },
+                new ParametersModel { Id = 7, Field = "EmailAlmacen2", Value = "almacen_etiqueta@mail.com" },
+                new ParametersModel { Id = 8, Field = "EmailAlmacen", Value = "almacen_noetiqueta@mail.com" },
+                new ParametersModel { Id = 9, Field = "EmailLogisticaCc1", Value = "logisitca1@mail.com" },
+                new ParametersModel { Id = 10, Field = "EmailLogisticaCc2", Value = "logisitca2@mail.com" },
+            };
+
             var mockCatalog = new Mock<ICatalogsService>();
             mockCatalog
-                .Setup(m => m.GetSmtpConfig())
-                .Returns(Task.FromResult(this.GetSMTPConfig()));
-            mockCatalog
-                .Setup(m => m.GetRawMaterialEmailConfig())
-                .Returns(Task.FromResult(this.GetRawMaterialEmailConfigModel()));
+                .Setup(m => m.GetParams(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(listParams));
 
             var mockEmail = new Mock<IOmicronMailClient>();
             mockEmail
                 .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
                 .Returns(Task.FromResult(true));
 
+            var mockDiApi = new Mock<ISapDiApi>();
+            mockDiApi
+                .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDiApi(resultDiApi)));
+
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
+
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
 
             // act
             var result = await service.SubmitRawMaterialRequestPdf(request);
 
             Assert.IsNotNull(result);
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(200, result.Code);
+
+            if (hasDiApiError)
+            {
+                Assert.IsFalse((bool)result.Response);
+                Assert.IsEmpty((List<string>)result.Comments);
+            }
+            else
+            {
+                Assert.IsTrue((bool)result.Response);
+                Assert.IsTrue(((List<string>)result.Comments).Count > 0);
+            }
         }
 
         /// <summary>
@@ -497,7 +563,8 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
+            var mockDiApi = new Mock<ISapDiApi>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
 
             // act
             var result = await service.SubmitIncidentsExel(request);
@@ -543,7 +610,8 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object);
+            var mockDiApi = new Mock<ISapDiApi>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
 
             // act
             var result = await service.SendEmails(listDoctor);

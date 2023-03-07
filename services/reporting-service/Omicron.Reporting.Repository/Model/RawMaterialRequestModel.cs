@@ -85,5 +85,13 @@ namespace Omicron.Reporting.Entities.Model
         /// String creation date.
         /// </value>
         public string CreationDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets RequestNumber.
+        /// </summary>
+        /// <value>
+        /// Int RequestNumber.
+        /// </value>
+        public string RequestNumber { get; set; }
     }
 }

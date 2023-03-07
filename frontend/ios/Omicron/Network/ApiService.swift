@@ -31,6 +31,7 @@ enum ApiService {
     case getContainer(userId: String)
     case getBulks(data: BulkListRequest)
     case createOrderBulk(data: BulkOrderCreate)
+    case createComponents(data: SendToStoreRequest)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -94,6 +95,8 @@ extension ApiService: AuthorizedTargetType {
             return "/sapadapter/products"
         case .createOrderBulk:
             return "/pedidos/fabOrder/isolated"
+        case .createComponents:
+            return "/warehouses/request/rawmaterial"
         }
     }
     var method: Moya.Method {
@@ -104,7 +107,8 @@ extension ApiService: AuthorizedTargetType {
              .postOrdersPDF,
              .validateOrders,
              .createOrderBulk,
-             .packageOrders:
+             .packageOrders,
+             .createComponents:
             return .post
         case .getInfoUser,
              .getStatusList,
@@ -136,6 +140,8 @@ extension ApiService: AuthorizedTargetType {
              .getConnect,
              .getContainer:
             return .requestPlain
+        case .createComponents(let data):
+            return .requestJSONEncodable(data)
         case .renew(let data):
             return .requestJSONEncodable(data)
         case .deleteItemOfOrdenDetail(let data):
@@ -285,6 +291,12 @@ extension ApiService: AuthorizedTargetType {
             return data
         case .createOrderBulk:
             guard let url = Bundle.main.url(forResource: "createOrderBulk", withExtension: "json"),
+            let data = try? Data(contentsOf: url) else {
+                      return Data()
+            }
+              return data
+        case .createComponents:
+            guard let url = Bundle.main.url(forResource: "createSupplie", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

@@ -1064,4 +1064,11 @@
 			<column name="field" value="DestinationWarehouse" />
 		</insert>
 	</changeSet>
+	<changeSet author="jarturoep" id="changelog-1.114">
+		<insert tableName="parameters">
+			<column name="value" value="almacen@o-lab.mx" />
+			<column name="type" value="string" />
+			<column name="field" value="EmailAlmacen2" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>

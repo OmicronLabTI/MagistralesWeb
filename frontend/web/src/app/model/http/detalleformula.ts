@@ -68,6 +68,7 @@ export class IFormulaDetalleReq {
     isItemSelected?: boolean;
     productoId?: string;
     isContainer?: boolean;
+    isLabel?: boolean;
 }
 
 

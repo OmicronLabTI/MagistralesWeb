@@ -38,7 +38,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string RawMaterialRequestEmailBody = "Se ha enviado una solicitud de Materia Prima, favor de no responder este correo.";
+        public const string RawMaterialRequestEmailBody = "<html><body><p>Solicitud de traslado No. {0}</p><p>Se ha enviado una solicitud de Materia Prima, favor de no responder este correo.</p></body></html>";
 
         /// <summary>
         /// the foreign.
@@ -328,6 +328,51 @@ namespace Omicron.Reporting.Services.Constants
         public const string InvoiceXmlName = "F{0}.xml";
 
         /// <summary>
+        /// status cancelado.
+        /// </summary>
+        public const string LabelMailParam = "EmailAlmacen2";
+
+        /// <summary>
+        /// status cancelado.
+        /// </summary>
+        public const string NoLabelMailParam = "EmailAlmacen";
+
+        /// <summary>
+        /// status LabelProduct.
+        /// </summary>
+        public const string LabelProduct = "LabelProduct";
+
+        /// <summary>
+        /// status NoLabelProduct.
+        /// </summary>
+        public const string NoLabelProduct = "NoLabelProduct";
+
+        /// <summary>
+        /// status NoLabelProduct.
+        /// </summary>
+        public const string EndpointCreateTransferRequest = "create/transferrequest";
+
+        /// <summary>
+        /// status NoLabelProduct.
+        /// </summary>
+        public const string Default = "create/transferrequest";
+
+        /// <summary>
+        /// value for refactua.
+        /// </summary>
+        public const string WareHouseMp = "MP";
+
+        /// <summary>
+        /// value for refactua.
+        /// </summary>
+        public const string WarehouseMg = "MG";
+
+        /// <summary>
+        /// value for refactua.
+        /// </summary>
+        public const string WarehouseDz = "DZ";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -376,6 +421,30 @@ namespace Omicron.Reporting.Services.Constants
             Camino,
             Entregado,
             Enviado,
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> RawMaterialRequestCopyMails { get; } = new List<string>
+        {
+          "EmailLogisticaCc1",
+          "EmailLogisticaCc2",
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> LabelProductCategory { get; } = new List<string>
+        {
+          LabelProduct,
+          NoLabelProduct,
         };
     }
 }
