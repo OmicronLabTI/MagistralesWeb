@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+	<changeSet author="lreyes" id="changelog-1.0">
+		<insert tableName="parameters">
+			<column name="value" value="C03384" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
+		</insert>
+		<insert tableName="parameters">
+			<column name="value" value="C00118" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
+		</insert>
+	</changeSet>
+
+	<changeSet author="lreyes" id="changelog-1.1">
+		<insert tableName="parameters">
+			<column name="value" value="C02042" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
+		</insert>
+		<insert tableName="parameters">
+			<column name="value" value="C00408" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
+		</insert>
+	</changeSet>
+	<changeSet author="jcastillo" id="changelog-1.2">
+		<insert tableName="parameters">
+			<column name="value" value="C00111" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
+		</insert>
+		<insert tableName="parameters">
+			<column name="value" value="C00299" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
+		</insert>
+	</changeSet>
+	<changeSet author="lreyes" id="changelog-1.3">
+		<insert tableName="parameters">
+			<column name="value" value="C00212" />
+			<column name="type" value="string" />
+			<column name="field" value="CardCodeResponsibleMedic" />
+		</insert>		
+	</changeSet>
+</databaseChangeLog>
