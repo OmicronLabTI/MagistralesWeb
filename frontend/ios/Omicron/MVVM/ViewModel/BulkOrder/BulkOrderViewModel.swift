@@ -13,7 +13,7 @@ import Resolver
 
 class BulkOrderViewModel {
     var searchBulk = PublishSubject<String>()
-    var okCreateOrder = PublishSubject<Bool>()
+    var okCreateOrder = PublishSubject<String>()
     var searchDidEnter = PublishSubject<Void>()
     var removeChip = PublishSubject<String>()
     var dataChips = BehaviorSubject<[String]>(value: [])
@@ -89,13 +89,17 @@ class BulkOrderViewModel {
             isFromQfbProfile: true)
         self.networkManager.createOrderBulks(req).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
-            self.rootViewModel.getOrders()
-            self.okCreateOrder.onNext(true)
+            if(res.response != 0){
+                self.rootViewModel.getOrders()
+                self.okCreateOrder.onNext(CommonStrings.okCreateBulkOrder)
+            }else{
+                self.okCreateOrder.onNext(res.userError ?? CommonStrings.errorCreateBulkOrder)
+            }
             self.rootViewModel.loading.onNext(false)
         }, onError: { [weak self] erro in
             guard let self = self else { return }
             self.rootViewModel.loading.onNext(false)
-            self.rootViewModel.error.onNext(CommonStrings.errorLoadingOrders)
+            self.okCreateOrder.onNext(CommonStrings.errorCreateBulkOrder)
         }).disposed(by: disposeBag)
     }
     
