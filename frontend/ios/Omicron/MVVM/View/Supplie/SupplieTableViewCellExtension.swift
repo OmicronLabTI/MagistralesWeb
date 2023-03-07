@@ -18,7 +18,15 @@ extension SupplieTableViewCell {
         let textRange = Range(range, in: text)!
         let currentText = text.replacingCharacters(in: textRange, with: string)
         let patternResult = validateRegex(pattern, currentText)
-        return patternResult || currentText.isEmpty
+        let isCorrect = patternResult || currentText.isEmpty
+        if currentText.isEmpty || Double(currentText) ?? 1 <= 0 {
+            textField.layer.borderWidth = 1
+            textField.layer.borderColor = OmicronColors.processStatus.cgColor
+        } else {
+            textField.layer.borderWidth = 1
+            textField.layer.borderColor = OmicronColors.ligthGray.cgColor
+        }
+        return isCorrect
     }
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
         self.supplieViewModel.changeQuantityPieces(itemCode: self.supplie.productId ?? "",
