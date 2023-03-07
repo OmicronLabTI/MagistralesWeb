@@ -117,4 +117,17 @@ class SupplieTest: XCTestCase {
         }).disposed(by: disposeBag!)
         self.supplieViewModel!.deleteComponents.onNext(())
     }
+    func testSendToStore() {
+        testData = UtilsManager.shared.getDataFor(resourse: "createSupplie",
+                                                  withExtension: "json")
+        let supplie1 = Supplie()
+        supplie1.productId = "123456"
+        let supplie2 = Supplie()
+        supplie2.productId = "6523213"
+        self.supplieViewModel!.supplieList = [supplie1, supplie2]
+        self.supplieViewModel!.returnBack.subscribe(onNext: { _ in
+            XCTAssertTrue(self.supplieViewModel!.supplieList.count == 0)
+        }).disposed(by: disposeBag!)
+        self.supplieViewModel?.sendToStore.onNext("Estos son los comentarios")
+    }
 }
