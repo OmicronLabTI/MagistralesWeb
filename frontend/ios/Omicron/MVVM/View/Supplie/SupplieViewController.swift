@@ -76,7 +76,16 @@ class SupplieViewController: UIViewController {
         changeView(true)
     }
     @IBAction func deleteComponents(_ sender: Any) {
-        supplieViewModel.deleteSelectedComponents()
+        let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
+        let okAction = UIAlertAction(title: CommonStrings.OKConst,
+                                     style: .default,
+                                     handler: { [weak self] _ in
+            self?.supplieViewModel.deleteSelectedComponents()
+        })
+        AlertManager.shared.showAlert(title: "Atención",
+                                      message: supplieViewModel.getDeleteMessageBody(),
+                                      actions: [okAction, cancelAction],
+                                      view: self)
     }
     @IBAction func openComponentsViewController(_ sender: Any) {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
@@ -87,10 +96,28 @@ class SupplieViewController: UIViewController {
         navigationVC.modalPresentationStyle = .formSheet
         self.present(navigationVC, animated: true, completion: nil)
     }
+
     @IBAction func sendToStoreDidPressed(_ sender: Any) {
-        supplieViewModel.sendToStore.onNext(observationsField.text ?? "")
+        let cancelAction = UIAlertAction(title: "Cancelar",
+                                         style: .destructive,
+                                         handler: nil)
+        let okAction = UIAlertAction(title: CommonStrings.OKConst,
+                                     style: .default,
+                                     handler: { [weak self] _ in
+            self?.sendToStoreAction()
+        })
+        AlertManager.shared.showAlert(title: "Atención",
+                                      message: CommonStrings.confirmSendToStore,
+                                      actions: [okAction, cancelAction],
+                                      view: self)
     }
 
+    func sendToStoreAction() {
+        let observations = observationsField.text == CommonStrings.placeholderObservations ?
+            "" :
+            observationsField.text ?? ""
+        supplieViewModel.sendToStore.onNext(observations)
+    }
     @objc func backBtnAction(_ sender: UIBarButtonItem) {
         if supplieList.count == 0 {
             returnBack()
@@ -154,6 +181,8 @@ class SupplieViewController: UIViewController {
         sendToStore.isEnabled = false
         deleteComponents.isEnabled = false
         observationsField.delegate = self
+        observationsField.text = CommonStrings.placeholderObservations
+        observationsField.textColor = UIColor.lightGray
         UtilsManager.shared.setStyleButtonStatus(button: self.deleteComponents,
                                                  title: StatusNameConstants.deleteMultiComponents,
                                                  color: OmicronColors.processStatus,

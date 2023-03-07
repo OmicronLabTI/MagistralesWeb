@@ -72,7 +72,6 @@ class SupplieViewModel {
         let req = SendToStoreRequest(data: dataReq, userId: userId)
         self.loading.onNext(true)
         networkManager.createComponentsOrder(req)
-            .observeOn(MainScheduler.instance)
             .subscribe(onNext: {[weak self] res in
                 guard let self = self else { return }
                 self.loading.onNext(false)
@@ -165,4 +164,10 @@ class SupplieViewModel {
         let allHasQuantity = supplieList.allSatisfy { ($0.requestQuantity ?? 0) > 0 }
         isSendToStoreEnabled.onNext(allHasQuantity && supplieList.count > 0)
     }
+    func getDeleteMessageBody() -> String {
+        return self.selectedComponentsToDelete.count == 1 ?
+            CommonStrings.confirmDeleteSingular :
+            CommonStrings.confirmDeletePlural
+    }
+
 }
