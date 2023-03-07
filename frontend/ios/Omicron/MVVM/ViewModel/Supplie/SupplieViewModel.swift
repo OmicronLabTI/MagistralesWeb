@@ -75,7 +75,14 @@ class SupplieViewModel {
             .subscribe(onNext: {[weak self] res in
                 guard let self = self else { return }
                 self.loading.onNext(false)
-                self.onSuccessResponse(res: res)
+                if res.response != nil {
+                    self.onSuccessResponse(res: res)
+                    return
+                }
+                self.showSuccessAlert.onNext((
+                    title: "Error",
+                    msg: res.userError ?? CommonStrings.errorComponents,
+                    autoDismiss: false))
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)
