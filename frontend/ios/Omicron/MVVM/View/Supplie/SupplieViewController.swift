@@ -44,7 +44,7 @@ class SupplieViewController: UIViewController {
             self.observationsField.text = String()
             self.showAlert(alert: (
                 title: "Completado",
-                msg: "Proceso realizado con éxito",
+                msg: "Solicitud enviada exitosamente",
                 autoDismiss: true
             ))
             self.resetValues()
