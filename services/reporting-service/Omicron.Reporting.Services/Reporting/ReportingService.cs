@@ -63,6 +63,7 @@ namespace Omicron.Reporting.Services
         /// <returns>Report file stream.</returns>
         public FileResultModel CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview)
         {
+            request.RequestNumber = string.Empty;
             var file = this.BuildPdfFile(request, preview);
             return new FileResultModel { Success = true, Code = 200, FileStream = file.FileStream, FileName = file.FileName };
         }
@@ -596,6 +597,7 @@ namespace Omicron.Reporting.Services
                 return (false, string.Empty);
             }
 
+            request.RequestNumber = transferRequestId.ToString();
             var file = this.BuildPdfFile(request, false);
             var pdfFiles = new Dictionary<string, MemoryStream>
             {
@@ -625,7 +627,7 @@ namespace Omicron.Reporting.Services
                         ItemCode = op.ProductId,
                         Quantity = decimal.ToDouble(op.RequestQuantity),
                         SourceWarehosue = ServiceConstants.WareHouseMp,
-                        TargetWarehosue = op.Warehouse,
+                        TargetWarehosue = CommonCall.CalculateTernary(op.Warehouse == ServiceConstants.WarehouseDz, ServiceConstants.WarehouseMg, op.Warehouse),
                     }).ToList(),
             };
 

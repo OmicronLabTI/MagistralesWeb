@@ -363,6 +363,16 @@ namespace Omicron.Reporting.Services.Constants
         public const string WareHouseMp = "MP";
 
         /// <summary>
+        /// value for refactua.
+        /// </summary>
+        public const string WarehouseMg = "MG";
+
+        /// <summary>
+        /// value for refactua.
+        /// </summary>
+        public const string WarehouseDz = "DZ";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
