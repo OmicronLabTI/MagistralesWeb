@@ -92,6 +92,7 @@ class SupplieViewController: UIViewController {
         let componentsVC = storyboard.instantiateViewController(
             withIdentifier: ViewControllerIdentifiers.componentsViewController) as? ComponentsViewController
         componentsVC?.typeOpen = .supplies
+        componentsVC!.clearObservables()
         let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
         navigationVC.modalPresentationStyle = .formSheet
         self.present(navigationVC, animated: true, completion: nil)
