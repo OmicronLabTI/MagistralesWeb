@@ -192,6 +192,18 @@ class NetworkManager: SessionProtocol {
         let res: Observable<ContainerResponse> = makeRequest(request: req)
         return res
     }
+    
+    func getBulks(_ data: BulkListRequest) -> Observable<BulkListResponse> {
+        let req: ApiService = ApiService.getBulks(data: data)
+        let res: Observable<BulkListResponse> = makeRequest(request: req)
+        return res
+    }
+    
+    func createOrderBulks(_ data: BulkOrderCreate) -> Observable<BulkListResponse> {
+        let req: ApiService = ApiService.createOrderBulk(data: data)
+        let res: Observable<BulkListResponse> = makeRequest(request: req)
+        return res
+    }
 
     private func makeRequest<T: BaseMappable>(
         request: ApiService, needsVPN: Bool = false) -> Observable<T> {
