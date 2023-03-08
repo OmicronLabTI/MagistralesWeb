@@ -93,9 +93,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var sapOrderTypes = ordersSap.Select(x => x.Order.OrderType).Distinct().ToList();
             var allUsers = await ServiceUtils.GetUsersByRole(this.userService, ServiceConstants.QfbRoleId.ToString(), true);
-            var users = allUsers;
+            var users = allUsers.FindAll(x => !x.Classification.ToUpper().Equals(ServiceConstants.UserClassificationDZ)).ToList();
 
-            var builder = new DzIsNotOmigenomicsBuilder(orders, users, ordersSap);
+            var builder = new DzIsNotOmigenomicsBuilder(orders, allUsers, ordersSap);
             var relationOrdersWithUsersDZIsNotOmi = builder.AssignOrdersToUsersDZIsNotOmi();
 
             users = ServiceShared.CalculateTernary(sapOrderTypes.Contains(ServiceConstants.Mix), users, users.Where(x => sapOrderTypes.Contains(x.Classification)).ToList());
