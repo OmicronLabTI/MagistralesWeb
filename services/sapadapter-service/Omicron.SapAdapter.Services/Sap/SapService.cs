@@ -449,7 +449,7 @@ namespace Omicron.SapAdapter.Services.Sap
             chipValues = ServiceUtils.UndecodeSpecialCaracters(chipValues);
 
             var userId = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.ParameterUserId, string.Empty);
-            var qfbWarehouse = await this.CalculateWarehouse(userId, string.Empty);
+            var qfbWarehouse = await ServiceUtils.CalculateWarehouse(userId, string.Empty, this.usersService);
             var alternateWarehouse = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(qfbWarehouse), qfbWarehouse, ServiceConstants.MagistralWareHouse);
             var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, alternateWarehouse);
             warehouse ??= alternateWarehouse;
@@ -987,26 +987,6 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var users = await this.usersService.GetUsersById(userIds, ServiceConstants.GetUsersById);
             return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
-        }
-
-        /// <summary>
-        /// Get users by id.
-        /// </summary>
-        /// <param name="userId">User id.</param>
-        /// <param name="warehouse">Current warehouse.</param>
-        /// <returns>User model.</returns>
-        private async Task<string> CalculateWarehouse(string userId, string warehouse)
-        {
-            if (string.IsNullOrEmpty(userId))
-            {
-                return warehouse;
-            }
-
-            var usersResponse = await this.usersService.GetUsersById(new List<string> { userId }, ServiceConstants.GetUsersById);
-            var users = JsonConvert.DeserializeObject<List<UserModel>>(usersResponse.Response.ToString());
-            var user = users.FirstOrDefault(u => u.Role == ServiceConstants.QfbUserRole);
-            user ??= new UserModel { Classification = warehouse };
-            return user.Classification;
         }
     }
 }

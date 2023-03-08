@@ -18,6 +18,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Redis;
+    using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
 
     /// <summary>
@@ -29,22 +30,28 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private readonly IRedisService redisService;
 
+        private readonly IUsersService usersService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ComponentsService"/> class.
         /// </summary>
         /// <param name="sapDao">sap dao.</param>
         /// <param name="redisService">The reddis service.</param>
-        public ComponentsService(ISapDao sapDao, IRedisService redisService)
+        /// <param name="userService">Te user service.</param>
+        public ComponentsService(ISapDao sapDao, IRedisService redisService, IUsersService userService)
         {
             this.sapDao = sapDao.ThrowIfNull(nameof(sapDao));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
+            this.usersService = userService.ThrowIfNull(nameof(userService));
         }
 
         /// <inheritdoc/>
         public async Task<ResultModel> GetMostCommonComponents(Dictionary<string, string> parameters)
         {
             var listToReturn = new List<CompleteDetalleFormulaModel>();
-            var redisValue = await this.redisService.GetRedisKey(ServiceConstants.RedisComponents);
+            var type = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.TypeParameter, ServiceConstants.DetailOrderParameter);
+            var redisKey = ServiceShared.CalculateTernary(type == ServiceConstants.DetailOrderParameter, ServiceConstants.RedisComponents, ServiceConstants.RedisComponentsInputRequest);
+            var redisValue = await this.redisService.GetRedisKey(redisKey);
             var redisComponents = !string.IsNullOrEmpty(redisValue) ? JsonConvert.DeserializeObject<List<ComponentsRedisModel>>(redisValue) : new List<ComponentsRedisModel>();
 
             if (!redisComponents.Any())
@@ -55,7 +62,11 @@ namespace Omicron.SapAdapter.Services.Sap
             redisComponents = redisComponents.OrderByDescending(x => x.Total).ToList();
             var ids = redisComponents.Skip(0).Take(10).Select(x => x.ItemCode.ToLower()).ToList();
 
-            var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, ServiceConstants.MagistralWareHouse);
+            var userId = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.ParameterUserId, string.Empty);
+            var qfbWarehouse = await ServiceUtils.CalculateWarehouse(userId, string.Empty, this.usersService);
+            var alternateWarehouse = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(qfbWarehouse), qfbWarehouse, ServiceConstants.MagistralWareHouse);
+            var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, alternateWarehouse);
+            warehouse ??= alternateWarehouse;
             var listComponents = await this.sapDao.GetItemsByContainsItemCode(ids, warehouse);
 
             ids.ForEach(x =>
