@@ -27,6 +27,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Doctors;
     using Omicron.SapAdapter.Services.Redis;
+    using Omicron.SapAdapter.Services.User;
     using Serilog;
 
     /// <summary>
@@ -452,6 +453,27 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             return ServiceShared.CalculateTernary(string.IsNullOrEmpty(addressType), true, addressType.ValidateNull().Equals(ServiceConstants.DoctorAddressType));
+        }
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        /// <param name="userId">User id.</param>
+        /// <param name="warehouse">Current warehouse.</param>
+        /// <param name="usersService">User service interface.</param>
+        /// <returns>User model.</returns>
+        public static async Task<string> CalculateWarehouse(string userId, string warehouse, IUsersService usersService)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return warehouse;
+            }
+
+            var usersResponse = await usersService.GetUsersById(new List<string> { userId }, ServiceConstants.GetUsersById);
+            var users = JsonConvert.DeserializeObject<List<UserModel>>(usersResponse.Response.ToString());
+            var user = users.FirstOrDefault(u => u.Role == ServiceConstants.QfbUserRole);
+            user ??= new UserModel { Classification = warehouse };
+            return user.Classification;
         }
 
         /// <summary>
