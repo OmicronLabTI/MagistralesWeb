@@ -6,7 +6,6 @@
 //  Copyright © 2022 Diego Cárcamo. All rights reserved.
 //
 
-
 import UIKit
 
 class BulkOrderTableViewCell: UITableViewCell {
