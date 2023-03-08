@@ -89,6 +89,7 @@ class OrderDetailViewController: UIViewController {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let componentsVC = storyboard.instantiateViewController(
             withIdentifier: ViewControllerIdentifiers.componentsViewController) as? ComponentsViewController
+        componentsVC!.clearObservables()
         let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
         navigationVC.modalPresentationStyle = .formSheet
         self.present(navigationVC, animated: true, completion: nil)

@@ -175,6 +175,8 @@ struct CommonStrings {
     static let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
     // swiftlint:disable line_length
     static let errorLoadingOrders = "Ocurrió un error al cargar las órdenes de fabricación,  por favor inténtalo de nuevo"
+    static let errorCreateBulkOrder = "Ocurrió un error al crear la orden de fabricación"
+    static let okCreateBulkOrder = "Orden de fabricación creada exitosamente"
     static let options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN",
                           "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
     static let errorFinishOrder = "Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo"

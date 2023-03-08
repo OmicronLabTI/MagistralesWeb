@@ -199,9 +199,9 @@ class NetworkManager: SessionProtocol {
         return res
     }
     
-    func createOrderBulks(_ data: BulkOrderCreate) -> Observable<BulkListResponse> {
+    func createOrderBulks(_ data: BulkOrderCreate) -> Observable<BulkCreateResponse> {
         let req: ApiService = ApiService.createOrderBulk(data: data)
-        let res: Observable<BulkListResponse> = makeRequest(request: req)
+        let res: Observable<BulkCreateResponse> = makeRequest(request: req)
         return res
     }
     func createComponentsOrder(_ data: SendToStoreRequest) -> Observable<CreateComponentsOrderResponse> {
