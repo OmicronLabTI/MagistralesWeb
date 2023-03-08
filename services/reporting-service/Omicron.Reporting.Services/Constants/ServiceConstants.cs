@@ -446,5 +446,13 @@ namespace Omicron.Reporting.Services.Constants
           LabelProduct,
           NoLabelProduct,
         };
+
+        /// <summary>
+        /// Gets the request number format.
+        /// </summary>
+        /// <value>
+        /// String RequestNumberFormat.
+        /// </value>
+        public static string RequestNumberFormat => "N° de Solicitud de traslado: {0}";
     }
 }

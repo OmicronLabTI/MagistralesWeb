@@ -18,6 +18,7 @@ namespace Omicron.Warehouses.Test.Services.Request
     using Omicron.Warehouses.Entities.Model;
     using Omicron.Warehouses.Services.Clients;
     using Omicron.Warehouses.Services.Constants;
+    using Omicron.Warehouses.Services.Redis;
     using Omicron.Warehouses.Services.Request;
 
     /// <summary>
@@ -33,6 +34,7 @@ namespace Omicron.Warehouses.Test.Services.Request
         private IRequestDao requestDao;
         private DatabaseContext context;
         private string userId = "abc";
+        private Mock<IRedisService> redisService;
 
         /// <summary>
         /// Initialize db.
@@ -125,8 +127,8 @@ namespace Omicron.Warehouses.Test.Services.Request
             this.mockUsersService.Setup(x => x.GetUsersById(It.IsAny<string[]>())).Returns(Task.FromResult(this.GetMockUsers()));
             this.mockSapAdapterService.Setup(x => x.GetProductionOrdersByCriterial(It.IsAny<List<int>>(), It.IsAny<List<int>>())).Returns(Task.FromResult(this.GetMockProductionOrders()));
             this.mockReportingService.SetReturnsDefault(Task.FromResult(true));
-
-            this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object, this.mockSapAdapterService.Object, this.mockReportingService.Object);
+            this.redisService = new Mock<IRedisService>();
+            this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object, this.mockSapAdapterService.Object, this.mockReportingService.Object, this.redisService.Object);
         }
 
         /// <summary>
@@ -178,7 +180,7 @@ namespace Omicron.Warehouses.Test.Services.Request
             // arrange
             this.mockReportingService = new Mock<IReportingService>();
             this.mockReportingService.SetReturnsDefault(Task.FromResult(false));
-            this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object, this.mockSapAdapterService.Object, this.mockReportingService.Object);
+            this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object, this.mockSapAdapterService.Object, this.mockReportingService.Object, this.redisService.Object);
 
             var request = AutoFixtureProvider.Create<RawMaterialRequestModel>();
             request.ProductionOrderIds = new List<int> { 2 };
