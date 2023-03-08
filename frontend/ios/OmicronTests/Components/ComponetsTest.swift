@@ -79,7 +79,7 @@ class ComponetsTest: XCTestCase {
         }).disposed(by: disposeBag!)
         statusCode = 500
         componentsViewModel?.networkManager = NetworkManager(provider: provider)
-        componentsViewModel?.getComponents(chips: ["Base"])
+        componentsViewModel?.getComponents(chips: ["Base"], offset: 0)
     }
     func testValidCodeNotNull() {
         componentsViewModel!.dataChips.onNext(["Base"])

@@ -44,7 +44,7 @@ class SupplieViewController: UIViewController {
             self.observationsField.text = String()
             self.showAlert(alert: (
                 title: "Completado",
-                msg: "Proceso realizado con éxito",
+                msg: "Solicitud enviada exitosamente",
                 autoDismiss: true
             ))
             self.resetValues()
@@ -92,6 +92,7 @@ class SupplieViewController: UIViewController {
         let componentsVC = storyboard.instantiateViewController(
             withIdentifier: ViewControllerIdentifiers.componentsViewController) as? ComponentsViewController
         componentsVC?.typeOpen = .supplies
+        componentsVC!.clearObservables()
         let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
         navigationVC.modalPresentationStyle = .formSheet
         self.present(navigationVC, animated: true, completion: nil)

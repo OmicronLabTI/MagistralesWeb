@@ -39,12 +39,14 @@ class ComponentRequest: Codable {
 }
 class ComponentResponse: HttpResponse {
     var response: [ComponentO]?
+    var comments: Int?
     required init?(map: Map) {
         super.init(map: map)
     }
     override func mapping(map: Map) {
         super.mapping(map: map)
         response <- map["response"]
+        comments <- map["comments"]
     }
 }
 class ComponentO: Mappable, Codable {
