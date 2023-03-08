@@ -20,6 +20,17 @@ class BulkOrderCreate: Codable {
     }
 }
 
+class BulkCreateResponse: HttpResponse {
+    var response: Int?
+    required init?(map: Map) {
+        super.init(map: map)
+    }
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        response <- map["response"]
+    }
+}
+
 class BulkListRequest: Codable {
     var offset: Int?
     var limit: Int?

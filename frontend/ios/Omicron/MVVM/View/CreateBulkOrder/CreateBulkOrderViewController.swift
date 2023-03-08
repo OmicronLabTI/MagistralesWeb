@@ -61,11 +61,17 @@ class CreateBulkOrderViewController: UIViewController {
         self.bulkOrderViewModel.okCreateOrder.subscribe(onNext: { [weak self] data in
             guard let self = self else { return }
             let alert = UIAlertController(
-                title: "Orden de fabricación creada exitosamente",
+                title: data,
                 message: nil,
                 preferredStyle: .alert)
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
+                guard let self = self else { return }
+                self.cancelAction(true)
+                self.cancelAction(true)
+            })
+            alert.addAction(okAction)
             self.present(alert, animated: true, completion: nil)
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(3000)) {
                 self.cancelAction(true)
                 self.cancelAction(true)
             }

@@ -22,7 +22,7 @@ class ComponentsViewController: UIViewController {
     @IBOutlet weak var heightMostCommonTableConstraint: NSLayoutConstraint!
     @Injected var componentsViewModel: ComponentsViewModel
     @Injected var supplieViewModel: SupplieViewModel
-
+    var isLoading = false
     var typeOpen = TypeComponentsOpenDialog.detailOrder
     var disposeBag = DisposeBag()
     override func viewDidLoad() {
@@ -34,6 +34,9 @@ class ComponentsViewController: UIViewController {
         bindingDataToMostComoonTable()
         itemSelectedOfMostCommonComponentsTable()
         componentsViewModel.getMostCommonComponentsService()
+    }
+    func clearObservables() {
+        componentsViewModel.clearObservables()
     }
     func viewModelBinding() {
         self.searchBar.rx.text.orEmpty.bind(to: componentsViewModel.searchFilter).disposed(by: disposeBag)
@@ -67,7 +70,8 @@ class ComponentsViewController: UIViewController {
         self.tableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
             self!.continueItemSelected(data)
         }).disposed(by: disposeBag)
-        self.componentsViewModel.loading.subscribe(onNext: {loading in
+        self.componentsViewModel.loading.subscribe(onNext: { loading in
+            self.isLoading = loading
             if loading {
                 LottieManager.shared.showLoading()
                 return
@@ -149,6 +153,17 @@ extension ComponentsViewController: UITableViewDelegate {
         let customView = UIView()
         customView.backgroundColor = OmicronColors.blue
         cell.selectedBackgroundView = customView
+        let lastSectionIndex = tableView.numberOfSections - 1
+        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
+        if indexPath.section == lastSectionIndex &&
+            indexPath.row == lastRowIndex - 3 &&
+            !isLoading &&
+            lastRowIndex > 10 {
+            tableView.scrollToRow(at: [0, lastRowIndex - 4],
+                                  at: .middle,
+                                  animated: false)
+            componentsViewModel.onScroll.onNext(())
+        }
         if indexPath.row%2 == 0 {
             cell.backgroundColor = OmicronColors.tableColorRow
         } else {
