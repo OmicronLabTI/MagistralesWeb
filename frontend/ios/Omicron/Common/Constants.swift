@@ -56,6 +56,7 @@ struct ViewControllerIdentifiers {
     static let signaturePadViewController = "SignaturePadViewController"
     static let componentsViewController = "ComponentsViewController"
     static let componentsTableViewCell = "ComponentsTableViewCell"
+    static let bulkTableViewCell = "BulkOrderTableViewCell"
     static let headerCollectionViewCell = "HeaderCollectionViewCell"
     static let headerReuseIdentifier = "header"
     static let showErrorViewController = "showError"
@@ -197,6 +198,13 @@ struct CommonStrings {
     static let processSuccess = "Proceso realizado correctamente"
     static let confirmExit = "Se perderá la información si sale de la pantalla de solicitud de insumos ¿Desea continuar?"
     static let errorComponents = "Por el momento no es posible crear la solicitud, por favor intenta más tarde"
+    static let confirmDeleteSingular = "El componente será eliminado ¿Quieres continuar?"
+    static let confirmDeletePlural = "Los componentes serán eliminados ¿Quieres continuar?"
+    static let successDeletePlural = "Los componentes se han eliminado correctamente"
+    static let successDeleteSingular = "El componente se ha eliminado correctamente"
+    static let confirmSendToStore = "¿Estás seguro que deseas enviar la solicitud de insumos?"
+    static let placeholderObservations = "Deja tu comentario aquí"
+    
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"

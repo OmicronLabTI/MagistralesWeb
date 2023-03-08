@@ -447,6 +447,22 @@
 		7F4FFECC292EA1DC00428501 /* PatientListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */; };
 		7F4FFECD292EA1DC00428501 /* PatientListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */; };
 		7F4FFECE292EA1DC00428501 /* PatientListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */; };
+		7FB0756F29B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
+		7FB0757029B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
+		7FB0757129B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
+		7FB0757229B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
+		7FE43E2229B5C588001049A6 /* BulkOrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */; };
+		7FE43E2329B5C588001049A6 /* BulkOrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */; };
+		7FE43E2429B5C588001049A6 /* BulkOrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */; };
+		7FE43E2529B5C588001049A6 /* BulkOrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */; };
+		7FE43E2729B6647A001049A6 /* BulkOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */; };
+		7FE43E2829B6647A001049A6 /* BulkOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */; };
+		7FE43E2929B6647A001049A6 /* BulkOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */; };
+		7FE43E2A29B6647A001049A6 /* BulkOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */; };
+		7FE43E2C29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */; };
+		7FE43E2D29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */; };
+		7FE43E2E29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */; };
+		7FE43E2F29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */; };
 		9719266841FFCA3A47C03F7D /* Pods_Omicron_OmicronUAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 264FF1FB957F8628A24ED936 /* Pods_Omicron_OmicronUAT.framework */; };
 		98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CAF24AFBC6C00E7772F /* AppDelegate.swift */; };
 		98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CB124AFBC6C00E7772F /* SceneDelegate.swift */; };
@@ -646,7 +662,11 @@
 		7D79BEA8926B484FFA4B0247 /* Pods_Omicron_Omicron_QA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_Omicron_QA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewTable.swift; sourceTree = "<group>"; };
 		7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientListViewController.swift; sourceTree = "<group>"; };
+		7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBulkOrderViewController.swift; sourceTree = "<group>"; };
 		7FB342D1D6AD96AF4C8DAA0E /* Pods_OmicronTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OmicronTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkOrderViewModel.swift; sourceTree = "<group>"; };
+		7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkOrderModel.swift; sourceTree = "<group>"; };
+		7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkOrderTableViewCell.swift; sourceTree = "<group>"; };
 		942B27E76651174E700E02BA /* Pods-Omicron-OmicronUAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUAT.debug.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUAT/Pods-Omicron-OmicronUAT.debug.xcconfig"; sourceTree = "<group>"; };
 		98015CAC24AFBC6C00E7772F /* OmicronLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmicronLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAF24AFBC6C00E7772F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -836,6 +856,7 @@
 				1E9674AE254338A40004344C /* OrderPDF.swift */,
 				49720ECE27EE7F0400A8A2DB /* HideButtons.swift */,
 				F363D7662981F00500113F3A /* PatientListModel.swift */,
+				7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -853,6 +874,7 @@
 		4989CCB725ED956A00257CA2 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				7FE43E2029B5C562001049A6 /* BulkOrder */,
 				1142E19429AE6248008651D1 /* Supplie */,
 				4989CCF325ED978300257CA2 /* Login */,
 				4989CCED25ED970A00257CA2 /* Inbox */,
@@ -1174,6 +1196,23 @@
 			path = PatientList;
 			sourceTree = "<group>";
 		};
+		7FB0756D29B2553300B8F604 /* CreateBulkOrder */ = {
+			isa = PBXGroup;
+			children = (
+				7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */,
+				7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */,
+			);
+			path = CreateBulkOrder;
+			sourceTree = "<group>";
+		};
+		7FE43E2029B5C562001049A6 /* BulkOrder */ = {
+			isa = PBXGroup;
+			children = (
+				7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */,
+			);
+			path = BulkOrder;
+			sourceTree = "<group>";
+		};
 		98015CA324AFBC6C00E7772F = {
 			isa = PBXGroup;
 			children = (
@@ -1329,6 +1368,7 @@
 		98C8C03624AFCB9800018A88 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				7FB0756D29B2553300B8F604 /* CreateBulkOrder */,
 				1142E18E29AE61EB008651D1 /* Supplie */,
 				7F4FFEC9292EA1A400428501 /* PatientList */,
 				4989CCF425ED979A00257CA2 /* PDF */,
@@ -2102,6 +2142,7 @@
 				490B6976268E98ED00DBE9F1 /* KPITableViewCell.swift in Sources */,
 				490B6977268E98ED00DBE9F1 /* LotsViewModel.swift in Sources */,
 				490B6978268E98ED00DBE9F1 /* ConnectModel.swift in Sources */,
+				7FB0757229B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */,
 				490B6979268E98ED00DBE9F1 /* OrderDetailFormViewController.swift in Sources */,
 				490B697A268E98ED00DBE9F1 /* Workload.swift in Sources */,
 				490B697B268E98ED00DBE9F1 /* MostCommonComponentsTableViewCell.swift in Sources */,
@@ -2112,6 +2153,7 @@
 				490B697F268E98ED00DBE9F1 /* NetworkManager.swift in Sources */,
 				490B6980268E98ED00DBE9F1 /* DetailTableViewCell.swift in Sources */,
 				490B6981268E98ED00DBE9F1 /* ChartCollectionViewCell.swift in Sources */,
+				7FE43E2A29B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				490B6982268E98ED00DBE9F1 /* Utils.swift in Sources */,
 				490B6983268E98ED00DBE9F1 /* FileManager.swift in Sources */,
 				1142E19329AE623E008651D1 /* SupplieViewController.swift in Sources */,
@@ -2134,6 +2176,7 @@
 				490B6991268E98ED00DBE9F1 /* OrderDetailViewModel.swift in Sources */,
 				490B6992268E98ED00DBE9F1 /* LotsSelectedTableViewCell.swift in Sources */,
 				F363D76F29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
+				7FE43E2529B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
 				490B6993268E98ED00DBE9F1 /* ComponentsViewModel.swift in Sources */,
 				49720ECD27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				490B6994268E98ED00DBE9F1 /* LotsViewController.swift in Sources */,
@@ -2175,6 +2218,7 @@
 				490B69B1268E98ED00DBE9F1 /* ExtensionInboxViewController.swift in Sources */,
 				490B69B2268E98ED00DBE9F1 /* LotsTableViewCell.swift in Sources */,
 				490B69B3268E98ED00DBE9F1 /* ValidateOrderModel.swift in Sources */,
+				7FE43E2F29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */,
 				490B69B4268E98ED00DBE9F1 /* LoginViewModel.swift in Sources */,
 				490B69B5268E98ED00DBE9F1 /* HeaderCollectionViewCell.swift in Sources */,
 				490B69B6268E98ED00DBE9F1 /* CardCollectionViewCell.swift in Sources */,
@@ -2190,6 +2234,7 @@
 				49CF65B825F2D4AB002CD598 /* KPITableViewCell.swift in Sources */,
 				49CF65B925F2D4AB002CD598 /* LotsViewModel.swift in Sources */,
 				49CF65BA25F2D4AB002CD598 /* ConnectModel.swift in Sources */,
+				7FB0757029B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */,
 				49CF65BB25F2D4AB002CD598 /* OrderDetailFormViewController.swift in Sources */,
 				49CF65BC25F2D4AB002CD598 /* Workload.swift in Sources */,
 				49CF65BD25F2D4AB002CD598 /* MostCommonComponentsTableViewCell.swift in Sources */,
@@ -2200,6 +2245,7 @@
 				49CF65C125F2D4AB002CD598 /* NetworkManager.swift in Sources */,
 				49CF65C225F2D4AB002CD598 /* DetailTableViewCell.swift in Sources */,
 				383DD58A25F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
+				7FE43E2829B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				49CF65C325F2D4AB002CD598 /* Utils.swift in Sources */,
 				49CF65C425F2D4AB002CD598 /* FileManager.swift in Sources */,
 				1142E19129AE623E008651D1 /* SupplieViewController.swift in Sources */,
@@ -2222,6 +2268,7 @@
 				49CF65D225F2D4AB002CD598 /* OrderDetailViewModel.swift in Sources */,
 				49CF65D325F2D4AB002CD598 /* LotsSelectedTableViewCell.swift in Sources */,
 				F363D76D29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
+				7FE43E2329B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
 				49CF65D425F2D4AB002CD598 /* ComponentsViewModel.swift in Sources */,
 				49720ECB27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				49CF65D525F2D4AB002CD598 /* LotsViewController.swift in Sources */,
@@ -2263,6 +2310,7 @@
 				49CF65F125F2D4AB002CD598 /* ExtensionInboxViewController.swift in Sources */,
 				49CF65F225F2D4AB002CD598 /* LotsTableViewCell.swift in Sources */,
 				49CF65F325F2D4AB002CD598 /* ValidateOrderModel.swift in Sources */,
+				7FE43E2D29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */,
 				49CF65F425F2D4AB002CD598 /* LoginViewModel.swift in Sources */,
 				49CF65F525F2D4AB002CD598 /* HeaderCollectionViewCell.swift in Sources */,
 				49CF65F625F2D4AB002CD598 /* CardCollectionViewCell.swift in Sources */,
@@ -2278,6 +2326,7 @@
 				49CF663B25F2D821002CD598 /* KPITableViewCell.swift in Sources */,
 				49CF663C25F2D821002CD598 /* LotsViewModel.swift in Sources */,
 				49CF663D25F2D821002CD598 /* ConnectModel.swift in Sources */,
+				7FB0757129B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */,
 				49CF663E25F2D821002CD598 /* OrderDetailFormViewController.swift in Sources */,
 				49CF663F25F2D821002CD598 /* Workload.swift in Sources */,
 				49CF664025F2D821002CD598 /* MostCommonComponentsTableViewCell.swift in Sources */,
@@ -2288,6 +2337,7 @@
 				49CF664425F2D821002CD598 /* NetworkManager.swift in Sources */,
 				49CF664525F2D821002CD598 /* DetailTableViewCell.swift in Sources */,
 				383DD58B25F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
+				7FE43E2929B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				49CF664625F2D821002CD598 /* Utils.swift in Sources */,
 				49CF664725F2D821002CD598 /* FileManager.swift in Sources */,
 				1142E19229AE623E008651D1 /* SupplieViewController.swift in Sources */,
@@ -2310,6 +2360,7 @@
 				49CF665525F2D821002CD598 /* OrderDetailViewModel.swift in Sources */,
 				49CF665625F2D821002CD598 /* LotsSelectedTableViewCell.swift in Sources */,
 				F363D76E29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
+				7FE43E2429B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
 				49CF665725F2D821002CD598 /* ComponentsViewModel.swift in Sources */,
 				49720ECC27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				49CF665825F2D821002CD598 /* LotsViewController.swift in Sources */,
@@ -2351,6 +2402,7 @@
 				49CF667425F2D821002CD598 /* ExtensionInboxViewController.swift in Sources */,
 				49CF667525F2D821002CD598 /* LotsTableViewCell.swift in Sources */,
 				49CF667625F2D821002CD598 /* ValidateOrderModel.swift in Sources */,
+				7FE43E2E29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */,
 				49CF667725F2D821002CD598 /* LoginViewModel.swift in Sources */,
 				49CF667825F2D821002CD598 /* HeaderCollectionViewCell.swift in Sources */,
 				49CF667925F2D821002CD598 /* CardCollectionViewCell.swift in Sources */,
@@ -2366,6 +2418,7 @@
 				1E07D8D2251AA0C900DF2979 /* KPITableViewCell.swift in Sources */,
 				7C9118FD24EF1CD900E2571A /* LotsViewModel.swift in Sources */,
 				1EC2920D254B4D90002FD4E3 /* ConnectModel.swift in Sources */,
+				7FB0756F29B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */,
 				7C5C6DA124E8F46C00662508 /* OrderDetailFormViewController.swift in Sources */,
 				1EF03220251932DA0040DC65 /* Workload.swift in Sources */,
 				4930B45225E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */,
@@ -2376,6 +2429,7 @@
 				98C8C04024AFCE3500018A88 /* NetworkManager.swift in Sources */,
 				7CB6736024E1D51D0072F2F6 /* DetailTableViewCell.swift in Sources */,
 				383DD58925F697B8002E2C2B /* ChartCollectionViewCell.swift in Sources */,
+				7FE43E2729B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				7CB6332824DDEE3F0055425C /* Utils.swift in Sources */,
 				7CCC6A4824F880E200ACBBE8 /* FileManager.swift in Sources */,
 				1142E19029AE623E008651D1 /* SupplieViewController.swift in Sources */,
@@ -2398,6 +2452,7 @@
 				7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */,
 				7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */,
 				F363D76C29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
+				7FE43E2229B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
 				987BDFE22509869F00D9C6E4 /* ComponentsViewModel.swift in Sources */,
 				49720ECA27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */,
@@ -2439,6 +2494,7 @@
 				49005EB325DEDB1E00EA4206 /* ExtensionInboxViewController.swift in Sources */,
 				7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */,
 				1E2A7600255362780014F38D /* ValidateOrderModel.swift in Sources */,
+				7FE43E2C29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */,
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
 				1E1C01A0250EA53A00CA6263 /* HeaderCollectionViewCell.swift in Sources */,
 				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
@@ -2633,7 +2689,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 73;
+				CURRENT_PROJECT_VERSION = 76;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2856,7 +2912,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 73;
+				CURRENT_PROJECT_VERSION = 76;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2882,7 +2938,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 73;
+				CURRENT_PROJECT_VERSION = 76;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3067,7 +3123,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 73;
+				CURRENT_PROJECT_VERSION = 76;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;

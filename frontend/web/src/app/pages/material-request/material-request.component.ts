@@ -70,7 +70,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
         ...resultNewMaterialComponent,
         id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one,
         warehouse: CONST_STRING.empty,
-        isLabel: resultNewMaterialComponent.isLabel
+        isLabel: resultNewMaterialComponent.isLabel,
+        isWithError: true
       }];
       this.checkIsCorrectData();
       this.checkToDownload();
@@ -195,14 +196,15 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.registerChanges();
   }
 
+  onChangeStore(value: string, index: number): void {
+    this.dataSource.data[index].isWithError = value === CONST_STRING.empty;
+    this.checkIsCorrectData();
+  }
+
   checkIsCorrectData(): void {
     this.isCorrectData = this.dataSource.data.filter(order => order.productId === CONST_STRING.empty
       || order.requestQuantity === null || order.description === CONST_STRING.empty
-      || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature && this.getValidateAllHasDestination();
-  }
-
-  getValidateAllHasDestination(): boolean {
-    return this.dataSource.data.every((item) => item.warehouse !== CONST_STRING.empty);
+      || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature && this.dataSource.data.length > 0;
   }
 
   ngOnDestroy(): void {
@@ -224,6 +226,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
           this.dataSource.data = this.dataSource.data.filter(order => !order.isChecked);
           this.checkToDownload();
           this.registerChanges();
+          this.checkIsCorrectData();
         }
       });
   }

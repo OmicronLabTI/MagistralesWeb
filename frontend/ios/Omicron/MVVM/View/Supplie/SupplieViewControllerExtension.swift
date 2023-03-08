@@ -60,5 +60,18 @@ extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UIT
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         return textView.text.count + text.count - range.length <= 500
     }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = CommonStrings.placeholderObservations
+            textView.textColor = UIColor.lightGray
+        }
+    }
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == UIColor.lightGray {
+            textView.text = String()
+            textView.textColor = UIColor.black
+        }
+    }
 
 }

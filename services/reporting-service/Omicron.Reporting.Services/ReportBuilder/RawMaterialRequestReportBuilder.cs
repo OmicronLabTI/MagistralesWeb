@@ -137,6 +137,11 @@ namespace Omicron.Reporting.Services.ReportBuilder
                 param.AppendText(this.creationDate);
                 param.Format.HorizontalAlignment = HorizontalAlignment.Center;
             }
+            else if (param.Text.Equals("requestNumber"))
+            {
+                param.ChildObjects.Clear();
+                param.AppendText(this.request.RequestNumber);
+            }
             else if (param.Text.Equals("obs"))
             {
                 param.ChildObjects.Clear();
@@ -221,6 +226,11 @@ namespace Omicron.Reporting.Services.ReportBuilder
                     }
 
                     if (cellIndex == 3)
+                    {
+                        cellContent.AppendText($"{product.Warehouse}");
+                    }
+
+                    if (cellIndex == 4)
                     {
                         cellContent.AppendText(product.Unit);
                     }

@@ -36,6 +36,7 @@ class RootViewModel {
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
     var userType: UserType = UserType.technical
+    var idUser: String = CommonStrings.empty
     init() {
         logoutDidTapBinding()
         searchFilterBinding()
@@ -44,6 +45,7 @@ class RootViewModel {
 
     func userData() {
         let rol = Persistence.shared.getUserData()?.role ?? UserType.technical.rawValue
+        self.idUser = Persistence.shared.getUserData()?.id ?? CommonStrings.empty
         self.userType = UserType(rawValue: rol)!
     }
     // MARK: - Functions

@@ -72,7 +72,6 @@ class SupplieViewModel {
         let req = SendToStoreRequest(data: dataReq, userId: userId)
         self.loading.onNext(true)
         networkManager.createComponentsOrder(req)
-            .observeOn(MainScheduler.instance)
             .subscribe(onNext: {[weak self] res in
                 guard let self = self else { return }
                 self.loading.onNext(false)
@@ -129,6 +128,7 @@ class SupplieViewModel {
         return newSupplie
     }
     func deleteSelectedComponents() {
+        let isSingular = selectedComponentsToDelete.count == 1
         selectedComponentsToDelete.forEach { itemCode in
             let indexToDelete = supplieList.firstIndex(where: { $0.productId == itemCode })
             if indexToDelete != nil {
@@ -139,8 +139,10 @@ class SupplieViewModel {
         selectedComponentsToDelete = []
         self.selectedButtonIsEnable.onNext(selectedComponentsToDelete.count > 0)
         self.validateSendToStoreIsEnabled()
-        self.showSuccessAlert.onNext((title: "Eliminados",
-                                      msg: "Los componentes se han eliminado correctamente",
+        let message = isSingular ? CommonStrings.successDeleteSingular :
+            CommonStrings.successDeletePlural
+        self.showSuccessAlert.onNext((title: isSingular ? "Eliminado" : "Eliminados",
+                                      msg: message,
                                       autoDismiss: true))
     }
     func validateItemsToDelete(itemCode: String) {
@@ -165,4 +167,10 @@ class SupplieViewModel {
         let allHasQuantity = supplieList.allSatisfy { ($0.requestQuantity ?? 0) > 0 }
         isSendToStoreEnabled.onNext(allHasQuantity && supplieList.count > 0)
     }
+    func getDeleteMessageBody() -> String {
+        return self.selectedComponentsToDelete.count == 1 ?
+            CommonStrings.confirmDeleteSingular :
+            CommonStrings.confirmDeletePlural
+    }
+
 }

@@ -55,5 +55,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { ComponentsViewModel() }.scope(Resolver.shared)
         Resolver.register { ChartViewModel() }.scope(Resolver.shared)
         Resolver.register { ContainerViewModel() }.scope(Resolver.unique)
+        Resolver.register { BulkOrderViewModel() }.scope(Resolver.unique)
     }
 }
