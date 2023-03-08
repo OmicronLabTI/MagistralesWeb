@@ -158,16 +158,17 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder)
         {
+            var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
+            var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
+            var hasPedidosType = ordersList.Any(order => !string.IsNullOrEmpty(order.Salesorderid));
             var isTecnicUser = updateStatusOrder.All(x => (UserRoleType)x.UserRoleType == UserRoleType.Tecnic);
             var (isValidQfbs, message) = await this.ValidateQfbConfiguration(updateStatusOrder, isTecnicUser);
 
-            if (ServiceShared.CalculateOr(!isValidQfbs))
+            if (ServiceShared.CalculateAnd(!isValidQfbs, hasPedidosType))
             {
                 return ServiceUtils.CreateResult(false, 400, message, null, null);
             }
 
-            var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
-            var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
 
             ordersList.ForEach(x =>
@@ -736,6 +737,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 await AsignarLogic.AssignOrder(
                     new ManualAssignModel { DocEntry = new List<int> { productionOrderId }, UserId = isolatedFabOrder.UserId, UserLogistic = isolatedFabOrder.UserId },
+                    new Dtos.Models.QfbTecnicInfoDto(),
                     this.pedidosDao,
                     this.sapDiApi,
                     this.sapAdapter,
