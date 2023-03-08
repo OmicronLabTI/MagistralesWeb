@@ -76,16 +76,7 @@ class SupplieViewController: UIViewController {
         changeView(true)
     }
     @IBAction func deleteComponents(_ sender: Any) {
-        let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
-        let okAction = UIAlertAction(title: CommonStrings.OKConst,
-                                     style: .default,
-                                     handler: { [weak self] _ in
-            self?.supplieViewModel.deleteSelectedComponents()
-        })
-        AlertManager.shared.showAlert(title: "Atención",
-                                      message: supplieViewModel.getDeleteMessageBody(),
-                                      actions: [okAction, cancelAction],
-                                      view: self)
+        supplieViewModel.deleteSelectedComponents()
     }
     @IBAction func openComponentsViewController(_ sender: Any) {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)

@@ -164,10 +164,13 @@ class ComponentsViewModel {
         }).disposed(by: disposeBag)
     }
 
-    func getMostCommonComponentsService() {
+    func getMostCommonComponentsService(type: String) {
         loading.onNext(true)
+        let userID = Persistence.shared.getUserData()?.id ?? ""
         let catalogGroup = orderDetailViewModel.getCatalogGroup()
-        let reqParams = CommonComponentRequest(catalogGroup: catalogGroup)
+        let reqParams = CommonComponentRequest(catalogGroup: catalogGroup,
+                                               userId: userID,
+                                               type: type)
         networkManager.getMostCommonComponents(reqParams).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)
