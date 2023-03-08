@@ -105,7 +105,7 @@ namespace Omicron.Pedidos.Test.Services
             // arrange
             var assign = new ManualAssignModel
             {
-                DocEntry = new List<int> { 101 },
+                DocEntry = new List<int> { 1502 },
                 OrderType = "Pedido",
                 UserId = "abc",
                 UserLogistic = "abd",

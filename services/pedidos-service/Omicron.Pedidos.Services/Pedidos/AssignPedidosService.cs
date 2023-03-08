@@ -67,9 +67,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> AssignOrder(ManualAssignModel manualAssign)
         {
-            var listSalesOrders = manualAssign.DocEntry.Select(x => x.ToString()).ToList();
-            var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(listSalesOrders)).ToList();
-            var hasPedidosType = userOrders.Any(order => !string.IsNullOrEmpty(order.Salesorderid));
+            var hasPedidosType = await this.CheckIfNeedTecnicConfigValidation(manualAssign.DocEntry.Select(x => x.ToString()).ToList(), manualAssign.OrderType);
             var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(new List<string> { manualAssign.UserId }, this.userService)).FirstOrDefault();
             qfbInfoValidated ??= new QfbTecnicInfoDto();
 
@@ -199,9 +197,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> ReassignOrder(ManualAssignModel manualAssign)
         {
-            var listSalesOrders = manualAssign.DocEntry.Select(x => x.ToString()).ToList();
-            var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(listSalesOrders)).ToList();
-            var hasPedidosType = userOrders.Any(order => !string.IsNullOrEmpty(order.Salesorderid));
+            var hasPedidosType = await this.CheckIfNeedTecnicConfigValidation(manualAssign.DocEntry.Select(x => x.ToString()).ToList(), manualAssign.OrderType);
             var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(new List<string> { manualAssign.UserId }, this.userService)).FirstOrDefault();
             qfbInfoValidated ??= new QfbTecnicInfoDto();
             if (ServiceShared.CalculateAnd(!qfbInfoValidated.IsValidTecnic, hasPedidosType))
@@ -348,6 +344,17 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 invalidQfbs.AddRange(invalidUser);
             }
+        }
+
+        private async Task<bool> CheckIfNeedTecnicConfigValidation(List<string> listSalesOrders, string orderType)
+        {
+            if (orderType.Equals(ServiceConstants.TypePedido))
+            {
+                return true;
+            }
+
+            var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(listSalesOrders)).ToList();
+            return userOrders.Any(order => !string.IsNullOrEmpty(order.Salesorderid));
         }
     }
 }
