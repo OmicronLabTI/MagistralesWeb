@@ -50,6 +50,9 @@ extension OrderDetailViewController {
         self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance)
         .subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
+            self.quantityTextField.isHidden = true
+            self.quantityButtonChange.isHidden = true
+            self.isolatedOrder = false
             if res.first != nil {
                 self.initLabelsWithContent(detail: res.first!)
                 self.changeTextColorLabel(color: .black)
@@ -73,17 +76,34 @@ extension OrderDetailViewController {
                     text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
                     self.isolatedOrder = true
+                    self.quantityTextField.text = "\(detail.plannedQuantity ?? 0)"
                     self.destinyLabel.text = ""
                     self.codeDescriptionLabel.isHidden = true
                     self.containerDescriptionLabel.isHidden = true
+                    self.validateStatusIsolated()
+                    let plannedQ = self.quantityTextField.isHidden ? String(describing: detail.plannedQuantity ?? 0) : ""
                     self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(
-                        text: "\(CommonStrings.plannedQuantity) \(detail.plannedQuantity ?? 0)",
+                        text: "\(CommonStrings.plannedQuantity) \(plannedQ)",
                         textToBold: CommonStrings.plannedQuantity)
                     self.quantityPlannedDescriptionLabel.text = ""
                 }
             }
         }).disposed(by: self.disposeBag)
     }
+    
+    func validateStatusIsolated() {
+        let statusValid = [
+            StatusNameConstants.assignedStatus,
+            StatusNameConstants.inProcessStatus,
+            StatusNameConstants.reassignedStatus,
+        ]
+        if statusValid.contains(self.statusType) && self.rootViewModel.userType == .qfb {
+            self.quantityTextField.isHidden = false
+            self.quantityButtonChange.isHidden = false
+        }
+    }
+    
+    
     func initLabelsWithContent(detail: OrderDetail) {
         let partDecimal = self.getDecimalPartOfDouble(
             number: NSDecimalNumber(decimal: detail.plannedQuantity ?? 0.0).doubleValue)
@@ -142,5 +162,25 @@ extension OrderDetailViewController {
                 return ""
             }
         }).disposed(by: disposeBag)
+    }
+    
+    func quantityTextFieldBindind() {
+        self.quantityTextField.rx.text.bind { text in
+            self.quantityButtonChange.isEnabled = false
+            if let textTemp = Decimal(string: text ?? "") ,
+                let detail = self.orderDetail.first,
+                textTemp>0,
+                textTemp != detail.plannedQuantity  {
+                self.quantityButtonChange.isEnabled = true
+            }
+        }
+    }
+    
+    func quantityButtonBindind() {
+        self.quantityButtonChange.rx.tap.bind {
+            self.quantityButtonChange.isEnabled = false
+            self.orderDetailViewModel.updateQuantity(Decimal(string: self.quantityTextField.text ?? "0") ?? 0)
+        }
+        .disposed(by: self.disposeBag)
     }
 }

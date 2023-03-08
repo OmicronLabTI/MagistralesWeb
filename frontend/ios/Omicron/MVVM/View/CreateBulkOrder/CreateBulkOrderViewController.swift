@@ -58,22 +58,19 @@ class CreateBulkOrderViewController: UIViewController {
     }
     
     func okCreateOrderBinding(){
-        self.bulkOrderViewModel.okCreateOrder.subscribe(onNext: { [weak self] data in
+        self.bulkOrderViewModel.okCreateOrder.subscribe(onNext: { [weak self] message in
             guard let self = self else { return }
             let alert = UIAlertController(
-                title: data,
+                title: message,
                 message: nil,
                 preferredStyle: .alert)
-            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
-                guard let self = self else { return }
-                self.cancelAction(true)
-                self.cancelAction(true)
-            })
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: nil)
             alert.addAction(okAction)
             self.present(alert, animated: true, completion: nil)
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(3000)) {
-                self.cancelAction(true)
-                self.cancelAction(true)
+            if(message == CommonStrings.okCreateBulkOrder) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(3000)) {
+                    self.view.window?.rootViewController?.dismiss(animated: true)
+                }
             }
         }).disposed(by: disposeBag)
     }
