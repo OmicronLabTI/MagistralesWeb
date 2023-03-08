@@ -447,6 +447,10 @@
 		7F4FFECC292EA1DC00428501 /* PatientListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */; };
 		7F4FFECD292EA1DC00428501 /* PatientListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */; };
 		7F4FFECE292EA1DC00428501 /* PatientListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */; };
+		7F738B5F29B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F738B5E29B86AE3007B69CC /* OrderDetailTextFieldController.swift */; };
+		7F738B6029B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F738B5E29B86AE3007B69CC /* OrderDetailTextFieldController.swift */; };
+		7F738B6129B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F738B5E29B86AE3007B69CC /* OrderDetailTextFieldController.swift */; };
+		7F738B6229B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F738B5E29B86AE3007B69CC /* OrderDetailTextFieldController.swift */; };
 		7FB0756F29B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
 		7FB0757029B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
 		7FB0757129B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
@@ -662,6 +666,7 @@
 		7D79BEA8926B484FFA4B0247 /* Pods_Omicron_Omicron_QA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Omicron_Omicron_QA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewTable.swift; sourceTree = "<group>"; };
 		7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientListViewController.swift; sourceTree = "<group>"; };
+		7F738B5E29B86AE3007B69CC /* OrderDetailTextFieldController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailTextFieldController.swift; sourceTree = "<group>"; };
 		7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBulkOrderViewController.swift; sourceTree = "<group>"; };
 		7FB342D1D6AD96AF4C8DAA0E /* Pods_OmicronTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OmicronTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkOrderViewModel.swift; sourceTree = "<group>"; };
@@ -1142,6 +1147,7 @@
 				7CB6332124DDCBAE0055425C /* OrderDetailViewController.swift */,
 				7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */,
 				F3D21DEA298A4F610099B94A /* OrderDetailViewControllerExtension.swift */,
+				7F738B5E29B86AE3007B69CC /* OrderDetailTextFieldController.swift */,
 			);
 			path = OrderDetail;
 			sourceTree = "<group>";
@@ -2178,6 +2184,7 @@
 				F363D76F29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
 				7FE43E2529B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
 				490B6993268E98ED00DBE9F1 /* ComponentsViewModel.swift in Sources */,
+				7F738B6229B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */,
 				49720ECD27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				490B6994268E98ED00DBE9F1 /* LotsViewController.swift in Sources */,
 				490B6995268E98ED00DBE9F1 /* ContainerTableViewCell.swift in Sources */,
@@ -2270,6 +2277,7 @@
 				F363D76D29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
 				7FE43E2329B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
 				49CF65D425F2D4AB002CD598 /* ComponentsViewModel.swift in Sources */,
+				7F738B6029B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */,
 				49720ECB27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				49CF65D525F2D4AB002CD598 /* LotsViewController.swift in Sources */,
 				49CF65D625F2D4AB002CD598 /* ContainerTableViewCell.swift in Sources */,
@@ -2362,6 +2370,7 @@
 				F363D76E29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
 				7FE43E2429B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
 				49CF665725F2D821002CD598 /* ComponentsViewModel.swift in Sources */,
+				7F738B6129B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */,
 				49720ECC27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				49CF665825F2D821002CD598 /* LotsViewController.swift in Sources */,
 				49CF665925F2D821002CD598 /* ContainerTableViewCell.swift in Sources */,
@@ -2454,6 +2463,7 @@
 				F363D76C29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
 				7FE43E2229B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
 				987BDFE22509869F00D9C6E4 /* ComponentsViewModel.swift in Sources */,
+				7F738B5F29B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */,
 				49720ECA27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */,
 				381B3BF225E034B80077F764 /* ContainerTableViewCell.swift in Sources */,
@@ -2689,7 +2699,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 76;
+				CURRENT_PROJECT_VERSION = 77;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2912,7 +2922,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 76;
+				CURRENT_PROJECT_VERSION = 77;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2938,7 +2948,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 76;
+				CURRENT_PROJECT_VERSION = 77;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3123,7 +3133,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 76;
+				CURRENT_PROJECT_VERSION = 77;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;

@@ -33,9 +33,11 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="detail">detail.</param>
         /// <returns>Boolean.</returns>
         public static bool IsDzAndIsNotOmigenomics(CompleteDetailOrderModel detail)
-            => detail.CodigoProducto.ToUpper().StartsWith("DZ ") &&
-            !detail.IsOmigenomics &&
-            ServiceConstants.SignaturesToAssignProductsDZ.Contains(detail.ProductFirmName.ToLower());
+            => ServiceShared.CalculateAnd(
+                detail.CodigoProducto.ToUpper().StartsWith("DZ "),
+                ServiceShared.CalculateOr(
+                    !detail.IsOmigenomics,
+                    ServiceConstants.SignaturesToAssignProductsDZ.Contains(detail.ProductFirmName.ToLower())));
 
         /// <summary>
         /// makes the logic to assign a pedido.
