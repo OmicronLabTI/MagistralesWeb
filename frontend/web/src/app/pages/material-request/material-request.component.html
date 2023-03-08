@@ -89,10 +89,11 @@
                             [ngClass]="element.isWithError ? 'with-error' : ''"
                             class="color-text-intables tdcell tdcell-center mobile-hide cantreq">
                             <mat-form-field appearance="outline">
-                                <input matInput type="number" class="color-number" placeholder="Ctd. requerida"
+                                <input matInput type="text"
+                                    mask="999999999.000000" [dropSpecialCharacters]="false"
+                                    class="color-number" placeholder="Ctd. requerida"
                                     [(ngModel)]="element.requestQuantity"
-                                    (ngModelChange)="onRequestQuantityChange($event, i)" step="any"
-                                    appDigitDecimalNumber decimalPlaces="6">
+                                    (ngModelChange)="onRequestQuantityChange($event, i)" step="any">
                             </mat-form-field>
                         </td>
                     </ng-container>
