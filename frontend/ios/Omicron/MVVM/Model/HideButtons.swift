@@ -15,7 +15,6 @@ class HideButtons {
     var addComp: Bool
     var save: Bool
     var seeBatches: Bool
-
     init(process: Bool, finished: Bool, pending: Bool,
          addComp: Bool, save: Bool, seeBatches: Bool) {
         self.process = process

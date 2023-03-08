@@ -200,4 +200,25 @@ extension OrderDetailViewModel {
                 self.showAlert.onNext(Constants.Errors.errorData.rawValue)
             }).disposed(by: disposeBag)
     }
+    
+    func updateQuantity(_ plannedQuantity: Decimal) {
+        self.loading.onNext(true)
+        let fechaFinFormated = UtilsManager.shared.formattedDateFromString(
+            dateString: tempOrderDetailData?.dueDate ?? String(), withFormat: DateFormat.yyyymmdd)
+        let order = OrderDetailRequest(
+            fabOrderID: tempOrderDetailData?.productionOrderID ?? 0,
+            plannedQuantity: plannedQuantity,
+            fechaFin: fechaFinFormated ?? String(), comments: String(),
+            warehouse: tempOrderDetailData?.warehouse ?? String(), components: [])
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
+            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            if self?.tempOrderDetailData != nil {
+                self?.getOrdenDetail(isRefresh: false)
+                self?.loading.onNext(false)
+            }
+            }, onError: {  [weak self] error in
+                self?.loading.onNext(false)
+                self?.showAlert.onNext(CommonStrings.couldNotDeleteItem)
+        }).disposed(by: self.disposeBag)
+    }
 }

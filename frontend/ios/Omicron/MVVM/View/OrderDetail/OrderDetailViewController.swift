@@ -42,8 +42,12 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var detailTable: UITableView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var destinyLabel: UILabel!
+    @IBOutlet weak var quantityTextField: UITextField!
+    @IBOutlet weak var quantityButtonChange: UIButton!
+    
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
+    @Injected var rootViewModel: RootViewModel
     @Injected var lottieManager: LottieManager
 
     var disposeBag: DisposeBag = DisposeBag()
@@ -60,6 +64,7 @@ class OrderDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.delegate = self
+        self.quantityTextField.delegate = self
         self.title = CommonStrings.formulaDetail
         self.showButtonsByStatusType(statusType: statusType)
         self.initComponents()
@@ -67,6 +72,8 @@ class OrderDetailViewController: UIViewController {
         tableView.setEditing(false, animated: true)
         self.orderDetailViewModel.orderId = self.orderId
         self.viewModelBinding()
+        quantityButtonBindind()
+        quantityTextFieldBindind()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
