@@ -30,14 +30,14 @@ class CreateBulkOrderViewController: UIViewController {
         super.viewDidAppear(animated)
         tableView.reloadData()
     }
-    
+
     func setUp() {
         self.tagsView.delegate = self
         bulkOrderViewModel.dataResults.map({ data -> Bool in
             return data.count > 0
         }).asDriver(onErrorJustReturn: true).drive(noResultsLabel.rx.isHidden).disposed(by: disposeBag)
     }
-    
+
     func searchBinding() {
         self.bulkSearchBar.rx.text.orEmpty.bind(to: self.bulkOrderViewModel.searchBulk).disposed(by: disposeBag)
         self.bulkSearchBar.rx.searchButtonClicked.bind(to: bulkOrderViewModel.searchDidEnter).disposed(by: disposeBag)
@@ -56,8 +56,8 @@ class CreateBulkOrderViewController: UIViewController {
                 cell.descriptionLabel.text = data.largeDescription?.uppercased()
         }.disposed(by: disposeBag)
     }
-    
-    func okCreateOrderBinding(){
+
+    func okCreateOrderBinding() {
         self.bulkOrderViewModel.okCreateOrder.subscribe(onNext: { [weak self] message in
             guard let self = self else { return }
             let alert = UIAlertController(
@@ -67,7 +67,7 @@ class CreateBulkOrderViewController: UIViewController {
             let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: nil)
             alert.addAction(okAction)
             self.present(alert, animated: true, completion: nil)
-            if(message == CommonStrings.okCreateBulkOrder) {
+            if message == CommonStrings.okCreateBulkOrder {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(3000)) {
                     self.view.window?.rootViewController?.dismiss(animated: true)
                 }
@@ -91,7 +91,6 @@ class CreateBulkOrderViewController: UIViewController {
             self.present(alert, animated: true, completion: nil)
         }).disposed(by: disposeBag)
     }
-    
 
     @IBAction func cancelAction(_ sender: Any) {
         dismiss(animated: true, completion: nil)

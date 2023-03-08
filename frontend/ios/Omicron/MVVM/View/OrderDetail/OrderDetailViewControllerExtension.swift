@@ -81,7 +81,9 @@ extension OrderDetailViewController {
                     self.codeDescriptionLabel.isHidden = true
                     self.containerDescriptionLabel.isHidden = true
                     self.validateStatusIsolated()
-                    let plannedQ = self.quantityTextField.isHidden ? String(describing: detail.plannedQuantity ?? 0) : ""
+                    let plannedQ = self.quantityTextField.isHidden ?
+                        String(describing: detail.plannedQuantity ?? 0) :
+                        ""
                     self.sumFormulaDescriptionLabel.attributedText = UtilsManager.shared.boldSubstring(
                         text: "\(CommonStrings.plannedQuantity) \(plannedQ)",
                         textToBold: CommonStrings.plannedQuantity)
@@ -90,20 +92,19 @@ extension OrderDetailViewController {
             }
         }).disposed(by: self.disposeBag)
     }
-    
+
     func validateStatusIsolated() {
         let statusValid = [
             StatusNameConstants.assignedStatus,
             StatusNameConstants.inProcessStatus,
-            StatusNameConstants.reassignedStatus,
+            StatusNameConstants.reassignedStatus
         ]
         if statusValid.contains(self.statusType) && self.rootViewModel.userType == .qfb {
             self.quantityTextField.isHidden = false
             self.quantityButtonChange.isHidden = false
         }
     }
-    
-    
+
     func initLabelsWithContent(detail: OrderDetail) {
         let partDecimal = self.getDecimalPartOfDouble(
             number: NSDecimalNumber(decimal: detail.plannedQuantity ?? 0.0).doubleValue)
@@ -163,19 +164,19 @@ extension OrderDetailViewController {
             }
         }).disposed(by: disposeBag)
     }
-    
+
     func quantityTextFieldBindind() {
         self.quantityTextField.rx.text.bind { text in
             self.quantityButtonChange.isEnabled = false
-            if let textTemp = Decimal(string: text ?? "") ,
+            if let textTemp = Decimal(string: text ?? ""),
                 let detail = self.orderDetail.first,
                 textTemp>0,
-                textTemp != detail.plannedQuantity  {
+                textTemp != detail.plannedQuantity {
                 self.quantityButtonChange.isEnabled = true
             }
         }
     }
-    
+
     func quantityButtonBindind() {
         self.quantityButtonChange.rx.tap.bind {
             self.quantityButtonChange.isEnabled = false
