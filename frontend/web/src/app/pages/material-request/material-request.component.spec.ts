@@ -25,7 +25,7 @@ import { MaterialRequestMock } from '../../../mocks/materialRequest';
 import { MaterialPostResMock } from 'src/mocks/materialPost';
 import { MaterialPostResFailedMock } from 'src/mocks/materialPostResponseFailed';
 import { Location } from '@angular/common';
-
+import { NgxMaskModule } from 'ngx-mask';
 describe('MaterialRequestComponent', () => {
   let component: MaterialRequestComponent;
   let fixture: ComponentFixture<MaterialRequestComponent>;
@@ -149,7 +149,8 @@ describe('MaterialRequestComponent', () => {
         RouterTestingModule,
         BrowserAnimationsModule,
         MatInputModule,
-        MatSelectModule
+        MatSelectModule,
+        NgxMaskModule.forRoot()
       ],
       providers: [
         { provide: MaterialRequestService, useValue: materialReServiceSpy },
