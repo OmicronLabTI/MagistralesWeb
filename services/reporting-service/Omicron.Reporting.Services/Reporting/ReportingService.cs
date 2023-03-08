@@ -63,7 +63,7 @@ namespace Omicron.Reporting.Services
         /// <returns>Report file stream.</returns>
         public FileResultModel CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview)
         {
-            request.RequestNumber = "0123456789";
+            request.RequestNumber = string.Empty;
             var file = this.BuildPdfFile(request, preview);
             return new FileResultModel { Success = true, Code = 200, FileStream = file.FileStream, FileName = file.FileName };
         }
