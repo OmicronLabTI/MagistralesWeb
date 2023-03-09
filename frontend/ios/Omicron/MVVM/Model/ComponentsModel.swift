@@ -127,8 +127,12 @@ class ComponentFormValues {
 
 class CommonComponentRequest {
     var catalogGroup: String
-    init(catalogGroup: String) {
+    var userId: String
+    var type: String
+    init(catalogGroup: String, userId: String, type: String) {
         self.catalogGroup = catalogGroup
+        self.userId = userId
+        self.type = type
     }
     func toDictionary() -> [String: Any] {
         var dict = [String: Any]()
@@ -149,6 +153,10 @@ class CommonComponentRequest {
 enum TypeComponentsOpenDialog: String {
     case supplies = "Supplies"
     case detailOrder = "DetailOrder"
+}
+enum TypeMostCommonRequest: String {
+    case detailOrder = "detailOrder"
+    case inputRequest = "inputRequest"
 }
 
 class SendToStoreRequest: Codable {

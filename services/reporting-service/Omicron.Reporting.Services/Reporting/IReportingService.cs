@@ -23,8 +23,8 @@ namespace Omicron.Reporting.Services
         /// </summary>
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Flag for preview file.</param>
-        /// <returns>Report file stream.</returns>
-        FileResultModel CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview);
+        /// <returns>Report files stream.</returns>
+        List<string> CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview);
 
         /// <summary>
         /// Submit raw material request.

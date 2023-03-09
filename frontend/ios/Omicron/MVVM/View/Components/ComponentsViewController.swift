@@ -33,7 +33,9 @@ class ComponentsViewController: UIViewController {
         hideMostCommonComponents()
         bindingDataToMostComoonTable()
         itemSelectedOfMostCommonComponentsTable()
-        componentsViewModel.getMostCommonComponentsService()
+        componentsViewModel.getMostCommonComponentsService(type: self.typeOpen == .detailOrder ?
+                                                            TypeMostCommonRequest.detailOrder.rawValue :
+                                                            TypeMostCommonRequest.inputRequest.rawValue)
     }
     func clearObservables() {
         componentsViewModel.clearObservables()

@@ -9,12 +9,10 @@ namespace Omicron.Reporting.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
     using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.EntityFrameworkCore.Internal;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
@@ -26,6 +24,7 @@ namespace Omicron.Reporting.Services
     using Omicron.Reporting.Services.ReportBuilder;
     using Omicron.Reporting.Services.SapDiApi;
     using Omicron.Reporting.Services.Utils;
+    using Org.BouncyCastle.Utilities;
 
     /// <summary>
     /// Implementations for request service.
@@ -61,11 +60,33 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Flag for preview file.</param>
         /// <returns>Report file stream.</returns>
-        public FileResultModel CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview)
+        public List<string> CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview)
         {
+            var results = new List<string>();
+            var allProducts = request.OrderedProducts;
             request.RequestNumber = string.Format(ServiceConstants.RequestNumberFormat, string.Empty);
-            var file = this.BuildPdfFile(request, preview);
-            return new FileResultModel { Success = true, Code = 200, FileStream = file.FileStream, FileName = file.FileName };
+            var azureAccount = this.configuration[ServiceConstants.AzureAccountName];
+            var azureKey = this.configuration[ServiceConstants.AzureAccountKey];
+
+            foreach (var category in ServiceConstants.LabelProductCategory)
+            {
+                var isLabelProducts = category == ServiceConstants.LabelProduct;
+                var products = allProducts.Where(op => op.IsLabel == isLabelProducts).ToList();
+                if (products.Any())
+                {
+                    request.OrderedProducts = products;
+                    var file = this.BuildPdfFile(request, preview, isLabelProducts);
+                    var pathTosave = string.Format(
+                        ServiceConstants.BlobUrlTemplate,
+                        azureAccount,
+                        ServiceConstants.ContainerAzureRequestOrderWarehose,
+                        file.FileName);
+                    this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, file.FileStream, "application/pdf"));
+                    results.Add(pathTosave);
+                }
+            }
+
+            return results;
         }
 
         /// <summary>
@@ -80,7 +101,6 @@ namespace Omicron.Reporting.Services
             var fileName = string.Empty;
             var isLabelProducts = false;
             var allProducts = request.OrderedProducts;
-
             foreach (var category in ServiceConstants.LabelProductCategory)
             {
                 isLabelProducts = category == ServiceConstants.LabelProduct;
@@ -459,13 +479,14 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Preview flag.</param>
         /// <returns>Report file.</returns>
-        private (MemoryStream FileStream, string FileName) BuildPdfFile(RawMaterialRequestModel request, bool preview)
+        private (MemoryStream FileStream, string FileName) BuildPdfFile(RawMaterialRequestModel request, bool preview, bool isLabelProducts)
         {
             var reportBuilder = new RawMaterialRequestReportBuilder(request);
             var report = reportBuilder.BuildReport();
             var date = DateTime.Now.ToString(DateConstants.RawMaterialRequestFormat);
             var requestIdentifier = preview ? "PREVIEW" : $"{request.Id}";
-            var fileName = string.Format(ServiceConstants.RawMaterialRequestFileNamePattern, $"{date}_{requestIdentifier}");
+            var addLabel = isLabelProducts ? "_Etiquetas" : string.Empty;
+            var fileName = string.Format(ServiceConstants.RawMaterialRequestFileNamePattern, $"{date}_{requestIdentifier}{addLabel}");
             return (report, fileName);
         }
 
@@ -598,7 +619,7 @@ namespace Omicron.Reporting.Services
             }
 
             request.RequestNumber = string.Format(ServiceConstants.RequestNumberFormat, transferRequestId.ToString());
-            var file = this.BuildPdfFile(request, false);
+            var file = this.BuildPdfFile(request, false, isLabel);
             var pdfFiles = new Dictionary<string, MemoryStream>
             {
                 { file.FileName, file.FileStream },

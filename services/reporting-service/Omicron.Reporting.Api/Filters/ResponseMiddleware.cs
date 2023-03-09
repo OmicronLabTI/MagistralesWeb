@@ -62,10 +62,9 @@ namespace Omicron.Reporting.Api.Filters
                     .WithLabels(context.Request.Method, context.Request.Path)
                     .Observe(sw.Elapsed.TotalSeconds);
             }
-            catch (Exception)
+            catch
             {
                 counter.Labels(path, method, "500").Inc();
-
                 throw;
             }
 
