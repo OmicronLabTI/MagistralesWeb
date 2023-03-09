@@ -41,9 +41,9 @@ namespace Omicron.Reporting.Api.Controllers
         /// <returns>Report file stream.</returns>
         [Route("/preview/request/rawmaterial/pdf")]
         [HttpPost]
-        public List<string> GetRawMaterialRequestPdfPreview(RawMaterialRequestDto request)
+        public IActionResult GetRawMaterialRequestPdfPreview(RawMaterialRequestDto request)
         {
-            return this.reportingFacade.CreateRawMaterialRequestPdf(request, true);
+            return this.Ok(new { response = this.reportingFacade.CreateRawMaterialRequestPdf(request, true) });
         }
 
         /// <summary>

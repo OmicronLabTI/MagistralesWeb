@@ -13,7 +13,6 @@ namespace Omicron.Usuarios.Api.Controllers
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Omicron.Usuarios.Dtos.Models;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Facade.Catalogs.Users;
 
