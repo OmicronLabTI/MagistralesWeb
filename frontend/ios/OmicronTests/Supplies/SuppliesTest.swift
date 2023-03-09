@@ -58,7 +58,7 @@ class SupplieTest: XCTestCase {
         self.supplieViewModel?.supplieList.append(supplieAdded)
 
         self.supplieViewModel!.showSuccessAlert.subscribe(onNext: { res in
-            XCTAssertTrue(res.msg == "El componente \(itemCode) ya existe para esta solicitud")
+            XCTAssertTrue(res.title == "El componente \(itemCode) ya existe para esta solicitud")
             XCTAssertTrue(self.supplieViewModel?.supplieList.count == 1)
         }).disposed(by: self.disposeBag!)
 

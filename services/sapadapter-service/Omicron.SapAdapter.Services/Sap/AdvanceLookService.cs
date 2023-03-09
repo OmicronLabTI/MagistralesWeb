@@ -1079,6 +1079,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Payments = paramentsCards.Payments,
                 Boxes = paramentsCards.Boxes,
                 DeliveryAddress = paramentsCards.DeliveryAddress,
+                SpecialCardCodes = paramentsCards.SpecialCardCodes,
             };
 
             var card = this.GenerateCardForDistribution(objectForDistribution);
@@ -1115,6 +1116,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Payments = paramentsCards.Payments,
                 Boxes = paramentsCards.Boxes,
                 DeliveryAddress = paramentsCards.DeliveryAddress,
+                SpecialCardCodes = paramentsCards.SpecialCardCodes,
             };
 
             var card = this.GenerateCardForDistribution(objectForDistribution);

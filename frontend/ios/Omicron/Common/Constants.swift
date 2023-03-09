@@ -206,7 +206,6 @@ struct CommonStrings {
     static let successDeleteSingular = "El componente se ha eliminado correctamente"
     static let confirmSendToStore = "¿Estás seguro que deseas enviar la solicitud de insumos?"
     static let placeholderObservations = "Deja tu comentario aquí"
-    
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"

@@ -8,7 +8,8 @@ import {
   ComponentSearch,
   CONST_NUMBER,
   CONST_STRING,
-  MessageType
+  MessageType,
+  TypeToSeeTap
 } from '../../constants/const';
 import { ErrorService } from '../../services/error.service';
 import { DataService } from '../../services/data.service';
@@ -256,8 +257,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.setModelData();
     this.reportingService.downloadPreviewMaterial(this.oldData).subscribe((res) => {
       const listOfBlobs = res.response;
-      listOfBlobs.forEach((blob) => {
-        this.fileDownloaderServie.downloadFileResult(blob, FileTypeContentEnum.PDF, this.getFileNamePreview());
+      listOfBlobs.forEach((url) => {
+        this.dataService.openNewTapByUrl(url, TypeToSeeTap.order);
       });
     });
   }
