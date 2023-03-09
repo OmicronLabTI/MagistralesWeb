@@ -301,4 +301,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.getPreMaterialRequestH();
     }
   }
+  noEnter(event: any): void {
+    event.preventDefault();
+  }
 }
