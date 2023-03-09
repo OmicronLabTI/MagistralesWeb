@@ -38,8 +38,8 @@ class SupplieViewModel {
             if exists != nil {
                 let productId = supplie.productId ?? ""
                 self.showSuccessAlert.onNext((
-                    title: "Error",
-                    msg: "El componente \(productId) ya existe para esta solicitud",
+                    title: "El componente \(productId) ya existe para esta solicitud",
+                    msg: String(),
                     autoDismiss: true))
                 return
             }
@@ -79,16 +79,17 @@ class SupplieViewModel {
                     self.onSuccessResponse(res: res)
                     return
                 }
+                let error = res.userError ?? CommonStrings.errorComponents
                 self.showSuccessAlert.onNext((
-                    title: "Error",
-                    msg: res.userError ?? CommonStrings.errorComponents,
+                    title: "Error \n\(error)",
+                    msg: String(),
                     autoDismiss: false))
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)
                 self.showSuccessAlert.onNext((
-                    title: "Error",
-                    msg: CommonStrings.errorComponents,
+                    title: "Error \n\(CommonStrings.errorComponents)",
+                    msg: String(),
                     autoDismiss: false))
             }).disposed(by: self.disposeBag)
     }
@@ -99,8 +100,8 @@ class SupplieViewModel {
         if res.success == true && response.failed.count > 0 {
             let error = generateErrorMessage(errors: faileds)
             self.showSuccessAlert.onNext((
-                title: "Error",
-                msg: error,
+                title: "Error \n\(error)",
+                msg: String(),
                 autoDismiss: false
             ))
         } else {
@@ -148,8 +149,8 @@ class SupplieViewModel {
         self.validateSendToStoreIsEnabled()
         let message = isSingular ? CommonStrings.successDeleteSingular :
             CommonStrings.successDeletePlural
-        self.showSuccessAlert.onNext((title: isSingular ? "Eliminado" : "Eliminados",
-                                      msg: message,
+            self.showSuccessAlert.onNext((title: "\(message)",
+                                      msg: String(),
                                       autoDismiss: true))
     }
     func validateItemsToDelete(itemCode: String) {
