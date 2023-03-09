@@ -711,6 +711,14 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string DetailOrderParameter = "detailOrder";
 
         /// <summary>
+        /// Gets the clasification user DZ.
+        /// </summary>
+        /// <value>
+        /// String UserTypeDZ.
+        /// </value>
+        public static string UserClassificationDZ => "DZ";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

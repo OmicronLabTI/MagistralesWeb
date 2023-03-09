@@ -473,7 +473,7 @@ namespace Omicron.SapAdapter.Services.Utils
             var users = JsonConvert.DeserializeObject<List<UserModel>>(usersResponse.Response.ToString());
             var user = users.FirstOrDefault(u => u.Role == ServiceConstants.QfbUserRole);
             user ??= new UserModel { Classification = warehouse };
-            return user.Classification;
+            return ServiceShared.CalculateTernary(user.Classification == ServiceConstants.UserClassificationDZ, ServiceConstants.MagistralWareHouse, user.Classification);
         }
 
         /// <summary>
