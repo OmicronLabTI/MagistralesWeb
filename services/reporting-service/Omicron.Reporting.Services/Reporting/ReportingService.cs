@@ -75,7 +75,7 @@ namespace Omicron.Reporting.Services
                 if (products.Any())
                 {
                     request.OrderedProducts = products;
-                    var file = this.BuildPdfFile(request, preview);
+                    var file = this.BuildPdfFile(request, preview, isLabelProducts);
                     var pathTosave = string.Format(
                         ServiceConstants.BlobUrlTemplate,
                         azureAccount,
@@ -479,13 +479,14 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Preview flag.</param>
         /// <returns>Report file.</returns>
-        private (MemoryStream FileStream, string FileName) BuildPdfFile(RawMaterialRequestModel request, bool preview)
+        private (MemoryStream FileStream, string FileName) BuildPdfFile(RawMaterialRequestModel request, bool preview, bool isLabelProducts)
         {
             var reportBuilder = new RawMaterialRequestReportBuilder(request);
             var report = reportBuilder.BuildReport();
             var date = DateTime.Now.ToString(DateConstants.RawMaterialRequestFormat);
             var requestIdentifier = preview ? "PREVIEW" : $"{request.Id}";
-            var fileName = string.Format(ServiceConstants.RawMaterialRequestFileNamePattern, $"{date}_{requestIdentifier}");
+            var addLabel = isLabelProducts ? "_Etiquetas" : string.Empty;
+            var fileName = string.Format(ServiceConstants.RawMaterialRequestFileNamePattern, $"{date}_{requestIdentifier}{addLabel}");
             return (report, fileName);
         }
 
@@ -618,7 +619,7 @@ namespace Omicron.Reporting.Services
             }
 
             request.RequestNumber = string.Format(ServiceConstants.RequestNumberFormat, transferRequestId.ToString());
-            var file = this.BuildPdfFile(request, false);
+            var file = this.BuildPdfFile(request, false, isLabel);
             var pdfFiles = new Dictionary<string, MemoryStream>
             {
                 { file.FileName, file.FileStream },
