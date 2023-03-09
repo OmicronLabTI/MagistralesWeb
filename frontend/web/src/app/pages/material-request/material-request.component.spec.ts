@@ -38,7 +38,6 @@ describe('MaterialRequestComponent', () => {
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
   let messagesServiceSpy: jasmine.SpyObj<MessagesService>;
-
   const getPreMaterialRequestMock = MaterialRequestMock;
   const postMaterialRequestMock = MaterialPostResMock;
   const blobResponse = new Blob();
@@ -100,7 +99,8 @@ describe('MaterialRequestComponent', () => {
       ('DataService',
         [
           'setIsToSaveAnything',
-          'calculateTernary'
+          'calculateTernary',
+          'openNewTapByUrl'
         ]);
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
       return validation ? firstValue : secondaValue;
@@ -120,7 +120,7 @@ describe('MaterialRequestComponent', () => {
         ]
       );
     reportingServiceSpy.downloadPreviewMaterial.and.returnValue(of({
-      response: [blobResponse]
+      response: ['', '']
     }));
 
     // -------------------- Observable Service
@@ -257,9 +257,9 @@ describe('MaterialRequestComponent', () => {
   });
   it('should download Preview', () => {
     reportingServiceSpy.downloadPreviewMaterial.and.returnValue(of({
-      response: [blobResponse]
+      response: ['url1', 'url2']
     }));
     component.downloadPreview();
-    expect(fileDownloaderServiceSpy.downloadFileResult).toHaveBeenCalled();
+    expect(dataServiceSpy.openNewTapByUrl).toHaveBeenCalledTimes(2);
   });
 });

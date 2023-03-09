@@ -9,10 +9,12 @@
 namespace Omicron.Reporting.Services.AzureServices
 {
     using System;
+    using System.IO;
     using System.Threading.Tasks;
     using Azure.Storage;
     using Azure.Storage.Blobs;
     using Azure.Storage.Blobs.Models;
+    using Omicron.LeadToCash.Resources.Exceptions;
 
     /// <summary>
     /// Class for azure.
@@ -33,6 +35,29 @@ namespace Omicron.Reporting.Services.AzureServices
             catch
             {
                 return null;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UploadElementToAzure(string azureAccount, string azureKey, Tuple<string, MemoryStream, string> filesToUpload)
+        {
+            try
+            {
+                var blobUir = new Uri(filesToUpload.Item1);
+                var credentials = new StorageSharedKeyCredential(azureAccount, azureKey);
+                var blobClient = new BlobClient(blobUir, credentials);
+                var config = new BlobHttpHeaders
+                {
+                    ContentType = filesToUpload.Item3,
+                };
+
+                await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+                await blobClient.UploadAsync(filesToUpload.Item2, config);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new CustomServiceException(ex.Message, System.Net.HttpStatusCode.BadRequest);
             }
         }
     }

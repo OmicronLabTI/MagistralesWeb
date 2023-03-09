@@ -8,6 +8,8 @@
 
 namespace Omicron.Reporting.Services.AzureServices
 {
+    using System.IO;
+    using System;
     using System.Threading.Tasks;
     using Azure.Storage.Blobs.Models;
 
@@ -24,5 +26,14 @@ namespace Omicron.Reporting.Services.AzureServices
         /// <param name="urlToDownload">urlToDownload To download.</param>
         /// <returns>the stream.</returns>
         Task<BlobDownloadInfo> GetlementFromAzure(string azureAccount, string azureKey, string urlToDownload);
+
+        /// <summary>
+        /// Gets a file from azure.
+        /// </summary>
+        /// <param name="azureAccount">the account.</param>
+        /// <param name="azureKey">the key.</param>
+        /// <param name="filesToUpload">Files To Upload.</param>
+        /// <returns>the stream.</returns>
+        Task<bool> UploadElementToAzure(string azureAccount, string azureKey, Tuple<string, MemoryStream, string> filesToUpload);
     }
 }

@@ -72,6 +72,10 @@ namespace Omicron.Reporting.Test.Facade.Request
                 .Setup(m => m.SendEmails(It.IsAny<List<EmailGenericDto>>()))
                 .Returns(Task.FromResult(resultModel));
 
+            mockReportingService
+                .Setup(m => m.CreateRawMaterialRequestPdf(It.IsAny<RawMaterialRequestModel>(), It.IsAny<bool>()))
+                .Returns(new List<string> { "http://urlpdf.com", "http://urlpdf2.com" });
+
             this.reportingFacade = new ReportingFacade(mockReportingService.Object, mapper);
         }
 
@@ -92,10 +96,6 @@ namespace Omicron.Reporting.Test.Facade.Request
             response.ForEach(report =>
             {
                 Assert.IsNotNull(report);
-                Assert.IsTrue(report.Success);
-                Assert.IsNotEmpty(report.FileName);
-                Assert.IsNotNull(report.FileName);
-                Assert.IsNotNull(report.FileStream);
             });
         }
 
