@@ -402,6 +402,11 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: elastic_apm_url
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: redis
           ports:
             - containerPort: 80
           resources:
