@@ -78,7 +78,7 @@ class ComponentsTestExtension: XCTestCase {
                 XCTAssertEqual(res[1].description, "Airless Pump Star 150 ml Blanco")
             }
         }).disposed(by: disposeBag!)
-        componentsViewModel?.getMostCommonComponentsService()
+        componentsViewModel?.getMostCommonComponentsService(type: "")
     }
 
     func testGetMostComponetServiceWhenCodeIs500() {
@@ -87,7 +87,7 @@ class ComponentsTestExtension: XCTestCase {
         }).disposed(by: disposeBag!)
         statusCode = 500
         componentsViewModel?.networkManager = NetworkManager(provider: provider)
-        componentsViewModel?.getMostCommonComponentsService()
+        componentsViewModel?.getMostCommonComponentsService(type: "")
     }
 
 }

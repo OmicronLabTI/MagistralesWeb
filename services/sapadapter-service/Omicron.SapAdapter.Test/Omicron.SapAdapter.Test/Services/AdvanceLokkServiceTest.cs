@@ -93,7 +93,8 @@ namespace Omicron.SapAdapter.Test.Services
 
             var parameters = new List<ParametersModel>
             {
-                new ParametersModel { Value = "10" },
+                new ParametersModel { Id = 1, Value = "10" },
+                new ParametersModel { Id = 2, Value = "Codigo", Field = "CardCodeResponsibleMedic" },
             };
 
             this.catalogService = new Mock<ICatalogsService>();

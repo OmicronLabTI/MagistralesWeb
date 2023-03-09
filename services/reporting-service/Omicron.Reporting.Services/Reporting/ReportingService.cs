@@ -61,11 +61,24 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Flag for preview file.</param>
         /// <returns>Report file stream.</returns>
-        public FileResultModel CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview)
+        public List<FileResultModel> CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview)
         {
-            request.RequestNumber = string.Empty;
-            var file = this.BuildPdfFile(request, preview);
-            return new FileResultModel { Success = true, Code = 200, FileStream = file.FileStream, FileName = file.FileName };
+            var results = new List<FileResultModel>();
+            var allProducts = request.OrderedProducts;
+            request.RequestNumber = string.Format(ServiceConstants.RequestNumberFormat, string.Empty);
+            foreach (var category in ServiceConstants.LabelProductCategory)
+            {
+                var isLabelProducts = category == ServiceConstants.LabelProduct;
+                var products = allProducts.Where(op => op.IsLabel == isLabelProducts).ToList();
+                if (products.Any())
+                {
+                    request.OrderedProducts = products;
+                    var file = this.BuildPdfFile(request, preview);
+                    results.Add(new FileResultModel { Success = true, Code = 200, FileStream = file.FileStream, FileName = file.FileName });
+                }
+            }
+
+            return results;
         }
 
         /// <summary>
@@ -80,7 +93,6 @@ namespace Omicron.Reporting.Services
             var fileName = string.Empty;
             var isLabelProducts = false;
             var allProducts = request.OrderedProducts;
-
             foreach (var category in ServiceConstants.LabelProductCategory)
             {
                 isLabelProducts = category == ServiceConstants.LabelProduct;
@@ -597,7 +609,7 @@ namespace Omicron.Reporting.Services
                 return (false, string.Empty);
             }
 
-            request.RequestNumber = transferRequestId.ToString();
+            request.RequestNumber = string.Format(ServiceConstants.RequestNumberFormat, transferRequestId.ToString());
             var file = this.BuildPdfFile(request, false);
             var pdfFiles = new Dictionary<string, MemoryStream>
             {

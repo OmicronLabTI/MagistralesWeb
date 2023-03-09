@@ -12,6 +12,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { FaborderListModule } from '../faborders-list/faborder-list.module';
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
   declarations: [ MaterialRequestComponent ],
@@ -26,7 +27,8 @@ import { FaborderListModule } from '../faborders-list/faborder-list.module';
       FormsModule,
       MatInputModule,
       MATERIAL_COMPONENTS,
-      FaborderListModule
+      FaborderListModule,
+      NgxMaskModule.forRoot()
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

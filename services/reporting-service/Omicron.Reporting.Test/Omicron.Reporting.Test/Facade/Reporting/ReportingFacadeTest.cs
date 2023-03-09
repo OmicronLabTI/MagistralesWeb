@@ -19,6 +19,7 @@ namespace Omicron.Reporting.Test.Facade.Request
     using Omicron.Reporting.Facade.Request;
     using Omicron.Reporting.Services;
     using Omicron.Reporting.Services.Mapping;
+    using DocumentFormat.OpenXml.Bibliography;
 
     /// <summary>
     /// Class UsersServiceTest.
@@ -87,12 +88,15 @@ namespace Omicron.Reporting.Test.Facade.Request
             // act
             var response = this.reportingFacade.CreateRawMaterialRequestPdf(requests, false);
 
-            // arrange
             Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotEmpty(response.FileName);
-            Assert.IsNotNull(response.FileName);
-            Assert.IsNotNull(response.FileStream);
+            response.ForEach(report =>
+            {
+                Assert.IsNotNull(report);
+                Assert.IsTrue(report.Success);
+                Assert.IsNotEmpty(report.FileName);
+                Assert.IsNotNull(report.FileName);
+                Assert.IsNotNull(report.FileStream);
+            });
         }
 
         /// <summary>
