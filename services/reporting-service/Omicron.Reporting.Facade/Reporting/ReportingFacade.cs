@@ -42,11 +42,9 @@ namespace Omicron.Reporting.Facade.Request
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Flag for preview file.</param>
         /// <returns>Report file stream.</returns>
-        public List<FileResultDto> CreateRawMaterialRequestPdf(RawMaterialRequestDto request, bool preview)
+        public List<string> CreateRawMaterialRequestPdf(RawMaterialRequestDto request, bool preview)
         {
-            return this.mapper.Map<List<FileResultDto>>(
-                this.reportingService.CreateRawMaterialRequestPdf(
-                    this.mapper.Map<RawMaterialRequestModel>(request), preview));
+            return this.reportingService.CreateRawMaterialRequestPdf(this.mapper.Map<RawMaterialRequestModel>(request), preview);
         }
 
         /// <summary>

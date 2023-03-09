@@ -9,12 +9,10 @@ namespace Omicron.Reporting.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
     using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.EntityFrameworkCore.Internal;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
@@ -26,6 +24,7 @@ namespace Omicron.Reporting.Services
     using Omicron.Reporting.Services.ReportBuilder;
     using Omicron.Reporting.Services.SapDiApi;
     using Omicron.Reporting.Services.Utils;
+    using Org.BouncyCastle.Utilities;
 
     /// <summary>
     /// Implementations for request service.
@@ -61,11 +60,14 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Flag for preview file.</param>
         /// <returns>Report file stream.</returns>
-        public List<FileResultModel> CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview)
+        public List<string> CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview)
         {
-            var results = new List<FileResultModel>();
+            var results = new List<string>();
             var allProducts = request.OrderedProducts;
             request.RequestNumber = string.Format(ServiceConstants.RequestNumberFormat, string.Empty);
+            var azureAccount = this.configuration[ServiceConstants.AzureAccountName];
+            var azureKey = this.configuration[ServiceConstants.AzureAccountKey];
+
             foreach (var category in ServiceConstants.LabelProductCategory)
             {
                 var isLabelProducts = category == ServiceConstants.LabelProduct;
@@ -74,7 +76,13 @@ namespace Omicron.Reporting.Services
                 {
                     request.OrderedProducts = products;
                     var file = this.BuildPdfFile(request, preview);
-                    results.Add(new FileResultModel { Success = true, Code = 200, FileStream = file.FileStream, FileName = file.FileName });
+                    var pathTosave = string.Format(
+                        ServiceConstants.BlobUrlTemplate,
+                        azureAccount,
+                        ServiceConstants.ContainerAzureRequestOrderWarehose,
+                        file.FileName);
+                    this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, file.FileStream, "application/pdf"));
+                    results.Add(pathTosave);
                 }
             }
 

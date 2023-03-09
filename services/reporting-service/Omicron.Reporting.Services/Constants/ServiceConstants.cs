@@ -8,6 +8,7 @@
 
 namespace Omicron.Reporting.Services.Constants
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -454,5 +455,21 @@ namespace Omicron.Reporting.Services.Constants
         /// String RequestNumberFormat.
         /// </value>
         public static string RequestNumberFormat => "N° de Solicitud de traslado: {0}";
+
+        /// <summary>
+        /// Gets Blob Url Template.
+        /// </summary>
+        /// <value>
+        /// String BlobUrlTemplate.
+        /// </value>
+        public static string BlobUrlTemplate => "https://{0}.blob.core.windows.net/{1}/{2}";
+
+        /// <summary>
+        /// Gets Container Azure Name to request order warehouse.
+        /// </summary>
+        /// <value>
+        /// String ContainerAzureRequestOrderWarehose.
+        /// </value>
+        public static string ContainerAzureRequestOrderWarehose => "request-order-warehose";
     }
 }
