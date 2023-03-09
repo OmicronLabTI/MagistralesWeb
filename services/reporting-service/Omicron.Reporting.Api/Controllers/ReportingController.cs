@@ -9,6 +9,7 @@
 namespace Omicron.Reporting.Api.Controllers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Net.Http.Headers;
@@ -40,14 +41,14 @@ namespace Omicron.Reporting.Api.Controllers
         /// <returns>Report file stream.</returns>
         [Route("/preview/request/rawmaterial/pdf")]
         [HttpPost]
-        public FileStreamResult GetRawMaterialRequestPdfPreview(RawMaterialRequestDto request)
+        public List<FileStreamResult> GetRawMaterialRequestPdfPreview(RawMaterialRequestDto request)
         {
             var report = this.reportingFacade.CreateRawMaterialRequestPdf(request, true);
-
-            return new FileStreamResult(report.FileStream, new MediaTypeHeaderValue("application/pdf"))
-            {
-                FileDownloadName = report.FileName,
-            };
+            return report
+                .Select(report => new FileStreamResult(report.FileStream, new MediaTypeHeaderValue("application/pdf"))
+                {
+                    FileDownloadName = report.FileName,
+                }).ToList();
         }
 
         /// <summary>
@@ -98,8 +99,8 @@ namespace Omicron.Reporting.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> SendEmailRejectedOrder(SendRejectedEmailDto request)
         {
-           var response = await this.reportingFacade.SendEmailRejectedOrder(request);
-           return this.Ok(response);
+            var response = await this.reportingFacade.SendEmailRejectedOrder(request);
+            return this.Ok(response);
         }
 
         /// <summary>
