@@ -66,7 +66,7 @@ class LotsViewModel {
     // MARK: - Functions
     func finishOrderDidTapBinding() {
         self.finishOrderDidTap.subscribe(onNext: { [weak self] in
-            self?.askIfUserWantToFinalizeOrder.onNext(CommonStrings.finishOrderMessage)
+            self?.validIfOrderCanBeFinalized()
         }).disposed(by: self.disposeBag)
     }
 
