@@ -96,9 +96,9 @@ namespace Omicron.Reporting.Services
         public async Task<ResultModel> SubmitRawMaterialRequestPdf(RawMaterialRequestModel request)
         {
             var mailStatus = true;
-            var diApiResult = await this.CreateRawMaterialRequestOnDiApi(request);
+            var resultDiApi = await this.CreateRawMaterialRequestOnDiApi(request);
 
-            if (diApiResult.All(x => !string.IsNullOrEmpty(x.Error)))
+            if (resultDiApi.All(x => !string.IsNullOrEmpty(x.Error)))
             {
                 return new ResultModel { Success = true, Code = 200, Response = false, UserError = ServiceConstants.ErrorToCreateTransferRequestOnDiApi, Comments = new List<string>() };
             }
@@ -109,7 +109,7 @@ namespace Omicron.Reporting.Services
             var allProducts = request.OrderedProducts;
             var productsWithError = new List<string>();
             var mailStatusList = new List<bool>();
-            foreach (var result in diApiResult)
+            foreach (var result in resultDiApi)
             {
                 isLabelProducts = result.IsLabel;
                 var products = allProducts.Where(op => op.IsLabel == isLabelProducts).ToList();
@@ -129,7 +129,7 @@ namespace Omicron.Reporting.Services
             if (productsWithError.Any())
             {
                 mailStatus = false;
-                var transferRequestIdOk = diApiResult.First(x => string.IsNullOrEmpty(x.Error)).TransferRequestId;
+                var transferRequestIdOk = resultDiApi.First(x => string.IsNullOrEmpty(x.Error)).TransferRequestId;
                 message = string.Format(ServiceConstants.ErrorWithOneRequestCreatedOnSap, transferRequestIdOk, string.Join(", ", productsWithError));
             }
             else
