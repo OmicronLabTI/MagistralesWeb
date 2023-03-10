@@ -58,9 +58,13 @@ extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UIT
         }
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
         return textView.text.count + text.count - range.length <= 500
     }
-    
+
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
             textView.text = CommonStrings.placeholderObservations
