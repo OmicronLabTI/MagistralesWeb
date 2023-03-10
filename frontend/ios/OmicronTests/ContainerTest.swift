@@ -11,7 +11,7 @@ import RxSwift
 import Resolver
 import Moya
 
-@testable import OmicronLab
+@testable import Magistrales
 
 class ContainerTest: XCTestCase {
 

@@ -667,7 +667,7 @@
 		7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkOrderViewModel.swift; sourceTree = "<group>"; };
 		7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkOrderModel.swift; sourceTree = "<group>"; };
 		942B27E76651174E700E02BA /* Pods-Omicron-OmicronUAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUAT.debug.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUAT/Pods-Omicron-OmicronUAT.debug.xcconfig"; sourceTree = "<group>"; };
-		98015CAC24AFBC6C00E7772F /* OmicronLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmicronLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		98015CAC24AFBC6C00E7772F /* Magistrales.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Magistrales.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAF24AFBC6C00E7772F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		98015CB124AFBC6C00E7772F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		98015CB624AFBC6C00E7772F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -1220,7 +1220,7 @@
 		98015CAD24AFBC6C00E7772F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				98015CAC24AFBC6C00E7772F /* OmicronLab.app */,
+				98015CAC24AFBC6C00E7772F /* Magistrales.app */,
 				98015CC224AFBC6D00E7772F /* OmicronTests.xctest */,
 				98015CCD24AFBC6D00E7772F /* OmicronUITests.xctest */,
 				49CF662225F2D4AB002CD598 /* OmicronDEV.app */,
@@ -1497,7 +1497,7 @@
 			);
 			name = Omicron;
 			productName = Omicron;
-			productReference = 98015CAC24AFBC6C00E7772F /* OmicronLab.app */;
+			productReference = 98015CAC24AFBC6C00E7772F /* Magistrales.app */;
 			productType = "com.apple.product-type.application";
 		};
 		98015CC124AFBC6D00E7772F /* OmicronTests */ = {
@@ -2641,7 +2641,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
-				PRODUCT_NAME = OmicronLab;
+				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = UAT;
 				SWIFT_VERSION = 5.0;
@@ -2681,7 +2681,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 82;
+				CURRENT_PROJECT_VERSION = 83;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2722,7 +2722,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Magistrales.app/Magistrales";
 			};
 			name = UAT;
 		};
@@ -2904,7 +2904,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 82;
+				CURRENT_PROJECT_VERSION = 83;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2930,7 +2930,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 82;
+				CURRENT_PROJECT_VERSION = 83;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3026,7 +3026,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
-				PRODUCT_NAME = OmicronLab;
+				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = QA;
 				SWIFT_VERSION = 5.0;
@@ -3056,7 +3056,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Magistrales.app/Magistrales";
 			};
 			name = QA;
 		};
@@ -3115,7 +3115,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 82;
+				CURRENT_PROJECT_VERSION = 83;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3265,7 +3265,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
-				PRODUCT_NAME = OmicronLab;
+				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
@@ -3289,7 +3289,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
-				PRODUCT_NAME = OmicronLab;
+				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_VERSION = 5.0;
@@ -3318,7 +3318,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Magistrales.app/Magistrales";
 			};
 			name = Debug;
 		};
@@ -3344,7 +3344,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Magistrales.app/Magistrales";
 			};
 			name = Release;
 		};
