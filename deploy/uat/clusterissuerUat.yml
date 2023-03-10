@@ -9,17 +9,17 @@ spec:
     privateKeySecretRef:
       name: letsencrypt
     solvers:
-    - http01:
-        ingress:
-          class: nginx-api
-          podTemplate:
-            spec:
-              nodeSelector:
-                "kubernetes.io/os": linux
-    - http01:
-        ingress:
-          class: nginx-log
-          podTemplate:
-            spec:
-              nodeSelector:
-                "kubernetes.io/os": linux
+      - http01:
+          ingress:
+            class: nginx-api
+            podTemplate:
+              spec:
+                nodeSelector:
+                  "kubernetes.io/os": linux
+      - http01:
+          ingress:
+            class: nginx-log
+            podTemplate:
+              spec:
+                nodeSelector:
+                  "kubernetes.io/os": linux
