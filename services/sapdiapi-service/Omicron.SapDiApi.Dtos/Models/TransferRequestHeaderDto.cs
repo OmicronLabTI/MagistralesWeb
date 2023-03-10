@@ -24,6 +24,12 @@ namespace Omicron.SapDiApi.Dtos.Models
         public string UserInfo { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the request is for labels.
+        /// </summary>
+        /// <value>Is label.</value>
+        public bool IsLabel { get; set; }
+
+        /// <summary>
         /// Gets or sets TransferRequestDetail.
         /// </summary>
         /// <value>
