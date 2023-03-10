@@ -11,7 +11,7 @@ import RxSwift
 import RxDataSources
 import Moya
 
-@testable import OmicronLab
+@testable import Magistrales
 class ExtensionInboxTest3: XCTestCase {
     var inboxViewModel: InboxViewModel?
     var rootViewModel: RootViewModel?
