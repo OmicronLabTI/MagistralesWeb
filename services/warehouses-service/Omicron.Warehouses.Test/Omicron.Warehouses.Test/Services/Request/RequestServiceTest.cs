@@ -126,7 +126,7 @@ namespace Omicron.Warehouses.Test.Services.Request
 
             this.mockUsersService.Setup(x => x.GetUsersById(It.IsAny<string[]>())).Returns(Task.FromResult(this.GetMockUsers()));
             this.mockSapAdapterService.Setup(x => x.GetProductionOrdersByCriterial(It.IsAny<List<int>>(), It.IsAny<List<int>>())).Returns(Task.FromResult(this.GetMockProductionOrders()));
-            this.mockReportingService.SetReturnsDefault(Task.FromResult(true));
+            this.mockReportingService.SetReturnsDefault(Task.FromResult((true, string.Empty)));
             this.redisService = new Mock<IRedisService>();
             this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object, this.mockSapAdapterService.Object, this.mockReportingService.Object, this.redisService.Object);
         }
@@ -179,7 +179,7 @@ namespace Omicron.Warehouses.Test.Services.Request
         {
             // arrange
             this.mockReportingService = new Mock<IReportingService>();
-            this.mockReportingService.SetReturnsDefault(Task.FromResult(false));
+            this.mockReportingService.SetReturnsDefault(Task.FromResult((false, "Ocurrió un error al enviar la solicitud.")));
             this.requestService = new RequestService(this.requestDao, this.mockUsersService.Object, this.mockSapAdapterService.Object, this.mockReportingService.Object, this.redisService.Object);
 
             var request = AutoFixtureProvider.Create<RawMaterialRequestModel>();

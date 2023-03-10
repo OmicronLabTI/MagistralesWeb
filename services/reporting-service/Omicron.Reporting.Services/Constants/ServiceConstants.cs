@@ -374,6 +374,21 @@ namespace Omicron.Reporting.Services.Constants
         public const string WarehouseDz = "DZ";
 
         /// <summary>
+        /// Error to submit request.
+        /// </summary>
+        public const string ErrorToSubmitFile = "Ocurrió un error al enviar la solicitud.";
+
+        /// <summary>
+        /// Error to submit request.
+        /// </summary>
+        public const string ErrorToCreateTransferRequestOnDiApi = "Ocurrió un error al generar la solicitud, favor de revisar los componentes para poder continuar.";
+
+        /// <summary>
+        /// Error to submit request.
+        /// </summary>
+        public const string ErrorWithOneRequestCreatedOnSap = "Se creo la solicitud No. {0}, ocurrió un error al generar la solicitud de los siguientes componentes: {1}.";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

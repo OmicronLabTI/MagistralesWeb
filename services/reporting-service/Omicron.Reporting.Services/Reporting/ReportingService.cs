@@ -97,23 +97,49 @@ namespace Omicron.Reporting.Services
         public async Task<ResultModel> SubmitRawMaterialRequestPdf(RawMaterialRequestModel request)
         {
             var mailStatus = true;
+            var diApiResult = await this.CreateRawMaterialRequestOnDiApi(request);
+
+            if (diApiResult.All(x => !string.IsNullOrEmpty(x.Error)))
+            {
+                return new ResultModel { Success = true, Code = 200, Response = false, UserError = ServiceConstants.ErrorToCreateTransferRequestOnDiApi, Comments = new List<string>() };
+            }
+
             var createdFileNames = new List<string>();
             var fileName = string.Empty;
             var isLabelProducts = false;
             var allProducts = request.OrderedProducts;
-            foreach (var category in ServiceConstants.LabelProductCategory)
+            var productsWithError = new List<string>();
+            var mailStatusList = new List<bool>();
+            foreach (var result in diApiResult)
             {
-                isLabelProducts = category == ServiceConstants.LabelProduct;
+                isLabelProducts = result.IsLabel;
                 var products = allProducts.Where(op => op.IsLabel == isLabelProducts).ToList();
-                if (products.Any())
+                if (!string.IsNullOrEmpty(result.Error))
                 {
-                    request.OrderedProducts = products;
-                    (mailStatus, fileName) = await this.SubmitRawMaterialRequestPdfByLabelProductCategory(request, isLabelProducts);
-                    createdFileNames.Add(fileName);
+                    productsWithError.AddRange(products.Select(x => x.ProductId).ToList());
+                    break;
                 }
+
+                request.OrderedProducts = products;
+                (mailStatus, fileName) = await this.SubmitRawMaterialRequestPdfByLabelProductCategory(request, isLabelProducts, result.TransferRequestId);
+                mailStatusList.Add(mailStatus);
+                createdFileNames.Add(fileName);
             }
 
-            return new ResultModel { Success = true, Code = 200, Response = mailStatus, Comments = createdFileNames.Where(x => !string.IsNullOrEmpty(x)).ToList() };
+            var message = string.Empty;
+            if (productsWithError.Any())
+            {
+                mailStatus = false;
+                var transferRequestIdOk = diApiResult.First(x => string.IsNullOrEmpty(x.Error)).TransferRequestId;
+                message = string.Format(ServiceConstants.ErrorWithOneRequestCreatedOnSap, transferRequestIdOk, string.Join(", ", productsWithError));
+            }
+            else
+            {
+                mailStatus = mailStatusList.All(isOk => isOk);
+                message = CommonCall.CalculateTernary(!mailStatus, ServiceConstants.ErrorToSubmitFile, string.Empty);
+            }
+
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus, UserError = message, Comments = createdFileNames.Where(x => !string.IsNullOrEmpty(x)).ToList() };
         }
 
         /// <inheritdoc/>
@@ -608,16 +634,10 @@ namespace Omicron.Reporting.Services
         /// </summary>
         /// <param name="request">request.</param>
         /// <param name="isLabel">is label.</param>
+        /// <param name="transferRequestId">Transfer request id.</param>
         /// <returns>Result.</returns>
-        private async Task<(bool, string)> SubmitRawMaterialRequestPdfByLabelProductCategory(RawMaterialRequestModel request, bool isLabel)
+        private async Task<(bool, string)> SubmitRawMaterialRequestPdfByLabelProductCategory(RawMaterialRequestModel request, bool isLabel, int transferRequestId)
         {
-            (bool isSuccessful, int transferRequestId) = await this.CreateRawMaterialRequestOnDiApi(request);
-
-            if (!isSuccessful)
-            {
-                return (false, string.Empty);
-            }
-
             request.RequestNumber = string.Format(ServiceConstants.RequestNumberFormat, transferRequestId.ToString());
             var file = this.BuildPdfFile(request, false, isLabel);
             var pdfFiles = new Dictionary<string, MemoryStream>
@@ -634,15 +654,35 @@ namespace Omicron.Reporting.Services
         /// </summary>
         /// <param name="request">Request.</param>
         /// <returns>Result.</returns>
-        private async Task<(bool, int)> CreateRawMaterialRequestOnDiApi(RawMaterialRequestModel request)
+        private async Task<List<TransferRequestResult>> CreateRawMaterialRequestOnDiApi(RawMaterialRequestModel request)
         {
-            var isSuccessful = false;
-            var transferRequestId = 0;
+            var isLabelProducts = false;
+            var transferRequestToDiApi = new List<TransferRequestHeaderDto>();
 
-            var transferRequestToDiApi = new TransferRequestHeaderDto
+            foreach (var category in ServiceConstants.LabelProductCategory)
             {
-                UserInfo = $"{request.SigningUserName}-{request.SigningUserId}",
-                TransferRequestDetail = request.OrderedProducts
+                isLabelProducts = category == ServiceConstants.LabelProduct;
+                if (request.OrderedProducts.Any(x => x.IsLabel == isLabelProducts))
+                {
+                    transferRequestToDiApi.Add(this.CreateTransferRequestHeaderDto(
+                        $"{request.SigningUserName}-{request.SigningUserId}",
+                        request.OrderedProducts.Where(x => x.IsLabel == isLabelProducts).ToList(),
+                        isLabelProducts));
+                }
+            }
+
+            var response = await this.sapDiApi.PostToSapDiApi(transferRequestToDiApi, ServiceConstants.EndpointCreateTransferRequest);
+            var result = JsonConvert.DeserializeObject<List<TransferRequestResult>>(response.Response.ToString());
+            return result;
+        }
+
+        private TransferRequestHeaderDto CreateTransferRequestHeaderDto(string userInfo, List<RawMaterialRequestDetailModel> products, bool isLabel)
+        {
+            return new TransferRequestHeaderDto
+            {
+                UserInfo = userInfo,
+                IsLabel = isLabel,
+                TransferRequestDetail = products
                     .Select(op => new TransferRequestDetailDto
                     {
                         ItemCode = op.ProductId,
@@ -651,18 +691,6 @@ namespace Omicron.Reporting.Services
                         TargetWarehosue = CommonCall.CalculateTernary(op.Warehouse == ServiceConstants.WarehouseDz, ServiceConstants.WarehouseMg, op.Warehouse),
                     }).ToList(),
             };
-
-            var response = await this.sapDiApi.PostToSapDiApi(new List<TransferRequestHeaderDto> { transferRequestToDiApi }, ServiceConstants.EndpointCreateTransferRequest);
-            var result = JsonConvert.DeserializeObject<List<TransferRequestResult>>(response.Response.ToString());
-
-            var rawMaterialResponse = result.FirstOrDefault(x => string.IsNullOrEmpty(x.Error));
-
-            if (rawMaterialResponse != null)
-            {
-                return (true, rawMaterialResponse.TransferRequestId);
-            }
-
-            return (isSuccessful, transferRequestId);
         }
     }
 }

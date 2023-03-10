@@ -86,10 +86,10 @@ namespace Omicron.Warehouses.Services.Request
 
             await this.InsertRequest(userId, request);
 
-            var mailResult = await this.reportingService.SubmitRequest(request);
-            if (!mailResult)
+            var result = await this.reportingService.SubmitRequest(request, 1);
+            if (!result.Item1)
             {
-                return ServiceUtils.CreateResult(true, 200, ErrorReasonConstants.ErrorToSubmitFile, null, null);
+                return ServiceUtils.CreateResult(true, 200, result.Item2, null, null);
             }
 
             await this.InsertRequestDetail(request);
