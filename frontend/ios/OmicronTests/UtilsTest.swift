@@ -10,7 +10,7 @@ import  XCTest
 import  RxSwift
 import Moya
 
-@testable import OmicronLab
+@testable import Magistrales
 
 class UtilsTest: XCTestCase {
     // MARK: VARIABLES

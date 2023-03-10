@@ -10,7 +10,7 @@ import XCTest
 import RxSwift
 import RxDataSources
 
-@testable import OmicronLab
+@testable import Magistrales
 class ExtensionInboxTest: XCTestCase {
 
     var inboxViewModel: InboxViewModel?
