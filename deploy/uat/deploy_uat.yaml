@@ -323,6 +323,11 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Uat
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-uat
+                  key: redis            
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:

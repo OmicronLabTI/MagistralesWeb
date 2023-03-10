@@ -1079,6 +1079,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Payments = paramentsCards.Payments,
                 Boxes = paramentsCards.Boxes,
                 DeliveryAddress = paramentsCards.DeliveryAddress,
+                SpecialCardCodes = paramentsCards.SpecialCardCodes,
             };
 
             var card = this.GenerateCardForDistribution(objectForDistribution);
@@ -1115,6 +1116,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Payments = paramentsCards.Payments,
                 Boxes = paramentsCards.Boxes,
                 DeliveryAddress = paramentsCards.DeliveryAddress,
+                SpecialCardCodes = paramentsCards.SpecialCardCodes,
             };
 
             var card = this.GenerateCardForDistribution(objectForDistribution);
@@ -1156,7 +1158,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 StatusDelivery = userOrder.StatusInvoice,
                 Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoice.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
                 ProductType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, parametersDistribution.LocalNeighbors, invoice.Address, payment),
-                Doctor = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == invoice.CardCode), deliveryAddress.AddressId, invoice.Medico),
+                Doctor = invoice.Medico, // ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == invoice.CardCode), deliveryAddress.AddressId, invoice.Medico),
                 TotalDeliveries = localInvoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),
                 InvoiceDocDate = userOrder.InvoiceStoreDate.Value,
                 Client = deliveryAddress.Contact.ValidateNull(),
