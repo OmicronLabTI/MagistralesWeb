@@ -11,7 +11,6 @@ import RxSwift
 import Resolver
 
 class ComponentsViewModel {
-
     var disposeBag = DisposeBag()
     var searchFilter = BehaviorSubject<String>(value: String())
     var searchDidTap = PublishSubject<Void>()

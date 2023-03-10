@@ -58,14 +58,15 @@ class BulkListRequest: Codable {
     }
 }
 
-
 class BulkListResponse: HttpResponse {
     var response: [BulkProduct]?
+    var comments: Int?
     required init?(map: Map) {
         super.init(map: map)
     }
     override func mapping(map: Map) {
         super.mapping(map: map)
+        comments <- map["comments"]
         response <- map["response"]
     }
 }
