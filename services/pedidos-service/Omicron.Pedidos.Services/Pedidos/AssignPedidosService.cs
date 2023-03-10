@@ -67,13 +67,22 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> AssignOrder(ManualAssignModel manualAssign)
         {
+            var hasPedidosType = await this.CheckIfNeedTecnicConfigValidation(manualAssign.DocEntry.Select(x => x.ToString()).ToList(), manualAssign.OrderType);
+            var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(new List<string> { manualAssign.UserId }, this.userService)).FirstOrDefault();
+            qfbInfoValidated ??= new QfbTecnicInfoDto();
+
+            if (ServiceShared.CalculateAnd(!qfbInfoValidated.IsValidTecnic, hasPedidosType))
+            {
+                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{qfbInfoValidated.QfbFirstName} {qfbInfoValidated.QfbLastName}"), null, null);
+            }
+
             if (manualAssign.OrderType.Equals(ServiceConstants.TypePedido))
             {
-                return await AsignarLogic.AssignPedido(manualAssign, this.userService, this.pedidosDao, this.sapAdapter, this.sapDiApi, this.kafkaConnector);
+                return await AsignarLogic.AssignPedido(manualAssign, qfbInfoValidated, this.pedidosDao, this.sapAdapter, this.sapDiApi, this.kafkaConnector);
             }
             else
             {
-                return await AsignarLogic.AssignOrder(manualAssign, this.pedidosDao, this.sapDiApi, this.sapAdapter, this.kafkaConnector);
+                return await AsignarLogic.AssignOrder(manualAssign, qfbInfoValidated, this.pedidosDao, this.sapDiApi, this.sapAdapter, this.kafkaConnector);
             }
         }
 
@@ -188,13 +197,21 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         public async Task<ResultModel> ReassignOrder(ManualAssignModel manualAssign)
         {
+            var hasPedidosType = await this.CheckIfNeedTecnicConfigValidation(manualAssign.DocEntry.Select(x => x.ToString()).ToList(), manualAssign.OrderType);
+            var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(new List<string> { manualAssign.UserId }, this.userService)).FirstOrDefault();
+            qfbInfoValidated ??= new QfbTecnicInfoDto();
+            if (ServiceShared.CalculateAnd(!qfbInfoValidated.IsValidTecnic, hasPedidosType))
+            {
+                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{qfbInfoValidated.QfbFirstName} {qfbInfoValidated.QfbLastName}"), null, null);
+            }
+
             if (manualAssign.OrderType.Equals(ServiceConstants.TypePedido))
             {
-                return await this.ReassingarPedido(manualAssign);
+                return await this.ReassingarPedido(manualAssign, qfbInfoValidated);
             }
             else
             {
-                return await this.ReassignOrders(manualAssign);
+                return await this.ReassignOrders(manualAssign, qfbInfoValidated);
             }
         }
 
@@ -203,15 +220,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="assign">the assign object.</param>
         /// <returns>the data.</returns>
-        private async Task<ResultModel> ReassingarPedido(ManualAssignModel assign)
+        private async Task<ResultModel> ReassingarPedido(ManualAssignModel assign, QfbTecnicInfoDto qfbInfoValidated)
         {
-            var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(new List<string> { assign.UserId }, this.userService)).FirstOrDefault();
-            qfbInfoValidated ??= new QfbTecnicInfoDto();
-            if (!qfbInfoValidated.IsValidTecnic)
-            {
-                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{qfbInfoValidated.QfbFirstName} {qfbInfoValidated.QfbLastName}"), null, null);
-            }
-
             var listSaleOrders = assign.DocEntry.Select(x => x.ToString()).ToList();
             var orders = (await this.pedidosDao.GetUserOrderBySaleOrder(listSaleOrders)).Where(x => !ServiceConstants.StatusAvoidReasignar.Contains(x.Status)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
@@ -252,7 +262,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="assignModel">the assign model.</param>
         /// <returns>the data.</returns>
-        private async Task<ResultModel> ReassignOrders(ManualAssignModel assignModel)
+        private async Task<ResultModel> ReassignOrders(ManualAssignModel assignModel, QfbTecnicInfoDto qfbInfoValidated)
         {
             var listOrdersId = assignModel.DocEntry.Select(x => x.ToString()).ToList();
             var orders = (await this.pedidosDao.GetUserOrderByProducionOrder(listOrdersId)).ToList();
@@ -263,7 +273,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
             var sapOrders = ServiceShared.CalculateTernary(listSalesNumber.Any(), await ServiceUtils.GetOrdersWithFabOrders(this.sapAdapter, listSalesNumber), new List<OrderWithDetailModel>());
 
-            var getUpdateUserOrderModel = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic, false);
+            var getUpdateUserOrderModel = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic, false, qfbInfoValidated);
             var ordersToUpdate = getUpdateUserOrderModel.Item1;
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
@@ -334,6 +344,17 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 invalidQfbs.AddRange(invalidUser);
             }
+        }
+
+        private async Task<bool> CheckIfNeedTecnicConfigValidation(List<string> listSalesOrders, string orderType)
+        {
+            if (orderType.Equals(ServiceConstants.TypePedido))
+            {
+                return true;
+            }
+
+            var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(listSalesOrders)).ToList();
+            return userOrders.Any(order => !string.IsNullOrEmpty(order.Salesorderid));
         }
     }
 }

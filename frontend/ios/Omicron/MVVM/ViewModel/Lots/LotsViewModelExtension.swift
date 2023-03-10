@@ -101,7 +101,7 @@ extension LotsViewModel {
                 guard let self = self else { return }
                 self.loading.onNext(false)
                 guard response.code == 400, !(response.success ?? false) else {
-                    self.showSignatureView.onNext(CommonStrings.signatureViewTitleQFB)
+                    self.askIfUserWantToFinalizeOrder.onNext(CommonStrings.finishOrderMessage)
                     return
                 }
                 guard let errors = response.response, errors.count > 0 else { return }

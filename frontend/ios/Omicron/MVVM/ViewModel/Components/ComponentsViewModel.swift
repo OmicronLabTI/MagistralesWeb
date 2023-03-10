@@ -11,7 +11,6 @@ import RxSwift
 import Resolver
 
 class ComponentsViewModel {
-
     var disposeBag = DisposeBag()
     var searchFilter = BehaviorSubject<String>(value: String())
     var searchDidTap = PublishSubject<Void>()
@@ -24,19 +23,31 @@ class ComponentsViewModel {
     var saveDidTap = PublishSubject<ComponentFormValues>()
     var saveSuccess = PublishSubject<Void>()
     var bindingData = BehaviorSubject<[ComponentO]>(value: [])
-
+    var componentsList: [ComponentO] = []
     @Injected var inboxViewModel: InboxViewModel
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var networkManager: NetworkManager
     var typeOpen = TypeComponentsOpenDialog.detailOrder
+    let onScroll = PublishSubject<Void>()
+    var chips: [String] = []
+    var offset = 0
+    var totalInfo = 0
 
     init() {
         searchDidTapBinding()
         removeChipBinding()
         dataChipsBinding()
         saveDidTapBinding()
+        bindOnScroll()
     }
 
+    func clearObservables() {
+        self.chips = []
+        self.offset = 0
+        self.totalInfo = 0
+        self.dataResults.onNext([])
+        self.dataChips.onNext([])
+    }
     func searchDidTapBinding() {
         searchDidTap.withLatestFrom(Observable.combineLatest(searchFilter, dataChips))
             .subscribe(onNext: { [weak self] text, chips in
@@ -52,6 +63,15 @@ class ComponentsViewModel {
         let newChips = chips + [text]
         dataChips.onNext(newChips)
     }
+    func bindOnScroll() {
+        self.onScroll.subscribe(onNext: {[weak self] _ in
+            guard let self = self else { return }
+            if self.totalInfo > self.componentsList.count {
+                self.offset += Constants.Components.limit.rawValue
+                self.getComponents(chips: self.chips, offset: self.offset)
+            }
+        }).disposed(by: disposeBag)
+    }
 
     func removeChipBinding() {
         removeChip.withLatestFrom(dataChips, resultSelector: { [weak self] removeItem, data in
@@ -64,11 +84,14 @@ class ComponentsViewModel {
     func dataChipsBinding() {
         dataChips.subscribe(onNext: { [weak self] data in
             guard let self = self else { return }
+            self.offset = 0
+            self.componentsList = []
             if data.count == 0 {
                 self.dataResults.onNext([])
                 return
             }
-            self.getComponents(chips: data)
+            self.chips = data
+            self.getComponents(chips: data, offset: self.offset)
         }).disposed(by: disposeBag)
     }
 
@@ -115,13 +138,13 @@ class ComponentsViewModel {
                 self.dataError.onNext(Constants.Errors.errorSave.rawValue)
             }).disposed(by: disposeBag)
     }
-    func getComponents(chips: [String]) {
+    func getComponents(chips: [String], offset: Int) {
         let catalogGroup = typeOpen == .detailOrder ?
             orderDetailViewModel.getCatalogGroup() :
             ""
         let userId = Persistence.shared.getUserData()?.id ?? ""
         let request = ComponentRequest(
-            offset: Constants.Components.offset.rawValue,
+            offset: offset,
             limit: Constants.Components.limit.rawValue,
             chips: chips,
             catalogGroup: catalogGroup,
@@ -129,7 +152,9 @@ class ComponentsViewModel {
         loading.onNext(true)
         self.networkManager.getComponents(request).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
-            self.dataResults.onNext(res.response ?? [])
+            self.componentsList.append(contentsOf: res.response ?? [])
+            self.totalInfo = res.comments ?? 0
+            self.dataResults.onNext(self.componentsList)
             self.loading.onNext(false)
         }, onError: { [weak self] _ in
             guard let self = self else { return }
@@ -138,10 +163,13 @@ class ComponentsViewModel {
         }).disposed(by: disposeBag)
     }
 
-    func getMostCommonComponentsService() {
+    func getMostCommonComponentsService(type: String) {
         loading.onNext(true)
+        let userID = Persistence.shared.getUserData()?.id ?? ""
         let catalogGroup = orderDetailViewModel.getCatalogGroup()
-        let reqParams = CommonComponentRequest(catalogGroup: catalogGroup)
+        let reqParams = CommonComponentRequest(catalogGroup: catalogGroup,
+                                               userId: userID,
+                                               type: type)
         networkManager.getMostCommonComponents(reqParams).subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)

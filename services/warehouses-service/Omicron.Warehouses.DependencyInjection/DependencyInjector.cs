@@ -16,6 +16,7 @@ namespace Omicron.Warehouses.DependencyInjection
     using Omicron.Warehouses.Entities.Context;
     using Omicron.Warehouses.Facade.Request;
     using Omicron.Warehouses.Services.Mapping;
+    using Omicron.Warehouses.Services.Redis;
     using Omicron.Warehouses.Services.Request;
 
     /// <summary>
@@ -37,6 +38,7 @@ namespace Omicron.Warehouses.DependencyInjection
             Services.AddTransient<IRequestService, RequestService>();
             Services.AddTransient<IRequestDao, RequestDao>();
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
+            Services.AddTransient<IRedisService, RedisService>();
             return Services;
         }
 

@@ -38,8 +38,8 @@ class SupplieViewModel {
             if exists != nil {
                 let productId = supplie.productId ?? ""
                 self.showSuccessAlert.onNext((
-                    title: "Error",
-                    msg: "El componente \(productId) ya existe para esta solicitud",
+                    title: "El componente \(productId) ya existe para esta solicitud",
+                    msg: String(),
                     autoDismiss: true))
                 return
             }
@@ -75,13 +75,21 @@ class SupplieViewModel {
             .subscribe(onNext: {[weak self] res in
                 guard let self = self else { return }
                 self.loading.onNext(false)
-                self.onSuccessResponse(res: res)
+                if res.response != nil {
+                    self.onSuccessResponse(res: res)
+                    return
+                }
+                let error = res.userError ?? CommonStrings.errorComponents
+                self.showSuccessAlert.onNext((
+                    title: "Error \n\(error)",
+                    msg: String(),
+                    autoDismiss: false))
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)
                 self.showSuccessAlert.onNext((
-                    title: "Error",
-                    msg: CommonStrings.errorComponents,
+                    title: "Error \n\(CommonStrings.errorComponents)",
+                    msg: String(),
                     autoDismiss: false))
             }).disposed(by: self.disposeBag)
     }
@@ -92,8 +100,8 @@ class SupplieViewModel {
         if res.success == true && response.failed.count > 0 {
             let error = generateErrorMessage(errors: faileds)
             self.showSuccessAlert.onNext((
-                title: "Error",
-                msg: error,
+                title: "Error \n\(error)",
+                msg: String(),
                 autoDismiss: false
             ))
         } else {
@@ -128,6 +136,7 @@ class SupplieViewModel {
         return newSupplie
     }
     func deleteSelectedComponents() {
+        let isSingular = selectedComponentsToDelete.count == 1
         selectedComponentsToDelete.forEach { itemCode in
             let indexToDelete = supplieList.firstIndex(where: { $0.productId == itemCode })
             if indexToDelete != nil {
@@ -138,8 +147,10 @@ class SupplieViewModel {
         selectedComponentsToDelete = []
         self.selectedButtonIsEnable.onNext(selectedComponentsToDelete.count > 0)
         self.validateSendToStoreIsEnabled()
-        self.showSuccessAlert.onNext((title: "Eliminados",
-                                      msg: "Los componentes se han eliminado correctamente",
+        let message = isSingular ? CommonStrings.successDeleteSingular :
+            CommonStrings.successDeletePlural
+            self.showSuccessAlert.onNext((title: "\(message)",
+                                      msg: String(),
                                       autoDismiss: true))
     }
     func validateItemsToDelete(itemCode: String) {

@@ -79,10 +79,13 @@ struct OmicronColors {
     static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
     static let darkGray = UIColor.init(red: 102, green: 106, blue: 109, alpha: 1)
     static let signColor = UIColor(red: 1.00, green: 0.42, blue: 0.00, alpha: 1.00)
-    static let batchesColor = UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00)
+    static let batchesColor = UIColor(red: 93/255, green: 246/255, blue: 1, alpha: 1.00)
+    static let batchesColorBackground = UIColor(red: 242/255, green: 253/255, blue: 253/255, alpha: 1.00)
     static let primaryBlue = UIColor(red: 19/255, green: 121/255, blue: 253/255, alpha: 1.00)
     static let disabledButton = UIColor(red: 223/255, green: 225/255, blue: 230/255, alpha: 1)
+    
 }
+
 struct UsersDefaultsConstants {
     static let isLogged = "isLogged"
     static let accessToken = "accessToken"
@@ -175,6 +178,8 @@ struct CommonStrings {
     static let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
     // swiftlint:disable line_length
     static let errorLoadingOrders = "Ocurrió un error al cargar las órdenes de fabricación,  por favor inténtalo de nuevo"
+    static let errorCreateBulkOrder = "Ocurrió un error al crear la orden de fabricación"
+    static let okCreateBulkOrder = "Orden de fabricación creada exitosamente"
     static let options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN",
                           "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
     static let errorFinishOrder = "Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo"
@@ -200,10 +205,11 @@ struct CommonStrings {
     static let errorComponents = "Por el momento no es posible crear la solicitud, por favor intenta más tarde"
     static let confirmDeleteSingular = "El componente será eliminado ¿Quieres continuar?"
     static let confirmDeletePlural = "Los componentes serán eliminados ¿Quieres continuar?"
-    static let successDeleteSingular = "El componente se ha eliminado correctamente"
     static let successDeletePlural = "Los componentes se han eliminado correctamente"
+    static let successDeleteSingular = "El componente se ha eliminado correctamente"
     static let confirmSendToStore = "¿Estás seguro que deseas enviar la solicitud de insumos?"
     static let placeholderObservations = "Deja tu comentario aquí"
+    static let createBuildOrder = "Crear orden de fabricaciòn"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"

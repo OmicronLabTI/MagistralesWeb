@@ -32,6 +32,11 @@ extension SupplieTableViewCell {
         self.supplieViewModel.changeQuantityPieces(itemCode: self.supplie.productId ?? "",
                                                    quantity: Double(textField.text ?? "0") ?? 0)
     }
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField.text == "0.0" {
+            textField.text = String()
+        }
+    }
     func validateRegex(_ pattern: String, _ valueToEvaluate: String) -> Bool {
         return NSPredicate(format: "SELF MATCHES %@", pattern).evaluate(with: valueToEvaluate)
     }

@@ -23,6 +23,7 @@ class SupplieViewController: UIViewController {
     @IBOutlet weak var tableComponents: UITableView!
     @IBOutlet weak var observationsField: UITextView!
     @Injected var supplieViewModel: SupplieViewModel
+    @Injected var lottieManager: LottieManager
 
     var supplieList: [Supplie] = []
 
@@ -43,8 +44,8 @@ class SupplieViewController: UIViewController {
             guard let self = self else { return }
             self.observationsField.text = String()
             self.showAlert(alert: (
-                title: "Completado",
-                msg: "Proceso realizado con éxito",
+                title: "Solicitud enviada exitosamente",
+                msg: String(),
                 autoDismiss: true
             ))
             self.resetValues()
@@ -76,22 +77,14 @@ class SupplieViewController: UIViewController {
         changeView(true)
     }
     @IBAction func deleteComponents(_ sender: Any) {
-        let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
-        let okAction = UIAlertAction(title: CommonStrings.OKConst,
-                                     style: .default,
-                                     handler: { [weak self] _ in
-            self?.supplieViewModel.deleteSelectedComponents()
-        })
-        AlertManager.shared.showAlert(title: "Atención",
-                                      message: supplieViewModel.getDeleteMessageBody(),
-                                      actions: [okAction, cancelAction],
-                                      view: self)
+        supplieViewModel.deleteSelectedComponents()
     }
     @IBAction func openComponentsViewController(_ sender: Any) {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let componentsVC = storyboard.instantiateViewController(
             withIdentifier: ViewControllerIdentifiers.componentsViewController) as? ComponentsViewController
         componentsVC?.typeOpen = .supplies
+        componentsVC!.clearObservables()
         let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
         navigationVC.modalPresentationStyle = .formSheet
         self.present(navigationVC, animated: true, completion: nil)
@@ -106,9 +99,9 @@ class SupplieViewController: UIViewController {
                                      handler: { [weak self] _ in
             self?.sendToStoreAction()
         })
-        AlertManager.shared.showAlert(title: "Atención",
-                                      message: CommonStrings.confirmSendToStore,
-                                      actions: [okAction, cancelAction],
+        AlertManager.shared.showAlert(title: "¡Atención! \n \(CommonStrings.confirmSendToStore)",
+                                      message: String(),
+                                      actions: [cancelAction, okAction],
                                       view: self)
     }
 
@@ -132,8 +125,8 @@ class SupplieViewController: UIViewController {
         let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
         let okAction = UIAlertAction(title: CommonStrings.OKConst,
                                      style: .default, handler: { [weak self] _ in self?.resetValues()})
-        AlertManager.shared.showAlert(title: "Atención",
-                                      message: CommonStrings.confirmExit,
+        AlertManager.shared.showAlert(title: "¡Atención! \n \(CommonStrings.confirmExit)",
+                                      message: String(),
                                       actions: [cancelAction, okAction],
                                       view: self)
     }
@@ -243,12 +236,12 @@ class SupplieViewController: UIViewController {
                                       dismissTime: 2)
     }
     func bindLoading() {
-        self.supplieViewModel.loading.subscribe(onNext: {loading in
+        self.supplieViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: {loading in
             if loading {
-                LottieManager.shared.showLoading()
+                self.lottieManager.showLoading()
                 return
             }
-            LottieManager.shared.hideLoading()
+            self.lottieManager.hideLoading()
         }).disposed(by: disposeBag)
     }
 }

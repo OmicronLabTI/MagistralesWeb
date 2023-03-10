@@ -39,12 +39,14 @@ class ComponentRequest: Codable {
 }
 class ComponentResponse: HttpResponse {
     var response: [ComponentO]?
+    var comments: Int?
     required init?(map: Map) {
         super.init(map: map)
     }
     override func mapping(map: Map) {
         super.mapping(map: map)
         response <- map["response"]
+        comments <- map["comments"]
     }
 }
 class ComponentO: Mappable, Codable {
@@ -125,8 +127,12 @@ class ComponentFormValues {
 
 class CommonComponentRequest {
     var catalogGroup: String
-    init(catalogGroup: String) {
+    var userId: String
+    var type: String
+    init(catalogGroup: String, userId: String, type: String) {
         self.catalogGroup = catalogGroup
+        self.userId = userId
+        self.type = type
     }
     func toDictionary() -> [String: Any] {
         var dict = [String: Any]()
@@ -147,6 +153,13 @@ class CommonComponentRequest {
 enum TypeComponentsOpenDialog: String {
     case supplies = "Supplies"
     case detailOrder = "DetailOrder"
+    case bulkOrder = "BulkOrder"
+}
+
+enum TypeMostCommonRequest: String {
+    case detailOrder = "detailOrder"
+    case inputRequest = "inputRequest"
+    case bulkOrder = "BulkOrder"
 }
 
 class SendToStoreRequest: Codable {

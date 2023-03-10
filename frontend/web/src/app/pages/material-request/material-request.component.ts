@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { DestinationStore, IMaterialRequestRes, MaterialComponent, RawRequest, RawRequestPost } from '../../model/http/materialReques';
@@ -8,7 +8,8 @@ import {
   ComponentSearch,
   CONST_NUMBER,
   CONST_STRING,
-  MessageType
+  MessageType,
+  TypeToSeeTap
 } from '../../constants/const';
 import { ErrorService } from '../../services/error.service';
 import { DataService } from '../../services/data.service';
@@ -26,7 +27,8 @@ import { MessagesService } from 'src/app/services/messages.service';
 @Component({
   selector: 'app-material-request',
   templateUrl: './material-request.component.html',
-  styleUrls: ['./material-request.component.scss']
+  styleUrls: ['./material-request.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class MaterialRequestComponent implements OnInit, OnDestroy {
   dataToRequest = {};
@@ -191,14 +193,19 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
 
   onRequestQuantityChange(requestQuantity: number, index: number): void {
-    this.dataSource.data[index].isWithError = !Number(requestQuantity);
+    this.validateRow(index);
     this.checkIsCorrectData();
     this.registerChanges();
   }
 
   onChangeStore(value: string, index: number): void {
-    this.dataSource.data[index].isWithError = value === CONST_STRING.empty;
+    this.validateRow(index);
     this.checkIsCorrectData();
+  }
+
+  validateRow(index: number): void {
+    this.dataSource.data[index].isWithError = !Number(this.dataSource.data[index].requestQuantity) ||
+      this.dataSource.data[index].warehouse === CONST_STRING.empty;
   }
 
   checkIsCorrectData(): void {
@@ -250,8 +257,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.setModelData();
     this.reportingService.downloadPreviewMaterial(this.oldData).subscribe((res) => {
       const listOfBlobs = res.response;
-      listOfBlobs.forEach((blob) => {
-        this.fileDownloaderServie.downloadFileResult(blob, FileTypeContentEnum.PDF, this.getFileNamePreview());
+      listOfBlobs.forEach((url) => {
+        this.dataService.openNewTapByUrl(url, TypeToSeeTap.order);
       });
     });
   }

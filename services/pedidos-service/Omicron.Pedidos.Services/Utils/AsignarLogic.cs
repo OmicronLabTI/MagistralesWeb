@@ -42,22 +42,14 @@ namespace Omicron.Pedidos.Services.Utils
         /// makes the logic to assign a pedido.
         /// </summary>
         /// <param name="assignModel">the assign model.</param>
-        /// <param name="userService"> User Service.</param>
+        /// <param name="qfbInfoValidated"> QfbINfoValidated.</param>
         /// <param name="pedidosDao">the pedidos dao.</param>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="sapDiApi">The sap di api.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
         /// <returns>the result.</returns>
-        public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, IUsersService userService, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi, IKafkaConnector kafkaConnector)
+        public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, QfbTecnicInfoDto qfbInfoValidated, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi, IKafkaConnector kafkaConnector)
         {
-            var qfbInfoValidated = (await ServiceUtils.GetQfbInfoById(new List<string> { assignModel.UserId }, userService)).FirstOrDefault();
-            qfbInfoValidated ??= new QfbTecnicInfoDto();
-
-            if (!qfbInfoValidated.IsValidTecnic)
-            {
-                return ServiceUtils.CreateResult(false, 400, string.Format(ServiceConstants.QfbWithoutTecnic, $"{qfbInfoValidated.QfbFirstName} {qfbInfoValidated.QfbLastName}"), null, null);
-            }
-
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
             var userOrders = (await pedidosDao.GetUserOrderBySaleOrder(listSalesOrders)).ToList();
 
@@ -94,12 +86,13 @@ namespace Omicron.Pedidos.Services.Utils
         /// the logic to assign a order.
         /// </summary>
         /// <param name="assignModel">the assign model.</param>
+        /// <param name="qfbInfoValidated">Qfb Info Validated.</param>
         /// <param name="pedidosDao">the pedido dao.</param>
         /// <param name="sapDiApi">the di api.</param>
         /// <param name="sapAdapter">Sap adapter.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
         /// <returns>the data.</returns>
-        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapAdapter sapAdapter, IKafkaConnector kafkaConnector)
+        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, QfbTecnicInfoDto qfbInfoValidated, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapAdapter sapAdapter, IKafkaConnector kafkaConnector)
         {
             var listToUpdate = new List<UpdateFabOrderModel>();
             var listProdOrders = new List<string>();
@@ -126,7 +119,7 @@ namespace Omicron.Pedidos.Services.Utils
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
             var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
 
-            var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic, true);
+            var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic, true, qfbInfoValidated);
             userOrdersByProd = getUpdateUserOrderModel.Item1;
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
@@ -244,8 +237,17 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="statusOrder">Status for the order fab.</param>
         /// <param name="userLogistic">user modificate.</param>
         /// <param name="isFromAssignOrder">Is from assignOrder.</param>
+        /// <param name="qfbInfoValidated">Qfb info validated.</param>
         /// <returns>the data.</returns>
-        public static Tuple<List<UserOrderModel>, List<SalesLogs>> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, List<OrderWithDetailModel> sapOrders, string user, string statusOrder, string userLogistic, bool isFromAssignOrder)
+        public static Tuple<List<UserOrderModel>, List<SalesLogs>> GetUpdateUserOrderModel(
+            List<UserOrderModel> listFromOrders,
+            List<UserOrderModel> listFromSales,
+            List<OrderWithDetailModel> sapOrders,
+            string user,
+            string statusOrder,
+            string userLogistic,
+            bool isFromAssignOrder,
+            QfbTecnicInfoDto qfbInfoValidated)
         {
             var listToUpdate = new List<UserOrderModel>();
             var listOrderLogToInsert = new List<SalesLogs>();
@@ -267,6 +269,7 @@ namespace Omicron.Pedidos.Services.Utils
                         o.ReassignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, o.ReassignmentDate, DateTime.Now);
                         o.AssignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, DateTime.Now, o.AssignmentDate);
                         o.PackingDate = ServiceShared.CalculateTernary(isFromAssignOrder, o.PackingDate, null);
+                        o.TecnicId = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(y.Key), qfbInfoValidated.TecnicId, null);
                         listToUpdate.Add(o);
                         /** add logs**/
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { o }));
@@ -280,6 +283,7 @@ namespace Omicron.Pedidos.Services.Utils
                         pedido.StatusForTecnic = pedido.Status;
                         pedido.ReassignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, pedido.ReassignmentDate, DateTime.Now);
                         pedido.AssignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, DateTime.Now, pedido.AssignmentDate);
+                        pedido.TecnicId = qfbInfoValidated.TecnicId;
                         listToUpdate.Add(pedido);
                         if (!missing)
                         {

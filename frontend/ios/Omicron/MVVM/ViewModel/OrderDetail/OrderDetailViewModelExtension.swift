@@ -22,7 +22,7 @@ extension OrderDetailViewModel {
     func terminateOrChangeStatusOfAnOrder(actionType: String) {
         switch actionType {
         case StatusNameConstants.finishedStatus:        // Realiza el proceso para terminar la orden
-            self.validIfOrderCanBeFinalized(orderId: orderId)
+            self.showSignatureView.onNext(CommonStrings.signatureViewTitleQFB)
         case StatusNameConstants.inProcessStatus:       // Realiza el proceso para cambiar el estatus a proceso
             self.changeStatus(actionType: actionType)
         case StatusNameConstants.penddingStatus:        // Realiza el proceso para cambiar el status a pendiente
@@ -181,7 +181,10 @@ extension OrderDetailViewModel {
                 guard let self = self else { return }
                 self.loading.onNext(false)
                 guard response.code == 400, !(response.success ?? false) else {
-                    self.showSignatureView.onNext(CommonStrings.signatureViewTitleQFB)
+                    let message = MessageToChangeStatus(
+                        message: CommonStrings.doYouWantToFinishTheOrder,
+                        typeOfStatus: StatusNameConstants.finishedStatus)
+                    self.showAlertConfirmation.onNext(message)
                     return
                 }
                 guard let errors = response.response, errors.count > 0 else { return }
@@ -199,5 +202,26 @@ extension OrderDetailViewModel {
                 self.loading.onNext(false)
                 self.showAlert.onNext(Constants.Errors.errorData.rawValue)
             }).disposed(by: disposeBag)
+    }
+    
+    func updateQuantity(_ plannedQuantity: Decimal) {
+        self.loading.onNext(true)
+        let fechaFinFormated = UtilsManager.shared.formattedDateFromString(
+            dateString: tempOrderDetailData?.dueDate ?? String(), withFormat: DateFormat.yyyymmdd)
+        let order = OrderDetailRequest(
+            fabOrderID: tempOrderDetailData?.productionOrderID ?? 0,
+            plannedQuantity: plannedQuantity,
+            fechaFin: fechaFinFormated ?? String(), comments: String(),
+            warehouse: tempOrderDetailData?.warehouse ?? String(), components: [])
+        self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
+            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            if self?.tempOrderDetailData != nil {
+                self?.getOrdenDetail(isRefresh: false)
+                self?.loading.onNext(false)
+            }
+            }, onError: {  [weak self] error in
+                self?.loading.onNext(false)
+                self?.showAlert.onNext(CommonStrings.couldNotDeleteItem)
+        }).disposed(by: self.disposeBag)
     }
 }
