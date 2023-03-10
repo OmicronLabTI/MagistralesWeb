@@ -94,7 +94,7 @@ extension InboxViewModel {
             guard let self = self else { return }
             self.loading.onNext(false)
             guard response.code == 400, !(response.success ?? false) else {
-                self.showSignatureVc.onNext(CommonStrings.signatureViewTitleQFB)
+                self.showConfirmDialog.onNext(())
                 return
             }
             guard let errors = response.response, errors.count > 0 else { return }
