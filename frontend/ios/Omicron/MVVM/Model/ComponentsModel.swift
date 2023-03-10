@@ -153,10 +153,13 @@ class CommonComponentRequest {
 enum TypeComponentsOpenDialog: String {
     case supplies = "Supplies"
     case detailOrder = "DetailOrder"
+    case bulkOrder = "BulkOrder"
 }
+
 enum TypeMostCommonRequest: String {
     case detailOrder = "detailOrder"
     case inputRequest = "inputRequest"
+    case bulkOrder = "BulkOrder"
 }
 
 class SendToStoreRequest: Codable {

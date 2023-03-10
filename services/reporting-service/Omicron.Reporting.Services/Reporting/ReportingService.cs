@@ -67,7 +67,6 @@ namespace Omicron.Reporting.Services
             request.RequestNumber = string.Format(ServiceConstants.RequestNumberFormat, string.Empty);
             var azureAccount = this.configuration[ServiceConstants.AzureAccountName];
             var azureKey = this.configuration[ServiceConstants.AzureAccountKey];
-
             foreach (var category in ServiceConstants.LabelProductCategory)
             {
                 var isLabelProducts = category == ServiceConstants.LabelProduct;

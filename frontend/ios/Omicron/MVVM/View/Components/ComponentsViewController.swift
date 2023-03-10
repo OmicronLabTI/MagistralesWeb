@@ -22,17 +22,21 @@ class ComponentsViewController: UIViewController {
     @IBOutlet weak var heightMostCommonTableConstraint: NSLayoutConstraint!
     @Injected var componentsViewModel: ComponentsViewModel
     @Injected var supplieViewModel: SupplieViewModel
+    @Injected var bulkOrderViewModel: BulkOrderViewModel
     var isLoading = false
     var typeOpen = TypeComponentsOpenDialog.detailOrder
     var disposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
         initComponents()
-        viewModelBinding()
-        viewModelBinding2()
+        if typeOpen == .bulkOrder {
+            viewModelBindingBulkOrders()
+        } else {
+            viewModelBinding()
+        }
+        viewModelBindingCommon()
         hideMostCommonComponents()
         bindingDataToMostComoonTable()
-        itemSelectedOfMostCommonComponentsTable()
         componentsViewModel.getMostCommonComponentsService(type: self.typeOpen == .detailOrder ?
                                                             TypeMostCommonRequest.detailOrder.rawValue :
                                                             TypeMostCommonRequest.inputRequest.rawValue)
@@ -40,6 +44,21 @@ class ComponentsViewController: UIViewController {
     func clearObservables() {
         componentsViewModel.clearObservables()
     }
+
+    func viewModelBindingCommon() {
+        componentsViewModel.bindingData.map({ data -> Bool in
+            return data.count > 0
+        }).asDriver(onErrorJustReturn: true).drive(noResultsLabel.rx.isHidden).disposed(by: disposeBag)
+        self.componentsViewModel.loading.subscribe(onNext: { loading in
+            self.isLoading = loading
+            if loading {
+                LottieManager.shared.showLoading()
+                return
+            }
+            LottieManager.shared.hideLoading()
+        }).disposed(by: disposeBag)
+    }
+
     func viewModelBinding() {
         self.searchBar.rx.text.orEmpty.bind(to: componentsViewModel.searchFilter).disposed(by: disposeBag)
         self.searchBar.rx.searchButtonClicked.bind(to: componentsViewModel.searchDidTap).disposed(by: disposeBag)
@@ -72,19 +91,17 @@ class ComponentsViewController: UIViewController {
         self.tableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
             self!.continueItemSelected(data)
         }).disposed(by: disposeBag)
-        self.componentsViewModel.loading.subscribe(onNext: { loading in
-            self.isLoading = loading
-            if loading {
-                LottieManager.shared.showLoading()
-                return
-            }
-            LottieManager.shared.hideLoading()
-        }).disposed(by: disposeBag)
+        self.componentsViewModel.dataResults.map({ data -> Bool in
+            return data.count > 0
+        }).asDriver(onErrorJustReturn: true).drive(labelNoResults.rx.isHidden).disposed(by: disposeBag)
+        itemSelectedOfMostCommonComponentsTable()
     }
+
     func continueItemSelected(_ data: ComponentO) {
         switch typeOpen {
         case .detailOrder: createFormView(data: data)
         case .supplies: closeSelection(data: data)
+        default: break
         }
     }
     func createFormView(data: ComponentO) {
@@ -96,17 +113,10 @@ class ComponentsViewController: UIViewController {
         self.dismiss(animated: false, completion: nil)
         supplieViewModel.addComponent.onNext(data)
     }
-    func viewModelBinding2() {
-        self.componentsViewModel.dataResults.map({ data -> Bool in
-            return data.count > 0
-        }).asDriver(onErrorJustReturn: true).drive(labelNoResults.rx.isHidden).disposed(by: disposeBag)
-        componentsViewModel.bindingData.map({ data -> Bool in
-            return data.count > 0
-        }).asDriver(onErrorJustReturn: true).drive(noResultsLabel.rx.isHidden).disposed(by: disposeBag)
-    }
+
     func initComponents() {
         self.componentsViewModel.typeOpen = self.typeOpen
-        self.title = CommonStrings.addComponentTitle
+        self.title = self.typeOpen == .bulkOrder ? CommonStrings.createBuildOrder : CommonStrings.addComponentTitle
         self.isModalInPresentation = true
         self.tableView.delegate = self
         self.mostCommontTableView.delegate = self
@@ -147,7 +157,8 @@ class ComponentsViewController: UIViewController {
 }
 extension ComponentsViewController: TagListViewDelegate {
     func tagRemoveButtonPressed(_ title: String, tagView: TagView, sender: TagListView) {
-        self.componentsViewModel.removeChip.onNext(title)
+            self.bulkOrderViewModel.removeChip.onNext(title)
+            self.componentsViewModel.removeChip.onNext(title)
     }
 }
 extension ComponentsViewController: UITableViewDelegate {
@@ -165,6 +176,7 @@ extension ComponentsViewController: UITableViewDelegate {
                                   at: .middle,
                                   animated: false)
             componentsViewModel.onScroll.onNext(())
+            bulkOrderViewModel.onScroll.onNext(())
         }
         if indexPath.row%2 == 0 {
             cell.backgroundColor = OmicronColors.tableColorRow

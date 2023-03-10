@@ -10,7 +10,7 @@ import XCTest
 import RxSwift
 import Resolver
 import Moya
-@testable import OmicronLab
+@testable import Magistrales
 class OrderDetailTestExtension: XCTestCase {
     var disposeBag: DisposeBag?
     var viewModel: LoginViewModel?

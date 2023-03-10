@@ -451,10 +451,6 @@
 		7F738B6029B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F738B5E29B86AE3007B69CC /* OrderDetailTextFieldController.swift */; };
 		7F738B6129B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F738B5E29B86AE3007B69CC /* OrderDetailTextFieldController.swift */; };
 		7F738B6229B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F738B5E29B86AE3007B69CC /* OrderDetailTextFieldController.swift */; };
-		7FB0756F29B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
-		7FB0757029B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
-		7FB0757129B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
-		7FB0757229B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */; };
 		7FE43E2229B5C588001049A6 /* BulkOrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */; };
 		7FE43E2329B5C588001049A6 /* BulkOrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */; };
 		7FE43E2429B5C588001049A6 /* BulkOrderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */; };
@@ -463,10 +459,6 @@
 		7FE43E2829B6647A001049A6 /* BulkOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */; };
 		7FE43E2929B6647A001049A6 /* BulkOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */; };
 		7FE43E2A29B6647A001049A6 /* BulkOrderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */; };
-		7FE43E2C29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */; };
-		7FE43E2D29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */; };
-		7FE43E2E29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */; };
-		7FE43E2F29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */; };
 		9719266841FFCA3A47C03F7D /* Pods_Omicron_OmicronUAT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 264FF1FB957F8628A24ED936 /* Pods_Omicron_OmicronUAT.framework */; };
 		98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CAF24AFBC6C00E7772F /* AppDelegate.swift */; };
 		98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98015CB124AFBC6C00E7772F /* SceneDelegate.swift */; };
@@ -516,6 +508,10 @@
 		F3D21DF1298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEF298A53490099B94A /* OrderDetailViewModelExtension.swift */; };
 		F3D21DF2298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEF298A53490099B94A /* OrderDetailViewModelExtension.swift */; };
 		F3D21DF3298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D21DEF298A53490099B94A /* OrderDetailViewModelExtension.swift */; };
+		F3F4F52A29BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F4F52929BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift */; };
+		F3F4F52B29BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F4F52929BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift */; };
+		F3F4F52C29BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F4F52929BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift */; };
+		F3F4F52D29BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F4F52929BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift */; };
 		F3FCD16A29822B57005D560F /* CellInboxViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FCD16929822B57005D560F /* CellInboxViewExtension.swift */; };
 		F3FCD16D29822EBF005D560F /* CellInboxViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FCD16929822B57005D560F /* CellInboxViewExtension.swift */; };
 		F3FCD16E29822EC0005D560F /* CellInboxViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FCD16929822B57005D560F /* CellInboxViewExtension.swift */; };
@@ -667,13 +663,11 @@
 		7F3FBFF12975DDD300C6EA3F /* OrderDetailViewTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewTable.swift; sourceTree = "<group>"; };
 		7F4FFECA292EA1DC00428501 /* PatientListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientListViewController.swift; sourceTree = "<group>"; };
 		7F738B5E29B86AE3007B69CC /* OrderDetailTextFieldController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailTextFieldController.swift; sourceTree = "<group>"; };
-		7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBulkOrderViewController.swift; sourceTree = "<group>"; };
 		7FB342D1D6AD96AF4C8DAA0E /* Pods_OmicronTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OmicronTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FE43E2129B5C588001049A6 /* BulkOrderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkOrderViewModel.swift; sourceTree = "<group>"; };
 		7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkOrderModel.swift; sourceTree = "<group>"; };
-		7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkOrderTableViewCell.swift; sourceTree = "<group>"; };
 		942B27E76651174E700E02BA /* Pods-Omicron-OmicronUAT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-OmicronUAT.debug.xcconfig"; path = "Target Support Files/Pods-Omicron-OmicronUAT/Pods-Omicron-OmicronUAT.debug.xcconfig"; sourceTree = "<group>"; };
-		98015CAC24AFBC6C00E7772F /* OmicronLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmicronLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		98015CAC24AFBC6C00E7772F /* Magistrales.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Magistrales.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98015CAF24AFBC6C00E7772F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		98015CB124AFBC6C00E7772F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		98015CB624AFBC6C00E7772F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -724,6 +718,7 @@
 		F363D76B29820CA900113F3A /* HeaderInboxViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderInboxViewExtension.swift; sourceTree = "<group>"; };
 		F3D21DEA298A4F610099B94A /* OrderDetailViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewControllerExtension.swift; sourceTree = "<group>"; };
 		F3D21DEF298A53490099B94A /* OrderDetailViewModelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailViewModelExtension.swift; sourceTree = "<group>"; };
+		F3F4F52929BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentsBulkOrdersViewController.swift; sourceTree = "<group>"; };
 		F3FCD16929822B57005D560F /* CellInboxViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellInboxViewExtension.swift; sourceTree = "<group>"; };
 		FE59331B9245416D467CEBC1 /* Pods-Omicron-Omicron QA.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron-Omicron QA.release.xcconfig"; path = "Target Support Files/Pods-Omicron-Omicron QA/Pods-Omicron-Omicron QA.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1202,15 +1197,6 @@
 			path = PatientList;
 			sourceTree = "<group>";
 		};
-		7FB0756D29B2553300B8F604 /* CreateBulkOrder */ = {
-			isa = PBXGroup;
-			children = (
-				7FB0756E29B2556400B8F604 /* CreateBulkOrderViewController.swift */,
-				7FE43E2B29B66F79001049A6 /* BulkOrderTableViewCell.swift */,
-			);
-			path = CreateBulkOrder;
-			sourceTree = "<group>";
-		};
 		7FE43E2029B5C562001049A6 /* BulkOrder */ = {
 			isa = PBXGroup;
 			children = (
@@ -1234,7 +1220,7 @@
 		98015CAD24AFBC6C00E7772F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				98015CAC24AFBC6C00E7772F /* OmicronLab.app */,
+				98015CAC24AFBC6C00E7772F /* Magistrales.app */,
 				98015CC224AFBC6D00E7772F /* OmicronTests.xctest */,
 				98015CCD24AFBC6D00E7772F /* OmicronUITests.xctest */,
 				49CF662225F2D4AB002CD598 /* OmicronDEV.app */,
@@ -1359,6 +1345,7 @@
 				989391D8250AE174004750D8 /* ComponentFormViewController.swift */,
 				7C7DDC72251007750049B43C /* ComponentsTableViewCell.swift */,
 				4930B45125E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift */,
+				F3F4F52929BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1374,7 +1361,6 @@
 		98C8C03624AFCB9800018A88 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				7FB0756D29B2553300B8F604 /* CreateBulkOrder */,
 				1142E18E29AE61EB008651D1 /* Supplie */,
 				7F4FFEC9292EA1A400428501 /* PatientList */,
 				4989CCF425ED979A00257CA2 /* PDF */,
@@ -1511,7 +1497,7 @@
 			);
 			name = Omicron;
 			productName = Omicron;
-			productReference = 98015CAC24AFBC6C00E7772F /* OmicronLab.app */;
+			productReference = 98015CAC24AFBC6C00E7772F /* Magistrales.app */;
 			productType = "com.apple.product-type.application";
 		};
 		98015CC124AFBC6D00E7772F /* OmicronTests */ = {
@@ -2148,7 +2134,6 @@
 				490B6976268E98ED00DBE9F1 /* KPITableViewCell.swift in Sources */,
 				490B6977268E98ED00DBE9F1 /* LotsViewModel.swift in Sources */,
 				490B6978268E98ED00DBE9F1 /* ConnectModel.swift in Sources */,
-				7FB0757229B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */,
 				490B6979268E98ED00DBE9F1 /* OrderDetailFormViewController.swift in Sources */,
 				490B697A268E98ED00DBE9F1 /* Workload.swift in Sources */,
 				490B697B268E98ED00DBE9F1 /* MostCommonComponentsTableViewCell.swift in Sources */,
@@ -2177,6 +2162,7 @@
 				490B698C268E98ED00DBE9F1 /* AlertManager.swift in Sources */,
 				490B698D268E98ED00DBE9F1 /* ChartViewController.swift in Sources */,
 				490B698E268E98ED00DBE9F1 /* LottieManager.swift in Sources */,
+				F3F4F52D29BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift in Sources */,
 				490B698F268E98ED00DBE9F1 /* Extensions.swift in Sources */,
 				490B6990268E98ED00DBE9F1 /* InboxViewModel.swift in Sources */,
 				490B6991268E98ED00DBE9F1 /* OrderDetailViewModel.swift in Sources */,
@@ -2225,7 +2211,6 @@
 				490B69B1268E98ED00DBE9F1 /* ExtensionInboxViewController.swift in Sources */,
 				490B69B2268E98ED00DBE9F1 /* LotsTableViewCell.swift in Sources */,
 				490B69B3268E98ED00DBE9F1 /* ValidateOrderModel.swift in Sources */,
-				7FE43E2F29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */,
 				490B69B4268E98ED00DBE9F1 /* LoginViewModel.swift in Sources */,
 				490B69B5268E98ED00DBE9F1 /* HeaderCollectionViewCell.swift in Sources */,
 				490B69B6268E98ED00DBE9F1 /* CardCollectionViewCell.swift in Sources */,
@@ -2241,7 +2226,6 @@
 				49CF65B825F2D4AB002CD598 /* KPITableViewCell.swift in Sources */,
 				49CF65B925F2D4AB002CD598 /* LotsViewModel.swift in Sources */,
 				49CF65BA25F2D4AB002CD598 /* ConnectModel.swift in Sources */,
-				7FB0757029B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */,
 				49CF65BB25F2D4AB002CD598 /* OrderDetailFormViewController.swift in Sources */,
 				49CF65BC25F2D4AB002CD598 /* Workload.swift in Sources */,
 				49CF65BD25F2D4AB002CD598 /* MostCommonComponentsTableViewCell.swift in Sources */,
@@ -2270,6 +2254,7 @@
 				49CF65CD25F2D4AB002CD598 /* AlertManager.swift in Sources */,
 				49CF65CE25F2D4AB002CD598 /* ChartViewController.swift in Sources */,
 				49CF65CF25F2D4AB002CD598 /* LottieManager.swift in Sources */,
+				F3F4F52B29BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift in Sources */,
 				49CF65D025F2D4AB002CD598 /* Extensions.swift in Sources */,
 				49CF65D125F2D4AB002CD598 /* InboxViewModel.swift in Sources */,
 				49CF65D225F2D4AB002CD598 /* OrderDetailViewModel.swift in Sources */,
@@ -2318,7 +2303,6 @@
 				49CF65F125F2D4AB002CD598 /* ExtensionInboxViewController.swift in Sources */,
 				49CF65F225F2D4AB002CD598 /* LotsTableViewCell.swift in Sources */,
 				49CF65F325F2D4AB002CD598 /* ValidateOrderModel.swift in Sources */,
-				7FE43E2D29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */,
 				49CF65F425F2D4AB002CD598 /* LoginViewModel.swift in Sources */,
 				49CF65F525F2D4AB002CD598 /* HeaderCollectionViewCell.swift in Sources */,
 				49CF65F625F2D4AB002CD598 /* CardCollectionViewCell.swift in Sources */,
@@ -2334,7 +2318,6 @@
 				49CF663B25F2D821002CD598 /* KPITableViewCell.swift in Sources */,
 				49CF663C25F2D821002CD598 /* LotsViewModel.swift in Sources */,
 				49CF663D25F2D821002CD598 /* ConnectModel.swift in Sources */,
-				7FB0757129B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */,
 				49CF663E25F2D821002CD598 /* OrderDetailFormViewController.swift in Sources */,
 				49CF663F25F2D821002CD598 /* Workload.swift in Sources */,
 				49CF664025F2D821002CD598 /* MostCommonComponentsTableViewCell.swift in Sources */,
@@ -2363,6 +2346,7 @@
 				49CF665025F2D821002CD598 /* AlertManager.swift in Sources */,
 				49CF665125F2D821002CD598 /* ChartViewController.swift in Sources */,
 				49CF665225F2D821002CD598 /* LottieManager.swift in Sources */,
+				F3F4F52C29BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift in Sources */,
 				49CF665325F2D821002CD598 /* Extensions.swift in Sources */,
 				49CF665425F2D821002CD598 /* InboxViewModel.swift in Sources */,
 				49CF665525F2D821002CD598 /* OrderDetailViewModel.swift in Sources */,
@@ -2411,7 +2395,6 @@
 				49CF667425F2D821002CD598 /* ExtensionInboxViewController.swift in Sources */,
 				49CF667525F2D821002CD598 /* LotsTableViewCell.swift in Sources */,
 				49CF667625F2D821002CD598 /* ValidateOrderModel.swift in Sources */,
-				7FE43E2E29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */,
 				49CF667725F2D821002CD598 /* LoginViewModel.swift in Sources */,
 				49CF667825F2D821002CD598 /* HeaderCollectionViewCell.swift in Sources */,
 				49CF667925F2D821002CD598 /* CardCollectionViewCell.swift in Sources */,
@@ -2427,7 +2410,6 @@
 				1E07D8D2251AA0C900DF2979 /* KPITableViewCell.swift in Sources */,
 				7C9118FD24EF1CD900E2571A /* LotsViewModel.swift in Sources */,
 				1EC2920D254B4D90002FD4E3 /* ConnectModel.swift in Sources */,
-				7FB0756F29B2556400B8F604 /* CreateBulkOrderViewController.swift in Sources */,
 				7C5C6DA124E8F46C00662508 /* OrderDetailFormViewController.swift in Sources */,
 				1EF03220251932DA0040DC65 /* Workload.swift in Sources */,
 				4930B45225E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */,
@@ -2456,6 +2438,7 @@
 				7CED3DA324DC0FBA00C52225 /* AlertManager.swift in Sources */,
 				1EF0321C25192C5C0040DC65 /* ChartViewController.swift in Sources */,
 				98532B3224B3933C0015BBC6 /* LottieManager.swift in Sources */,
+				F3F4F52A29BAA37F00FB808A /* ComponentsBulkOrdersViewController.swift in Sources */,
 				1E07D8CE251A5C5400DF2979 /* Extensions.swift in Sources */,
 				7CE216D424CB9576005A7FED /* InboxViewModel.swift in Sources */,
 				7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */,
@@ -2504,7 +2487,6 @@
 				49005EB325DEDB1E00EA4206 /* ExtensionInboxViewController.swift in Sources */,
 				7C0017A824EF4D300025B17D /* LotsTableViewCell.swift in Sources */,
 				1E2A7600255362780014F38D /* ValidateOrderModel.swift in Sources */,
-				7FE43E2C29B66F79001049A6 /* BulkOrderTableViewCell.swift in Sources */,
 				98C8C03124AFBD4100018A88 /* LoginViewModel.swift in Sources */,
 				1E1C01A0250EA53A00CA6263 /* HeaderCollectionViewCell.swift in Sources */,
 				7CBA553C24CF8E9B00918C38 /* CardCollectionViewCell.swift in Sources */,
@@ -2659,7 +2641,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
-				PRODUCT_NAME = OmicronLab;
+				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = UAT;
 				SWIFT_VERSION = 5.0;
@@ -2699,7 +2681,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 80;
+				CURRENT_PROJECT_VERSION = 83;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2740,7 +2722,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Magistrales.app/Magistrales";
 			};
 			name = UAT;
 		};
@@ -2922,7 +2904,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 80;
+				CURRENT_PROJECT_VERSION = 83;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -2948,7 +2930,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 80;
+				CURRENT_PROJECT_VERSION = 83;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3044,7 +3026,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
-				PRODUCT_NAME = OmicronLab;
+				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = QA;
 				SWIFT_VERSION = 5.0;
@@ -3074,7 +3056,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Magistrales.app/Magistrales";
 			};
 			name = QA;
 		};
@@ -3133,7 +3115,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 80;
+				CURRENT_PROJECT_VERSION = 83;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
@@ -3283,7 +3265,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
-				PRODUCT_NAME = OmicronLab;
+				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
@@ -3307,7 +3289,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
-				PRODUCT_NAME = OmicronLab;
+				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_VERSION = 5.0;
@@ -3336,7 +3318,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Magistrales.app/Magistrales";
 			};
 			name = Debug;
 		};
@@ -3362,7 +3344,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OmicronLab.app/OmicronLab";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Magistrales.app/Magistrales";
 			};
 			name = Release;
 		};

@@ -89,8 +89,7 @@
                             [ngClass]="element.isWithError ? 'with-error' : ''"
                             class="color-text-intables tdcell tdcell-center mobile-hide cantreq">
                             <mat-form-field appearance="outline">
-                                <input matInput type="text"
-                                    mask="999999999.000000" [dropSpecialCharacters]="false"
+                                <input matInput type="text" mask="999999999.000000" [dropSpecialCharacters]="false"
                                     class="color-number" placeholder="Ctd. requerida"
                                     [(ngModel)]="element.requestQuantity"
                                     (ngModelChange)="onRequestQuantityChange($event, i)" step="any">
@@ -108,7 +107,7 @@
 
                                 <mat-form-field appearance="outline">
                                     <mat-select [(ngModel)]="element.warehouse" placeholder="Almacén requerido"
-                                         (selectionChange)="onChangeStore($event.value, i)">
+                                        (selectionChange)="onChangeStore($event.value, i)">
                                         <mat-option [value]="store.value"
                                             *ngFor="let store of listStore">{{store.value}}</mat-option>
                                     </mat-select>
@@ -123,7 +122,8 @@
                 </table>
             </mat-tab>
             <mat-tab label="Observaciones">
-                <textarea class="text-area-formula" cols="100" rows="10" maxlength="500" [(ngModel)]="comments">
+                <textarea class="text-area-formula" cols="100" rows="10" maxlength="500" [(ngModel)]="comments"
+                (keydown.enter)="$event.preventDefault()" (paste)="$event.preventDefault()">
                         </textarea>
             </mat-tab>
         </mat-tab-group>
