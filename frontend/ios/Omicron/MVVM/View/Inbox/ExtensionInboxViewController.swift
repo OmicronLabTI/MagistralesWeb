@@ -58,8 +58,8 @@ extension InboxViewController {
         inboxViewModel.title
             .withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, _ in
                 guard let self = self else { return }
-                let statusId = self.inboxViewModel.getStatusId(name: title)
-                var message = self.inboxViewModel.ordersTemp.count == 0 ?
+                _ = self.inboxViewModel.getStatusId(name: title)
+                let message = self.inboxViewModel.ordersTemp.count == 0 ?
                     "No tienes órdenes \(title)" :
                     String()
                 self.collectionView.setEmptyMessage(message)

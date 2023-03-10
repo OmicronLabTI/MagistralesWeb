@@ -223,6 +223,20 @@ class RootViewController: UIViewController {
                                                  titleColor: .white)
         self.createBulk.isHidden = rootViewModel.userType != .qfb
         self.createSupplies.isHidden = rootViewModel.userType != .qfb
+        self.createBulk.rx.tap.bind { _ in
+            self.openBulkProducts()
+        }
+    }
+
+    func openBulkProducts() {
+        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+        let componentsVC = storyboard.instantiateViewController(
+            withIdentifier: ViewControllerIdentifiers.componentsViewController) as? ComponentsViewController
+        componentsVC?.typeOpen = .bulkOrder
+        componentsVC!.clearObservables()
+        let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
+        navigationVC.modalPresentationStyle = .formSheet
+        self.present(navigationVC, animated: true, completion: nil)
     }
 
     private func getUserInfo() -> String {

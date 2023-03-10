@@ -79,10 +79,13 @@ struct OmicronColors {
     static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
     static let darkGray = UIColor.init(red: 102, green: 106, blue: 109, alpha: 1)
     static let signColor = UIColor(red: 1.00, green: 0.42, blue: 0.00, alpha: 1.00)
-    static let batchesColor = UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00)
+    static let batchesColor = UIColor(red: 93/255, green: 246/255, blue: 1, alpha: 1.00)
+    static let batchesColorBackground = UIColor(red: 242/255, green: 253/255, blue: 253/255, alpha: 1.00)
     static let primaryBlue = UIColor(red: 19/255, green: 121/255, blue: 253/255, alpha: 1.00)
     static let disabledButton = UIColor(red: 223/255, green: 225/255, blue: 230/255, alpha: 1)
+    
 }
+
 struct UsersDefaultsConstants {
     static let isLogged = "isLogged"
     static let accessToken = "accessToken"
@@ -206,7 +209,7 @@ struct CommonStrings {
     static let successDeleteSingular = "El componente se ha eliminado correctamente"
     static let confirmSendToStore = "¿Estás seguro que deseas enviar la solicitud de insumos?"
     static let placeholderObservations = "Deja tu comentario aquí"
-    
+    static let createBuildOrder = "Crear orden de fabricaciòn"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
