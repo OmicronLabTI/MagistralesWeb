@@ -58,9 +58,7 @@ class OrderDetailViewModel {
     func finishBtnActionBinding() {
         self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
-            let message = MessageToChangeStatus(
-                message: CommonStrings.doYouWantToFinishTheOrder, typeOfStatus: StatusNameConstants.finishedStatus)
-            self.showAlertConfirmation.onNext(message)
+            self.validIfOrderCanBeFinalized(orderId: self.orderId)
         }).disposed(by: self.disposeBag)
     }
     // MARK: - DELETE MANY BUTTON BINDIND ACTION

@@ -55,6 +55,7 @@ class InboxViewController: UIViewController {
         extensionInitComponents()
         registerCellsOfCollectionView()
         tapBindingButtons()
+        bindShowConfirmDialog()
         finishedButton.isHidden = true
         pendingButton.isHidden = true
         navigationItem.rightBarButtonItem = getOmniconLogo()
@@ -103,6 +104,22 @@ class InboxViewController: UIViewController {
     // MARK: - Functions
     func getDecimalPartOfDouble(number: Double) -> Double {
         return number.truncatingRemainder(dividingBy: 1)
+    }
+    func bindShowConfirmDialog() {
+        inboxViewModel.showConfirmDialog.subscribe(onNext: { [weak self] _ in
+            let alert = UIAlertController(title: CommonStrings.confirmationMessageFinishedStatus,
+                                          message: nil,
+                                          preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
+            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
+                guard let self = self else { return }
+                self.view.isUserInteractionEnabled = false
+                self.inboxViewModel.showSignatureVc.onNext(CommonStrings.signatureViewTitleQFB)
+            })
+            alert.addAction(cancelAction)
+            alert.addAction(okAction)
+            self?.present(alert, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
     }
     func goToSupplies() {
         self.view.endEditing(true)
@@ -198,17 +215,17 @@ class InboxViewController: UIViewController {
         inboxViewModel.showAlertToChangeOrderOfStatus
             .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
                 guard let self = self else { return }
+                if data.typeOfStatus == StatusNameConstants.finishedStatus {
+                    self.inboxViewModel.validOrders(indexPathOfOrdersSelected: self.indexPathsSelected)
+                    return
+                }
                 let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
                 let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
                 let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
                     guard let self = self else { return }
                     self.view.isUserInteractionEnabled = false
-                    if data.typeOfStatus == StatusNameConstants.finishedStatus {
-                        self.inboxViewModel.validOrders(indexPathOfOrdersSelected: self.indexPathsSelected)
-                    } else {
-                        self.inboxViewModel.changeStatus(
+                    self.inboxViewModel.changeStatus(
                             indexPath: self.indexPathsSelected, typeOfStatus: data.typeOfStatus)
-                    }
                 })
                 alert.addAction(cancelAction)
                 alert.addAction(okAction)
@@ -363,10 +380,10 @@ class InboxViewController: UIViewController {
     }
 
     @IBAction func packageOrdersDidPressed(_ sender: Any) {
-        if !self.inboxViewModel.validateSelectedOrdersAreSameSAPId(indexPathOfOrdersSelected: indexPathsSelected) {
-            rootViewModel.error.onNext(Constants.Errors.invalidSapOrderId.rawValue)
-            return
-        }
+//        if !self.inboxViewModel.validateSelectedOrdersAreSameSAPId(indexPathOfOrdersSelected: indexPathsSelected) {
+//            rootViewModel.error.onNext(Constants.Errors.invalidSapOrderId.rawValue)
+//            return
+//        }
         inboxViewModel.indexPathOfOrdersSelected = indexPathsSelected
         inboxViewModel.showSignatureVc.onNext(CommonStrings.signatureViewTitleTechnical)
     }

@@ -41,6 +41,7 @@ class InboxViewModel {
     var orderURLPDF = PublishSubject<String>()
     var resetData = PublishSubject<Void>()
     var showSignatureVc = PublishSubject<String>()
+    var showConfirmDialog = PublishSubject<Void>()
     var finishOrders = PublishSubject<Void>()
     var isUserInteractionEnabled = PublishSubject<Bool>()
     var reloadData = PublishSubject<Void>()
@@ -126,7 +127,7 @@ class InboxViewModel {
             self.resetData.onNext(())
         }).disposed(by: self.disposeBag)
     }
-    
+
     func goToSupplies() {
         self.goToSuppliesView.onNext(())
     }

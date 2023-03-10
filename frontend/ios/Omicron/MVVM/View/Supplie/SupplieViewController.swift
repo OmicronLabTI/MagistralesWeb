@@ -99,7 +99,7 @@ class SupplieViewController: UIViewController {
                                      handler: { [weak self] _ in
             self?.sendToStoreAction()
         })
-        AlertManager.shared.showAlert(title: "Atención \n \(CommonStrings.confirmSendToStore)",
+        AlertManager.shared.showAlert(title: "¡Atención! \n \(CommonStrings.confirmSendToStore)",
                                       message: String(),
                                       actions: [cancelAction, okAction],
                                       view: self)
@@ -125,7 +125,7 @@ class SupplieViewController: UIViewController {
         let cancelAction = UIAlertAction(title: "Cancelar", style: .destructive, handler: nil)
         let okAction = UIAlertAction(title: CommonStrings.OKConst,
                                      style: .default, handler: { [weak self] _ in self?.resetValues()})
-        AlertManager.shared.showAlert(title: "Atención \n \(CommonStrings.confirmExit)",
+        AlertManager.shared.showAlert(title: "¡Atención! \n \(CommonStrings.confirmExit)",
                                       message: String(),
                                       actions: [cancelAction, okAction],
                                       view: self)
