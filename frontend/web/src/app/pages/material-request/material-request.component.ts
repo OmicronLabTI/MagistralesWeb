@@ -173,6 +173,12 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     newComponentsToSend.userId = this.localStorageService.getUserId();
 
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe(resultMaterialPost => {
+      if (!resultMaterialPost.response && resultMaterialPost.userError) {
+        this.messagesService.presentToastCustom(CONST_STRING.empty, 'error',
+        resultMaterialPost.userError,
+        true, false, ClassNames.popupCustom);
+        return;
+      }
       if (resultMaterialPost.success && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {
         this.onDataError(resultMaterialPost.response.failed);
       } else {
