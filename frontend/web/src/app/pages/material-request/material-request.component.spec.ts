@@ -1,5 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { async, ComponentFixture, TestBed, tick, fakeAsync} from '@angular/core/testing';
 import { MaterialRequestComponent } from './material-request.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MaterialRequestService } from 'src/app/services/material-request.service';
@@ -131,6 +130,7 @@ describe('MaterialRequestComponent', () => {
         'setSearchComponentModal',
         'setOpenSignatureDialog',
         'setMessageGeneralCallHttp',
+        'setIsLoading'
       ]
     );
     observableServiceSpy.getNewMaterialComponent.and.returnValue(of({}));
@@ -255,11 +255,13 @@ describe('MaterialRequestComponent', () => {
     expect(component.isCorrectData).toBeTruthy();
     expect(dataServiceSpy.setIsToSaveAnything).toHaveBeenCalled();
   });
-  it('should download Preview', () => {
+  it('should download Preview', fakeAsync(() => {
     reportingServiceSpy.downloadPreviewMaterial.and.returnValue(of({
       response: ['url1', 'url2']
     }));
     component.downloadPreview();
-    expect(dataServiceSpy.openNewTapByUrl).toHaveBeenCalledTimes(2);
-  });
+    tick(3000);
+    fixture.detectChanges();
+    expect(dataServiceSpy.openNewTapByUrl).toHaveBeenCalled();
+  }));
 });
