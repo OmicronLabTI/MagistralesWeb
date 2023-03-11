@@ -21,7 +21,8 @@ namespace Omicron.Warehouses.Services.Clients
         /// Method for submit request.
         /// </summary>
         /// <param name="request">Request to submit.</param>
+        /// <param name="numberOfAttemps">Number of attemps.</param>
         /// <returns>User list.</returns>
-        Task<bool> SubmitRequest(RawMaterialRequestModel request);
+        Task<(bool, string)> SubmitRequest(RawMaterialRequestModel request, int numberOfAttemps = 3);
     }
 }

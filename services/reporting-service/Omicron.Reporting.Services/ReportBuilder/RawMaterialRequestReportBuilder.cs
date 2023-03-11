@@ -224,7 +224,7 @@ namespace Omicron.Reporting.Services.ReportBuilder
 
                     if (cellIndex == 2)
                     {
-                        cellContent.AppendText($"{decimal.Round(product.RequestQuantity, 5)}");
+                        cellContent.AppendText($"{product.RequestQuantity}");
                     }
 
                     if (cellIndex == 3)
