@@ -29,11 +29,13 @@ extension SupplieTableViewCell {
         return isCorrect
     }
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
+        let textQuantity = textField.text ?? "0"
+        let quantity = Decimal(string: textQuantity)
         self.supplieViewModel.changeQuantityPieces(itemCode: self.supplie.productId ?? "",
-                                                   quantity: Double(textField.text ?? "0") ?? 0)
+                                                   quantity: quantity ?? 0)
     }
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        if textField.text == "0.0" {
+        if textField.text == "0.000000" {
             textField.text = String()
         }
     }

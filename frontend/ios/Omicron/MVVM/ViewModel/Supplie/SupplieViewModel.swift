@@ -131,7 +131,7 @@ class SupplieViewModel {
         newSupplie.pendingQuantity = supplie.pendingQuantity
         newSupplie.stock = supplie.stock
         newSupplie.warehouseQuantity = supplie.warehouseQuantity
-        newSupplie.requestQuantity = 0
+        newSupplie.requestQuantity = 0.0
         newSupplie.isLabel = supplie.isLabel
         return newSupplie
     }
@@ -165,7 +165,7 @@ class SupplieViewModel {
     func validateExistsInList(itemCode: String) -> Bool {
         selectedComponentsToDelete.firstIndex(where: { $0 == itemCode }) != nil
     }
-    func changeQuantityPieces(itemCode: String, quantity: Double) {
+    func changeQuantityPieces(itemCode: String, quantity: Decimal) {
         let selectedIndex = supplieList.firstIndex(where: { $0.productId == itemCode })
         guard let index = selectedIndex else { return }
         supplieList[index].requestQuantity = quantity

@@ -95,7 +95,7 @@ class Supplie: Codable {
     var stock: Decimal?
     var warehouseQuantity: Decimal?
     var isLabel: Bool?
-    var requestQuantity: Double?
+    var requestQuantity: Decimal?
     init() { }
     required init?(map: Map) {
         self.requestQuantity <- map["requestQuantity"]
