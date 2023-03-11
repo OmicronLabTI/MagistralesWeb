@@ -24,6 +24,7 @@ class SupplieViewController: UIViewController {
     @IBOutlet weak var observationsField: UITextView!
     @Injected var supplieViewModel: SupplieViewModel
     @Injected var lottieManager: LottieManager
+    var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
 
     var supplieList: [Supplie] = []
 
@@ -152,7 +153,7 @@ class SupplieViewController: UIViewController {
                 cell.idLabel.text = String(self.supplieList.count - index)
                 cell.codeLabel.text = supplie.productId
                 cell.descriptionLabel.text = supplie.description
-                cell.quantityTextField.text = String(supplie.requestQuantity ?? 0)
+                cell.quantityTextField.text = self.formatter.string(from: (supplie.requestQuantity ?? 0) as NSNumber)
                 cell.storeDestinationLabel.text = supplie.warehouse
                 cell.unityLabel.text = supplie.unit
                 cell.index = index
