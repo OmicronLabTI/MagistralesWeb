@@ -175,8 +175,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe(resultMaterialPost => {
       if (!resultMaterialPost.response && resultMaterialPost.userError) {
         this.messagesService.presentToastCustom(CONST_STRING.empty, 'error',
-        resultMaterialPost.userError,
-        true, false, ClassNames.popupCustom);
+          resultMaterialPost.userError,
+          true, false, ClassNames.popupCustom);
         return;
       }
       if (resultMaterialPost.success && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {
@@ -263,9 +263,13 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.setModelData();
     this.reportingService.downloadPreviewMaterial(this.oldData).subscribe((res) => {
       const listOfBlobs = res.response;
-      listOfBlobs.forEach((url) => {
-        this.dataService.openNewTapByUrl(url, TypeToSeeTap.order);
-      });
+      this.observableService.setIsLoading(true);
+      setTimeout(() => {
+        this.observableService.setIsLoading(false);
+        listOfBlobs.forEach((url) => {
+          this.dataService.openNewTapByUrl(url, TypeToSeeTap.order);
+        });
+      }, 3000);
     });
   }
 
