@@ -263,13 +263,9 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     this.setModelData();
     this.reportingService.downloadPreviewMaterial(this.oldData).subscribe((res) => {
       const listOfBlobs = res.response;
-      this.observableService.setIsLoading(true);
-      setTimeout(() => {
-        this.observableService.setIsLoading(false);
-        listOfBlobs.forEach((url) => {
-          this.dataService.openNewTapByUrl(url, TypeToSeeTap.order);
-        });
-      }, 3000);
+      listOfBlobs.forEach((url) => {
+        this.dataService.openNewTapByUrl(url, TypeToSeeTap.order);
+      });
     });
   }
 
