@@ -118,10 +118,14 @@ class ComponentFormValues {
     var baseQuantity: Double
     var requiredQuantity: Double
     var warehouse: String
-    init(baseQuantity: Double, requiredQuantity: Double, warehouse: String) {
+    var selectedComponent: ComponentO
+    init(baseQuantity: Double, requiredQuantity: Double,
+         warehouse: String,
+         selectedComponent: ComponentO) {
         self.baseQuantity = baseQuantity
         self.requiredQuantity = requiredQuantity
         self.warehouse = warehouse
+        self.selectedComponent = selectedComponent
     }
 }
 

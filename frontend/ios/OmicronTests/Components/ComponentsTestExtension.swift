@@ -57,14 +57,13 @@ class ComponentsTestExtension: XCTestCase {
     func testSaveDidTapOrderIsNil() {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
-                                         warehouse: "MG")
-        let componentSelected = ComponentO()
+                                         warehouse: "MG",
+                                         selectedComponent: ComponentO())
         componentsViewModel?.saveSuccess.subscribe(onNext: { _ in
             XCTAssertTrue(true)
         }).disposed(by: disposeBag!)
         order1?.productionOrderId = nil
         inboxViewModel.selectedOrder = order1
-        componentsViewModel?.selectedComponent.onNext(componentSelected)
         componentsViewModel?.saveDidTap.onNext(values)
     }
 
