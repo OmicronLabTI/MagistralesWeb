@@ -32,8 +32,10 @@ namespace Omicron.Reporting.Services.AzureServices
         /// </summary>
         /// <param name="azureAccount">the account.</param>
         /// <param name="azureKey">the key.</param>
-        /// <param name="filesToUpload">Files To Upload.</param>
+        /// <param name="url">Url.</param>
+        /// <param name="fileStream">Files To Upload.</param>
+        /// <param name="contentType">Content type.</param>
         /// <returns>the stream.</returns>
-        Task<bool> UploadElementToAzure(string azureAccount, string azureKey, Tuple<string, MemoryStream, string> filesToUpload);
+        Task<bool> UploadElementToAzure(string azureAccount, string azureKey, string url, Stream fileStream, string contentType);
     }
 }
