@@ -44,6 +44,7 @@ class OrderDetailViewModel {
     var itemSelectedDetail: [Int] = []
     var showTwoModals = false
     @Injected var rootViewModel: RootViewModel
+    @Injected var inboxViewModel: InboxViewModel
     @Injected var networkManager: NetworkManager
     // MARK: - Init
     init() {
