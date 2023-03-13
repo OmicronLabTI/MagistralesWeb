@@ -107,6 +107,7 @@ class ComponentsViewController: UIViewController {
     func createFormView(data: ComponentO) {
         self.componentsViewModel.selectedComponent.onNext(data)
         let compFormVC = ComponentFormViewController()
+        compFormVC.selectedComponent = data
         self.navigationController?.pushViewController(compFormVC, animated: true)
     }
     func closeSelection(data: ComponentO) {

@@ -96,21 +96,22 @@ class ComponentsViewModel {
     }
 
     func saveDidTapBinding() {
-        saveDidTap.withLatestFrom(selectedComponent, resultSelector: { [weak self] values, data in
+        saveDidTap.subscribe(onNext: {[weak self] values in
             guard let self = self else { return }
-            guard let comp = data else { return }
             guard let order = self.inboxViewModel.selectedOrder else { return }
             let component = Component(
-                orderFabID: order.productionOrderId ?? 0, productId: comp.productId ?? String(),
-                componentDescription: comp.description ?? String(), baseQuantity: values.baseQuantity,
+                orderFabID: order.productionOrderId ?? 0, productId: values.selectedComponent.productId ?? String(),
+                componentDescription: values.selectedComponent.description ?? String(),
+                baseQuantity: values.baseQuantity,
                 requiredQuantity: values.requiredQuantity,
-                consumed: NSDecimalNumber(decimal: comp.consumed ?? 0).doubleValue,
-                available: NSDecimalNumber(decimal: comp.available ?? 0).doubleValue,
-                unit: comp.unit ?? String(), warehouse: values.warehouse,
-                pendingQuantity: NSDecimalNumber(decimal: comp.pendingQuantity ?? 0).doubleValue,
-                stock: NSDecimalNumber(decimal: comp.stock ?? 0).doubleValue,
-                warehouseQuantity: NSDecimalNumber(
-                    decimal: comp.warehouseQuantity ?? 0).doubleValue, action: Actions.insert.rawValue)
+                consumed: NSDecimalNumber(decimal: values.selectedComponent.consumed ?? 0).doubleValue,
+                available: NSDecimalNumber(decimal: values.selectedComponent.available ?? 0).doubleValue,
+                unit: values.selectedComponent.unit ?? String(), warehouse: values.warehouse,
+                pendingQuantity: NSDecimalNumber(decimal: values.selectedComponent.pendingQuantity ?? 0).doubleValue,
+                stock: NSDecimalNumber(decimal: values.selectedComponent.stock ?? 0).doubleValue,
+                warehouseQuantity: NSDecimalNumber(decimal:
+                                                    values.selectedComponent.warehouseQuantity ?? 0).doubleValue,
+                action: Actions.insert.rawValue)
             let orderDetailReq = OrderDetailRequest(
                 fabOrderID: component.orderFabId,
                 plannedQuantity: order.plannedQuantity ?? 0, fechaFin: (order.finishDate != nil ?
@@ -121,20 +122,20 @@ class ComponentsViewModel {
                 warehouse: self.orderDetailViewModel.tempOrderDetailData?.warehouse ?? CommonStrings.empty,
                 components: [component])
             self.saveComponent(req: orderDetailReq)
-        }).subscribe().disposed(by: disposeBag)
+        }).disposed(by: disposeBag)
     }
 
     func saveComponent(req: OrderDetailRequest) {
-        loading.onNext(true)
+        inboxViewModel.rootViewModel.loading.onNext(true)
         self.networkManager.updateDeleteItemOfTableInOrderDetail(req)
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
-                self.loading.onNext(false)
+                self.inboxViewModel.rootViewModel.loading.onNext(false)
                 self.saveSuccess.onNext(())
                 self.orderDetailViewModel.getOrdenDetail(isRefresh: true)
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
-                self.loading.onNext(false)
+                self.inboxViewModel.rootViewModel.loading.onNext(false)
                 self.dataError.onNext(Constants.Errors.errorSave.rawValue)
             }).disposed(by: disposeBag)
     }

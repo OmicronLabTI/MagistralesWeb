@@ -18,6 +18,7 @@ class ComponentFormViewController: FormViewController {
     @Injected var lottieManager: LottieManager
     @Injected var inboxViewModel: InboxViewModel
     var disposeBag = DisposeBag()
+    var selectedComponent = ComponentO()
     weak var baseQuantity: TextRow?
     weak var requiredQuantity: TextRow?
     weak var warehouse: PickerInlineRow<String>?
@@ -227,15 +228,16 @@ class ComponentFormViewController: FormViewController {
             let warehouseValue = self.warehouse?.value ?? ""
             let values = ComponentFormValues(baseQuantity: baseQuantityValue,
                                              requiredQuantity: requiredQuantityValue,
-                                             warehouse: warehouseValue)
+                                             warehouse: warehouseValue,
+                                             selectedComponent: self.selectedComponent)
             self.componentsViewModel.saveDidTap.onNext(values)
         }
     }
     func viewModelBinding() {
-        self.componentsViewModel.selectedComponent.subscribe(onNext: { [weak self] comp in
-            guard let component = comp else { return }
-            guard let order = self?.inboxViewModel.selectedOrder else { return }
-            self?.buildForm(component: component, order: order)
+        self.componentsViewModel.selectedComponent.subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            guard let order = self.inboxViewModel.selectedOrder else { return }
+            self.buildForm(component: self.selectedComponent, order: order)
         }).disposed(by: disposeBag)
         self.componentsViewModel.saveSuccess.subscribe(onNext: { [weak self] _ in
             self?.dismiss(animated: true, completion: nil)

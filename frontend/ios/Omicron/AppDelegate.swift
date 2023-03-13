@@ -52,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { SignaturePadViewModel() }.scope(Resolver.shared)
         Resolver.register { LottieManager() }.scope(Resolver.shared)
         Resolver.register { SupplieViewModel() }.scope(Resolver.shared)
-        Resolver.register { ComponentsViewModel() }.scope(Resolver.shared)
+        Resolver.register { ComponentsViewModel() }.scope(Resolver.unique)
         Resolver.register { ChartViewModel() }.scope(Resolver.shared)
         Resolver.register { ContainerViewModel() }.scope(Resolver.unique)
         Resolver.register { BulkOrderViewModel() }.scope(Resolver.unique)
