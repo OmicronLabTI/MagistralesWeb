@@ -167,7 +167,8 @@ class ComponentsViewModel {
     func getMostCommonComponentsService(type: String) {
         loading.onNext(true)
         let userID = Persistence.shared.getUserData()?.id ?? ""
-        let catalogGroup = orderDetailViewModel.getCatalogGroup()
+        let catalogGroup = type == TypeComponentsOpenDialog.detailOrder.rawValue ?
+            orderDetailViewModel.getCatalogGroup(): String()
         let reqParams = CommonComponentRequest(catalogGroup: catalogGroup,
                                                userId: userID,
                                                type: type)
