@@ -43,13 +43,13 @@ class CardIsolatedOrderCollectionViewCell: UICollectionViewCell {
                 cell: self,
                 borderColor: self.colorBatchesSign(OmicronColors.assignedStatus),
                 iconName: ImageButtonNames.assigned,
-                orderTextColor: colorBatchesSign(.black))
+                backgroundColor: self.backgroundBatchesSign(OmicronColors.ligthGray))
         case 2:
             self.propertyCard(
                 cell: self,
                 borderColor: self.colorBatchesSign(OmicronColors.processStatus),
                 iconName: ImageButtonNames.inProcess,
-                orderTextColor: colorBatchesSign(.black))
+                backgroundColor: self.backgroundBatchesSign(OmicronColors.ligthGray))
         case 3:
             self.propertyCard(
                 cell: self,
@@ -65,7 +65,7 @@ class CardIsolatedOrderCollectionViewCell: UICollectionViewCell {
                 cell: self,
                 borderColor: self.colorBatchesSign(OmicronColors.reassignedStatus),
                 iconName: ImageButtonNames.reasigned,
-                orderTextColor: colorBatchesSign(.black))
+                backgroundColor: self.backgroundBatchesSign(OmicronColors.ligthGray))
         default: break
         }
     }
@@ -79,12 +79,26 @@ class CardIsolatedOrderCollectionViewCell: UICollectionViewCell {
         return colorDefault
     }
 
-    func propertyCard(cell: CardIsolatedOrderCollectionViewCell, borderColor: UIColor, iconName: String,
-                      orderTextColor: UIColor = .black) {
+    func backgroundBatchesSign(_ colorDefault: UIColor) -> UIColor {
+        let signOk = self.order?.technicalSign ?? false
+        let batchesComplete = self.order?.areBatchesComplete ?? false
+        if signOk || batchesComplete {
+            return signOk ? OmicronColors.signColorBackground : OmicronColors.batchesColorBackground
+        }
+        return colorDefault
+    }
+
+    func propertyCard(
+        cell: CardIsolatedOrderCollectionViewCell,
+        borderColor: UIColor,
+        iconName: String,
+        orderTextColor: UIColor = .black,
+        backgroundColor: UIColor = OmicronColors.ligthGray) {
         cell.assignedStyleCard(color: borderColor.cgColor)
         missingStockImage.layer.borderColor = borderColor.cgColor
         missingStockImage.tintColor = borderColor
         numberDescriptionLabel.textColor = orderTextColor
+        cell.backgroundColor = backgroundColor
     }
 
     func assignedStyleCard(color: CGColor) {
