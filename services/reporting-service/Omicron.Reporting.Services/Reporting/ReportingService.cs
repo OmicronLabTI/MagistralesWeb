@@ -80,7 +80,8 @@ namespace Omicron.Reporting.Services
                         azureAccount,
                         ServiceConstants.ContainerAzureRequestOrderWarehose,
                         file.FileName);
-                    this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, file.FileStream, "application/pdf"));
+                    this.azureService.UploadElementToAzure(azureAccount, azureKey, pathTosave, file.FileStream, "application/pdf").Wait();
+                    file.FileStream.Dispose();
                     results.Add(pathTosave);
                 }
             }
