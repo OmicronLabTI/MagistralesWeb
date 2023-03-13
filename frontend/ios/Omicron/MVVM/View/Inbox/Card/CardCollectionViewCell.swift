@@ -58,13 +58,13 @@ class CardCollectionViewCell: UICollectionViewCell {
             self.propertyCard(
                 cell: self,
                 borderColor: colorBatchesSign(OmicronColors.assignedStatus),
-                iconName: ImageButtonNames.assigned, orderTextColor: colorBatchesSign(.black),
+                iconName: ImageButtonNames.assigned,
                 backgroundColor: backgroundBatchesSign(OmicronColors.ligthGray))
         case 2:
             self.propertyCard(
                 cell: self,
                 borderColor: colorBatchesSign(OmicronColors.processStatus),
-                iconName: ImageButtonNames.inProcess, orderTextColor: colorBatchesSign(.black),
+                iconName: ImageButtonNames.inProcess,
                 backgroundColor: backgroundBatchesSign(OmicronColors.ligthGray))
         case 3:
             self.propertyCard(
@@ -81,7 +81,6 @@ class CardCollectionViewCell: UICollectionViewCell {
                 cell: self,
                 borderColor: colorBatchesSign(OmicronColors.reassignedStatus),
                 iconName: ImageButtonNames.reasigned,
-                orderTextColor: colorBatchesSign(.black),
                 backgroundColor: backgroundBatchesSign(OmicronColors.ligthGray))
         default: break
         }
@@ -100,7 +99,7 @@ class CardCollectionViewCell: UICollectionViewCell {
         let signOk = self.order?.technicalSign ?? false
         let batchesComplete = self.order?.areBatchesComplete ?? false
         if signOk || batchesComplete {
-            return signOk ? OmicronColors.ligthGray : OmicronColors.batchesColorBackground
+            return signOk ? OmicronColors.signColorBackground : OmicronColors.batchesColorBackground
         }
         return colorDefault
     }

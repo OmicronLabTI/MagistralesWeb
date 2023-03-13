@@ -78,12 +78,12 @@ struct OmicronColors {
     static let tableColorRow = UIColor.init(red: 192/255, green: 219/255, blue: 243/255, alpha: 1)
     static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
     static let darkGray = UIColor.init(red: 102, green: 106, blue: 109, alpha: 1)
-    static let signColor = UIColor(red: 1.00, green: 0.42, blue: 0.00, alpha: 1.00)
+    static let signColor = UIColor(red: 0, green: 6/255, blue: 177/255, alpha: 1.00)
+    static let signColorBackground = UIColor(red: 248/255, green: 249/255, blue: 254/255, alpha: 1.00)
     static let batchesColor = UIColor(red: 93/255, green: 246/255, blue: 1, alpha: 1.00)
     static let batchesColorBackground = UIColor(red: 242/255, green: 253/255, blue: 253/255, alpha: 1.00)
     static let primaryBlue = UIColor(red: 19/255, green: 121/255, blue: 253/255, alpha: 1.00)
     static let disabledButton = UIColor(red: 223/255, green: 225/255, blue: 230/255, alpha: 1)
-    
 }
 
 struct UsersDefaultsConstants {

@@ -73,10 +73,12 @@ class BulkListResponse: HttpResponse {
 class BulkProduct: Mappable {
     var productoId: String?
     var largeDescription: String?
+    var productoName: String?
     required init?(map: Map) {}
     init() { }
     func mapping(map: Map) {
         self.productoId <- map["productoId"]
         self.largeDescription <- map["largeDescription"]
+        self.productoName <- map["productoName"]
     }
 }

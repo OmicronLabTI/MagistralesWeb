@@ -29,7 +29,7 @@ extension ComponentsViewController {
             cellIdentifier: ViewControllerIdentifiers.componentsTableViewCell,
             cellType: ComponentsTableViewCell.self)) { _, data, cell in
                 cell.productCodeLabel.text = data.productoId
-                cell.descriptionLabel.text = data.largeDescription?.uppercased()
+                cell.descriptionLabel.text = data.productoName?.uppercased()
         }.disposed(by: disposeBag)
         bulkOrderViewModel.dataResults.map({ data -> Bool in
             return data.count > 0
@@ -48,7 +48,7 @@ extension ComponentsViewController {
 
     func createBulkOrderQuestion(_ data: BulkProduct) {
         let alert = UIAlertController(
-            title: "¿Desea crear la orden de fabricación de granel \(data.productoId ?? "")?",
+            title: "¿Deseas crear la orden de fabricación para el granel \(data.productoId ?? "")?",
             message: nil,
             preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
