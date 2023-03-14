@@ -467,6 +467,20 @@ namespace Omicron.SapAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Get possible orders active to dxp project.
+        /// </summary>
+        /// <returns>the detail.</returns>
+        [Test]
+        public async Task GetRawMaterialRequest()
+        {
+            // act
+            var response = await this.sapFacade.GetRawMaterialRequest(new Dictionary<string, string>());
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>
