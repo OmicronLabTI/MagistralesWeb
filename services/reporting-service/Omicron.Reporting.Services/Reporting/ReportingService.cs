@@ -665,7 +665,8 @@ namespace Omicron.Reporting.Services
                 if (request.OrderedProducts.Any(x => x.IsLabel == isLabelProducts))
                 {
                     transferRequestToDiApi.Add(this.CreateTransferRequestHeaderDto(
-                        $"{request.SigningUserName}-{request.SigningUserId}",
+                        request.SigningUserName,
+                        request.SigningUserId,
                         request.OrderedProducts.Where(x => x.IsLabel == isLabelProducts).ToList(),
                         isLabelProducts));
                 }
@@ -676,11 +677,12 @@ namespace Omicron.Reporting.Services
             return result;
         }
 
-        private TransferRequestHeaderDto CreateTransferRequestHeaderDto(string userInfo, List<RawMaterialRequestDetailModel> products, bool isLabel)
+        private TransferRequestHeaderDto CreateTransferRequestHeaderDto(string userName, string userId, List<RawMaterialRequestDetailModel> products, bool isLabel)
         {
             return new TransferRequestHeaderDto
             {
-                UserInfo = userInfo,
+                UserInfo = $"{userName}-{userId}",
+                UserId = userId,
                 IsLabel = isLabel,
                 TransferRequestDetail = products
                     .Select(op => new TransferRequestDetailDto
