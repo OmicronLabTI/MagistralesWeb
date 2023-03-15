@@ -599,6 +599,12 @@ namespace Omicron.SapDiApi.Services.SapDiApi
                         sapTransferRequest.Lines.Quantity = transferRequest.TransferRequestDetail[i].Quantity;
                         sapTransferRequest.Lines.FromWarehouseCode = transferRequest.TransferRequestDetail[i].SourceWarehosue;
                         sapTransferRequest.Lines.WarehouseCode = transferRequest.TransferRequestDetail[i].TargetWarehosue;
+
+                        if(!string.IsNullOrEmpty(transferRequest.UserId))
+                        {
+                            sapTransferRequest.UserFields.Fields.Item("U_RequestedUserid").Value = transferRequest.UserId;
+                        }
+
                         sapTransferRequest.Lines.Add();
                     }
 
