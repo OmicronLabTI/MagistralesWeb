@@ -29,7 +29,6 @@ export class MaterialRequestService {
   }
 
   gethistoryMaterial = (query: string): Observable<IMaterialHistoryRes> => {
-    return of(MaterialRequestHistoryMock);
     return this.consumeService.httpGet(`${Endpoints.materialRequest.historyMaterial}${query}`);
   }
 }

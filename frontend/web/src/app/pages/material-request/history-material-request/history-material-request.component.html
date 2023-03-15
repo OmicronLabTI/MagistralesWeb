@@ -4,19 +4,35 @@
         <div class="title-list-container col-12">
             <span>Solicitud de insumos al almacén general</span>
         </div>
-        <div class="filters-contain col-12">
-            <!-- <mat-form-field appearance="fill">
-                <mat-label>Enter a date range</mat-label>
-                <mat-date-range-input [rangePicker]="picker">
-                  <input matInput  placeholder="Start date">
-                  <input matInput  placeholder="End date">
-                </mat-date-range-input>
-                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-date-range-picker #picker></mat-date-range-picker>
-              </mat-form-field> -->
-
-            <div class="col-md-3 col-6">
+        <div class="py-2 my-3">
+            <div class="breadcrumb"><a class="breadcrumblink" >Solicitud de insumos</a> /
+               Historial</div>
+        </div>
+        <div class="filters-contain col-12 d-flex ">
+            <div class="col-md-4 col-6 datepicker">
+                <!-- <app-range-date
+                titleRangeDate="Fecha de solicitud"
+                maxMonthsRange="3" typeInitialRange="1"
+                ></app-range-date> -->
+                
+<!--                     
+                    <mat-form-field class="col-12" appearance="outline">
+                    <mat-label>Fecha de solicitud</mat-label>
+                    <div class="d-flex align-items-center p-0 m-0">
+                        <mat-date-range-input [formGroup]="rangeFilter" [max]="maxDate" [rangePicker]="picker">
+                            <input (dateChange)="updateMaxDate()" matStartDate formControlName="start"
+                                placeholder="Start date">
+                            <input (dateChange)="filterChange()" matEndDate formControlName="end"
+                                placeholder="End date">
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker">
+                            <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+                        </mat-datepicker-toggle>
+                    </div>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field> -->
+            </div>
+            <div class="col-md-4 col-6">
                 <mat-form-field appearance="outline" class="custom-field custom-style-status">
                     <mat-label>Estatus</mat-label>
                     <mat-select (selectionChange)="filterChange()" [formControl]="statusControl" multiple>
@@ -26,13 +42,12 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-
         </div>
     </div>
     <div class="table-contain">
         <app-table-common [loading]="loading" [data]="dataHistory"
             [settings]="historyMaterialRequestSettings"></app-table-common>
         <mat-paginator [pageSizeOptions]="[5, 10, 15 ,20]" [pageSize]="limit" [length]="lengthPaginator"
-            [pageIndex]="pageIndex" (page)="pageEvent = changeDataEvent($event)"></mat-paginator>
+            [pageIndex]="pageIndex" (page)="changeDataEvent($event)"></mat-paginator>
     </div>
 </div>

@@ -5,6 +5,7 @@ import { BoolConst, CONST_NUMBER } from 'src/app/constants/const';
 import { SettingsCommonTableClass } from 'src/app/model/data/common.data';
 import { MaterialRequestHistoryTableSettings } from 'src/app/model/data/materialRequestHistory';
 import { IMaterialHistoryItem } from 'src/app/model/http/materialReques';
+import { DataService } from 'src/app/services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { MaterialRequestService } from 'src/app/services/material-request.service';
 
@@ -22,23 +23,53 @@ export class HistoryMaterialRequestComponent implements OnInit {
   limit: number = CONST_NUMBER.ten;
   statusControl: FormControl = new FormControl([]);
   loading: boolean = BoolConst.false;
+  rangeFilter: FormGroup;
+  maxDate: Date = new Date();
+  today: Date = new Date();
   constructor(
     private materialRequest: MaterialRequestService,
-    private errorService: ErrorService
-  ) { }
+    private errorService: ErrorService,
+    private dataService: DataService
+  ) {
+    this.rangeFilter = new FormGroup({
+      start: new FormControl(this.getWeekOneWeekDate(this.maxDate, -7)),
+      end: new FormControl(this.maxDate),
+    });
+  }
 
   ngOnInit() {
     this.historyMaterialRequest();
   }
 
+  openCalendar = () => {
+    this.maxDate = this.today;
+    this.rangeFilter.controls.start.setValue(null);
+    this.rangeFilter.controls.end.setValue(null);
+  }
+
   filterChange = () => {
-    this.historyMaterialRequest();
+    if (this.rangeFilter.controls.end.value) {
+      this.historyMaterialRequest();
+    }
+  }
+
+  updateMaxDate = () => {
+    const dateStart = this.rangeFilter.controls.start.value;
+    const maxDateAux = this.getWeekOneWeekDate(dateStart, 7);
+    this.maxDate = maxDateAux > this.today ? this.today : maxDateAux;
   }
 
   getQuery = () => {
     const status = this.statusControl.value.toString();
-    return `?offset=${this.offset}&limit=${this.limit}&fini=08/03/2023&ffin=14/03/2023&status=${status}`;
+    const start = this.rangeFilter.controls.start.value;
+    const end = this.rangeFilter.controls.end.value;
+    return `?offset=${
+      this.offset}&limit=${
+        this.limit}&fini=${
+          this.dataService.getDateFilterFormat(start)}&ffin=${
+            this.dataService.getDateFilterFormat(end)}&status=${status}`;
   }
+
   changeDataEvent(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.offset = (event.pageSize * (event.pageIndex));
@@ -47,15 +78,22 @@ export class HistoryMaterialRequestComponent implements OnInit {
     return event;
   }
 
+  getWeekOneWeekDate = (date: Date, days: number) => {
+    const dateAux = new Date(date);
+    dateAux.setDate(dateAux.getDate() + days);
+    return dateAux;
+  }
+
   historyMaterialRequest = () => {
     this.loading = true;
     this.materialRequest.gethistoryMaterial(this.getQuery()).subscribe(res => {
       this.dataHistory = res.response.map((item, index) => ({ ...item, order: index + 1 }));
       this.lengthPaginator = res.comments;
+      this.loading = false;
     },
-      this.errorService.httpError, () => {
+      err => {
+        this.errorService.httpError(err);
         this.loading = false;
       });
   }
-
 }
