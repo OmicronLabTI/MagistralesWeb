@@ -1,15 +1,10 @@
-import { SettingsCommonTableClass } from "src/app/components/table-common/table-common.component";
+import { CONST_STRING } from 'src/app/constants/const';
+import { SettingsCommonTableClass } from './common.data';
 
 export const MaterialRequestHistoryTableSettings: SettingsCommonTableClass = {
     className: 'metrics-promotions-table',
-    emptyLabel: "No se Encontraron resultados",
-    stickyColumns: [
-        // {
-        //     className: '',
-        //     title: 'Código de cliente',
-        //     attr: 'cardCode',
-        // },
-    ],
+    emptyLabel: CONST_STRING.notResults,
+    stickyColumns: [],
     columns: [
         {
             className: ' text-center ',
@@ -54,10 +49,12 @@ export const MaterialRequestHistoryTableSettings: SettingsCommonTableClass = {
         {
             className: ' text-center ',
             title: 'FECHA DE SOLICITUD',
+            type: 'date',
             attr: 'docDate',
         },
         {
-            className: ' text-center ',
+            className: ' badge ',
+            type: 'badge',
             title: 'ESTATUS',
             attr: 'status',
         },

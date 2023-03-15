@@ -33,6 +33,10 @@
                     <ng-container *ngSwitchCase="CellTypes.date">
                         {{ valueCell(row,cell.attr) | date: "dd/MM/yyyy" }}
                     </ng-container>
+                    <ng-container *ngSwitchCase="CellTypes.badge">
+                        <div [class]="'point '+row[cell.attr]"></div>
+                        <div>{{ row[cell.attr]  }}</div>
+                    </ng-container>
                     <ng-container *ngSwitchDefault>
                         {{ row[cell.attr] }}
                     </ng-container>
@@ -43,7 +47,7 @@
     <div class="position-static-letters">
         <div class="not-found-title justify-content-center d-flex  py-2 font-omicron-bold">
             <ng-container *ngIf="loading; else notFound">
-                <!-- <app-mat-spinner></app-mat-spinner> -->
+                Cargando...
             </ng-container>
             <ng-template #notFound>
                 <p class="w-100">

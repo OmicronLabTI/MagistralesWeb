@@ -1,5 +1,4 @@
 .table-common-component {
-  font-family: omicron-medium, Arial, Helvetica, sans-serif !important;
   overflow-y: auto;
   max-height: 60vh;
   white-space: nowrap;
@@ -9,6 +8,7 @@
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;
+
     thead {
       background-color: #ffff;
       left: 0;
@@ -17,23 +17,48 @@
       border-bottom: solid 0.5px #dcdcdc;
       margin-bottom: 10px;
       z-index: 2;
+
       th {
         padding: 5px 10px;
       }
     }
+
     tbody {
       tr {
         min-height: 29px;
         height: 29px;
+
         td {
           padding: 10px 10px;
         }
+
         &:hover {
           background: #e6e6e6;
         }
       }
     }
+
+    .badge {
+      display: flex;
+      align-items: center;
+      .point {
+        margin-right: 5px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        &.Abierto{
+          background-color: #1379FD;
+        }
+        &.Cerrado{
+          background-color: #02AC4A;
+        }
+        &.Cancelado{
+          background-color: #E30900;
+        }
+      }
+    }
   }
+
   a {
     text-decoration: none;
     color: black;
@@ -43,18 +68,22 @@
   .statusContent {
     padding: 5px 10px;
   }
+
   .links {
     text-decoration: underline;
-   
+
   }
+
   &::-webkit-scrollbar {
     width: 5px;
     height: 7px !important;
   }
+
   .position-static-letters {
     position: sticky;
     left: 0;
     z-index: 4;
+
     .not-found-title {
       white-space: normal;
       max-width: 200px;
@@ -72,6 +101,7 @@
       left: 0;
       background-color: #ffff;
     }
+
     .stickyBody {
       position: sticky;
       left: 0;

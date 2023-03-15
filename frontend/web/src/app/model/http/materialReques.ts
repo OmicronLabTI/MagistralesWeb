@@ -6,12 +6,13 @@ export class IMaterialRequestRes extends BaseResponseHttp {
 }
 
 export class IMaterialHistoryRes extends BaseResponseHttp {
-    response: IMaterialHistoryItem[]
+    response: IMaterialHistoryItem[];
 }
 
 export class IMaterialPostRes extends BaseResponseHttp {
     response: MaterialPostRes;
 }
+
 export class MaterialPostRes {
     failed: RawRequestError[];
 }
@@ -78,5 +79,4 @@ export interface IMaterialHistoryItem {
     targetWarehosue: string;
     docDate: string;
     status: string;
-
 }

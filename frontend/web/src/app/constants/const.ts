@@ -19,6 +19,7 @@ export const CONST_NUMBER = {
 export const CONST_STRING = {
     empty: '',
     zero: '0',
+    notResults: 'No hay resultados'
 };
 export const CONST_CONTAINER = {
     en: 'EN',
@@ -31,7 +32,7 @@ export const CONST_USER_DIALOG = {
     patternOnlyNumbers: /^[0-9]$/
 };
 
-export const MODAL_NAMES =  {
+export const MODAL_NAMES = {
     addUserModal: 'addModal',
     editUser: 'editModal',
     placeOrders: 'Pedido',
@@ -224,7 +225,7 @@ export const pathRoles = {
     ]
 };
 export const CONST_PRODUCTIVITY = {
-  titleTotal: 'total',
+    titleTotal: 'total',
 };
 
 export const RouterPaths = {
@@ -301,7 +302,7 @@ export const ClassButton = {
     closeIncident: 'close-incident',
     attendingIncident: 'attending-incident'
 };
-export const ValidDigits = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Backspace'];
+export const ValidDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Backspace'];
 export const OrderType = {
     bioElite: 'MN',
     bioEqual: 'BE',
@@ -342,7 +343,7 @@ export const TypeClasifications = {
 export const BoolConst = {
     true: true,
     false: false
-}
+};
 
 
-export const CallBackEmptyConst = ( ) => {}
+export const CallBackEmptyConst = () => { };

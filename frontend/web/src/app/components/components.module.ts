@@ -1,26 +1,26 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {RangeDateComponent} from './range-date/range-date.component';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {FormsModule} from '@angular/forms';
-import {MatInputModule} from '@angular/material/input';
+import { RangeDateComponent } from './range-date/range-date.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 import { GraphShowComponent } from './graph-show/graph-show.component';
-import {ButtonRefreshComponent} from './button-refresh/button-refresh.component';
+import { ButtonRefreshComponent } from './button-refresh/button-refresh.component';
 import { ButtonBackComponent } from './button-back/button-back.component';
 import { ButtonNextComponent } from './button-next/button-next.component';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TableCommonComponent } from './table-common/table-common.component';
 
 @NgModule({
-  declarations: [
-    RangeDateComponent, 
-    GraphShowComponent, 
-    ButtonRefreshComponent, 
-    ButtonBackComponent, 
-    ButtonNextComponent,
-    TableCommonComponent
-],
+    declarations: [
+        RangeDateComponent,
+        GraphShowComponent,
+        ButtonRefreshComponent,
+        ButtonBackComponent,
+        ButtonNextComponent,
+        TableCommonComponent
+    ],
     exports: [
         RangeDateComponent,
         GraphShowComponent,

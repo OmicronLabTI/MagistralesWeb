@@ -40,37 +40,37 @@ export const MaterialRequestHistoryMock: IMaterialHistoryRes = {
     response: [
         {
             docEntry: 7750,
-            itemCode: "1001   100 SB",
-            description: "Sulfato de Cobre 5 gr, Sobres",
-            applicantName: "benny benny",
+            itemCode: '1001   100 SB',
+            description: 'Sulfato de Cobre 5 gr, Sobres',
+            applicantName: 'benny benny',
             quantity: 1.8989,
-            unit: "Paquete",
-            targetWarehosue: "MG",
-            docDate: "2023-03-14T00:00:00",
-            status: "Abierto"
+            unit: 'Paquete',
+            targetWarehosue: 'MG',
+            docDate: '2023-03-14T00:00:00',
+            status: 'Abierto'
         },
         {
             docEntry: 7750,
-            itemCode: "1001   100 SB",
-            description: "Sulfato de Cobre 5 gr, Sobres",
-            applicantName: "benny benny",
+            itemCode: '1001   100 SB',
+            description: 'Sulfato de Cobre 5 gr, Sobres',
+            applicantName: 'benny benny',
             quantity: 1.8989,
-            unit: "Paquete",
-            targetWarehosue: "MG",
-            docDate: "2023-03-14T00:00:00",
-            status: "Cerrado"
+            unit: 'Paquete',
+            targetWarehosue: 'MG',
+            docDate: '2023-03-14T00:00:00',
+            status: 'Cerrado'
         },
         {
             docEntry: 7750,
-            itemCode: "1001   100 SB",
-            description: "Sulfato de Cobre 5 gr, Sobres",
-            applicantName: "benny benny",
+            itemCode: '1001   100 SB',
+            description: 'Sulfato de Cobre 5 gr, Sobres',
+            applicantName: 'benny benny',
             quantity: 1.8989,
-            unit: "Paquete",
-            targetWarehosue: "MG",
-            docDate: "2023-03-14T00:00:00",
-            status: "Cancelado"
+            unit: 'Paquete',
+            targetWarehosue: 'MG',
+            docDate: '2023-03-14T00:00:00',
+            status: 'Cancelado'
         }
     ],
     comments: 477
-}
+};

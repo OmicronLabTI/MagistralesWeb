@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
-import {ConsumeService} from './consume.service';
-import {Endpoints} from '../../environments/endpoints';
-import {DestinationStoreResponse, IMaterialHistoryRes, IMaterialPostRes, IMaterialRequestRes, RawRequestPost} from '../model/http/materialReques';
+import { ConsumeService } from './consume.service';
+import { Endpoints } from '../../environments/endpoints';
+import {
+  DestinationStoreResponse,
+  IMaterialHistoryRes,
+  IMaterialPostRes,
+  IMaterialRequestRes,
+  RawRequestPost
+} from '../model/http/materialReques';
 import { Observable, of } from 'rxjs';
 import { MaterialRequestHistoryMock } from 'src/mocks/materialRequest';
 
@@ -22,9 +28,8 @@ export class MaterialRequestService {
     return this.consumeService.httpGet<DestinationStoreResponse>(Endpoints.destination);
   }
 
-  gethistoryMaterial=():Observable<IMaterialHistoryRes>=>{
-    return of(MaterialRequestHistoryMock)
-    return this.consumeService.httpGet(Endpoints.materialRequest.historyMaterial)
+  gethistoryMaterial = (query: string): Observable<IMaterialHistoryRes> => {
+    return of(MaterialRequestHistoryMock);
+    return this.consumeService.httpGet(`${Endpoints.materialRequest.historyMaterial}${query}`);
   }
-
 }
