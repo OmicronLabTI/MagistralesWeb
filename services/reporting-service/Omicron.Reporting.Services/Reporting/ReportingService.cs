@@ -117,7 +117,7 @@ namespace Omicron.Reporting.Services
                 if (!string.IsNullOrEmpty(result.Error))
                 {
                     productsWithError.AddRange(products.Select(x => x.ProductId).ToList());
-                    break;
+                    continue;
                 }
 
                 request.OrderedProducts = products;
