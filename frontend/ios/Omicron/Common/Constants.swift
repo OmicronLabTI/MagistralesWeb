@@ -56,11 +56,14 @@ struct ViewControllerIdentifiers {
     static let signaturePadViewController = "SignaturePadViewController"
     static let componentsViewController = "ComponentsViewController"
     static let componentsTableViewCell = "ComponentsTableViewCell"
+    static let bulkTableViewCell = "BulkOrderTableViewCell"
     static let headerCollectionViewCell = "HeaderCollectionViewCell"
     static let headerReuseIdentifier = "header"
     static let showErrorViewController = "showError"
     static let mostCommonComponentsTableViewCell = "MostCommonComponentsTableViewCell"
     static let patientListViewController = "PatientListViewController"
+    static let supplieViewController = "SupplieViewController"
+    static let supplieTableViewCell = "SupplieTableViewCell"
 }
 struct OmicronColors {
     static let blue = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
@@ -75,9 +78,14 @@ struct OmicronColors {
     static let tableColorRow = UIColor.init(red: 192/255, green: 219/255, blue: 243/255, alpha: 1)
     static let comments = UIColor.init(red: 231/255, green: 231/255, blue: 231/255, alpha: 1)
     static let darkGray = UIColor.init(red: 102, green: 106, blue: 109, alpha: 1)
-    static let signColor = UIColor(red: 1.00, green: 0.42, blue: 0.00, alpha: 1.00)
-    static let batchesColor = UIColor(red: 0.33, green: 0.84, blue: 0.96, alpha: 1.00)
+    static let signColor = UIColor(red: 0, green: 6/255, blue: 177/255, alpha: 1.00)
+    static let signColorBackground = UIColor(red: 248/255, green: 249/255, blue: 254/255, alpha: 1.00)
+    static let batchesColor = UIColor(red: 93/255, green: 246/255, blue: 1, alpha: 1.00)
+    static let batchesColorBackground = UIColor(red: 242/255, green: 253/255, blue: 253/255, alpha: 1.00)
+    static let primaryBlue = UIColor(red: 19/255, green: 121/255, blue: 253/255, alpha: 1.00)
+    static let disabledButton = UIColor(red: 223/255, green: 225/255, blue: 230/255, alpha: 1)
 }
+
 struct UsersDefaultsConstants {
     static let isLogged = "isLogged"
     static let accessToken = "accessToken"
@@ -170,6 +178,8 @@ struct CommonStrings {
     static let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
     // swiftlint:disable line_length
     static let errorLoadingOrders = "Ocurrió un error al cargar las órdenes de fabricación,  por favor inténtalo de nuevo"
+    static let errorCreateBulkOrder = "Ocurrió un error al crear la orden de fabricación"
+    static let okCreateBulkOrder = "Orden de fabricación creada exitosamente"
     static let options = ["AMP", "BE", "GENERAL", "INCI", "MER", "MG", "MN",
                           "MP", "PROD", "PRONATUR", "PT", "TALLERES", "WEB"]
     static let errorFinishOrder = "Ocurrió un error al finalizar la orden, por favor intentarlo de nuevo"
@@ -191,6 +201,15 @@ struct CommonStrings {
     static let noBatchesAssigned = "No hay lotes asignados"
     static let noChanges = "No se han realizado modificaciones de lotes"
     static let processSuccess = "Proceso realizado correctamente"
+    static let confirmExit = "Se perderá la información si sale de la pantalla de solicitud de insumos ¿Desea continuar?"
+    static let errorComponents = "Por el momento no es posible crear la solicitud, por favor intenta más tarde"
+    static let confirmDeleteSingular = "El componente será eliminado ¿Quieres continuar?"
+    static let confirmDeletePlural = "Los componentes serán eliminados ¿Quieres continuar?"
+    static let successDeletePlural = "Los componentes se han eliminado correctamente"
+    static let successDeleteSingular = "El componente se ha eliminado correctamente"
+    static let confirmSendToStore = "¿Estás seguro que deseas enviar la solicitud de insumos?"
+    static let placeholderObservations = "Deja tu comentario aquí"
+    static let createBuildOrder = "Crear orden de fabricaciòn"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
@@ -211,6 +230,10 @@ struct StatusNameConstants {
     static let save = "Guardar"
     static let seeLots = "Ver Lotes"
     static let package = "Envasar"
+    static let deleteMultiComponents = "Eliminar componente"
+    static let sendToStore = "Enviar a almacén"
+    static let getSupplies = "Solicitar insumos"
+    static let createBulk = "Crear granel"
 }
 struct ImageButtonNames {
     static let assigned = "showAssignedDetailButton.png"

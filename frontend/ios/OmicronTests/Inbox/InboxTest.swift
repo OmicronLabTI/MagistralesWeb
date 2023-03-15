@@ -12,7 +12,7 @@ import Resolver
 import RxDataSources
 import Moya
 
-@testable import OmicronLab
+@testable import Magistrales
 
 class InboxTest: XCTestCase {
     // MARK: - VARIABLES

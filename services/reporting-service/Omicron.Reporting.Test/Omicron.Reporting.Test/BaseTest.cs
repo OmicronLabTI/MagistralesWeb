@@ -10,7 +10,9 @@ namespace Omicron.Reporting.Test
 {
     using System.Collections.Generic;
     using System.IO;
+    using Newtonsoft.Json;
     using Omicron.Reporting.Entities.Model;
+    using Omicron.Reporting.Services.Constants;
 
     /// <summary>
     /// Class Base Test.
@@ -92,6 +94,23 @@ namespace Omicron.Reporting.Test
                 CopyTo = "copy@email.com",
             };
             return rawMaterialConfig;
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <param name="response">Response.</param>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultDiApi(object response)
+        {
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(response),
+                Success = true,
+                UserError = string.Empty,
+            };
         }
     }
 }

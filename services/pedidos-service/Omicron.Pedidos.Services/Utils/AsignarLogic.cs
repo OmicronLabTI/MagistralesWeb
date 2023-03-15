@@ -11,7 +11,6 @@ namespace Omicron.Pedidos.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
@@ -33,13 +32,17 @@ namespace Omicron.Pedidos.Services.Utils
         /// </summary>
         /// <param name="detail">detail.</param>
         /// <returns>Boolean.</returns>
-        public static bool IsDzAndIsNotOmigenomics(CompleteDetailOrderModel detail) => detail.CodigoProducto.ToUpper().StartsWith("DZ ") && !detail.IsOmigenomics;
+        public static bool IsDzAndIsNotOmigenomics(CompleteDetailOrderModel detail)
+            => ServiceShared.CalculateAnd(
+                detail.CodigoProducto.ToUpper().StartsWith("DZ "),
+                ServiceConstants.SignaturesToAssignProductsDZ.Contains(detail.ProductFirmName.ToLower()),
+                !detail.IsOmigenomics);
 
         /// <summary>
         /// makes the logic to assign a pedido.
         /// </summary>
         /// <param name="assignModel">the assign model.</param>
-        /// <param name="qfbInfoValidated"> th Qfb Info Validated.</param>
+        /// <param name="qfbInfoValidated"> QfbINfoValidated.</param>
         /// <param name="pedidosDao">the pedidos dao.</param>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="sapDiApi">The sap di api.</param>
@@ -83,7 +86,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// the logic to assign a order.
         /// </summary>
         /// <param name="assignModel">the assign model.</param>
-        /// <param name="qfbInfoValidated"> th Qfb Info Validated.</param>
+        /// <param name="qfbInfoValidated">Qfb Info Validated.</param>
         /// <param name="pedidosDao">the pedido dao.</param>
         /// <param name="sapDiApi">the di api.</param>
         /// <param name="sapAdapter">Sap adapter.</param>
@@ -116,7 +119,7 @@ namespace Omicron.Pedidos.Services.Utils
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
             var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
 
-            var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic, qfbInfoValidated.TecnicId, true);
+            var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic, true, qfbInfoValidated);
             userOrdersByProd = getUpdateUserOrderModel.Item1;
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
@@ -233,10 +236,18 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="user">the user to update.</param>
         /// <param name="statusOrder">Status for the order fab.</param>
         /// <param name="userLogistic">user modificate.</param>
-        /// <param name="tecnicId">Tecnic id.</param>
         /// <param name="isFromAssignOrder">Is from assignOrder.</param>
+        /// <param name="qfbInfoValidated">Qfb info validated.</param>
         /// <returns>the data.</returns>
-        public static Tuple<List<UserOrderModel>, List<SalesLogs>> GetUpdateUserOrderModel(List<UserOrderModel> listFromOrders, List<UserOrderModel> listFromSales, List<OrderWithDetailModel> sapOrders, string user, string statusOrder, string userLogistic, string tecnicId, bool isFromAssignOrder)
+        public static Tuple<List<UserOrderModel>, List<SalesLogs>> GetUpdateUserOrderModel(
+            List<UserOrderModel> listFromOrders,
+            List<UserOrderModel> listFromSales,
+            List<OrderWithDetailModel> sapOrders,
+            string user,
+            string statusOrder,
+            string userLogistic,
+            bool isFromAssignOrder,
+            QfbTecnicInfoDto qfbInfoValidated)
         {
             var listToUpdate = new List<UserOrderModel>();
             var listOrderLogToInsert = new List<SalesLogs>();
@@ -254,11 +265,11 @@ namespace Omicron.Pedidos.Services.Utils
                     {
                         o.Userid = user;
                         o.Status = statusOrder;
-                        o.TecnicId = tecnicId;
                         o.StatusForTecnic = statusOrder;
                         o.ReassignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, o.ReassignmentDate, DateTime.Now);
                         o.AssignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, DateTime.Now, o.AssignmentDate);
                         o.PackingDate = ServiceShared.CalculateTernary(isFromAssignOrder, o.PackingDate, null);
+                        o.TecnicId = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(y.Key), qfbInfoValidated.TecnicId, null);
                         listToUpdate.Add(o);
                         /** add logs**/
                         listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userLogistic, new List<UserOrderModel> { o }));
@@ -269,10 +280,10 @@ namespace Omicron.Pedidos.Services.Utils
                         var pedido = listFromSales.FirstOrDefault(x => x.Salesorderid == y.Key && string.IsNullOrEmpty(x.Productionorderid));
                         pedido.Status = ServiceShared.CalculateTernary(missing, pedido.Status, ServiceConstants.Liberado);
                         pedido.Userid = user;
-                        pedido.TecnicId = tecnicId;
                         pedido.StatusForTecnic = pedido.Status;
                         pedido.ReassignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, pedido.ReassignmentDate, DateTime.Now);
                         pedido.AssignmentDate = ServiceShared.CalculateTernary(isFromAssignOrder, DateTime.Now, pedido.AssignmentDate);
+                        pedido.TecnicId = qfbInfoValidated.TecnicId;
                         listToUpdate.Add(pedido);
                         if (!missing)
                         {

@@ -23,7 +23,7 @@ extension InboxViewController {
         inboxViewModel.normalViewButtonIsEnable.subscribe(onNext: { [weak self] isEnabled in
             guard let self = self else { return }
             self.normalViewButton.isEnabled = isEnabled
-            self.heigthCollectionViewConstraint.constant = isEnabled ? 8 : -60
+            self.heigthCollectionViewConstraint.constant = 8
             self.showMoreIndicators()
             self.goToTop()
         }).disposed(by: self.disposeBag)
@@ -58,8 +58,8 @@ extension InboxViewController {
         inboxViewModel.title
             .withLatestFrom(inboxViewModel.statusDataGrouped, resultSelector: { [weak self] title, _ in
                 guard let self = self else { return }
-                let statusId = self.inboxViewModel.getStatusId(name: title)
-                var message = self.inboxViewModel.ordersTemp.count == 0 ?
+                _ = self.inboxViewModel.getStatusId(name: title)
+                let message = self.inboxViewModel.ordersTemp.count == 0 ?
                     "No tienes órdenes \(title)" :
                     String()
                 self.collectionView.setEmptyMessage(message)

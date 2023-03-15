@@ -41,6 +41,7 @@ class InboxViewModel {
     var orderURLPDF = PublishSubject<String>()
     var resetData = PublishSubject<Void>()
     var showSignatureVc = PublishSubject<String>()
+    var showConfirmDialog = PublishSubject<Void>()
     var finishOrders = PublishSubject<Void>()
     var isUserInteractionEnabled = PublishSubject<Bool>()
     var reloadData = PublishSubject<Void>()
@@ -56,6 +57,7 @@ class InboxViewModel {
     var indexPathOfOrdersSelected: [IndexPath]?
     var currentSection: SectionOrder = SectionOrder(
         statusId: 0, statusName: String(), numberTask: 0, imageIndicatorStatus: String(), orders: [])
+    var goToSuppliesView = PublishSubject<Void>()
 
     @Injected var rootViewModel: RootViewModel
     @Injected var networkManager: NetworkManager
@@ -124,6 +126,10 @@ class InboxViewModel {
             self.changeStatusSort(.normal)
             self.resetData.onNext(())
         }).disposed(by: self.disposeBag)
+    }
+
+    func goToSupplies() {
+        self.goToSuppliesView.onNext(())
     }
 
     func groupByShopTransactionButtonDidTapBinding() {

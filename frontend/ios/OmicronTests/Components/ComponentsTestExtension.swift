@@ -10,7 +10,7 @@ import XCTest
 import RxSwift
 import Resolver
 import Moya
-@testable import OmicronLab
+@testable import Magistrales
 class ComponentsTestExtension: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?
@@ -57,14 +57,13 @@ class ComponentsTestExtension: XCTestCase {
     func testSaveDidTapOrderIsNil() {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
-                                         warehouse: "MG")
-        let componentSelected = ComponentO()
+                                         warehouse: "MG",
+                                         selectedComponent: ComponentO())
         componentsViewModel?.saveSuccess.subscribe(onNext: { _ in
             XCTAssertTrue(true)
         }).disposed(by: disposeBag!)
         order1?.productionOrderId = nil
         inboxViewModel.selectedOrder = order1
-        componentsViewModel?.selectedComponent.onNext(componentSelected)
         componentsViewModel?.saveDidTap.onNext(values)
     }
 
@@ -78,7 +77,7 @@ class ComponentsTestExtension: XCTestCase {
                 XCTAssertEqual(res[1].description, "Airless Pump Star 150 ml Blanco")
             }
         }).disposed(by: disposeBag!)
-        componentsViewModel?.getMostCommonComponentsService()
+        componentsViewModel?.getMostCommonComponentsService(type: "")
     }
 
     func testGetMostComponetServiceWhenCodeIs500() {
@@ -87,7 +86,7 @@ class ComponentsTestExtension: XCTestCase {
         }).disposed(by: disposeBag!)
         statusCode = 500
         componentsViewModel?.networkManager = NetworkManager(provider: provider)
-        componentsViewModel?.getMostCommonComponentsService()
+        componentsViewModel?.getMostCommonComponentsService(type: "")
     }
 
 }

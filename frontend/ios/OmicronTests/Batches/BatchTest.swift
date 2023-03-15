@@ -11,7 +11,7 @@ import RxSwift
 import Moya
 import Resolver
 
-@testable import OmicronLab
+@testable import Magistrales
 
 class BatchesTest: XCTestCase {
     // MARK: - VARIABLES

@@ -265,6 +265,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
             var payments = await this.GetPayments(sapSaleOrder, sapDelivery, sapInvoicesHeaders);
             var doctorAddresses = await this.GetDeliveryAddressInfo(sapSaleOrder, sapDelivery, sapInvoicesHeaders);
+            var catalogResponse = await this.catalogsService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.CardCodeResponsibleMedic}={ServiceConstants.CardCodeResponsibleMedic}");
+            var specialCardCodes = JsonConvert.DeserializeObject<List<ParametersModel>>(catalogResponse.Response.ToString()).Select(x => x.Value).ToList();
 
             var objectCardOrder = new ParamentsCards
             {
@@ -287,6 +289,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsFromDxpId = initialDocNum.StartsWith(ServiceConstants.WildcardDocNumDxp),
                 DocNum = initialDocNum,
                 DeliveryAddress = doctorAddresses,
+                SpecialCardCodes = specialCardCodes,
             };
 
             tupleIds.DistinctBy(order => new { order.Item1, order.Item2 }).ToList().ForEach(order =>
@@ -1026,6 +1029,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Payments = paramentsCards.Payments,
                     Boxes = paramentsCards.Boxes,
                     DeliveryAddress = paramentsCards.DeliveryAddress,
+                    SpecialCardCodes = paramentsCards.SpecialCardCodes,
                 };
 
                 listToReturn.Add(this.GenerateCardForDistribution(objectForDistribution));
@@ -1075,6 +1079,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Payments = paramentsCards.Payments,
                 Boxes = paramentsCards.Boxes,
                 DeliveryAddress = paramentsCards.DeliveryAddress,
+                SpecialCardCodes = paramentsCards.SpecialCardCodes,
             };
 
             var card = this.GenerateCardForDistribution(objectForDistribution);
@@ -1111,6 +1116,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Payments = paramentsCards.Payments,
                 Boxes = paramentsCards.Boxes,
                 DeliveryAddress = paramentsCards.DeliveryAddress,
+                SpecialCardCodes = paramentsCards.SpecialCardCodes,
             };
 
             var card = this.GenerateCardForDistribution(objectForDistribution);
@@ -1141,6 +1147,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var shippingCostAcceptedInvoice = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(invoice.IsDeliveredInOffice) && invoice.IsDeliveredInOffice == "Y", 0, 1);
             payment.ShippingCostAccepted = payment.TransactionId == null ? shippingCostAcceptedInvoice : payment.ShippingCostAccepted;
 
+            var specialCardCodes = parametersDistribution.SpecialCardCodes;
+            specialCardCodes ??= new List<string>();
+
             return new InvoiceHeaderAdvancedLookUp
             {
                 Invoice = invoiceId,
@@ -1149,7 +1158,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 StatusDelivery = userOrder.StatusInvoice,
                 Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoice.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
                 ProductType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, parametersDistribution.LocalNeighbors, invoice.Address, payment),
-                Doctor = invoice.Medico,
+                Doctor = invoice.Medico, // ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == invoice.CardCode), deliveryAddress.AddressId, invoice.Medico),
                 TotalDeliveries = localInvoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),
                 InvoiceDocDate = userOrder.InvoiceStoreDate.Value,
                 Client = deliveryAddress.Contact.ValidateNull(),

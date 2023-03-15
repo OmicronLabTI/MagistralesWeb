@@ -29,6 +29,9 @@ enum ApiService {
     case getConnect
     case getMostCommonComponents(data: CommonComponentRequest)
     case getContainer(userId: String)
+    case getBulks(data: BulkListRequest)
+    case createOrderBulk(data: BulkOrderCreate)
+    case createComponents(data: SendToStoreRequest)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -88,6 +91,12 @@ extension ApiService: AuthorizedTargetType {
             return "/sapadapter/common/components"
         case .getContainer(let userId):
             return "/sapadapter/orders/packingRequired/\(userId)"
+        case .getBulks:
+            return "/sapadapter/products"
+        case .createOrderBulk:
+            return "/pedidos/fabOrder/isolated"
+        case .createComponents:
+            return "/warehouses/request/rawmaterial"
         }
     }
     var method: Moya.Method {
@@ -97,7 +106,9 @@ extension ApiService: AuthorizedTargetType {
              .finishOrder,
              .postOrdersPDF,
              .validateOrders,
-             .packageOrders:
+             .createOrderBulk,
+             .packageOrders,
+             .createComponents:
             return .post
         case .getInfoUser,
              .getStatusList,
@@ -108,6 +119,7 @@ extension ApiService: AuthorizedTargetType {
              .getWorkload,
              .getConnect,
              .getMostCommonComponents,
+             .getBulks,
              .getContainer:
             return .get
         case .deleteItemOfOrdenDetail,
@@ -128,6 +140,8 @@ extension ApiService: AuthorizedTargetType {
              .getConnect,
              .getContainer:
             return .requestPlain
+        case .createComponents(let data):
+            return .requestJSONEncodable(data)
         case .renew(let data):
             return .requestJSONEncodable(data)
         case .deleteItemOfOrdenDetail(let data):
@@ -147,6 +161,10 @@ extension ApiService: AuthorizedTargetType {
         case .postOrdersPDF(let data):
             return .requestJSONEncodable(data)
         case .validateOrders(let data):
+            return .requestJSONEncodable(data)
+        case .getBulks(let data):
+            return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
+        case .createOrderBulk(let data):
             return .requestJSONEncodable(data)
         case .getMostCommonComponents(let data):
             return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
@@ -261,6 +279,24 @@ extension ApiService: AuthorizedTargetType {
               return data
         case .getContainer:
             guard let url = Bundle.main.url(forResource: "container", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .getBulks:
+            guard let url = Bundle.main.url(forResource: "GetBulks", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .createOrderBulk:
+            guard let url = Bundle.main.url(forResource: "createOrderBulk", withExtension: "json"),
+            let data = try? Data(contentsOf: url) else {
+                      return Data()
+            }
+              return data
+        case .createComponents:
+            guard let url = Bundle.main.url(forResource: "createSupplie", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

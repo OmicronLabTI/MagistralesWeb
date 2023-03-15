@@ -10,7 +10,7 @@ import XCTest
 import RxSwift
 import Resolver
 import Moya
-@testable import OmicronLab
+@testable import Magistrales
 class ComponetsTest: XCTestCase {
     // MARK: - VARIABLES
     var disposeBag: DisposeBag?
@@ -66,7 +66,8 @@ class ComponetsTest: XCTestCase {
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips,
-                catalogGroup: "MG")
+                catalogGroup: "MG",
+                userId: "")
             self?.networkManager.getComponents(request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
             }).disposed(by: (self?.disposeBag)!)
@@ -78,7 +79,7 @@ class ComponetsTest: XCTestCase {
         }).disposed(by: disposeBag!)
         statusCode = 500
         componentsViewModel?.networkManager = NetworkManager(provider: provider)
-        componentsViewModel?.getComponents(chips: ["Base"])
+        componentsViewModel?.getComponents(chips: ["Base"], offset: 0)
     }
     func testValidCodeNotNull() {
         componentsViewModel!.dataChips.onNext(["Base"])
@@ -87,7 +88,8 @@ class ComponetsTest: XCTestCase {
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips,
-                catalogGroup: "MG")
+                catalogGroup: "MG",
+                userId: "")
             self?.networkManager.getComponents(request).subscribe(onNext: { res in
                 XCTAssertNotNil(res.code)
             }).disposed(by: (self?.disposeBag)!)
@@ -100,7 +102,8 @@ class ComponetsTest: XCTestCase {
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips,
-                catalogGroup: "MG")
+                catalogGroup: "MG",
+                userId: "")
             self?.networkManager.getComponents(request).subscribe(onNext: { res in
                 XCTAssert(res.code == 200)
             }).disposed(by: (self?.disposeBag)!)
@@ -114,7 +117,8 @@ class ComponetsTest: XCTestCase {
                 offset: Constants.Components.offset.rawValue,
                 limit: Constants.Components.limit.rawValue,
                 chips: chips,
-                catalogGroup: "MG")
+                catalogGroup: "MG",
+                userId: "")
             self?.networkManager.getComponents(request).subscribe(onNext: { [weak self] res in
                 orderDetailRequest = self?.returnOrderDetailRequest(componentO: res.response)
                 self?.networkManager.updateDeleteItemOfTableInOrderDetail(orderDetailRequest!)
@@ -138,7 +142,10 @@ class ComponetsTest: XCTestCase {
     func returnOrderDetailRequest(componentO: [ComponentO]?) -> OrderDetailRequest? {
         guard let componentO = componentO else { return nil }
         guard let comp = componentO.first else { return  nil }
-        let values = ComponentFormValues(baseQuantity: 2.0, requiredQuantity: 2.0, warehouse: "MN")
+        let values = ComponentFormValues(baseQuantity: 2.0,
+                                         requiredQuantity: 2.0,
+                                         warehouse: "MN",
+                                         selectedComponent: comp)
         let productOrderId = 89466
         let plannedQuantity: Decimal = 1.0
         let fechaFin =
@@ -187,9 +194,6 @@ class ComponetsTest: XCTestCase {
     }
 
     func testSaveDidTapSuccess() {
-        let values = ComponentFormValues(baseQuantity: 2,
-                                         requiredQuantity: 1,
-                                         warehouse: "MG")
         let componentSelected = ComponentO()
         componentSelected.available = 2
         componentSelected.baseQuantity = 3
@@ -202,37 +206,38 @@ class ComponetsTest: XCTestCase {
         componentSelected.stock = 3
         componentSelected.unit = CommonStrings.piece
         componentSelected.warehouse = String()
+        let values = ComponentFormValues(baseQuantity: 2,
+                                         requiredQuantity: 1,
+                                         warehouse: "MG",
+                                         selectedComponent: componentSelected)
         componentsViewModel?.saveSuccess.subscribe(onNext: { _ in
             XCTAssertTrue(true)
         }).disposed(by: disposeBag!)
         inboxViewModel.selectedOrder = order1
-        componentsViewModel?.selectedComponent.onNext(componentSelected)
         componentsViewModel?.saveDidTap.onNext(values)
     }
 
     func testSaveDidTapDataEmpty() {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
-                                         warehouse: "MG")
-        let componentSelected = ComponentO()
+                                         warehouse: "MG",
+                                         selectedComponent: ComponentO())
         componentsViewModel?.saveSuccess.subscribe(onNext: { _ in
             XCTAssertTrue(true)
         }).disposed(by: disposeBag!)
         inboxViewModel.selectedOrder = order1
-        componentsViewModel?.selectedComponent.onNext(componentSelected)
         componentsViewModel?.saveDidTap.onNext(values)
     }
 
     func testSaveDidTapOrderSelectedIsNil() {
         let values = ComponentFormValues(baseQuantity: 2,
                                          requiredQuantity: 1,
-                                         warehouse: "MG")
-        let componentSelected = ComponentO()
+                                         warehouse: "MG",
+                                         selectedComponent: ComponentO())
         componentsViewModel?.saveSuccess.subscribe(onNext: { _ in
             XCTAssertTrue(true)
         }).disposed(by: disposeBag!)
         inboxViewModel.selectedOrder = nil
-        componentsViewModel?.selectedComponent.onNext(componentSelected)
         componentsViewModel?.saveDidTap.onNext(values)
     }
 }

@@ -10,8 +10,7 @@ import XCTest
 import RxSwift
 import Moya
 
-@testable import OmicronLab
-
+@testable import Magistrales
 class SignaturePadTest: XCTestCase {
 
     // MARK: - Variables

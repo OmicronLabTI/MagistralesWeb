@@ -1,14 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-import { IMaterialRequestRes, MaterialComponent, RawRequest, RawRequestPost } from '../../model/http/materialReques';
+import { DestinationStore, IMaterialRequestRes, MaterialComponent, RawRequest, RawRequestPost } from '../../model/http/materialReques';
 import { MaterialRequestService } from '../../services/material-request.service';
 import {
   ClassNames,
   ComponentSearch,
   CONST_NUMBER,
   CONST_STRING,
-  MessageType
+  MessageType,
+  TypeToSeeTap
 } from '../../constants/const';
 import { ErrorService } from '../../services/error.service';
 import { DataService } from '../../services/data.service';
@@ -26,12 +27,13 @@ import { MessagesService } from 'src/app/services/messages.service';
 @Component({
   selector: 'app-material-request',
   templateUrl: './material-request.component.html',
-  styleUrls: ['./material-request.component.scss']
+  styleUrls: ['./material-request.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class MaterialRequestComponent implements OnInit, OnDestroy {
   dataToRequest = {};
   displayedColumns: string[] = [
-    'check', 'code', 'component', 'requestQuantity', 'unit'
+    'check', 'code', 'component', 'requestQuantity', 'destinationStore', 'unit'
   ];
   dataSource = new MatTableDataSource<MaterialComponent>();
   comments = CONST_STRING.empty;
@@ -43,6 +45,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   isThereToDelete = false;
   isToDownload = false;
   isFreeRequest = false;
+  listStore: DestinationStore[] = [];
   constructor(
     private materialReService: MaterialRequestService,
     private errorService: ErrorService,
@@ -61,13 +64,16 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.dataToRequest = params.get('requests');
       this.isOrder = Number(params.get('isOrder')) === CONST_NUMBER.one;
       this.isFreeRequest = Number(this.dataToRequest) === CONST_NUMBER.zero;
-
+      this.getDestination();
       this.validateRequest();
     });
     this.subscription.add(this.observableService.getNewMaterialComponent().subscribe(resultNewMaterialComponent => {
       this.dataSource.data = [...this.dataSource.data, {
         ...resultNewMaterialComponent,
-        id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one
+        id: CONST_NUMBER.zero, requestQuantity: CONST_NUMBER.one,
+        warehouse: CONST_STRING.empty,
+        isLabel: resultNewMaterialComponent.isLabel,
+        isWithError: true
       }];
       this.checkIsCorrectData();
       this.checkToDownload();
@@ -77,6 +83,12 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.oldData.signature = newDataSignature;
       this.checkIsCorrectData();
     }));
+  }
+
+  getDestination(): void {
+    this.materialReService.getDestinationStore().subscribe((res) => {
+      this.listStore = res.response;
+    }, error => this.errorService.httpError(error));
   }
   getPreMaterialRequestH(): void {
     let titleStatusOrders = CONST_STRING.empty;
@@ -161,6 +173,12 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     newComponentsToSend.userId = this.localStorageService.getUserId();
 
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe(resultMaterialPost => {
+      if (!resultMaterialPost.response && resultMaterialPost.userError) {
+        this.messagesService.presentToastCustom(CONST_STRING.empty, 'error',
+          resultMaterialPost.userError,
+          true, false, ClassNames.popupCustom);
+        return;
+      }
       if (resultMaterialPost.success && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {
         this.onDataError(resultMaterialPost.response.failed);
       } else {
@@ -181,17 +199,26 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
 
   onRequestQuantityChange(requestQuantity: number, index: number): void {
-    this.dataSource.data[index].isWithError = !Number(requestQuantity);
+    this.validateRow(index);
     this.checkIsCorrectData();
     this.registerChanges();
   }
 
-  checkIsCorrectData(): void {
-    this.isCorrectData = this.isCorrectData = this.dataSource.data.filter(order => order.productId === CONST_STRING.empty
-      || order.requestQuantity === null || order.description === CONST_STRING.empty
-      || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature;
+  onChangeStore(value: string, index: number): void {
+    this.validateRow(index);
+    this.checkIsCorrectData();
   }
 
+  validateRow(index: number): void {
+    this.dataSource.data[index].isWithError = !Number(this.dataSource.data[index].requestQuantity) ||
+      this.dataSource.data[index].warehouse === CONST_STRING.empty;
+  }
+
+  checkIsCorrectData(): void {
+    this.isCorrectData = this.dataSource.data.filter(order => order.productId === CONST_STRING.empty
+      || order.requestQuantity === null || order.description === CONST_STRING.empty
+      || order.isWithError).length === CONST_NUMBER.zero && this.oldData.signature && this.dataSource.data.length > 0;
+  }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
@@ -212,6 +239,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
           this.dataSource.data = this.dataSource.data.filter(order => !order.isChecked);
           this.checkToDownload();
           this.registerChanges();
+          this.checkIsCorrectData();
         }
       });
   }
@@ -233,8 +261,12 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
 
   downloadPreview(): void {
     this.setModelData();
-    this.fileDownloaderServie.downloadFile(
-      this.reportingService.downloadPreviewRawMaterialRequest(this.oldData), FileTypeContentEnum.PDF, this.getFileNamePreview());
+    this.reportingService.downloadPreviewMaterial(this.oldData).subscribe((res) => {
+      const listOfBlobs = res.response;
+      listOfBlobs.forEach((url) => {
+        this.dataService.openNewTapByUrl(url, TypeToSeeTap.order);
+      });
+    });
   }
 
   private setModelData(): void {
@@ -251,7 +283,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       `Solicitud_MP_${this.getStringNumberTwoDigits(date.getDate())}-
       ${this.getStringNumberTwoDigits(date.getMonth() + 1)}-
       ${date.getFullYear()}_${date.getHours()}_
-      ${date.getMinutes()}_PREVIEW.pdf`;
+      ${date.getTime()}_PREVIEW.pdf`;
     return fileName;
   }
 

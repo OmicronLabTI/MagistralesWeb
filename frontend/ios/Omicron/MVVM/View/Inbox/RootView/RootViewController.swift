@@ -21,6 +21,8 @@ class RootViewController: UIViewController {
     @IBOutlet weak var kpiButtonViewContain: UIView!
     @IBOutlet weak var versionLabel: UILabel!
     @IBOutlet weak var rolLabel: UILabel!
+    @IBOutlet weak var createBulk: UIButton!
+    @IBOutlet weak var createSupplies: UIButton!
 
     @IBAction func logoutAction(_ sender: UIButton) {
         isLogOut = true
@@ -47,6 +49,9 @@ class RootViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.rootViewModel.getOrders()
+    }
+    @IBAction func createSupplieDidPressed(_ sender: Any) {
+        inboxViewModel.goToSupplies()
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -207,7 +212,33 @@ class RootViewController: UIViewController {
                 textToBold: "Versión: ")
         self.versionLabel.textColor = OmicronColors.blue
         self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
+        UtilsManager.shared.setStyleButtonStatus(button: self.createSupplies,
+                                                 title: StatusNameConstants.getSupplies,
+                                                 color: OmicronColors.primaryBlue,
+                                                 titleColor: OmicronColors.primaryBlue)
+        UtilsManager.shared.setStyleButtonStatus(button: self.createBulk,
+                                                 title: StatusNameConstants.createBulk,
+                                                 color: OmicronColors.primaryBlue,
+                                                 backgroudColor: OmicronColors.primaryBlue,
+                                                 titleColor: .white)
+        self.createBulk.isHidden = rootViewModel.userType != .qfb
+        self.createSupplies.isHidden = rootViewModel.userType != .qfb
+        self.createBulk.rx.tap.bind { _ in
+            self.openBulkProducts()
+        }
     }
+
+    func openBulkProducts() {
+        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+        let componentsVC = storyboard.instantiateViewController(
+            withIdentifier: ViewControllerIdentifiers.componentsViewController) as? ComponentsViewController
+        componentsVC?.typeOpen = .bulkOrder
+        componentsVC!.clearObservables()
+        let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
+        navigationVC.modalPresentationStyle = .formSheet
+        self.present(navigationVC, animated: true, completion: nil)
+    }
+
     private func getUserInfo() -> String {
         guard let userInfo =  Persistence.shared.getUserData() else { return "" }
         return "\(userInfo.firstName!) \(userInfo.lastName!)"
