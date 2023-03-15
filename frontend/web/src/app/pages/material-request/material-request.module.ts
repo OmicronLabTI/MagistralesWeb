@@ -7,15 +7,17 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatTableModule} from '@angular/material/table';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {FormsModule} from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MATERIAL_COMPONENTS} from '../../app.material';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { FaborderListModule } from '../faborders-list/faborder-list.module';
 import { NgxMaskModule } from 'ngx-mask';
+import { HistoryMaterialRequestComponent } from './history-material-request/history-material-request.component';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
-  declarations: [ MaterialRequestComponent ],
+  declarations: [ MaterialRequestComponent, HistoryMaterialRequestComponent ],
   imports: [
       CommonModule,
       MaterialRequestRoutingModule,
@@ -28,7 +30,10 @@ import { NgxMaskModule } from 'ngx-mask';
       MatInputModule,
       MATERIAL_COMPONENTS,
       FaborderListModule,
-      NgxMaskModule.forRoot()
+      NgxMaskModule.forRoot(),
+      ComponentsModule,
+      FormsModule,
+      ReactiveFormsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

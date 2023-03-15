@@ -338,3 +338,11 @@ export const TypeClasifications = {
     bioequal: 'BE',
     magistral: 'MG',
 };
+
+export const BoolConst = {
+    true: true,
+    false: false
+}
+
+
+export const CallBackEmptyConst = ( ) => {}

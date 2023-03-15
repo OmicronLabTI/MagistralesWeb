@@ -1,9 +1,14 @@
 import { CONST_NUMBER, CONST_STRING } from 'src/app/constants/const';
-import {BaseResponseHttp} from './commons';
+import { BaseResponseHttp } from './commons';
 
 export class IMaterialRequestRes extends BaseResponseHttp {
- response: RawRequest;
+    response: RawRequest;
 }
+
+export class IMaterialHistoryRes extends BaseResponseHttp {
+    response: IMaterialHistoryItem[]
+}
+
 export class IMaterialPostRes extends BaseResponseHttp {
     response: MaterialPostRes;
 }
@@ -61,4 +66,17 @@ export class DestinationStore {
         this.type = CONST_STRING.empty;
         this.field = CONST_STRING.empty;
     }
+}
+
+export interface IMaterialHistoryItem {
+    docEntry: number;
+    itemCode: string;
+    description: string;
+    applicantName: string;
+    quantity: number;
+    unit: string;
+    targetWarehosue: string;
+    docDate: string;
+    status: string;
+
 }

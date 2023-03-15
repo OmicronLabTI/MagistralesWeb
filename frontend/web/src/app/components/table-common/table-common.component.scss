@@ -1,0 +1,81 @@
+.table-common-component {
+  font-family: omicron-medium, Arial, Helvetica, sans-serif !important;
+  overflow-y: auto;
+  max-height: 60vh;
+  white-space: nowrap;
+  width: 100%;
+  table {
+    position: relative;
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    thead {
+      background-color: #ffff;
+      left: 0;
+      position: sticky;
+      top: 0px;
+      border-bottom: solid 0.5px #dcdcdc;
+      margin-bottom: 10px;
+      z-index: 2;
+      th {
+        padding: 5px 10px;
+      }
+    }
+    tbody {
+      tr {
+        min-height: 29px;
+        height: 29px;
+        td {
+          padding: 10px 10px;
+        }
+        &:hover {
+          background: #e6e6e6;
+        }
+      }
+    }
+  }
+  a {
+    text-decoration: none;
+    color: black;
+    cursor: default;
+  }
+
+  .statusContent {
+    padding: 5px 10px;
+  }
+  .links {
+    text-decoration: underline;
+   
+  }
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 7px !important;
+  }
+  .position-static-letters {
+    position: sticky;
+    left: 0;
+    z-index: 4;
+    .not-found-title {
+      white-space: normal;
+      max-width: 200px;
+      width: 100%;
+      overflow: hidden;
+      margin: auto;
+      text-align: center;
+    }
+  }
+
+  @media (min-width: 425px) {
+    .stickyHead {
+      position: sticky;
+      top: 0;
+      left: 0;
+      background-color: #ffff;
+    }
+    .stickyBody {
+      position: sticky;
+      left: 0;
+      background-color: #ffff;
+    }
+  }
+}

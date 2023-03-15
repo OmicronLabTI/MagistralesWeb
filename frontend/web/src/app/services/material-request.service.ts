@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {ConsumeService} from './consume.service';
 import {Endpoints} from '../../environments/endpoints';
-import {DestinationStoreResponse, IMaterialPostRes, IMaterialRequestRes, RawRequestPost} from '../model/http/materialReques';
+import {DestinationStoreResponse, IMaterialHistoryRes, IMaterialPostRes, IMaterialRequestRes, RawRequestPost} from '../model/http/materialReques';
 import { Observable, of } from 'rxjs';
+import { MaterialRequestHistoryMock } from 'src/mocks/materialRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -20,4 +21,10 @@ export class MaterialRequestService {
   getDestinationStore(): Observable<DestinationStoreResponse> {
     return this.consumeService.httpGet<DestinationStoreResponse>(Endpoints.destination);
   }
+
+  gethistoryMaterial=():Observable<IMaterialHistoryRes>=>{
+    return of(MaterialRequestHistoryMock)
+    return this.consumeService.httpGet(Endpoints.materialRequest.historyMaterial)
+  }
+
 }

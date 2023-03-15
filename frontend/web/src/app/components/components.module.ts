@@ -10,23 +10,33 @@ import {ButtonRefreshComponent} from './button-refresh/button-refresh.component'
 import { ButtonBackComponent } from './button-back/button-back.component';
 import { ButtonNextComponent } from './button-next/button-next.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { TableCommonComponent } from './table-common/table-common.component';
 
 @NgModule({
-  declarations: [RangeDateComponent, GraphShowComponent, ButtonRefreshComponent, ButtonBackComponent, ButtonNextComponent],
+  declarations: [
+    RangeDateComponent, 
+    GraphShowComponent, 
+    ButtonRefreshComponent, 
+    ButtonBackComponent, 
+    ButtonNextComponent,
+    TableCommonComponent
+],
     exports: [
         RangeDateComponent,
         GraphShowComponent,
         ButtonRefreshComponent,
         ButtonBackComponent,
-        ButtonNextComponent
+        ButtonNextComponent,
+        TableCommonComponent
     ],
     imports: [
+        MatTooltipModule,
         CommonModule,
         MatFormFieldModule,
         MatDatepickerModule,
         FormsModule,
         MatInputModule,
-        MatTooltipModule
+        MatTooltipModule,
     ]
 })
 export class ComponentsModule { }
