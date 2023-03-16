@@ -16,6 +16,9 @@
 
         </div>
         <div class="table-toolbar-buttons">
+             <button mat-raised-button class="button-blue" [routerLink]="'/materialRequest/history'">
+                Historial
+            </button>
             <button mat-raised-button [disabled]="!isThereToDelete"
                 [ngClass]="isThereToDelete? 'button-blue' : 'disable-button'" (click)="deleteComponents()">
                 Eliminar componente
