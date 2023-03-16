@@ -61,7 +61,7 @@ class RawMaterialItem: Mappable {
     var itemCode: String?
     var description: String?
     var applicationName: String?
-    var quantity: Decimal?
+    var quantity: Double?
     var unit: String?
     var targetWarehosue: String?
     var docDate: Date?
@@ -72,7 +72,7 @@ class RawMaterialItem: Mappable {
          itemCode: String?,
          description: String?,
          applicationName: String?,
-         quantity: Decimal?,
+         quantity: Double?,
          unit: String?,
          targetWarehosue: String?,
          docDate: Date?,
