@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material';
 import { BoolConst, CONST_NUMBER } from 'src/app/constants/const';
@@ -16,53 +16,44 @@ import { MaterialRequestService } from 'src/app/services/material-request.servic
 })
 export class HistoryMaterialRequestComponent implements OnInit {
   historyMaterialRequestSettings: SettingsCommonTableClass = MaterialRequestHistoryTableSettings;
-  dataHistory: IMaterialHistoryItem[];
+  dataHistory: IMaterialHistoryItem[] = [];
   lengthPaginator = CONST_NUMBER.zero;
   offset: number = CONST_NUMBER.zero;
   pageIndex: number = CONST_NUMBER.zero;
   limit: number = CONST_NUMBER.ten;
   statusControl: FormControl = new FormControl([]);
   loading: boolean = BoolConst.false;
-  rangeFilter: FormGroup;
   maxDate: Date = new Date();
   today: Date = new Date();
+  date: FormControl;
   constructor(
     private materialRequest: MaterialRequestService,
     private errorService: ErrorService,
     private dataService: DataService
   ) {
-    this.rangeFilter = new FormGroup({
-      start: new FormControl(this.getWeekOneWeekDate(this.maxDate, -7)),
-      end: new FormControl(this.maxDate),
-    });
+    this.date = new FormControl({begin: this.getWeekOneWeekDate(this.maxDate, -7), end: this.maxDate});
   }
 
   ngOnInit() {
     this.historyMaterialRequest();
   }
 
-  openCalendar = () => {
-    this.maxDate = this.today;
-    this.rangeFilter.controls.start.setValue(null);
-    this.rangeFilter.controls.end.setValue(null);
-  }
-
   filterChange = () => {
-    if (this.rangeFilter.controls.end.value) {
+    if (this.date.value) {
       this.historyMaterialRequest();
     }
   }
 
   updateMaxDate = () => {
-    const dateStart = this.rangeFilter.controls.start.value;
-    const maxDateAux = this.getWeekOneWeekDate(dateStart, 7);
-    this.maxDate = maxDateAux > this.today ? this.today : maxDateAux;
+    // const dateStart = this.rangeFilter.controls.start.value;
+    // const maxDateAux = this.getWeekOneWeekDate(dateStart, 7);
+    // this.maxDate = maxDateAux > this.today ? this.today : maxDateAux;
   }
 
   getQuery = () => {
     const status = this.statusControl.value.toString();
-    const start = this.rangeFilter.controls.start.value;
-    const end = this.rangeFilter.controls.end.value;
+    const start = this.date.value.begin;
+    const end = this.date.value.end;
     return `?offset=${
       this.offset}&limit=${
         this.limit}&fini=${

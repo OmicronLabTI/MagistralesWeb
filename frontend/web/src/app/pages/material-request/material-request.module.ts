@@ -15,6 +15,7 @@ import { FaborderListModule } from '../faborders-list/faborder-list.module';
 import { NgxMaskModule } from 'ngx-mask';
 import { HistoryMaterialRequestComponent } from './history-material-request/history-material-request.component';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { SatDatepickerModule, SatNativeDateModule } from 'saturn-datepicker';
 
 @NgModule({
   declarations: [ MaterialRequestComponent, HistoryMaterialRequestComponent ],
@@ -33,7 +34,9 @@ import { ComponentsModule } from 'src/app/components/components.module';
       NgxMaskModule.forRoot(),
       ComponentsModule,
       FormsModule,
-      ReactiveFormsModule
+      ReactiveFormsModule,
+      SatDatepickerModule,
+      SatNativeDateModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
