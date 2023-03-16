@@ -36,6 +36,7 @@ export class HistoryMaterialRequestComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.picker.openedStream.subscribe(this.onOpenDate);
     this.picker.setBeginDateSelected = this.updateMaxDate;
     this.historyMaterialRequest();
   }
@@ -44,6 +45,10 @@ export class HistoryMaterialRequestComponent implements OnInit {
     if (this.date.value) {
       this.historyMaterialRequest();
     }
+  }
+
+  onOpenDate = () => {
+    this.maxDate = this.today;
   }
 
   updateMaxDate = (dateStart: Date) => {
