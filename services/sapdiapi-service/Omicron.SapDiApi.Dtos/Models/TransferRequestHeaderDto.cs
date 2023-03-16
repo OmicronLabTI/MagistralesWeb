@@ -23,6 +23,14 @@ namespace Omicron.SapDiApi.Dtos.Models
         /// </value>
         public string UserInfo { get; set; }
 
+        // <summary>
+        /// Gets or sets UserId.
+        /// </summary>
+        /// <value>
+        /// String UserId.
+        /// </value>
+        public string UserId { get; set; }
+
         /// <summary>
         /// Gets or sets a value indicating whether the request is for labels.
         /// </summary>

@@ -928,5 +928,39 @@ namespace Omicron.SapAdapter.Test
                 UserError = string.Empty,
             };
         }
+
+        /// <summary>
+        /// Gets the attachments models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<RawMaterialRequestModel> GetRawMaterialRequestModel()
+        {
+            return new List<RawMaterialRequestModel>
+            {
+               new RawMaterialRequestModel { DocEntry = 1, DocDate = DateTime.Today, Status = "O", AdditionalComments = "NOMBRE APELLIDO-3c1e872e-76db-4753-ae15-108b555bc18d", Canceled = "N", RequestedUserId = "3c1e872e-76db-4753-ae15-108b555bc18d" },
+               new RawMaterialRequestModel { DocEntry = 2, DocDate = DateTime.Today, Status = "C", AdditionalComments = "NOMBRE APELLIDO-3c1e872e-76db-4753-ae15-108b555bc18d", Canceled = "N", RequestedUserId = "3c1e872e-76db-4753-ae15-108b555bc18d" },
+               new RawMaterialRequestModel { DocEntry = 3, DocDate = DateTime.Today, Status = "C", AdditionalComments = "NOMBRE APELLIDO-3c1e872e-76db-4753-ae15-108b555bc18d", Canceled = "Y", RequestedUserId = "3c1e872e-76db-4753-ae15-108b555bc18d" },
+               new RawMaterialRequestModel { DocEntry = 4, DocDate = DateTime.Today.AddDays(-3), Status = "O", AdditionalComments = "NOMBRE APELLIDO-db106faf-ef03-4c2e-9b7c-be0c7da8c0b7", Canceled = "N", RequestedUserId = "db106faf-ef03-4c2e-9b7c-be0c7da8c0b7" },
+               new RawMaterialRequestModel { DocEntry = 5, DocDate = DateTime.Today.AddDays(-3), Status = "C", AdditionalComments = "NOMBRE APELLIDO-db106faf-ef03-4c2e-9b7c-be0c7da8c0b7", Canceled = "N", RequestedUserId = "db106faf-ef03-4c2e-9b7c-be0c7da8c0b7" },
+               new RawMaterialRequestModel { DocEntry = 6, DocDate = DateTime.Today.AddDays(-3), Status = "C", AdditionalComments = "NOMBRE APELLIDO-db106faf-ef03-4c2e-9b7c-be0c7da8c0b7", Canceled = "Y", RequestedUserId = "db106faf-ef03-4c2e-9b7c-be0c7da8c0b7" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the attachments models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<RawMaterialRequestDetailModel> GetRawMaterialRequestDetailModel()
+        {
+            return new List<RawMaterialRequestDetailModel>
+            {
+               new RawMaterialRequestDetailModel { DocEntry = 1, ItemCode = "ITM 1", Description = "Descripción", Quantity = 1.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 2, ItemCode = "ITM 2", Description = "Descripción", Quantity = 2.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 3, ItemCode = "ITM 3", Description = "Descripción", Quantity = 3.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 4, ItemCode = "ITM 4", Description = "Descripción", Quantity = 4.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 5, ItemCode = "ITM 5", Description = "Descripción", Quantity = 5.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 6, ItemCode = "ITM 6", Description = "Descripción", Quantity = 6.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+            };
+        }
     }
 }
