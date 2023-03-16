@@ -533,5 +533,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="delveryId">the ids to look.</param>
         /// <returns>the data.</returns>
         Task<List<CompleteDeliveryDetailModel>> GetDeliveryDetailForDeliveryById(List<int> delveryId);
+
+        /// <summary>
+        /// Get the Get Complete Raw Material Request By Filters.
+        /// </summary>
+        /// <param name="initDate">Init date.</param>
+        /// <param name="endDate">End date.</param>
+        /// <param name="userId">User id.</param>
+        /// <returns>WRaw material request information.</returns>
+        Task<List<CompleteRawMaterialRequestModel>> GetCompleteRawMaterialRequestByFilters(DateTime initDate, DateTime endDate, string userId);
     }
 }

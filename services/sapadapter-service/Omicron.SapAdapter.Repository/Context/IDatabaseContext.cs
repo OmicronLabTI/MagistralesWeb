@@ -200,5 +200,21 @@ namespace Omicron.SapAdapter.Entities.Context
         /// ProductFirmModel Doctor group.
         /// </value>
         DbSet<ProductFirmModel> ProductFirmModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets RawMaterialRequestDetailModel.
+        /// </summary>
+        /// <value>
+        /// RawMaterialRequestDetailModel.
+        /// </value>
+        DbSet<RawMaterialRequestDetailModel> RawMaterialRequestDetailModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the RawMaterialRequestModel.
+        /// </summary>
+        /// <value>
+        /// RawMaterialRequestModel.
+        /// </value>
+        DbSet<RawMaterialRequestModel> RawMaterialRequestModel { get; set; }
     }
 }

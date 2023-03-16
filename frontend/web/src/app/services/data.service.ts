@@ -217,4 +217,10 @@ export class DataService {
   calculateOrValueList(list: boolean[]): boolean {
     return list.some(item => item);
   }
+  getDateFilterFormat = (date?: Date) => {
+    if (!date) {
+      return '';
+    }
+    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  }
 }

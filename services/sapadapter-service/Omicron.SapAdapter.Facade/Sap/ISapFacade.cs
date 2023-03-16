@@ -191,5 +191,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="ordersid">The parameters.</param>
         /// <returns>List of orders.</returns>
         Task<ResultDto> GetOrdersActive(List<int> ordersid);
+
+        /// <summary>
+        /// Gets raw material request.
+        /// </summary>
+        /// <param name="parameters">The paremeteres.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetRawMaterialRequest(Dictionary<string, string> parameters);
     }
 }

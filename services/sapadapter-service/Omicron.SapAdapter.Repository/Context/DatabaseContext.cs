@@ -105,6 +105,12 @@ namespace Omicron.SapAdapter.Entities.Context
         /// <inheritdoc/>
         public virtual DbSet<ProductFirmModel> ProductFirmModel { get; set; }
 
+        /// <inheritdoc/>
+        public virtual DbSet<RawMaterialRequestDetailModel> RawMaterialRequestDetailModel { get; set; }
+
+        /// <inheritdoc/>
+        public virtual DbSet<RawMaterialRequestModel> RawMaterialRequestModel { get; set; }
+
         /// <summary>
         /// model creating.
         /// </summary>

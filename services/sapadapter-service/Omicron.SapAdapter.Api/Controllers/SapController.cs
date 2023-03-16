@@ -123,7 +123,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         [Route("/fabOrder")]
         [HttpGet]
         public async Task<IActionResult> GetFabricationOrdersByCriterial(
-            [FromQuery]string salesOrders,
+            [FromQuery] string salesOrders,
             [FromQuery] string productionOrders,
             [FromQuery] bool components)
         {
@@ -418,6 +418,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         {
             this.lifetime.StopApplication();
             return this.Ok("Dead");
+        }
+
+        /// <summary>
+        /// Method to get all orders.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>List of orders.</returns>
+        [Route("/get/rawmaterialrequest")]
+        [HttpGet]
+        public async Task<IActionResult> GetRawMaterialRequest([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapFacade.GetRawMaterialRequest(parameters);
+            return this.Ok(response);
         }
     }
 }
