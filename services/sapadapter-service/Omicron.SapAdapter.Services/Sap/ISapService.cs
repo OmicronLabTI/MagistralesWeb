@@ -178,5 +178,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="userId">The parameters.</param>
         /// <returns>List.</returns>
         Task<ResultModel> GetPackingRequiredForOrderInAssignedStatus(string userId);
+
+        /// <summary>
+        /// Gets raw material request.
+        /// </summary>
+        /// <param name="parameters">The paremeteres.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetRawMaterialRequest(Dictionary<string, string> parameters);
     }
 }

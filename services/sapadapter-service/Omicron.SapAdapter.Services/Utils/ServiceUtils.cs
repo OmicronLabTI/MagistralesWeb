@@ -477,6 +477,39 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// Calculate Sap Status.
+        /// </summary>
+        /// <param name="statusSap">Status sap.</param>
+        /// <param name="isCanceled">Is canceled.</param>
+        /// <returns>User model.</returns>
+        public static string CalculateSapStatus(string statusSap, bool isCanceled)
+        {
+            if (isCanceled)
+            {
+                return ServiceConstants.Cancelado;
+            }
+
+            return ServiceShared.CalculateTernary(statusSap == ServiceConstants.AbiertoSap, ServiceConstants.Abierto, ServiceConstants.CloseStatus);
+        }
+
+        /// <summary>
+        /// Calculate Raw Material Applicant Name.
+        /// </summary>
+        /// <param name="additionalComments">Additional Comments.</param>
+        /// <returns>User model.</returns>
+        public static string CalculateRawMaterialApplicantName(string additionalComments)
+        {
+            var additionalCommentsList = additionalComments.Split("-").ToList();
+
+            if (!additionalCommentsList.Any())
+            {
+                return additionalComments;
+            }
+
+            return additionalCommentsList.First();
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>
