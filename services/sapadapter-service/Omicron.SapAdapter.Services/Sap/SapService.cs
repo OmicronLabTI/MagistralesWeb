@@ -790,6 +790,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var endDatestr = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.FechaFin, string.Empty);
 
             var listStatus = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.Abierto);
+            listStatus ??= ServiceConstants.Abierto;
             var status = listStatus.Split(",").ToList();
             status = status.Select(x => x.ToUpper()).ToList();
 
