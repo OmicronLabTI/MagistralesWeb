@@ -64,7 +64,7 @@ class RawMaterialItem: Mappable {
     var quantity: Double?
     var unit: String?
     var targetWarehosue: String?
-    var docDate: Date?
+    var docDate: String?
     var status: String?
     
     required init?(map: Map) {}
@@ -75,7 +75,7 @@ class RawMaterialItem: Mappable {
          quantity: Double?,
          unit: String?,
          targetWarehosue: String?,
-         docDate: Date?,
+         docDate: String?,
          status: String?) {
         self.docEntry = docEntry
         self.itemCode = itemCode

@@ -51,7 +51,8 @@ extension SupplieViewController {
                     cell.quantityLabel.text = self.formatter.string(from: (item.quantity ?? 0) as NSNumber)
                     cell.unitLabel.text = item.unit
                     cell.destinationStoreLabel.text = item.targetWarehosue
-                    cell.dateOrderLabel.text =  dateFormatter.string(from: item.docDate ?? Date())
+                    let selectedDate = item.docDate ?? String()
+                    cell.dateOrderLabel.text = selectedDate
                     cell.statusOrderLabel.text = item.status
                     cell.circleStatus.layer.cornerRadius = 5
                     cell.circleStatus.backgroundColor = self.getBackGround(status: item.status ?? String())
