@@ -18,6 +18,7 @@ class HistoryViewModel {
     var selectedRangeDateObs = PublishSubject<(startDate: Date, endDate: Date)>()
     var selectedStatusObs = PublishSubject<[String]>()
     var selectedHistoryList = PublishSubject<[RawMaterialItem]>()
+    var changeFilters = PublishSubject<Void>()
     var onScroll = PublishSubject<Void>()
     var startDate = Date()
     var endDate = Date()
@@ -51,6 +52,7 @@ class HistoryViewModel {
             self.endDate = dates.endDate
             self.offset = 0
             self.historyList = []
+            self.changeFilters.onNext(())
             self.getHistory(offset: self.offset, limit: self.limit)
         }).disposed(by: disposeBag)
     }
@@ -60,6 +62,7 @@ class HistoryViewModel {
             self.selectedStatus = status
             self.offset = 0
             self.historyList = []
+            self.changeFilters.onNext(())
             self.getHistory(offset: self.offset, limit: self.limit)
         }).disposed(by: disposeBag)
     }
@@ -93,7 +96,7 @@ class HistoryViewModel {
         }, onError: { [weak self] error in
             guard let self = self else { return }
             self.loading.onNext(false)
-            self.showAlert.onNext("")
+            self.showAlert.onNext(CommonStrings.errorGetHistoryOrders)
         }).disposed(by: disposeBag)
     }
 

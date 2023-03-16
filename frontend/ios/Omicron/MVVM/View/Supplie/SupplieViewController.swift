@@ -29,6 +29,9 @@ class SupplieViewController: UIViewController {
     @IBOutlet weak var estatusView: UIView!
     @IBOutlet weak var tableHistory: UITableView!
     @IBOutlet weak var noHistoryResults: UIView!
+    @IBOutlet weak var statusSelectedsLabel: UILabel!
+    @IBOutlet weak var dateRangeSelectedLabel: UILabel!
+    
     @Injected var supplieViewModel: SupplieViewModel
     @Injected var lottieManager: LottieManager
     @Injected var historyViewModel: HistoryViewModel
@@ -37,6 +40,9 @@ class SupplieViewController: UIViewController {
     var isLoading = false
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindShowAlert()
+        repaintFilters()
+        bindinChangeFilters()
         bindSegmentedControl()
         loadStyles()
         resetInfo()

@@ -87,6 +87,9 @@ struct OmicronColors {
     static let batchesColorBackground = UIColor(red: 242/255, green: 253/255, blue: 253/255, alpha: 1.00)
     static let primaryBlue = UIColor(red: 19/255, green: 121/255, blue: 253/255, alpha: 1.00)
     static let disabledButton = UIColor(red: 223/255, green: 225/255, blue: 230/255, alpha: 1)
+    static let historyStatusOpen = UIColor(red: 19/255, green: 121/255, blue: 253/255, alpha: 1)
+    static let historyStatusClosed = UIColor(red: 2/255, green: 172/255, blue: 74/255, alpha: 1)
+    static let historyStatusCancel = UIColor(red: 227/255, green: 9/255, blue: 0/255, alpha: 1)
 }
 
 struct UsersDefaultsConstants {
@@ -213,6 +216,7 @@ struct CommonStrings {
     static let confirmSendToStore = "¿Estás seguro que deseas enviar la solicitud de insumos?"
     static let placeholderObservations = "Deja tu comentario aquí"
     static let createBuildOrder = "Crear orden de fabricaciòn"
+    static let errorGetHistoryOrders = "Error al obtener el historial de solicitudes de traslados"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"

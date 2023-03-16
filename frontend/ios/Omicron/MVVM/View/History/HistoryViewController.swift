@@ -42,7 +42,6 @@ extension SupplieViewController {
         self.historyViewModel.selectedHistoryList.bind(to: self.tableHistory.rx.items(
                 cellIdentifier: ViewControllerIdentifiers.historyTableViewCell,
                 cellType: HistoryTableViewCell.self)) { index, item, cell  in
-                    
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "dd-MM-yyyy"
                     cell.descriptionLabel.text = item.description
@@ -52,7 +51,15 @@ extension SupplieViewController {
                     cell.destinationStoreLabel.text = item.targetWarehosue
                     cell.dateOrderLabel.text =  dateFormatter.string(from: item.docDate ?? Date())
                     cell.statusOrderLabel.text = item.status
+                    cell.circleStatus.layer.cornerRadius = 5
+                    cell.circleStatus.backgroundColor = self.getBackGround(status: item.status ?? String())
         }.disposed(by: disposeBag)
+    }
+    func getBackGround(status: String) -> UIColor {
+        let options = ["Abierto": OmicronColors.historyStatusOpen,
+                       "Cerrado": OmicronColors.historyStatusClosed,
+                       "Cancelado": OmicronColors.historyStatusCancel]
+        return options[status] ?? OmicronColors.historyStatusOpen
     }
     func bindIsLoading() {
         self.historyViewModel.loading.subscribe(onNext: {[weak self] loading in
@@ -73,5 +80,25 @@ extension SupplieViewController {
             guard let self = self else { return }
             self.validateHistoryResults(totalInfo: data.count)
         }).disposed(by: disposeBag)
+    }
+    func bindShowAlert() {
+        self.historyViewModel.showAlert.subscribe(onNext: {[weak self] error in
+            guard let self = self else { return }
+            self.showAlert(alert: (title: error, msg: String(), autoDismiss: true))
+        }).disposed(by: disposeBag)
+    }
+    func bindinChangeFilters() {
+        self.historyViewModel.changeFilters.subscribe(onNext: {[weak self] _ in
+            guard let self = self else { return }
+            self.repaintFilters()
+        }).disposed(by: disposeBag)
+    }
+    func repaintFilters() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM/yyyy"
+        statusSelectedsLabel.text = historyViewModel.selectedStatus.joined(separator: ",")
+        let startDateString = dateFormatter.string(from: historyViewModel.startDate)
+        let endDateString = dateFormatter.string(from: historyViewModel.endDate)
+        dateRangeSelectedLabel.text = "\(startDateString)-\(endDateString)"
     }
 }

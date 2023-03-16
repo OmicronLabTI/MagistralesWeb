@@ -16,6 +16,7 @@ class HistoryTableViewCell: UITableViewCell {
     @IBOutlet var destinationStoreLabel: UILabel!
     @IBOutlet var dateOrderLabel: UILabel!
     @IBOutlet var statusOrderLabel: UILabel!
+    @IBOutlet var circleStatus: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
