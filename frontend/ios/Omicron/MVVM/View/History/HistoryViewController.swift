@@ -43,7 +43,9 @@ extension SupplieViewController {
                 cellIdentifier: ViewControllerIdentifiers.historyTableViewCell,
                 cellType: HistoryTableViewCell.self)) { index, item, cell  in
                     let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "dd-MM-yyyy"
+                    dateFormatter.dateFormat = "dd/MM/yyyy"
+                    let docEntry = item.docEntry ?? 0
+                    cell.sapId.text = String(docEntry)
                     cell.descriptionLabel.text = item.description
                     cell.codeLabel.text = item.itemCode
                     cell.quantityLabel.text = self.formatter.string(from: (item.quantity ?? 0) as NSNumber)

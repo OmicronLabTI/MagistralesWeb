@@ -9,6 +9,7 @@
 import UIKit
 
 class HistoryTableViewCell: UITableViewCell {
+    @IBOutlet var sapId: UILabel!
     @IBOutlet var codeLabel: UILabel!
     @IBOutlet var descriptionLabel: UILabel!
     @IBOutlet var quantityLabel: UILabel!
