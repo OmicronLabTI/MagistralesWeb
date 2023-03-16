@@ -64,6 +64,9 @@ struct ViewControllerIdentifiers {
     static let patientListViewController = "PatientListViewController"
     static let supplieViewController = "SupplieViewController"
     static let supplieTableViewCell = "SupplieTableViewCell"
+    static let dateRangeSelectorViewController = "DateRangeSelectorViewController"
+    static let dropdownViewController = "DropdownViewController"
+    static let historyTableViewCell = "HistoryTableViewCell"
 }
 struct OmicronColors {
     static let blue = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)

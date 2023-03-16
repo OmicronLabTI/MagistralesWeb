@@ -7,10 +7,42 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1113E43729C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
+		1113E43829C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
+		1113E43929C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
+		1113E43A29C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
+		1113E43C29C288070043083E /* getHistory.json in Resources */ = {isa = PBXBuildFile; fileRef = 1113E43B29C288070043083E /* getHistory.json */; };
+		1113E43D29C288070043083E /* getHistory.json in Resources */ = {isa = PBXBuildFile; fileRef = 1113E43B29C288070043083E /* getHistory.json */; };
+		1113E43E29C288070043083E /* getHistory.json in Resources */ = {isa = PBXBuildFile; fileRef = 1113E43B29C288070043083E /* getHistory.json */; };
+		1113E43F29C288070043083E /* getHistory.json in Resources */ = {isa = PBXBuildFile; fileRef = 1113E43B29C288070043083E /* getHistory.json */; };
 		1122026929AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
 		1122026A29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
 		1122026B29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
 		1122026C29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
+		1135809429C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */; };
+		1135809529C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */; };
+		1135809629C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */; };
+		1135809729C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */; };
+		1135809929C1020400A58C74 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809829C1020400A58C74 /* HistoryViewController.swift */; };
+		1135809A29C1020400A58C74 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809829C1020400A58C74 /* HistoryViewController.swift */; };
+		1135809B29C1020400A58C74 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809829C1020400A58C74 /* HistoryViewController.swift */; };
+		1135809C29C1020400A58C74 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809829C1020400A58C74 /* HistoryViewController.swift */; };
+		113580A329C1220700A58C74 /* DateMultipleRangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580A229C1220700A58C74 /* DateMultipleRangeViewController.swift */; };
+		113580A429C1220700A58C74 /* DateMultipleRangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580A229C1220700A58C74 /* DateMultipleRangeViewController.swift */; };
+		113580A529C1220700A58C74 /* DateMultipleRangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580A229C1220700A58C74 /* DateMultipleRangeViewController.swift */; };
+		113580A629C1220700A58C74 /* DateMultipleRangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580A229C1220700A58C74 /* DateMultipleRangeViewController.swift */; };
+		113580AD29C12B0A00A58C74 /* CalendarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580AC29C12B0A00A58C74 /* CalendarItemView.swift */; };
+		113580AE29C12B0A00A58C74 /* CalendarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580AC29C12B0A00A58C74 /* CalendarItemView.swift */; };
+		113580AF29C12B0A00A58C74 /* CalendarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580AC29C12B0A00A58C74 /* CalendarItemView.swift */; };
+		113580B029C12B0A00A58C74 /* CalendarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580AC29C12B0A00A58C74 /* CalendarItemView.swift */; };
+		113580B229C12EF600A58C74 /* DayRangeIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580B129C12EF600A58C74 /* DayRangeIndicatorView.swift */; };
+		113580B329C12EF700A58C74 /* DayRangeIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580B129C12EF600A58C74 /* DayRangeIndicatorView.swift */; };
+		113580B429C12EF700A58C74 /* DayRangeIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580B129C12EF600A58C74 /* DayRangeIndicatorView.swift */; };
+		113580B529C12EF700A58C74 /* DayRangeIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580B129C12EF600A58C74 /* DayRangeIndicatorView.swift */; };
+		113580B729C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580B629C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift */; };
+		113580B829C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580B629C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift */; };
+		113580B929C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580B629C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift */; };
+		113580BA29C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113580B629C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift */; };
 		1142E19029AE623E008651D1 /* SupplieViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1142E18F29AE623E008651D1 /* SupplieViewController.swift */; };
 		1142E19129AE623E008651D1 /* SupplieViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1142E18F29AE623E008651D1 /* SupplieViewController.swift */; };
 		1142E19229AE623E008651D1 /* SupplieViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1142E18F29AE623E008651D1 /* SupplieViewController.swift */; };
@@ -23,6 +55,10 @@
 		115FD8CB29B2791200762C3E /* createSupplie.json in Resources */ = {isa = PBXBuildFile; fileRef = 115FD8C929B2791200762C3E /* createSupplie.json */; };
 		115FD8CC29B2791200762C3E /* createSupplie.json in Resources */ = {isa = PBXBuildFile; fileRef = 115FD8C929B2791200762C3E /* createSupplie.json */; };
 		115FD8CD29B2791200762C3E /* createSupplie.json in Resources */ = {isa = PBXBuildFile; fileRef = 115FD8C929B2791200762C3E /* createSupplie.json */; };
+		11717B7D29C246B500B9ADFC /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */; };
+		11717B7E29C246B500B9ADFC /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */; };
+		11717B7F29C246B500B9ADFC /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */; };
+		11717B8029C246B500B9ADFC /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */; };
 		11ACB7D229AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
 		11ACB7D329AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
 		11ACB7D429AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
@@ -32,6 +68,14 @@
 		11ACB7D929AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */; };
 		11ACB7DA29AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */; };
 		11E7879C29B65AC100B888C6 /* SuppliesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E7879B29B65AC100B888C6 /* SuppliesTest.swift */; };
+		11EB7A2729C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */; };
+		11EB7A2829C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */; };
+		11EB7A2929C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */; };
+		11EB7A2A29C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */; };
+		11FD7B1C29C2331700F04747 /* DropdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11FD7B1B29C2331700F04747 /* DropdownViewController.swift */; };
+		11FD7B1D29C2331700F04747 /* DropdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11FD7B1B29C2331700F04747 /* DropdownViewController.swift */; };
+		11FD7B1E29C2331700F04747 /* DropdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11FD7B1B29C2331700F04747 /* DropdownViewController.swift */; };
+		11FD7B1F29C2331700F04747 /* DropdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11FD7B1B29C2331700F04747 /* DropdownViewController.swift */; };
 		1E07D8CE251A5C5400DF2979 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8CD251A5C5400DF2979 /* Extensions.swift */; };
 		1E07D8D2251AA0C900DF2979 /* KPITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */; };
 		1E1C019E250EA43800CA6263 /* HeaderCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1E1C019D250EA43800CA6263 /* HeaderCollectionViewCell.xib */; };
@@ -537,13 +581,24 @@
 
 /* Begin PBXFileReference section */
 		0A4BE9F3CB565F9C5BB8E3F8 /* Pods-Omicron.qa.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron.qa.xcconfig"; path = "Target Support Files/Pods-Omicron/Pods-Omicron.qa.xcconfig"; sourceTree = "<group>"; };
+		1113E43629C27FBA0043083E /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
+		1113E43B29C288070043083E /* getHistory.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getHistory.json; sourceTree = "<group>"; };
 		1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCellExtension.swift; sourceTree = "<group>"; };
+		1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
+		1135809829C1020400A58C74 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
+		113580A229C1220700A58C74 /* DateMultipleRangeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateMultipleRangeViewController.swift; sourceTree = "<group>"; };
+		113580AC29C12B0A00A58C74 /* CalendarItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarItemView.swift; sourceTree = "<group>"; };
+		113580B129C12EF600A58C74 /* DayRangeIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayRangeIndicatorView.swift; sourceTree = "<group>"; };
+		113580B629C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayRangeIndicatorViewExtension.swift; sourceTree = "<group>"; };
 		1142E18F29AE623E008651D1 /* SupplieViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewController.swift; sourceTree = "<group>"; };
 		1142E19529AE626C008651D1 /* SupplieViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewModel.swift; sourceTree = "<group>"; };
 		115FD8C929B2791200762C3E /* createSupplie.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = createSupplie.json; sourceTree = "<group>"; };
+		11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
 		11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewControllerExtension.swift; sourceTree = "<group>"; };
 		11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCell.swift; sourceTree = "<group>"; };
 		11E7879B29B65AC100B888C6 /* SuppliesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuppliesTest.swift; sourceTree = "<group>"; };
+		11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateRangeSelectorViewController.swift; sourceTree = "<group>"; };
+		11FD7B1B29C2331700F04747 /* DropdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropdownViewController.swift; sourceTree = "<group>"; };
 		1321C32813E9F154A27FD4BA /* Pods-OmicronTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OmicronTests.debug.xcconfig"; path = "Target Support Files/Pods-OmicronTests/Pods-OmicronTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1E07D8CD251A5C5400DF2979 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KPITableViewCell.swift; sourceTree = "<group>"; };
@@ -794,12 +849,49 @@
 			path = Supplie;
 			sourceTree = "<group>";
 		};
+		11717B7B29C2468900B9ADFC /* History */ = {
+			isa = PBXGroup;
+			children = (
+				11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		11717B8129C2470700B9ADFC /* History */ = {
+			isa = PBXGroup;
+			children = (
+				1135809829C1020400A58C74 /* HistoryViewController.swift */,
+				1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
 		11E7879A29B65A9000B888C6 /* Supplies */ = {
 			isa = PBXGroup;
 			children = (
 				11E7879B29B65AC100B888C6 /* SuppliesTest.swift */,
 			);
 			path = Supplies;
+			sourceTree = "<group>";
+		};
+		11EB7A2529C0EC6C0002DCB5 /* DateRangeSelector */ = {
+			isa = PBXGroup;
+			children = (
+				11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */,
+				113580A229C1220700A58C74 /* DateMultipleRangeViewController.swift */,
+				113580AC29C12B0A00A58C74 /* CalendarItemView.swift */,
+				113580B129C12EF600A58C74 /* DayRangeIndicatorView.swift */,
+				113580B629C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift */,
+			);
+			path = DateRangeSelector;
+			sourceTree = "<group>";
+		};
+		11FD7B1A29C232F200F04747 /* Dropdown */ = {
+			isa = PBXGroup;
+			children = (
+				11FD7B1B29C2331700F04747 /* DropdownViewController.swift */,
+			);
+			path = Dropdown;
 			sourceTree = "<group>";
 		};
 		1EF03223251938970040DC65 /* Chart */ = {
@@ -857,6 +949,7 @@
 				49720ECE27EE7F0400A8A2DB /* HideButtons.swift */,
 				F363D7662981F00500113F3A /* PatientListModel.swift */,
 				7FE43E2629B6647A001049A6 /* BulkOrderModel.swift */,
+				1113E43629C27FBA0043083E /* History.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -874,6 +967,7 @@
 		4989CCB725ED956A00257CA2 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				11717B7B29C2468900B9ADFC /* History */,
 				7FE43E2029B5C562001049A6 /* BulkOrder */,
 				1142E19429AE6248008651D1 /* Supplie */,
 				4989CCF325ED978300257CA2 /* Login */,
@@ -1304,6 +1398,7 @@
 				4930D96B25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json */,
 				49A8A42D25F022C600600829 /* SendBatchToServerNoEmptyResponse.json */,
 				115FD8C929B2791200762C3E /* createSupplie.json */,
+				1113E43B29C288070043083E /* getHistory.json */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -1361,6 +1456,9 @@
 		98C8C03624AFCB9800018A88 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				11717B8129C2470700B9ADFC /* History */,
+				11FD7B1A29C232F200F04747 /* Dropdown */,
+				11EB7A2529C0EC6C0002DCB5 /* DateRangeSelector */,
 				1142E18E29AE61EB008651D1 /* Supplie */,
 				7F4FFEC9292EA1A400428501 /* PatientList */,
 				4989CCF425ED979A00257CA2 /* PDF */,
@@ -1612,6 +1710,7 @@
 				490B69CD268E98ED00DBE9F1 /* SendBatchToServerNoEmptyResponse.json in Resources */,
 				490B69CE268E98ED00DBE9F1 /* container.json in Resources */,
 				490B69CF268E98ED00DBE9F1 /* updateOrDeleteItemOfTable.json in Resources */,
+				1113E43F29C288070043083E /* getHistory.json in Resources */,
 				490B69D0268E98ED00DBE9F1 /* HeaderCollectionViewCell.xib in Resources */,
 				490B69D1268E98ED00DBE9F1 /* Status.json in Resources */,
 				490B69D2268E98ED00DBE9F1 /* login.json in Resources */,
@@ -1651,6 +1750,7 @@
 				49CF660D25F2D4AB002CD598 /* orderDetail.json in Resources */,
 				49CF660E25F2D4AB002CD598 /* SendBatchToServerNoEmptyResponse.json in Resources */,
 				49CF660F25F2D4AB002CD598 /* container.json in Resources */,
+				1113E43D29C288070043083E /* getHistory.json in Resources */,
 				115FD8CB29B2791200762C3E /* createSupplie.json in Resources */,
 				49CF661025F2D4AB002CD598 /* updateOrDeleteItemOfTable.json in Resources */,
 				49CF661125F2D4AB002CD598 /* HeaderCollectionViewCell.xib in Resources */,
@@ -1693,6 +1793,7 @@
 				49CF669025F2D821002CD598 /* orderDetail.json in Resources */,
 				49CF669125F2D821002CD598 /* SendBatchToServerNoEmptyResponse.json in Resources */,
 				49CF669225F2D821002CD598 /* container.json in Resources */,
+				1113E43E29C288070043083E /* getHistory.json in Resources */,
 				49CF669325F2D821002CD598 /* updateOrDeleteItemOfTable.json in Resources */,
 				49CF669425F2D821002CD598 /* HeaderCollectionViewCell.xib in Resources */,
 				49CF669525F2D821002CD598 /* Status.json in Resources */,
@@ -1722,6 +1823,7 @@
 				7C5DFB0C251C1B580041B2AC /* finishedOrderResponse.json in Resources */,
 				1EC2920B254B4C9F002FD4E3 /* connect.json in Resources */,
 				98015CBC24AFBC6D00E7772F /* LaunchScreen.storyboard in Resources */,
+				1113E43C29C288070043083E /* getHistory.json in Resources */,
 				7CBA553D24CF8E9B00918C38 /* CardCollectionViewCell.xib in Resources */,
 				7C2401DE24D4970700E2D56C /* SF-Pro-Display-Bold.otf in Resources */,
 				49E4D87025F154E100E196F9 /* GoogleService-Info.plist in Resources */,
@@ -2134,11 +2236,13 @@
 				490B6976268E98ED00DBE9F1 /* KPITableViewCell.swift in Sources */,
 				490B6977268E98ED00DBE9F1 /* LotsViewModel.swift in Sources */,
 				490B6978268E98ED00DBE9F1 /* ConnectModel.swift in Sources */,
+				11EB7A2A29C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */,
 				490B6979268E98ED00DBE9F1 /* OrderDetailFormViewController.swift in Sources */,
 				490B697A268E98ED00DBE9F1 /* Workload.swift in Sources */,
 				490B697B268E98ED00DBE9F1 /* MostCommonComponentsTableViewCell.swift in Sources */,
 				490B697C268E98ED00DBE9F1 /* CommentsViewModel.swift in Sources */,
 				1142E19929AE626C008651D1 /* SupplieViewModel.swift in Sources */,
+				11717B8029C246B500B9ADFC /* HistoryViewModel.swift in Sources */,
 				490B697D268E98ED00DBE9F1 /* OrderDetailViewController.swift in Sources */,
 				490B697E268E98ED00DBE9F1 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				490B697F268E98ED00DBE9F1 /* NetworkManager.swift in Sources */,
@@ -2157,6 +2261,7 @@
 				490B6988268E98ED00DBE9F1 /* ApiService.swift in Sources */,
 				490B6989268E98ED00DBE9F1 /* ComponentFormViewController.swift in Sources */,
 				490B698A268E98ED00DBE9F1 /* ComponentsTableViewCell.swift in Sources */,
+				11FD7B1F29C2331700F04747 /* DropdownViewController.swift in Sources */,
 				490B698B268E98ED00DBE9F1 /* AppDelegate.swift in Sources */,
 				7F3FBFF52975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */,
 				490B698C268E98ED00DBE9F1 /* AlertManager.swift in Sources */,
@@ -2166,13 +2271,17 @@
 				490B698F268E98ED00DBE9F1 /* Extensions.swift in Sources */,
 				490B6990268E98ED00DBE9F1 /* InboxViewModel.swift in Sources */,
 				490B6991268E98ED00DBE9F1 /* OrderDetailViewModel.swift in Sources */,
+				1135809729C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */,
 				490B6992268E98ED00DBE9F1 /* LotsSelectedTableViewCell.swift in Sources */,
 				F363D76F29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
+				113580BA29C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift in Sources */,
 				7FE43E2529B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
+				113580A629C1220700A58C74 /* DateMultipleRangeViewController.swift in Sources */,
 				490B6993268E98ED00DBE9F1 /* ComponentsViewModel.swift in Sources */,
 				7F738B6229B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */,
 				49720ECD27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				490B6994268E98ED00DBE9F1 /* LotsViewController.swift in Sources */,
+				113580B529C12EF700A58C74 /* DayRangeIndicatorView.swift in Sources */,
 				490B6995268E98ED00DBE9F1 /* ContainerTableViewCell.swift in Sources */,
 				490B6996268E98ED00DBE9F1 /* ExtensionsUI.swift in Sources */,
 				490B6997268E98ED00DBE9F1 /* ComponentsModel.swift in Sources */,
@@ -2183,6 +2292,7 @@
 				490B699A268E98ED00DBE9F1 /* ComponentsViewController.swift in Sources */,
 				490B699B268E98ED00DBE9F1 /* OrderDetailModel.swift in Sources */,
 				490B699C268E98ED00DBE9F1 /* ChartViewModel.swift in Sources */,
+				1113E43A29C27FBA0043083E /* History.swift in Sources */,
 				490B699D268E98ED00DBE9F1 /* OrderDetailFormViewModel.swift in Sources */,
 				490B699E268E98ED00DBE9F1 /* OrderPDF.swift in Sources */,
 				490B699F268E98ED00DBE9F1 /* ContainerViewController.swift in Sources */,
@@ -2200,10 +2310,12 @@
 				490B69A8268E98ED00DBE9F1 /* InboxModel.swift in Sources */,
 				490B69A9268E98ED00DBE9F1 /* PDFViewController.swift in Sources */,
 				490B69AA268E98ED00DBE9F1 /* SceneDelegate.swift in Sources */,
+				1135809C29C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				490B69AB268E98ED00DBE9F1 /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				490B69AC268E98ED00DBE9F1 /* SnapCollectionView.swift in Sources */,
 				490B69AD268E98ED00DBE9F1 /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D529AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
+				113580B029C12B0A00A58C74 /* CalendarItemView.swift in Sources */,
 				1122026C29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */,
 				490B69AE268E98ED00DBE9F1 /* ContainerViewModel.swift in Sources */,
 				490B69AF268E98ED00DBE9F1 /* NetworkModel.swift in Sources */,
@@ -2226,11 +2338,13 @@
 				49CF65B825F2D4AB002CD598 /* KPITableViewCell.swift in Sources */,
 				49CF65B925F2D4AB002CD598 /* LotsViewModel.swift in Sources */,
 				49CF65BA25F2D4AB002CD598 /* ConnectModel.swift in Sources */,
+				11EB7A2829C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */,
 				49CF65BB25F2D4AB002CD598 /* OrderDetailFormViewController.swift in Sources */,
 				49CF65BC25F2D4AB002CD598 /* Workload.swift in Sources */,
 				49CF65BD25F2D4AB002CD598 /* MostCommonComponentsTableViewCell.swift in Sources */,
 				49CF65BE25F2D4AB002CD598 /* CommentsViewModel.swift in Sources */,
 				1142E19729AE626C008651D1 /* SupplieViewModel.swift in Sources */,
+				11717B7E29C246B500B9ADFC /* HistoryViewModel.swift in Sources */,
 				49CF65BF25F2D4AB002CD598 /* OrderDetailViewController.swift in Sources */,
 				49CF65C025F2D4AB002CD598 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				49CF65C125F2D4AB002CD598 /* NetworkManager.swift in Sources */,
@@ -2249,6 +2363,7 @@
 				49CF65C925F2D4AB002CD598 /* ApiService.swift in Sources */,
 				49CF65CA25F2D4AB002CD598 /* ComponentFormViewController.swift in Sources */,
 				49CF65CB25F2D4AB002CD598 /* ComponentsTableViewCell.swift in Sources */,
+				11FD7B1D29C2331700F04747 /* DropdownViewController.swift in Sources */,
 				49CF65CC25F2D4AB002CD598 /* AppDelegate.swift in Sources */,
 				7F3FBFF32975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */,
 				49CF65CD25F2D4AB002CD598 /* AlertManager.swift in Sources */,
@@ -2258,13 +2373,17 @@
 				49CF65D025F2D4AB002CD598 /* Extensions.swift in Sources */,
 				49CF65D125F2D4AB002CD598 /* InboxViewModel.swift in Sources */,
 				49CF65D225F2D4AB002CD598 /* OrderDetailViewModel.swift in Sources */,
+				1135809529C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */,
 				49CF65D325F2D4AB002CD598 /* LotsSelectedTableViewCell.swift in Sources */,
 				F363D76D29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
+				113580B829C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift in Sources */,
 				7FE43E2329B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
+				113580A429C1220700A58C74 /* DateMultipleRangeViewController.swift in Sources */,
 				49CF65D425F2D4AB002CD598 /* ComponentsViewModel.swift in Sources */,
 				7F738B6029B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */,
 				49720ECB27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				49CF65D525F2D4AB002CD598 /* LotsViewController.swift in Sources */,
+				113580B329C12EF700A58C74 /* DayRangeIndicatorView.swift in Sources */,
 				49CF65D625F2D4AB002CD598 /* ContainerTableViewCell.swift in Sources */,
 				49CF65D725F2D4AB002CD598 /* ExtensionsUI.swift in Sources */,
 				49CF65D825F2D4AB002CD598 /* ComponentsModel.swift in Sources */,
@@ -2275,6 +2394,7 @@
 				49CF65DB25F2D4AB002CD598 /* ComponentsViewController.swift in Sources */,
 				49CF65DC25F2D4AB002CD598 /* OrderDetailModel.swift in Sources */,
 				49CF65DD25F2D4AB002CD598 /* ChartViewModel.swift in Sources */,
+				1113E43829C27FBA0043083E /* History.swift in Sources */,
 				49CF65DE25F2D4AB002CD598 /* OrderDetailFormViewModel.swift in Sources */,
 				49CF65DF25F2D4AB002CD598 /* OrderPDF.swift in Sources */,
 				49CF65E025F2D4AB002CD598 /* ContainerViewController.swift in Sources */,
@@ -2292,10 +2412,12 @@
 				49CF65E925F2D4AB002CD598 /* InboxModel.swift in Sources */,
 				49CF65EA25F2D4AB002CD598 /* PDFViewController.swift in Sources */,
 				49CF65EB25F2D4AB002CD598 /* SceneDelegate.swift in Sources */,
+				1135809A29C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				49CF65EC25F2D4AB002CD598 /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				382707C125F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
 				49CF65ED25F2D4AB002CD598 /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D329AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
+				113580AE29C12B0A00A58C74 /* CalendarItemView.swift in Sources */,
 				1122026A29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */,
 				49CF65EE25F2D4AB002CD598 /* ContainerViewModel.swift in Sources */,
 				49CF65EF25F2D4AB002CD598 /* NetworkModel.swift in Sources */,
@@ -2318,11 +2440,13 @@
 				49CF663B25F2D821002CD598 /* KPITableViewCell.swift in Sources */,
 				49CF663C25F2D821002CD598 /* LotsViewModel.swift in Sources */,
 				49CF663D25F2D821002CD598 /* ConnectModel.swift in Sources */,
+				11EB7A2929C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */,
 				49CF663E25F2D821002CD598 /* OrderDetailFormViewController.swift in Sources */,
 				49CF663F25F2D821002CD598 /* Workload.swift in Sources */,
 				49CF664025F2D821002CD598 /* MostCommonComponentsTableViewCell.swift in Sources */,
 				49CF664125F2D821002CD598 /* CommentsViewModel.swift in Sources */,
 				1142E19829AE626C008651D1 /* SupplieViewModel.swift in Sources */,
+				11717B7F29C246B500B9ADFC /* HistoryViewModel.swift in Sources */,
 				49CF664225F2D821002CD598 /* OrderDetailViewController.swift in Sources */,
 				49CF664325F2D821002CD598 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				49CF664425F2D821002CD598 /* NetworkManager.swift in Sources */,
@@ -2341,6 +2465,7 @@
 				49CF664C25F2D821002CD598 /* ApiService.swift in Sources */,
 				49CF664D25F2D821002CD598 /* ComponentFormViewController.swift in Sources */,
 				49CF664E25F2D821002CD598 /* ComponentsTableViewCell.swift in Sources */,
+				11FD7B1E29C2331700F04747 /* DropdownViewController.swift in Sources */,
 				49CF664F25F2D821002CD598 /* AppDelegate.swift in Sources */,
 				7F3FBFF42975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */,
 				49CF665025F2D821002CD598 /* AlertManager.swift in Sources */,
@@ -2350,13 +2475,17 @@
 				49CF665325F2D821002CD598 /* Extensions.swift in Sources */,
 				49CF665425F2D821002CD598 /* InboxViewModel.swift in Sources */,
 				49CF665525F2D821002CD598 /* OrderDetailViewModel.swift in Sources */,
+				1135809629C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */,
 				49CF665625F2D821002CD598 /* LotsSelectedTableViewCell.swift in Sources */,
 				F363D76E29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
+				113580B929C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift in Sources */,
 				7FE43E2429B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
+				113580A529C1220700A58C74 /* DateMultipleRangeViewController.swift in Sources */,
 				49CF665725F2D821002CD598 /* ComponentsViewModel.swift in Sources */,
 				7F738B6129B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */,
 				49720ECC27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				49CF665825F2D821002CD598 /* LotsViewController.swift in Sources */,
+				113580B429C12EF700A58C74 /* DayRangeIndicatorView.swift in Sources */,
 				49CF665925F2D821002CD598 /* ContainerTableViewCell.swift in Sources */,
 				49CF665A25F2D821002CD598 /* ExtensionsUI.swift in Sources */,
 				49CF665B25F2D821002CD598 /* ComponentsModel.swift in Sources */,
@@ -2367,6 +2496,7 @@
 				49CF665E25F2D821002CD598 /* ComponentsViewController.swift in Sources */,
 				49CF665F25F2D821002CD598 /* OrderDetailModel.swift in Sources */,
 				49CF666025F2D821002CD598 /* ChartViewModel.swift in Sources */,
+				1113E43929C27FBA0043083E /* History.swift in Sources */,
 				49CF666125F2D821002CD598 /* OrderDetailFormViewModel.swift in Sources */,
 				49CF666225F2D821002CD598 /* OrderPDF.swift in Sources */,
 				49CF666325F2D821002CD598 /* ContainerViewController.swift in Sources */,
@@ -2384,10 +2514,12 @@
 				49CF666C25F2D821002CD598 /* InboxModel.swift in Sources */,
 				49CF666D25F2D821002CD598 /* PDFViewController.swift in Sources */,
 				49CF666E25F2D821002CD598 /* SceneDelegate.swift in Sources */,
+				1135809B29C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				49CF666F25F2D821002CD598 /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				382707C225F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
 				49CF667025F2D821002CD598 /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D429AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
+				113580AF29C12B0A00A58C74 /* CalendarItemView.swift in Sources */,
 				1122026B29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */,
 				49CF667125F2D821002CD598 /* ContainerViewModel.swift in Sources */,
 				49CF667225F2D821002CD598 /* NetworkModel.swift in Sources */,
@@ -2410,11 +2542,13 @@
 				1E07D8D2251AA0C900DF2979 /* KPITableViewCell.swift in Sources */,
 				7C9118FD24EF1CD900E2571A /* LotsViewModel.swift in Sources */,
 				1EC2920D254B4D90002FD4E3 /* ConnectModel.swift in Sources */,
+				11EB7A2729C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */,
 				7C5C6DA124E8F46C00662508 /* OrderDetailFormViewController.swift in Sources */,
 				1EF03220251932DA0040DC65 /* Workload.swift in Sources */,
 				4930B45225E07AA400F1F4F8 /* MostCommonComponentsTableViewCell.swift in Sources */,
 				7CB218DA24E79E870015951C /* CommentsViewModel.swift in Sources */,
 				1142E19629AE626C008651D1 /* SupplieViewModel.swift in Sources */,
+				11717B7D29C246B500B9ADFC /* HistoryViewModel.swift in Sources */,
 				7CB6332224DDCBAE0055425C /* OrderDetailViewController.swift in Sources */,
 				1E85E51D25224505007636E8 /* CardIsolatedOrderCollectionViewCell.swift in Sources */,
 				98C8C04024AFCE3500018A88 /* NetworkManager.swift in Sources */,
@@ -2433,6 +2567,7 @@
 				98C8C03924AFCBE300018A88 /* ApiService.swift in Sources */,
 				989391D9250AE174004750D8 /* ComponentFormViewController.swift in Sources */,
 				7C7DDC73251007760049B43C /* ComponentsTableViewCell.swift in Sources */,
+				11FD7B1C29C2331700F04747 /* DropdownViewController.swift in Sources */,
 				98015CB024AFBC6C00E7772F /* AppDelegate.swift in Sources */,
 				7F3FBFF22975DDD300C6EA3F /* OrderDetailViewTable.swift in Sources */,
 				7CED3DA324DC0FBA00C52225 /* AlertManager.swift in Sources */,
@@ -2442,13 +2577,17 @@
 				1E07D8CE251A5C5400DF2979 /* Extensions.swift in Sources */,
 				7CE216D424CB9576005A7FED /* InboxViewModel.swift in Sources */,
 				7CB6332424DDCBC90055425C /* OrderDetailViewModel.swift in Sources */,
+				1135809429C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */,
 				7C0017AC24EFA8570025B17D /* LotsSelectedTableViewCell.swift in Sources */,
 				F363D76C29820CA900113F3A /* HeaderInboxViewExtension.swift in Sources */,
+				113580B729C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift in Sources */,
 				7FE43E2229B5C588001049A6 /* BulkOrderViewModel.swift in Sources */,
+				113580A329C1220700A58C74 /* DateMultipleRangeViewController.swift in Sources */,
 				987BDFE22509869F00D9C6E4 /* ComponentsViewModel.swift in Sources */,
 				7F738B5F29B86AE3007B69CC /* OrderDetailTextFieldController.swift in Sources */,
 				49720ECA27ED1F5300A8A2DB /* InboxViewModelExtension.swift in Sources */,
 				7C9118FB24EF1C8B00E2571A /* LotsViewController.swift in Sources */,
+				113580B229C12EF600A58C74 /* DayRangeIndicatorView.swift in Sources */,
 				381B3BF225E034B80077F764 /* ContainerTableViewCell.swift in Sources */,
 				986EA24725083BF200ACE26A /* ExtensionsUI.swift in Sources */,
 				987BDFE4250986A700D9C6E4 /* ComponentsModel.swift in Sources */,
@@ -2459,6 +2598,7 @@
 				987BDFE02509869200D9C6E4 /* ComponentsViewController.swift in Sources */,
 				7CB6332624DDCBE70055425C /* OrderDetailModel.swift in Sources */,
 				1EF032222519388C0040DC65 /* ChartViewModel.swift in Sources */,
+				1113E43729C27FBA0043083E /* History.swift in Sources */,
 				7C5C6DA324E8F48500662508 /* OrderDetailFormViewModel.swift in Sources */,
 				1E9674AF254338A40004344C /* OrderPDF.swift in Sources */,
 				381B3BCA25E0315E0077F764 /* ContainerViewController.swift in Sources */,
@@ -2476,10 +2616,12 @@
 				7CE216D624CB9588005A7FED /* InboxModel.swift in Sources */,
 				1E83B0732534F34C00755026 /* PDFViewController.swift in Sources */,
 				98015CB224AFBC6C00E7772F /* SceneDelegate.swift in Sources */,
+				1135809929C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				382707C025F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
 				7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D229AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
+				113580AD29C12B0A00A58C74 /* CalendarItemView.swift in Sources */,
 				1122026929AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */,
 				381B3BD525E0316B0077F764 /* ContainerViewModel.swift in Sources */,
 				98C8C04224AFD2A600018A88 /* NetworkModel.swift in Sources */,
