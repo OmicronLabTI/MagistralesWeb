@@ -12,7 +12,7 @@
             <div class="col-md-4 col-6 datepicker">
                 <mat-form-field appearance="outline" >
                     <mat-label>Fecha de solicitud</mat-label>
-                    <input (ngModelChange)="filterChange()"   [max]="maxDate" readonly="true" matInput placeholder="Choose a date" [satDatepicker]="picker2" [formControl]="date" ngDefaultControl>
+                    <input (ngModelChange)="filterChange()"  [max]="maxDate" [min]="minDate" readonly="true" matInput placeholder="Choose a date" [satDatepicker]="picker2" [formControl]="date" ngDefaultControl>
                     <sat-datepicker  #picker2 [rangeMode]="true">
                     </sat-datepicker>
                     <sat-datepicker-toggle matSuffix [for]="picker2"></sat-datepicker-toggle>

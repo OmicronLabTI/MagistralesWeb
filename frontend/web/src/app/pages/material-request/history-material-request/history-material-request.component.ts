@@ -23,6 +23,7 @@ export class HistoryMaterialRequestComponent implements OnInit {
   limit: number = CONST_NUMBER.ten;
   statusControl: FormControl = new FormControl([]);
   loading: boolean = BoolConst.false;
+  minDate: Date = null;
   maxDate: Date = new Date();
   today: Date = new Date();
   date: FormControl;
@@ -48,10 +49,12 @@ export class HistoryMaterialRequestComponent implements OnInit {
   }
 
   onOpenDate = () => {
+    this.minDate = null;
     this.maxDate = this.today;
   }
 
   updateMaxDate = (dateStart: Date) => {
+    this.minDate = dateStart;
     const maxDateAux = this.getWeekOneWeekDate(dateStart, 7);
     this.maxDate = maxDateAux > this.today ? this.today : maxDateAux;
   }
