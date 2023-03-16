@@ -26,15 +26,17 @@ export class HistoryMaterialRequestComponent implements OnInit {
   maxDate: Date = new Date();
   today: Date = new Date();
   date: FormControl;
+  @ViewChild('picker2', { static: true }) picker;
   constructor(
     private materialRequest: MaterialRequestService,
     private errorService: ErrorService,
     private dataService: DataService
   ) {
-    this.date = new FormControl({begin: this.getWeekOneWeekDate(this.maxDate, -7), end: this.maxDate});
+    this.date = new FormControl({ begin: this.getWeekOneWeekDate(this.maxDate, -7), end: this.maxDate });
   }
 
   ngOnInit() {
+    this.picker.setBeginDateSelected = this.updateMaxDate;
     this.historyMaterialRequest();
   }
 
@@ -44,10 +46,9 @@ export class HistoryMaterialRequestComponent implements OnInit {
     }
   }
 
-  updateMaxDate = () => {
-    // const dateStart = this.rangeFilter.controls.start.value;
-    // const maxDateAux = this.getWeekOneWeekDate(dateStart, 7);
-    // this.maxDate = maxDateAux > this.today ? this.today : maxDateAux;
+  updateMaxDate = (dateStart: Date) => {
+    const maxDateAux = this.getWeekOneWeekDate(dateStart, 7);
+    this.maxDate = maxDateAux > this.today ? this.today : maxDateAux;
   }
 
   getQuery = () => {

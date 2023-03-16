@@ -8,12 +8,12 @@
             <div class="breadcrumb"><a class="breadcrumblink">Solicitud de insumos</a> /
                 Historial</div>
         </div>
-        <div class="filters-contain col-12 d-flex ">
+        <div class="filters-contain col-12 d-flex flex-wrap">
             <div class="col-md-4 col-6 datepicker">
                 <mat-form-field appearance="outline" >
                     <mat-label>Fecha de solicitud</mat-label>
-                    <input (dateRangesChange)="filterChange()"   [max]="maxDate" readonly="true" matInput placeholder="Choose a date" [satDatepicker]="picker2" [formControl]="date" ngDefaultControl>
-                    <sat-datepicker [selectFirstDateOnClose]="true"   [rangeHoverEffect]="true" #picker2 [rangeMode]="true">
+                    <input (ngModelChange)="filterChange()"   [max]="maxDate" readonly="true" matInput placeholder="Choose a date" [satDatepicker]="picker2" [formControl]="date" ngDefaultControl>
+                    <sat-datepicker  #picker2 [rangeMode]="true">
                     </sat-datepicker>
                     <sat-datepicker-toggle matSuffix [for]="picker2"></sat-datepicker-toggle>
                 </mat-form-field>
@@ -22,7 +22,7 @@
                 <mat-form-field appearance="outline" class="custom-field custom-style-status">
                     <mat-label>Estatus</mat-label>
                     <mat-select (selectionChange)="filterChange()" [formControl]="statusControl" multiple>
-                        <mat-option value="Abierta">Abierta</mat-option>
+                        <mat-option value="Abierto">Abierto</mat-option>
                         <mat-option value="Cerrado">Cerrado</mat-option>
                         <mat-option value="Cancelado">Cancelado</mat-option>
                     </mat-select>
