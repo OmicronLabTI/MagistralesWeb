@@ -5,7 +5,7 @@ metadata:
   labels:
     app: oauthserver
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: oauthserver
@@ -31,11 +31,11 @@ spec:
             - containerPort: 8090
           resources:
             limits:
-              cpu: 1413m
-              memory: 477Mi
+              cpu: 500m
+              memory: 900Mi
             requests:
-              cpu: 707m
-              memory: 323Mi
+              cpu: 300m
+              memory: 630Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -97,11 +97,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 170m
-              memory: 166Mi
+              cpu: 220m
+              memory: 210Mi
             requests:
-              cpu: 85m
-              memory: 95Mi
+              cpu: 154m
+              memory: 147Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -127,7 +127,7 @@ metadata:
   labels:
     app: usuarios
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: usuarios
@@ -163,11 +163,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 168m
-              memory: 292Mi
+              cpu: 215m
+              memory: 370Mi
             requests:
-              cpu: 84m
-              memory: 132Mi
+              cpu: 151m
+              memory: 259Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -193,7 +193,7 @@ metadata:
   labels:
     app: sapadapter
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: sapadapter
@@ -239,11 +239,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 1233m
-              memory: 1240Mi
+              cpu: 500m
+              memory: 500Mi
             requests:
-              cpu: 617m
-              memory: 396Mi
+              cpu: 350m
+              memory: 350Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -269,7 +269,7 @@ metadata:
   labels:
     app: pedidos
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: pedidos
@@ -340,11 +340,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 368m
-              memory: 3546Mi
+              cpu: 150m
+              memory: 1200Mi
             requests:
-              cpu: 184m
-              memory: 463Mi
+              cpu: 105m
+              memory: 840Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -406,11 +406,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 102m
-              memory: 65Mi
+              cpu: 135m
+              memory: 135Mi
             requests:
-              cpu: 51m
-              memory: 51Mi
+              cpu: 95m
+              memory: 95Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -477,11 +477,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 38m
-              memory: 133Mi
+              cpu: 100m
+              memory: 180Mi
             requests:
-              cpu: 19m
-              memory: 97Mi
+              cpu: 70m
+              memory: 126Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -500,3 +500,4 @@ spec:
     app: reporting
   type: ClusterIP
 ---
+
