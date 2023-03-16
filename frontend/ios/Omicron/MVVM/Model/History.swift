@@ -15,16 +15,19 @@ class RawMaterialHistoryReq {
     var fini: String
     var ffin: String
     var status: [String]
+    var userId: String
     init(offset: Int,
          limit: Int,
          fini: String,
          ffin: String,
-         status: [String]) {
+         status: [String],
+         userId: String) {
         self.offset = offset
         self.limit = limit
         self.ffin = ffin
         self.fini = fini
         self.status = status
+        self.userId = userId
     }
     func toDictionary() -> [String: Any] {
         var dict = [String: Any]()
@@ -65,7 +68,25 @@ class RawMaterialItem: Mappable {
     var status: String?
     
     required init?(map: Map) {}
-    init() { }
+    init(docEntry: Int?,
+         itemCode: String?,
+         description: String?,
+         applicationName: String?,
+         quantity: Decimal?,
+         unit: String?,
+         targetWarehosue: String?,
+         docDate: Date?,
+         status: String?) {
+        self.docEntry = docEntry
+        self.itemCode = itemCode
+        self.description = description
+        self.applicationName = applicationName
+        self.quantity = quantity
+        self.unit = unit
+        self.targetWarehosue = targetWarehosue
+        self.docDate = docDate
+        self.status = status
+    }
     func mapping(map: Map) {
         self.docEntry <- map["docEntry"]
         self.itemCode <- map["itemCode"]

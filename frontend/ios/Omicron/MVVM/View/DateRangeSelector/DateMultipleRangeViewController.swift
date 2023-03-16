@@ -62,6 +62,6 @@ extension DateRangeSelectorViewController {
         let selectedStartDate = Calendar.current.date(byAdding: .day, value: -7, to: self.startDate ?? Date()) ?? Date()
         let selectedEndDate = Calendar.current.date(byAdding: .day, value: 7, to: self.startDate ?? Date()) ?? Date()
         return self.startDate != nil && selectedDate < selectedStartDate ||
-        self.startDate != nil && selectedDate > selectedEndDate
+        self.startDate != nil && selectedDate > selectedEndDate || selectedDate > Date()
     }
 }

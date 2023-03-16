@@ -39,6 +39,7 @@ class DateRangeSelectorViewController: UIViewController {
           calendarView.topAnchor.constraint(equalTo: calendarContainer.topAnchor),
           calendarView.bottomAnchor.constraint(equalTo: calendarContainer.bottomAnchor)
         ])
+        calendarView.scroll(toDayContaining: self.startDate ?? Date(), scrollPosition: .centered, animated: false)
         calendarView.daySelectionHandler = { [weak self] day in
           guard let self else { return }
             if self.validateIsDisabledDate(day.description) {

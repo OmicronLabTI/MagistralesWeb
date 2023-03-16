@@ -26,17 +26,6 @@ extension SupplieViewController {
         navigationVC.modalPresentationStyle = .formSheet
         self.present(navigationVC, animated: true, completion: nil)
     }
-    @IBAction func changeStatusOptionsDidPressed(_ sender: Any) {
-        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
-        let dropdownVC = storyboard.instantiateViewController(
-            withIdentifier: ViewControllerIdentifiers.dropdownViewController)
-            as? DropdownViewController
-        dropdownVC?.modalPresentationStyle = .popover
-        dropdownVC?.selectedOptions = historyViewModel.selectedStatus
-        dropdownVC?.preferredContentSize = CGSize(width: 200, height: 230)
-        let navigationVC = UINavigationController(rootViewController: dropdownVC ?? DropdownViewController())
-        self.present(navigationVC, animated: true, completion: nil)
-    }
 
     @objc func onChanged(_ sender: UISegmentedControl) {
         switch segmentedControl?.selectedSegmentIndex {
@@ -53,6 +42,36 @@ extension SupplieViewController {
         self.historyViewModel.selectedHistoryList.bind(to: self.tableHistory.rx.items(
                 cellIdentifier: ViewControllerIdentifiers.historyTableViewCell,
                 cellType: HistoryTableViewCell.self)) { index, item, cell  in
+                    
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "dd-MM-yyyy"
+                    cell.descriptionLabel.text = item.description
+                    cell.codeLabel.text = item.itemCode
+                    cell.quantityLabel.text = self.formatter.string(from: (item.quantity ?? 0) as NSNumber)
+                    cell.unitLabel.text = item.unit
+                    cell.destinationStoreLabel.text = item.targetWarehosue
+                    cell.dateOrderLabel.text =  dateFormatter.string(from: item.docDate ?? Date())
+                    cell.statusOrderLabel.text = item.status
         }.disposed(by: disposeBag)
+    }
+    func bindIsLoading() {
+        self.historyViewModel.loading.subscribe(onNext: {[weak self] loading in
+            guard let self = self else { return }
+            if loading {
+                self.lottieManager.showLoading()
+                return
+            }
+            self.lottieManager.hideLoading()
+        }).disposed(by: disposeBag)
+    }
+    func validateHistoryResults(totalInfo: Int) {
+        tableHistory.isHidden = totalInfo == 0
+        noHistoryResults.isHidden = totalInfo > 0
+    }
+    func validateHasInfo() {
+        self.historyViewModel.selectedHistoryList.subscribe(onNext: {[weak self] data in
+            guard let self = self else { return }
+            self.validateHistoryResults(totalInfo: data.count)
+        }).disposed(by: disposeBag)
     }
 }

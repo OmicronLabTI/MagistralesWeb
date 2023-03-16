@@ -9,7 +9,14 @@
 import UIKit
 
 class HistoryTableViewCell: UITableViewCell {
-
+    @IBOutlet var codeLabel: UILabel!
+    @IBOutlet var descriptionLabel: UILabel!
+    @IBOutlet var quantityLabel: UILabel!
+    @IBOutlet var unitLabel: UILabel!
+    @IBOutlet var destinationStoreLabel: UILabel!
+    @IBOutlet var dateOrderLabel: UILabel!
+    @IBOutlet var statusOrderLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

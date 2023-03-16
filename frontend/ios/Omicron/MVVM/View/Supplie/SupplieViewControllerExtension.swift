@@ -11,9 +11,13 @@ import UIKit
 extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UITextViewDelegate {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return supplieList.count
-    }
+        if tableView == self.tableComponents {
+            return supplieList.count
+        } else {
+            return historyViewModel.historyList.count
+        }
 
+    }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         return loadTableRow(tableView, cellForRowAt: indexPath)
     }
@@ -23,16 +27,13 @@ extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UIT
             for: indexPath) as? SupplieTableViewCell
         else { return SupplieTableViewCell() }
         let supplie: Supplie = supplieList[indexPath.row]
-        supplieList = []
-        cell.idLabel?.text = String(indexPath.row)
+        cell.idLabel?.text = String(self.supplieList.count - indexPath.row)
         cell.codeLabel?.text = supplie.productId
         cell.descriptionLabel?.text = supplie.description
-        cell.quantityTextField?.text = String(0)
+        cell.quantityTextField?.text = self.formatter.string(from: (supplie.requestQuantity ?? 0) as NSNumber)
         cell.storeDestinationLabel?.text = supplie.warehouse
         cell.unityLabel?.text = supplie.unit
-        cell.index = indexPath.row
         cell.supplie = supplie
-        supplieList.append(supplie)
         return cell
     }
     // Selected Cell
@@ -51,6 +52,19 @@ extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UIT
         let customView = UIView()
         customView.backgroundColor = OmicronColors.processStatus
         cell.selectedBackgroundView = customView
+        
+        let lastSectionIndex = tableView.numberOfSections - 1
+        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
+        if indexPath.section == lastSectionIndex &&
+            indexPath.row == lastRowIndex - 3 &&
+            !self.isLoading &&
+            lastRowIndex > 10 {
+            tableView.scrollToRow(at: [0, lastRowIndex - 4],
+                                  at: .middle,
+                                  animated: false)
+            self.historyViewModel.onScroll.onNext(())
+        }
+        
         if indexPath.row%2 == 0 {
             cell.backgroundColor = OmicronColors.tableColorRow
         } else {

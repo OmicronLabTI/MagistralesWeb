@@ -28,11 +28,13 @@ class SupplieViewController: UIViewController {
     @IBOutlet weak var dateOrderView: UIView!
     @IBOutlet weak var estatusView: UIView!
     @IBOutlet weak var tableHistory: UITableView!
+    @IBOutlet weak var noHistoryResults: UIView!
     @Injected var supplieViewModel: SupplieViewModel
     @Injected var lottieManager: LottieManager
     @Injected var historyViewModel: HistoryViewModel
     var supplieList: [Supplie] = []
-
+    var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
+    var isLoading = false
     override func viewDidLoad() {
         super.viewDidLoad()
         bindSegmentedControl()
@@ -49,6 +51,9 @@ class SupplieViewController: UIViewController {
         segmentedControl.selectedSegmentIndex = 0
         changeSegmentedView(isSupplie: true)
         bindHistoryTable()
+        bindIsLoading()
+        validateHasInfo()
+        historyViewModel.getHistory(offset: 0, limit: historyViewModel.limit)
     }
     func bindReturnBack() {
         supplieViewModel.returnBack.subscribe(onNext: { [weak self] _ in
@@ -78,10 +83,10 @@ class SupplieViewController: UIViewController {
         supplieList = []
         supplieViewModel.supplieList = []
         supplieViewModel.selectedComponentsToDelete = []
+        historyViewModel.resetValues()
         tableComponents.dataSource = [] as? any UITableViewDataSource
         tableHistory.dataSource = [] as? any UITableViewDataSource
-        tableComponents.reloadData()
-        tableHistory.reloadData()
+        tableHistory.delegate = self
     }
     @IBAction func showComponents(_ sender: Any) {
         changeView(false)
@@ -155,23 +160,11 @@ class SupplieViewController: UIViewController {
             guard let self = self else { return }
             self.supplieList = list
         }).disposed(by: disposeBag)
-
-//        supplieViewModel
-//            .componentsList
-//            .bind(to: tableComponents.rx.items(
-//                cellIdentifier: ViewControllerIdentifiers.supplieTableViewCell,
-//                cellType: SupplieTableViewCell.self
-//            )) { index, supplie, cell  in
-//                cell.idLabel?.text = String(self.supplieList.count - index)
-//                cell.codeLabel?.text = supplie.productId
-//                cell.descriptionLabel?.text = supplie.description
-//                cell.quantityTextField?.text = self.formatter.string(from: (supplie.requestQuantity ?? 0) as NSNumber)
-//                cell.storeDestinationLabel?.text = supplie.warehouse
-//                cell.unityLabel?.text = supplie.unit
-//                cell.index = index
-//                cell.supplie = supplie
-//            }
-//            .disposed(by: disposeBag)
+        
+        supplieViewModel.componentsList.subscribe(onNext: {[weak self] data in
+            self?.supplieList = data
+            self?.tableComponents.reloadData()
+        }).disposed(by: disposeBag)
     }
 
     func bindDeleteButton() {

@@ -8,7 +8,7 @@
 
 import UIKit
 import Resolver
-class DropdownViewController: UIViewController, UIPopoverPresentationControllerDelegate {
+class DropdownViewController: UIViewController {
     @IBOutlet weak var optionsTable: UITableView!
     var options = ["ABIERTO", "CERRADO", "CANCELADO"]
     @Injected var historyViewModel: HistoryViewModel
@@ -17,9 +17,9 @@ class DropdownViewController: UIViewController, UIPopoverPresentationControllerD
         super.viewDidLoad()
         optionsTable.delegate = self
         optionsTable.dataSource = self
-        preferredContentSize = CGSize(width: 200, height: 230)
+        selectedOptions = historyViewModel.selectedStatus
         setSelectedOptions()
-        // Do any additional setup after loading the view.
+        self.preferredContentSize = CGSize(width: 210, height: 250)
     }
     func setSelectedOptions() {
         selectedOptions.forEach ({
@@ -27,19 +27,10 @@ class DropdownViewController: UIViewController, UIPopoverPresentationControllerD
                 self.optionsTable.selectRow(at: IndexPath(row: selectedIndex, section: 0),
                                             animated: false,
                                             scrollPosition: .none)
+                self.optionsTable.cellForRow(at: IndexPath(row: selectedIndex,
+                                                           section: 0))?.accessoryType = .checkmark
             }
-            print(self.optionsTable.indexPathsForSelectedRows)
         })
-    }
-
-    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
-        return .none
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let viewPopover = segue.destination as? DropdownViewController
-        viewPopover?.popoverPresentationController?.delegate = self
-        optionsTable.delegate = self
     }
 
     @IBAction func acceptDidPressed(_ sender: Any) {
@@ -52,7 +43,6 @@ class DropdownViewController: UIViewController, UIPopoverPresentationControllerD
             self.dismiss(animated: true)
         }
     }
-
 }
 
 extension DropdownViewController: UITableViewDelegate, UITableViewDataSource {

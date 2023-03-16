@@ -18,11 +18,13 @@ class HistoryViewModel {
     var selectedRangeDateObs = PublishSubject<(startDate: Date, endDate: Date)>()
     var selectedStatusObs = PublishSubject<[String]>()
     var selectedHistoryList = PublishSubject<[RawMaterialItem]>()
+    var onScroll = PublishSubject<Void>()
     var startDate = Date()
     var endDate = Date()
-    var selectedStatus: [String] = []
+    var selectedStatus: [String] = ["ABIERTO"]
     var offset = 0
     var limit = 20
+    var totalData = 0
     var loading = PublishSubject<Bool>()
     var showAlert = PublishSubject<String>()
     var historyList: [RawMaterialItem] = []
@@ -30,6 +32,16 @@ class HistoryViewModel {
         startDate = Calendar.current.date(byAdding: .day, value: -7, to: self.endDate) ?? Date()
         bindChangeDateRange()
         bindChangeStatus()
+        bindOnScroll()
+    }
+    
+    func resetValues() {
+        endDate = Date()
+        startDate = Calendar.current.date(byAdding: .day, value: -7, to: self.endDate) ?? Date()
+        historyList = []
+        offset = 0
+        totalData = 0
+        selectedStatus = ["ABIERTO"]
     }
 
     func bindChangeDateRange() {
@@ -51,18 +63,31 @@ class HistoryViewModel {
             self.getHistory(offset: self.offset, limit: self.limit)
         }).disposed(by: disposeBag)
     }
+    func bindOnScroll() {
+        onScroll.subscribe(onNext: {[weak self] _ in
+            guard let self = self else { return }
+            if self.totalData > self.historyList.count {
+                self.offset += self.limit
+                self.getHistory(offset: self.offset, limit: self.limit)
+            }
+        }).disposed(by: disposeBag)
+    }
 
     func getHistory(offset: Int,
                     limit: Int) {
+        self.loading.onNext(true)
+        let userId = Persistence.shared.getUserData()?.id ?? String()
         let req = RawMaterialHistoryReq(offset: offset,
                                         limit: limit,
                                         fini: getStringDate(self.startDate),
                                         ffin: getStringDate(self.endDate),
-                                        status: self.selectedStatus)
+                                        status: self.selectedStatus,
+                                        userId: userId)
         networkManager.getRawMaterialRequest(req).subscribe(onNext: {[weak self] res in
             guard let self = self else { return }
             let responseList = res.response ?? []
             self.historyList.append(contentsOf: responseList)
+            self.totalData = res.comments ?? 0
             self.selectedHistoryList.onNext(self.historyList)
             self.loading.onNext(false)
         }, onError: { [weak self] error in

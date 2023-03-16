@@ -43,7 +43,7 @@ final class DayRangeIndicatorView: UIView {
 
     // Draw rounded rectangles for each day row
     for dayRowFrame in dayRowFrames {
-      let roundedRectanglePath = UIBezierPath(roundedRect: dayRowFrame, cornerRadius: 12)
+      let roundedRectanglePath = UIBezierPath(roundedRect: dayRowFrame, cornerRadius: 32)
       context?.addPath(roundedRectanglePath.cgPath)
       context?.fillPath()
     }
