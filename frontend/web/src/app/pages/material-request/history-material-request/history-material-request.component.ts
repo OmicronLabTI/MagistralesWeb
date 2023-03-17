@@ -33,7 +33,7 @@ export class HistoryMaterialRequestComponent implements OnInit {
     private errorService: ErrorService,
     private dataService: DataService
   ) {
-    this.date = new FormControl({ begin: this.getWeekOneWeekDate(this.maxDate, -7), end: this.maxDate });
+    this.date = new FormControl({ begin: this.getWeekOneWeekDate(this.maxDate, -6), end: this.maxDate });
   }
 
   ngOnInit() {
@@ -44,6 +44,8 @@ export class HistoryMaterialRequestComponent implements OnInit {
 
   filterChange = () => {
     if (this.date.value) {
+      this.offset = 0;
+      this.pageIndex = 0;
       this.historyMaterialRequest();
     }
   }
@@ -55,7 +57,7 @@ export class HistoryMaterialRequestComponent implements OnInit {
 
   updateMaxDate = (dateStart: Date) => {
     this.minDate = dateStart;
-    const maxDateAux = this.getWeekOneWeekDate(dateStart, 7);
+    const maxDateAux = this.getWeekOneWeekDate(dateStart, 6);
     this.maxDate = maxDateAux > this.today ? this.today : maxDateAux;
   }
 
