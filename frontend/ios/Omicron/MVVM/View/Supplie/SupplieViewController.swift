@@ -90,6 +90,7 @@ class SupplieViewController: UIViewController {
         supplieViewModel.supplieList = []
         supplieViewModel.selectedComponentsToDelete = []
         historyViewModel.resetValues()
+        repaintFilters()
         tableComponents.dataSource = [] as? any UITableViewDataSource
         tableHistory.dataSource = [] as? any UITableViewDataSource
         tableHistory.delegate = self

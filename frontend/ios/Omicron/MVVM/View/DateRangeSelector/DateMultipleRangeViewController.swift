@@ -59,8 +59,8 @@ extension DateRangeSelectorViewController {
 
     func validateIsDisabledDate(_ stringDate: String) -> Bool {
         let selectedDate = self.createDate(stringDate: stringDate) ?? Date()
-        let selectedStartDate = Calendar.current.date(byAdding: .day, value: -7, to: self.startDate ?? Date()) ?? Date()
-        let selectedEndDate = Calendar.current.date(byAdding: .day, value: 7, to: self.startDate ?? Date()) ?? Date()
+        let selectedStartDate = Calendar.current.date(byAdding: .day, value: -6, to: self.startDate ?? Date()) ?? Date()
+        let selectedEndDate = Calendar.current.date(byAdding: .day, value: 6, to: self.startDate ?? Date()) ?? Date()
         return self.startDate != nil && selectedDate < selectedStartDate ||
         self.startDate != nil && selectedDate > selectedEndDate || selectedDate > Date()
     }
