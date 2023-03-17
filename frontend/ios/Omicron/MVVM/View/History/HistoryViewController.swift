@@ -56,7 +56,7 @@ extension SupplieViewController {
                     cell.statusOrderLabel.text = item.status
                     cell.circleStatus.layer.cornerRadius = 5
                     cell.circleStatus.backgroundColor = self.getBackGround(status: item.status ?? String())
-        }.disposed(by: disposeBag)
+        }.disposed(by: disposeBag!)
     }
     func getBackGround(status: String) -> UIColor {
         let options = ["Abierto": OmicronColors.historyStatusOpen,
@@ -72,7 +72,7 @@ extension SupplieViewController {
                 return
             }
             self.lottieManager.hideLoading()
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
     func validateHistoryResults(totalInfo: Int) {
         tableHistory.isHidden = totalInfo == 0
@@ -82,19 +82,19 @@ extension SupplieViewController {
         self.historyViewModel.selectedHistoryList.subscribe(onNext: {[weak self] data in
             guard let self = self else { return }
             self.validateHistoryResults(totalInfo: data.count)
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
     func bindShowAlert() {
         self.historyViewModel.showAlert.subscribe(onNext: {[weak self] error in
             guard let self = self else { return }
             self.showAlert(alert: (title: error, msg: String(), autoDismiss: true))
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
     func bindinChangeFilters() {
         self.historyViewModel.changeFilters.subscribe(onNext: {[weak self] _ in
             guard let self = self else { return }
             self.repaintFilters()
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
     func repaintFilters() {
         let dateFormatter = DateFormatter()

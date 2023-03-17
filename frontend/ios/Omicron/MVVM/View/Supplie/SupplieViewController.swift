@@ -12,7 +12,7 @@ import RxCocoa
 import Resolver
 
 class SupplieViewController: UIViewController {
-    let disposeBag = DisposeBag()
+    var disposeBag: DisposeBag? = DisposeBag()
     @IBOutlet weak var deleteComponents: UIButton!
     @IBOutlet weak var addComponent: UIButton!
     @IBOutlet weak var sendToStore: UIButton!
@@ -61,6 +61,10 @@ class SupplieViewController: UIViewController {
         validateHasInfo()
         historyViewModel.getHistory(offset: 0, limit: historyViewModel.limit)
     }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        disposeBag = nil
+    }
     func bindReturnBack() {
         supplieViewModel.returnBack.subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
@@ -76,7 +80,7 @@ class SupplieViewController: UIViewController {
                                  block: { _ in
                 self.returnBack()
             })
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
     func initNavigationBar() {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Mis órdenes",
@@ -90,6 +94,7 @@ class SupplieViewController: UIViewController {
         supplieViewModel.supplieList = []
         supplieViewModel.selectedComponentsToDelete = []
         historyViewModel.resetValues()
+        repaintFilters()
         tableComponents.dataSource = [] as? any UITableViewDataSource
         tableHistory.dataSource = [] as? any UITableViewDataSource
         tableHistory.delegate = self
@@ -165,18 +170,18 @@ class SupplieViewController: UIViewController {
         supplieViewModel.componentsList.subscribe(onNext: { [weak self] list in
             guard let self = self else { return }
             self.supplieList = list
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
         
         supplieViewModel.componentsList.subscribe(onNext: {[weak self] data in
             self?.supplieList = data
             self?.tableComponents.reloadData()
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
 
     func bindDeleteButton() {
         supplieViewModel.selectedButtonIsEnable.subscribe(onNext: {[weak self] isEnabled in
             self?.deleteComponents.isEnabled = isEnabled
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
 
     func setupUI() {
@@ -234,13 +239,13 @@ class SupplieViewController: UIViewController {
             self.sendToStore.isEnabled = isEnabled
             let color = self.sendToStore.isEnabled ? OmicronColors.primaryBlue : OmicronColors.disabledButton
                 self.changeBGButton(button: self.sendToStore, backgroundColor: color)
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
     func bindAlertDialog() {
         supplieViewModel.showSuccessAlert.subscribe(onNext: { [weak self] alert in
             guard let self = self else { return }
             self.showAlert(alert: alert)
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
     func showAlert(alert: (title: String, msg: String, autoDismiss: Bool)) {
         AlertManager.shared.showAlert(title: alert.title,
@@ -257,6 +262,6 @@ class SupplieViewController: UIViewController {
                 return
             }
             self.lottieManager.hideLoading()
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
 }

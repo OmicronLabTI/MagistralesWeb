@@ -30,7 +30,7 @@ class HistoryViewModel {
     var showAlert = PublishSubject<String>()
     var historyList: [RawMaterialItem] = []
     init() {
-        startDate = Calendar.current.date(byAdding: .day, value: -7, to: self.endDate) ?? Date()
+        startDate = Calendar.current.date(byAdding: .day, value: -6, to: self.endDate) ?? Date()
         bindChangeDateRange()
         bindChangeStatus()
         bindOnScroll()
@@ -38,7 +38,7 @@ class HistoryViewModel {
     
     func resetValues() {
         endDate = Date()
-        startDate = Calendar.current.date(byAdding: .day, value: -7, to: self.endDate) ?? Date()
+        startDate = Calendar.current.date(byAdding: .day, value: -6, to: self.endDate) ?? Date()
         historyList = []
         offset = 0
         totalData = 0
