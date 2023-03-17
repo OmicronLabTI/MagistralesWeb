@@ -8,6 +8,7 @@
 
 namespace Omicron.Warehouses.Services.Mapping
 {
+    using System;
     using AutoMapper;
     using Omicron.Warehouses.Dtos.Model;
     using Omicron.Warehouses.Entities.Model;
@@ -24,10 +25,12 @@ namespace Omicron.Warehouses.Services.Mapping
         {
             this.CreateMap<ResultModel, ResultDto>();
             this.CreateMap<ResultDto, ResultModel>();
-            this.CreateMap<RawMaterialRequestDto, RawMaterialRequestModel>().ForMember(x => x.Signature, opt => opt.ConvertUsing<ConverterBase64ToByteArray, string>());
+            this.CreateMap<RawMaterialRequestDto, RawMaterialRequestModel>()
+                .ForMember(x => x.Signature, opt => opt.ConvertUsing<ConverterBase64ToByteArray, string>());
             this.CreateMap<RawMaterialRequestModel, RawMaterialRequestDto>();
             this.CreateMap<RawMaterialRequestDetailModel, RawMaterialRequestDetailDto>();
-            this.CreateMap<RawMaterialRequestDetailDto, RawMaterialRequestDetailModel>();
+            this.CreateMap<RawMaterialRequestDetailDto, RawMaterialRequestDetailModel>()
+                .ForMember(x => x.RequestQuantity, opt => opt.ConvertUsing<ConverterStringToDecimal, string>());
         }
     }
 }

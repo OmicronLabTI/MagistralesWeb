@@ -36,7 +36,7 @@ namespace Omicron.Warehouses.Dtos.Model
         /// Gets or sets request quantity.
         /// </summary>
         /// <value>The base quantity.</value>
-        public decimal RequestQuantity { get; set; }
+        public string RequestQuantity { get; set; }
 
         /// <summary>
         /// Gets or sets measurement of unit.
