@@ -29,8 +29,7 @@ namespace Omicron.Warehouses.Services.Mapping
                 .ForMember(x => x.Signature, opt => opt.ConvertUsing<ConverterBase64ToByteArray, string>());
             this.CreateMap<RawMaterialRequestModel, RawMaterialRequestDto>();
             this.CreateMap<RawMaterialRequestDetailModel, RawMaterialRequestDetailDto>();
-            this.CreateMap<RawMaterialRequestDetailDto, RawMaterialRequestDetailModel>()
-                .ForMember(x => x.RequestQuantity, opt => opt.ConvertUsing<ConverterStringToDecimal, string>());
+            this.CreateMap<RawMaterialRequestDetailDto, RawMaterialRequestDetailModel>();
         }
     }
 }
