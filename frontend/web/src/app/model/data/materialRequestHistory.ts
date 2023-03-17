@@ -49,7 +49,6 @@ export const MaterialRequestHistoryTableSettings: SettingsCommonTableClass = {
         {
             className: ' text-center ',
             title: 'FECHA DE SOLICITUD',
-            type: 'date',
             attr: 'docDate',
         },
         {
