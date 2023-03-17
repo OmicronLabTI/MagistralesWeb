@@ -269,7 +269,7 @@ metadata:
   labels:
     app: pedidos
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: pedidos
@@ -341,10 +341,10 @@ spec:
           resources:
             limits:
               cpu: 150m
-              memory: 1500Mi
+              memory: 1000Mi
             requests:
               cpu: 105m
-              memory: 1050Mi
+              memory: 700Mi
       imagePullSecrets:
         - name: pullsecret
 ---
