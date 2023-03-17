@@ -8,8 +8,6 @@
 
 namespace Omicron.SapAdapter.Entities.Model.JoinsModels
 {
-    using System;
-
     /// <summary>
     /// The item.
     /// </summary>
@@ -25,7 +23,7 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public DateTime DocDate { get; set; }
+        public string DocDate { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
