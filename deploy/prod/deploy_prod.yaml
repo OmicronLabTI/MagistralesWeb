@@ -341,10 +341,10 @@ spec:
           resources:
             limits:
               cpu: 150m
-              memory: 1300Mi
+              memory: 1500Mi
             requests:
               cpu: 105m
-              memory: 910Mi
+              memory: 1050Mi
       imagePullSecrets:
         - name: pullsecret
 ---
