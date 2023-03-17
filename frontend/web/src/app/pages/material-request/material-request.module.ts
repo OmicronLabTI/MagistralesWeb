@@ -17,6 +17,7 @@ import { HistoryMaterialRequestComponent } from './history-material-request/hist
 import { ComponentsModule } from 'src/app/components/components.module';
 import { SatDatepickerModule, SatNativeDateModule } from 'saturn-datepicker';
 import { APP_PROVIDERS } from 'src/app/app.providers';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [MaterialRequestComponent, HistoryMaterialRequestComponent],
@@ -37,7 +38,8 @@ import { APP_PROVIDERS } from 'src/app/app.providers';
     FormsModule,
     ReactiveFormsModule,
     SatDatepickerModule,
-    SatNativeDateModule
+    SatNativeDateModule,
+    RouterModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
