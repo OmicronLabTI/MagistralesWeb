@@ -1304,7 +1304,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          where header.DocDate >= initDate && header.DocDate <= endDate && !string.IsNullOrEmpty(header.RequestedUserId) && (header.RequestedUserId == userId || userId == null)
                          select new CompleteRawMaterialRequestModel
                          {
-                             DocDate = header.DocDate,
+                             DocDate = header.DocDate.ToString("dd/MM/yyyy"),
                              DocEntry = header.DocEntry,
                              AdditionalComments = header.AdditionalComments,
                              IsCanceled = header.Canceled == "Y",
@@ -1315,7 +1315,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Unit = detail.Unit,
                              Status = header.Status,
                              RequestedUserId = header.RequestedUserId,
-                         }).OrderByDescending(raw => raw.DocDate).ThenByDescending( raw => raw.DocEntry).AsNoTracking();
+                         }).OrderByDescending(raw => raw.DocEntry).AsNoTracking();
             return (await this.RetryQuery(query)).ToList();
         }
 

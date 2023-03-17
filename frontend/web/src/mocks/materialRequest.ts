@@ -46,7 +46,7 @@ export const MaterialRequestHistoryMock: IMaterialHistoryRes = {
             quantity: 1.8989,
             unit: 'Paquete',
             targetWarehosue: 'MG',
-            docDate: '2023-03-14T00:00:00',
+            docDate: '14/03/2023',
             status: 'Abierto'
         },
         {
@@ -57,7 +57,7 @@ export const MaterialRequestHistoryMock: IMaterialHistoryRes = {
             quantity: 1.8989,
             unit: 'Paquete',
             targetWarehosue: 'MG',
-            docDate: '2023-03-14T00:00:00',
+            docDate: '14/03/2023',
             status: 'Cerrado'
         },
         {

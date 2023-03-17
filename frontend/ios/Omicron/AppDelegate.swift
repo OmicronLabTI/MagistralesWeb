@@ -14,7 +14,7 @@ import  Firebase
 #endif
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+    class AppDelegate: UIResponder, UIApplicationDelegate {
     // swiftlint:disable line_length
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -56,5 +56,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { ChartViewModel() }.scope(Resolver.shared)
         Resolver.register { ContainerViewModel() }.scope(Resolver.unique)
         Resolver.register { BulkOrderViewModel() }.scope(Resolver.unique)
+        Resolver.register { HistoryViewModel() }.scope(Resolver.application)
     }
 }

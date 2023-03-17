@@ -22,14 +22,29 @@ class SupplieViewController: UIViewController {
     @IBOutlet weak var observationsView: UIView!
     @IBOutlet weak var tableComponents: UITableView!
     @IBOutlet weak var observationsField: UITextView!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    @IBOutlet weak var newSupplie: UIStackView!
+    @IBOutlet weak var historySupplie: UIStackView!
+    @IBOutlet weak var dateOrderView: UIView!
+    @IBOutlet weak var estatusView: UIView!
+    @IBOutlet weak var tableHistory: UITableView!
+    @IBOutlet weak var noHistoryResults: UIView!
+    @IBOutlet weak var statusSelectedsLabel: UILabel!
+    @IBOutlet weak var dateRangeSelectedLabel: UILabel!
+    
     @Injected var supplieViewModel: SupplieViewModel
     @Injected var lottieManager: LottieManager
-    var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
-
+    @Injected var historyViewModel: HistoryViewModel
     var supplieList: [Supplie] = []
-
+    var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
+    var isLoading = false
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindShowAlert()
+        repaintFilters()
+        bindinChangeFilters()
+        bindSegmentedControl()
+        loadStyles()
         resetInfo()
         setupUI()
         bindTableData()
@@ -39,6 +54,12 @@ class SupplieViewController: UIViewController {
         disableSendToStoreBinding()
         bindLoading()
         bindReturnBack()
+        segmentedControl.selectedSegmentIndex = 0
+        changeSegmentedView(isSupplie: true)
+        bindHistoryTable()
+        bindIsLoading()
+        validateHasInfo()
+        historyViewModel.getHistory(offset: 0, limit: historyViewModel.limit)
     }
     func bindReturnBack() {
         supplieViewModel.returnBack.subscribe(onNext: { [weak self] _ in
@@ -68,8 +89,10 @@ class SupplieViewController: UIViewController {
         supplieList = []
         supplieViewModel.supplieList = []
         supplieViewModel.selectedComponentsToDelete = []
+        historyViewModel.resetValues()
         tableComponents.dataSource = [] as? any UITableViewDataSource
-        tableComponents.reloadData()
+        tableHistory.dataSource = [] as? any UITableViewDataSource
+        tableHistory.delegate = self
     }
     @IBAction func showComponents(_ sender: Any) {
         changeView(false)
@@ -143,23 +166,11 @@ class SupplieViewController: UIViewController {
             guard let self = self else { return }
             self.supplieList = list
         }).disposed(by: disposeBag)
-
-        supplieViewModel
-            .componentsList
-            .bind(to: tableComponents.rx.items(
-                cellIdentifier: ViewControllerIdentifiers.supplieTableViewCell,
-                cellType: SupplieTableViewCell.self
-            )) { index, supplie, cell in
-                cell.idLabel.text = String(self.supplieList.count - index)
-                cell.codeLabel.text = supplie.productId
-                cell.descriptionLabel.text = supplie.description
-                cell.quantityTextField.text = self.formatter.string(from: (supplie.requestQuantity ?? 0) as NSNumber)
-                cell.storeDestinationLabel.text = supplie.warehouse
-                cell.unityLabel.text = supplie.unit
-                cell.index = index
-                cell.supplie = supplie
-            }
-            .disposed(by: disposeBag)
+        
+        supplieViewModel.componentsList.subscribe(onNext: {[weak self] data in
+            self?.supplieList = data
+            self?.tableComponents.reloadData()
+        }).disposed(by: disposeBag)
     }
 
     func bindDeleteButton() {
@@ -172,6 +183,9 @@ class SupplieViewController: UIViewController {
         tableComponents.delegate = self
         tableComponents.dataSource = self
         tableComponents.rowHeight = UITableView.automaticDimension
+        tableHistory.delegate = self
+        tableHistory.dataSource = self
+        tableHistory.rowHeight = UITableView.automaticDimension
         sendToStore.isEnabled = false
         deleteComponents.isEnabled = false
         observationsField.delegate = self

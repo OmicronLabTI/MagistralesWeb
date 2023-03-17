@@ -209,6 +209,11 @@ class NetworkManager: SessionProtocol {
         let res: Observable<CreateComponentsOrderResponse> = makeRequest(request: req)
         return res
     }
+    func getRawMaterialRequest(_ data: RawMaterialHistoryReq) -> Observable<RawMaterialHistory> {
+        let req: ApiService = ApiService.getHistory(data: data)
+        let res: Observable<RawMaterialHistory> = makeRequest(request: req)
+        return res
+    }
 
     private func makeRequest<T: BaseMappable>(
         request: ApiService, needsVPN: Bool = false) -> Observable<T> {

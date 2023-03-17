@@ -221,6 +221,8 @@ export class DataService {
     if (!date) {
       return '';
     }
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    return `${this.getTwoDigitsNumber(date.getDate())}/${this.getTwoDigitsNumber(date.getMonth() + 1)}/${date.getFullYear()}`;
   }
+
+  getTwoDigitsNumber = (digit: number) => digit > 9 ? digit : `0${digit}`;
 }
