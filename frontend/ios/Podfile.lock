@@ -72,6 +72,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.2.2):
     - GoogleUtilities/Logger
+  - HorizonCalendar (1.16.0)
   - lottie-ios (3.1.8)
   - Moya/Core (14.0.0):
     - Alamofire (~> 5.0)
@@ -105,6 +106,7 @@ DEPENDENCIES:
   - Eureka
   - Firebase/Analytics
   - Firebase/Crashlytics
+  - HorizonCalendar
   - lottie-ios
   - Moya/RxSwift (~> 14.0)
   - ObjectMapper
@@ -130,6 +132,7 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
+    - HorizonCalendar
     - lottie-ios
     - Moya
     - nanopb
@@ -158,6 +161,7 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: 0c3b134b2c0a90c4c24833873894bfe0e42a0384
   GoogleDataTransport: 1024b1a4dfbd7a0e92cb20d7e0a6f1fb66b449a4
   GoogleUtilities: 31c5b01f978a70c6cff2afc6272b3f1921614b43
+  HorizonCalendar: 90d7281cf1cd0cb3fae1d3e53f6f7fd24fda5a0e
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   nanopb: 59221d7f958fb711001e6a449489542d92ae113e
@@ -172,6 +176,6 @@ SPEC CHECKSUMS:
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
 
-PODFILE CHECKSUM: a2a99850ae38ac9d494f68f0a4a663c6709cb9a4
+PODFILE CHECKSUM: 466fe495036aa23a5a1ce76257c9544e59da032c
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.0
