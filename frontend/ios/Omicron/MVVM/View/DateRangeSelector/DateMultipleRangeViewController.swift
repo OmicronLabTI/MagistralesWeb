@@ -23,6 +23,7 @@ extension DateRangeSelectorViewController {
         let dateRangeToHighlight = validatePaintRange() ?
             selectedStartDate...selectedEndDate :
             Date()...Date()
+        calendar.locale = NSLocale(localeIdentifier: "es_MX") as Locale
         return CalendarViewContent(
         calendar: calendar,
         visibleDateRange: startDate...endDate,
@@ -43,6 +44,14 @@ extension DateRangeSelectorViewController {
                         .clear),
               viewModel: .init(day: day))
         }
+        .monthHeaderItemProvider({ month in
+            return CalendarItemModel<MonthLabel>(
+              invariantViewProperties: .init(
+                font: UIFont.systemFont(ofSize: 25),
+                textColor: UIColor.black,
+                backgroundColor: .clear),
+              viewModel: .init(month: month))
+        })
         .interMonthSpacing(10)
         .verticalDayMargin(4)
         .horizontalDayMargin(4)
