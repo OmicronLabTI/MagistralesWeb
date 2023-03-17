@@ -21,7 +21,7 @@
                         {{ row[cellSticky.attr] }}
                     </div>
                 </td>
-                <td [ngClass]="cell.className" *ngFor="let cell of settings.columns; let indexCell=index;"
+                <td [matTooltip]="valueCell(row,cell.attr)" [ngClass]="cell.className" *ngFor="let cell of settings.columns; let indexCell=index;"
                     [ngSwitch]="cell.type">
                     <ng-container *ngSwitchCase="CellTypes.action">
                         <a [matTooltip]="actionCell(row,cell.attr).label" href="javascript:void(0)"
@@ -37,7 +37,7 @@
                         <div [class]="'point '+row[cell.attr]"></div>
                         <div>{{ row[cell.attr]  }}</div>
                     </ng-container>
-                    <ng-container *ngSwitchDefault>
+                    <ng-container  *ngSwitchDefault>
                         {{ row[cell.attr] }}
                     </ng-container>
                 </td>
