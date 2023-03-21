@@ -17,16 +17,6 @@ class DateRangeSelectorViewController: UIViewController {
     var endDate: Date?
     lazy var calendarView: CalendarView = CalendarView(initialContent: makeContent())
     lazy var calendar = Calendar.current
-    lazy var dayDateFormatter: DateFormatter = {
-      let dateFormatter = DateFormatter()
-      dateFormatter.calendar = calendar
-      dateFormatter.locale = calendar.locale
-      dateFormatter.dateFormat = DateFormatter.dateFormat(
-        fromTemplate: "EEEE, MMM d, yyyy",
-        options: 0,
-        locale: calendar.locale ?? Locale.current)
-      return dateFormatter
-    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +30,8 @@ class DateRangeSelectorViewController: UIViewController {
           calendarView.bottomAnchor.constraint(equalTo: calendarContainer.bottomAnchor)
         ])
         calendarView.scroll(toDayContaining: self.startDate ?? Date(), scrollPosition: .centered, animated: false)
+        calendarView.reloadInputViews()
+        calendarView.accessibilityLanguage = "es_MX"
         calendarView.daySelectionHandler = { [weak self] day in
             guard let self = self else { return }
             if self.validateIsDisabledDate(day.description) {
