@@ -46,7 +46,7 @@ import  Firebase
         Resolver.register { InboxViewModel() }.scope(Resolver.cached)
         Resolver.register { RootViewModel() }.scope(Resolver.cached)
         Resolver.register { OrderDetailViewModel()}.scope(Resolver.shared)
-        Resolver.register { OrderDetailFormViewModel()}.scope(Resolver.shared)
+        Resolver.register { OrderDetailFormViewModel()}.scope(Resolver.application)
         Resolver.register { CommentsViewModel() }.scope(Resolver.shared)
         Resolver.register { LotsViewModel() }.scope(Resolver.shared)
         Resolver.register { SignaturePadViewModel() }.scope(Resolver.shared)
