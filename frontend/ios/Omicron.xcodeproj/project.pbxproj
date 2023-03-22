@@ -59,6 +59,10 @@
 		11717B7E29C246B500B9ADFC /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */; };
 		11717B7F29C246B500B9ADFC /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */; };
 		11717B8029C246B500B9ADFC /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */; };
+		11A3295D29C511510093C4AE /* CalentarMonthItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */; };
+		11A3295E29C511510093C4AE /* CalentarMonthItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */; };
+		11A3295F29C511510093C4AE /* CalentarMonthItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */; };
+		11A3296029C511510093C4AE /* CalentarMonthItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */; };
 		11ACB7D229AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
 		11ACB7D329AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
 		11ACB7D429AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
@@ -594,6 +598,7 @@
 		1142E19529AE626C008651D1 /* SupplieViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewModel.swift; sourceTree = "<group>"; };
 		115FD8C929B2791200762C3E /* createSupplie.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = createSupplie.json; sourceTree = "<group>"; };
 		11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
+		11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalentarMonthItemView.swift; sourceTree = "<group>"; };
 		11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewControllerExtension.swift; sourceTree = "<group>"; };
 		11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCell.swift; sourceTree = "<group>"; };
 		11E7879B29B65AC100B888C6 /* SuppliesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuppliesTest.swift; sourceTree = "<group>"; };
@@ -882,6 +887,7 @@
 				113580AC29C12B0A00A58C74 /* CalendarItemView.swift */,
 				113580B129C12EF600A58C74 /* DayRangeIndicatorView.swift */,
 				113580B629C12F6500A58C74 /* DayRangeIndicatorViewExtension.swift */,
+				11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */,
 			);
 			path = DateRangeSelector;
 			sourceTree = "<group>";
@@ -2313,6 +2319,7 @@
 				1135809C29C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				490B69AB268E98ED00DBE9F1 /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				490B69AC268E98ED00DBE9F1 /* SnapCollectionView.swift in Sources */,
+				11A3296029C511510093C4AE /* CalentarMonthItemView.swift in Sources */,
 				490B69AD268E98ED00DBE9F1 /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D529AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
 				113580B029C12B0A00A58C74 /* CalendarItemView.swift in Sources */,
@@ -2415,6 +2422,7 @@
 				1135809A29C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				49CF65EC25F2D4AB002CD598 /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				382707C125F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
+				11A3295E29C511510093C4AE /* CalentarMonthItemView.swift in Sources */,
 				49CF65ED25F2D4AB002CD598 /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D329AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
 				113580AE29C12B0A00A58C74 /* CalendarItemView.swift in Sources */,
@@ -2517,6 +2525,7 @@
 				1135809B29C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				49CF666F25F2D821002CD598 /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				382707C225F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
+				11A3295F29C511510093C4AE /* CalentarMonthItemView.swift in Sources */,
 				49CF667025F2D821002CD598 /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D429AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
 				113580AF29C12B0A00A58C74 /* CalendarItemView.swift in Sources */,
@@ -2619,6 +2628,7 @@
 				1135809929C1020400A58C74 /* HistoryViewController.swift in Sources */,
 				4951100025E433C7007BE4DF /* ExtensionOrderDetailFormViewController.swift in Sources */,
 				382707C025F6EB4D001F4057 /* SnapCollectionView.swift in Sources */,
+				11A3295D29C511510093C4AE /* CalentarMonthItemView.swift in Sources */,
 				7C0017AA24EFA8410025B17D /* LotsAvailableTableViewCell.swift in Sources */,
 				11ACB7D229AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */,
 				113580AD29C12B0A00A58C74 /* CalendarItemView.swift in Sources */,
@@ -2823,7 +2833,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 91;
+				CURRENT_PROJECT_VERSION = 93;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3048,7 +3058,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 91;
+				CURRENT_PROJECT_VERSION = 93;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3076,7 +3086,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 91;
+				CURRENT_PROJECT_VERSION = 93;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3263,7 +3273,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 91;
+				CURRENT_PROJECT_VERSION = 93;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;

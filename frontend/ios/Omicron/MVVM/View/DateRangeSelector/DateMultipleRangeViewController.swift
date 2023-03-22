@@ -23,6 +23,7 @@ extension DateRangeSelectorViewController {
         let dateRangeToHighlight = validatePaintRange() ?
             selectedStartDate...selectedEndDate :
             Date()...Date()
+        calendar.locale = NSLocale(localeIdentifier: "es_MX") as Locale
         return CalendarViewContent(
         calendar: calendar,
         visibleDateRange: startDate...endDate,
@@ -43,6 +44,14 @@ extension DateRangeSelectorViewController {
                         .clear),
               viewModel: .init(day: day))
         }
+        .monthHeaderItemProvider({ month in
+            return CalendarItemModel<MonthLabel>(
+              invariantViewProperties: .init(
+                font: UIFont.systemFont(ofSize: 25),
+                textColor: UIColor.black,
+                backgroundColor: .clear),
+              viewModel: .init(month: month))
+        })
         .interMonthSpacing(10)
         .verticalDayMargin(4)
         .horizontalDayMargin(4)
@@ -59,8 +68,8 @@ extension DateRangeSelectorViewController {
 
     func validateIsDisabledDate(_ stringDate: String) -> Bool {
         let selectedDate = self.createDate(stringDate: stringDate) ?? Date()
-        let selectedStartDate = Calendar.current.date(byAdding: .day, value: -7, to: self.startDate ?? Date()) ?? Date()
-        let selectedEndDate = Calendar.current.date(byAdding: .day, value: 7, to: self.startDate ?? Date()) ?? Date()
+        let selectedStartDate = Calendar.current.date(byAdding: .day, value: -6, to: self.startDate ?? Date()) ?? Date()
+        let selectedEndDate = Calendar.current.date(byAdding: .day, value: 6, to: self.startDate ?? Date()) ?? Date()
         return self.startDate != nil && selectedDate < selectedStartDate ||
         self.startDate != nil && selectedDate > selectedEndDate || selectedDate > Date()
     }

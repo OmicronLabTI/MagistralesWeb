@@ -60,12 +60,12 @@ export class ProductivityComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    Chart.defaults.global.defaultFontFamily = `'Quicksand', sans serif`;
+    Chart.defaults.global.defaultFontFamily = `'omicron-medium', Arial, Helvetica, sans-serif`;
     Chart.defaults.global.legend.position = 'bottom';
     Chart.defaults.global.legend.align = 'start';
     Chart.defaults.global.title.display = true;
     Chart.defaults.global.title.text = 'Productividad por cada QFB';
-    Chart.defaults.global.title.fontFamily = `'Quicksand', sans serif`;
+    Chart.defaults.global.title.fontFamily = `'omicron-medium', Arial, Helvetica, sans serif`;
     Chart.defaults.global.title.fontSize = 14;
     Chart.defaults.global.title.fontColor = '#3b3f5c';
     Chart.defaults.global.defaultFontStyle = '600';

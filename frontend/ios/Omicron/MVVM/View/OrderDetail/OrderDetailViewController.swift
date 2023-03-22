@@ -80,6 +80,13 @@ class OrderDetailViewController: UIViewController {
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
     }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        let controllerCount = self.navigationController?.viewControllers.count ?? 0
+        if controllerCount == 0 {
+            disposeBag = DisposeBag()
+        }
+    }
     // MARK: - Functions
     @objc func goToCommentsViewController() {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
