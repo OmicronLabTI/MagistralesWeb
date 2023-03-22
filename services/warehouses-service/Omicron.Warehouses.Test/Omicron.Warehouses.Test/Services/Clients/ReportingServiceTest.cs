@@ -66,7 +66,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.SubmitRequest(new RawMaterialRequestModel()).Result;
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.IsTrue(result.Item1);
             this.GetHttpMock().Protected().Verify("SendAsync", Times.Once(), ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>());
         }
 
@@ -83,7 +83,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.SubmitRequest(new RawMaterialRequestModel()).Result;
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsFalse(result.Item1);
             this.GetHttpMock().Protected().Verify("SendAsync", Times.Exactly(3), ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>());
         }
 
@@ -100,7 +100,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.SubmitRequest(new RawMaterialRequestModel()).Result;
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsFalse(result.Item1);
             this.GetHttpMock().Protected().Verify("SendAsync", Times.Exactly(3), ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>());
         }
 

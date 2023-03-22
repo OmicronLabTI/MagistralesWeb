@@ -14,7 +14,8 @@ class AlertManager {
     static let shared = AlertManager()
     // MARK: - Functions
     func showAlert(
-        title: String? = nil, message: String? = nil, actions: [UIAlertAction]? = nil, view: UIViewController? = nil) {
+        title: String? = nil, message: String? = nil, actions: [UIAlertAction]? = nil, view: UIViewController? = nil,
+        autoDismiss: Bool? = false, dismissTime: Int? = 0) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         for action in actions ?? [] {
             alert.addAction(action)
@@ -23,6 +24,16 @@ class AlertManager {
             let okAction = UIAlertAction(title: "Aceptar", style: .default, handler: nil)
             alert.addAction(okAction)
         }
-        view?.present(alert, animated: true, completion: nil)
+        if  autoDismiss == true && (dismissTime ?? 0) > 0 {
+            view?.present(alert,
+                          animated: true,
+                          completion: {Timer.scheduledTimer(withTimeInterval: TimeInterval(dismissTime ?? 0),
+                                                            repeats: false,
+                                                            block: {_ in
+                              alert.dismiss(animated: true, completion: nil)
+                          })})
+        } else {
+            view?.present(alert, animated: true, completion: nil)
+        }
     }
 }

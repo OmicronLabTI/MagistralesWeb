@@ -84,5 +84,13 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// String Activo.
         /// </value>
         public int Asignable { get; set; }
+
+        /// <summary>
+        /// Gets or sets the QFB classification.
+        /// </summary>
+        /// <value>
+        /// String classification.
+        /// </value>
+        public string Classification { get; set; }
     }
 }

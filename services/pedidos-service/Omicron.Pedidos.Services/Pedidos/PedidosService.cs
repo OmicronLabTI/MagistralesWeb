@@ -158,16 +158,17 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateStatusOrder(List<UpdateStatusOrderModel> updateStatusOrder)
         {
+            var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
+            var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
+            var hasPedidosType = ordersList.Any(order => !string.IsNullOrEmpty(order.Salesorderid));
             var isTecnicUser = updateStatusOrder.All(x => (UserRoleType)x.UserRoleType == UserRoleType.Tecnic);
             var (isValidQfbs, message) = await this.ValidateQfbConfiguration(updateStatusOrder, isTecnicUser);
 
-            if (ServiceShared.CalculateOr(!isValidQfbs))
+            if (ServiceShared.CalculateAnd(!isValidQfbs, hasPedidosType))
             {
                 return ServiceUtils.CreateResult(false, 400, message, null, null);
             }
 
-            var orders = updateStatusOrder.Select(x => x.OrderId.ToString()).ToList();
-            var ordersList = (await this.pedidosDao.GetUserOrderByProducionOrder(orders)).ToList();
             var listOrderLogToInsert = new List<SalesLogs>();
 
             ordersList.ForEach(x =>
@@ -716,18 +717,31 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var result = await this.sapAdapter.GetSapAdapter(route);
                 productionOrderId = int.Parse(result.Response.ToString() ?? throw new InvalidOperationException());
 
-                UserOrderModel newProductionOrder = new UserOrderModel();
-                newProductionOrder.Salesorderid = string.Empty;
-                newProductionOrder.Productionorderid = productionOrderId.ToString();
-                newProductionOrder.CreatorUserId = isolatedFabOrder.UserId;
-                newProductionOrder.CreationDate = DateTime.Now.FormatedLargeDate();
-                newProductionOrder.Status = ServiceConstants.Planificado;
-                newProductionOrder.PlanningDate = DateTime.Now;
+                UserOrderModel newProductionOrder = new UserOrderModel
+                {
+                    Salesorderid = string.Empty,
+                    Productionorderid = productionOrderId.ToString(),
+                    CreatorUserId = isolatedFabOrder.UserId,
+                    CreationDate = DateTime.Now.FormatedLargeDate(),
+                    Status = ServiceConstants.Planificado,
+                    PlanningDate = DateTime.Now,
+                };
 
                 /** add logs**/
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(isolatedFabOrder.UserId, new List<UserOrderModel> { newProductionOrder }));
                 await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
                 _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+            }
+
+            if (ServiceShared.CalculateAnd(!string.IsNullOrEmpty(resultMessage.Key), isolatedFabOrder.IsFromQfbProfile))
+            {
+                await AsignarLogic.AssignOrder(
+                    new ManualAssignModel { DocEntry = new List<int> { productionOrderId }, UserId = isolatedFabOrder.UserId, UserLogistic = isolatedFabOrder.UserId },
+                    new Dtos.Models.QfbTecnicInfoDto(),
+                    this.pedidosDao,
+                    this.sapDiApi,
+                    this.sapAdapter,
+                    this.kafkaConnector);
             }
 
             return ServiceUtils.CreateResult(true, 200, resultMessage.Value, productionOrderId, null);

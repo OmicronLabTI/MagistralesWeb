@@ -558,6 +558,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// the insert value.
         /// </summary>
+        public const string RedisComponentsInputRequest = "redisComponentsInputRequest";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
         public const string RemisionChip = "rem-";
 
         /// <summary>
@@ -684,6 +689,34 @@ namespace Omicron.SapAdapter.Services.Constants
         /// Reason unexpected error.
         /// </summary>
         public const string OrderWithoutTecnicSign = "No es posible terminar, falta la firma del técnico asignado";
+
+        /// <summary>
+        /// Parameter user id.
+        /// </summary>
+        public const string ParameterUserId = "userId";
+
+        /// <summary>
+        /// Qfb user role.
+        /// </summary>
+        public const int QfbUserRole = 2;
+
+        /// <summary>
+        /// The order type dict.
+        /// </summary>
+        public const string TypeParameter = "type";
+
+        /// <summary>
+        /// The order type dict.
+        /// </summary>
+        public const string DetailOrderParameter = "detailOrder";
+
+        /// <summary>
+        /// Gets the clasification user DZ.
+        /// </summary>
+        /// <value>
+        /// String UserTypeDZ.
+        /// </value>
+        public static string UserClassificationDZ => "DZ";
 
         /// <summary>
         /// Gets the status of the order.

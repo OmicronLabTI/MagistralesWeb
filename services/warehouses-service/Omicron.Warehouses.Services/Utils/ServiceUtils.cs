@@ -8,6 +8,7 @@
 
 namespace Omicron.Warehouses.Services.Utils
 {
+    using System;
     using Omicron.Warehouses.Entities.Model;
 
     /// <summary>
@@ -36,6 +37,18 @@ namespace Omicron.Warehouses.Services.Utils
                 Code = code,
                 Comments = comments,
             };
+        }
+
+        /// <summary>
+        ///    test.
+        /// </summary>
+        /// <typeparam name="T">s.</typeparam>
+        /// <param name="obj">sfr.</param>
+        /// <param name="name">name of param.</param>
+        /// <returns>ca.</returns>
+        public static T ThrowIfNull<T>(this T obj, string name)
+        {
+            return obj ?? throw new ArgumentNullException(name);
         }
     }
 }

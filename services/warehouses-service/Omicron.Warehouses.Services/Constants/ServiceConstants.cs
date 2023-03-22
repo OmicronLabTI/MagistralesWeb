@@ -8,6 +8,8 @@
 
 namespace Omicron.Warehouses.Services.Constants
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// the class for constatns.
     /// </summary>
@@ -17,5 +19,22 @@ namespace Omicron.Warehouses.Services.Constants
         /// Status of planed production orders.
         /// </summary>
         public const string ProductionOrderPlannedStatus = "Planificado";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string RedisComponentsInputRequest = "redisComponentsInputRequest";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> ListComponentsMostAssigned { get; } = new List<string>
+        {
+            "EN",
+            "EM",
+        };
     }
 }

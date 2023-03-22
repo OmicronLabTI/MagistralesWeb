@@ -16,6 +16,7 @@ namespace Omicron.Reporting.Services.Clients
     using Newtonsoft.Json;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services.Constants;
+    using Omicron.Reporting.Services.Utils;
 
     /// <summary>
     /// Class catalogs service implementation.
@@ -61,16 +62,7 @@ namespace Omicron.Reporting.Services.Clients
             };
 
             var parameters = await this.GetParams(parameterNames);
-
-            return new SmtpConfigModel
-            {
-                SmtpServer = parameters.FirstOrDefault(x => x.Field.Equals("SmtpServer")).Value,
-                SmtpPort = int.Parse(parameters.FirstOrDefault(x => x.Field.Equals("SmtpPort")).Value),
-                SmtpDefaultPassword = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewarePassword")).Value,
-                SmtpDefaultUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddleware")).Value,
-                EmailCCDelivery = parameters.FirstOrDefault(x => x.Field.Equals("EmailCCDelivery")).Value,
-                EmailMiddlewareUser = parameters.FirstOrDefault(x => x.Field.Equals("EmailMiddlewareUser")).Value,
-            };
+            return CommonCall.CreateSmtpConfigModel(parameters);
         }
 
         /// <summary>

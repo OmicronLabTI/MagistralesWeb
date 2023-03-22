@@ -192,5 +192,13 @@ namespace Omicron.SapAdapter.Entities.Context
         /// Object UserModel OrderModel.
         /// </value>
         DbSet<CatalogProductModel> CatalogProductModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the CatalogProductModel.
+        /// </summary>
+        /// <value>
+        /// ProductFirmModel Doctor group.
+        /// </value>
+        DbSet<ProductFirmModel> ProductFirmModel { get; set; }
     }
 }

@@ -16,11 +16,11 @@ namespace Omicron.Reporting.Api
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
     using Omicron.Reporting.Api.Filters;
     using Omicron.Reporting.DependencyInjection;
     using Omicron.Reporting.Services.Clients;
+    using Omicron.Reporting.Services.SapDiApi;
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
@@ -71,9 +71,7 @@ namespace Omicron.Reporting.Api
                 .WriteTo.Seq(this.Configuration["SeqUrl"])
                 .CreateLogger();
 
-            ILoggerFactory loggerFactory = new LoggerFactory();
-            loggerFactory.AddSerilog();
-            services.AddSingleton(loggerFactory);
+            services.AddSingleton(Log.Logger);
 
             var mvcBuilder = services.AddMvc();
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomActionFilterAttribute(Log.Logger)));
@@ -99,6 +97,12 @@ namespace Omicron.Reporting.Api
                 c.BaseAddress = new Uri(this.Configuration["CatalogsURL"]);
             })
             .AddTypedClient<ICatalogsService, CatalogsService>();
+
+            services.AddHttpClient("sapdiapi", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["DiApiAddress"]);
+            })
+            .AddTypedClient<ISapDiApi, SapDiApi>();
 
             this.AddRedis(services, Log.Logger);
             this.AddCorsSvc(services);

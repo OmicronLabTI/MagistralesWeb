@@ -10,7 +10,7 @@ import XCTest
 import RxSwift
 import Moya
 import Resolver
-@testable import OmicronLab
+@testable import Magistrales
 class BatchesTestExtension: XCTestCase {
 
     var lotsViewModel: LotsViewModel?

@@ -19,6 +19,7 @@ namespace Omicron.Reporting.Test.Facade.Request
     using Omicron.Reporting.Facade.Request;
     using Omicron.Reporting.Services;
     using Omicron.Reporting.Services.Mapping;
+    using DocumentFormat.OpenXml.Bibliography;
 
     /// <summary>
     /// Class UsersServiceTest.
@@ -71,6 +72,10 @@ namespace Omicron.Reporting.Test.Facade.Request
                 .Setup(m => m.SendEmails(It.IsAny<List<EmailGenericDto>>()))
                 .Returns(Task.FromResult(resultModel));
 
+            mockReportingService
+                .Setup(m => m.CreateRawMaterialRequestPdf(It.IsAny<RawMaterialRequestModel>(), It.IsAny<bool>()))
+                .Returns(new List<string> { "http://urlpdf.com", "http://urlpdf2.com" });
+
             this.reportingFacade = new ReportingFacade(mockReportingService.Object, mapper);
         }
 
@@ -87,12 +92,11 @@ namespace Omicron.Reporting.Test.Facade.Request
             // act
             var response = this.reportingFacade.CreateRawMaterialRequestPdf(requests, false);
 
-            // arrange
             Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotEmpty(response.FileName);
-            Assert.IsNotNull(response.FileName);
-            Assert.IsNotNull(response.FileStream);
+            response.ForEach(report =>
+            {
+                Assert.IsNotNull(report);
+            });
         }
 
         /// <summary>

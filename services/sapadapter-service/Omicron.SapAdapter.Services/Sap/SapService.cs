@@ -448,8 +448,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var chipValues = parameters[ServiceConstants.Chips].Split(ServiceConstants.ChipSeparator).ToList();
             chipValues = ServiceUtils.UndecodeSpecialCaracters(chipValues);
 
-            var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, ServiceConstants.MagistralWareHouse);
-
+            var userId = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.ParameterUserId, string.Empty);
+            var qfbWarehouse = await ServiceUtils.CalculateWarehouse(userId, string.Empty, this.usersService);
+            var alternateWarehouse = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(qfbWarehouse), qfbWarehouse, ServiceConstants.MagistralWareHouse);
+            var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.CatalogGroup, alternateWarehouse);
+            warehouse ??= alternateWarehouse;
             var firstChip = chipValues.FirstOrDefault().ToLower();
             listValues.AddRange((await this.sapDao.GetItemsByContainsItemCode(firstChip, warehouse)).ToList());
             listValues.AddRange((await this.sapDao.GetItemsByContainsDescription(firstChip, warehouse)).ToList());
@@ -468,6 +471,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var produtOrdered = listValues.OrderBy(o => o.ProductId).ToList();
             var productToReturn = produtOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
+
+            productToReturn.ToList().ForEach(pr =>
+            {
+                pr.Warehouse = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(qfbWarehouse), qfbWarehouse, pr.Warehouse);
+            });
+
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, productToReturn, null, produtOrdered.Count);
         }
 
@@ -812,8 +821,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<List<UserModel>> GetUsers(List<UserOrderModel> userOrders)
         {
             var userIDs = userOrders.Where(x => !string.IsNullOrEmpty(x.Userid)).Select(x => x.Userid).Distinct().ToList();
-            var users = await this.usersService.GetUsersById(userIDs, ServiceConstants.GetUsersById);
-            return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
+            return await this.GetUsersById(userIDs);
         }
 
         private async Task<List<DoctorPrescriptionInfoModel>> GetDoctors(List<string> cardCodes, string url)
@@ -968,6 +976,17 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(licenseName), licenseName, pedidoLocal.Medico);
+        }
+
+        /// <summary>
+        /// Get users by id.
+        /// </summary>
+        /// <param name="userIds">Users id.</param>
+        /// <returns>User model.</returns>
+        private async Task<List<UserModel>> GetUsersById(List<string> userIds)
+        {
+            var users = await this.usersService.GetUsersById(userIds, ServiceConstants.GetUsersById);
+            return JsonConvert.DeserializeObject<List<UserModel>>(users.Response.ToString());
         }
     }
 }

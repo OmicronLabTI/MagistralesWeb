@@ -13,14 +13,18 @@ namespace Omicron.Reporting.Services
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore.Internal;
     using Microsoft.Extensions.Configuration;
+    using Newtonsoft.Json;
     using Omicron.Reporting.Dtos.Model;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services.AzureServices;
     using Omicron.Reporting.Services.Clients;
     using Omicron.Reporting.Services.Constants;
     using Omicron.Reporting.Services.ReportBuilder;
+    using Omicron.Reporting.Services.SapDiApi;
     using Omicron.Reporting.Services.Utils;
+    using Org.BouncyCastle.Utilities;
 
     /// <summary>
     /// Implementations for request service.
@@ -31,6 +35,7 @@ namespace Omicron.Reporting.Services
         private readonly IOmicronMailClient omicronMailClient;
         private readonly IConfiguration configuration;
         private readonly IAzureService azureService;
+        private readonly ISapDiApi sapDiApi;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReportingService"/> class.
@@ -39,12 +44,14 @@ namespace Omicron.Reporting.Services
         /// <param name="omicronMailClient">The email service.</param>
         /// <param name="azureService">the azure service.</param>
         /// <param name="configuration">the configuration.</param>
-        public ReportingService(ICatalogsService catalogsService, IOmicronMailClient omicronMailClient, IConfiguration configuration, IAzureService azureService)
+        /// <param name="sapDiApi">the sapdiapi.</param>
+        public ReportingService(ICatalogsService catalogsService, IOmicronMailClient omicronMailClient, IConfiguration configuration, IAzureService azureService, ISapDiApi sapDiApi)
         {
             this.catalogsService = catalogsService;
             this.omicronMailClient = omicronMailClient;
             this.configuration = configuration;
             this.azureService = azureService;
+            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
         }
 
         /// <summary>
@@ -53,10 +60,33 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Flag for preview file.</param>
         /// <returns>Report file stream.</returns>
-        public FileResultModel CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview)
+        public List<string> CreateRawMaterialRequestPdf(RawMaterialRequestModel request, bool preview)
         {
-            var file = this.BuildPdfFile(request, preview);
-            return new FileResultModel { Success = true, Code = 200, FileStream = file.FileStream, FileName = file.FileName };
+            var results = new List<string>();
+            var allProducts = request.OrderedProducts;
+            request.RequestNumber = string.Format(ServiceConstants.RequestNumberFormat, string.Empty);
+            var azureAccount = this.configuration[ServiceConstants.AzureAccountName];
+            var azureKey = this.configuration[ServiceConstants.AzureAccountKey];
+            foreach (var category in ServiceConstants.LabelProductCategory)
+            {
+                var isLabelProducts = category == ServiceConstants.LabelProduct;
+                var products = allProducts.Where(op => op.IsLabel == isLabelProducts).ToList();
+                if (products.Any())
+                {
+                    request.OrderedProducts = products;
+                    var file = this.BuildPdfFile(request, preview, isLabelProducts);
+                    var pathTosave = string.Format(
+                        ServiceConstants.BlobUrlTemplate,
+                        azureAccount,
+                        ServiceConstants.ContainerAzureRequestOrderWarehose,
+                        file.FileName);
+                    this.azureService.UploadElementToAzure(azureAccount, azureKey, pathTosave, file.FileStream, "application/pdf").Wait();
+                    file.FileStream.Dispose();
+                    results.Add(pathTosave);
+                }
+            }
+
+            return results;
         }
 
         /// <summary>
@@ -66,10 +96,50 @@ namespace Omicron.Reporting.Services
         /// <returns>Operation result.</returns>
         public async Task<ResultModel> SubmitRawMaterialRequestPdf(RawMaterialRequestModel request)
         {
-            var file = this.BuildPdfFile(request, false);
-            var mailStatus = await this.SendRawMaterialRequestMail(file.FileStream, file.FileName);
+            var mailStatus = true;
+            var resultDiApi = await this.CreateRawMaterialRequestOnDiApi(request);
 
-            return new ResultModel { Success = true, Code = 200, Response = mailStatus, Comments = file.FileName };
+            if (resultDiApi.All(x => !string.IsNullOrEmpty(x.Error)))
+            {
+                return new ResultModel { Success = true, Code = 200, Response = false, UserError = ServiceConstants.ErrorToCreateTransferRequestOnDiApi, Comments = new List<string>() };
+            }
+
+            var createdFileNames = new List<string>();
+            var fileName = string.Empty;
+            var isLabelProducts = false;
+            var allProducts = request.OrderedProducts;
+            var productsWithError = new List<string>();
+            var mailStatusList = new List<bool>();
+            foreach (var result in resultDiApi)
+            {
+                isLabelProducts = result.IsLabel;
+                var products = allProducts.Where(op => op.IsLabel == isLabelProducts).ToList();
+                if (!string.IsNullOrEmpty(result.Error))
+                {
+                    productsWithError.AddRange(products.Select(x => x.ProductId).ToList());
+                    continue;
+                }
+
+                request.OrderedProducts = products;
+                (mailStatus, fileName) = await this.SubmitRawMaterialRequestPdfByLabelProductCategory(request, isLabelProducts, result.TransferRequestId);
+                mailStatusList.Add(mailStatus);
+                createdFileNames.Add(fileName);
+            }
+
+            var message = string.Empty;
+            if (productsWithError.Any())
+            {
+                mailStatus = false;
+                var transferRequestIdOk = resultDiApi.First(x => string.IsNullOrEmpty(x.Error)).TransferRequestId;
+                message = string.Format(ServiceConstants.ErrorWithOneRequestCreatedOnSap, transferRequestIdOk, string.Join(", ", productsWithError));
+            }
+            else
+            {
+                mailStatus = mailStatusList.All(isOk => isOk);
+                message = CommonCall.CalculateTernary(!mailStatus, ServiceConstants.ErrorToSubmitFile, string.Empty);
+            }
+
+            return new ResultModel { Success = true, Code = 200, Response = mailStatus, UserError = message, Comments = createdFileNames.Where(x => !string.IsNullOrEmpty(x)).ToList() };
         }
 
         /// <inheritdoc/>
@@ -435,33 +505,43 @@ namespace Omicron.Reporting.Services
         /// <param name="request">Requests data.</param>
         /// <param name="preview">Preview flag.</param>
         /// <returns>Report file.</returns>
-        private (MemoryStream FileStream, string FileName) BuildPdfFile(RawMaterialRequestModel request, bool preview)
+        private (MemoryStream FileStream, string FileName) BuildPdfFile(RawMaterialRequestModel request, bool preview, bool isLabelProducts)
         {
             var reportBuilder = new RawMaterialRequestReportBuilder(request);
             var report = reportBuilder.BuildReport();
             var date = DateTime.Now.ToString(DateConstants.RawMaterialRequestFormat);
             var requestIdentifier = preview ? "PREVIEW" : $"{request.Id}";
-            var fileName = string.Format(ServiceConstants.RawMaterialRequestFileNamePattern, $"{date}_{requestIdentifier}");
+            var addLabel = isLabelProducts ? "_Etiquetas" : string.Empty;
+            var fileName = string.Format(ServiceConstants.RawMaterialRequestFileNamePattern, $"{date}_{requestIdentifier}{addLabel}");
             return (report, fileName);
         }
 
         /// <summary>
-        /// Sed mail with raw material request file.
+        /// Send Raw Material Request Mail.
         /// </summary>
-        /// <param name="fileStream">File stream.</param>
-        /// <param name="fileName">File name.</param>
-        /// <returns>Nothing.</returns>
-        private async Task<bool> SendRawMaterialRequestMail(MemoryStream fileStream, string fileName)
+        /// <param name="transferRequestId">Transfer request id.</param>
+        /// <param name="isLabel">Is label o no label.</param>
+        /// <param name="pdfFiles">Prdf files to send.</param>
+        /// <returns>True if sendend correctly otherwise false.</returns>
+        private async Task<bool> SendRawMaterialRequestMail(int transferRequestId, bool isLabel, Dictionary<string, MemoryStream> pdfFiles)
         {
-            var smtpConfig = await this.catalogsService.GetSmtpConfig();
-            var mailConfig = await this.catalogsService.GetRawMaterialEmailConfig();
+            var parameterNames = ServiceConstants.ValuesForEmail;
+            var mailToParam = CommonCall.CalculateTernary(isLabel, ServiceConstants.LabelMailParam, ServiceConstants.NoLabelMailParam);
+            parameterNames.Add(mailToParam);
+            parameterNames.AddRange(ServiceConstants.RawMaterialRequestCopyMails);
+            var parameters = await this.catalogsService.GetParams(parameterNames);
+            var smtpConfig = CommonCall.CreateSmtpConfigModel(parameters);
+            var bodyMail = string.Format(ServiceConstants.RawMaterialRequestEmailBody, transferRequestId);
+
+            (string mailTo, string copyMails) = this.CalculateMailsToSendRawMaterialRequest(parameters, mailToParam);
+
             return await this.omicronMailClient.SendMail(
                 smtpConfig,
-                mailConfig.Addressee,
+                mailTo,
                 ServiceConstants.RawMaterialRequestEmailSubject,
-                ServiceConstants.RawMaterialRequestEmailBody,
-                mailConfig.CopyTo,
-                new Dictionary<string, MemoryStream> { { fileName, fileStream } });
+                bodyMail,
+                copyMails,
+                pdfFiles);
         }
 
         /// <summary>
@@ -534,6 +614,85 @@ namespace Omicron.Reporting.Services
             }
 
             return dictFiles;
+        }
+
+        /// <summary>
+        /// Calculate Mails To Send Raw Material Request.
+        /// </summary>
+        /// <param name="parameters">Parameters.</param>
+        /// <param name="mailToParam">Mailto param.</param>
+        /// <returns>Emails.</returns>
+        private (string, string) CalculateMailsToSendRawMaterialRequest(List<ParametersModel> parameters, string mailToParam)
+        {
+            var mailTo = parameters.Where(p => p.Field == mailToParam).Select(p => p.Value).ToList();
+            var copyMails = parameters.Where(p => ServiceConstants.RawMaterialRequestCopyMails.Contains(p.Field)).Select(p => p.Value).ToList();
+            return (string.Join(";", mailTo), string.Join(";", copyMails));
+        }
+
+        /// <summary>
+        /// Submit Raw Material Request Pdf By Label Product Category.
+        /// </summary>
+        /// <param name="request">request.</param>
+        /// <param name="isLabel">is label.</param>
+        /// <param name="transferRequestId">Transfer request id.</param>
+        /// <returns>Result.</returns>
+        private async Task<(bool, string)> SubmitRawMaterialRequestPdfByLabelProductCategory(RawMaterialRequestModel request, bool isLabel, int transferRequestId)
+        {
+            request.RequestNumber = string.Format(ServiceConstants.RequestNumberFormat, transferRequestId.ToString());
+            var file = this.BuildPdfFile(request, false, isLabel);
+            var pdfFiles = new Dictionary<string, MemoryStream>
+            {
+                { file.FileName, file.FileStream },
+            };
+
+            var mailStatus = await this.SendRawMaterialRequestMail(transferRequestId, isLabel, pdfFiles);
+            return (mailStatus, file.FileName);
+        }
+
+        /// <summary>
+        /// Create Raw Material Request On DiApi.
+        /// </summary>
+        /// <param name="request">Request.</param>
+        /// <returns>Result.</returns>
+        private async Task<List<TransferRequestResult>> CreateRawMaterialRequestOnDiApi(RawMaterialRequestModel request)
+        {
+            var isLabelProducts = false;
+            var transferRequestToDiApi = new List<TransferRequestHeaderDto>();
+
+            foreach (var category in ServiceConstants.LabelProductCategory)
+            {
+                isLabelProducts = category == ServiceConstants.LabelProduct;
+                if (request.OrderedProducts.Any(x => x.IsLabel == isLabelProducts))
+                {
+                    transferRequestToDiApi.Add(this.CreateTransferRequestHeaderDto(
+                        request.SigningUserName,
+                        request.SigningUserId,
+                        request.OrderedProducts.Where(x => x.IsLabel == isLabelProducts).ToList(),
+                        isLabelProducts));
+                }
+            }
+
+            var response = await this.sapDiApi.PostToSapDiApi(transferRequestToDiApi, ServiceConstants.EndpointCreateTransferRequest);
+            var result = JsonConvert.DeserializeObject<List<TransferRequestResult>>(response.Response.ToString());
+            return result;
+        }
+
+        private TransferRequestHeaderDto CreateTransferRequestHeaderDto(string userName, string userId, List<RawMaterialRequestDetailModel> products, bool isLabel)
+        {
+            return new TransferRequestHeaderDto
+            {
+                UserInfo = $"{userName}-{userId}",
+                UserId = userId,
+                IsLabel = isLabel,
+                TransferRequestDetail = products
+                    .Select(op => new TransferRequestDetailDto
+                    {
+                        ItemCode = op.ProductId,
+                        Quantity = decimal.ToDouble(op.RequestQuantity),
+                        SourceWarehosue = ServiceConstants.WareHouseMp,
+                        TargetWarehosue = CommonCall.CalculateTernary(op.Warehouse == ServiceConstants.WarehouseDz, ServiceConstants.WarehouseMg, op.Warehouse),
+                    }).ToList(),
+            };
         }
     }
 }

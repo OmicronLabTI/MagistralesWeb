@@ -435,6 +435,8 @@ namespace Omicron.SapAdapter.Test
             var users = new List<UserModel>
             {
                 new UserModel { Id = "123", Activo = 1, FirstName = "Gus", LastName = "Ramirez", Password = "asd", Role = 1, UserName = "asdf" },
+                new UserModel { Id = "35642b3a-9471-4b89-9862-8bee6d98c361", Activo = 1, FirstName = "Gus", LastName = "Ramirez", Password = "asd", Role = 3, UserName = "asdf", Classification = "DZ" },
+                new UserModel { Id = "db106faf-ef03-4c2e-9b7c-be0c7da8c0b7", Activo = 1, FirstName = "Gus", LastName = "Ramirez", Password = "asd", Role = 2, UserName = "asdf", Classification = "BE" },
             };
 
             return new ResultDto

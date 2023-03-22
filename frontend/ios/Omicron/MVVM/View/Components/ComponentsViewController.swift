@@ -21,17 +21,44 @@ class ComponentsViewController: UIViewController {
     @IBOutlet weak var mostCommontTableView: UITableView!
     @IBOutlet weak var heightMostCommonTableConstraint: NSLayoutConstraint!
     @Injected var componentsViewModel: ComponentsViewModel
+    @Injected var supplieViewModel: SupplieViewModel
+    @Injected var bulkOrderViewModel: BulkOrderViewModel
+    var isLoading = false
+    var typeOpen = TypeComponentsOpenDialog.detailOrder
     var disposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
         initComponents()
-        viewModelBinding()
-        viewModelBinding2()
+        if typeOpen == .bulkOrder {
+            viewModelBindingBulkOrders()
+        } else {
+            viewModelBinding()
+        }
+        viewModelBindingCommon()
         hideMostCommonComponents()
         bindingDataToMostComoonTable()
-        itemSelectedOfMostCommonComponentsTable()
-        componentsViewModel.getMostCommonComponentsService()
+        componentsViewModel.getMostCommonComponentsService(type: self.typeOpen == .detailOrder ?
+                                                            TypeMostCommonRequest.detailOrder.rawValue :
+                                                            TypeMostCommonRequest.inputRequest.rawValue)
     }
+    func clearObservables() {
+        componentsViewModel.clearObservables()
+    }
+
+    func viewModelBindingCommon() {
+        componentsViewModel.bindingData.map({ data -> Bool in
+            return data.count > 0
+        }).asDriver(onErrorJustReturn: true).drive(noResultsLabel.rx.isHidden).disposed(by: disposeBag)
+        self.componentsViewModel.loading.subscribe(onNext: { loading in
+            self.isLoading = loading
+            if loading {
+                LottieManager.shared.showLoading()
+                return
+            }
+            LottieManager.shared.hideLoading()
+        }).disposed(by: disposeBag)
+    }
+
     func viewModelBinding() {
         self.searchBar.rx.text.orEmpty.bind(to: componentsViewModel.searchFilter).disposed(by: disposeBag)
         self.searchBar.rx.searchButtonClicked.bind(to: componentsViewModel.searchDidTap).disposed(by: disposeBag)
@@ -53,35 +80,44 @@ class ComponentsViewController: UIViewController {
                 actions: nil,
                 view: self)
         }).disposed(by: disposeBag)
+        // se refresca la tabla despues del filtrado con chips y la respuesta del servicio
         self.componentsViewModel.dataResults.bind(to: tableView.rx.items(
             cellIdentifier: ViewControllerIdentifiers.componentsTableViewCell,
             cellType: ComponentsTableViewCell.self)) { _, data, cell in
                 cell.productCodeLabel.text = data.productId
                 cell.descriptionLabel.text = data.description?.uppercased()
         }.disposed(by: disposeBag)
+        // se selecciona un elemento de la tabla
         self.tableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
-            self?.componentsViewModel.selectedComponent.onNext(data)
-            let compFormVC = ComponentFormViewController()
-            self?.navigationController?.pushViewController(compFormVC, animated: true)
+            self!.continueItemSelected(data)
         }).disposed(by: disposeBag)
-        self.componentsViewModel.loading.subscribe(onNext: {loading in
-            if loading {
-                LottieManager.shared.showLoading()
-                return
-            }
-            LottieManager.shared.hideLoading()
-        }).disposed(by: disposeBag)
-    }
-    func viewModelBinding2() {
         self.componentsViewModel.dataResults.map({ data -> Bool in
             return data.count > 0
         }).asDriver(onErrorJustReturn: true).drive(labelNoResults.rx.isHidden).disposed(by: disposeBag)
-        componentsViewModel.bindingData.map({ data -> Bool in
-            return data.count > 0
-        }).asDriver(onErrorJustReturn: true).drive(noResultsLabel.rx.isHidden).disposed(by: disposeBag)
+        itemSelectedOfMostCommonComponentsTable()
     }
+
+    func continueItemSelected(_ data: ComponentO) {
+        switch typeOpen {
+        case .detailOrder: createFormView(data: data)
+        case .supplies: closeSelection(data: data)
+        default: break
+        }
+    }
+    func createFormView(data: ComponentO) {
+        self.componentsViewModel.selectedComponent.onNext(data)
+        let compFormVC = ComponentFormViewController()
+        compFormVC.selectedComponent = data
+        self.navigationController?.pushViewController(compFormVC, animated: true)
+    }
+    func closeSelection(data: ComponentO) {
+        self.dismiss(animated: false, completion: nil)
+        supplieViewModel.addComponent.onNext(data)
+    }
+
     func initComponents() {
-        self.title = CommonStrings.addComponentTitle
+        self.componentsViewModel.typeOpen = self.typeOpen
+        self.title = self.typeOpen == .bulkOrder ? CommonStrings.createBuildOrder : CommonStrings.addComponentTitle
         self.isModalInPresentation = true
         self.tableView.delegate = self
         self.mostCommontTableView.delegate = self
@@ -89,6 +125,7 @@ class ComponentsViewController: UIViewController {
         self.tagsView.delegate = self
         self.tagsView.tagBackgroundColor = OmicronColors.blue
         self.tagsView.bounds = self.tagsView.bounds.inset(by: UIEdgeInsets(top: 0, left: -10, bottom: 0, right: 20))
+        self.heightMostCommonTableConstraint.constant = typeOpen == .bulkOrder ? 0 : 200
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: CommonStrings.cancel, style: .plain, target: self,
             action: #selector(ComponentsViewController.cancelButtonTap(sender:)))
@@ -115,15 +152,14 @@ class ComponentsViewController: UIViewController {
 
     private func itemSelectedOfMostCommonComponentsTable() {
         self.mostCommontTableView.rx.modelSelected(ComponentO.self).subscribe(onNext: { [weak self] data in
-            self?.componentsViewModel.selectedComponent.onNext(data)
-            let compFormVC = ComponentFormViewController()
-            self?.navigationController?.pushViewController(compFormVC, animated: true)
+            self!.continueItemSelected(data)
         }).disposed(by: disposeBag)
     }
 }
 extension ComponentsViewController: TagListViewDelegate {
     func tagRemoveButtonPressed(_ title: String, tagView: TagView, sender: TagListView) {
-        self.componentsViewModel.removeChip.onNext(title)
+            self.bulkOrderViewModel.removeChip.onNext(title)
+            self.componentsViewModel.removeChip.onNext(title)
     }
 }
 extension ComponentsViewController: UITableViewDelegate {
@@ -131,6 +167,18 @@ extension ComponentsViewController: UITableViewDelegate {
         let customView = UIView()
         customView.backgroundColor = OmicronColors.blue
         cell.selectedBackgroundView = customView
+        let lastSectionIndex = tableView.numberOfSections - 1
+        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
+        if indexPath.section == lastSectionIndex &&
+            indexPath.row == lastRowIndex - 3 &&
+            !isLoading &&
+            lastRowIndex > 10 {
+            tableView.scrollToRow(at: [0, lastRowIndex - 4],
+                                  at: .middle,
+                                  animated: false)
+            componentsViewModel.onScroll.onNext(())
+            bulkOrderViewModel.onScroll.onNext(())
+        }
         if indexPath.row%2 == 0 {
             cell.backgroundColor = OmicronColors.tableColorRow
         } else {

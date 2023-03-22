@@ -1,21 +1,24 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: omicron-ingress-log
+  name: omicron-ingress-seq
   annotations:
-    kubernetes.io/ingress.class: nginx-log
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt
 spec:
+  ingressClassName: nginx-log
   tls:
-  - hosts:
-    - omicronlabloguat.eastus2.cloudapp.azure.com
-    secretName: tls-secret
+    - hosts:
+        - omicronlabloguat.eastus2.cloudapp.azure.com
+      secretName: tls-secret
   rules:
-  - host: omicronlabloguat.eastus2.cloudapp.azure.com
-    http:
-      paths:
-      - backend:
-          serviceName: seqlog-svc
-          servicePort: 81
-        path: /
+    - host: omicronlabloguat.eastus2.cloudapp.azure.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: seqlog-svc
+                port:
+                  number: 81
+            path: /
+            pathType: Prefix

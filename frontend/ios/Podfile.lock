@@ -1,8 +1,9 @@
 PODS:
   - Alamofire (5.2.1)
-  - Charts (3.5.0):
-    - Charts/Core (= 3.5.0)
-  - Charts/Core (3.5.0)
+  - Charts (4.1.0):
+    - Charts/Core (= 4.1.0)
+  - Charts/Core (4.1.0):
+    - SwiftAlgorithms (~> 1.0)
   - Differentiator (4.0.1)
   - Eureka (5.3.1)
   - Firebase/Analytics (7.7.0):
@@ -96,10 +97,11 @@ PODS:
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
   - SignaturePad (1.0.3)
+  - SwiftAlgorithms (1.0.0)
   - TagListView (1.4.1)
 
 DEPENDENCIES:
-  - Charts
+  - Charts (~> 4.1.0)
   - Eureka
   - Firebase/Analytics
   - Firebase/Crashlytics
@@ -139,11 +141,12 @@ SPEC REPOS:
     - RxRelay
     - RxSwift
     - SignaturePad
+    - SwiftAlgorithms
     - TagListView
 
 SPEC CHECKSUMS:
   Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
-  Charts: 40a08591df1f8ad5c223ddedfb1a06da92f24f7c
+  Charts: 354f86803d11d9c35de280587fef50d1af063978
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   Eureka: 859877ab1e85661b6b7e810015d430e937d9cc7d
   Firebase: cd2ab85eec8170dc260186159f21072ecb679ad5
@@ -166,8 +169,9 @@ SPEC CHECKSUMS:
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   SignaturePad: b0d6322a27e90fe3e7d55194606503f5dfacb077
+  SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
 
-PODFILE CHECKSUM: 5610d7853c635711f18b722aa68cb3caee49f482
+PODFILE CHECKSUM: a2a99850ae38ac9d494f68f0a4a663c6709cb9a4
 
 COCOAPODS: 1.11.3

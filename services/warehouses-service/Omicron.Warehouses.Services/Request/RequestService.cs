@@ -11,10 +11,12 @@ namespace Omicron.Warehouses.Services.Request
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using Omicron.Warehouses.DataAccess.DAO.Request;
     using Omicron.Warehouses.Entities.Model;
     using Omicron.Warehouses.Services.Clients;
     using Omicron.Warehouses.Services.Constants;
+    using Omicron.Warehouses.Services.Redis;
     using Omicron.Warehouses.Services.Utils;
 
     /// <summary>
@@ -26,6 +28,7 @@ namespace Omicron.Warehouses.Services.Request
         private readonly IUsersService usersService;
         private readonly ISapAdapterService sapAdapterService;
         private readonly IReportingService reportingService;
+        private readonly IRedisService redisService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestService"/> class.
@@ -34,12 +37,14 @@ namespace Omicron.Warehouses.Services.Request
         /// <param name="usersService">users service.</param>
         /// <param name="sapAdapterService">sap adapter service.</param>
         /// <param name="reportingService">reporting service.</param>
-        public RequestService(IRequestDao requestDao, IUsersService usersService, ISapAdapterService sapAdapterService, IReportingService reportingService)
+        /// <param name="redisService">Redis service.</param>
+        public RequestService(IRequestDao requestDao, IUsersService usersService, ISapAdapterService sapAdapterService, IReportingService reportingService, IRedisService redisService)
         {
             this.requestDao = requestDao;
             this.usersService = usersService;
             this.sapAdapterService = sapAdapterService;
             this.reportingService = reportingService;
+            this.redisService = redisService.ThrowIfNull(nameof(redisService));
         }
 
         /// <summary>
@@ -81,10 +86,10 @@ namespace Omicron.Warehouses.Services.Request
 
             await this.InsertRequest(userId, request);
 
-            var mailResult = await this.reportingService.SubmitRequest(request);
-            if (!mailResult)
+            var result = await this.reportingService.SubmitRequest(request, 1);
+            if (!result.Item1)
             {
-                return ServiceUtils.CreateResult(true, 200, ErrorReasonConstants.ErrorToSubmitFile, null, null);
+                return ServiceUtils.CreateResult(true, 200, result.Item2, null, null);
             }
 
             await this.InsertRequestDetail(request);
@@ -96,6 +101,9 @@ namespace Omicron.Warehouses.Services.Request
                 return ServiceUtils.CreateResult(true, 200, null, results, null);
             }
 
+            var listComponents = request.OrderedProducts.Select(y => y.ProductId).Distinct().ToList();
+            listComponents = listComponents.Where(x => ServiceConstants.ListComponentsMostAssigned.Any(y => x.Contains(y))).ToList();
+            await this.UpdateMostUsedComponents(listComponents);
             results.AddSuccesResult(new { ProductionOrderId = 0 });
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
@@ -273,6 +281,44 @@ namespace Omicron.Warehouses.Services.Request
             var sumRequiredQuantities = group.Sum(x => x.RequiredQuantity);
 
             return (firstItem.WarehouseQuantity < 0) ? -sumRequiredQuantities : firstItem.WarehouseQuantity - sumRequiredQuantities;
+        }
+
+        /// <summary>
+        /// set the components and how many times.
+        /// </summary>
+        /// <param name="components">the components.</param>
+        /// <returns>the data.</returns>
+        private async Task UpdateMostUsedComponents(List<string> components)
+        {
+            if (!components.Any())
+            {
+                return;
+            }
+
+            var redisValue = await this.redisService.GetRedisKey(ServiceConstants.RedisComponentsInputRequest);
+            var redisComponents = !string.IsNullOrEmpty(redisValue) ? JsonConvert.DeserializeObject<List<ComponentsRedisModel>>(redisValue) : new List<ComponentsRedisModel>();
+            redisComponents ??= new List<ComponentsRedisModel>();
+
+            var listToUpdate = new List<ComponentsRedisModel>();
+            foreach (var c in components)
+            {
+                var component = redisComponents.FirstOrDefault(y => y.ItemCode == c);
+
+                if (component == null)
+                {
+                    listToUpdate.Add(new ComponentsRedisModel { ItemCode = c, Total = 1 });
+                    continue;
+                }
+
+                listToUpdate.Add(new ComponentsRedisModel { ItemCode = c, Total = component.Total + 1 });
+            }
+
+            var listItemsToInsert = listToUpdate.Select(x => x.ItemCode).ToList();
+            var missing = redisComponents.Where(x => !listItemsToInsert.Contains(x.ItemCode));
+            listToUpdate.AddRange(missing);
+            listToUpdate = listToUpdate.OrderByDescending(x => x.Total).ToList();
+            listToUpdate = listToUpdate.Skip(0).Take(10).ToList();
+            await this.redisService.WriteToRedis(ServiceConstants.RedisComponentsInputRequest, JsonConvert.SerializeObject(listToUpdate));
         }
     }
 }

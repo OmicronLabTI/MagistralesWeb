@@ -32,19 +32,21 @@ namespace Omicron.Warehouses.Services.Clients
         /// Method for submit request.
         /// </summary>
         /// <param name="request">Request to submit.</param>
+        /// <param name="numberOfAttemps">Numbers of attemps.</param>
         /// <returns>User list.</returns>
-        public async Task<bool> SubmitRequest(RawMaterialRequestModel request)
+        public async Task<(bool, string)> SubmitRequest(RawMaterialRequestModel request, int numberOfAttemps = 3)
         {
             var result = false;
-
-            for (int attempNumber = 0; attempNumber < 3; attempNumber++)
+            var message = string.Empty;
+            for (int attempNumber = 0; attempNumber < numberOfAttemps; attempNumber++)
             {
                 try
                 {
                     var resultModel = await this.PostAsync(request, EndPointConstants.SubmitRawMaterialRequest);
                     result = bool.Parse(resultModel.Response.ToString());
+                    message = resultModel.UserError;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     result = false;
                 }
@@ -55,7 +57,7 @@ namespace Omicron.Warehouses.Services.Clients
                 }
             }
 
-            return result;
+            return (result, message);
         }
     }
 }

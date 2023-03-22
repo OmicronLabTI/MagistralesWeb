@@ -143,6 +143,13 @@ namespace Omicron.SapDiApi.Facade.Sap
         Task<ResultDto> UpdateAdvisorProfileInfo(AdvisorProfileDto profileDto);
 
         /// <summary>
+        /// The method to update batches.
+        /// </summary>
+        /// <param name="transferRequest">the transfer Request.</param>
+        /// <returns>the result.</returns>
+        ResultDto CreateTransferRequest(List<TransferRequestHeaderDto> transferRequestHeader);
+
+        /// <summary>
         /// connecto to sap.
         /// </summary>
         /// <returns>connects.</returns>

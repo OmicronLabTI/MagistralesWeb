@@ -8,6 +8,7 @@
 
 namespace Omicron.Reporting.Services.Constants
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -38,7 +39,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Body of email.
         /// </summary>
-        public const string RawMaterialRequestEmailBody = "Se ha enviado una solicitud de Materia Prima, favor de no responder este correo.";
+        public const string RawMaterialRequestEmailBody = "<html><body><p>Solicitud de traslado No. {0}</p><p>Se ha enviado una solicitud de Materia Prima, favor de no responder este correo.</p></body></html>";
 
         /// <summary>
         /// the foreign.
@@ -328,6 +329,66 @@ namespace Omicron.Reporting.Services.Constants
         public const string InvoiceXmlName = "F{0}.xml";
 
         /// <summary>
+        /// status cancelado.
+        /// </summary>
+        public const string LabelMailParam = "EmailAlmacen2";
+
+        /// <summary>
+        /// status cancelado.
+        /// </summary>
+        public const string NoLabelMailParam = "EmailAlmacen";
+
+        /// <summary>
+        /// status LabelProduct.
+        /// </summary>
+        public const string LabelProduct = "LabelProduct";
+
+        /// <summary>
+        /// status NoLabelProduct.
+        /// </summary>
+        public const string NoLabelProduct = "NoLabelProduct";
+
+        /// <summary>
+        /// status NoLabelProduct.
+        /// </summary>
+        public const string EndpointCreateTransferRequest = "create/transferrequest";
+
+        /// <summary>
+        /// status NoLabelProduct.
+        /// </summary>
+        public const string Default = "create/transferrequest";
+
+        /// <summary>
+        /// value for refactua.
+        /// </summary>
+        public const string WareHouseMp = "MP";
+
+        /// <summary>
+        /// value for refactua.
+        /// </summary>
+        public const string WarehouseMg = "MG";
+
+        /// <summary>
+        /// value for refactua.
+        /// </summary>
+        public const string WarehouseDz = "DZ";
+
+        /// <summary>
+        /// Error to submit request.
+        /// </summary>
+        public const string ErrorToSubmitFile = "Ocurrió un error al enviar la solicitud.";
+
+        /// <summary>
+        /// Error to submit request.
+        /// </summary>
+        public const string ErrorToCreateTransferRequestOnDiApi = "Ocurrió un error al generar la solicitud, favor de revisar los componentes para poder continuar.";
+
+        /// <summary>
+        /// Error to submit request.
+        /// </summary>
+        public const string ErrorWithOneRequestCreatedOnSap = "Se creo la solicitud No. {0}, ocurrió un error al generar la solicitud de los siguientes componentes: {1}.";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -377,5 +438,53 @@ namespace Omicron.Reporting.Services.Constants
             Entregado,
             Enviado,
         };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> RawMaterialRequestCopyMails { get; } = new List<string>
+        {
+          "EmailLogisticaCc1",
+          "EmailLogisticaCc2",
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> LabelProductCategory { get; } = new List<string>
+        {
+          LabelProduct,
+          NoLabelProduct,
+        };
+
+        /// <summary>
+        /// Gets the request number format.
+        /// </summary>
+        /// <value>
+        /// String RequestNumberFormat.
+        /// </value>
+        public static string RequestNumberFormat => "N° de Solicitud de traslado: {0}";
+
+        /// <summary>
+        /// Gets Blob Url Template.
+        /// </summary>
+        /// <value>
+        /// String BlobUrlTemplate.
+        /// </value>
+        public static string BlobUrlTemplate => "https://{0}.blob.core.windows.net/{1}/{2}";
+
+        /// <summary>
+        /// Gets Container Azure Name to request order warehouse.
+        /// </summary>
+        /// <value>
+        /// String ContainerAzureRequestOrderWarehose.
+        /// </value>
+        public static string ContainerAzureRequestOrderWarehose => "request-order-warehose";
     }
 }
