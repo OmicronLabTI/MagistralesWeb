@@ -52,6 +52,8 @@ extension OrderDetailViewController {
             guard let self = self else { return }
             self.quantityTextField.isHidden = true
             self.quantityButtonChange.isHidden = true
+            self.quantityPlannedDescriptionLabel.isHidden = false
+            self.destinyLabel.isHidden = false
             self.isolatedOrder = false
             if res.first != nil {
                 self.initLabelsWithContent(detail: res.first!)
@@ -88,6 +90,8 @@ extension OrderDetailViewController {
                         text: "\(CommonStrings.plannedQuantity) \(plannedQ)",
                         textToBold: CommonStrings.plannedQuantity)
                     self.quantityPlannedDescriptionLabel.text = ""
+                    self.quantityPlannedDescriptionLabel.isHidden = true
+                    self.destinyLabel.isHidden = true
                 }
             }
         }).disposed(by: self.disposeBag)
