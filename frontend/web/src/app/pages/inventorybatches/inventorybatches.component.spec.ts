@@ -129,7 +129,20 @@ describe('InventorybatchesComponent', () => {
   it('should call getInventoryBatches() ok', () => {
     component.ordenFabricacionId = '1234';
     batchesServiceSpy.getInventoryBatches.and.callFake(() => {
-      return of(iLotesFormulaRes);
+      return of({
+        ...iLotesFormulaRes,
+        response: [
+          {
+            codigoProducto: '',
+            descripcionProducto: '',
+            almacen: '',
+            totalNecesario: 0,
+            totalSeleccionado: 0,
+            lotes: [],
+            lotesAsignados: []
+          }
+        ]
+      });
     });
     batchesServiceSpy.getInventoryBatches('88087');
     component.getInventoryBatches();
