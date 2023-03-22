@@ -74,6 +74,7 @@ class OrderDetailViewController: UIViewController {
         self.viewModelBinding()
         quantityButtonBindind()
         quantityTextFieldBindind()
+        infoView.layer.cornerRadius = 10
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
