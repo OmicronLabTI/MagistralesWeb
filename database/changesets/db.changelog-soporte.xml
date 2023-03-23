@@ -46,4 +46,12 @@
 			<column name="field" value="CardCodeResponsibleMedic" />
 		</insert>		
 	</changeSet>
+	<changeSet author="jcastillo" id="changelog-1.4">
+		<sql endDelimiter=";"> UPDATE parameters set value = 
+		'pedidos@o-lab.mx;atencion@o-lab.mx;tania.dominguez@axity.com' where "Id" = 71;</sql>	
+	</changeSet>
+	<changeSet author="jcastillo" id="changelog-1.5">
+		<sql endDelimiter=";"> UPDATE parameters set value = 
+		'mag1@o-lab.mx' where "Id" = 3;</sql>	
+	</changeSet>
 </databaseChangeLog>
