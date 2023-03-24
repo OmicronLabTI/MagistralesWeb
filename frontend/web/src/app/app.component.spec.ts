@@ -258,5 +258,10 @@ describe('AppComponent', () => {
     expect(observableServiceSpy.setCallHttpService).toHaveBeenCalled();
   });
 
+  it('should showAutomaticModalOrder ', () => {
+    component.showAutomaticModalOrder({});
+    expect(messagesServiceSpy.presentToastCustom).toHaveBeenCalled();
+  });
+
 
 });

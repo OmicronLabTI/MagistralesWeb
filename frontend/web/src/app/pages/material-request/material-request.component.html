@@ -109,7 +109,7 @@
                             <div>
 
                                 <mat-form-field appearance="outline">
-                                    <mat-select [(ngModel)]="element.warehouse" placeholder="Almacén requerido"
+                                    <mat-select [(ngModel)]="element.warehouse" placeholder="Almacén destino"
                                         (selectionChange)="onChangeStore($event.value, i)">
                                         <mat-option [value]="store.value"
                                             *ngFor="let store of listStore">{{store.value}}</mat-option>

@@ -345,5 +345,8 @@ export const BoolConst = {
     false: false
 };
 
-
 export const CallBackEmptyConst = () => { };
+
+export const CONST_ARRAY = {
+    empty: []
+};
