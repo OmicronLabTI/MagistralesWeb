@@ -45,7 +45,24 @@ class RootViewController: UIViewController {
         self.setTitleCustom()
         // Configure Refresh Control
         self.refreshControl.addTarget(self, action: #selector(self.refreshOrders), for: .valueChanged)
+        self.showModalAutoHideBind()
     }
+
+    func showModalAutoHideBind() {
+        self.rootViewModel.modalHideAuto.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
+            if message != "" {
+                let alert = UIAlertController(
+                    title: message,
+                    message: nil,
+                    preferredStyle: .alert)
+                self?.present(alert, animated: true, completion: nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(3000)) {
+                        self?.view.window?.rootViewController?.dismiss(animated: true)
+                    }
+            }
+        }).disposed(by: self.disposeBag)
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.rootViewModel.getOrders()
