@@ -71,6 +71,7 @@
 		11ACB7D829AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */; };
 		11ACB7D929AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */; };
 		11ACB7DA29AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */; };
+		11AFF02F29CBACE400DBB32D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11AFF02E29CBACE400DBB32D /* GoogleService-Info.plist */; };
 		11E7879C29B65AC100B888C6 /* SuppliesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E7879B29B65AC100B888C6 /* SuppliesTest.swift */; };
 		11EB7A2729C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */; };
 		11EB7A2829C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */; };
@@ -601,6 +602,7 @@
 		11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalentarMonthItemView.swift; sourceTree = "<group>"; };
 		11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewControllerExtension.swift; sourceTree = "<group>"; };
 		11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCell.swift; sourceTree = "<group>"; };
+		11AFF02E29CBACE400DBB32D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		11E7879B29B65AC100B888C6 /* SuppliesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuppliesTest.swift; sourceTree = "<group>"; };
 		11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateRangeSelectorViewController.swift; sourceTree = "<group>"; };
 		11FD7B1B29C2331700F04747 /* DropdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropdownViewController.swift; sourceTree = "<group>"; };
@@ -871,6 +873,14 @@
 			path = History;
 			sourceTree = "<group>";
 		};
+		11AFF02D29CBAC9100DBB32D /* DEV */ = {
+			isa = PBXGroup;
+			children = (
+				11AFF02E29CBACE400DBB32D /* GoogleService-Info.plist */,
+			);
+			path = DEV;
+			sourceTree = "<group>";
+		};
 		11E7879A29B65A9000B888C6 /* Supplies */ = {
 			isa = PBXGroup;
 			children = (
@@ -921,6 +931,7 @@
 		494EA4F1273A66920077BB5B /* GoogleServices */ = {
 			isa = PBXGroup;
 			children = (
+				11AFF02D29CBAC9100DBB32D /* DEV */,
 				49E4D86925F154AF00E196F9 /* Prod */,
 				494EA4F2273A66CD0077BB5B /* UAT */,
 				49E4D86825F1549500E196F9 /* QA */,
@@ -1764,6 +1775,7 @@
 				49CF661325F2D4AB002CD598 /* login.json in Resources */,
 				49CF661425F2D4AB002CD598 /* PostOrderPDF.json in Resources */,
 				49CF661525F2D4AB002CD598 /* Main.storyboard in Resources */,
+				11AFF02F29CBACE400DBB32D /* GoogleService-Info.plist in Resources */,
 				49928126272A3F21001962D4 /* Omicron-UAT.plist in Resources */,
 				49CF661625F2D4AB002CD598 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
 				49CF661725F2D4AB002CD598 /* FinishOrdersErrorResponse.json in Resources */,
@@ -2817,7 +2829,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.axity.starter;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-DEV";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = UAT;
@@ -3019,7 +3031,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.axity.starter;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-DEV";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_VERSION = 5.0;
@@ -3042,7 +3054,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.axity.starter;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-DEV";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
@@ -3257,7 +3269,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.axity.starter;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-DEV";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = QA;

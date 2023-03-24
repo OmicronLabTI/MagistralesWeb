@@ -51,7 +51,6 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private activeRoute: ActivatedRoute,
     private dataService: DataService,
-    private fileDownloaderServie: FileDownloaderService,
     private reportingService: ReportingService,
     private location: Location,
     private localStorageService: LocalStorageService,
