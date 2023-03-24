@@ -69,7 +69,7 @@ struct ViewControllerIdentifiers {
     static let historyTableViewCell = "HistoryTableViewCell"
 }
 struct OmicronColors {
-    static let blue = UIColor.init(red: 84/255, green: 128/255, blue: 166/255, alpha: 1)
+    static let blue = UIColor.init(red: 16/255, green: 149/255, blue: 200/255, alpha: 1)
     static let transparent = UIColor.init(red: 0/255, green: 0/255, blue: 0/255, alpha: 0)
     static let ligthGray = UIColor.init(red: 246/255, green: 246/255, blue: 246/255, alpha: 1)
     static let assignedStatus = UIColor.init(red: 12/255, green: 204/255, blue: 86/255, alpha: 1)
