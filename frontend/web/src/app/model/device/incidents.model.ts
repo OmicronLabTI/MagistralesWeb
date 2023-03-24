@@ -1,9 +1,10 @@
-import {IncidentsGraphicsMatrix} from '../http/incidents.model';
+import { CONST_ARRAY, CONST_NUMBER } from 'src/app/constants/const';
+import { IncidentsGraphicsMatrix } from '../http/incidents.model';
 
 export class ConfigurationGraphic {
-    isPie: boolean;
+    isPie = true;
     titleForGraph: string;
-    dataGraph: IncidentsGraphicsMatrix[];
+    dataGraph: IncidentsGraphicsMatrix[] = CONST_ARRAY.empty;
     isSmall: boolean;
     isWithFullTooltip: boolean;
     isWithNumberTooltip?: boolean;
