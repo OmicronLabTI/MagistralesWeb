@@ -29,6 +29,15 @@ describe('TableCommonComponent', () => {
 
   it('should handle action Cell', () => {
     spyOn(component.handleAction, 'emit');
-
+  });
+  it('should valueCell', () => {
+    expect(component.valueCell({
+      item: '1'
+    }, 'item')).toBe('1');
+  });
+  it('should actionCell', () => {
+    expect(component.actionCell({
+      item: '1'
+    }, 'item').label).toBe('');
   });
 });
