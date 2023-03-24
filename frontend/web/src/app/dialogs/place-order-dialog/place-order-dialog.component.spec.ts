@@ -1,5 +1,14 @@
-import { async, ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+  async,
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+} from '@angular/core/testing';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 
 import { PlaceOrderDialogComponent } from './place-order-dialog.component';
 import { MATERIAL_COMPONENTS } from '../../app.material';
@@ -7,7 +16,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DataService } from '../../services/data.service';
-import { MODAL_NAMES } from '../../constants/const';
+import { CONST_NUMBER, MODAL_NAMES } from '../../constants/const';
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { QfbClassification, QfbWithNumber } from 'src/app/model/http/users';
 import { of, throwError } from 'rxjs';
@@ -15,6 +24,9 @@ import { ObservableService } from 'src/app/services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { CountOrdersMock } from 'src/mocks/countOrdersMock';
 import { ErrorService } from 'src/app/services/error.service';
+import { AppDateAdapter } from 'src/app/utils/date.adapter';
+import { Platform } from '@angular/cdk/platform';
+import { DestinationStore } from 'src/app/model/http/materialReques';
 
 describe('PlaceOrderDialogComponent', () => {
   let component: PlaceOrderDialogComponent;
@@ -28,53 +40,52 @@ describe('PlaceOrderDialogComponent', () => {
   const getQfbsWithOrdersMock = CountOrdersMock;
 
   beforeEach(async(() => {
-    messagesServiceSpy = jasmine.createSpyObj<MessagesService>('MessagesService', [
-      'presentToastCustom'
-    ]);
+    messagesServiceSpy = jasmine.createSpyObj<MessagesService>(
+      'MessagesService',
+      ['presentToastCustom']
+    );
 
-    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
-      [
-        'getFormattedNumber',
-      ]);
-    pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService',
-      [
-        'getQfbsWithOrders'
-      ]);
+    dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
+      'getFormattedNumber',
+    ]);
+    pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
+      'getQfbsWithOrders',
+    ]);
     pedidosServiceSpy.getQfbsWithOrders.and.callFake(() => {
       return of(getQfbsWithOrdersMock);
     });
     // --- Observable Service
-    observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
+    observableServiceSpy = jasmine.createSpyObj<ObservableService>(
+      'ObservableService',
       [
         'getCallHttpService',
         'setMessageGeneralCallHttp',
         'setUrlActive',
         'setQbfToPlace',
-        'setIsLoading'
+        'setIsLoading',
       ]
     );
     observableServiceSpy.getCallHttpService.and.returnValue(of());
     // --- Error Service
-    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', ['httpError']);
+    errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
+      'httpError',
+    ]);
 
     TestBed.configureTestingModule({
       declarations: [PlaceOrderDialogComponent],
-      imports: [
-        HttpClientTestingModule,
-        MatDialogModule,
-        MATERIAL_COMPONENTS,
-      ],
+      imports: [HttpClientTestingModule, MatDialogModule, MATERIAL_COMPONENTS],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
-        { provide: MatDialogRef, useValue: { close: () => { } } },
+        { provide: MatDialogRef, useValue: { close: () => {} } },
         {
-          provide: MAT_DIALOG_DATA, useValue: {
+          provide: MAT_DIALOG_DATA,
+          useValue: {
             placeOrdersData: {
               list: [],
               modalType: 'placeOrder',
               userId: '',
-            }
-          }
+            },
+          },
         },
         { provide: DataService, useValue: dataServiceSpy },
         DatePipe,
@@ -82,9 +93,8 @@ describe('PlaceOrderDialogComponent', () => {
         { provide: MessagesService, useValue: messagesServiceSpy },
         { provide: PedidosService, useValue: pedidosServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
-      ]
-    })
-      .compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -104,28 +114,36 @@ describe('PlaceOrderDialogComponent', () => {
   it('should call placeOrder()', () => {
     component.placeOrder('anyUserId', 'anyUserName');
     expect(observableServiceSpy.setQbfToPlace).toHaveBeenCalledWith({
-      userId: 'anyUserId', userName: 'anyUserName',
-      modalType: 'placeOrder', list: [], assignType: MODAL_NAMES.assignManual,
-      isFromOrderIsolated: undefined, isFromReassign: undefined, clasification: 'mg'
+      userId: 'anyUserId',
+      userName: 'anyUserName',
+      modalType: 'placeOrder',
+      list: [],
+      assignType: MODAL_NAMES.assignManual,
+      isFromOrderIsolated: undefined,
+      isFromReassign: undefined,
+      clasification: 'mg',
     });
-
   });
   it('should call placeOrderAutomatic()', () => {
     component.placeOrderAutomatic();
     expect(observableServiceSpy.setQbfToPlace).toHaveBeenCalledWith({
       modalType: 'placeOrder',
       list: [],
-      assignType: MODAL_NAMES.assignAutomatic
+      assignType: MODAL_NAMES.assignAutomatic,
     });
   });
 
   it('getQfbsWithOrders should be success', fakeAsync(() => {
-    pedidosServiceSpy.getQfbsWithOrders.and.returnValue(of(getQfbsWithOrdersMock));
+    pedidosServiceSpy.getQfbsWithOrders.and.returnValue(
+      of(getQfbsWithOrdersMock)
+    );
     component.ngOnInit();
     expect(component.qfbs.length).toBeGreaterThanOrEqual(0);
   }));
   it('getQfbsWithOrders should failed', fakeAsync(() => {
-    pedidosServiceSpy.getQfbsWithOrders.and.returnValue(throwError({ status: 500 }));
+    pedidosServiceSpy.getQfbsWithOrders.and.returnValue(
+      throwError({ status: 500 })
+    );
     component.ngOnInit();
     expect(pedidosServiceSpy.getQfbsWithOrders).toHaveBeenCalled();
   }));
@@ -140,5 +158,20 @@ describe('PlaceOrderDialogComponent', () => {
   it('should change Type Qfb -> mn', () => {
     component.changeTypeQfb(QfbClassification.mn, false);
     expect(component.currentQfbType).toBe(QfbClassification.mn);
+  });
+  it('should AppDateAdapter', () => {
+    const adapter = new AppDateAdapter('', new Platform());
+    const fomattedDate = adapter.format(new Date('2/2/2023'), null);
+    expect(fomattedDate).toEqual('02/02/2023');
+    const store = new DestinationStore();
+    expect(store.id).toBe(CONST_NUMBER.zero);
+  });
+  it('should change Type Qfb -> dz', () => {
+    component.changeTypeQfb(QfbClassification.dz, true);
+    expect(component.currentQfbType).toBe(QfbClassification.dz);
+  });
+  it('should change Type Qfb -> mg', () => {
+    component.changeTypeQfb(QfbClassification.mg, true);
+    expect(component.currentQfbType).toBe(QfbClassification.mg);
   });
 });
