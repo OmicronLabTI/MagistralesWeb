@@ -3,5 +3,8 @@
         padding: 20px 0px;
         display: flex;
         flex-wrap: wrap;
+        .date-filter, .status-filter{
+            padding: 0px 10px;
+        }
     }
 }
