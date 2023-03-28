@@ -41,7 +41,7 @@ extension SupplieViewController {
     func bindHistoryTable() {
         self.historyViewModel.selectedHistoryList.bind(to: self.tableHistory.rx.items(
                 cellIdentifier: ViewControllerIdentifiers.historyTableViewCell,
-                cellType: HistoryTableViewCell.self)) { index, item, cell  in
+                cellType: HistoryTableViewCell.self)) { _, item, cell  in
                     let dateFormatter = DateFormatter()
                     dateFormatter.dateFormat = "dd/MM/yyyy"
                     let docEntry = item.docEntry ?? 0

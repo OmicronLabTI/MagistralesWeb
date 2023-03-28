@@ -22,7 +22,7 @@ class DropdownViewController: UIViewController {
         self.preferredContentSize = CGSize(width: 210, height: 250)
     }
     func setSelectedOptions() {
-        selectedOptions.forEach ({
+        selectedOptions.forEach({
             if let selectedIndex = self.options.firstIndex(of: $0) {
                 self.optionsTable.selectRow(at: IndexPath(row: selectedIndex, section: 0),
                                             animated: false,

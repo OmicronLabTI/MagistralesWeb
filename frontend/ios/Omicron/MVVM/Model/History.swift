@@ -66,7 +66,6 @@ class RawMaterialItem: Mappable {
     var targetWarehosue: String?
     var docDate: String?
     var status: String?
-    
     required init?(map: Map) {}
     init(docEntry: Int?,
          itemCode: String?,
