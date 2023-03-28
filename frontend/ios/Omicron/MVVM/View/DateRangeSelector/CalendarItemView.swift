@@ -40,4 +40,3 @@ struct DayLabel: CalendarItemViewRepresentable {
     view.text = "\(viewModel.day.day)"
   }
 }
-
