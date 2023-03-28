@@ -9,7 +9,7 @@
                 Historial</div>
         </div>
         <div class="filters-contain col-12 d-flex flex-wrap">
-            <div class="col-md-4 col-6 datepicker">
+            <div class="date-filter">
                 <mat-form-field appearance="outline" >
                     <mat-label>Fecha de solicitud</mat-label>
                     <input (ngModelChange)="filterChange()"  [max]="maxDate" [min]="minDate" readonly="true" matInput placeholder="Choose a date" [satDatepicker]="picker2" [formControl]="date" ngDefaultControl>
@@ -18,8 +18,8 @@
                     <sat-datepicker-toggle matSuffix [for]="picker2"></sat-datepicker-toggle>
                 </mat-form-field>
             </div>
-            <div class="col-md-4 col-6">
-                <mat-form-field appearance="outline" class="custom-field custom-style-status">
+            <div class="status-filter ">
+                <mat-form-field appearance="outline" class="">
                     <mat-label>Estatus</mat-label>
                     <mat-select (selectionChange)="filterChange()" [formControl]="statusControl" multiple>
                         <mat-option value="Abierto">Abierto</mat-option>

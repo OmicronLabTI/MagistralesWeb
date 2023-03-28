@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		111005E229D367080069BEDE /* HistoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111005E129D367080069BEDE /* HistoryTest.swift */; };
 		1113E43729C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
 		1113E43829C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
 		1113E43929C27FBA0043083E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1113E43629C27FBA0043083E /* History.swift */; };
@@ -586,6 +587,7 @@
 
 /* Begin PBXFileReference section */
 		0A4BE9F3CB565F9C5BB8E3F8 /* Pods-Omicron.qa.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Omicron.qa.xcconfig"; path = "Target Support Files/Pods-Omicron/Pods-Omicron.qa.xcconfig"; sourceTree = "<group>"; };
+		111005E129D367080069BEDE /* HistoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTest.swift; sourceTree = "<group>"; };
 		1113E43629C27FBA0043083E /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		1113E43B29C288070043083E /* getHistory.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getHistory.json; sourceTree = "<group>"; };
 		1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCellExtension.swift; sourceTree = "<group>"; };
@@ -837,6 +839,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		111005E029D366DB0069BEDE /* History */ = {
+			isa = PBXGroup;
+			children = (
+				111005E129D367080069BEDE /* HistoryTest.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
 		1142E18E29AE61EB008651D1 /* Supplie */ = {
 			isa = PBXGroup;
 			children = (
@@ -1365,6 +1375,7 @@
 		98015CC524AFBC6D00E7772F /* OmicronTests */ = {
 			isa = PBXGroup;
 			children = (
+				111005E029D366DB0069BEDE /* History */,
 				11E7879A29B65A9000B888C6 /* Supplies */,
 				4993351127F25DBD00CEBDC2 /* Batches */,
 				4993351027F25D9700CEBDC2 /* Inbox */,
@@ -2673,6 +2684,7 @@
 				4993350F27F234CE00CEBDC2 /* OrderDetailTestExtension.swift in Sources */,
 				1E72B27C251B9C20009F56FC /* SignaturePadTest.swift in Sources */,
 				7C75C32E24DC6B4900CBA3C3 /* InboxTest.swift in Sources */,
+				111005E229D367080069BEDE /* HistoryTest.swift in Sources */,
 				11E7879C29B65AC100B888C6 /* SuppliesTest.swift in Sources */,
 				98015CC724AFBC6D00E7772F /* LoginTest.swift in Sources */,
 				1E72B278251B9BEC009F56FC /* ChartTest.swift in Sources */,
@@ -2845,7 +2857,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 95;
+				CURRENT_PROJECT_VERSION = 96;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3070,7 +3082,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 95;
+				CURRENT_PROJECT_VERSION = 96;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3098,7 +3110,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 95;
+				CURRENT_PROJECT_VERSION = 96;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3285,7 +3297,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 95;
+				CURRENT_PROJECT_VERSION = 96;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;

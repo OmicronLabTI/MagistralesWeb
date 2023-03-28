@@ -7,9 +7,7 @@
 //
 
 import Foundation
-
 extension InboxViewController: HeaderSelectedDelegate {
-
     func downloadPDF(_ ordersId: [Int]) {
         inboxViewModel.downloadPDF(ordersId)
     }
