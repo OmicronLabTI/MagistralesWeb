@@ -65,7 +65,10 @@ export class HistoryMaterialRequestComponent implements OnInit {
     const status = this.statusControl.value.toString();
     const start = this.date.value.begin;
     const end = this.date.value.end;
-    return `?offset=${this.offset}&limit=${this.limit}&fini=${this.dataService.getDateFilterFormat(start)}&ffin=${this.dataService.getDateFilterFormat(end)}&status=${status}`;
+    return `?offset=${this.offset}
+      &limit=${this.limit}
+      &fini=${this.dataService.getDateFilterFormat(start)}
+      &ffin=${this.dataService.getDateFilterFormat(end)}&status=${status}`;
   }
 
   changeDataEvent(event: PageEvent) {
@@ -85,7 +88,12 @@ export class HistoryMaterialRequestComponent implements OnInit {
   historyMaterialRequest = () => {
     this.loading = true;
     this.materialRequest.gethistoryMaterial(this.getQuery()).subscribe(res => {
-      this.dataHistory = res.response.map(({ quantity, ...others }, index) => ({ ...others, order: index + 1, quantity: String(quantity.toLocaleString("en-US")) }));
+      this.dataHistory = res.response.map(({ quantity, ...others }, index) =>
+        ({
+          ...others,
+          order: index + 1,
+          quantity: String(quantity.toLocaleString('en-US'))
+        }));
       this.lengthPaginator = res.comments;
       this.loading = false;
     },
