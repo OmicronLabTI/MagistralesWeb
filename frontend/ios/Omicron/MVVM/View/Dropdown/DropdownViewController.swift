@@ -19,7 +19,7 @@ class DropdownViewController: UIViewController {
         optionsTable.dataSource = self
         selectedOptions = historyViewModel.selectedStatus
         setSelectedOptions()
-        self.preferredContentSize = CGSize(width: 210, height: 250)
+        self.preferredContentSize = CGSize(width: 180, height: 190)
     }
     func setSelectedOptions() {
         selectedOptions.forEach({
