@@ -10,7 +10,7 @@ import UIKit
 import Resolver
 class DropdownViewController: UIViewController {
     @IBOutlet weak var optionsTable: UITableView!
-    var options = ["ABIERTO", "CERRADO", "CANCELADO"]
+    var options = ["ABIERTO", "CERRADO"]
     @Injected var historyViewModel: HistoryViewModel
     var selectedOptions: [String] = []
     override func viewDidLoad() {
@@ -19,7 +19,7 @@ class DropdownViewController: UIViewController {
         optionsTable.dataSource = self
         selectedOptions = historyViewModel.selectedStatus
         setSelectedOptions()
-        self.preferredContentSize = CGSize(width: 210, height: 250)
+        self.preferredContentSize = CGSize(width: 210, height: 160)
     }
     func setSelectedOptions() {
         selectedOptions.forEach({
