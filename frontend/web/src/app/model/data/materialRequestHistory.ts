@@ -52,7 +52,7 @@ export const MaterialRequestHistoryTableSettings: SettingsCommonTableClass = {
             attr: 'docDate',
         },
         {
-            className: ' badge ',
+            className: '  text-center  badge ',
             type: 'badge',
             title: 'ESTATUS',
             attr: 'status',

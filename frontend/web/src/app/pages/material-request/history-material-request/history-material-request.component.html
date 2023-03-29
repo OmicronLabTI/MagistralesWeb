@@ -1,14 +1,14 @@
 <div class="history-material-component">
     <div class="header-page d-flex flex-wrap
     ">
-        <div class="title-list-container col-12">
+        <div class="title-list-container col-12 padding-v-m">
             <span>Solicitud de insumos al almacén general</span>
         </div>
-        <div class="py-2 my-3">
+        <div class=" col-12 padding-v-m">
             <div class="breadcrumb"><a class="breadcrumblink" routerLink="/materialRequest/0/1" >Solicitud de insumos</a> /
                 Historial</div>
         </div>
-        <div class="filters-contain col-12 d-flex flex-wrap">
+        <div class="filters-contain col-12 d-flex flex-wrap  col-12 padding-v-m">
             <div class="date-filter">
                 <mat-form-field appearance="outline" >
                     <mat-label>Fecha de solicitud</mat-label>
@@ -29,7 +29,7 @@
             </div>
         </div>
     </div>
-    <div class="table-contain">
+    <div class="table-contain  col-12 padding-v-m">
         <app-table-common [loading]="loading" [data]="dataHistory"
             [settings]="historyMaterialRequestSettings"></app-table-common>
         <mat-paginator [pageSizeOptions]="[5, 10, 15 ,20]" [pageSize]="limit" [length]="lengthPaginator"
