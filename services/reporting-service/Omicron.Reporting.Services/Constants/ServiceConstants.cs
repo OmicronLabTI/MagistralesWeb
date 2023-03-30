@@ -464,14 +464,6 @@ namespace Omicron.Reporting.Services.Constants
         };
 
         /// <summary>
-        /// Gets the request number format.
-        /// </summary>
-        /// <value>
-        /// String RequestNumberFormat.
-        /// </value>
-        public static string RequestNumberFormat => "N° de Solicitud de traslado: {0}";
-
-        /// <summary>
         /// Gets Blob Url Template.
         /// </summary>
         /// <value>

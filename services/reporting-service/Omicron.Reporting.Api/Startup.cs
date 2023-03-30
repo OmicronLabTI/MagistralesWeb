@@ -16,6 +16,7 @@ namespace Omicron.Reporting.Api
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.OpenApi.Models;
     using Omicron.Reporting.Api.Filters;
     using Omicron.Reporting.DependencyInjection;
@@ -79,15 +80,15 @@ namespace Omicron.Reporting.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
                     Title = "Api Reporting",
                     Description = "Api para generación de reportes.",
-                    Contact = new Microsoft.OpenApi.Models.OpenApiContact
+                    Contact = new OpenApiContact
                     {
                         Name = "Axity",
-                        Url = new System.Uri(this.Configuration["AxityURL"]),
+                        Url = new Uri(this.Configuration["AxityURL"]),
                     },
                 });
             });
@@ -118,11 +119,14 @@ namespace Omicron.Reporting.Api
         /// <param name="env">Hosting Environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseAllElasticApm(this.Configuration);
+            if (env.IsProduction())
+            {
+                app.UseAllElasticApm(this.Configuration);
+            }
+
             app.UseSwagger(c =>
             {
                 var basepath = this.Configuration["SwaggerAddress"];
-
                 c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                 {
                     var paths = new OpenApiPaths();
@@ -134,7 +138,6 @@ namespace Omicron.Reporting.Api
                     swaggerDoc.Paths = paths;
                 });
             });
-
             app.UseStaticFiles();
             app.UseSwaggerUI(c =>
             {
@@ -144,8 +147,8 @@ namespace Omicron.Reporting.Api
             app.UseResponseCompression();
 
             app.UseMetricServer();
-            app.UseMiddleware<ResponseMiddleware>();
 
+            app.UseMiddleware<ResponseMiddleware>();
             app.UseRouting();
             app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
@@ -189,7 +192,7 @@ namespace Omicron.Reporting.Api
             }
             catch (Exception)
             {
-                logger.Error("No se econtro Redis");
+                logger.Error("Reporting service: No se econtro Redis");
             }
         }
     }
