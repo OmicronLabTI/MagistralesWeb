@@ -8,18 +8,19 @@
     <AdditionalFiles Include="$(SolutionDir)\StyleCop\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.0.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.8.3" />
-    <PackageReference Include="ClosedXML" Version="0.95.4" />
-    <PackageReference Include="FreeSpire.Doc" Version="7.11.0" />
-    <PackageReference Include="iTextSharp" Version="5.5.13.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
+    <PackageReference Include="ClosedXML" Version="0.100.3" />
+    <PackageReference Include="FreeSpire.Doc" Version="10.8.0" />
+    <PackageReference Include="itext7" Version="7.2.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.32" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,10 +34,13 @@
     <None Remove="Utils\" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="ReportBuilder\Templates\arial.ttf">
+    <None Update="ReportBuilder\SuppliesWarehouse\Resources\Frutiger Next Bold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="ReportBuilder\Templates\BASE_RM_REQUEST.docx">
+    <None Update="ReportBuilder\SuppliesWarehouse\Resources\Frutiger Next Medium.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ReportBuilder\Templates\arial.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

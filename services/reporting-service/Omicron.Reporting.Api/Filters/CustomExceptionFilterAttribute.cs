@@ -11,7 +11,7 @@ namespace Omicron.Reporting.Api.Filters
     using System.Net;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using Omicron.Reporting.Resources.Exceptions;
     using Serilog;
 
     /// <summary>

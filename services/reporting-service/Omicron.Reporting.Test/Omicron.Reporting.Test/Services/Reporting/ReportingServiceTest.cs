@@ -21,6 +21,7 @@ namespace Omicron.Reporting.Test.Services.Request
     using Omicron.Reporting.Services;
     using Omicron.Reporting.Services.AzureServices;
     using Omicron.Reporting.Services.Clients;
+    using Omicron.Reporting.Services.ReportBuilder.SuppliesWarehouse;
     using Omicron.Reporting.Services.SapDiApi;
 
     /// <summary>
@@ -308,6 +309,7 @@ namespace Omicron.Reporting.Test.Services.Request
                     RequestId = 1,
                     Unit = "ambar",
                     RequestQuantity = 5,
+                    Warehouse = "MG",
                 },
             };
             var request = new RawMaterialRequestModel()
@@ -353,6 +355,7 @@ namespace Omicron.Reporting.Test.Services.Request
                     RequestId = 1,
                     Unit = "ambar",
                     RequestQuantity = 5,
+                    Warehouse = "MG",
                 },
             };
             var request = new RawMaterialRequestModel()

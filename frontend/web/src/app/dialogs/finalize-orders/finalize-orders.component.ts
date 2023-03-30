@@ -183,7 +183,7 @@ export class FinalizeOrdersComponent implements OnInit {
   groupBy(list: IOrdersReq[], keyGetter): Map<string, IOrdersReq[]> {
     const map = new Map<string, IOrdersReq[]>();
     list.forEach((item) => {
-      const key = keyGetter(item.itemCode);
+      const key = keyGetter(item);
       const collection = map.get(key);
       if (!collection) {
         map.set(key, [item]);
