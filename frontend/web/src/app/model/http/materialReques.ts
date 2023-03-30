@@ -74,7 +74,7 @@ export interface IMaterialHistoryItem {
     itemCode: string;
     description: string;
     applicantName: string;
-    quantity: number;
+    quantity: string | number;
     unit: string;
     targetWarehosue: string;
     docDate: string;
