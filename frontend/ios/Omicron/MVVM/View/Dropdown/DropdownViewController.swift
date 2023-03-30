@@ -41,6 +41,11 @@ class DropdownViewController: UIViewController {
             }
             historyViewModel.selectedStatusObs.onNext(selectedItems)
             self.dismiss(animated: true)
+        } else {
+            AlertManager.shared.showAlert(title: (CommonStrings.selectFilter),
+                                          message: String(),
+                                          actions: nil,
+                                          view: self)
         }
     }
 }

@@ -217,6 +217,7 @@ struct CommonStrings {
     static let placeholderObservations = "Deja tu comentario aquí"
     static let createBuildOrder = "Crear orden de fabricaciòn"
     static let errorGetHistoryOrders = "Error al obtener el historial de solicitudes de traslados"
+    static let selectFilter = "Selecciona un filtro"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"
