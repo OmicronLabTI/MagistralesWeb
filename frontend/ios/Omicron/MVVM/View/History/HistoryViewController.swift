@@ -99,7 +99,7 @@ extension SupplieViewController {
     func repaintFilters() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd/MM/yyyy"
-        statusSelectedsLabel.text = historyViewModel.selectedStatus.joined(separator: ",")
+        statusSelectedsLabel.text = String(historyViewModel.selectedStatus.count)
         let startDateString = dateFormatter.string(from: historyViewModel.startDate)
         let endDateString = dateFormatter.string(from: historyViewModel.endDate)
         dateRangeSelectedLabel.text = "\(startDateString)-\(endDateString)"
