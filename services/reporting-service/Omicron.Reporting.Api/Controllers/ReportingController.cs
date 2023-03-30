@@ -9,10 +9,8 @@
 namespace Omicron.Reporting.Api.Controllers
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Net.Http.Headers;
     using Omicron.Reporting.Dtos.Model;
     using Omicron.Reporting.Facade.Request;
 

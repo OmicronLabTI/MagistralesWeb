@@ -6,11 +6,10 @@
 // </copyright>
 // </summary>
 
-namespace Omicron.LeadToCash.Resources.Exceptions
+namespace Omicron.Reporting.Resources.Exceptions
 {
     using System;
     using System.Net;
-    using System.Runtime.Serialization;
 
     /// <summary>
     /// Class Custom Service.

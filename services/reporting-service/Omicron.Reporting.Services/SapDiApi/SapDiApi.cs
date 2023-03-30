@@ -13,7 +13,7 @@ namespace Omicron.Reporting.Services.SapDiApi
     using System.Threading.Tasks;
     using DocumentFormat.OpenXml.Office2010.CustomUI;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using Omicron.Reporting.Resources.Exceptions;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services.Utils;
     using Serilog;

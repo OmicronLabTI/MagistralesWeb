@@ -13,10 +13,7 @@ namespace Omicron.Reporting.Services.ReportBuilder
     using System.Data;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using ClosedXML.Excel;
-    using DocumentFormat.OpenXml;
-    using DocumentFormat.OpenXml.Spreadsheet;
     using Omicron.Reporting.Entities.Model;
     using Omicron.Reporting.Services.Constants;
 
@@ -85,14 +82,11 @@ namespace Omicron.Reporting.Services.ReportBuilder
         /// <returns>the data.</returns>
         private string FormatData(string property, string value)
         {
-            switch (property)
+            return property switch
             {
-                case ServiceConstants.Comments:
-                    return value.Replace("&", " ");
-
-                default:
-                    return value;
-            }
+                ServiceConstants.Comments => value.Replace("&", " "),
+                _ => value,
+            };
         }
     }
 }
