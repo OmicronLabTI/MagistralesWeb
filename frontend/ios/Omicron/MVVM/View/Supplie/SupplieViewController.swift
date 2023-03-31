@@ -69,11 +69,8 @@ class SupplieViewController: UIViewController {
         supplieViewModel.returnBack.subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.observationsField.text = String()
-            self.showAlert(alert: (
-                title: "Solicitud enviada exitosamente",
-                msg: String(),
-                autoDismiss: true
-            ))
+            self.showAlertSuccess(title: "Solicitud enviada exitosamente",
+                                  message: String())
             self.resetValues()
             Timer.scheduledTimer(withTimeInterval: TimeInterval(2),
                                  repeats: false,
@@ -81,6 +78,12 @@ class SupplieViewController: UIViewController {
                 self.returnBack()
             })
         }).disposed(by: disposeBag!)
+    }
+    func showAlertSuccess(title: String, message: String) {
+        AlertManager.shared.showAlertWithoutButtons(title: title,
+                                                    message: message,
+                                                    view: self,
+                                                    dismissTime: 2)
     }
     func initNavigationBar() {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Mis órdenes",
