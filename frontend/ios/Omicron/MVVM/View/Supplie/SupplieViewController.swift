@@ -31,7 +31,7 @@ class SupplieViewController: UIViewController {
     @IBOutlet weak var noHistoryResults: UIView!
     @IBOutlet weak var statusSelectedsLabel: UILabel!
     @IBOutlet weak var dateRangeSelectedLabel: UILabel!
-    
+    var maxRangeDays: Int? = 6
     @Injected var supplieViewModel: SupplieViewModel
     @Injected var lottieManager: LottieManager
     @Injected var historyViewModel: HistoryViewModel
@@ -60,7 +60,10 @@ class SupplieViewController: UIViewController {
         bindIsLoading()
         validateHasInfo()
         historyViewModel.getHistory(offset: 0, limit: historyViewModel.limit)
+        bindRecognizers()
     }
+
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         disposeBag = nil
@@ -69,11 +72,8 @@ class SupplieViewController: UIViewController {
         supplieViewModel.returnBack.subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.observationsField.text = String()
-            self.showAlert(alert: (
-                title: "Solicitud enviada exitosamente",
-                msg: String(),
-                autoDismiss: true
-            ))
+            self.showAlertSuccess(title: "Solicitud enviada exitosamente",
+                                  message: String())
             self.resetValues()
             Timer.scheduledTimer(withTimeInterval: TimeInterval(2),
                                  repeats: false,
@@ -81,6 +81,12 @@ class SupplieViewController: UIViewController {
                 self.returnBack()
             })
         }).disposed(by: disposeBag!)
+    }
+    func showAlertSuccess(title: String, message: String) {
+        AlertManager.shared.showAlertWithoutButtons(title: title,
+                                                    message: message,
+                                                    view: self,
+                                                    dismissTime: 2)
     }
     func initNavigationBar() {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Mis órdenes",

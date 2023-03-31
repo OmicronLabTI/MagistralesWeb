@@ -15,7 +15,26 @@ extension SupplieViewController {
     func bindSegmentedControl() {
         self.segmentedControl?.addTarget(self, action: #selector(onChanged(_:)), for: .valueChanged)
     }
+    func bindRecognizers() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapStatus))
+        self.estatusView.addGestureRecognizer(tap)
+        let tap2 = UITapGestureRecognizer(target: self, action: #selector(handleTapDateSelector))
+        self.dateOrderView.addGestureRecognizer(tap2)
+    }
+    @objc func handleTapDateSelector() {
+        openDateRangeSelector()
+    }
+    @objc func handleTapStatus() {
+        guard let popoverVC = storyboard?.instantiateViewController(identifier: "DropdownViewController") as? DropdownViewController
+        else { return }
+        popoverVC.modalPresentationStyle = .popover
+        popoverVC.popoverPresentationController?.sourceView = estatusView
+        present(popoverVC, animated: true, completion: nil)
+    }
     @IBAction func changeSelectedDateDidPressed(_ sender: Any) {
+        openDateRangeSelector()
+    }
+    func openDateRangeSelector() {
         let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
         let selectorVC = storyboard.instantiateViewController(
             withIdentifier: ViewControllerIdentifiers.dateRangeSelectorViewController)
@@ -23,6 +42,7 @@ extension SupplieViewController {
         let navigationVC = UINavigationController(rootViewController: selectorVC ?? DateRangeSelectorViewController())
         selectorVC?.startDate = self.historyViewModel.startDate
         selectorVC?.endDate = self.historyViewModel.endDate
+        selectorVC?.delegate = self
         navigationVC.modalPresentationStyle = .formSheet
         self.present(navigationVC, animated: true, completion: nil)
     }
@@ -99,9 +119,15 @@ extension SupplieViewController {
     func repaintFilters() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd/MM/yyyy"
-        statusSelectedsLabel.text = String(historyViewModel.selectedStatus.count)
+        statusSelectedsLabel.text = historyViewModel.selectedStatus.sorted().joined(separator: ", ")
         let startDateString = dateFormatter.string(from: historyViewModel.startDate)
         let endDateString = dateFormatter.string(from: historyViewModel.endDate)
         dateRangeSelectedLabel.text = "\(startDateString)-\(endDateString)"
+    }
+}
+
+extension SupplieViewController: DateRangeSelectorViewDelegate {
+    func acceptRange(startDate: Date, endDate: Date) {
+        historyViewModel.selectedRangeDateObs.onNext((startDate: startDate, endDate: endDate))
     }
 }

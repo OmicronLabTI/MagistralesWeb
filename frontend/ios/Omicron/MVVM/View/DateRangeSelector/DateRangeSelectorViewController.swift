@@ -7,12 +7,16 @@
 //
 import HorizonCalendar
 import UIKit
-import Resolver
+
+protocol DateRangeSelectorViewDelegate {
+    var maxRangeDays: Int? { get set }
+    func acceptRange(startDate: Date, endDate: Date)
+}
+
 class DateRangeSelectorViewController: UIViewController {
     @IBOutlet weak var calendarContainer: UIView!
     @IBOutlet weak var acceptButton: UIButton!
-    @Injected var historyViewModel: HistoryViewModel
-
+    var delegate: DateRangeSelectorViewDelegate?
     var startDate: Date?
     var endDate: Date?
     lazy var calendarView: CalendarView = CalendarView(initialContent: makeContent())
@@ -59,8 +63,8 @@ class DateRangeSelectorViewController: UIViewController {
     }
 
     @IBAction func accepButtonDidPresset(_ sender: Any) {
-        historyViewModel.selectedRangeDateObs.onNext((startDate: self.startDate ?? Date(),
-                                                      endDate: self.endDate ?? Date()))
+        self.delegate?.acceptRange(startDate: self.startDate ?? Date(),
+                                   endDate: self.endDate ?? Date())
         self.dismiss(animated: true)
     }
     @IBAction func cancelButtonDidPresset(_ sender: Any) {
