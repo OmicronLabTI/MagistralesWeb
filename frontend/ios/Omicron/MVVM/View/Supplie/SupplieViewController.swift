@@ -60,7 +60,10 @@ class SupplieViewController: UIViewController {
         bindIsLoading()
         validateHasInfo()
         historyViewModel.getHistory(offset: 0, limit: historyViewModel.limit)
+        bindRecognizers()
     }
+
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         disposeBag = nil
