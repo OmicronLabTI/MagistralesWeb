@@ -42,6 +42,7 @@ extension SupplieViewController {
         let navigationVC = UINavigationController(rootViewController: selectorVC ?? DateRangeSelectorViewController())
         selectorVC?.startDate = self.historyViewModel.startDate
         selectorVC?.endDate = self.historyViewModel.endDate
+        selectorVC?.delegate = self
         navigationVC.modalPresentationStyle = .formSheet
         self.present(navigationVC, animated: true, completion: nil)
     }
@@ -122,5 +123,11 @@ extension SupplieViewController {
         let startDateString = dateFormatter.string(from: historyViewModel.startDate)
         let endDateString = dateFormatter.string(from: historyViewModel.endDate)
         dateRangeSelectedLabel.text = "\(startDateString)-\(endDateString)"
+    }
+}
+
+extension SupplieViewController: DateRangeSelectorViewDelegate {
+    func acceptRange(startDate: Date, endDate: Date) {
+        historyViewModel.selectedRangeDateObs.onNext((startDate: startDate, endDate: endDate))
     }
 }
