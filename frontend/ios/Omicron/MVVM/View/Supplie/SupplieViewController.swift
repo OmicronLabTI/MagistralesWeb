@@ -31,7 +31,7 @@ class SupplieViewController: UIViewController {
     @IBOutlet weak var noHistoryResults: UIView!
     @IBOutlet weak var statusSelectedsLabel: UILabel!
     @IBOutlet weak var dateRangeSelectedLabel: UILabel!
-    
+    var maxRangeDays: Int? = 6
     @Injected var supplieViewModel: SupplieViewModel
     @Injected var lottieManager: LottieManager
     @Injected var historyViewModel: HistoryViewModel
@@ -60,7 +60,10 @@ class SupplieViewController: UIViewController {
         bindIsLoading()
         validateHasInfo()
         historyViewModel.getHistory(offset: 0, limit: historyViewModel.limit)
+        bindRecognizers()
     }
+
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         disposeBag = nil
