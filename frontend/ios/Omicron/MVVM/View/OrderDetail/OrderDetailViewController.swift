@@ -44,7 +44,7 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var destinyLabel: UILabel!
     @IBOutlet weak var quantityTextField: UITextField!
     @IBOutlet weak var quantityButtonChange: UIButton!
-    
+
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
