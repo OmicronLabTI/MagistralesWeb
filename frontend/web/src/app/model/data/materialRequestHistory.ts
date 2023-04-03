@@ -3,7 +3,7 @@ import { SettingsCommonTableClass } from './common.data';
 
 export const MaterialRequestHistoryTableSettings: SettingsCommonTableClass = {
     className: 'metrics-promotions-table',
-    emptyLabel: CONST_STRING.notResults,
+    emptyLabel: '<p>No se encontraron resultados <br/> Quita o intenta con otro filtro de búsqueda</p>',
     stickyColumns: [],
     columns: [
         {
