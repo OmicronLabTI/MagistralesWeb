@@ -80,3 +80,16 @@ export interface IMaterialHistoryItem {
     docDate: string;
     status: string;
 }
+
+export class MaterialHistoryQuery {
+    start: string;
+    offset: number;
+    limit: number;
+    status: string;
+    constructor() {
+        this.start = CONST_STRING.empty;
+        this.offset = CONST_NUMBER.zero;
+        this.limit = CONST_NUMBER.ten;
+        this.status = 'Abierto';
+    }
+}
