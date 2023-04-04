@@ -60,20 +60,8 @@ extension OrderDetailViewController {
                 self.changeTextColorLabel(color: .black)
                 self.orderDetail = res
                 let detail = res.first!
-                let titleFontSize = CGFloat(22.0)
                 self.productDescritionLabel.textColor = .black
-                let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)",
-                    textToBold: detail.code, fontSize: titleFontSize, textColor: OmicronColors.blue)
-                let description = UtilsManager.shared.boldSubstring(
-                    text: "\(detail.productDescription ?? CommonStrings.empty)",
-                    textToBold: detail.productDescription, fontSize: titleFontSize, textColor: .gray)
-                let pipe = UtilsManager.shared.boldSubstring(text: " | ", textToBold: " | ",
-                                                             fontSize: titleFontSize, textColor: .black)
-                let richText = NSMutableAttributedString()
-                richText.append(code)
-                richText.append(pipe)
-                richText.append(description)
-                self.productDescritionLabel.attributedText = richText
+                self.productDescritionLabel.attributedText = self.getRichText(detail: detail)
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(
                     text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
@@ -96,7 +84,21 @@ extension OrderDetailViewController {
             }
         }).disposed(by: self.disposeBag)
     }
-
+    func getRichText(detail: OrderDetail) -> NSMutableAttributedString {
+        let titleFontSize = CGFloat(22.0)
+        let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)",
+            textToBold: detail.code, fontSize: titleFontSize, textColor: OmicronColors.blue)
+        let description = UtilsManager.shared.boldSubstring(
+            text: "\(detail.productDescription ?? CommonStrings.empty)",
+            textToBold: detail.productDescription, fontSize: titleFontSize, textColor: .gray)
+        let pipe = UtilsManager.shared.boldSubstring(text: " | ", textToBold: " | ",
+                                                     fontSize: titleFontSize, textColor: .black)
+        let richText = NSMutableAttributedString()
+        richText.append(code)
+        richText.append(pipe)
+        richText.append(description)
+        return richText
+    }
     func validateStatusIsolated() {
         let statusValid = [
             StatusNameConstants.assignedStatus,

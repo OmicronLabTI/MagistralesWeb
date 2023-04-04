@@ -222,7 +222,8 @@ class InboxViewController: UIViewController {
                 let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
                     guard let self = self else { return }
                     self.view.isUserInteractionEnabled = false
-                    self.inboxViewModel.changeStatus(indexPath: self.indexPathsSelected, typeOfStatus: data.typeOfStatus)
+                    self.inboxViewModel.changeStatus(indexPath: self.indexPathsSelected,
+                                                     typeOfStatus: data.typeOfStatus)
                 })
                 alert.addAction(cancelAction)
                 alert.addAction(okAction)

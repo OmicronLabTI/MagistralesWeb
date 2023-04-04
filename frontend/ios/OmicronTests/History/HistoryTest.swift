@@ -56,7 +56,7 @@ class HistoryTest: XCTestCase {
         historyViewModel?.offset = 0
         historyViewModel?.historyList = []
         historyViewModel?.selectedStatus = ["ABIERTO"]
-        historyViewModel?.selectedHistoryList.subscribe(onNext: { [weak self] res in
+        historyViewModel?.selectedHistoryList.subscribe(onNext: { [weak self] _ in
             XCTAssertTrue(self?.historyViewModel?.selectedStatus.count == 2)
         }).disposed(by: disposeBag!)
         historyViewModel?.selectedStatusObs.onNext(["Abierto","Cancelado"])
