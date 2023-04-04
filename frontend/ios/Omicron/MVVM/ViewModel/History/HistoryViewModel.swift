@@ -22,7 +22,7 @@ class HistoryViewModel {
     var onScroll = PublishSubject<Void>()
     var startDate = Date()
     var endDate = Date()
-    var selectedStatus: [String] = ["ABIERTO"]
+    var selectedStatus: [String] = ["Abierto"]
     var offset = 0
     var limit = 20
     var totalData = 0
@@ -35,16 +35,14 @@ class HistoryViewModel {
         bindChangeStatus()
         bindOnScroll()
     }
-    
     func resetValues() {
         endDate = Date()
         startDate = Calendar.current.date(byAdding: .day, value: -6, to: self.endDate) ?? Date()
         historyList = []
         offset = 0
         totalData = 0
-        selectedStatus = ["ABIERTO"]
+        selectedStatus = ["Abierto"]
     }
-
     func bindChangeDateRange() {
         selectedRangeDateObs.subscribe(onNext: { [weak self]dates in
             guard let self = self else { return }
@@ -93,7 +91,7 @@ class HistoryViewModel {
             self.totalData = res.comments ?? 0
             self.selectedHistoryList.onNext(self.historyList)
             self.loading.onNext(false)
-        }, onError: { [weak self] error in
+        }, onError: { [weak self] _ in
             guard let self = self else { return }
             self.loading.onNext(false)
             self.showAlert.onNext(CommonStrings.errorGetHistoryOrders)

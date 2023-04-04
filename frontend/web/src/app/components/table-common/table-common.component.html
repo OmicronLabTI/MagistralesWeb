@@ -50,9 +50,7 @@
                 Cargando...
             </ng-container>
             <ng-template #notFound>
-                <p class="w-100">
-                    {{ data.length===0? settings.emptyLabel: '' }}
-                </p>
+                <p class="w-100" *ngIf="data.length===0" [innerHTML]="settings.emptyLabel" ></p>
             </ng-template>
         </div>
     </div>

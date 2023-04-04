@@ -44,7 +44,7 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var destinyLabel: UILabel!
     @IBOutlet weak var quantityTextField: UITextField!
     @IBOutlet weak var quantityButtonChange: UIButton!
-    
+
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
@@ -67,26 +67,25 @@ class OrderDetailViewController: UIViewController {
         self.quantityTextField.delegate = self
         self.title = CommonStrings.formulaDetail
         self.showButtonsByStatusType(statusType: statusType)
-        self.initComponents()
         self.tableView.allowsMultipleSelectionDuringEditing = false
         tableView.setEditing(false, animated: true)
         self.orderDetailViewModel.orderId = self.orderId
-        self.viewModelBinding()
-        quantityButtonBindind()
-        quantityTextFieldBindind()
         infoView.layer.cornerRadius = 10
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        self.disposeBag = DisposeBag()
+        self.initComponents()
+        self.viewModelBinding()
+        quantityButtonBindind()
+        quantityTextFieldBindind()
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         let controllerCount = self.navigationController?.viewControllers.count ?? 0
-        if controllerCount == 0 {
-            disposeBag = DisposeBag()
-        }
+        disposeBag = DisposeBag()
     }
     // MARK: - Functions
     @objc func goToCommentsViewController() {

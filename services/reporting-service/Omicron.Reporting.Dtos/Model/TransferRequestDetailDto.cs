@@ -30,6 +30,14 @@ namespace Omicron.Reporting.Dtos.Model
         public double Quantity { get; set; }
 
         /// <summary>
+        /// Gets or sets ItemDescription.
+        /// </summary>
+        /// <value>
+        /// String ItemDescription.
+        /// </value>
+        public string ItemDescription { get; set; }
+
+        /// <summary>
         /// Gets or sets SourceWarehosue.
         /// </summary>
         /// <value>

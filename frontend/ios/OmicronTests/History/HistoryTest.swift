@@ -56,10 +56,10 @@ class HistoryTest: XCTestCase {
         historyViewModel?.offset = 0
         historyViewModel?.historyList = []
         historyViewModel?.selectedStatus = ["ABIERTO"]
-        historyViewModel?.selectedHistoryList.subscribe(onNext: { [weak self] res in
+        historyViewModel?.selectedHistoryList.subscribe(onNext: { [weak self] _ in
             XCTAssertTrue(self?.historyViewModel?.selectedStatus.count == 2)
         }).disposed(by: disposeBag!)
-        historyViewModel?.selectedStatusObs.onNext(["ABIERTO","CANCELADO"])
+        historyViewModel?.selectedStatusObs.onNext(["Abierto","Cancelado"])
     }
     func testOnScroll() {
         historyViewModel?.offset = 0
@@ -73,7 +73,7 @@ class HistoryTest: XCTestCase {
                             targetWarehosue: String(),
                             docDate: String(),
                             status: String())]
-        historyViewModel?.selectedStatus = ["ABIERTO"]
+        historyViewModel?.selectedStatus = ["Abierto"]
         historyViewModel?.totalData = 40
         historyViewModel?.selectedHistoryList.subscribe(onNext: { res in
             XCTAssertTrue(res.count == 2)
