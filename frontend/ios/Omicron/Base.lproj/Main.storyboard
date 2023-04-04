@@ -2161,7 +2161,7 @@
                                                                 <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="decimalPad" textContentType="flight-number"/>
                                                             </textField>
                                                             <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ax3-ob-22R">
-                                                                <rect key="frame" x="41.5" y="-0.5" width="166.5" height="34.5"/>
+                                                                <rect key="frame" x="41.5" y="-0.5" width="156.5" height="34.5"/>
                                                                 <color key="tintColor" white="1" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <state key="normal" title="Button"/>
                                                                 <buttonConfiguration key="configuration" style="plain" image="doc" catalog="system" title=" ">
@@ -2169,9 +2169,9 @@
                                                                 </buttonConfiguration>
                                                             </button>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WHl-LJ-1pb">
-                                                                <rect key="frame" x="208" y="6.5" width="90" height="20.5"/>
+                                                                <rect key="frame" x="198" y="6.5" width="100" height="20.5"/>
                                                                 <constraints>
-                                                                    <constraint firstAttribute="width" constant="90" id="mOv-vg-bvo"/>
+                                                                    <constraint firstAttribute="width" constant="100" id="mOv-vg-bvo"/>
                                                                 </constraints>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                 <nil key="textColor"/>
