@@ -68,7 +68,9 @@ extension SupplieViewController {
                     cell.sapId.text = String(docEntry)
                     cell.descriptionLabel.text = item.description
                     cell.codeLabel.text = item.itemCode
-                    cell.quantityLabel.text = self.formatter.string(from: (item.quantity ?? 0) as NSNumber)
+                    let quantity = UtilsManager.shared
+                        .formatterDoublesToString().string(from: (item.quantity ?? 0) as NSNumber)
+                    cell.quantityLabel.text = quantity
                     cell.unitLabel.text = item.unit
                     cell.destinationStoreLabel.text = item.targetWarehosue
                     let selectedDate = item.docDate ?? String()
