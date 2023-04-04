@@ -10,7 +10,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Resolver
-
 class SupplieViewController: UIViewController {
     var disposeBag: DisposeBag? = DisposeBag()
     @IBOutlet weak var deleteComponents: UIButton!
@@ -177,7 +176,6 @@ class SupplieViewController: UIViewController {
             guard let self = self else { return }
             self.supplieList = list
         }).disposed(by: disposeBag!)
-        
         supplieViewModel.componentsList.subscribe(onNext: {[weak self] data in
             self?.supplieList = data
             self?.tableComponents.reloadData()

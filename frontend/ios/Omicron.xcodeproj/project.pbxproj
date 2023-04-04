@@ -64,6 +64,10 @@
 		11A3295E29C511510093C4AE /* CalentarMonthItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */; };
 		11A3295F29C511510093C4AE /* CalentarMonthItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */; };
 		11A3296029C511510093C4AE /* CalentarMonthItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */; };
+		11A7CA4029DB456200AE4336 /* RootViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A7CA3F29DB456200AE4336 /* RootViewControllerExtension.swift */; };
+		11A7CA4129DB456200AE4336 /* RootViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A7CA3F29DB456200AE4336 /* RootViewControllerExtension.swift */; };
+		11A7CA4229DB456200AE4336 /* RootViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A7CA3F29DB456200AE4336 /* RootViewControllerExtension.swift */; };
+		11A7CA4329DB456200AE4336 /* RootViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A7CA3F29DB456200AE4336 /* RootViewControllerExtension.swift */; };
 		11ACB7D229AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
 		11ACB7D329AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
 		11ACB7D429AE7BDB00FE3E32 /* SupplieViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */; };
@@ -602,6 +606,7 @@
 		115FD8C929B2791200762C3E /* createSupplie.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = createSupplie.json; sourceTree = "<group>"; };
 		11717B7C29C246B500B9ADFC /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
 		11A3295C29C511510093C4AE /* CalentarMonthItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalentarMonthItemView.swift; sourceTree = "<group>"; };
+		11A7CA3F29DB456200AE4336 /* RootViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewControllerExtension.swift; sourceTree = "<group>"; };
 		11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewControllerExtension.swift; sourceTree = "<group>"; };
 		11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCell.swift; sourceTree = "<group>"; };
 		11AFF02E29CBACE400DBB32D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -1243,6 +1248,7 @@
 				7C844BA924D27E5800D26B96 /* RootViewController.swift */,
 				7C844BAD24D28B4F00D26B96 /* RootTableViewCell.swift */,
 				1E07D8D1251AA0C900DF2979 /* KPITableViewCell.swift */,
+				11A7CA3F29DB456200AE4336 /* RootViewControllerExtension.swift */,
 			);
 			path = RootView;
 			sourceTree = "<group>";
@@ -2280,6 +2286,7 @@
 				7FE43E2A29B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				490B6982268E98ED00DBE9F1 /* Utils.swift in Sources */,
 				490B6983268E98ED00DBE9F1 /* FileManager.swift in Sources */,
+				11A7CA4329DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
 				1142E19329AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF3298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
 				490B6984268E98ED00DBE9F1 /* SignaturePadViewModel.swift in Sources */,
@@ -2383,6 +2390,7 @@
 				7FE43E2829B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				49CF65C325F2D4AB002CD598 /* Utils.swift in Sources */,
 				49CF65C425F2D4AB002CD598 /* FileManager.swift in Sources */,
+				11A7CA4129DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
 				1142E19129AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF1298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
 				49CF65C525F2D4AB002CD598 /* SignaturePadViewModel.swift in Sources */,
@@ -2486,6 +2494,7 @@
 				7FE43E2929B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				49CF664625F2D821002CD598 /* Utils.swift in Sources */,
 				49CF664725F2D821002CD598 /* FileManager.swift in Sources */,
+				11A7CA4229DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
 				1142E19229AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF2298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
 				49CF664825F2D821002CD598 /* SignaturePadViewModel.swift in Sources */,
@@ -2589,6 +2598,7 @@
 				7FE43E2729B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				7CB6332824DDEE3F0055425C /* Utils.swift in Sources */,
 				7CCC6A4824F880E200ACBBE8 /* FileManager.swift in Sources */,
+				11A7CA4029DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
 				1142E19029AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF0298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
 				7CF2EA3A24F6C6500005602F /* SignaturePadViewModel.swift in Sources */,
@@ -2857,7 +2867,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 100;
+				CURRENT_PROJECT_VERSION = 101;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3082,7 +3092,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 100;
+				CURRENT_PROJECT_VERSION = 101;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3110,7 +3120,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 100;
+				CURRENT_PROJECT_VERSION = 101;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3297,7 +3307,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 100;
+				CURRENT_PROJECT_VERSION = 101;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;

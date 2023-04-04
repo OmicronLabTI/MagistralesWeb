@@ -52,7 +52,6 @@ extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UIT
         let customView = UIView()
         customView.backgroundColor = OmicronColors.processStatus
         cell.selectedBackgroundView = customView
-        
         let lastSectionIndex = tableView.numberOfSections - 1
         let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
         if indexPath.section == lastSectionIndex &&
@@ -64,7 +63,6 @@ extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UIT
                                   animated: false)
             self.historyViewModel.onScroll.onNext(())
         }
-        
         if indexPath.row%2 == 0 {
             cell.backgroundColor = OmicronColors.tableColorRow
         } else {
