@@ -8,7 +8,7 @@
 import HorizonCalendar
 import UIKit
 
-protocol DateRangeSelectorViewDelegate {
+protocol DateRangeSelectorViewDelegate: AnyObject {
     var maxRangeDays: Int? { get set }
     func acceptRange(startDate: Date, endDate: Date)
 }
@@ -16,7 +16,7 @@ protocol DateRangeSelectorViewDelegate {
 class DateRangeSelectorViewController: UIViewController {
     @IBOutlet weak var calendarContainer: UIView!
     @IBOutlet weak var acceptButton: UIButton!
-    var delegate: DateRangeSelectorViewDelegate?
+    weak var delegate: DateRangeSelectorViewDelegate?
     var startDate: Date?
     var endDate: Date?
     lazy var calendarView: CalendarView = CalendarView(initialContent: makeContent())

@@ -61,8 +61,6 @@ class SupplieViewController: UIViewController {
         historyViewModel.getHistory(offset: 0, limit: historyViewModel.limit)
         bindRecognizers()
     }
-
-
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         disposeBag = nil
@@ -188,48 +186,6 @@ class SupplieViewController: UIViewController {
         }).disposed(by: disposeBag!)
     }
 
-    func setupUI() {
-        tableComponents.delegate = self
-        tableComponents.dataSource = self
-        tableComponents.rowHeight = UITableView.automaticDimension
-        tableHistory.delegate = self
-        tableHistory.dataSource = self
-        tableHistory.rowHeight = UITableView.automaticDimension
-        sendToStore.isEnabled = false
-        deleteComponents.isEnabled = false
-        observationsField.delegate = self
-        observationsField.text = CommonStrings.placeholderObservations
-        observationsField.textColor = UIColor.lightGray
-        UtilsManager.shared.setStyleButtonStatus(button: self.deleteComponents,
-                                                 title: StatusNameConstants.deleteMultiComponents,
-                                                 color: OmicronColors.processStatus,
-                                                 titleColor: OmicronColors.processStatus)
-
-        UtilsManager.shared.setStyleButtonStatus(button: self.addComponent,
-                                                 title: StatusNameConstants.addComponent,
-                                                 color: OmicronColors.primaryBlue,
-                                                 titleColor: OmicronColors.primaryBlue)
-        setBlueButtonStyle()
-        changeView(false)
-        observationsField.layer.borderWidth = 1
-        observationsField.layer.cornerRadius = 10
-        observationsField.layer.borderColor = OmicronColors.disabledButton.cgColor
-    }
-
-    func setBlueButtonStyle() {
-        sendToStore.setTitle(StatusNameConstants.sendToStore, for: .normal)
-        sendToStore.setTitleColor(UIColor.white, for: .normal)
-        sendToStore.setTitleColor(UIColor.black, for: .disabled)
-        sendToStore.layer.borderWidth = 1
-        sendToStore.layer.cornerRadius = 10
-        sendToStore.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 16)
-        changeBGButton(button: sendToStore,
-                       backgroundColor: OmicronColors.disabledButton)
-    }
-    func changeBGButton(button: UIButton, backgroundColor: UIColor) {
-        button.layer.borderColor = backgroundColor.cgColor
-        button.backgroundColor = backgroundColor
-    }
     func changeView(_ isComponents: Bool) {
         componentsView.isHidden = isComponents
         observationsView.isHidden = !isComponents
