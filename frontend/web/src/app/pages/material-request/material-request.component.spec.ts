@@ -24,6 +24,7 @@ import { MaterialRequestMock } from '../../../mocks/materialRequest';
 import { DataService } from '../../services/data.service';
 import { MaterialRequestComponent } from './material-request.component';
 import { CONST_ARRAY } from 'src/app/constants/const';
+import { MaterialComponent } from 'src/app/model/http/materialReques';
 describe('MaterialRequestComponent', () => {
   let component: MaterialRequestComponent;
   let fixture: ComponentFixture<MaterialRequestComponent>;
@@ -169,6 +170,7 @@ describe('MaterialRequestComponent', () => {
     fixture = TestBed.createComponent(MaterialRequestComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    component.dataSource.data = [{ ...new MaterialComponent(), requestQuantity: '1,000.00' }];
   });
 
   it('should create', () => {
