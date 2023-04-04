@@ -12,12 +12,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MATERIAL_COMPONENTS } from '../../app.material';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FaborderListModule } from '../faborders-list/faborder-list.module';
-import { NgxMaskModule } from 'ngx-mask';
 import { HistoryMaterialRequestComponent } from './history-material-request/history-material-request.component';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { SatDatepickerModule, SatNativeDateModule } from 'saturn-datepicker';
 import { APP_PROVIDERS } from 'src/app/app.providers';
 import { RouterModule } from '@angular/router';
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
   declarations: [MaterialRequestComponent, HistoryMaterialRequestComponent],
@@ -33,7 +33,7 @@ import { RouterModule } from '@angular/router';
     MatInputModule,
     MATERIAL_COMPONENTS,
     FaborderListModule,
-    NgxMaskModule.forRoot(),
+    NgxMaskModule,
     ComponentsModule,
     FormsModule,
     ReactiveFormsModule,
