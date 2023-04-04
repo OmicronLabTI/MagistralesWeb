@@ -25,7 +25,8 @@ extension SupplieViewController {
         openDateRangeSelector()
     }
     @objc func handleTapStatus() {
-        guard let popoverVC = storyboard?.instantiateViewController(identifier: "DropdownViewController") as? DropdownViewController
+        guard let popoverVC = storyboard?
+            .instantiateViewController(identifier: "DropdownViewController") as? DropdownViewController
         else { return }
         popoverVC.modalPresentationStyle = .popover
         popoverVC.popoverPresentationController?.sourceView = estatusView
