@@ -22,7 +22,7 @@ class HistoryViewModel {
     var onScroll = PublishSubject<Void>()
     var startDate = Date()
     var endDate = Date()
-    var selectedStatus: [String] = ["ABIERTO"]
+    var selectedStatus: [String] = ["Abierto"]
     var offset = 0
     var limit = 20
     var totalData = 0
@@ -41,7 +41,7 @@ class HistoryViewModel {
         historyList = []
         offset = 0
         totalData = 0
-        selectedStatus = ["ABIERTO"]
+        selectedStatus = ["Abierto"]
     }
     func bindChangeDateRange() {
         selectedRangeDateObs.subscribe(onNext: { [weak self]dates in

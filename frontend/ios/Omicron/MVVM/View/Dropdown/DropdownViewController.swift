@@ -10,7 +10,7 @@ import UIKit
 import Resolver
 class DropdownViewController: UIViewController {
     @IBOutlet weak var optionsTable: UITableView!
-    var options = ["ABIERTO", "CERRADO"]
+    var options = ["Abierto", "Cerrado"]
     @Injected var historyViewModel: HistoryViewModel
     var selectedOptions: [String] = []
     override func viewDidLoad() {
