@@ -5,10 +5,15 @@
         flex-wrap: wrap;
         .date-filter, .status-filter{
             padding: 0px 10px 0px 0px;
-            width: 250px;
             mat-form-field{
                 width: 100%;
             }
+        }
+        .date-filter{
+            width: 250px;
+        }
+        .status-filter{
+            width: 180px;
         }
     }
     .padding-v-m{

@@ -11,6 +11,7 @@ import { ButtonBackComponent } from './button-back/button-back.component';
 import { ButtonNextComponent } from './button-next/button-next.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TableCommonComponent } from './table-common/table-common.component';
+import { PipesModule } from '../pipes/pipes.module';
 
 @NgModule({
     declarations: [
@@ -37,6 +38,7 @@ import { TableCommonComponent } from './table-common/table-common.component';
         FormsModule,
         MatInputModule,
         MatTooltipModule,
+        PipesModule
     ]
 })
 export class ComponentsModule { }

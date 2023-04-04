@@ -125,7 +125,9 @@ export const ConstToken = {
     filtersActive: 'filters-active',
     filtersActiveOrders: 'filters-active-orders',
     detailOrderCurrent: 'detail-current',
-    productNoLabel: 'productNoLabel'
+    productNoLabel: 'productNoLabel',
+    materialRequest: 'materialRequest',
+    historyQuery: 'historyQuery'
 };
 export const BOOLEANS = {
     verdadero: true,

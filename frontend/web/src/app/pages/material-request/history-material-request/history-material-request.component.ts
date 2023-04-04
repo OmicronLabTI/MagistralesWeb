@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material';
 import { BoolConst, CONST_NUMBER } from 'src/app/constants/const';
@@ -7,6 +7,7 @@ import { MaterialRequestHistoryTableSettings } from 'src/app/model/data/material
 import { IMaterialHistoryItem } from 'src/app/model/http/materialReques';
 import { DataService } from 'src/app/services/data.service';
 import { ErrorService } from 'src/app/services/error.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { MaterialRequestService } from 'src/app/services/material-request.service';
 
 @Component({
@@ -14,7 +15,7 @@ import { MaterialRequestService } from 'src/app/services/material-request.servic
   templateUrl: './history-material-request.component.html',
   styleUrls: ['./history-material-request.component.scss']
 })
-export class HistoryMaterialRequestComponent implements OnInit {
+export class HistoryMaterialRequestComponent implements OnInit, OnDestroy {
   historyMaterialRequestSettings: SettingsCommonTableClass = MaterialRequestHistoryTableSettings;
   dataHistory: IMaterialHistoryItem[] = [];
   lengthPaginator = CONST_NUMBER.zero;
@@ -31,7 +32,8 @@ export class HistoryMaterialRequestComponent implements OnInit {
   constructor(
     private materialRequest: MaterialRequestService,
     private errorService: ErrorService,
-    private dataService: DataService
+    private dataService: DataService,
+    private localStorageService: LocalStorageService
   ) {
     this.date = new FormControl({ begin: this.getWeekOneWeekDate(this.maxDate, -6), end: this.maxDate });
   }
@@ -39,7 +41,29 @@ export class HistoryMaterialRequestComponent implements OnInit {
   ngOnInit() {
     this.picker.openedStream.subscribe(this.onOpenDate);
     this.picker.setBeginDateSelected = this.updateMaxDate;
+    this.loadFilters();
     this.historyMaterialRequest();
+  }
+
+  ngOnDestroy(): void {
+    this.localStorageService.setMaterialHistoryQuery({
+      start: this.date.value.begin,
+      offset: this.offset,
+      limit: this.limit,
+      status: this.statusControl.value.toString()
+    });
+  }
+
+  loadFilters = () => {
+    const { limit, offset, status, start } = this.localStorageService.getMaterialHistoryQuery();
+    this.limit = limit;
+    this.statusControl.setValue(status.split(','));
+    this.offset = offset;
+    if (start !== '') {
+      this.date.setValue({
+        begin: new Date(start), end: this.getWeekOneWeekDate(new Date(start), 6)
+      });
+    }
   }
 
   filterChange = () => {
@@ -87,11 +111,11 @@ export class HistoryMaterialRequestComponent implements OnInit {
     this.loading = true;
     this.materialRequest.gethistoryMaterial(this.getQuery()).subscribe(res => {
       this.dataHistory = res.response.map(({ quantity, ...others }, index) =>
-        ({
-          ...others,
-          order: this.offset + index + 1,
-          quantity: String(quantity.toLocaleString('en-US'))
-        }));
+      ({
+        ...others,
+        order: this.offset + index + 1,
+        quantity: String(quantity.toLocaleString('en-US'))
+      }));
       this.lengthPaginator = res.comments;
       this.loading = false;
     },
