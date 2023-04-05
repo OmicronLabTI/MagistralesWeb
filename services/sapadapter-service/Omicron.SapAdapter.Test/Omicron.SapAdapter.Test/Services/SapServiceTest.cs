@@ -72,6 +72,8 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.BatchTransacitions.AddRange(this.GetBatchTransacitions());
             this.context.BatchesTransactionQtyModel.AddRange(this.GetBatchesTransactionQtyModel());
             this.context.AttachmentModel.AddRange(this.GetAttachmentModel());
+            this.context.RawMaterialRequestModel.AddRange(this.GetRawMaterialRequestModel());
+            this.context.RawMaterialRequestDetailModel.AddRange(this.GetRawMaterialRequestDetailModel());
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
@@ -1149,6 +1151,90 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetOrders(dicParams);
 
             Assert.IsNotNull(result);
+        }
+
+        /// <summary>
+        /// Get Raw Material Request.
+        /// </summary>
+        /// <param name="userId">User id.</param>
+        /// <param name="status">Status.</param>
+        /// <param name="sendDates">Send dates.</param>
+        /// <returns>the detail.</returns>
+        [Test]
+        [TestCase(null, "Abierto,Cerrado,Cancelado", true)]
+        [TestCase(null, "Abierto,Cancelado", true)]
+        [TestCase(null, "Abierto", true)]
+        [TestCase("db106faf-ef03-4c2e-9b7c-be0c7da8c0b7", "Abierto,Cerrado,Cancelado", true)]
+        [TestCase("db106faf-ef03-4c2e-9b7c-be0c7da8c0b7", "Abierto,Cancelado", true)]
+        [TestCase("db106faf-ef03-4c2e-9b7c-be0c7da8c0b7", "Abierto", true)]
+        [TestCase("db106faf-ef03-4c2e-9b7c-be0c7da8c0b7", "Abierto", false)]
+        [TestCase("4c2e983e-87db-5864-ae16-108b666bc19d", "Abierto", true)]
+        public async Task GetRawMaterialRequest(string userId, string status, bool sendDates)
+        {
+            // arrange
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "5" },
+                { ServiceConstants.Status, status },
+            };
+
+            if (userId != null)
+            {
+                dicParams.Add(ServiceConstants.ParameterUserId, userId);
+            }
+
+            if (sendDates)
+            {
+                dicParams.Add(ServiceConstants.FechaInicio, DateTime.Today.AddDays(-7).ToString("dd/MM/yyyy"));
+                dicParams.Add(ServiceConstants.FechaFin, DateTime.Today.ToString("dd/MM/yyyy"));
+            }
+
+            // act
+            var result = await this.sapService.GetRawMaterialRequest(dicParams);
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(200, result.Code);
+            Assert.IsInstanceOf<List<CompleteRawMaterialRequestModel>>(result.Response);
+            var rawMaterial = (List<CompleteRawMaterialRequestModel>)result.Response;
+
+            if (userId == "4c2e983e-87db-5864-ae16-108b666bc19d")
+            {
+                Assert.AreEqual(0, result.Comments);
+                Assert.AreEqual(0, rawMaterial.Count);
+            }
+            else if (string.IsNullOrEmpty(userId) && status == "Abierto,Cerrado,Cancelado")
+            {
+                Assert.AreEqual(6, result.Comments);
+                Assert.AreEqual(5, rawMaterial.Count);
+            }
+            else if (string.IsNullOrEmpty(userId) && status == "Abierto,Cancelado")
+            {
+                Assert.AreEqual(4, result.Comments);
+                Assert.AreEqual(4, rawMaterial.Count);
+            }
+            else if (string.IsNullOrEmpty(userId) && status == "Abierto")
+            {
+                Assert.AreEqual(2, result.Comments);
+                Assert.AreEqual(2, rawMaterial.Count);
+            }
+            else if (status == "Abierto,Cerrado,Cancelado")
+            {
+                Assert.AreEqual(3, result.Comments);
+                Assert.AreEqual(3, rawMaterial.Count);
+            }
+            else if (status == "Abierto,Cancelado")
+            {
+                Assert.AreEqual(2, result.Comments);
+                Assert.AreEqual(2, rawMaterial.Count);
+            }
+            else
+            {
+                Assert.AreEqual(1, result.Comments);
+                Assert.AreEqual(1, rawMaterial.Count);
+            }
         }
     }
 }

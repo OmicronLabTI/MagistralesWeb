@@ -16,6 +16,9 @@
 
         </div>
         <div class="table-toolbar-buttons">
+             <button mat-raised-button class="button-blue" [routerLink]="'/materialRequest/history'">
+                Historial
+            </button>
             <button mat-raised-button [disabled]="!isThereToDelete"
                 [ngClass]="isThereToDelete? 'button-blue' : 'disable-button'" (click)="deleteComponents()">
                 Eliminar componente
@@ -89,7 +92,7 @@
                             [ngClass]="element.isWithError ? 'with-error' : ''"
                             class="color-text-intables tdcell tdcell-center mobile-hide cantreq">
                             <mat-form-field appearance="outline">
-                                <input matInput type="text" mask="999999999.000000" [dropSpecialCharacters]="false"
+                                <input matInput type="text"  mask="comma_separator.6"   thousandSeparator=","  [dropSpecialCharacters]="false"
                                     class="color-number" placeholder="Ctd. requerida"
                                     [(ngModel)]="element.requestQuantity"
                                     (ngModelChange)="onRequestQuantityChange($event, i)" step="any">
@@ -106,7 +109,7 @@
                             <div>
 
                                 <mat-form-field appearance="outline">
-                                    <mat-select [(ngModel)]="element.warehouse" placeholder="Almacén requerido"
+                                    <mat-select [(ngModel)]="element.warehouse" placeholder="Almacén destino"
                                         (selectionChange)="onChangeStore($event.value, i)">
                                         <mat-option [value]="store.value"
                                             *ngFor="let store of listStore">{{store.value}}</mat-option>

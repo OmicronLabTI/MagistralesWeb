@@ -1,30 +1,30 @@
-import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
-import { MaterialRequestComponent } from './material-request.component';
+import { Location } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MaterialRequestService } from 'src/app/services/material-request.service';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule, MatSelectModule } from '@angular/material';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterTestingModule } from '@angular/router/testing';
+import { NgxMaskModule } from 'ngx-mask';
 import { of, throwError } from 'rxjs';
 import { ErrorService } from 'src/app/services/error.service';
-import { DataService } from '../../services/data.service';
-import { FileDownloaderService } from 'src/app/services/file.downloader.service';
-import { ReportingService } from 'src/app/services/reporting.service';
-import { HttpResponse } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTableModule } from '@angular/material/table';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatInputModule, MatSelectModule } from '@angular/material';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
-import { ObservableService } from 'src/app/services/observable.service';
+import { MaterialRequestService } from 'src/app/services/material-request.service';
 import { MessagesService } from 'src/app/services/messages.service';
-import { MaterialRequestMock } from '../../../mocks/materialRequest';
+import { ObservableService } from 'src/app/services/observable.service';
+import { ReportingService } from 'src/app/services/reporting.service';
 import { MaterialPostResMock } from 'src/mocks/materialPost';
 import { MaterialPostResFailedMock } from 'src/mocks/materialPostResponseFailed';
-import { Location } from '@angular/common';
-import { NgxMaskModule } from 'ngx-mask';
+import { MaterialRequestMock } from '../../../mocks/materialRequest';
+import { DataService } from '../../services/data.service';
+import { MaterialRequestComponent } from './material-request.component';
+import { CONST_ARRAY } from 'src/app/constants/const';
+import { MaterialComponent } from 'src/app/model/http/materialReques';
 describe('MaterialRequestComponent', () => {
   let component: MaterialRequestComponent;
   let fixture: ComponentFixture<MaterialRequestComponent>;
@@ -32,7 +32,6 @@ describe('MaterialRequestComponent', () => {
   let materialReServiceSpy: jasmine.SpyObj<MaterialRequestService>;
   let errorServiceSpy: jasmine.SpyObj<ErrorService>;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
-  let fileDownloaderServiceSpy: jasmine.SpyObj<FileDownloaderService>;
   let reportingServiceSpy: jasmine.SpyObj<ReportingService>;
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
@@ -90,6 +89,7 @@ describe('MaterialRequestComponent', () => {
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getUserId',
       'getUserName',
+      'getMaterialRequestData'
     ]);
 
 
@@ -107,9 +107,7 @@ describe('MaterialRequestComponent', () => {
     messagesServiceSpy.getMessageTitle.and.returnValue('Title');
     localStorageServiceSpy.getUserName.and.returnValue('benny benny');
     localStorageServiceSpy.getUserId.and.returnValue('35642b3a-9471-4b89-9862-8bee6d98c361');
-    // -------------------- FileDownloaderService
-    fileDownloaderServiceSpy = jasmine.createSpyObj<FileDownloaderService>
-      ('FileDownloaderService', ['downloadFileResult']);
+    localStorageServiceSpy.getMaterialRequestData.and.returnValue(CONST_ARRAY.empty);
 
     //  -------------------- ReportingService
     reportingServiceSpy = jasmine.createSpyObj<ReportingService>
@@ -156,7 +154,6 @@ describe('MaterialRequestComponent', () => {
         { provide: MaterialRequestService, useValue: materialReServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
-        { provide: FileDownloaderService, useValue: fileDownloaderServiceSpy },
         { provide: ReportingService, useValue: reportingServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: LocalStorageService, useValue: localStorageServiceSpy },
@@ -173,6 +170,7 @@ describe('MaterialRequestComponent', () => {
     fixture = TestBed.createComponent(MaterialRequestComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    component.dataSource.data = [{ ...new MaterialComponent(), requestQuantity: '1,000.00' }];
   });
 
   it('should create', () => {

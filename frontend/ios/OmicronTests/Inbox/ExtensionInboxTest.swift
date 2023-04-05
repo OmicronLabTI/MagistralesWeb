@@ -27,8 +27,7 @@ class ExtensionInboxTest: XCTestCase {
         inboxViewModel = InboxViewModel()
         rootViewModel = RootViewModel()
         disposeBag = DisposeBag()
-        order1 = Order(
-            areBatchesComplete: true, productionOrderId: 89284, baseDocument: 60067, container: "",
+        order1 = Order(areBatchesComplete: true, productionOrderId: 89284, baseDocument: 60067, container: "",
             tag: "Selecciona una...", plannedQuantity: 1, startDate: "27/08/2020", finishDate: "06/09/2020",
             descriptionProduct: "Aceite de Arbol de Te 0.3%, Alantoina 0.3%, Citrico 0.2%, " +
             "Extracto de Te Verde 3%, Extracto de Pepino 3%, Glicerina 3%, Hamamelis 3%, Hialuronico 3%, " +
@@ -36,15 +35,13 @@ class ExtensionInboxTest: XCTestCase {
             statusId: 1, itemCode: "3264   120 ML", productCode: "3264", destiny: "Foráneo",
             hasMissingStock: false, finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp",
             shopTransaction: "emnjkd", qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
-        order2 = Order(
-            areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284, container: "PRINCESS/ATOMIZADOR",
-            tag: "NA", plannedQuantity: 1, startDate: "22/09/2020", finishDate: "30/09/2020",
-            descriptionProduct: "Lactico 30% Solución", statusId: 1, itemCode: "1027S   30 ML",
-            productCode: "1027S", destiny: "Local", hasMissingStock: false, finishedLabel: false,
-            patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd",
+        order2 = Order(areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284,
+            container: "PRINCESS/ATOMIZADOR", tag: "NA", plannedQuantity: 1, startDate: "22/09/2020",
+            finishDate: "30/09/2020", descriptionProduct: "Lactico 30% Solución", statusId: 1,
+            itemCode: "1027S   30 ML", productCode: "1027S", destiny: "Local", hasMissingStock: false,
+            finishedLabel: false, patientName: "NamePatient", clientDxp: "clientDxp", shopTransaction: "emnjkd",
             qfbName: "", technicalSign: true, hasTechnicalAssigned: false)
-        orderItemCodeEmpty = Order(
-            areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284,
+        orderItemCodeEmpty = Order(areBatchesComplete: true, productionOrderId: 89995, baseDocument: 60284,
             container: "PRINCESS/ATOMIZADOR", tag: "NA", plannedQuantity: 1, startDate: "22/09/2020",
             finishDate: "30/09/2020", descriptionProduct: "Lactico 30% Solución", statusId: 1, itemCode: "",
             productCode: "1027S", destiny: "Local", hasMissingStock: false, finishedLabel: false,

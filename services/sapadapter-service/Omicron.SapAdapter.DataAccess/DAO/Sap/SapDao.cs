@@ -1296,6 +1296,29 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return (await this.RetryQuery(query)).ToList();
         }
 
+        /// <inheritdoc/>
+        public async Task<List<CompleteRawMaterialRequestModel>> GetCompleteRawMaterialRequestByFilters(DateTime initDate, DateTime endDate, string userId)
+        {
+            var query = (from header in this.databaseContext.RawMaterialRequestModel
+                         join detail in this.databaseContext.RawMaterialRequestDetailModel on header.DocEntry equals detail.DocEntry
+                         where header.DocDate >= initDate && header.DocDate <= endDate && !string.IsNullOrEmpty(header.RequestedUserId) && (header.RequestedUserId == userId || userId == null)
+                         select new CompleteRawMaterialRequestModel
+                         {
+                             DocDate = header.DocDate.ToString("dd/MM/yyyy"),
+                             DocEntry = header.DocEntry,
+                             AdditionalComments = header.AdditionalComments,
+                             IsCanceled = header.Canceled == "Y",
+                             Description = detail.Description,
+                             ItemCode = detail.ItemCode,
+                             Quantity = detail.Quantity,
+                             TargetWarehosue = detail.TargetWarehosue,
+                             Unit = detail.Unit,
+                             Status = header.Status,
+                             RequestedUserId = header.RequestedUserId,
+                         }).OrderByDescending(raw => raw.DocEntry).AsNoTracking();
+            return (await this.RetryQuery(query)).ToList();
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

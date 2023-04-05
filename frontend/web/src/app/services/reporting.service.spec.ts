@@ -22,4 +22,8 @@ describe('ReportingService', () => {
     const service: ReportingService = TestBed.get(ReportingService);
     expect(service.downloadPreviewRawMaterialRequest({}) instanceof Observable).toBeTruthy();
   });
+  it('should downloadPreviewMaterial', () => {
+    const service: ReportingService = TestBed.get(ReportingService);
+    expect(service.downloadPreviewMaterial({}) instanceof Observable).toBeTruthy();
+  });
 });

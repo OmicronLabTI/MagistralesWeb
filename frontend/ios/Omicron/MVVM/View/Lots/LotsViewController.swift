@@ -43,9 +43,12 @@ class LotsViewController: UIViewController {
     @IBOutlet weak var manufacturingOrderLabel: UILabel!
     @IBOutlet weak var finishOrderButton: UIButton!
     @IBOutlet weak var buttonsViewConstraint: NSLayoutConstraint!
+    @IBOutlet weak var backButtonStackView: UIStackView!
+    @IBOutlet weak var backButtonLabel: UILabel!
     // MARK: - Variables
     @Injected var lotsViewModel: LotsViewModel
     @Injected var lottieManager: LottieManager
+    @Injected var inboxViewModel: InboxViewModel    
     let disposeBag = DisposeBag()
     var orderId = -1
     var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
@@ -63,6 +66,8 @@ class LotsViewController: UIViewController {
         self.lotsViewModel.orderId = self.orderId
         self.lotsViewModel.getLots()
         self.setupKeyboard()
+        self.setBackButtonLabelText()
+        self.bindGestureRecognizer()
         splitViewController?.preferredDisplayMode = .primaryHidden
     }
     override func viewDidAppear(_ animated: Bool) {
@@ -85,6 +90,16 @@ class LotsViewController: UIViewController {
         splitViewController?.preferredDisplayMode = .primaryHidden
     }
     // MARK: - Functions
+    func bindGestureRecognizer() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(backToStartView))
+        self.backButtonStackView.addGestureRecognizer(tap)
+    }
+    @objc func backToStartView() {
+        self.navigationController?.popToRootViewController(animated: true)
+    }
+    func setBackButtonLabelText() {
+        self.backButtonLabel.text = inboxViewModel.currentSection.statusName
+    }
     func viewModelBinding() {
         self.modelBindingExtension1()
         self.modelViewBindingEstension2()

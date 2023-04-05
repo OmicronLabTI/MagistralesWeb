@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { DestinationStore, IMaterialRequestRes, MaterialComponent, RawRequest, RawRequestPost } from '../../model/http/materialReques';
 import { MaterialRequestService } from '../../services/material-request.service';
 import {
   ClassNames,
   ComponentSearch,
+  CONST_ARRAY,
   CONST_NUMBER,
   CONST_STRING,
   MessageType,
@@ -16,9 +17,7 @@ import { DataService } from '../../services/data.service';
 import { Messages } from '../../constants/messages';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { FileDownloaderService } from 'src/app/services/file.downloader.service';
 import { ReportingService } from 'src/app/services/reporting.service';
-import { FileTypeContentEnum } from 'src/app/enums/FileTypeContentEnum';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
@@ -51,9 +50,9 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     private errorService: ErrorService,
     private activeRoute: ActivatedRoute,
     private dataService: DataService,
-    private fileDownloaderServie: FileDownloaderService,
     private reportingService: ReportingService,
     private location: Location,
+    private router: Router,
     private localStorageService: LocalStorageService,
     private observableService: ObservableService,
     private messagesService: MessagesService) {
@@ -67,6 +66,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.getDestination();
       this.validateRequest();
     });
+    this.dataSource.data = this.localStorageService.getMaterialRequestData();
     this.subscription.add(this.observableService.getNewMaterialComponent().subscribe(resultNewMaterialComponent => {
       this.dataSource.data = [...this.dataSource.data, {
         ...resultNewMaterialComponent,
@@ -173,6 +173,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     newComponentsToSend.userId = this.localStorageService.getUserId();
 
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe(resultMaterialPost => {
+      this.dataSource.data = CONST_ARRAY.empty;
       if (!resultMaterialPost.response && resultMaterialPost.userError) {
         this.messagesService.presentToastCustom(CONST_STRING.empty, 'error',
           resultMaterialPost.userError,
@@ -210,7 +211,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   validateRow(index: number): void {
-    this.dataSource.data[index].isWithError = !Number(this.dataSource.data[index].requestQuantity) ||
+    const reqQuantity = Number(this.dataSource.data[index].requestQuantity.replace(',', ''));
+    this.dataSource.data[index].isWithError = !Number(reqQuantity) ||
       this.dataSource.data[index].warehouse === CONST_STRING.empty;
   }
 
@@ -223,6 +225,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.dataService.setIsToSaveAnything(false);
+    this.localStorageService.setMaterialRequestData(this.dataSource.data);
   }
 
   checkToDelete(): void {
@@ -245,7 +248,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   private goBack(): void {
-    this.location.back();
+    const route = this.isOrder ? 'ordenes' : 'pedidos';
+    this.router.navigate([route]);
   }
 
   onDataError(errorData: any[], isOnInitError: boolean = false): void {

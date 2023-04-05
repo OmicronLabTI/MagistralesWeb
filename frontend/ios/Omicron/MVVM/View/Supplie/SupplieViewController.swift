@@ -10,9 +10,8 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Resolver
-
 class SupplieViewController: UIViewController {
-    let disposeBag = DisposeBag()
+    var disposeBag: DisposeBag? = DisposeBag()
     @IBOutlet weak var deleteComponents: UIButton!
     @IBOutlet weak var addComponent: UIButton!
     @IBOutlet weak var sendToStore: UIButton!
@@ -22,14 +21,29 @@ class SupplieViewController: UIViewController {
     @IBOutlet weak var observationsView: UIView!
     @IBOutlet weak var tableComponents: UITableView!
     @IBOutlet weak var observationsField: UITextView!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    @IBOutlet weak var newSupplie: UIStackView!
+    @IBOutlet weak var historySupplie: UIStackView!
+    @IBOutlet weak var dateOrderView: UIView!
+    @IBOutlet weak var estatusView: UIView!
+    @IBOutlet weak var tableHistory: UITableView!
+    @IBOutlet weak var noHistoryResults: UIView!
+    @IBOutlet weak var statusSelectedsLabel: UILabel!
+    @IBOutlet weak var dateRangeSelectedLabel: UILabel!
+    var maxRangeDays: Int? = 6
     @Injected var supplieViewModel: SupplieViewModel
     @Injected var lottieManager: LottieManager
-    var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
-
+    @Injected var historyViewModel: HistoryViewModel
     var supplieList: [Supplie] = []
-
+    var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()
+    var isLoading = false
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindShowAlert()
+        repaintFilters()
+        bindinChangeFilters()
+        bindSegmentedControl()
+        loadStyles()
         resetInfo()
         setupUI()
         bindTableData()
@@ -39,23 +53,37 @@ class SupplieViewController: UIViewController {
         disableSendToStoreBinding()
         bindLoading()
         bindReturnBack()
+        segmentedControl.selectedSegmentIndex = 0
+        changeSegmentedView(isSupplie: true)
+        bindHistoryTable()
+        bindIsLoading()
+        validateHasInfo()
+        historyViewModel.getHistory(offset: 0, limit: historyViewModel.limit)
+        bindRecognizers()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        disposeBag = nil
     }
     func bindReturnBack() {
         supplieViewModel.returnBack.subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.observationsField.text = String()
-            self.showAlert(alert: (
-                title: "Solicitud enviada exitosamente",
-                msg: String(),
-                autoDismiss: true
-            ))
+            self.showAlertSuccess(title: "Solicitud enviada exitosamente",
+                                  message: String())
             self.resetValues()
             Timer.scheduledTimer(withTimeInterval: TimeInterval(2),
                                  repeats: false,
                                  block: { _ in
                 self.returnBack()
             })
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
+    }
+    func showAlertSuccess(title: String, message: String) {
+        AlertManager.shared.showAlertWithoutButtons(title: title,
+                                                    message: message,
+                                                    view: self,
+                                                    dismissTime: 2)
     }
     func initNavigationBar() {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "< Mis órdenes",
@@ -68,8 +96,11 @@ class SupplieViewController: UIViewController {
         supplieList = []
         supplieViewModel.supplieList = []
         supplieViewModel.selectedComponentsToDelete = []
+        historyViewModel.resetValues()
+        repaintFilters()
         tableComponents.dataSource = [] as? any UITableViewDataSource
-        tableComponents.reloadData()
+        tableHistory.dataSource = [] as? any UITableViewDataSource
+        tableHistory.delegate = self
     }
     @IBAction func showComponents(_ sender: Any) {
         changeView(false)
@@ -142,71 +173,19 @@ class SupplieViewController: UIViewController {
         supplieViewModel.componentsList.subscribe(onNext: { [weak self] list in
             guard let self = self else { return }
             self.supplieList = list
-        }).disposed(by: disposeBag)
-
-        supplieViewModel
-            .componentsList
-            .bind(to: tableComponents.rx.items(
-                cellIdentifier: ViewControllerIdentifiers.supplieTableViewCell,
-                cellType: SupplieTableViewCell.self
-            )) { index, supplie, cell in
-                cell.idLabel.text = String(self.supplieList.count - index)
-                cell.codeLabel.text = supplie.productId
-                cell.descriptionLabel.text = supplie.description
-                cell.quantityTextField.text = self.formatter.string(from: (supplie.requestQuantity ?? 0) as NSNumber)
-                cell.storeDestinationLabel.text = supplie.warehouse
-                cell.unityLabel.text = supplie.unit
-                cell.index = index
-                cell.supplie = supplie
-            }
-            .disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
+        supplieViewModel.componentsList.subscribe(onNext: {[weak self] data in
+            self?.supplieList = data
+            self?.tableComponents.reloadData()
+        }).disposed(by: disposeBag!)
     }
 
     func bindDeleteButton() {
         supplieViewModel.selectedButtonIsEnable.subscribe(onNext: {[weak self] isEnabled in
             self?.deleteComponents.isEnabled = isEnabled
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
 
-    func setupUI() {
-        tableComponents.delegate = self
-        tableComponents.dataSource = self
-        tableComponents.rowHeight = UITableView.automaticDimension
-        sendToStore.isEnabled = false
-        deleteComponents.isEnabled = false
-        observationsField.delegate = self
-        observationsField.text = CommonStrings.placeholderObservations
-        observationsField.textColor = UIColor.lightGray
-        UtilsManager.shared.setStyleButtonStatus(button: self.deleteComponents,
-                                                 title: StatusNameConstants.deleteMultiComponents,
-                                                 color: OmicronColors.processStatus,
-                                                 titleColor: OmicronColors.processStatus)
-
-        UtilsManager.shared.setStyleButtonStatus(button: self.addComponent,
-                                                 title: StatusNameConstants.addComponent,
-                                                 color: OmicronColors.primaryBlue,
-                                                 titleColor: OmicronColors.primaryBlue)
-        setBlueButtonStyle()
-        changeView(false)
-        observationsField.layer.borderWidth = 1
-        observationsField.layer.cornerRadius = 10
-        observationsField.layer.borderColor = OmicronColors.disabledButton.cgColor
-    }
-
-    func setBlueButtonStyle() {
-        sendToStore.setTitle(StatusNameConstants.sendToStore, for: .normal)
-        sendToStore.setTitleColor(UIColor.white, for: .normal)
-        sendToStore.setTitleColor(UIColor.black, for: .disabled)
-        sendToStore.layer.borderWidth = 1
-        sendToStore.layer.cornerRadius = 10
-        sendToStore.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 16)
-        changeBGButton(button: sendToStore,
-                       backgroundColor: OmicronColors.disabledButton)
-    }
-    func changeBGButton(button: UIButton, backgroundColor: UIColor) {
-        button.layer.borderColor = backgroundColor.cgColor
-        button.backgroundColor = backgroundColor
-    }
     func changeView(_ isComponents: Bool) {
         componentsView.isHidden = isComponents
         observationsView.isHidden = !isComponents
@@ -220,13 +199,13 @@ class SupplieViewController: UIViewController {
             self.sendToStore.isEnabled = isEnabled
             let color = self.sendToStore.isEnabled ? OmicronColors.primaryBlue : OmicronColors.disabledButton
                 self.changeBGButton(button: self.sendToStore, backgroundColor: color)
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
     func bindAlertDialog() {
         supplieViewModel.showSuccessAlert.subscribe(onNext: { [weak self] alert in
             guard let self = self else { return }
             self.showAlert(alert: alert)
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
     func showAlert(alert: (title: String, msg: String, autoDismiss: Bool)) {
         AlertManager.shared.showAlert(title: alert.title,
@@ -243,6 +222,6 @@ class SupplieViewController: UIViewController {
                 return
             }
             self.lottieManager.hideLoading()
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
 }

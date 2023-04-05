@@ -719,6 +719,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public static string UserClassificationDZ => "DZ";
 
         /// <summary>
+        /// Gets the close status.
+        /// </summary>
+        public static string CloseStatus => "Cerrado";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -14,7 +14,7 @@ import  Firebase
 #endif
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+    class AppDelegate: UIResponder, UIApplicationDelegate {
     // swiftlint:disable line_length
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -46,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { InboxViewModel() }.scope(Resolver.cached)
         Resolver.register { RootViewModel() }.scope(Resolver.cached)
         Resolver.register { OrderDetailViewModel()}.scope(Resolver.shared)
-        Resolver.register { OrderDetailFormViewModel()}.scope(Resolver.shared)
+        Resolver.register { OrderDetailFormViewModel()}.scope(Resolver.application)
         Resolver.register { CommentsViewModel() }.scope(Resolver.shared)
         Resolver.register { LotsViewModel() }.scope(Resolver.shared)
         Resolver.register { SignaturePadViewModel() }.scope(Resolver.shared)
@@ -56,5 +56,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Resolver.register { ChartViewModel() }.scope(Resolver.shared)
         Resolver.register { ContainerViewModel() }.scope(Resolver.unique)
         Resolver.register { BulkOrderViewModel() }.scope(Resolver.unique)
+        Resolver.register { HistoryViewModel() }.scope(Resolver.application)
     }
 }

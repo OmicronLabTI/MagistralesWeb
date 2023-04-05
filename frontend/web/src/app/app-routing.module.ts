@@ -49,7 +49,7 @@ const routes: Routes = [
     canActivate: [GuardService]
   },
   {
-    path: `${RouterPaths.materialRequest}/:requests/:isOrder`,
+    path: `${RouterPaths.materialRequest}`,
     loadChildren: () => import('./pages/material-request/material-request.module').then(m => m.MaterialRequestModule),
     canActivate: [GuardService]
   },

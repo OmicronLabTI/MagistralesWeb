@@ -64,17 +64,17 @@ extension ComponentsViewController {
     func okCreateBulkOrderBind() {
         self.bulkOrderViewModel.okCreateOrder.subscribe(onNext: { [weak self] message in
             guard let self = self else { return }
-            let alert = UIAlertController(
-                title: message,
-                message: nil,
-                preferredStyle: .alert)
-            let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: nil)
-            alert.addAction(okAction)
-            self.present(alert, animated: true, completion: nil)
-            if message == CommonStrings.okCreateBulkOrder {
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(3000)) {
-                    self.view.window?.rootViewController?.dismiss(animated: true)
-                }
+            if message != CommonStrings.okCreateBulkOrder {
+                let alert = UIAlertController(
+                    title: message,
+                    message: nil,
+                    preferredStyle: .alert)
+                let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: nil)
+                alert.addAction(okAction)
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                self.dismiss(animated: true)
+                self.bulkOrderViewModel.rootViewModel.modalHideAuto.onNext(message)
             }
         }).disposed(by: disposeBag)
     }

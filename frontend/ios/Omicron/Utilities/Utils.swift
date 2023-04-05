@@ -82,6 +82,12 @@ class UtilsManager {
         formatter.numberStyle = .decimal
         return formatter
     }
+    func formatterDoublesToString() -> NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 6
+        formatter.numberStyle = .none
+        return formatter
+    }
     func buildMessageError(error: ValidateOrder, message: String, lastSeparator: String) -> String {
         let errors = error.listItems?.joined(separator: "\n") ?? CommonStrings.empty
         return  "\(message)\n\(errors) \(lastSeparator)"
