@@ -115,7 +115,6 @@ export class LocalStorageService {
   }
 
   setMaterialRequestData = (data: MaterialRequestData) => {
-    console.log(data)
     localStorage.setItem(ConstToken.materialRequest, JSON.stringify(data));
   }
 

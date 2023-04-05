@@ -18,9 +18,10 @@ import { SatDatepickerModule, SatNativeDateModule } from 'saturn-datepicker';
 import { APP_PROVIDERS } from 'src/app/app.providers';
 import { RouterModule } from '@angular/router';
 import { NgxMaskModule } from 'ngx-mask';
+import { RequestSuppliesComponent } from './request-supplies/request-supplies.component';
 
 @NgModule({
-  declarations: [MaterialRequestComponent, HistoryMaterialRequestComponent],
+  declarations: [MaterialRequestComponent, HistoryMaterialRequestComponent, RequestSuppliesComponent],
   imports: [
     CommonModule,
     MaterialRequestRoutingModule,

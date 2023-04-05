@@ -99,7 +99,7 @@ export class MaterialRequestData {
     sign: string;
     comments: string;
     isValid: boolean;
-    constructor(){
+    constructor() {
         this.products = CONST_ARRAY.empty;
         this.sign = CONST_STRING.empty;
         this.comments = CONST_STRING.empty;
