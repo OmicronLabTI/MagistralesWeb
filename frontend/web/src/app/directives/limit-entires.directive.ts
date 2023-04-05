@@ -6,7 +6,7 @@ import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 export class LimitEntiresDirective {
   @Input() entiresPlaces = 8;
 
-  private specialKeys: Array<string> = ['Backspace', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight', 'Del', 'Delete', 'Alt', '+'];
+  private specialKeys: Array<string> = ['Backspace', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight', 'Del', 'Delete', 'Alt', '+', '.'];
   constructor(private el: ElementRef) {}
 
   @HostListener('keydown', ['$event'])
