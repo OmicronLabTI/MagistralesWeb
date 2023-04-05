@@ -66,7 +66,7 @@ extension OrderDetailViewController {
                     text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
                     self.isolatedOrder = true
-                    self.quantityTextField.text = "\(detail.plannedQuantity ?? 0)"
+                    self.quantityTextField.text = self.getFormattedText(number: Double(truncating: NSDecimalNumber(decimal: detail.plannedQuantity ?? 0)))
                     self.destinyLabel.text = ""
                     self.codeDescriptionLabel.isHidden = true
                     self.containerDescriptionLabel.isHidden = true
@@ -171,22 +171,11 @@ extension OrderDetailViewController {
         }).disposed(by: disposeBag)
     }
 
-    func quantityTextFieldBindind() {
-        self.quantityTextField.rx.text.bind { text in
-            self.quantityButtonChange.isEnabled = false
-            if let textTemp = Decimal(string: text ?? ""),
-                let detail = self.orderDetail.first,
-                textTemp>0,
-                textTemp != detail.plannedQuantity {
-                self.quantityButtonChange.isEnabled = true
-            }
-        }
-    }
-
     func quantityButtonBindind() {
         self.quantityButtonChange.rx.tap.bind {
             self.quantityButtonChange.isEnabled = false
-            self.orderDetailViewModel.updateQuantity(Decimal(string: self.quantityTextField.text ?? "0") ?? 0)
+            let quantity = Decimal(string: self.quantityTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0")
+            self.orderDetailViewModel.updateQuantity(quantity ?? 0)
         }
         .disposed(by: self.disposeBag)
     }

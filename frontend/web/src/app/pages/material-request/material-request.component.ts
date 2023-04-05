@@ -211,7 +211,8 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   validateRow(index: number): void {
-    this.dataSource.data[index].isWithError = !Number(this.dataSource.data[index].requestQuantity) ||
+    const reqQuantity = Number(this.dataSource.data[index].requestQuantity.replace(',', ''));
+    this.dataSource.data[index].isWithError = !Number(reqQuantity) ||
       this.dataSource.data[index].warehouse === CONST_STRING.empty;
   }
 
