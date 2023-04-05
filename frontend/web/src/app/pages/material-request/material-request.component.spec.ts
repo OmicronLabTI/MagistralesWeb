@@ -24,13 +24,14 @@ describe('MaterialRequestComponent', () => {
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getUserId',
       'getUserName',
-      'getMaterialRequestData'
+      'setMaterialHistoryQuery',
+      'setMaterialRequestData'
     ]);
 
     localStorageServiceSpy.getUserName.and.returnValue('benny benny');
     localStorageServiceSpy.getUserId.and.returnValue('35642b3a-9471-4b89-9862-8bee6d98c361');
-    localStorageServiceSpy.getMaterialRequestData.and.returnValue(new MaterialRequestData());
-
+    localStorageServiceSpy.setMaterialHistoryQuery.and.returnValue();
+    localStorageServiceSpy.setMaterialRequestData.and.returnValue();
     TestBed.configureTestingModule({
       declarations: [MaterialRequestComponent],
       imports: [

@@ -89,7 +89,8 @@ describe('RequestSupplies Component', () => {
     localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
       'getUserId',
       'getUserName',
-      'getMaterialRequestData'
+      'getMaterialRequestData',
+      'setMaterialRequestData'
     ]);
 
 
@@ -114,6 +115,7 @@ describe('RequestSupplies Component', () => {
         requestQuantity: '1,000.00'
       }]
     });
+    localStorageServiceSpy.setMaterialRequestData.and.returnValue();
 
     //  -------------------- ReportingService
     reportingServiceSpy = jasmine.createSpyObj<ReportingService>
@@ -253,6 +255,7 @@ describe('RequestSupplies Component', () => {
     expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
   it('onRequestQuantityChange method should change quantity success', () => {
+    component.dataSource.data = [{ ...new MaterialComponent(), requestQuantity: '1,000.00' }];
     materialReServiceSpy.getPreMaterialRequest.and.returnValue(of(MaterialRequestMock));
     component.getPreMaterialRequestH();
     component.onRequestQuantityChange(100, 0);
