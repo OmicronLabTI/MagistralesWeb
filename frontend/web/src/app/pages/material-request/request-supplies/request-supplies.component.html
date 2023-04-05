@@ -92,10 +92,10 @@
                             [ngClass]="element.isWithError ? 'with-error' : ''"
                             class="color-text-intables tdcell tdcell-center mobile-hide cantreq">
                             <mat-form-field appearance="outline">
-                                <input matInput type="text"  mask="comma_separator.6"   thousandSeparator=","  [dropSpecialCharacters]="false"
+                                <input matInput type="text"   mask="comma_separator.6"   thousandSeparator=","  [dropSpecialCharacters]="false"
                                     class="color-number" placeholder="Ctd. requerida"
                                     [(ngModel)]="element.requestQuantity"
-                                    (ngModelChange)="onRequestQuantityChange($event, i)" step="any">
+                                    (ngModelChange)="onRequestQuantityChange($event, i)" step="any" appLimitEntires>
                             </mat-form-field>
                         </td>
                     </ng-container>
