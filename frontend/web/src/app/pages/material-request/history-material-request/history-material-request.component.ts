@@ -78,6 +78,12 @@ export class HistoryMaterialRequestComponent implements OnInit, OnDestroy {
     this.minDate = null;
     this.maxDate = this.today;
   }
+  getIsDisabled(status: string): boolean {
+    if ((this.statusControl.value as string[]).length <= 1) {
+      return status.toUpperCase() === String(this.statusControl.value[0]).toUpperCase();
+    }
+    return false;
+  }
 
   updateMaxDate = (dateStart: Date) => {
     this.minDate = dateStart;
