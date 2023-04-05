@@ -44,7 +44,8 @@ namespace Omicron.Reporting.Facade.Request
         /// <returns>Report file stream.</returns>
         public List<string> CreateRawMaterialRequestPdf(RawMaterialRequestDto request, bool preview)
         {
-            return this.reportingService.CreateRawMaterialRequestPdf(this.mapper.Map<RawMaterialRequestModel>(request), preview);
+            return this.reportingService.CreateRawMaterialRequestPdf(
+                this.mapper.Map<RawMaterialRequestModel>(request), preview);
         }
 
         /// <summary>
@@ -54,7 +55,9 @@ namespace Omicron.Reporting.Facade.Request
         /// <returns>Operation result.</returns>
         public async Task<ResultDto> SubmitRawMaterialRequestPdf(RawMaterialRequestDto request)
         {
-            return this.mapper.Map<ResultDto>(await this.reportingService.SubmitRawMaterialRequestPdf(this.mapper.Map<RawMaterialRequestModel>(request)));
+            return this.mapper.Map<ResultDto>(
+                await this.reportingService.SubmitRawMaterialRequestPdf(
+                    this.mapper.Map<RawMaterialRequestModel>(request)));
         }
 
         /// <inheritdoc/>
@@ -72,7 +75,7 @@ namespace Omicron.Reporting.Facade.Request
         /// <inheritdoc/>
         public async Task<ResultDto> SendEmailRejectedOrder(SendRejectedEmailDto request)
         {
-           return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailRejectedOrder(this.mapper.Map<SendRejectedEmailModel>(request)));
+            return this.mapper.Map<ResultDto>(await this.reportingService.SendEmailRejectedOrder(this.mapper.Map<SendRejectedEmailModel>(request)));
         }
 
         /// <inheritdoc/>

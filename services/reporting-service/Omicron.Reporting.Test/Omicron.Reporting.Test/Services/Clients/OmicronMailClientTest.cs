@@ -71,6 +71,24 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             Assert.IsTrue(result);
         }
 
+        /// <summary>
+        /// Action tests.
+        /// </summary>
+        /// <returns>Nothing.</returns>
+        [Test]
+        public async Task SendMailFilesNull()
+        {
+            // Arrange
+            var smtpConfig = this.GetMockSmtpConfigModel();
+            Dictionary<string, MemoryStream> files = null;
+
+            // Act
+            var result = await this.omicronMailClient.SendMail(smtpConfig, "to@mail.com", "subject", "body", "cc1@mail.com;cc2@mail.com", files);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
         private SmtpConfigModel GetMockSmtpConfigModel()
         {
             return new SmtpConfigModel
