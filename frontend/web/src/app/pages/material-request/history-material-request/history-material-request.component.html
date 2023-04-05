@@ -22,8 +22,8 @@
                 <mat-form-field appearance="outline" class="">
                     <mat-label>Estatus</mat-label>
                     <mat-select (selectionChange)="filterChange()" [formControl]="statusControl" multiple>
-                        <mat-option value="Abierto">Abierto</mat-option>
-                        <mat-option value="Cerrado">Cerrado</mat-option>
+                        <mat-option value="Abierto" [disabled]="getIsDisabled('Abierto')">Abierto</mat-option>
+                        <mat-option value="Cerrado" [disabled]=" getIsDisabled('Cerrado')">Cerrado</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>

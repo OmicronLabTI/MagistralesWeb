@@ -102,5 +102,12 @@ describe('HistoryMaterialRequestComponent', () => {
   it('should on change page event', () => {
     materialReServiceSpy.gethistoryMaterial.and.callFake(() => throwError('error'));
   });
-
+  it('should getIsDisabled true', () => {
+    component.statusControl.setValue(['Abierto']);
+    expect(component.getIsDisabled('Abierto')).toBeTruthy();
+  });
+  it('should getIsDisabled false', () => {
+    component.statusControl.setValue(['Abierto', 'Cerrado']);
+    expect(component.getIsDisabled('Abierto')).toBeFalsy();
+  });
 });
