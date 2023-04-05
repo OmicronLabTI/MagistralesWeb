@@ -11,13 +11,23 @@ import { SatNativeDateModule, SatDatepickerModule } from 'saturn-datepicker';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ErrorService } from 'src/app/services/error.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
+import { MaterialHistoryQuery } from 'src/app/model/http/materialReques';
 
 describe('HistoryMaterialRequestComponent', () => {
   let component: HistoryMaterialRequestComponent;
   let fixture: ComponentFixture<HistoryMaterialRequestComponent>;
   let materialReServiceSpy: jasmine.SpyObj<MaterialRequestService>;
   let errorServiceSpy: jasmine.SpyObj<ErrorService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
+
   beforeEach(async(() => {
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+      'getUserId',
+      'getUserName',
+      'setMaterialHistoryQuery',
+      'getMaterialHistoryQuery'
+    ]);
     materialReServiceSpy = jasmine.createSpyObj<MaterialRequestService>
       ('MaterialRequestService',
         [
@@ -28,6 +38,10 @@ describe('HistoryMaterialRequestComponent', () => {
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
+    localStorageServiceSpy.getUserName.and.returnValue('benny benny');
+    localStorageServiceSpy.getUserId.and.returnValue('35642b3a-9471-4b89-9862-8bee6d98c361');
+    localStorageServiceSpy.setMaterialHistoryQuery.and.returnValue();
+    localStorageServiceSpy.getMaterialHistoryQuery.and.returnValue(new MaterialHistoryQuery());
     errorServiceSpy.httpError.and.returnValue();
     TestBed.configureTestingModule({
       declarations: [HistoryMaterialRequestComponent],
@@ -47,6 +61,10 @@ describe('HistoryMaterialRequestComponent', () => {
       providers: [
         {
           provide: MaterialRequestService, useValue: materialReServiceSpy
+        },
+        {
+          provide: LocalStorageService,
+          useValue: localStorageServiceSpy
         }
       ]
     })
