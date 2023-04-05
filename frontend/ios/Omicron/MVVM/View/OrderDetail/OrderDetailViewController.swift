@@ -78,7 +78,6 @@ class OrderDetailViewController: UIViewController {
         self.initComponents()
         self.viewModelBinding()
         quantityButtonBindind()
-        quantityTextFieldBindind()
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
     }
