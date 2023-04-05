@@ -8,19 +8,20 @@
 
 namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.Json.Serialization;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Omicron.SapAdapter.DataAccess.Extensions;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model;
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Serilog;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Entities.Model.Wraps;
-    using Omicron.SapAdapter.DataAccess.Extensions;
+    using Serilog;
 
     /// <summary>
     /// Class for the dao.
@@ -1333,8 +1334,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             }
             catch (Exception ex)
             {
-                this.logger.Error($"Error al correr query {ex.Message} --- {ex.StackTrace}");
-                return await query.ToListAsync();
+                this.logger.Error(messageTemplate: $"SapOrdersAdapter.SapOrdersAdapterDao. Error to exec query : {query.ToString()} Error : {ex.Message} --- {ex.StackTrace}");
+                throw new Exception($"Error : {ex.Message} --- {ex.StackTrace}");
             }
         }
 
