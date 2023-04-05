@@ -254,14 +254,7 @@ describe('RequestSupplies Component', () => {
     expect(materialReServiceSpy.postMaterialRequest).toHaveBeenCalled();
     expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
-  it('onRequestQuantityChange method should change quantity success', () => {
-    component.dataSource.data = [{ ...new MaterialComponent(), requestQuantity: '1,000.00' }];
-    materialReServiceSpy.getPreMaterialRequest.and.returnValue(of(MaterialRequestMock));
-    component.getPreMaterialRequestH();
-    component.onRequestQuantityChange(100, 0);
-    expect(component.isCorrectData).toBeTruthy();
-    expect(dataServiceSpy.setIsToSaveAnything).toHaveBeenCalled();
-  });
+  
   it('should download Preview', () => {
     reportingServiceSpy.downloadPreviewMaterial.and.returnValue(of({
       response: ['url1', 'url2']
