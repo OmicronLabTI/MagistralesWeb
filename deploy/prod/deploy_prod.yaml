@@ -32,7 +32,7 @@ spec:
           resources:
             limits:
               cpu: 1413m
-              memory: 477Mi
+              memory: 800Mi
             requests:
               cpu: 707m
               memory: 323Mi
@@ -98,7 +98,7 @@ spec:
           resources:
             limits:
               cpu: 170m
-              memory: 166Mi
+              memory: 300Mi
             requests:
               cpu: 85m
               memory: 95Mi
@@ -412,7 +412,7 @@ spec:
           resources:
             limits:
               cpu: 102m
-              memory: 65Mi
+              memory: 150Mi
             requests:
               cpu: 51m
               memory: 51Mi
@@ -478,12 +478,17 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: elastic_apm_url
+            - name: SAP_DI_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: sap_di_api_url
           ports:
             - containerPort: 80
           resources:
             limits:
               cpu: 38m
-              memory: 133Mi
+              memory: 396Mi
             requests:
               cpu: 19m
               memory: 97Mi
@@ -505,3 +510,4 @@ spec:
     app: reporting
   type: ClusterIP
 ---
+

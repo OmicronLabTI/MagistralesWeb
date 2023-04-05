@@ -12,7 +12,7 @@ namespace Omicron.Reporting.Services.Clients
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using Omicron.Reporting.Resources.Exceptions;
     using Omicron.Reporting.Entities.Model;
 
     /// <summary>

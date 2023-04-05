@@ -14,7 +14,7 @@ namespace Omicron.Reporting.Services.AzureServices
     using Azure.Storage;
     using Azure.Storage.Blobs;
     using Azure.Storage.Blobs.Models;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using Omicron.Reporting.Resources.Exceptions;
 
     /// <summary>
     /// Class for azure.
