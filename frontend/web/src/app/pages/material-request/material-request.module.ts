@@ -19,6 +19,7 @@ import { APP_PROVIDERS } from 'src/app/app.providers';
 import { RouterModule } from '@angular/router';
 import { NgxMaskModule } from 'ngx-mask';
 import { RequestSuppliesComponent } from './request-supplies/request-supplies.component';
+import { DirectivesModule } from 'src/app/directives/directives.module';
 
 @NgModule({
   declarations: [MaterialRequestComponent, HistoryMaterialRequestComponent, RequestSuppliesComponent],
@@ -40,7 +41,8 @@ import { RequestSuppliesComponent } from './request-supplies/request-supplies.co
     ReactiveFormsModule,
     SatDatepickerModule,
     SatNativeDateModule,
-    RouterModule
+    RouterModule,
+    DirectivesModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
