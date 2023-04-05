@@ -1,4 +1,4 @@
-import { CONST_NUMBER, CONST_STRING } from 'src/app/constants/const';
+import { BoolConst, CONST_ARRAY, CONST_NUMBER, CONST_STRING } from 'src/app/constants/const';
 import { BaseResponseHttp } from './commons';
 
 export class IMaterialRequestRes extends BaseResponseHttp {
@@ -91,5 +91,18 @@ export class MaterialHistoryQuery {
         this.offset = CONST_NUMBER.zero;
         this.limit = CONST_NUMBER.ten;
         this.status = 'Abierto';
+    }
+}
+
+export class MaterialRequestData {
+    products: Array<MaterialComponent>;
+    sign: string;
+    comments: string;
+    isValid: boolean;
+    constructor(){
+        this.products = CONST_ARRAY.empty;
+        this.sign = CONST_STRING.empty;
+        this.comments = CONST_STRING.empty;
+        this.isValid = BoolConst.false;
     }
 }

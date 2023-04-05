@@ -3,7 +3,7 @@ import {
   ConstToken,
 } from '../constants/const';
 import { Catalogs, ParamsPedidos } from '../model/http/pedidos';
-import { MaterialComponent, MaterialHistoryQuery } from '../model/http/materialReques';
+import { MaterialComponent, MaterialHistoryQuery, MaterialRequestData } from '../model/http/materialReques';
 
 @Injectable({
   providedIn: 'root'
@@ -114,12 +114,13 @@ export class LocalStorageService {
     localStorage.removeItem(ConstToken.detailOrderCurrent);
   }
 
-  setMaterialRequestData = (data: Array<MaterialComponent>) => {
+  setMaterialRequestData = (data: MaterialRequestData) => {
+    console.log(data)
     localStorage.setItem(ConstToken.materialRequest, JSON.stringify(data));
   }
 
-  getMaterialRequestData = (): Array<MaterialComponent> => {
-    return JSON.parse(localStorage.getItem(ConstToken.materialRequest)) || [];
+  getMaterialRequestData = (): MaterialRequestData => {
+    return JSON.parse(localStorage.getItem(ConstToken.materialRequest)) || new MaterialRequestData();
   }
 
   setMaterialHistoryQuery = (data: MaterialHistoryQuery) => {

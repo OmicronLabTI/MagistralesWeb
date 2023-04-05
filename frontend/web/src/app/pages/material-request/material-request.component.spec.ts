@@ -24,7 +24,7 @@ import { MaterialRequestMock } from '../../../mocks/materialRequest';
 import { DataService } from '../../services/data.service';
 import { MaterialRequestComponent } from './material-request.component';
 import { CONST_ARRAY } from 'src/app/constants/const';
-import { MaterialComponent } from 'src/app/model/http/materialReques';
+import { MaterialComponent, MaterialRequestData } from 'src/app/model/http/materialReques';
 describe('MaterialRequestComponent', () => {
   let component: MaterialRequestComponent;
   let fixture: ComponentFixture<MaterialRequestComponent>;
@@ -107,7 +107,7 @@ describe('MaterialRequestComponent', () => {
     messagesServiceSpy.getMessageTitle.and.returnValue('Title');
     localStorageServiceSpy.getUserName.and.returnValue('benny benny');
     localStorageServiceSpy.getUserId.and.returnValue('35642b3a-9471-4b89-9862-8bee6d98c361');
-    localStorageServiceSpy.getMaterialRequestData.and.returnValue(CONST_ARRAY.empty);
+    localStorageServiceSpy.getMaterialRequestData.and.returnValue(new MaterialRequestData());
 
     //  -------------------- ReportingService
     reportingServiceSpy = jasmine.createSpyObj<ReportingService>

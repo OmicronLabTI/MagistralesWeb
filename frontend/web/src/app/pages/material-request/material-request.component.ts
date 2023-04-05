@@ -66,7 +66,7 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.getDestination();
       this.validateRequest();
     });
-    this.dataSource.data = this.localStorageService.getMaterialRequestData();
+    this.fillCacheData();
     this.subscription.add(this.observableService.getNewMaterialComponent().subscribe(resultNewMaterialComponent => {
       this.dataSource.data = [...this.dataSource.data, {
         ...resultNewMaterialComponent,
@@ -83,6 +83,15 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
       this.oldData.signature = newDataSignature;
       this.checkIsCorrectData();
     }));
+  }
+
+  fillCacheData = () => {
+    let { isValid, products, sign, comments } = this.localStorageService.getMaterialRequestData();
+    if (isValid) {
+      this.dataSource.data = products;
+      this.oldData.signature = sign;
+      this.comments = comments;
+    }
   }
 
   getDestination(): void {
@@ -173,18 +182,18 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
     newComponentsToSend.userId = this.localStorageService.getUserId();
 
     this.materialReService.postMaterialRequest(newComponentsToSend).subscribe(resultMaterialPost => {
-      this.dataSource.data = CONST_ARRAY.empty;
       if (!resultMaterialPost.response && resultMaterialPost.userError) {
         this.messagesService.presentToastCustom(CONST_STRING.empty, 'error',
           resultMaterialPost.userError,
           true, false, ClassNames.popupCustom);
         return;
       }
-      if (resultMaterialPost.success && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {
+      if (resultMaterialPost.success && resultMaterialPost.response && resultMaterialPost.response.failed.length > CONST_NUMBER.zero) {
         this.onDataError(resultMaterialPost.response.failed);
       } else {
-        this.goBack();
+        this.dataSource.data = CONST_ARRAY.empty;
         this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
+        this.goBack();
       }
     }, error => this.errorService.httpError(error));
   }
@@ -225,7 +234,15 @@ export class MaterialRequestComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.dataService.setIsToSaveAnything(false);
-    this.localStorageService.setMaterialRequestData(this.dataSource.data);
+    this.saveData();
+  }
+
+  saveData = () => {
+    this.localStorageService.setMaterialRequestData({ 
+      products: this.dataSource.data, 
+      sign: this.oldData.signature, 
+      comments: this.comments, 
+      isValid: true });
   }
 
   checkToDelete(): void {
