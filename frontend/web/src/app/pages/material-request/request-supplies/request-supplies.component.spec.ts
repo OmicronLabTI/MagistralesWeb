@@ -254,7 +254,7 @@ describe('RequestSupplies Component', () => {
     expect(materialReServiceSpy.postMaterialRequest).toHaveBeenCalled();
     expect(errorServiceSpy.httpError).toHaveBeenCalled();
   });
-  
+
   it('should download Preview', () => {
     reportingServiceSpy.downloadPreviewMaterial.and.returnValue(of({
       response: ['url1', 'url2']

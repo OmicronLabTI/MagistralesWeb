@@ -8,6 +8,7 @@ import {FinalizeOrdersComponent} from '../../dialogs/finalize-orders/finalize-or
 import { DigitDecimalNumberDirective } from 'src/app/directives/digit-decima-number.directive';
 import {PipesModule} from '../../pipes/pipes.module';
 import {ComponentsModule} from '../../components/components.module';
+import { LimitEntiresDirective } from 'src/app/directives/limit-entires.directive';
 
 @NgModule({
   declarations: [FabordersListComponent, FinalizeOrdersComponent, DigitDecimalNumberDirective],
