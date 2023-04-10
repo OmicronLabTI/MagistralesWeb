@@ -1328,15 +1328,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         private async Task<IEnumerable<T>> RetryQuery<T>(IQueryable<T> query)
         {
-            try
-            {
-                return await query.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                this.logger.Error(messageTemplate: $"SapOrdersAdapter.SapOrdersAdapterDao. Error to exec query : {query.ToString()} Error : {ex.Message} --- {ex.StackTrace}");
-                throw new Exception($"Error : {ex.Message} --- {ex.StackTrace}");
-            }
+            return await query.ToListAsync();
         }
 
         private async Task<List<CompleteDetalleFormulaModel>> GetComponentes(List<ProductoModel> products, string warehouse)
