@@ -83,10 +83,12 @@ export interface IMaterialHistoryItem {
 
 export class MaterialHistoryQuery {
     start: string;
+    end: string;
     offset: number;
     limit: number;
     status: string;
     constructor() {
+        this.end = CONST_STRING.empty;
         this.start = CONST_STRING.empty;
         this.offset = CONST_NUMBER.zero;
         this.limit = CONST_NUMBER.ten;
