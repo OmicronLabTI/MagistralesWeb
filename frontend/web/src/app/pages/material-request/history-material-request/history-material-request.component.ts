@@ -48,6 +48,7 @@ export class HistoryMaterialRequestComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.localStorageService.setMaterialHistoryQuery({
       start: this.date.value.begin,
+      end: this.date.value.end,
       offset: this.offset,
       limit: this.limit,
       status: this.statusControl.value.toString()
@@ -55,13 +56,13 @@ export class HistoryMaterialRequestComponent implements OnInit, OnDestroy {
   }
 
   loadFilters = () => {
-    const { limit, offset, status, start } = this.localStorageService.getMaterialHistoryQuery();
+    const { limit, offset, status, start, end } = this.localStorageService.getMaterialHistoryQuery();
     this.limit = limit;
     this.statusControl.setValue(status.split(','));
     this.offset = offset;
     if (start !== '') {
       this.date.setValue({
-        begin: new Date(start), end: this.getWeekOneWeekDate(new Date(start), 6)
+        begin: new Date(start), end: new Date(end)
       });
     }
   }
