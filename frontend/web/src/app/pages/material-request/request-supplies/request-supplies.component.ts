@@ -265,7 +265,7 @@ export class RequestSuppliesComponent implements OnInit, OnDestroy {
   }
 
   private goBack(): void {
-    const route = this.isOrder ? 'ordenes' : 'pedidos';
+    const route = this.isOrder ? 'pedidos' : 'ordenes';
     this.router.navigate([route]);
   }
 
