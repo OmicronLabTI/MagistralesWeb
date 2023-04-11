@@ -15,8 +15,8 @@ namespace Omicron.SapAdapter.Test.Services
     using Moq;
     using Newtonsoft.Json;
     using NUnit.Framework;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Resources.Exceptions;
     using Omicron.SapAdapter.Services.Catalog;
     using Serilog;
 

@@ -14,9 +14,9 @@ namespace Omicron.Pedidos.Services.Utils
     using System.Net.Http;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
+    using Omicron.Pedidos.Resources.Exceptions;
     using Serilog;
 
     /// <summary>

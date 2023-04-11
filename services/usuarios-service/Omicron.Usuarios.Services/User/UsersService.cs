@@ -15,10 +15,10 @@ namespace Omicron.Usuarios.Services.User
     using System.Threading.Tasks;
     using AutoMapper;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Usuarios.DataAccess.DAO.User;
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Model;
+    using Omicron.Usuarios.Resources.Exceptions;
     using Omicron.Usuarios.Services.Constants;
     using Omicron.Usuarios.Services.Pedidos;
     using Omicron.Usuarios.Services.SapAdapter;

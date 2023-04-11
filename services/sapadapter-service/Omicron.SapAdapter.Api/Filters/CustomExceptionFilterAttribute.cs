@@ -14,7 +14,7 @@ namespace Omicron.SapAdapter.Api.Filters
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Hosting;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using Omicron.SapAdapter.Resources.Exceptions;
     using Serilog;
 
     /// <summary>
