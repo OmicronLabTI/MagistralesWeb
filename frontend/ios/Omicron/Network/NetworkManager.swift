@@ -289,24 +289,10 @@ class NetworkManager: SessionProtocol {
         })
     }
 }
-private func JSONStringify(body: AnyObject) -> String {
-    if JSONSerialization.isValidJSONObject(body) {
-         do {
-             let data = try JSONSerialization.data(withJSONObject: body)
-             if let string = NSString(data: data, encoding: NSUTF8StringEncoding) {
-                 return string as String
-             }
-         } catch {
-             return String()
-         }
-
-     }
-     return String()
-}
 private func loadErrorToCrashlytics(service: String,
                                     code: Int,
                                     message: String,
-                                    body: String? = String()) {
+                                    body: String = String()) {
     Crashlytics.crashlytics().setUserID(Persistence.shared.getUserData()?.id ?? String())
     Crashlytics.crashlytics().log("Error al llamar el servicio: \(service)")
     Crashlytics.crashlytics().setCustomValue(message, forKey: "error")
