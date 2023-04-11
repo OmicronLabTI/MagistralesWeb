@@ -4,8 +4,7 @@ import { SettingsCommonTableClass } from './common.data';
 export const MaterialRequestHistoryTableSettings: SettingsCommonTableClass = {
     className: 'metrics-promotions-table',
     emptyLabel: '<p>No se encontraron resultados <br/> Quita o intenta con otro filtro de búsqueda</p>',
-    stickyColumns: [],
-    columns: [
+    stickyColumns: [
         {
             className: ' text-center ',
             title: '#',
@@ -20,9 +19,11 @@ export const MaterialRequestHistoryTableSettings: SettingsCommonTableClass = {
             className: ' text-center ',
             title: 'CÓDIGO',
             attr: 'itemCode',
-        },
+        }
+    ],
+    columns: [
         {
-            className: ' text-center ',
+            className: '  text-center ',
             title: 'DESCRIPCIÓN',
             attr: 'description',
         },
