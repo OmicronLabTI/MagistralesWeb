@@ -16,10 +16,10 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Builders;
     using Omicron.Pedidos.Services.Constants;
