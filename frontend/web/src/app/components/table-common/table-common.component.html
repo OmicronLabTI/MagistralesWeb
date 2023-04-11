@@ -3,11 +3,9 @@
         <thead>
             <tr>
                 <th scope="row" class="stickyHead" *ngIf="settings.stickyColumns.length>0">
-                    <div class="d-flex">
-                        <div *ngFor="let sticky of settings.stickyColumns">
+                        <div class="row-sticky" *ngFor="let sticky of settings.stickyColumns">
                             {{sticky.title}}
                         </div>
-                    </div>
                 </th>
                 <th scope="row" *ngFor="let column of settings.columns">
                     {{column.title}}
@@ -17,7 +15,7 @@
         <tbody>
             <tr *ngFor="let row of loading ? [] : data; let indexRow = index;">
                 <td class="stickyBody" *ngIf="settings.stickyColumns.length>0">
-                    <div *ngFor="let cellSticky of settings.stickyColumns; let indexSticky=index;">
+                    <div class="row-sticky" [matTooltip]="row[cellSticky.attr]" *ngFor="let cellSticky of settings.stickyColumns; let indexSticky=index;">
                         {{ row[cellSticky.attr] }}
                     </div>
                 </td>

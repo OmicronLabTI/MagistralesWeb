@@ -9,7 +9,7 @@
 namespace Omicron.Pedidos.Test.Services.SapAdapter
 {
     using NUnit.Framework;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.Services.SapAdapter;
 
     /// <summary>

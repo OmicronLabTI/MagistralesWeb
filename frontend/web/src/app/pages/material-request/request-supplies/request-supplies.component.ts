@@ -219,7 +219,7 @@ export class RequestSuppliesComponent implements OnInit, OnDestroy {
   }
 
   validateRow(index: number): void {
-    const reqQuantity = Number(this.dataSource.data[index].requestQuantity.replace(',', ''));
+    const reqQuantity = Number(this.dataSource.data[index].requestQuantity.replaceAll(',', ''));
     this.dataSource.data[index].isWithError = !Number(reqQuantity) ||
       this.dataSource.data[index].warehouse === CONST_STRING.empty;
   }
@@ -265,7 +265,7 @@ export class RequestSuppliesComponent implements OnInit, OnDestroy {
   }
 
   private goBack(): void {
-    const route = this.isOrder ? 'ordenes' : 'pedidos';
+    const route = this.isOrder ? 'pedidos' : 'ordenes';
     this.router.navigate([route]);
   }
 
@@ -292,7 +292,10 @@ export class RequestSuppliesComponent implements OnInit, OnDestroy {
 
   private setModelData(): void {
     this.oldData.observations = this.comments || '';
-    this.dataSource.data.forEach(order => order.requestQuantity = Number(Number(order.requestQuantity).toFixed(CONST_NUMBER.seven)));
+    this.dataSource.data.forEach(order => {
+      const reqQuantity = Number(order.requestQuantity.replaceAll(',', '')).toFixed(CONST_NUMBER.seven);
+      order.requestQuantity = Number(reqQuantity);
+    });
     this.oldData.orderedProducts = this.dataSource.data;
     this.oldData.signature = this.oldData.signature || '';
     this.oldData.signingUserName = this.localStorageService.getUserName();

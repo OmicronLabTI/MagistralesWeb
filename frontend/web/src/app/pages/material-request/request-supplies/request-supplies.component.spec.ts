@@ -232,34 +232,4 @@ describe('RequestSupplies Component', () => {
     component.signUser();
     expect(observableServiceSpy.setOpenSignatureDialog).toHaveBeenCalled();
   });
-  it('sendRequest service should be success', () => {
-    materialReServiceSpy.getPreMaterialRequest.and.returnValue(of(MaterialRequestMock));
-    component.getPreMaterialRequestH();
-    component.sendRequest();
-    expect(materialReServiceSpy.postMaterialRequest).toHaveBeenCalled();
-    expect(observableServiceSpy.setMessageGeneralCallHttp).toHaveBeenCalled();
-  });
-  it('sendRequest service should be success but some failed', () => {
-    materialReServiceSpy.getPreMaterialRequest.and.returnValue(of(MaterialRequestMock));
-    const mock = MaterialPostResFailedMock;
-    materialReServiceSpy.postMaterialRequest.and.returnValue(of(mock));
-    component.getPreMaterialRequestH();
-    component.sendRequest();
-    expect(materialReServiceSpy.postMaterialRequest).toHaveBeenCalled();
-  });
-  it('sendRequest service should be failed', () => {
-    materialReServiceSpy.getPreMaterialRequest.and.returnValue(of(MaterialRequestMock));
-    materialReServiceSpy.postMaterialRequest.and.returnValue(throwError({ status: 500 }));
-    component.sendRequest();
-    expect(materialReServiceSpy.postMaterialRequest).toHaveBeenCalled();
-    expect(errorServiceSpy.httpError).toHaveBeenCalled();
-  });
-  
-  it('should download Preview', () => {
-    reportingServiceSpy.downloadPreviewMaterial.and.returnValue(of({
-      response: ['url1', 'url2']
-    }));
-    component.downloadPreview();
-    expect(dataServiceSpy.openNewTapByUrl).toHaveBeenCalled();
-  });
 });

@@ -4,12 +4,17 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CodeAnalysisRuleSet>$(SolutionDir)StyleCop\StyleCopeRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+
   <ItemGroup>
-    <AdditionalFiles Include="$(SolutionDir)StyleCop\stylecop.json" Link="stylecop.json" />
+    <Compile Remove="Enums\**" />
+    <Compile Remove="Extensions\**" />
+    <EmbeddedResource Remove="Enums\**" />
+    <EmbeddedResource Remove="Extensions\**" />
+    <None Remove="Enums\**" />
+    <None Remove="Extensions\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Enums\" />
-    <Folder Include="Extensions\" />
+    <AdditionalFiles Include="$(SolutionDir)StyleCop\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
