@@ -17,7 +17,7 @@ namespace Omicron.Pedidos.Test.Services
     using Moq;
     using Newtonsoft.Json;
     using NUnit.Framework;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;

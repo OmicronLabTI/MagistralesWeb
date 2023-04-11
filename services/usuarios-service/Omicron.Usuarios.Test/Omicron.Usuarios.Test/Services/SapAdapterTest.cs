@@ -14,8 +14,8 @@ namespace Omicron.Usuarios.Test.Services
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using NUnit.Framework;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Usuarios.Entities.Model;
+    using Omicron.Usuarios.Resources.Exceptions;
     using Omicron.Usuarios.Services.Constants;
     using Omicron.Usuarios.Services.SapAdapter;
 

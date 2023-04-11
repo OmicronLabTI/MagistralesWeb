@@ -12,8 +12,8 @@ namespace Omicron.Usuarios.Services.SapAdapter
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Usuarios.Entities.Model;
+    using Omicron.Usuarios.Resources.Exceptions;
 
     /// <summary>
     /// the sap adapter.
