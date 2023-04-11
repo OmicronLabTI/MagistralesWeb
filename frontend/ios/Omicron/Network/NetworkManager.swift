@@ -11,7 +11,7 @@ import Moya
 import RxSwift
 import ObjectMapper
 import Alamofire
-
+import FirebaseCrashlytics
 enum RequestError: Error {
     case unknownError
     case invalidRequest(error: HttpError?)
@@ -218,6 +218,7 @@ class NetworkManager: SessionProtocol {
     private func makeRequest<T: BaseMappable>(
         request: ApiService, needsVPN: Bool = false) -> Observable<T> {
         providerChoseed = provider
+        let serviceRoute = "\(request.method.rawValue): \(request.baseURL)\(request.path)"
         if needsVPN { providerChoseed = MoyaProvider<ApiService>(requestClosure: requestTimeoutClosure) }
         return Observable<T>.create({ [weak self] observer in
             let res = !request.needsAuth ?
@@ -233,35 +234,73 @@ class NetworkManager: SessionProtocol {
                     observer.onNext(res!)
                 } else {
                     observer.onError(RequestError.invalidResponse)
+                    loadErrorToCrashlytics(service: serviceRoute,
+                                           code: 0,
+                                           message: String(describing: RequestError.invalidResponse.localizedDescription))
                 }
             }, onError: { error in
                 if let moyaError: MoyaError = error as? MoyaError, let res = moyaError.response {
                     let statusCode = res.statusCode
                     let json = try? res.mapJSON()
+                    
                     switch statusCode {
                     case 400:
                         let err = Mapper<HttpError>().map(JSONObject: json)
                         observer.onError(RequestError.invalidRequest(error: err))
+                        loadErrorToCrashlytics(service: serviceRoute,
+                                               code: statusCode,
+                                               message: String(describing: error),
+                                               body: changeBodyToString(res.request?.httpBody ?? Data()))
                     case 401:
                         let err = Mapper<HttpError>().map(JSONObject: json)
                         observer.onError(RequestError.unauthorized(error: err))
+                        loadErrorToCrashlytics(service: serviceRoute,
+                                               code: statusCode,
+                                               message: String(describing: error),
+                                               body: changeBodyToString(res.request?.httpBody ?? Data()))
                     case 404:
                         observer.onError(RequestError.notFound)
+                        loadErrorToCrashlytics(service: serviceRoute,
+                                               code: statusCode,
+                                               message: String(describing: error),
+                                               body: changeBodyToString(res.request?.httpBody ?? Data()))
                     case 500...:
                         let err = Mapper<HttpError>().map(JSONObject: json)
                         observer.onError(RequestError.serverError(error: err))
+                        loadErrorToCrashlytics(service: serviceRoute,
+                                               code: statusCode,
+                                               message: String(describing: error),
+                                               body: changeBodyToString(res.request?.httpBody ?? Data()))
                     default:
                         observer.onError(RequestError.unknownError)
+                        loadErrorToCrashlytics(service: serviceRoute,
+                                               code: statusCode,
+                                               message: String(describing: error),
+                                               body: changeBodyToString(res.request?.httpBody ?? Data()))
                     }
                     return
                 }
                 observer.onError(RequestError.serverUnavailable)
+                loadErrorToCrashlytics(service: serviceRoute,
+                                       code: 500,
+                                       message: RequestError.serverUnavailable.localizedDescription)
             })
             return Disposables.create()
         })
     }
 }
-
+private func loadErrorToCrashlytics(service: String,
+                                    code: Int,
+                                    message: String,
+                                    body: String = String()) {
+    Crashlytics.crashlytics().setUserID(Persistence.shared.getUserData()?.id ?? String())
+    Crashlytics.crashlytics().log("Error al llamar el servicio: \(service)")
+    Crashlytics.crashlytics().setCustomValue(message, forKey: "error")
+    Crashlytics.crashlytics().setCustomValue(code, forKey: "code")
+    Crashlytics.crashlytics().setCustomValue(body, forKey: "body")
+    Crashlytics.crashlytics().record(exceptionModel: ExceptionModel(name: "OmicronException",
+                                                                    reason: message))
+}
 private func JSONResponseDataFormatter(_ data: Data) -> String {
     do {
         let dataAsJSON = try JSONSerialization.jsonObject(with: data)
@@ -271,7 +310,15 @@ private func JSONResponseDataFormatter(_ data: Data) -> String {
         return String(data: data, encoding: .utf8) ?? ""
     }
 }
-
+private func changeBodyToString(_ data: Data) -> String {
+    do {
+        let dataAsJSON = try JSONSerialization.jsonObject(with: data)
+        let prettyData = try JSONSerialization.data(withJSONObject: dataAsJSON, options: .withoutEscapingSlashes)
+        return String((String(data: prettyData, encoding: .utf8) ?? String(data: data, encoding: .utf8) ?? "").prefix(1000))
+    } catch {
+        return String((String(data: data, encoding: .utf8) ?? "").prefix(1000))
+    }
+}
 struct AuthPlugin: PluginType {
     let tokenClosure: () -> String?
     func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
