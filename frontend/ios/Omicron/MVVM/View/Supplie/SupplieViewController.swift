@@ -207,7 +207,7 @@ class SupplieViewController: UIViewController {
             self.showAlert(alert: alert)
         }).disposed(by: disposeBag!)
     }
-    func showAlert(alert: (title: String, msg: String, autoDismiss: Bool)) {
+    func showAlert(alert: DisplayAlertAutoDissmis) {
         AlertManager.shared.showAlert(title: alert.title,
                                       message: alert.msg,
                                       actions: nil,

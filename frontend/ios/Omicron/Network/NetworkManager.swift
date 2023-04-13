@@ -236,13 +236,14 @@ class NetworkManager: SessionProtocol {
                     observer.onError(RequestError.invalidResponse)
                     loadErrorToCrashlytics(service: serviceRoute,
                                            code: 0,
-                                           message: String(describing: RequestError.invalidResponse.localizedDescription))
+                                           message: String(describing: RequestError
+                                            .invalidResponse.localizedDescription))
                 }
             }, onError: { error in
                 if let moyaError: MoyaError = error as? MoyaError, let res = moyaError.response {
                     let statusCode = res.statusCode
                     let json = try? res.mapJSON()
-                    
+
                     switch statusCode {
                     case 400:
                         let err = Mapper<HttpError>().map(JSONObject: json)
@@ -314,7 +315,8 @@ private func changeBodyToString(_ data: Data) -> String {
     do {
         let dataAsJSON = try JSONSerialization.jsonObject(with: data)
         let prettyData = try JSONSerialization.data(withJSONObject: dataAsJSON, options: .withoutEscapingSlashes)
-        return String((String(data: prettyData, encoding: .utf8) ?? String(data: data, encoding: .utf8) ?? "").prefix(1000))
+        return String((String(data: prettyData, encoding: .utf8) ??
+                       String(data: data, encoding: .utf8) ?? "").prefix(1000))
     } catch {
         return String((String(data: data, encoding: .utf8) ?? "").prefix(1000))
     }
