@@ -98,3 +98,14 @@ class RawMaterialItem: Mappable {
         self.status <- map["status"]
     }
 }
+
+class DisplayAlertAutoDissmis {
+    var title: String
+    var msg: String
+    var autoDismiss: Bool
+    init(title: String, msg: String, autoDismiss: Bool) {
+        self.title = title
+        self.msg = msg
+        self.autoDismiss = autoDismiss
+    }
+}

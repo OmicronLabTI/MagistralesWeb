@@ -66,7 +66,9 @@ extension OrderDetailViewController {
                     text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
                     self.isolatedOrder = true
-                    self.quantityTextField.text = self.getFormattedText(number: Double(truncating: NSDecimalNumber(decimal: detail.plannedQuantity ?? 0)))
+                    self.quantityTextField.text = self.getFormattedText(
+                        number: Double(truncating:
+                                        NSDecimalNumber(decimal: detail.plannedQuantity ?? 0)))
                     self.destinyLabel.text = ""
                     self.codeDescriptionLabel.isHidden = true
                     self.containerDescriptionLabel.isHidden = true

@@ -21,8 +21,7 @@ class SupplieViewModel {
     var selectedComponentsToDelete: [String] = []
     let selectedButtonIsEnable = PublishSubject<Bool>()
     let deleteComponents = PublishSubject<Void>()
-    var showSuccessAlert: PublishSubject<(title: String, msg: String, autoDismiss: Bool)> =
-    PublishSubject<(title: String, msg: String, autoDismiss: Bool)>()
+    var showSuccessAlert: PublishSubject<DisplayAlertAutoDissmis> = PublishSubject<DisplayAlertAutoDissmis>()
     let isSendToStoreEnabled = PublishSubject<Bool>()
     let sendToStore = PublishSubject<String>()
     let loading = PublishSubject<Bool>()
@@ -37,7 +36,7 @@ class SupplieViewModel {
             let exists = self.supplieList.firstIndex(where: { $0.productId == supplie.productId })
             if exists != nil {
                 let productId = supplie.productId ?? ""
-                self.showSuccessAlert.onNext((
+                self.showSuccessAlert.onNext(DisplayAlertAutoDissmis(
                     title: "El componente \(productId) ya existe para esta solicitud",
                     msg: String(),
                     autoDismiss: true))
@@ -80,14 +79,14 @@ class SupplieViewModel {
                     return
                 }
                 let error = res.userError ?? CommonStrings.errorComponents
-                self.showSuccessAlert.onNext((
+                self.showSuccessAlert.onNext(DisplayAlertAutoDissmis(
                     title: "Error \n\(error)",
                     msg: String(),
                     autoDismiss: false))
             }, onError: { [weak self] _ in
                 guard let self = self else { return }
                 self.loading.onNext(false)
-                self.showSuccessAlert.onNext((
+                self.showSuccessAlert.onNext(DisplayAlertAutoDissmis(
                     title: "Error \n\(CommonStrings.errorComponents)",
                     msg: String(),
                     autoDismiss: false))
@@ -99,7 +98,7 @@ class SupplieViewModel {
         let faileds = response.failed
         if res.success == true && response.failed.count > 0 {
             let error = generateErrorMessage(errors: faileds)
-            self.showSuccessAlert.onNext((
+            self.showSuccessAlert.onNext(DisplayAlertAutoDissmis(
                 title: "Error \n\(error)",
                 msg: String(),
                 autoDismiss: false
@@ -149,7 +148,7 @@ class SupplieViewModel {
         self.validateSendToStoreIsEnabled()
         let message = isSingular ? CommonStrings.successDeleteSingular :
             CommonStrings.successDeletePlural
-            self.showSuccessAlert.onNext((title: "\(message)",
+            self.showSuccessAlert.onNext(DisplayAlertAutoDissmis(title: "\(message)",
                                       msg: String(),
                                       autoDismiss: true))
     }

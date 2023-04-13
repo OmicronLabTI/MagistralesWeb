@@ -109,7 +109,9 @@ extension SupplieViewController {
     func bindShowAlert() {
         self.historyViewModel.showAlert.subscribe(onNext: {[weak self] error in
             guard let self = self else { return }
-            self.showAlert(alert: (title: error, msg: String(), autoDismiss: true))
+            self.showAlert(alert: DisplayAlertAutoDissmis(title: error,
+                                                          msg: String(),
+                                                          autoDismiss: true))
         }).disposed(by: disposeBag!)
     }
     func bindinChangeFilters() {

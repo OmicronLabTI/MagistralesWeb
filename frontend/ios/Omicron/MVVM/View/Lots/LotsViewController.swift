@@ -48,7 +48,8 @@ class LotsViewController: UIViewController {
     // MARK: - Variables
     @Injected var lotsViewModel: LotsViewModel
     @Injected var lottieManager: LottieManager
-    @Injected var inboxViewModel: InboxViewModel    
+    @Injected var inboxViewModel: InboxViewModel
+
     let disposeBag = DisposeBag()
     var orderId = -1
     var formatter = UtilsManager.shared.formatterDoublesTo6Decimals()

@@ -83,7 +83,6 @@ class OrderDetailViewController: UIViewController {
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        let controllerCount = self.navigationController?.viewControllers.count ?? 0
         disposeBag = DisposeBag()
     }
     // MARK: - Functions
