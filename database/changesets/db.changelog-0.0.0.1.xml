@@ -1064,6 +1064,14 @@
 			<column name="field" value="DestinationWarehouse" />
 		</insert>
 	</changeSet>
+	<changeSet author="israelmorales" id="changelog-1.113">
+		<sql endDelimiter=";"> 
+			UPDATE parameters SET value='67' WHERE "field"='QrDeliveryRectyTop';
+			UPDATE parameters SET value='395' WHERE "field"='QrDeliveryRecty';
+			UPDATE parameters SET value='200' WHERE "field"='QrDeliveryLabelSaleRectx';
+			UPDATE parameters SET value='170' WHERE "field"='QrDeliveryLabelRectx';
+		</sql>
+	</changeSet>
 	<changeSet author="jarturoep" id="changelog-1.114">
 		<insert tableName="parameters">
 			<column name="value" value="almacen@o-lab.mx" />
