@@ -903,7 +903,7 @@ namespace Omicron.Pedidos.Test.Services
         public async Task CreateIsolatedProductionOrder()
         {
             // arrange
-            var order = new CreateIsolatedFabOrderModel { ProductCode = "ProductCode", UserId = "abc", };
+            var order = new CreateIsolatedFabOrderModel { ProductCode = "EN-1234", UserId = "abc", };
 
             var mockContent = new KeyValuePair<string, string>("token", "Ok");
             var mockSapDiApiLocal = new Mock<ISapDiApi>();

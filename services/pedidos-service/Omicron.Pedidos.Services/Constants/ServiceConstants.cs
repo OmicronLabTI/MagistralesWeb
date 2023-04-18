@@ -911,6 +911,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string OrderWithoutTecnicSign = "No es posible terminar, falta la firma del técnico asignado";
 
         /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string RedisBulkOrderKey = "redisComponentsBulkOrder";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -50,7 +50,7 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var listToReturn = new List<CompleteDetalleFormulaModel>();
             var type = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.TypeParameter, ServiceConstants.DetailOrderParameter);
-            var redisKey = ServiceShared.CalculateTernary(type == ServiceConstants.DetailOrderParameter, ServiceConstants.RedisComponents, ServiceConstants.RedisComponentsInputRequest);
+            var redisKey = this.GetRedisKeyForCommonComponents(type);
             var redisValue = await this.redisService.GetRedisKey(redisKey);
             var redisComponents = !string.IsNullOrEmpty(redisValue) ? JsonConvert.DeserializeObject<List<ComponentsRedisModel>>(redisValue) : new List<ComponentsRedisModel>();
 
@@ -78,6 +78,17 @@ namespace Omicron.SapAdapter.Services.Sap
 
             listToReturn = listToReturn.Where(x => !string.IsNullOrEmpty(x.ProductId)).ToList();
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
+        }
+
+        private string GetRedisKeyForCommonComponents(string type)
+        {
+            return type switch
+            {
+                ServiceConstants.DetailOrderParameter => ServiceConstants.RedisComponents,
+                ServiceConstants.InputRequestParameter => ServiceConstants.RedisComponentsInputRequest,
+                ServiceConstants.BulkOrderParameter => ServiceConstants.RedisBulkOrderKey,
+                _ => string.Empty,
+            };
         }
     }
 }
