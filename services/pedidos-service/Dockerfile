@@ -1,8 +1,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+ARG NUGET_AUTH_TOKEN
+ARG NUGET_USER_NAME
 
 WORKDIR /app
 
 COPY . ./
+
+COPY ./nuget.config.template ./nuget.config
+RUN sed -i -e "s/USER/$NUGET_USER_NAME/g" -e "s/PW/$NUGET_AUTH_TOKEN/g" nuget.config 
 
 RUN dotnet restore "/app/Omicron.Pedidos.Api/Omicron.Pedidos.Api.csproj"
 RUN dotnet publish "/app/Omicron.Pedidos.Api/Omicron.Pedidos.Api.csproj" -c Release -o out
