@@ -26,7 +26,7 @@ class RootTableViewCell: UITableViewCell {
     }
     func initComponents() {
         self.backgroundColor = OmicronColors.tableStatus
-        self.indicatorStatusNameLabel.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 22)
-        self.indicatorStatusNumber.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 22)
+        self.indicatorStatusNameLabel.font = UIFont(name: FontsNames.FrutigerNextLTRegular, size: 22)
+        self.indicatorStatusNumber.font = UIFont(name: FontsNames.FrutigerNextLTRegular, size: 22)
     }
 }

@@ -242,7 +242,7 @@ class OrderDetailViewController: UIViewController {
         self.productDescritionLabel.textColor = .white
         // Se cambian de color los Labels
         self.changeTextColorLabel(color: OmicronColors.ligthGray)
-        self.productDescritionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
+        self.productDescritionLabel.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: 22)
         self.detailTable.tableFooterView = UIView()
         self.infoView.layer.cornerRadius = 10.0
         self.infoView.backgroundColor = OmicronColors.ligthGray
