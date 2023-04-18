@@ -123,7 +123,7 @@ extension SupplieViewController: UITableViewDelegate, UITableViewDataSource, UIT
         sendToStore.setTitleColor(UIColor.black, for: .disabled)
         sendToStore.layer.borderWidth = 1
         sendToStore.layer.cornerRadius = 10
-        sendToStore.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 16)
+        sendToStore.titleLabel?.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: 16)
         changeBGButton(button: sendToStore,
                        backgroundColor: OmicronColors.disabledButton)
     }

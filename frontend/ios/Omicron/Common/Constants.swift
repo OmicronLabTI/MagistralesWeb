@@ -225,6 +225,11 @@ struct FontsNames {
     static let SFProDisplayMedium = "SFProDisplay-Medium"
     static let SFProDisplayLight = "SFProDisplay-Ligth"
     static let SFProDisplaySemibold = "SFProDisplay-Semibold"
+    static let FrutigerNextLT = "FrutigerNextLT"
+    static let FrutigerNextLTBold = "FrutigerNextLT-Bold"
+    static let FrutigerNextLTRegular = "FrutigerNextLT-Regular"
+    static let FrutigerNextLTLight = "FrutigerNextLT-Light"
+    static let FrutigerNextLTMedium = "FrutigerNextLT-Medium"
 }
 struct StatusNameConstants {
     static let assignedStatus = "Asignadas"

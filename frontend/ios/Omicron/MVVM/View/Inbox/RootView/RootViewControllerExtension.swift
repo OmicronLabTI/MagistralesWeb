@@ -14,7 +14,7 @@ extension RootViewController {
         self.viewTable.tableFooterView = UIView()
         self.viewTable.backgroundColor = OmicronColors.tableStatus
         self.myOrdesLabel.backgroundColor = OmicronColors.tableStatus
-        self.myOrdesLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
+        self.myOrdesLabel.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: 25)
         self.searchOrdesSearchBar.placeholder = CommonStrings.searchOrden
         self.searchOrdesSearchBar.backgroundColor = OmicronColors.tableStatus
         self.searchOrdesSearchBar.barTintColor = OmicronColors.tableStatus
@@ -27,13 +27,13 @@ extension RootViewController {
         self.logoutButton.imageView?.contentMode = .scaleAspectFit
         self.logoutButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 10, bottom: 15, right: 260)
         self.logoutButton.titleEdgeInsets.left = 20
-        self.logoutButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 17)
+        self.logoutButton.titleLabel?.font = UIFont(name: FontsNames.FrutigerNextLTMedium, size: 17)
         self.versionLabel.attributedText = UtilsManager.shared
             .boldSubstring(
                 text: "Versión: \(CommonStrings.version) (\(CommonStrings.build))",
                 textToBold: "Versión: ")
         self.versionLabel.textColor = OmicronColors.blue
-        self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
+        self.versionLabel.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: 12)
         UtilsManager.shared.setStyleButtonStatus(button: self.createSupplies,
                                                  title: StatusNameConstants.getSupplies,
                                                  color: OmicronColors.primaryBlue,
