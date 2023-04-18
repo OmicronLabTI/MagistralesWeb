@@ -131,7 +131,11 @@ namespace Omicron.Reporting.Services.ReportBuilder.SuppliesWarehouse
         /// </summary>
         private Image GetSignature()
         {
-            this.request.Signature = string.IsNullOrEmpty(this.request.Signature) ? "R0lGODlhAQABAIABAP///wAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" : this.request.Signature;
+            if (string.IsNullOrEmpty(this.request.Signature))
+            {
+                return new Image(ImageDataFactory.Create(1, 1, 3, 8, new byte[] { 255, 255, 255 }, null));
+            }
+
             byte[] imageBytes = Convert.FromBase64String(this.request.Signature);
             return new Image(ImageDataFactory.Create(imageBytes));
         }
