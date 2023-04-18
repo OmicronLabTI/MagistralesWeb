@@ -9,7 +9,7 @@
 namespace Omicron.Pedidos.Test.Services.Almacen
 {
     using NUnit.Framework;
-    using Omicron.Pedidos.Resources.Exceptions;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Services.AlmacenService;
 
     /// <summary>

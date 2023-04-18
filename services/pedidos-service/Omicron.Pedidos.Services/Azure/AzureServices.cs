@@ -15,7 +15,7 @@ namespace Omicron.Pedidos.Services.Azure
     using global::Azure.Storage;
     using global::Azure.Storage.Blobs;
     using global::Azure.Storage.Blobs.Models;
-    using Omicron.Pedidos.Resources.Exceptions;
+    using Omicron.LeadToCash.Resources.Exceptions;
 
     /// <summary>
     /// Class for azure.

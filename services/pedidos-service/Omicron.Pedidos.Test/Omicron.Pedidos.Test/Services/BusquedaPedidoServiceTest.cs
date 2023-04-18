@@ -8,13 +8,29 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Moq;
+    using Newtonsoft.Json;
     using NUnit.Framework;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
+    using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Enums;
+    using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
+    using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapFile;
+    using Omicron.Pedidos.Services.User;
+    using Omicron.Pedidos.Services.Utils;
+    using Omicron.Pedidos.Services.Reporting;
+    using Omicron.Pedidos.Services.Redis;
 
     /// <summary>
     /// class for the test.

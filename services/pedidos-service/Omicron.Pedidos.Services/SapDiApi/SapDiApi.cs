@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.Services.SapDiApi
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Utils;
     using Serilog;

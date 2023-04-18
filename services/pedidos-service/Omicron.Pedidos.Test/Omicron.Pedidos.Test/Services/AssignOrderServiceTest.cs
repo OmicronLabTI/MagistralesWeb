@@ -14,10 +14,11 @@ namespace Omicron.Pedidos.Test.Services
     using Microsoft.EntityFrameworkCore;
     using Moq;
     using NUnit.Framework;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;

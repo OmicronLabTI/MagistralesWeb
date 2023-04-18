@@ -11,10 +11,12 @@ namespace Omicron.Pedidos.Services.Builders
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Net;
+    using System.Threading;
     using Newtonsoft.Json;
+    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Utils;
 

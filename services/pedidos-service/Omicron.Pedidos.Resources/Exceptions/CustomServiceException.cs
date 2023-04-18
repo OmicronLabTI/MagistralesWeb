@@ -6,7 +6,7 @@
 // </copyright>
 // </summary>
 
-namespace Omicron.Pedidos.Resources.Exceptions
+namespace Omicron.LeadToCash.Resources.Exceptions
 {
     using System;
     using System.Net;
