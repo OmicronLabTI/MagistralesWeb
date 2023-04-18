@@ -172,7 +172,8 @@ class ComponentsViewModel {
         let reqParams = CommonComponentRequest(catalogGroup: catalogGroup,
                                                userId: userID,
                                                type: type)
-        networkManager.getMostCommonComponents(reqParams).subscribe(onNext: { [weak self] res in
+        networkManager.getMostCommonComponents(reqParams).subscribe(onNext: {
+            [weak self] res in
             guard let self = self else { return }
             self.loading.onNext(false)
             if let components = res.response {
