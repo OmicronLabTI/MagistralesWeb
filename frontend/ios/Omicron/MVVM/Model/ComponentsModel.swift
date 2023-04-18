@@ -163,7 +163,7 @@ enum TypeComponentsOpenDialog: String {
 enum TypeMostCommonRequest: String {
     case detailOrder = "detailOrder"
     case inputRequest = "inputRequest"
-    case bulkOrder = "BulkOrder"
+    case bulkOrder = "bulkOrder"
 }
 
 class SendToStoreRequest: Codable {
