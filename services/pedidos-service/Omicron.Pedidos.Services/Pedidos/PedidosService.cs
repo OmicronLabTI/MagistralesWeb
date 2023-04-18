@@ -150,7 +150,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var utils = new PedidosUtils(this.redis);
             var listComponents = updateFormula.Components.Where(x => x.Action == ServiceConstants.Insert).Select(y => y.ProductId).ToList();
             listComponents = listComponents.Where(x => ServiceConstants.ListComponentsMostAssigned.Any(y => x.Contains(y))).ToList();
-            await utils.UpdateMostUsedComponents(listComponents);
+            await utils.UpdateMostUsedComponents(listComponents, ServiceConstants.RedisComponents);
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(resultSapApi.Response), null);
         }
@@ -731,6 +731,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(isolatedFabOrder.UserId, new List<UserOrderModel> { newProductionOrder }));
                 await this.pedidosDao.InsertUserOrder(new List<UserOrderModel> { newProductionOrder });
                 _ = this.kafkaConnector.PushMessage(listOrderLogToInsert);
+                await this.SaveCommonComponents(isolatedFabOrder.ProductCode);
             }
 
             if (ServiceShared.CalculateAnd(!string.IsNullOrEmpty(resultMessage.Key), isolatedFabOrder.IsFromQfbProfile))
@@ -1098,6 +1099,16 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             return (isValidQfbs, message);
+        }
+
+        private async Task SaveCommonComponents(string productCode)
+        {
+            if (ServiceConstants.ListComponentsMostAssigned.Any(y => productCode.Contains(y)))
+            {
+                var utils = new PedidosUtils(this.redis);
+                var listComponents = new List<string> { productCode };
+                await utils.UpdateMostUsedComponents(listComponents, ServiceConstants.RedisBulkOrderKey);
+            }
         }
     }
 }
