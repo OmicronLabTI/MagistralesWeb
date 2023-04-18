@@ -335,7 +335,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="listOrders">List with orders.</param>
         /// <param name="userLogistic">List with user.</param>
         /// <returns>the first is the list to insert the second the list to update.</returns>
-        private Tuple<List<UserOrderModel>, List<UserOrderModel>, List<SalesLogs>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders,  List<string> errors, List<OrderWithDetailModel> listOrders, string userLogistic, List<UserOrderModel> newOrdersToCreate)
+        private Tuple<List<UserOrderModel>, List<UserOrderModel>, List<SalesLogs>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders, List<string> errors, List<OrderWithDetailModel> listOrders, string userLogistic, List<UserOrderModel> newOrdersToCreate)
         {
             var listToInsert = new List<UserOrderModel>();
             var listToUpdate = new List<UserOrderModel>();
