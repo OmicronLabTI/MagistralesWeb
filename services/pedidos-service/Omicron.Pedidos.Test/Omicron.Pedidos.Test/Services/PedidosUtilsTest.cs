@@ -37,7 +37,7 @@ namespace Omicron.Pedidos.Test.Services
             var service = new PedidosUtils(redis.Object);
 
             // act
-            await service.UpdateMostUsedComponents(listIds);
+            await service.UpdateMostUsedComponents(listIds, "redisComponents");
 
             // assert
             Assert.IsNotNull(listIds);
@@ -65,7 +65,7 @@ namespace Omicron.Pedidos.Test.Services
             var service = new PedidosUtils(redis.Object);
 
             // act
-            await service.UpdateMostUsedComponents(listIds);
+            await service.UpdateMostUsedComponents(listIds, "redisComponents");
 
             // assert
             Assert.IsNotNull(listIds);
