@@ -1103,12 +1103,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private async Task SaveCommonComponents(string productCode)
         {
-            if (ServiceConstants.ListComponentsMostAssigned.Any(y => productCode.Contains(y)))
-            {
-                var utils = new PedidosUtils(this.redis);
-                var listComponents = new List<string> { productCode };
-                await utils.UpdateMostUsedComponents(listComponents, ServiceConstants.RedisBulkOrderKey);
-            }
+            var utils = new PedidosUtils(this.redis);
+            var listComponents = new List<string> { productCode };
+            await utils.UpdateMostUsedComponents(listComponents, ServiceConstants.RedisBulkOrderKey);
         }
     }
 }
