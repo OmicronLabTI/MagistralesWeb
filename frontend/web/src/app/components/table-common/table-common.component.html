@@ -23,8 +23,7 @@
                     [ngSwitch]="cell.type">
                     <ng-container *ngSwitchCase="CellTypes.action">
                         <a [matTooltip]="actionCell(row,cell.attr).label" href="javascript:void(0)"
-                            [ngClass]="actionCell(row,cell.attr).className"
-                            (click)="handleActionCell(row,cell.attr,indexRow)">
+                            [ngClass]="actionCell(row,cell.attr).className">
                             {{ actionCell(row,cell.attr).label }}
                         </a>
                     </ng-container>
