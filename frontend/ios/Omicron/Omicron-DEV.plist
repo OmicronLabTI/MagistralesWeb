@@ -29,6 +29,10 @@
 		<string>SF-Pro-Display-Semibold.ttf</string>
 		<string>SF-Pro-Display-Bold.otf</string>
 		<string>SF-Pro-Display-Regular.otf</string>
+		<string>FrutigerNextLT-Bold.ttf</string>
+		<string>FrutigerNextLT-Light.ttf</string>
+		<string>FrutigerNextLT-Medium.ttf</string>
+		<string>FrutigerNextLT-Regular.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

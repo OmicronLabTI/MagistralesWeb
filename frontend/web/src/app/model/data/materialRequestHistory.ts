@@ -23,7 +23,7 @@ export const MaterialRequestHistoryTableSettings: SettingsCommonTableClass = {
     ],
     columns: [
         {
-            className: '  text-center ',
+            className: '',
             title: 'DESCRIPCIÓN',
             attr: 'description',
         },

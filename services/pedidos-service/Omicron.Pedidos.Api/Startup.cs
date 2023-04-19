@@ -8,82 +8,34 @@
 
 namespace Omicron.Pedidos.Api
 {
-    using System;
-    using System.IO;
-    using Elastic.Apm.NetCoreAll;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.ResponseCompression;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.FileProviders;
-    using Microsoft.OpenApi.Models;
-    using Omicron.Pedidos.Api.Filters;
-    using Omicron.Pedidos.DependencyInjection;
-    using Omicron.Pedidos.Services.AlmacenService;
-    using Omicron.Pedidos.Services.Reporting;
-    using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
-    using Omicron.Pedidos.Services.SapFile;
-    using Omicron.Pedidos.Services.User;
-    using Prometheus;
-    using Serilog;
-    using StackExchange.Redis;
-
     /// <summary>
     /// Class Startup.
     /// </summary>
-    public class Startup
+    public static class Startup
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// Config application.
         /// </summary>
-        /// <param name="configuration">App Configuration.</param>
-        public Startup(IConfiguration configuration)
+        /// <param name="webApplication">WebApplicationBuilder.</param>
+        /// <returns>WebApplication.</returns>
+        public static WebApplication AppConfiguration(this WebApplicationBuilder webApplication)
         {
-            this.Configuration = configuration;
-        }
-
-        /// <summary>
-        /// Finalizes an instance of the <see cref="Startup"/> class.
-        /// </summary>
-        ~Startup()
-        {
-            Log.CloseAndFlush();
-        }
-
-        /// <summary>
-        /// Gets configuration.
-        /// </summary>
-        /// <value>
-        /// App Settings Configuration.
-        /// </value>
-        public IConfiguration Configuration { get; }
-
-        /// <summary>
-        /// Method to configure services.
-        /// </summary>
-        /// <param name="services">Service Collection.</param>
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
-
-            DependencyInjector.RegisterServices(services);
+            DependencyInjector.RegisterServices(webApplication.Services);
             DependencyInjector.AddAutoMapper();
-            DependencyInjector.AddDbContext(this.Configuration);
+            DependencyInjector.AddDbContext(webApplication.Configuration);
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
-                .WriteTo.Seq(this.Configuration["SeqUrl"])
+                .WriteTo.Seq(webApplication.Configuration["SeqUrl"])
                 .CreateLogger();
 
-            services.AddSingleton(Log.Logger);
+            webApplication.Services.AddSingleton(Log.Logger);
 
-            var mvcBuilder = services.AddMvc();
+            var mvcBuilder = webApplication.Services.AddMvc();
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomActionFilterAttribute(Log.Logger)));
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomExceptionFilterAttribute(Log.Logger)));
 
-            services.AddSwaggerGen(c =>
+            webApplication.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
@@ -93,68 +45,70 @@ namespace Omicron.Pedidos.Api
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
                     {
                         Name = "Axity",
-                        Url = new System.Uri(this.Configuration["AXITYURL"]),
+                        Url = new System.Uri(webApplication.Configuration["AXITYURL"]),
                     },
                 });
 
                 c.OperationFilter<AddAuthorizationHeaderParameterOperationFilter>();
             });
 
-            var sapDiApiUrl = this.Configuration["DiApiAddress"];
-            services.AddHttpClient("sapadapter", c =>
+            var sapDiApiUrl = webApplication.Configuration["DiApiAddress"];
+            webApplication.Services.AddHttpClient("sapadapter", c =>
             {
-                c.BaseAddress = new Uri(this.Configuration["SapAdapterUrl"]);
+                c.BaseAddress = new Uri(webApplication.Configuration["SapAdapterUrl"]);
             })
             .AddTypedClient<ISapAdapter, SapAdapter>();
 
-            services.AddHttpClient("sapdiapi", c =>
+            webApplication.Services.AddHttpClient("sapdiapi", c =>
             {
                 c.BaseAddress = new Uri(sapDiApiUrl);
             })
             .AddTypedClient<ISapDiApi, SapDiApi>();
 
-            services.AddHttpClient("usuariosservice", c =>
+            webApplication.Services.AddHttpClient("usuariosservice", c =>
             {
-                c.BaseAddress = new Uri(this.Configuration["UserUrl"]);
+                c.BaseAddress = new Uri(webApplication.Configuration["UserUrl"]);
             })
             .AddTypedClient<IUsersService, UsersService>();
 
-            services.AddHttpClient("sapfileService", c =>
+            webApplication.Services.AddHttpClient("sapfileService", c =>
             {
-                c.BaseAddress = new Uri(this.Configuration["SapFileUrl"]);
+                c.BaseAddress = new Uri(webApplication.Configuration["SapFileUrl"]);
             })
             .AddTypedClient<ISapFileService, SapFileService>();
 
-            services.AddHttpClient("almacenService", c =>
+            webApplication.Services.AddHttpClient("almacenService", c =>
             {
-                c.BaseAddress = new Uri(this.Configuration["AlmacenUrl"]);
+                c.BaseAddress = new Uri(webApplication.Configuration["AlmacenUrl"]);
             })
             .AddTypedClient<IAlmacenService, AlmacenService>();
 
-            services.AddHttpClient("reportingService", c =>
+            webApplication.Services.AddHttpClient("reportingService", c =>
             {
-                c.BaseAddress = new Uri(this.Configuration["ReportingService"]);
+                c.BaseAddress = new Uri(webApplication.Configuration["ReportingService"]);
             })
             .AddTypedClient<IReportingService, ReportingService>();
 
-            this.AddRedis(services, Log.Logger);
-            this.AddCorsSvc(services);
+            webApplication.AddRedis();
+            webApplication.AddCorsSvc();
 
-            services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
-            services.AddResponseCompression();
+            webApplication.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
+            webApplication.Services.AddResponseCompression();
+
+            return webApplication.Build();
         }
 
         /// <summary>
-        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// Use application.
         /// </summary>
-        /// <param name="app">Application Builder.</param>
-        /// <param name="env">Hosting Environment.</param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        /// <param name="app">WebApplicationBuilder.</param>
+        /// <returns>WebApplication.</returns>
+        public static WebApplication UseApplication(this WebApplication app)
         {
-            app.UseAllElasticApm(this.Configuration);
+            app.UseAllElasticApm(app.Configuration);
             app.UseSwagger(c =>
             {
-                var basepath = this.Configuration["SwaggerAddress"];
+                var basepath = app.Configuration["SwaggerAddress"];
 
                 c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                 {
@@ -167,11 +121,10 @@ namespace Omicron.Pedidos.Api
                     swaggerDoc.Paths = paths;
                 });
             });
-
             app.UseStaticFiles();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint($"{this.Configuration["SwaggerAddress"]}/swagger/v1/swagger.json", "Api Pedidos");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api Pedidos");
                 c.RoutePrefix = string.Empty;
             });
 
@@ -203,15 +156,16 @@ namespace Omicron.Pedidos.Api
             {
                 endpoints.MapControllers();
             });
+            return app;
         }
 
         /// <summary>
         /// Adds the cors SVC.
         /// </summary>
-        /// <param name="services">The services.</param>
-        private void AddCorsSvc(IServiceCollection services)
+        /// <param name="webApplication">WebApplicationBuilder webApplication.</param>
+        private static void AddCorsSvc(this WebApplicationBuilder webApplication)
         {
-            services.AddCors(options =>
+            webApplication.Services.AddCors(options =>
             {
                 options.AddPolicy(
                     "CorsPolicy",
@@ -226,21 +180,20 @@ namespace Omicron.Pedidos.Api
         /// <summary>
         /// Add configuration Redis.
         /// </summary>
-        /// <param name="services">Service Collection.</param>
-        /// <param name="logger">The logger.</param>
-        private void AddRedis(IServiceCollection services, Serilog.ILogger logger)
+        /// <param name="webApplication">WebApplicationBuilder webApplication.</param>
+        private static void AddRedis(this WebApplicationBuilder webApplication)
         {
             try
             {
-                var configuration = ConfigurationOptions.Parse(this.Configuration["redis:hostname"], true);
+                var configuration = ConfigurationOptions.Parse(webApplication.Configuration["redis:hostname"], true);
                 configuration.ResolveDns = true;
 
                 ConnectionMultiplexer cm = ConnectionMultiplexer.Connect(configuration);
-                services.AddSingleton<IConnectionMultiplexer>(cm);
+                webApplication.Services.AddSingleton<IConnectionMultiplexer>(cm);
             }
             catch (Exception)
             {
-                logger.Error("No se econtro Redis");
+                Log.Error("No se econtro Redis");
             }
         }
     }

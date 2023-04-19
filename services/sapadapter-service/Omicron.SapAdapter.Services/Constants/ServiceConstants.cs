@@ -563,6 +563,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// the insert value.
         /// </summary>
+        public const string RedisBulkOrderKey = "redisComponentsBulkOrder";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
         public const string RemisionChip = "rem-";
 
         /// <summary>
@@ -706,9 +711,19 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string TypeParameter = "type";
 
         /// <summary>
-        /// The order type dict.
+        /// Detail Order Parameter.
         /// </summary>
         public const string DetailOrderParameter = "detailOrder";
+
+        /// <summary>
+        /// Input Request Parameter.
+        /// </summary>
+        public const string InputRequestParameter = "inputRequest";
+
+        /// <summary>
+        /// Bulk Order Parameter.
+        /// </summary>
+        public const string BulkOrderParameter = "bulkOrder";
 
         /// <summary>
         /// Gets the clasification user DZ.

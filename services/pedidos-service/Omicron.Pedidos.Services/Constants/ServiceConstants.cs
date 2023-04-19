@@ -756,6 +756,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrTextFontType = "Tahoma";
 
         /// <summary>
+        /// Inidicates the font type in the QR text.
+        /// </summary>
+        public const double QrSize = 0.65;
+
+        /// <summary>
         /// gets the size of text.
         /// </summary>
         public const string QrDeliveryBottomTextSize = "QrDeliveryBottomTextSize";
@@ -904,6 +909,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// Reason unexpected error.
         /// </summary>
         public const string OrderWithoutTecnicSign = "No es posible terminar, falta la firma del técnico asignado";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
+        public const string RedisBulkOrderKey = "redisComponentsBulkOrder";
 
         /// <summary>
         /// Gets the status of the order.

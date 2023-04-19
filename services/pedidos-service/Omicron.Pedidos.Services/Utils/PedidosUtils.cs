@@ -37,15 +37,16 @@ namespace Omicron.Pedidos.Services.Utils
         /// set the components and how many times.
         /// </summary>
         /// <param name="components">the components.</param>
+        /// <param name="redisKey">Redis key.</param>
         /// <returns>the data.</returns>
-        public async Task UpdateMostUsedComponents(List<string> components)
+        public async Task UpdateMostUsedComponents(List<string> components, string redisKey)
         {
             if (!components.Any())
             {
                 return;
             }
 
-            var redisValue = await this.redisService.GetRedisKey(ServiceConstants.RedisComponents);
+            var redisValue = await this.redisService.GetRedisKey(redisKey);
             var redisComponents = !string.IsNullOrEmpty(redisValue) ? JsonConvert.DeserializeObject<List<ComponentsRedisModel>>(redisValue) : new List<ComponentsRedisModel>();
             redisComponents ??= new List<ComponentsRedisModel>();
 
@@ -68,7 +69,7 @@ namespace Omicron.Pedidos.Services.Utils
             listToUpdate.AddRange(missing);
             listToUpdate = listToUpdate.OrderByDescending(x => x.Total).ToList();
             listToUpdate = listToUpdate.Skip(0).Take(10).ToList();
-            await this.redisService.WriteToRedis(ServiceConstants.RedisComponents, JsonConvert.SerializeObject(listToUpdate));
+            await this.redisService.WriteToRedis(redisKey, JsonConvert.SerializeObject(listToUpdate));
         }
     }
 }

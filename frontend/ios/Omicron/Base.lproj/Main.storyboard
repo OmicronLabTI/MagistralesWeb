@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="EFE-v6-BeN">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="EFE-v6-BeN">
     <device id="ipad12_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -12,14 +12,17 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
-        <array key="SF-Pro-Display-Black.otf">
-            <string>SFProDisplay-Black</string>
+        <array key="FrutigerNextLT-Bold.ttf">
+            <string>FrutigerNextLT-Bold</string>
+        </array>
+        <array key="FrutigerNextLT-Medium.ttf">
+            <string>FrutigerNextLT-Medium</string>
+        </array>
+        <array key="FrutigerNextLT-Regular.ttf">
+            <string>FrutigerNextLT-Regular</string>
         </array>
         <array key="SF-Pro-Display-Bold.otf">
             <string>SFProDisplay-Bold</string>
-        </array>
-        <array key="SF-Pro-Display-Medium.otf">
-            <string>SFProDisplay-Medium</string>
         </array>
         <array key="SF-Pro-Display-Regular.otf">
             <string>SFProDisplay-Regular</string>
@@ -75,46 +78,46 @@
                                         <rect key="frame" x="708.5" y="0.0" width="676.5" height="930"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="11" translatesAutoresizingMaskIntoConstraints="NO" id="uJq-3H-9Mk">
-                                                <rect key="frame" x="188" y="303" width="301" height="324.5"/>
+                                                <rect key="frame" x="188" y="309" width="301" height="312"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4mf-6Y-Fzd">
-                                                        <rect key="frame" x="0.0" y="0.0" width="301" height="20"/>
-                                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="301" height="16"/>
+                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IpV-05-wDS">
-                                                        <rect key="frame" x="0.0" y="31" width="301" height="20"/>
-                                                        <fontDescription key="fontDescription" name="SFProDisplay-Black" family="SF Pro Display" pointSize="17"/>
+                                                        <rect key="frame" x="0.0" y="27" width="301" height="16"/>
+                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Usuario" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Vzx-eb-Yqk">
-                                                        <rect key="frame" x="0.0" y="62" width="301" height="34"/>
+                                                        <rect key="frame" x="0.0" y="54" width="301" height="34"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="34" id="GOb-i5-ACW"/>
                                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="lng-xU-aCn"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" returnKeyType="continue" smartInsertDeleteType="yes" textContentType="email"/>
                                                     </textField>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zWz-ZA-qjc">
-                                                        <rect key="frame" x="0.0" y="107" width="301" height="20.5"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <rect key="frame" x="0.0" y="99" width="301" height="16"/>
+                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Contraseña" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZIm-yZ-WYR">
-                                                        <rect key="frame" x="0.0" y="138.5" width="301" height="34"/>
+                                                        <rect key="frame" x="0.0" y="126" width="301" height="34"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="JbJ-q8-KAm"/>
                                                             <constraint firstAttribute="height" constant="34" id="cxr-3o-2ep"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="alphabet" returnKeyType="continue" secureTextEntry="YES" textContentType="password"/>
                                                     </textField>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f4r-4W-MgX">
-                                                        <rect key="frame" x="0.0" y="183.5" width="301" height="80"/>
+                                                        <rect key="frame" x="0.0" y="171" width="301" height="80"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="301" id="FMP-9u-jU3"/>
@@ -123,11 +126,11 @@
                                                         </constraints>
                                                     </view>
                                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="RNK-S2-CyC">
-                                                        <rect key="frame" x="0.0" y="274.5" width="301" height="50"/>
+                                                        <rect key="frame" x="0.0" y="262" width="301" height="50"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vCe-c7-sa8">
                                                                 <rect key="frame" x="0.0" y="0.0" width="225" height="50"/>
-                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="17"/>
                                                                 <color key="textColor" red="0.0" green="0.49684340910000002" blue="0.60481375459999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
@@ -473,7 +476,7 @@
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TECNICO" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Fj-BG-QzI">
                                 <rect key="frame" x="16" y="60" width="343" height="32"/>
-                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="14"/>
+                                <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="14"/>
                                 <color key="textColor" systemColor="tintColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -575,6 +578,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="98U-Y3-Ys1"/>
                                 </constraints>
+                                <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="18"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="30" maxY="0.0"/>
                                 <state key="normal" title="Cerrar sesión" image="square.and.arrow.down.on.square" catalog="system">
                                     <color key="titleColor" systemColor="darkTextColor"/>
@@ -1028,8 +1032,8 @@
                                                 <imageReference key="image" image="chevron.left.2" catalog="system" symbolScale="small"/>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="En proceso" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X6y-Jg-7Et">
-                                                <rect key="frame" x="25" y="5" width="175" height="20.5"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <rect key="frame" x="25" y="4.5" width="175" height="21.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                 <color key="textColor" systemColor="linkColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
@@ -1734,7 +1738,7 @@
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nombre de paciente" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iwq-vC-VdI">
                                         <rect key="frame" x="8" y="19" width="434" height="45"/>
-                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="22"/>
+                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="22"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -1783,11 +1787,11 @@
                                                 <rect key="frame" x="0.0" y="311.5" width="450" height="128"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="HmA-px-9Se" id="MyE-ny-kJf">
-                                                    <rect key="frame" x="0.0" y="0.0" width="600" height="128"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="450" height="128"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="d9u-AN-XKh">
-                                                            <rect key="frame" x="8" y="0.0" width="584" height="128"/>
+                                                            <rect key="frame" x="8" y="0.0" width="434" height="128"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
                                                             <nil key="textColor"/>
@@ -1803,8 +1807,8 @@
                                         </connections>
                                     </tableView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KZ6-qg-eTO">
-                                        <rect key="frame" x="0.0" y="60" width="450" height="23"/>
-                                        <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="19"/>
+                                        <rect key="frame" x="0.0" y="65.5" width="450" height="17.5"/>
+                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="19"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -2549,14 +2553,14 @@
             <objects>
                 <viewController storyboardIdentifier="ComponentsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9NP-z5-RkI" customClass="ComponentsViewController" customModule="Magistrales" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Wn3-1f-N5U">
-                        <rect key="frame" x="0.0" y="0.0" width="704" height="944"/>
+                        <rect key="frame" x="0.0" y="0.0" width="704" height="984"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="nhb-0t-jMp">
-                                <rect key="frame" x="0.0" y="266" width="704" height="678"/>
+                                <rect key="frame" x="0.0" y="266" width="704" height="718"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W8z-nA-eC1" customClass="TagListView" customModule="TagListView">
-                                        <rect key="frame" x="0.0" y="0.0" width="704" height="396"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="704" height="436"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -2581,7 +2585,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </view>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="b7C-aR-kJn">
-                                        <rect key="frame" x="0.0" y="406" width="704" height="272"/>
+                                        <rect key="frame" x="0.0" y="446" width="704" height="272"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <label key="tableFooterView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No hay resultados" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="K7c-ch-I4L">
                                             <rect key="frame" x="0.0" y="128.5" width="704" height="44"/>
@@ -2948,7 +2952,7 @@
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Solicitud de insumos al almacén general" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5gi-NT-7oM">
                                                                 <rect key="frame" x="0.0" y="0.0" width="970.5" height="30"/>
-                                                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="24"/>
+                                                                <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="24"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
@@ -3048,7 +3052,7 @@
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="30" id="cd2-ZT-Utm"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -3057,13 +3061,13 @@
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="180" id="8pl-nh-pWf"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Descripción" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L7H-Og-HZ7">
                                                                         <rect key="frame" x="230" y="0.0" width="330.5" height="0.0"/>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -3072,7 +3076,7 @@
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="180" id="e1q-av-dcl"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -3081,7 +3085,7 @@
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="100" id="SqW-TS-vea"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -3090,7 +3094,7 @@
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="100" id="Lao-TM-q4L"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -3107,7 +3111,7 @@
                                                                         <rect key="frame" x="0.0" y="50" width="970.5" height="44"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FG9-fi-0lX" id="f8V-wW-oXw">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="970.66666666666663" height="44"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="970.5" height="44"/>
                                                                             <autoresizingMask key="autoresizingMask"/>
                                                                             <subviews>
                                                                                 <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="4Ok-d9-aOW">
@@ -3118,7 +3122,7 @@
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UHk-We-6g3">
                                                                                                     <rect key="frame" x="0.0" y="0.0" width="30" height="24"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3136,7 +3140,7 @@
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yPf-hO-9Us">
                                                                                                     <rect key="frame" x="0.0" y="0.0" width="180" height="24"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3154,7 +3158,7 @@
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fDH-As-hq0">
                                                                                                     <rect key="frame" x="0.0" y="0.0" width="330.5" height="24"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3174,7 +3178,7 @@
                                                                                                     <constraints>
                                                                                                         <constraint firstAttribute="height" constant="40" id="dDS-YG-VC8"/>
                                                                                                     </constraints>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <textInputTraits key="textInputTraits"/>
                                                                                                 </textField>
                                                                                             </subviews>
@@ -3191,7 +3195,7 @@
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="13q-Xb-eB6">
                                                                                                     <rect key="frame" x="0.0" y="0.0" width="100" height="24"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3209,7 +3213,7 @@
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sfZ-R6-0MW">
                                                                                                     <rect key="frame" x="0.0" y="0.0" width="100" height="24"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3292,11 +3296,11 @@
                                                 <rect key="frame" x="0.0" y="60" width="970.5" height="850"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="h4v-ly-UyM">
-                                                        <rect key="frame" x="0.0" y="0.0" width="248.5" height="30"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="250" height="30"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Solicitudes de traslado" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PXX-pS-pWp">
-                                                                <rect key="frame" x="0.0" y="0.0" width="248.5" height="30"/>
-                                                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="24"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="250" height="30"/>
+                                                                <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="24"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
@@ -3309,20 +3313,20 @@
                                                         <rect key="frame" x="0.0" y="40" width="970.5" height="80"/>
                                                         <subviews>
                                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="Oz4-Sf-MOH" userLabel="date stack">
-                                                                <rect key="frame" x="15" y="0.0" width="230" height="73"/>
+                                                                <rect key="frame" x="15" y="0.0" width="230" height="69"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="FECHA SOLICITUD" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5dr-zk-YbA">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="230" height="18"/>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="15"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="230" height="14"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="15"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7QC-E6-csF">
-                                                                        <rect key="frame" x="0.0" y="23" width="230" height="50"/>
+                                                                        <rect key="frame" x="0.0" y="19" width="230" height="50"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="29/03/2023-30/03/2023" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X1T-pF-B1m">
                                                                                 <rect key="frame" x="10" y="10" width="190" height="30"/>
-                                                                                <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
@@ -3357,20 +3361,20 @@
                                                                 </subviews>
                                                             </stackView>
                                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="fGo-dy-fjh" userLabel="status">
-                                                                <rect key="frame" x="275" y="0.0" width="165" height="73"/>
+                                                                <rect key="frame" x="275" y="0.0" width="165" height="69"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ESTATUS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mbm-hg-5Tq">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="165" height="18"/>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="15"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="165" height="14"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="15"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rm2-AZ-15b">
-                                                                        <rect key="frame" x="0.0" y="23" width="165" height="50"/>
+                                                                        <rect key="frame" x="0.0" y="19" width="165" height="50"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Abierto, Cerrado" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tna-nE-7Ju">
                                                                                 <rect key="frame" x="10" y="10" width="125" height="30"/>
-                                                                                <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
@@ -3420,102 +3424,102 @@
                                                         <rect key="frame" x="0.0" y="130" width="970.5" height="720"/>
                                                         <subviews>
                                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="TFw-9k-kFU">
-                                                                <rect key="frame" x="0.0" y="0.0" width="970.5" height="45.5"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="970.5" height="35"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d0T-6H-DzA">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="70" height="45.5"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="70" height="35"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="70" id="jsY-r4-dbA"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Código" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cEB-ac-hY3">
-                                                                        <rect key="frame" x="80" y="0.0" width="140" height="45.5"/>
+                                                                        <rect key="frame" x="80" y="0.0" width="140" height="35"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="140" id="Qvn-OW-U2G"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Descripción" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jkn-Bn-jM8">
-                                                                        <rect key="frame" x="230" y="0.0" width="170.5" height="45.5"/>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <rect key="frame" x="230" y="0.0" width="170.5" height="35"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cantidad" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NQb-mQ-AjV">
-                                                                        <rect key="frame" x="410.5" y="0.0" width="120" height="45.5"/>
+                                                                        <rect key="frame" x="410.5" y="0.0" width="120" height="35"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="120" id="wFa-dV-AD9"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unidad" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7GI-5h-Lub">
-                                                                        <rect key="frame" x="540.5" y="0.0" width="80" height="45.5"/>
+                                                                        <rect key="frame" x="540.5" y="0.0" width="80" height="35"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="80" id="aCS-7k-DFW"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Almacén destino" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MrT-zj-L4o">
-                                                                        <rect key="frame" x="630.5" y="0.0" width="100" height="45.5"/>
+                                                                        <rect key="frame" x="630.5" y="0.0" width="100" height="35"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="100" id="dNL-1Y-Pcy"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fecha solicitud" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BmN-Db-z9W">
-                                                                        <rect key="frame" x="740.5" y="0.0" width="120" height="45.5"/>
+                                                                        <rect key="frame" x="740.5" y="0.0" width="120" height="35"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="120" id="i5b-EA-aGd"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Estatus" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wa9-Rf-dXX">
-                                                                        <rect key="frame" x="870.5" y="0.0" width="100" height="45.5"/>
+                                                                        <rect key="frame" x="870.5" y="0.0" width="100" height="35"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="100" id="KFX-XL-9t9"/>
                                                                         </constraints>
-                                                                        <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="19"/>
+                                                                        <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="19"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                 </subviews>
                                                             </stackView>
                                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="vE4-eg-oDM">
-                                                                <rect key="frame" x="0.0" y="45.5" width="970.5" height="674.5"/>
+                                                                <rect key="frame" x="0.0" y="35" width="970.5" height="685"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                 <prototypes>
                                                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="HistoryTableViewCell" id="XuV-gk-lOD" customClass="HistoryTableViewCell" customModule="Magistrales" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="50" width="970.5" height="198"/>
+                                                                        <rect key="frame" x="0.0" y="50" width="970.5" height="217.5"/>
                                                                         <autoresizingMask key="autoresizingMask"/>
                                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XuV-gk-lOD" id="NZg-NL-LNA">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="970.5" height="198"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="970.5" height="217.5"/>
                                                                             <autoresizingMask key="autoresizingMask"/>
                                                                             <subviews>
                                                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="tcy-iN-bsq">
-                                                                                    <rect key="frame" x="0.0" y="10" width="970.5" height="178"/>
+                                                                                    <rect key="frame" x="0.0" y="10" width="970.5" height="197.5"/>
                                                                                     <subviews>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F94-Kv-kbc">
-                                                                                            <rect key="frame" x="0.0" y="0.0" width="70" height="178"/>
+                                                                                            <rect key="frame" x="0.0" y="0.0" width="70" height="197.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12341" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ibh-YX-q7e">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="70" height="178"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="70" height="197.5"/>
                                                                                                     <constraints>
                                                                                                         <constraint firstAttribute="width" constant="70" id="ePw-0O-1Bp"/>
                                                                                                     </constraints>
-                                                                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="17"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3528,11 +3532,11 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="C6v-KP-RRv">
-                                                                                            <rect key="frame" x="80" y="0.0" width="140" height="178"/>
+                                                                                            <rect key="frame" x="80" y="0.0" width="140" height="197.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="123" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fac-cr-pLR">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="140" height="178"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="140" height="197.5"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3546,11 +3550,11 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="92g-s0-6BN">
-                                                                                            <rect key="frame" x="230" y="0.0" width="170.5" height="178"/>
+                                                                                            <rect key="frame" x="230" y="0.0" width="170.5" height="197.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="descripcion del producto" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hXc-1e-eHX">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="170.5" height="178"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="170.5" height="197.5"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3563,11 +3567,11 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zVy-Ao-4MG">
-                                                                                            <rect key="frame" x="410.5" y="0.0" width="120" height="178"/>
+                                                                                            <rect key="frame" x="410.5" y="0.0" width="120" height="197.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="823-I0-zeH">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="178"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="197.5"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3581,11 +3585,11 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D6V-6u-hdD">
-                                                                                            <rect key="frame" x="540.5" y="0.0" width="80" height="178"/>
+                                                                                            <rect key="frame" x="540.5" y="0.0" width="80" height="197.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pieza" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ghk-RT-3nD">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="178"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="197.5"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3599,11 +3603,11 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Owu-ye-mBL">
-                                                                                            <rect key="frame" x="630.5" y="0.0" width="100" height="178"/>
+                                                                                            <rect key="frame" x="630.5" y="0.0" width="100" height="197.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MG" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mEb-hx-bqz">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="178"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="197.5"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3617,11 +3621,11 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I29-lb-i2z">
-                                                                                            <rect key="frame" x="740.5" y="0.0" width="120" height="178"/>
+                                                                                            <rect key="frame" x="740.5" y="0.0" width="120" height="197.5"/>
                                                                                             <subviews>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12/12/2023" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yKX-Me-xbb">
-                                                                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="178"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <rect key="frame" x="0.0" y="0.0" width="120" height="197.5"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3635,10 +3639,10 @@
                                                                                             </constraints>
                                                                                         </view>
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tta-5F-cbd">
-                                                                                            <rect key="frame" x="870.5" y="0.0" width="100" height="178"/>
+                                                                                            <rect key="frame" x="870.5" y="0.0" width="100" height="197.5"/>
                                                                                             <subviews>
                                                                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KXN-dK-MBN" userLabel="circle">
-                                                                                                    <rect key="frame" x="12.5" y="84" width="10" height="10"/>
+                                                                                                    <rect key="frame" x="12" y="94" width="10" height="10"/>
                                                                                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                                                     <constraints>
                                                                                                         <constraint firstAttribute="height" constant="10" id="1dq-1f-jbv"/>
@@ -3647,7 +3651,7 @@
                                                                                                 </view>
                                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Abierto" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0VH-Cq-mwH">
                                                                                                     <rect key="frame" x="27.5" y="0.0" width="45.5" height="157.5"/>
-                                                                                                    <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="15"/>
+                                                                                                    <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="15"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
@@ -3688,10 +3692,10 @@
                                                                 </prototypes>
                                                             </tableView>
                                                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6UG-Tf-6z0">
-                                                                <rect key="frame" x="0.0" y="45.5" width="970.5" height="474.5"/>
+                                                                <rect key="frame" x="0.0" y="35" width="970.5" height="485"/>
                                                                 <subviews>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jjS-T1-dfH">
-                                                                        <rect key="frame" x="310.5" y="189.5" width="350" height="95.5"/>
+                                                                        <rect key="frame" x="310.5" y="200" width="350" height="85.5"/>
                                                                         <subviews>
                                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="magnifyingglass" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="5k7-oZ-HNq">
                                                                                 <rect key="frame" x="150" y="0.5" width="50" height="48.5"/>
@@ -3702,14 +3706,14 @@
                                                                                 </constraints>
                                                                             </imageView>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No se encontraron resultados" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eft-m4-CbH">
-                                                                                <rect key="frame" x="41.5" y="50" width="267" height="24"/>
-                                                                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="20"/>
+                                                                                <rect key="frame" x="39.5" y="50" width="271" height="18.5"/>
+                                                                                <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="20"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Quita o intenta con otro filtro de búsqueda" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hxf-3P-wot" userLabel="Quita o intenta con otro filtro de búsqueda">
-                                                                                <rect key="frame" x="18.5" y="74" width="313" height="21.5"/>
-                                                                                <fontDescription key="fontDescription" name="SFProDisplay-Regular" family="SF Pro Display" pointSize="18"/>
+                                                                                <rect key="frame" x="13" y="68.5" width="324" height="17"/>
+                                                                                <fontDescription key="fontDescription" name="FrutigerNextLT-Regular" family="FrutigerNextLT" pointSize="18"/>
                                                                                 <nil key="textColor"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
@@ -3819,7 +3823,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="j0J-FD-uIo">
-                                <rect key="frame" x="0.0" y="24" width="990.5" height="906"/>
+                                <rect key="frame" x="0.0" y="24" width="990.5" height="886"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="flk-Oy-FF7">
                                     <size key="itemSize" width="759.5" height="760"/>
@@ -3830,7 +3834,7 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="chart" id="mdy-RR-Kde" customClass="ChartCollectionViewCell" customModule="Magistrales" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="73" width="759.5" height="760"/>
+                                        <rect key="frame" x="0.0" y="63" width="759.5" height="760"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="7Ah-UA-2ld">
                                             <rect key="frame" x="0.0" y="0.0" width="759.5" height="760"/>
@@ -3856,8 +3860,8 @@
                                 </cells>
                             </collectionView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T3X-X2-UYz">
-                                <rect key="frame" x="8" y="32" width="87" height="42"/>
-                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="35"/>
+                                <rect key="frame" x="8" y="32" width="86.5" height="32.5"/>
+                                <fontDescription key="fontDescription" name="FrutigerNextLT-Bold" family="FrutigerNextLT" pointSize="35"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -3907,8 +3911,8 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6q9-iM-wcU">
-                                <rect key="frame" x="8" y="82" width="43" height="21"/>
-                                <fontDescription key="fontDescription" name="SFProDisplay-Medium" family="SF Pro Display" pointSize="18"/>
+                                <rect key="frame" x="8" y="72.5" width="42" height="17"/>
+                                <fontDescription key="fontDescription" name="FrutigerNextLT-Medium" family="FrutigerNextLT" pointSize="18"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
