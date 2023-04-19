@@ -102,7 +102,6 @@ namespace Omicron.Warehouses.Services.Request
             }
 
             var listComponents = request.OrderedProducts.Select(y => y.ProductId).Distinct().ToList();
-            listComponents = listComponents.Where(x => ServiceConstants.ListComponentsMostAssigned.Any(y => x.Contains(y))).ToList();
             await this.UpdateMostUsedComponents(listComponents);
             results.AddSuccesResult(new { ProductionOrderId = 0 });
             return ServiceUtils.CreateResult(true, 200, null, results, null);
