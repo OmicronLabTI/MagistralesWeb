@@ -15,11 +15,11 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
-    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
+    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.Resources.Extensions;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;

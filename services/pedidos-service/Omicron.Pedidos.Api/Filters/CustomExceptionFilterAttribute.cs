@@ -8,6 +8,7 @@
 
 namespace Omicron.Pedidos.Api.Filters
 {
+    using System.IO;
     using System.Net;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Filters;

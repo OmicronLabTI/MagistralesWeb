@@ -17,11 +17,11 @@ namespace Omicron.Pedidos.Test.Services
     using Moq;
     using Newtonsoft.Json;
     using NUnit.Framework;
-    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
+    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Pedidos;
