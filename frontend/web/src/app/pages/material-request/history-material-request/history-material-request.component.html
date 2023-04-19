@@ -1,0 +1,38 @@
+<div class="history-material-component">
+    <div class="header-page d-flex flex-wrap
+    ">
+        <div class="title-list-container col-12 padding-v-m">
+            <span>Solicitudes de traslado</span>
+        </div>
+        <div class=" col-12 padding-v-m">
+            <div class="breadcrumb"><a class="breadcrumblink" routerLink="/materialRequest/0/1" >Solicitud de insumos</a> /
+                Historial</div>
+        </div>
+        <div class="filters-contain col-12 d-flex flex-wrap  col-12 padding-v-m">
+            <div class="date-filter">
+                <mat-form-field appearance="outline" >
+                    <mat-label>Fecha de solicitud</mat-label>
+                    <input (ngModelChange)="filterChange()"  [max]="maxDate" [min]="minDate" readonly="true" matInput placeholder="Choose a date" [satDatepicker]="picker2" [formControl]="date" ngDefaultControl>
+                    <sat-datepicker  #picker2 [rangeMode]="true">
+                    </sat-datepicker>
+                    <sat-datepicker-toggle matSuffix [for]="picker2"></sat-datepicker-toggle>
+                </mat-form-field>
+            </div>
+            <div class="status-filter ">
+                <mat-form-field appearance="outline" class="">
+                    <mat-label>Estatus</mat-label>
+                    <mat-select (selectionChange)="filterChange()" [formControl]="statusControl" multiple>
+                        <mat-option value="Abierto" [disabled]="getIsDisabled('Abierto')">Abierto</mat-option>
+                        <mat-option value="Cerrado" [disabled]=" getIsDisabled('Cerrado')">Cerrado</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <div class="table-contain  col-12 padding-v-m">
+        <app-table-common [loading]="loading" [data]="dataHistory"
+            [settings]="historyMaterialRequestSettings"></app-table-common>
+        <mat-paginator [pageSizeOptions]="[5, 10, 15 ,20]" [pageSize]="limit" [length]="lengthPaginator"
+            [pageIndex]="pageIndex" (page)="changeDataEvent($event)"></mat-paginator>
+    </div>
+</div>

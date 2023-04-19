@@ -52,31 +52,23 @@ extension OrderDetailViewController {
             guard let self = self else { return }
             self.quantityTextField.isHidden = true
             self.quantityButtonChange.isHidden = true
+            self.quantityPlannedDescriptionLabel.isHidden = false
+            self.destinyLabel.isHidden = false
             self.isolatedOrder = false
             if res.first != nil {
                 self.initLabelsWithContent(detail: res.first!)
                 self.changeTextColorLabel(color: .black)
                 self.orderDetail = res
                 let detail = res.first!
-                let titleFontSize = CGFloat(22.0)
                 self.productDescritionLabel.textColor = .black
-                let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)",
-                    textToBold: detail.code, fontSize: titleFontSize, textColor: OmicronColors.blue)
-                let description = UtilsManager.shared.boldSubstring(
-                    text: "\(detail.productDescription ?? CommonStrings.empty)",
-                    textToBold: detail.productDescription, fontSize: titleFontSize, textColor: .gray)
-                let pipe = UtilsManager.shared.boldSubstring(text: " | ", textToBold: " | ",
-                                                             fontSize: titleFontSize, textColor: .black)
-                let richText = NSMutableAttributedString()
-                richText.append(code)
-                richText.append(pipe)
-                richText.append(description)
-                self.productDescritionLabel.attributedText = richText
+                self.productDescritionLabel.attributedText = self.getRichText(detail: detail)
                 self.destinyLabel.attributedText = UtilsManager.shared.boldSubstring(
                     text: "\(CommonStrings.destiny) \(self.destiny)", textToBold: CommonStrings.destiny)
                 if detail.baseDocument == 0 {
                     self.isolatedOrder = true
-                    self.quantityTextField.text = "\(detail.plannedQuantity ?? 0)"
+                    self.quantityTextField.text = self.getFormattedText(
+                        number: Double(truncating:
+                                        NSDecimalNumber(decimal: detail.plannedQuantity ?? 0)))
                     self.destinyLabel.text = ""
                     self.codeDescriptionLabel.isHidden = true
                     self.containerDescriptionLabel.isHidden = true
@@ -88,11 +80,27 @@ extension OrderDetailViewController {
                         text: "\(CommonStrings.plannedQuantity) \(plannedQ)",
                         textToBold: CommonStrings.plannedQuantity)
                     self.quantityPlannedDescriptionLabel.text = ""
+                    self.quantityPlannedDescriptionLabel.isHidden = true
+                    self.destinyLabel.isHidden = true
                 }
             }
         }).disposed(by: self.disposeBag)
     }
-
+    func getRichText(detail: OrderDetail) -> NSMutableAttributedString {
+        let titleFontSize = CGFloat(22.0)
+        let code = UtilsManager.shared.boldSubstring(text: "\(detail.code ?? CommonStrings.empty)",
+            textToBold: detail.code, fontSize: titleFontSize, textColor: OmicronColors.blue)
+        let description = UtilsManager.shared.boldSubstring(
+            text: "\(detail.productDescription ?? CommonStrings.empty)",
+            textToBold: detail.productDescription, fontSize: titleFontSize, textColor: .gray)
+        let pipe = UtilsManager.shared.boldSubstring(text: " | ", textToBold: " | ",
+                                                     fontSize: titleFontSize, textColor: .black)
+        let richText = NSMutableAttributedString()
+        richText.append(code)
+        richText.append(pipe)
+        richText.append(description)
+        return richText
+    }
     func validateStatusIsolated() {
         let statusValid = [
             StatusNameConstants.assignedStatus,
@@ -165,22 +173,11 @@ extension OrderDetailViewController {
         }).disposed(by: disposeBag)
     }
 
-    func quantityTextFieldBindind() {
-        self.quantityTextField.rx.text.bind { text in
-            self.quantityButtonChange.isEnabled = false
-            if let textTemp = Decimal(string: text ?? ""),
-                let detail = self.orderDetail.first,
-                textTemp>0,
-                textTemp != detail.plannedQuantity {
-                self.quantityButtonChange.isEnabled = true
-            }
-        }
-    }
-
     func quantityButtonBindind() {
         self.quantityButtonChange.rx.tap.bind {
             self.quantityButtonChange.isEnabled = false
-            self.orderDetailViewModel.updateQuantity(Decimal(string: self.quantityTextField.text ?? "0") ?? 0)
+            let quantity = Decimal(string: self.quantityTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0")
+            self.orderDetailViewModel.updateQuantity(quantity ?? 0)
         }
         .disposed(by: self.disposeBag)
     }

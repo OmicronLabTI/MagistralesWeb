@@ -44,7 +44,7 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var destinyLabel: UILabel!
     @IBOutlet weak var quantityTextField: UITextField!
     @IBOutlet weak var quantityButtonChange: UIButton!
-    
+
     // MARK: Variables
     @Injected var orderDetailViewModel: OrderDetailViewModel
     @Injected var rootViewModel: RootViewModel
@@ -67,18 +67,23 @@ class OrderDetailViewController: UIViewController {
         self.quantityTextField.delegate = self
         self.title = CommonStrings.formulaDetail
         self.showButtonsByStatusType(statusType: statusType)
-        self.initComponents()
         self.tableView.allowsMultipleSelectionDuringEditing = false
         tableView.setEditing(false, animated: true)
         self.orderDetailViewModel.orderId = self.orderId
-        self.viewModelBinding()
-        quantityButtonBindind()
-        quantityTextFieldBindind()
+        infoView.layer.cornerRadius = 10
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        self.disposeBag = DisposeBag()
+        self.initComponents()
+        self.viewModelBinding()
+        quantityButtonBindind()
         self.orderDetailViewModel.getOrdenDetail()
         self.refreshViewControl()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        disposeBag = DisposeBag()
     }
     // MARK: - Functions
     @objc func goToCommentsViewController() {
@@ -237,7 +242,7 @@ class OrderDetailViewController: UIViewController {
         self.productDescritionLabel.textColor = .white
         // Se cambian de color los Labels
         self.changeTextColorLabel(color: OmicronColors.ligthGray)
-        self.productDescritionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
+        self.productDescritionLabel.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: 22)
         self.detailTable.tableFooterView = UIView()
         self.infoView.layer.cornerRadius = 10.0
         self.infoView.backgroundColor = OmicronColors.ligthGray

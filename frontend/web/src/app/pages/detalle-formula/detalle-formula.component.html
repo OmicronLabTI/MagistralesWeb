@@ -76,14 +76,16 @@
                         <mat-label [ngClass]="isPlannedQuantityError ? 'input-with-error': ''" >Cantidad planificada</mat-label>
                         <input matInput
                                [disabled]="oldDataFormulaDetail.hasBatches"
-                               type="number"
+                               type="text"
                                placeholder="Cantidad planificada"
                                [ngClass]="isPlannedQuantityError ? 'input-with-error': ''"
                                [(ngModel)]="plannedQuantity"
                                (ngModelChange)="changeData()"
                                step="any"
-                               appDigitDecimalNumber
-                               decimalPlaces="6">
+                               mask="comma_separator.6"   
+                               thousandSeparator=","
+                               entiresPlaces="10"
+                               appLimitEntires>
 
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="generalinput disabled" style="width: 15.8%;">

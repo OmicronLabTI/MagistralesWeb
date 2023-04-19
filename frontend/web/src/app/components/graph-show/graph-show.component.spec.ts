@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GraphShowComponent } from './graph-show.component';
-import {DatePipe} from '@angular/common';
-import {RouterTestingModule} from '@angular/router/testing';
+import { DatePipe } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
 import { DataService } from 'src/app/services/data.service';
 import { IncidentsGraphicsMatrix } from 'src/app/model/http/incidents.model';
 import { ConfigurationGraphic } from 'src/app/model/device/incidents.model';
@@ -23,22 +23,47 @@ describe('GraphShowComponent', () => {
     // dataServiceSpy.getDataForGraphic.and.returnValue();
     dataServiceSpy.getPercentageByItem.and.returnValue('');
     TestBed.configureTestingModule({
-      declarations: [ GraphShowComponent ],
+      declarations: [GraphShowComponent],
       providers: [DatePipe,
-      { provide: DataService, useValue: dataServiceSpy},
-    ],
+        { provide: DataService, useValue: dataServiceSpy },
+      ],
       imports: [RouterTestingModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(GraphShowComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    component.configurationGraph.dataGraph = [{
+      totalCount: 0,
+      fieldKey: '',
+      graphType: ''
+    }, {
+      totalCount: 1,
+      fieldKey: '',
+      graphType: ''
+    }];
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should generateInitConfigurationGraph is pay', () => {
+    component.generateInitConfigurationGraph();
+    expect(component.configurationGraph.isPie).toBeTruthy();
+
+  });
+
+  it('should generateInitConfigurationGraph is bar', () => {
+    component.configurationGraph.isPie = false;
+    component.generateInitConfigurationGraph();
+    expect(component.configurationGraph.isPie).toBeFalsy();
+  });
+
+  it('should get data indicators ', () => {
+    component.generateGraph();
   });
 });

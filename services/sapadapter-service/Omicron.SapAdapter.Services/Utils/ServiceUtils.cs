@@ -15,7 +15,6 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Dtos.Models;
@@ -23,6 +22,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Resources.Exceptions;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
     using Omicron.SapAdapter.Services.Doctors;
@@ -474,6 +474,39 @@ namespace Omicron.SapAdapter.Services.Utils
             var user = users.FirstOrDefault(u => u.Role == ServiceConstants.QfbUserRole);
             user ??= new UserModel { Classification = warehouse };
             return ServiceShared.CalculateTernary(user.Classification == ServiceConstants.UserClassificationDZ, ServiceConstants.MagistralWareHouse, user.Classification);
+        }
+
+        /// <summary>
+        /// Calculate Sap Status.
+        /// </summary>
+        /// <param name="statusSap">Status sap.</param>
+        /// <param name="isCanceled">Is canceled.</param>
+        /// <returns>User model.</returns>
+        public static string CalculateSapStatus(string statusSap, bool isCanceled)
+        {
+            if (isCanceled)
+            {
+                return ServiceConstants.Cancelado;
+            }
+
+            return ServiceShared.CalculateTernary(statusSap == ServiceConstants.AbiertoSap, ServiceConstants.Abierto, ServiceConstants.CloseStatus);
+        }
+
+        /// <summary>
+        /// Calculate Raw Material Applicant Name.
+        /// </summary>
+        /// <param name="additionalComments">Additional Comments.</param>
+        /// <returns>User model.</returns>
+        public static string CalculateRawMaterialApplicantName(string additionalComments)
+        {
+            var additionalCommentsList = additionalComments.Split("-").ToList();
+
+            if (!additionalCommentsList.Any())
+            {
+                return additionalComments;
+            }
+
+            return additionalCommentsList.First();
         }
 
         /// <summary>

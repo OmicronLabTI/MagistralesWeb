@@ -17,7 +17,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
+    using Omicron.SapAdapter.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
@@ -780,6 +780,37 @@ namespace Omicron.SapAdapter.Services.Sap
             });
 
             return ServiceUtils.CreateResult(true, 200, null, packaginList, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetRawMaterialRequest(Dictionary<string, string> parameters)
+        {
+            var userId = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.ParameterUserId, null);
+            var startDateStr = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.FechaInicio, string.Empty);
+            var endDatestr = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.FechaFin, string.Empty);
+
+            var listStatus = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.Abierto);
+            listStatus ??= ServiceConstants.Abierto;
+            var status = listStatus.Split(",").ToList();
+            status = status.Select(x => x.ToUpper()).ToList();
+
+            var startDate = ServiceShared.ParseExactDateOrDefault(startDateStr, DateTime.Today.AddDays(-7));
+            var endDate = ServiceShared.ParseExactDateOrDefault(endDatestr, DateTime.Today);
+
+            var rawMaterialRequest = await this.sapDao.GetCompleteRawMaterialRequestByFilters(startDate.Date, endDate.Date, userId);
+
+            rawMaterialRequest.ForEach(raw =>
+            {
+                raw.Status = ServiceUtils.CalculateSapStatus(raw.Status, raw.IsCanceled);
+                raw.ApplicantName = ServiceUtils.CalculateRawMaterialApplicantName(raw.AdditionalComments);
+            });
+
+            var filteredRawMaterialInfo = rawMaterialRequest.Where(raw => status.Contains(raw.Status.ToUpper())).ToList();
+            var rawMaterialCount = filteredRawMaterialInfo.Count;
+
+            filteredRawMaterialInfo = ServiceShared.GetOffsetLimit(filteredRawMaterialInfo, parameters);
+
+            return ServiceUtils.CreateResult(true, 200, null, filteredRawMaterialInfo, null, rawMaterialCount);
         }
 
         /// <summary>

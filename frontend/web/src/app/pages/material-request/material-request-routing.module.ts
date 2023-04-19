@@ -1,12 +1,23 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {MaterialRequestComponent} from './material-request.component';
-
+import { HistoryMaterialRequestComponent } from './history-material-request/history-material-request.component';
+import { MaterialRequestComponent } from './material-request.component';
+import { RequestSuppliesComponent } from './request-supplies/request-supplies.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: MaterialRequestComponent
+    component: MaterialRequestComponent,
+    children: [
+      {
+        path: ':requests/:isOrder',
+        component: RequestSuppliesComponent
+      },
+      {
+        path: 'history',
+        component: HistoryMaterialRequestComponent
+      }
+    ]
   }
 ];
 

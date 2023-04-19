@@ -36,4 +36,18 @@ class AlertManager {
             view?.present(alert, animated: true, completion: nil)
         }
     }
+    func showAlertWithoutButtons(
+        title: String? = nil,
+        message: String? = nil,
+        view: UIViewController? = nil,
+        dismissTime: Int? = 2) {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            view?.present(alert,
+                          animated: true,
+                          completion: {Timer.scheduledTimer(withTimeInterval: TimeInterval(dismissTime ?? 0),
+                                                            repeats: false,
+                                                            block: {_ in
+                              alert.dismiss(animated: true, completion: nil)
+                          })})
+        }
 }

@@ -33,6 +33,7 @@ class RootViewModel {
     var orders: [SectionOrder] = []
     var showTwoModals = false
     var completeOrderList: [Order] = []
+    var modalHideAuto: BehaviorSubject<String> = BehaviorSubject(value: "")
     @Injected var chartViewModel: ChartViewModel
     @Injected var networkManager: NetworkManager
     var userType: UserType = UserType.technical

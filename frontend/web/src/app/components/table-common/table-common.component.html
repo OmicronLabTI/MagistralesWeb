@@ -1,0 +1,55 @@
+<div [ngClass]="settings.className" class="table-common-component">
+    <table aria-label="common">
+        <thead>
+            <tr>
+                <th scope="row" class="stickyHead" *ngIf="settings.stickyColumns.length>0">
+                        <div class="row-sticky" *ngFor="let sticky of settings.stickyColumns">
+                            {{sticky.title}}
+                        </div>
+                </th>
+                <th scope="row" *ngFor="let column of settings.columns">
+                    {{column.title}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of loading ? [] : data; let indexRow = index;">
+                <td class="stickyBody" *ngIf="settings.stickyColumns.length>0">
+                    <div class="row-sticky" [matTooltip]="row[cellSticky.attr]" *ngFor="let cellSticky of settings.stickyColumns; let indexSticky=index;">
+                        {{ row[cellSticky.attr] }}
+                    </div>
+                </td>
+                <td [matTooltip]="valueCell(row,cell.attr)" [ngClass]="cell.className" *ngFor="let cell of settings.columns; let indexCell=index;"
+                    [ngSwitch]="cell.type">
+                    <ng-container *ngSwitchCase="CellTypes.action">
+                        <a [matTooltip]="actionCell(row,cell.attr).label" href="javascript:void(0)"
+                            [ngClass]="actionCell(row,cell.attr).className"
+                            (click)="handleActionCell(row,cell.attr,indexRow)">
+                            {{ actionCell(row,cell.attr).label }}
+                        </a>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="CellTypes.date">
+                        {{ valueCell(row,cell.attr) | date: "dd/MM/yyyy" }}
+                    </ng-container>
+                    <ng-container *ngSwitchCase="CellTypes.badge">
+                        <div [class]="'point '+row[cell.attr]"></div>
+                        <div>{{ row[cell.attr]  }}</div>
+                    </ng-container>
+                    <ng-container  *ngSwitchDefault>
+                        {{ row[cell.attr] }}
+                    </ng-container>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="position-static-letters">
+        <div class="not-found-title justify-content-center d-flex  py-2 font-omicron-bold">
+            <ng-container *ngIf="loading; else notFound">
+                Cargando...
+            </ng-container>
+            <ng-template #notFound>
+                <p class="w-100" *ngIf="data.length===0" [innerHTML]="settings.emptyLabel" ></p>
+            </ng-template>
+        </div>
+    </div>
+</div>

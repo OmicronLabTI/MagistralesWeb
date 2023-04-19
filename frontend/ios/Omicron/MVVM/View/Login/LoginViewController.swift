@@ -95,23 +95,23 @@ class LoginViewController: UIViewController {
         self.loginView.backgroundColor = UIColor.white
         self.loginView.layer.cornerRadius = 30
         self.loginDescriptionLabel.text = CommonStrings.logIntoYourAccount
-        self.loginDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 24)
+        self.loginDescriptionLabel.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: 24)
         self.loginDescriptionLabel.textColor = UIColor.black
         self.usernameTextField.backgroundColor = OmicronColors.ligthGray
         self.usernameTextField.textColor = UIColor.black
         self.passwordTextField.backgroundColor = OmicronColors.ligthGray
         self.passwordTextField.textColor = UIColor.black
         self.loginButtonDescriptionLabel.text = CommonStrings.enter
-        self.loginButtonDescriptionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 18)
+        self.loginButtonDescriptionLabel.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: 18)
         self.loginButtonDescriptionLabel.textColor = OmicronColors.blue
         self.loginButtonDescriptionLabel.textColor = UIColor.black
         self.loginButton.imageView?.contentMode = .scaleAspectFit
         self.userLabel.text = CommonStrings.user
         self.userLabel.textColor = UIColor.black
-        self.userLabel.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 12)
+        self.userLabel.font = UIFont(name: FontsNames.FrutigerNextLTRegular, size: 12)
         self.passwordLabel.text = CommonStrings.password
         self.passwordLabel.textColor = UIColor.black
-        self.passwordLabel.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 12)
+        self.passwordLabel.font = UIFont(name: FontsNames.FrutigerNextLTRegular, size: 12)
         self.passwordTextField.rightViewMode = .unlessEditing
         self.button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -24, bottom: 0, right: 10)
         self.button.frame = CGRect(x: CGFloat(passwordTextField.frame.size.width - 25), y: 5, width: 15, height: 25)
@@ -124,7 +124,7 @@ class LoginViewController: UIViewController {
         self.versionLabel.attributedText = UtilsManager.shared.boldSubstring(
             text: "Versión: \(CommonStrings.version) (\(CommonStrings.build))", textToBold: "Versión: ")
         self.versionLabel.textColor = OmicronColors.blue
-        self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
+        self.versionLabel.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: 12)
         self.loginStackView.backgroundColor = OmicronColors.blue
     }
     @objc func keyBoardActions(notification: Notification) {

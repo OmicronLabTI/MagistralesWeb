@@ -217,4 +217,12 @@ export class DataService {
   calculateOrValueList(list: boolean[]): boolean {
     return list.some(item => item);
   }
+  getDateFilterFormat = (date?: Date) => {
+    if (!date) {
+      return '';
+    }
+    return `${this.getTwoDigitsNumber(date.getDate())}/${this.getTwoDigitsNumber(date.getMonth() + 1)}/${date.getFullYear()}`;
+  }
+
+  getTwoDigitsNumber = (digit: number) => digit > 9 ? digit : `0${digit}`;
 }

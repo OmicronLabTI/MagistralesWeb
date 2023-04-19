@@ -12,8 +12,8 @@ namespace Omicron.Usuarios.Services.Pedidos
     using System.Text;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Usuarios.Entities.Model;
+    using Omicron.Usuarios.Resources.Exceptions;
 
     /// <summary>
     /// The class for pedido service.

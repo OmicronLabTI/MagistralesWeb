@@ -1,4 +1,4 @@
-import { IMaterialRequestRes } from 'src/app/model/http/materialReques';
+import { IMaterialHistoryRes, IMaterialRequestRes } from 'src/app/model/http/materialReques';
 
 export const MaterialRequestMock: IMaterialRequestRes = {
     code: 200,
@@ -30,4 +30,47 @@ export const MaterialRequestMock: IMaterialRequestRes = {
         creationUserId: '12/12/21',
         creationDate: '12/12/21',
     }
+};
+
+export const MaterialRequestHistoryMock: IMaterialHistoryRes = {
+    code: 200,
+    userError: null,
+    exceptionMessage: null,
+    success: true,
+    response: [
+        {
+            docEntry: 7750,
+            itemCode: '1001   100 SB',
+            description: 'Sulfato de Cobre 5 gr, Sobres',
+            applicantName: 'benny benny',
+            quantity: 1.8989,
+            unit: 'Paquete',
+            targetWarehosue: 'MG',
+            docDate: '14/03/2023',
+            status: 'Abierto'
+        },
+        {
+            docEntry: 7750,
+            itemCode: '1001   100 SB',
+            description: 'Sulfato de Cobre 5 gr, Sobres',
+            applicantName: 'benny benny',
+            quantity: 1.8989,
+            unit: 'Paquete',
+            targetWarehosue: 'MG',
+            docDate: '14/03/2023',
+            status: 'Cerrado'
+        },
+        {
+            docEntry: 7750,
+            itemCode: '1001   100 SB',
+            description: 'Sulfato de Cobre 5 gr, Sobres',
+            applicantName: 'benny benny',
+            quantity: 1.8989,
+            unit: 'Paquete',
+            targetWarehosue: 'MG',
+            docDate: '2023-03-14T00:00:00',
+            status: 'Cancelado'
+        }
+    ],
+    comments: 477
 };

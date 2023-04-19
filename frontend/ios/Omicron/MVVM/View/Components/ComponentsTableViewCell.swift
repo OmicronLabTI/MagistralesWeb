@@ -15,8 +15,8 @@ class ComponentsTableViewCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
         let fontSize = CGFloat(17)
-        productCodeLabel.font = UIFont(name: FontsNames.SFProDisplayMedium, size: fontSize)
-        descriptionLabel.font = UIFont(name: FontsNames.SFProDisplayMedium, size: fontSize)
+        productCodeLabel.font = UIFont(name: FontsNames.FrutigerNextLTMedium, size: fontSize)
+        descriptionLabel.font = UIFont(name: FontsNames.FrutigerNextLTMedium, size: fontSize)
     }
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
