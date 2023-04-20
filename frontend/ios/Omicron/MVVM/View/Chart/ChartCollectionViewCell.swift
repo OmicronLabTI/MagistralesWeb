@@ -91,7 +91,7 @@ class ChartCollectionViewCell: UICollectionViewCell, ChartViewDelegate {
         let myAttrString = NSAttributedString(
               string: extraData,
               attributes: [NSAttributedString.Key.foregroundColor: OmicronColors.blue,
-                           NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 25)])
+                           NSAttributedString.Key.font: UIFont.fontDefaultBold(25)])
 
         pieChartView.centerAttributedText = myAttrString
 

@@ -73,15 +73,15 @@ class CommentsViewController: UIViewController {
     func initComponents() {
         mainView.layer.cornerRadius = 10
         titleLabel.text = "Comentarios"
-        titleLabel.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: 22)
+        titleLabel.font = .fontDefaultBold(22)
         cancelButton.setTitle("Cancelar", for: .normal)
-        cancelButton.titleLabel?.font = UIFont(name: FontsNames.FrutigerNextLTRegular, size: 17)
+        cancelButton.titleLabel?.font = .fontDefaultRegular(17)
         cancelButton.setTitleColor(.systemRed, for: .normal)
         aceptButton.setTitle("Aceptar", for: .normal)
-        aceptButton.titleLabel?.font = UIFont(name: FontsNames.FrutigerNextLTRegular, size: 17)
+        aceptButton.titleLabel?.font = .fontDefaultRegular(17)
 //        aceptButton.setTitleColor(.white, for: .normal)
 //        aceptButton.backgroundColor = UIColor.systemGreen
         textView.text = String()
-        textView.font = UIFont(name: FontsNames.FrutigerNextLTRegular, size: 20)
+        textView.font = .fontDefaultRegular(20)
     }
 }

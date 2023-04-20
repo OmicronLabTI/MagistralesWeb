@@ -36,7 +36,7 @@ extension DateRangeSelectorViewController {
         .dayItemProvider { day in
             return CalendarItemModel<DayLabel>(
               invariantViewProperties: .init(
-                font: UIFont.systemFont(ofSize: 18),
+                font: .fontDefaultRegular(18),
                 textColor: self.validateIsDisabledDate(day.description) ? OmicronColors.ligthGray :
                     self.validateIsSelectedItem(day.description) ? .white : .darkGray,
                 backgroundColor: self.validateIsSelectedItem(day.description) ?
@@ -47,7 +47,7 @@ extension DateRangeSelectorViewController {
         .monthHeaderItemProvider({ month in
             return CalendarItemModel<MonthLabel>(
               invariantViewProperties: .init(
-                font: UIFont.systemFont(ofSize: 25),
+                font: .fontDefaultRegular(25),
                 textColor: UIColor.black,
                 backgroundColor: .clear),
               viewModel: .init(month: month))
