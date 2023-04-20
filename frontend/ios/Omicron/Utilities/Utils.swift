@@ -23,16 +23,16 @@ class UtilsManager {
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 10
         button.layer.borderColor = color.cgColor
-        button.titleLabel?.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: 16)
+            button.titleLabel?.font = .fontDefaultBold(16)
         button.backgroundColor = backgroudColor
     }
     func labelsStyle(label: UILabel, text: String, fontSize: CGFloat, typeFont: String = "medium") {
         label.text = text
         switch typeFont {
         case "bold":
-            label.font = UIFont(name: FontsNames.FrutigerNextLTBold, size: fontSize)
+            label.font = .fontDefaultBold(fontSize)
         default:
-            label.font = UIFont(name: FontsNames.FrutigerNextLTMedium, size: fontSize)
+            label.font = .fontDefaultMedium(fontSize)
         }
     }
     func changeIconButton(button: UIButton, iconName: String) {
@@ -47,7 +47,7 @@ class UtilsManager {
                               options: .regularExpression, range: NSMakeRange(0, str.length))
         if range.length > 0 { att.addAttribute(NSAttributedString.Key.foregroundColor, value: textColor, range: range)
             att.addAttribute(NSAttributedString.Key.font,
-                             value: UIFont(name: FontsNames.FrutigerNextLTBold, size: fontSize) as Any, range: range)
+                             value: UIFont.fontDefaultBold(fontSize) as Any, range: range)
         }
         return att
     }

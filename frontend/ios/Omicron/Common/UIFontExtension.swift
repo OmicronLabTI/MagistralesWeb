@@ -19,7 +19,19 @@ extension UIFontDescriptor.AttributeName {
 }
 
 extension UIFont {
-
+    
+    static func fontDefaultBold(_ size : CGFloat) -> UIFont {
+        return UIFont(name: FontsNames.FrutigerNextLTBold, size: size) ?? .systemFont(ofSize: size)
+    }
+    static func fontDefaultRegular(_ size : CGFloat) -> UIFont {
+        return UIFont(name: FontsNames.FrutigerNextLTRegular, size: size) ?? .systemFont(ofSize: size)
+    }
+    static func fontDefaultMedium(_ size : CGFloat) -> UIFont {
+        return UIFont(name: FontsNames.FrutigerNextLTMedium, size: size) ?? .systemFont(ofSize: size)
+    }
+    static func fontDefaultLight(_ size : CGFloat) -> UIFont {
+        return UIFont(name: FontsNames.FrutigerNextLTLight, size: size) ?? .systemFont(ofSize: size)
+    }
   @objc class func mySystemFont(ofSize size: CGFloat) -> UIFont {
         return UIFont(name: AppFontName.regular, size: size)!
   }
