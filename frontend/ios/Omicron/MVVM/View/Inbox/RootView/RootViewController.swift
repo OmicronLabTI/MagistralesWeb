@@ -86,10 +86,10 @@ class RootViewController: UIViewController {
         let navLabel = UILabel(frame: (self.navigationController?.navigationBar.frame)!)
         navLabel.numberOfLines = 0
         let navTitle = NSMutableAttributedString(string: "Hola\n", attributes: [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10.0)
+            NSAttributedString.Key.font: UIFont.fontDefaultRegular(10)
         ])
         navTitle.append(NSMutableAttributedString(string: getUserInfo(), attributes: [
-            NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17.0)
+            NSAttributedString.Key.font: UIFont.fontDefaultBold(17)
         ]))
         navLabel.attributedText = navTitle
         self.rolLabel.text = rootViewModel.userType == .qfb ? "QUÍMICO": "TÉCNICO"
