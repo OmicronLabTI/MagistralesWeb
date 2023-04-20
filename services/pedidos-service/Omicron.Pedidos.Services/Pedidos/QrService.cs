@@ -316,7 +316,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
                 parameters.IsBoldFont = true;
                 var remisionType = ServiceShared.CalculateTernary(string.IsNullOrEmpty(modelQr.Omi) || modelQr.Omi == "N", ServiceConstants.RemisionType, ServiceConstants.RemisionOmiType);
-                using var memoryStrem = this.AddTextToSKQr(surface, modelQr.NeedsCooling, $"{remisionType}{ServiceConstants.QrBottomTextRemision}", modelQr.RemisionId.ToString(), parameters, false, topText);
+                var memoryStrem = this.AddTextToSKQr(surface, modelQr.NeedsCooling, $"{remisionType}{ServiceConstants.QrBottomTextRemision}", modelQr.RemisionId.ToString(), parameters, false, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
                 memoryStrem.Position = 0;
 
@@ -361,7 +361,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 parameters.QrRectxTop = parameters.LabelRectx;
                 parameters.QrRectyTop = parameters.LabelRecty;
 
-                using var memoryStrem = this.AddTextToSKQr(surface, false, modelQr.PedidoId.ToString(), string.Empty, parameters, false, topText);
+                var memoryStrem = this.AddTextToSKQr(surface, false, modelQr.PedidoId.ToString(), string.Empty, parameters, false, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"MU{modelQr.PedidoId}qr.png");
                 memoryStrem.Position = 0;
 
@@ -398,7 +398,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
                 var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
                 parameters.IsBoldFont = true;
-                using var memoryStrem = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters, false);
+                var memoryStrem = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters, false);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
                 memoryStrem.Position = 0;
 
