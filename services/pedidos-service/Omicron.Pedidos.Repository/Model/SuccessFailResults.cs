@@ -17,6 +17,7 @@ namespace Omicron.Pedidos.Entities.Model
     /// </summary>
     /// <typeparam name="T">Class type.</typeparam>
     public class SuccessFailResults<T>
+        where T : class
     {
         /// <summary>
         /// Gets success items on response.
