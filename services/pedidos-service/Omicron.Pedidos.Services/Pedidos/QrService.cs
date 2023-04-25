@@ -10,9 +10,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 {
     using System;
     using System.Collections.Generic;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+    using System.Drawing.Imaging;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
@@ -23,8 +25,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.Azure;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Utils;
-    using SkiaSharp;
-    using SkiaSharp.QrCode;
+    using ZXing;
 
     /// <summary>
     /// Class to create the Qrs.
@@ -266,17 +267,19 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<MagistralQrModel>(so.MagistralQr);
                 modelQr.Quantity = Math.Round(modelQr.Quantity, 1);
-                var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(new { modelQr.SaleOrder, modelQr.ProductionOrder, modelQr.Quantity, modelQr.NeedsCooling, modelQr.ItemCode, Dxp = modelQr.DocNumDxp }));
+                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(new { modelQr.SaleOrder, modelQr.ProductionOrder, modelQr.Quantity, modelQr.NeedsCooling, modelQr.ItemCode, Dxp = modelQr.DocNumDxp }));
 
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
                 var dxpDocNum = string.IsNullOrEmpty(modelQr.DocNumDxp) ? $"P:{modelQr.SaleOrder}" : $"S:{ServiceUtils.GetSubstring(modelQr.DocNumDxp, 6)} P:{modelQr.SaleOrder}";
                 var topText = string.Format(ServiceConstants.QrTopTextOrden, dxpDocNum, modelQr.ItemCode);
                 parameters.IsBoldFont = false;
-                var streamQr = this.AddTextToSKQr(surface, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, true, topText);
+                bitmap = this.AddTextToQr(bitmap, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, true, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");
-                streamQr.Position = 0;
+                var memoryStrem = new MemoryStream();
+                bitmap.Save(memoryStrem, ImageFormat.Png);
+                memoryStrem.Position = 0;
 
-                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, streamQr, "png"));
+                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
 
                 var modelToSave = new ProductionOrderQr
                 {
@@ -306,7 +309,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
-                var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
+                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
 
                 if (!string.IsNullOrEmpty(modelQr.Ship))
                 {
@@ -316,8 +319,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
                 parameters.IsBoldFont = true;
                 var remisionType = ServiceShared.CalculateTernary(string.IsNullOrEmpty(modelQr.Omi) || modelQr.Omi == "N", ServiceConstants.RemisionType, ServiceConstants.RemisionOmiType);
-                using var memoryStrem = this.AddTextToSKQr(surface, modelQr.NeedsCooling, $"{remisionType}{ServiceConstants.QrBottomTextRemision}", modelQr.RemisionId.ToString(), parameters, false, topText);
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, $"{remisionType}{ServiceConstants.QrBottomTextRemision}", modelQr.RemisionId.ToString(), parameters, false, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
+
+                var memoryStrem = new MemoryStream();
+                bitmap.Save(memoryStrem, ImageFormat.Png);
                 memoryStrem.Position = 0;
 
                 await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
@@ -346,12 +352,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionRemisionQrModel>();
+            var memoryStrem = new MemoryStream();
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).ToList();
 
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
-                var surface = this.DrawFilledSkRectangle(parameters.QrWidth, parameters.QrHeight);
+                var bitmap = this.DrawFilledRectangle(parameters.QrWidth, parameters.QrHeight);
 
                 var topText = $"{modelQr.Ship}:";
                 parameters.IsBoldFont = true;
@@ -361,8 +368,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 parameters.QrRectxTop = parameters.LabelRectx;
                 parameters.QrRectyTop = parameters.LabelRecty;
 
-                using var memoryStrem = this.AddTextToSKQr(surface, false, modelQr.PedidoId.ToString(), string.Empty, parameters, false, topText);
+                bitmap = this.AddTextToQr(bitmap, false, modelQr.PedidoId.ToString(), string.Empty, parameters, false, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"MU{modelQr.PedidoId}qr.png");
+
+                memoryStrem.Flush();
+                bitmap.Save(memoryStrem, ImageFormat.Png);
                 memoryStrem.Position = 0;
 
                 await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
@@ -391,15 +401,19 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionFacturaQrModel>();
+            var memoryStrem = new MemoryStream();
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.InvoiceQr)).ToList();
 
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
-                var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
+                var bitmap = this.CreateQr(parameters, JsonConvert.SerializeObject(modelQr));
                 parameters.IsBoldFont = true;
-                using var memoryStrem = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters, false);
+                bitmap = this.AddTextToQr(bitmap, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters, false);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
+
+                memoryStrem.Flush();
+                bitmap.Save(memoryStrem, ImageFormat.Png);
                 memoryStrem.Position = 0;
 
                 await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
@@ -429,44 +443,38 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="parameters">The parameters data.</param>
         /// <param name="textToConvert">The text to use.</param>
         /// <returns>the bitmap.</returns>
-        private SKSurface CreateSKQrCode(QrDimensionsModel parameters, string textToConvert)
+        private Bitmap CreateQr(QrDimensionsModel parameters, string textToConvert)
         {
-            using var generator = new QRCodeGenerator();
-            var level = ECCLevel.H;
-            var qr = generator.CreateQrCode(textToConvert, level, true);
-            var info = new SKImageInfo(parameters.QrWidth, parameters.QrHeight, SKColorType.Rgba8888, SKAlphaType.Premul);
-            var surface = SKSurface.Create(info);
-            var canvas = surface.Canvas;
-            canvas.Clear();
-            var rect = SKRect.Create((int)((parameters.QrWidth / 2) - (parameters.QrWidth * ServiceConstants.QrSize / 2)), (int)((parameters.QrHeight / 2) - (parameters.QrHeight * ServiceConstants.QrSize / 2)), (int)(parameters.QrWidth * ServiceConstants.QrSize), (int)(parameters.QrHeight * ServiceConstants.QrSize));
-            canvas.Render(qr, rect, SKColor.Parse("FFFFFF "), SKColor.Parse("000000"));
-            return surface;
+            var writer = new BarcodeWriter()
+            {
+                Format = BarcodeFormat.QR_CODE,
+                Options = new ZXing.Common.EncodingOptions()
+                {
+                    Height = parameters.QrHeight,
+                    Width = parameters.QrWidth,
+                    Margin = parameters.QrMargin,
+                },
+            };
+
+            return writer.Write(textToConvert);
+        }
+
+        private Bitmap DrawFilledRectangle(int width, int heigth)
+        {
+            Bitmap bmp = new Bitmap(width, heigth);
+            using (Graphics graph = Graphics.FromImage(bmp))
+            {
+                Rectangle imageSize = new Rectangle(0, 0, width, heigth);
+                graph.FillRectangle(Brushes.White, imageSize);
+            }
+
+            return bmp;
         }
 
         /// <summary>
         /// Add custom text to QR.
         /// </summary>
-        /// <param name="width">Width to the Rectangle.</param>
-        /// <param name="heigth">Heigth to the Rectangle.</param>
-        /// <returns>SKSurface.</returns>
-        private SKSurface DrawFilledSkRectangle(int width, int heigth)
-        {
-            var info = new SKImageInfo(width, heigth, SKColorType.Rgba8888, SKAlphaType.Premul);
-            var surface = SKSurface.Create(info);
-            var canvas = surface.Canvas;
-            var paint = new SKPaint();
-            paint.Style = SKPaintStyle.Fill;
-            paint.IsAntialias = true;
-            canvas.Clear(SKColors.White);
-
-            // canvas.DrawRect(0, 0, width, heigth, paint);
-            return surface;
-        }
-
-        /// <summary>
-        /// Add custom text to QR.
-        /// </summary>
-        /// <param name="surface">the SK Surface.</param>
+        /// <param name="qrsBitmap">the bitmap.</param>
         /// <param name="needsCoolingFlag">the flag if it needs cooling.</param>
         /// <param name="botomText">the botom text.</param>
         /// <param name="identifierToPlace">the id to place.</param>
@@ -474,121 +482,61 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="needTopTextRotated">Bool need top text rotated.</param>
         /// <param name="topText">Top text.</param>
         /// <returns>the bitmap to return.</returns>
-        private MemoryStream AddTextToSKQr(SKSurface surface, bool needsCoolingFlag, string botomText, string identifierToPlace, QrDimensionsModel parameters, bool needTopTextRotated, string topText = null)
+        private Bitmap AddTextToQr(Bitmap qrsBitmap, bool needsCoolingFlag, string botomText, string identifierToPlace, QrDimensionsModel parameters, bool needTopTextRotated, string topText = null)
         {
-            var canvas = surface.Canvas;
             var needsCooling = needsCoolingFlag ? ServiceConstants.NeedsCooling : string.Empty;
             var bottomText = string.Format(botomText, identifierToPlace, needsCooling);
 
-            var paint = new SKPaint();
-            paint.Color = SKColors.Black;
-            paint.IsAntialias = true;
-            paint.TextSize = parameters.QrBottomTextSize + 5;
+            var graphic = Graphics.FromImage(qrsBitmap);
+            graphic.SmoothingMode = SmoothingMode.AntiAlias;
+            graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            var fontStyle = parameters.IsBoldFont ? new Font(ServiceConstants.QrTextFontType, parameters.QrBottomTextSize, FontStyle.Bold) : new Font(ServiceConstants.QrTextFontType, parameters.QrBottomTextSize);
+            this.DrawRectangleText(graphic, parameters.QrRectx, parameters.QrRecty, parameters.QrRectWidth, parameters.QrRectHeight, bottomText, fontStyle, false, 0);
 
-            // paint.TextAlign = SKTextAlign.Center;
-            paint.Typeface = SKTypeface.FromFamilyName(ServiceConstants.QrTextFontType, parameters.IsBoldFont ? SKFontStyleWeight.Bold : SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright);
-
-            this.DrawRectangleSKText(paint, ref canvas, parameters.QrRectx, parameters.QrRecty, parameters.QrRectWidth, parameters.QrRectHeight, bottomText, false, 0);
             if (!string.IsNullOrEmpty(topText))
             {
-                this.CreateQrTopSkText(paint, ref canvas, parameters, topText, needTopTextRotated);
+                this.CreateQrTopText(graphic, parameters, topText, fontStyle, needTopTextRotated);
             }
 
-            SKImage image = surface.Snapshot();
-            SKData data = image.Encode(SKEncodedImageFormat.Png, 90);
-            MemoryStream streamQr = new MemoryStream(data.ToArray());
-            return streamQr;
+            graphic.Flush();
+            return qrsBitmap;
         }
 
         /// <summary>
         /// Draw an rectangule with text in a graphic.
         /// </summary>
-        /// <param name="paint">Sk Paint.</param>
-        /// <param name="canvas">SK Canvas.</param>
+        /// <param name="graphic">Graph where the rectangle will be draw.</param>
         /// <param name="rectx">Position X.</param>
         /// <param name="recty">Position Y.</param>
         /// <param name="width">Regtangle Width.</param>
         /// <param name="heigth">Rectangle heigth.</param>
         /// <param name="text">Text to draw.</param>
+        /// <param name="font">Font elements.</param>
         /// <param name="needRotate">need rottion.</param>
-        private void DrawRectangleSKText(SKPaint paint, ref SKCanvas canvas, int rectx, int recty, int width, int heigth, string text, bool needRotate, int angleRotate)
+        private void DrawRectangleText(Graphics graphic, int rectx, int recty, int width, int heigth, string text, Font font, bool needRotate, int angleRotate)
         {
+            RectangleF rectf = new RectangleF(rectx, recty, width, heigth);
+
             if (needRotate)
             {
-                canvas.RotateDegrees(angleRotate);
+                graphic.RotateTransform(angleRotate);
             }
 
-            this.DrawTextArea(ref canvas, paint, rectx, recty, 24, 30, text);
-            canvas.RotateDegrees(0);
-        }
-
-        /// <summary>
-        /// Draw an text area into text.
-        /// </summary>
-        /// <param name="canvas">Sk Canvas.</param>
-        /// <param name="paint">SK Paint.</param>
-        /// <param name="x">Position X.</param>
-        /// <param name="y">Position Y.</param>
-        /// <param name="maxWidth">Regtangle Width.</param>
-        /// <param name="lineHeight">Line heigth.</param>
-        /// <param name="text">Text to draw.</param>
-        private void DrawTextArea(ref SKCanvas canvas, SKPaint paint, float x, float y, float maxWidth, float lineHeight, string text)
-        {
-            var spaceWidth = paint.MeasureText("\n");
-            var lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            lines = lines.SelectMany(l => this.SplitLine(paint, maxWidth, l, spaceWidth)).ToArray();
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                var line = lines[i];
-                canvas.DrawText(line, x, y, paint);
-                y += lineHeight;
-            }
-        }
-
-        private string[] SplitLine(SKPaint paint, float maxWidth, string text, float spaceWidth)
-        {
-            var result = new List<string>();
-
-            var words = text.Split(new[] { "\n" }, StringSplitOptions.None);
-
-            var line = new StringBuilder();
-            float width = 0;
-            foreach (var word in words)
-            {
-                var wordWidth = paint.MeasureText(word);
-                var wordWithSpaceWidth = wordWidth + spaceWidth;
-                var wordWithSpace = word + " ";
-
-                if (width + wordWidth > maxWidth)
-                {
-                    result.Add(line.ToString());
-                    line = new StringBuilder(wordWithSpace);
-                    width = wordWithSpaceWidth;
-                }
-                else
-                {
-                    line.Append(wordWithSpace);
-                    width += wordWithSpaceWidth;
-                }
-            }
-
-            result.Add(line.ToString());
-
-            return result.ToArray();
+            graphic.DrawString(text, font, Brushes.Black, rectf);
         }
 
         /// <summary>
         /// Draw the top text in QR.
         /// </summary>
-        /// <param name="paint">Sk Paint.</param>
-        /// <param name="canvas">SK Canvas.</param>
+        /// <param name="graphic">Graph where the rectangle will be draw.</param>
         /// <param name="parameters">Parameters.</param>
         /// <param name="topText">Top text to draw.</param>
+        /// <param name="fontStyle">Font Style.</param>
         /// <param name="textRotated">Needs the text rotated.</param>
-        private void CreateQrTopSkText(SKPaint paint, ref SKCanvas canvas, QrDimensionsModel parameters, string topText, bool textRotated)
+        private void CreateQrTopText(Graphics graphic, QrDimensionsModel parameters, string topText, Font fontStyle, bool textRotated)
         {
-            this.DrawRectangleSKText(paint, ref canvas, parameters.QrRectxTop, parameters.QrRectyTop, parameters.QrRectWidth, parameters.QrRectHeight, topText, textRotated, parameters.QrTopTextRotationAngle);
+            this.DrawRectangleText(graphic, parameters.QrRectxTop, parameters.QrRectyTop, parameters.QrRectWidth, parameters.QrRectHeight, topText, fontStyle, textRotated, parameters.QrTopTextRotationAngle);
         }
 
         private QrDimensionsModel GetMagistralParameters(List<ParametersModel> parameters)
