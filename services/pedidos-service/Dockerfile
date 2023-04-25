@@ -11,6 +11,10 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 COPY --from=build-env /app/out .
 
+RUN apk add icu-libs --no-cache tzdata
+RUN apk add libgdiplus --repository https://dl-3.alpinelinux.org/alpine/edge/testing/
+RUN apk update
+
 ENV TZ America/Mexico_City
 EXPOSE 5103
 ENTRYPOINT ["dotnet", "Omicron.Pedidos.Api.dll"]
