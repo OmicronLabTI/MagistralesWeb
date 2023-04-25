@@ -13,14 +13,13 @@
     <PackageReference Include="Confluent.Kafka" Version="1.9.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.3" />
     <PackageReference Include="SkiaSharp.QrCode" Version="0.6.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.90" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="ZXing.Net" Version="0.16.8" />
     <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" Version="0.16.10" />
   </ItemGroup>
