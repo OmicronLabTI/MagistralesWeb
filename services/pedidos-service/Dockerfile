@@ -12,5 +12,5 @@ WORKDIR /app
 COPY --from=build-env /app/out .
 
 ENV TZ America/Mexico_City
-EXPOSE 5103
+
 ENTRYPOINT ["dotnet", "Omicron.Pedidos.Api.dll"]
