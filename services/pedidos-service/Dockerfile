@@ -16,5 +16,5 @@ RUN apk add libgdiplus --repository https://dl-3.alpinelinux.org/alpine/edge/tes
 RUN apk update
 
 ENV TZ America/Mexico_City
-EXPOSE 5103
+
 ENTRYPOINT ["dotnet", "Omicron.Pedidos.Api.dll"]
