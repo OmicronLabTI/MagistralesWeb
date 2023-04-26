@@ -27,6 +27,7 @@ import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { DateService } from '../../services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from '../../services/filters.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-detalle-formula',
@@ -55,7 +56,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   ];
   dataSource = new MatTableDataSource<IFormulaDetalleReq>();
   comments = CONST_STRING.empty;
-  plannedQuantity = CONST_NUMBER.zero;
+  plannedQuantityControl = new FormControl(0, []);
   warehouse = CONST_STRING.empty;
   endDateGeneral = new Date();
   isComponentsToDelete = false;
@@ -109,6 +110,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
       this.getIsReadyTOSave();
       this.getIsElementsToSave();
     }));
+    this.subscription.add(this.plannedQuantityControl.valueChanges.subscribe(() => this.changeData()));
   }
 
   getDetalleFormula() {
@@ -120,7 +122,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   onSuccessDetailFormula(response: IFormulaReq) {
     this.currentOrdenFabricacionId = response.productionOrderId;
     this.oldDataFormulaDetail = response;
-    this.plannedQuantity = response.plannedQuantity;
+    this.plannedQuantityControl.setValue(response.plannedQuantity, { emitEvent: false });
     this.warehouse = response.warehouse;
     this.comments = response.comments || '';
     const endDate = this.oldDataFormulaDetail.dueDate.split('/');
@@ -188,7 +190,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   onBaseQuantityChange(baseQuantity: any, index: number) {
     if (baseQuantity !== null && baseQuantity > 0) {
       this.dataSource.data[index].requiredQuantity =
-        Number((baseQuantity * this.plannedQuantity).toFixed(CONST_NUMBER.ten));
+        Number((baseQuantity * this.plannedQuantityControl.value).toFixed(CONST_NUMBER.ten));
       this.getIsReadyTOSave();
       this.getAction(index);
     }
@@ -197,7 +199,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   onRequiredQuantityChange(requiredQuantity: any, index: number) {
     if (requiredQuantity !== null && requiredQuantity > 0) {
       this.dataSource.data[index].baseQuantity =
-        Number((requiredQuantity / this.plannedQuantity).toFixed(CONST_NUMBER.ten));
+        Number((requiredQuantity / this.plannedQuantityControl.value).toFixed(CONST_NUMBER.ten));
       this.getIsReadyTOSave();
       this.getAction(index);
     }
@@ -276,7 +278,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
   createDetailTOSave(isFromSave: boolean = false) {
     const detailComponentsTOSave = new IComponentsSaveReq();
     detailComponentsTOSave.fabOrderId = Number(this.ordenFabricacionId);
-    detailComponentsTOSave.plannedQuantity = isFromSave ? Number(this.plannedQuantity) : this.oldDataFormulaDetail.plannedQuantity;
+    detailComponentsTOSave.plannedQuantity = isFromSave ? Number(this.plannedQuantityControl.value) :
+      this.oldDataFormulaDetail.plannedQuantity;
     detailComponentsTOSave.warehouse = isFromSave ? this.warehouse : this.oldDataFormulaDetail.warehouse;
     detailComponentsTOSave.comments = isFromSave ? this.comments : this.oldDataFormulaDetail.comments;
 
@@ -294,10 +297,10 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
 
 
   changeData() {
-    this.isPlannedQuantityError = this.plannedQuantity === null || this.plannedQuantity <= 0
-      || this.plannedQuantity === 0;
+    this.isPlannedQuantityError = this.plannedQuantityControl.value === null || Number(this.plannedQuantityControl.value) <= 0
+      || Number(this.plannedQuantityControl.value) === 0;
     this.dataSource.data.forEach(component => {
-      component.requiredQuantity = component.baseQuantity * this.plannedQuantity;
+      component.requiredQuantity = component.baseQuantity * Number(this.plannedQuantityControl.value);
     });
 
     this.getIsReadyTOSave();
@@ -405,7 +408,7 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         productId: element.productId,
         description: element.description.toUpperCase(),
         baseQuantity: element.baseQuantity,
-        requiredQuantity: parseFloat((element.baseQuantity * this.plannedQuantity).toFixed(CONST_NUMBER.ten)),
+        requiredQuantity: parseFloat((element.baseQuantity * Number(this.plannedQuantityControl.value)).toFixed(CONST_NUMBER.ten)),
         consumed: 0,
         available: 0,
         unit: 'GR',
