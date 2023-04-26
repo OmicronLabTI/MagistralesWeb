@@ -42,6 +42,7 @@ class OrderDetailViewController: UIViewController {
     @IBOutlet weak var detailTable: UITableView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var destinyLabel: UILabel!
+    @IBOutlet weak var labelSpaceQuantity: UILabel!
     @IBOutlet weak var quantityTextField: UITextField!
     @IBOutlet weak var quantityButtonChange: UIButton!
 
