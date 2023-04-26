@@ -57,14 +57,14 @@ class SignaturePadViewController: UIViewController {
         signaturePadView.delegate = self
         view.layer.cornerRadius = 10
         signatureTitleLabel.text = self.titleView
-        signatureTitleLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 22)
+        signatureTitleLabel.font = .fontDefaultBold(22)
         clearButton.setTitle(CommonStrings.clear, for: .normal)
-        clearButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 17)
+        clearButton.titleLabel?.font = .fontDefaultRegular(17)
         cancelButton.setTitle(CommonStrings.cancel, for: .normal)
-        cancelButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 17)
+        cancelButton.titleLabel?.font = .fontDefaultRegular(17)
         cancelButton.setTitleColor(.systemRed, for: .normal)
         acceptButton.setTitle(CommonStrings.accept, for: .normal)
-        acceptButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayRegular, size: 17)
+        acceptButton.titleLabel?.font = .fontDefaultRegular(17)
     }
 }
 extension SignaturePadViewController: SignaturePadDelegate {

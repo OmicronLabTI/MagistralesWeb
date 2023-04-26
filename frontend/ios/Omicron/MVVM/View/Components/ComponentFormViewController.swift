@@ -38,7 +38,7 @@ class ComponentFormViewController: FormViewController {
         LabelRow.defaultCellUpdate = { cell, _ in
             cell.contentView.backgroundColor = .red
             cell.textLabel?.textColor = .white
-            cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 9)
+            cell.textLabel?.font = .fontDefaultBold(9)
             cell.textLabel?.textAlignment = .left
             cell.textLabel?.numberOfLines = 2
         }

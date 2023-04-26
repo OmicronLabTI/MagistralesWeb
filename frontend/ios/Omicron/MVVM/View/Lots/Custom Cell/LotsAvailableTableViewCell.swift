@@ -28,7 +28,7 @@ class LotsAvailableTableViewCell: UITableViewCell {
         UtilsManager.shared.labelsStyle(label: self.lotsLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.quantityAvailableLabel, text: "", fontSize: 14)
         UtilsManager.shared.labelsStyle(label: self.quantityAssignedLabel, text: "", fontSize: 14)
-        self.quantitySelected.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 14)
+        self.quantitySelected.font = .fontDefaultMedium(14)
         self.quantitySelected.delegate = self
     }
     override func setSelected(_ selected: Bool, animated: Bool) {

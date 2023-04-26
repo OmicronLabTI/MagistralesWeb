@@ -274,5 +274,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapDxpService.GetOrdersActive(ordersid));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetRawMaterialRequest(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetRawMaterialRequest(parameters));
+        }
     }
 }

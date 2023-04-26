@@ -159,7 +159,7 @@ namespace Omicron.Reporting.Services.ReportBuilder.SuppliesWarehouse
                     .AddStyle(this.GetRowStyle(styleCellBlue, styleCellWhite, rowNumber))
                     .SetTextAlignment(TextAlignment.JUSTIFIED));
 
-                cellSupplie = new Cell().Add(new Paragraph(product.RequestQuantity.ToString()));
+                cellSupplie = new Cell().Add(new Paragraph(product.RequestQuantity.ToString("#,#.#######")));
                 tableSupplies.AddCell(cellSupplie.AddStyle(this.GetRowStyle(styleCellBlue, styleCellWhite, rowNumber)));
 
                 cellSupplie = new Cell().Add(new Paragraph(product.Warehouse ?? string.Empty));

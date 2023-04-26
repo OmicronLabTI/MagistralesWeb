@@ -104,12 +104,23 @@ describe('FinalizeOrdersComponent', () => {
       imports: [MATERIAL_COMPONENTS, FormsModule, HttpClientTestingModule, RouterTestingModule],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefSpy },
-        { provide: MAT_DIALOG_DATA, useValue: { finalizeOrdersData: [] } },
+        {
+          provide: MAT_DIALOG_DATA, useValue: {
+            finalizeOrdersData: [{
+              docNum: 0,
+              itemCode: 'example'
+            },
+            {
+              docNum: 1,
+              itemCode: 'example2'
+            }]
+          }
+        },
         DatePipe,
         { provide: PedidosService, useValue: orderServiceSpy },
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy},
+        { provide: LocalStorageService, useValue: localStorageServiceSpy },
         { provide: DateService, useValue: dateServiceSpy },
         { provide: MessagesService, useValue: messagesServiceSpy },
       ]
@@ -130,7 +141,7 @@ describe('FinalizeOrdersComponent', () => {
     iOrdersReq = [
       {
         isChecked: true,
-        docNum: 1,
+        docNum: 0,
         fabOrderId: 1,
         itemCode: '1',
         description: '',
@@ -232,27 +243,27 @@ describe('FinalizeOrdersComponent', () => {
         batch: ''
       }];
     component.ordersIsolated = [{
-        isChecked: true,
-        docNum: 1,
-        fabOrderId: 1,
-        itemCode: '1',
-        description: 'string',
-        quantity: 1,
-        createDate: '',
-        finishDate: '',
-        qfb: '',
-        status: '',
-        class: '',
-        unit: '',
-        batche: '1',
-        quantityFinish: 1,
-        endDate: new Date('22/12/12'),
-        fabDate: new Date('22/12/12'),
-        isWithError: false,
-        isWithErrorBatch: false,
-        hasMissingStock: false,
-        batch: ''
-      }];
+      isChecked: true,
+      docNum: 1,
+      fabOrderId: 1,
+      itemCode: '1',
+      description: 'string',
+      quantity: 1,
+      createDate: '',
+      finishDate: '',
+      qfb: '',
+      status: '',
+      class: '',
+      unit: '',
+      batche: '1',
+      quantityFinish: 1,
+      endDate: new Date('22/12/12'),
+      fabDate: new Date('22/12/12'),
+      isWithError: false,
+      isWithErrorBatch: false,
+      hasMissingStock: false,
+      batch: ''
+    }];
     // orderServiceSpy.getIfExistsBatchCode();
     component.focusOutLote(0);
     // expect(component.isCorrectData).toBeTruthy();
@@ -286,27 +297,27 @@ describe('FinalizeOrdersComponent', () => {
         batch: ''
       }];
     component.ordersIsolated = [{
-        isChecked: true,
-        docNum: 1,
-        fabOrderId: 1,
-        itemCode: '1',
-        description: 'string',
-        quantity: 1,
-        createDate: '',
-        finishDate: '',
-        qfb: '',
-        status: '',
-        class: '',
-        unit: '',
-        batche: '1',
-        quantityFinish: 1,
-        endDate: new Date('22/12/12'),
-        fabDate: new Date('22/12/12'),
-        isWithError: false,
-        isWithErrorBatch: false,
-        hasMissingStock: false,
-        batch: ''
-      }];
+      isChecked: true,
+      docNum: 1,
+      fabOrderId: 1,
+      itemCode: '1',
+      description: 'string',
+      quantity: 1,
+      createDate: '',
+      finishDate: '',
+      qfb: '',
+      status: '',
+      class: '',
+      unit: '',
+      batche: '1',
+      quantityFinish: 1,
+      endDate: new Date('22/12/12'),
+      fabDate: new Date('22/12/12'),
+      isWithError: false,
+      isWithErrorBatch: false,
+      hasMissingStock: false,
+      batch: ''
+    }];
     // orderServiceSpy.getIfExistsBatchCode();
     component.focusOutLote(0);
     // expect(component.isCorrectData).toBeTruthy();
@@ -340,27 +351,27 @@ describe('FinalizeOrdersComponent', () => {
         batch: ''
       }];
     component.ordersIsolated = [{
-        isChecked: true,
-        docNum: 1,
-        fabOrderId: 1,
-        itemCode: '1',
-        description: 'string',
-        quantity: 1,
-        createDate: '',
-        finishDate: '',
-        qfb: '',
-        status: '',
-        class: '',
-        unit: '',
-        batche: '1',
-        quantityFinish: 1,
-        endDate: new Date('22/12/12'),
-        fabDate: new Date('22/12/12'),
-        isWithError: false,
-        isWithErrorBatch: false,
-        hasMissingStock: false,
-        batch: ''
-      }];
+      isChecked: true,
+      docNum: 1,
+      fabOrderId: 1,
+      itemCode: '1',
+      description: 'string',
+      quantity: 1,
+      createDate: '',
+      finishDate: '',
+      qfb: '',
+      status: '',
+      class: '',
+      unit: '',
+      batche: '1',
+      quantityFinish: 1,
+      endDate: new Date('22/12/12'),
+      fabDate: new Date('22/12/12'),
+      isWithError: false,
+      isWithErrorBatch: false,
+      hasMissingStock: false,
+      batch: ''
+    }];
     orderServiceSpy.getIfExistsBatchCode.and.callFake(() => {
       return throwError({ error: true });
     });

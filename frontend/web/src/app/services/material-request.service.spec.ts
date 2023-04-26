@@ -26,4 +26,12 @@ describe('MaterialRequestService', () => {
     const service: MaterialRequestService = TestBed.get(MaterialRequestService);
     expect(service.postMaterialRequest({data: {} as RawRequest, userId: 'userId'}) instanceof Observable).toBeTruthy();
   });
+  it('should getDestinationStore', () => {
+    const service: MaterialRequestService = TestBed.get(MaterialRequestService);
+    expect(service.getDestinationStore() instanceof Observable).toBeTruthy();
+  });
+  it('should gethistoryMaterial', () => {
+    const service: MaterialRequestService = TestBed.get(MaterialRequestService);
+    expect(service.gethistoryMaterial('') instanceof Observable).toBeTruthy();
+  });
 });

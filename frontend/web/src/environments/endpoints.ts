@@ -42,7 +42,7 @@ export const Endpoints = {
     rangeDateInit:
     `${environment.baseUrl}/api/catalogos/params/contains/field?MagistralesDaysToLook=MagistralesDaysToLook&ProductNoLabel=ProductNoLabel`,
     refuseOrdersService: `${environment.baseUrl}/api/pedidos/salesOrder/reject`,
-},
+  },
   inventoryBatches: {
     getInventoryBatches: `${environment.baseUrl}/api/sapadapter/componentes/lotes/`,
     assignBatches: `${environment.baseUrl}/api/pedidos/assignBatches`
@@ -55,7 +55,7 @@ export const Endpoints = {
     viewPdf: `${environment.baseUrl}/api/pedidos/saleorder/pdf`,
     ordersToDelivered: `${environment.baseUrl}/api/pedidos/status/fabOrder`,
     finishLabels: `${environment.baseUrl}/api/pedidos/finish/label`,
-    qrByOrder: `${environment.baseUrl}/api/pedidos/qr/magistral` ,
+    qrByOrder: `${environment.baseUrl}/api/pedidos/qr/magistral`,
     customList: `${environment.baseUrl}/api/pedidos/components/custom`,
   },
   productivity: {
@@ -64,7 +64,8 @@ export const Endpoints = {
   },
   materialRequest: {
     getPreMaterialRequest: `${environment.baseUrl}/api/warehouses/prerequest/rawmaterial`,
-    postMaterialRequest: `${environment.baseUrl}/api/warehouses/request/rawmaterial`
+    postMaterialRequest: `${environment.baseUrl}/api/warehouses/request/rawmaterial`,
+    historyMaterial: `${environment.baseUrl}/api/sapadapter/get/rawmaterialrequest`
   },
   reporting: {
     getRawMaterialRequestFilePreview: `${environment.baseUrl}/api/reporting/preview/request/rawmaterial/pdf`

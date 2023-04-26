@@ -19,6 +19,7 @@ target 'Omicron' do
   pod 'Charts', '~> 4.1.0'
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
+  pod 'HorizonCalendar'
   
   target 'OmicronQA' do
     # Comment the next line if you don't want to use dynamic frameworks
@@ -38,6 +39,7 @@ target 'Omicron' do
     pod 'Charts', '~> 4.1.0'
     pod 'Firebase/Analytics'
     pod 'Firebase/Crashlytics'
+    pod 'HorizonCalendar'
     end
     
     target 'OmicronDEV' do
@@ -58,6 +60,7 @@ target 'Omicron' do
       pod 'Charts', '~> 4.1.0'
       pod 'Firebase/Analytics'
       pod 'Firebase/Crashlytics'
+      pod 'HorizonCalendar'
       end
     
     target 'OmicronUAT' do
@@ -78,6 +81,7 @@ target 'Omicron' do
       pod 'Charts', '~> 4.1.0'
       pod 'Firebase/Analytics'
       pod 'Firebase/Crashlytics'
+      pod 'HorizonCalendar'
       end
  
   target 'OmicronTests' do

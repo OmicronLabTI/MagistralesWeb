@@ -15,8 +15,8 @@ class MostCommonComponentsTableViewCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
         let fontSize = CGFloat(17)
-        productCodeLabel.font = UIFont(name: FontsNames.SFProDisplayMedium, size: fontSize)
-        descriptionLabel.font = UIFont(name: FontsNames.SFProDisplayMedium, size: fontSize)
+        productCodeLabel.font = .fontDefaultMedium(fontSize)
+        descriptionLabel.font = .fontDefaultMedium(fontSize)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

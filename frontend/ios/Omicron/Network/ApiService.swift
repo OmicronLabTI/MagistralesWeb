@@ -32,6 +32,7 @@ enum ApiService {
     case getBulks(data: BulkListRequest)
     case createOrderBulk(data: BulkOrderCreate)
     case createComponents(data: SendToStoreRequest)
+    case getHistory(data: RawMaterialHistoryReq)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -97,6 +98,8 @@ extension ApiService: AuthorizedTargetType {
             return "/pedidos/fabOrder/isolated"
         case .createComponents:
             return "/warehouses/request/rawmaterial"
+        case .getHistory:
+            return "/sapadapter/get/rawmaterialrequest"
         }
     }
     var method: Moya.Method {
@@ -120,7 +123,8 @@ extension ApiService: AuthorizedTargetType {
              .getConnect,
              .getMostCommonComponents,
              .getBulks,
-             .getContainer:
+             .getContainer,
+             .getHistory:
             return .get
         case .deleteItemOfOrdenDetail,
              .changeStatusOrder,
@@ -168,6 +172,8 @@ extension ApiService: AuthorizedTargetType {
             return .requestJSONEncodable(data)
         case .getMostCommonComponents(let data):
             return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
+        case .getHistory(let data):
+            return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
         }
     }
     var sampleData: Data {
@@ -194,6 +200,12 @@ extension ApiService: AuthorizedTargetType {
             return data
         case .getOrdenDetail:
             guard let url = Bundle.main.url(forResource: "orderDetail", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .getHistory:
+            guard let url = Bundle.main.url(forResource: "getHistory", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }
@@ -302,7 +314,6 @@ extension ApiService: AuthorizedTargetType {
             }
             return data
         }
-
     }
     var headers: [String: String]? {
         return ["Content-type": "application/json"]

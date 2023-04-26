@@ -45,7 +45,24 @@ class RootViewController: UIViewController {
         self.setTitleCustom()
         // Configure Refresh Control
         self.refreshControl.addTarget(self, action: #selector(self.refreshOrders), for: .valueChanged)
+        self.showModalAutoHideBind()
     }
+
+    func showModalAutoHideBind() {
+        self.rootViewModel.modalHideAuto.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
+            if message != "" {
+                let alert = UIAlertController(
+                    title: message,
+                    message: nil,
+                    preferredStyle: .alert)
+                self?.present(alert, animated: true, completion: nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(3000)) {
+                        self?.view.window?.rootViewController?.dismiss(animated: true)
+                    }
+            }
+        }).disposed(by: self.disposeBag)
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.rootViewModel.getOrders()
@@ -69,10 +86,10 @@ class RootViewController: UIViewController {
         let navLabel = UILabel(frame: (self.navigationController?.navigationBar.frame)!)
         navLabel.numberOfLines = 0
         let navTitle = NSMutableAttributedString(string: "Hola\n", attributes: [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10.0)
+            NSAttributedString.Key.font: UIFont.fontDefaultRegular(10)
         ])
         navTitle.append(NSMutableAttributedString(string: getUserInfo(), attributes: [
-            NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17.0)
+            NSAttributedString.Key.font: UIFont.fontDefaultBold(17)
         ]))
         navLabel.attributedText = navTitle
         self.rolLabel.text = rootViewModel.userType == .qfb ? "QUÍMICO": "TÉCNICO"
@@ -188,57 +205,6 @@ class RootViewController: UIViewController {
             self.rootViewModel.searchFilter.onNext(itemToSearch)
         }).disposed(by: disposeBag)
     }
-    func initComponents() {
-        self.viewTable.tableFooterView = UIView()
-        self.viewTable.backgroundColor = OmicronColors.tableStatus
-        self.myOrdesLabel.backgroundColor = OmicronColors.tableStatus
-        self.myOrdesLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 25)
-        self.searchOrdesSearchBar.placeholder = CommonStrings.searchOrden
-        self.searchOrdesSearchBar.backgroundColor = OmicronColors.tableStatus
-        self.searchOrdesSearchBar.barTintColor = OmicronColors.tableStatus
-        self.view.backgroundColor = OmicronColors.tableStatus
-        self.refreshControl.tintColor = OmicronColors.blue
-        self.refreshControl.attributedTitle = NSAttributedString(string: "Actualizando datos")
-        self.logoutButton.setTitle("Cerrar sesión", for: .normal)
-        self.logoutButton.tintColor = .darkGray
-        self.logoutButton.setImage(UIImage(named: ImageButtonNames.logout), for: .normal)
-        self.logoutButton.imageView?.contentMode = .scaleAspectFit
-        self.logoutButton.imageEdgeInsets = UIEdgeInsets(top: 15, left: 10, bottom: 15, right: 260)
-        self.logoutButton.titleEdgeInsets.left = 20
-        self.logoutButton.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayMedium, size: 17)
-        self.versionLabel.attributedText = UtilsManager.shared
-            .boldSubstring(
-                text: "Versión: \(CommonStrings.version) (\(CommonStrings.build))",
-                textToBold: "Versión: ")
-        self.versionLabel.textColor = OmicronColors.blue
-        self.versionLabel.font = UIFont(name: FontsNames.SFProDisplayBold, size: 12)
-        UtilsManager.shared.setStyleButtonStatus(button: self.createSupplies,
-                                                 title: StatusNameConstants.getSupplies,
-                                                 color: OmicronColors.primaryBlue,
-                                                 titleColor: OmicronColors.primaryBlue)
-        UtilsManager.shared.setStyleButtonStatus(button: self.createBulk,
-                                                 title: StatusNameConstants.createBulk,
-                                                 color: OmicronColors.primaryBlue,
-                                                 backgroudColor: OmicronColors.primaryBlue,
-                                                 titleColor: .white)
-        self.createBulk.isHidden = rootViewModel.userType != .qfb
-        self.createSupplies.isHidden = rootViewModel.userType != .qfb
-        self.createBulk.rx.tap.bind { _ in
-            self.openBulkProducts()
-        }
-    }
-
-    func openBulkProducts() {
-        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
-        let componentsVC = storyboard.instantiateViewController(
-            withIdentifier: ViewControllerIdentifiers.componentsViewController) as? ComponentsViewController
-        componentsVC?.typeOpen = .bulkOrder
-        componentsVC!.clearObservables()
-        let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
-        navigationVC.modalPresentationStyle = .formSheet
-        self.present(navigationVC, animated: true, completion: nil)
-    }
-
     private func getUserInfo() -> String {
         guard let userInfo =  Persistence.shared.getUserData() else { return "" }
         return "\(userInfo.firstName!) \(userInfo.lastName!)"

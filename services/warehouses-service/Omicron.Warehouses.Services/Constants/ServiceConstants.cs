@@ -24,17 +24,5 @@ namespace Omicron.Warehouses.Services.Constants
         /// the insert value.
         /// </summary>
         public const string RedisComponentsInputRequest = "redisComponentsInputRequest";
-
-        /// <summary>
-        /// Gets the status of the order.
-        /// </summary>
-        /// <value>
-        /// the status.
-        /// </value>
-        public static List<string> ListComponentsMostAssigned { get; } = new List<string>
-        {
-            "EN",
-            "EM",
-        };
     }
 }

@@ -8,7 +8,6 @@
 
 namespace Omicron.Usuarios.Test.Services.Catalogs
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -16,11 +15,10 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     using Microsoft.EntityFrameworkCore;
     using Moq;
     using NUnit.Framework;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Usuarios.DataAccess.DAO.User;
-    using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Context;
     using Omicron.Usuarios.Entities.Model;
+    using Omicron.Usuarios.Resources.Exceptions;
     using Omicron.Usuarios.Services.Constants;
     using Omicron.Usuarios.Services.Mapping;
     using Omicron.Usuarios.Services.Pedidos;

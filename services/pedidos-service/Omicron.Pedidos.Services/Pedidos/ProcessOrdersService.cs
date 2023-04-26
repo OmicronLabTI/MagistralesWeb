@@ -13,9 +13,9 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
-    using Omicron.LeadToCash.Resources.Exceptions;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Redis;
@@ -335,7 +335,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="listOrders">List with orders.</param>
         /// <param name="userLogistic">List with user.</param>
         /// <returns>the first is the list to insert the second the list to update.</returns>
-        private Tuple<List<UserOrderModel>, List<UserOrderModel>, List<SalesLogs>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders,  List<string> errors, List<OrderWithDetailModel> listOrders, string userLogistic, List<UserOrderModel> newOrdersToCreate)
+        private Tuple<List<UserOrderModel>, List<UserOrderModel>, List<SalesLogs>> GetListToUpdateInsert(List<int> pedidosId, List<UserOrderModel> dataBaseSaleOrders, List<string> errors, List<OrderWithDetailModel> listOrders, string userLogistic, List<UserOrderModel> newOrdersToCreate)
         {
             var listToInsert = new List<UserOrderModel>();
             var listToUpdate = new List<UserOrderModel>();

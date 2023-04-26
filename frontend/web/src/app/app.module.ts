@@ -18,6 +18,8 @@ import { ComponentslistComponent } from './dialogs/componentslist/componentslist
 import {RequestSignatureDialogComponent} from './dialogs/request-signature-dialog/request-signature-dialog.component';
 import {SignaturePadModule} from 'angular2-signaturepad';
 import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comments-dialog.component';
+import { NgxMaskModule } from 'ngx-mask';
+import { LimitEntiresDirective } from './directives/limit-entires.directive';
 
 @NgModule({
     declarations: [
@@ -34,7 +36,8 @@ import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comm
         FlexLayoutModule,
         FormsModule,
         InfiniteScrollModule,
-        SignaturePadModule
+        SignaturePadModule,
+        NgxMaskModule.forRoot(),
     ],
     providers: [
         APP_PROVIDERS,

@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>438961866496-0grt639vh1tdc0d2ea9p789u6qchk19b.apps.googleusercontent.com</string>
+	<string>410977073741-fga9rhq2qm6bgqb0kaofndsvuguu0bs4.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.438961866496-0grt639vh1tdc0d2ea9p789u6qchk19b</string>
+	<string>com.googleusercontent.apps.410977073741-fga9rhq2qm6bgqb0kaofndsvuguu0bs4</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCQV26UB0f8qdehr00aKPCU_DNE9P58emM</string>
+	<string>AIzaSyA8k_tvsaNclwOsgiDZdO30HF1S0yglmwU</string>
 	<key>GCM_SENDER_ID</key>
-	<string>438961866496</string>
+	<string>410977073741</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.axity.Omicron-QA</string>
 	<key>PROJECT_ID</key>
-	<string>omicronlab-43713</string>
+	<string>omicron-qa</string>
 	<key>STORAGE_BUCKET</key>
-	<string>omicronlab-43713.appspot.com</string>
+	<string>omicron-qa.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:438961866496:ios:8e0352b454106cf43095e5</string>
+	<string>1:410977073741:ios:68b7fc4a8eabc71ef07a04</string>
 </dict>
 </plist>

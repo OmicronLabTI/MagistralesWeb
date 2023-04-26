@@ -37,14 +37,21 @@ class ComponentsViewController: UIViewController {
         viewModelBindingCommon()
         hideMostCommonComponents()
         bindingDataToMostComoonTable()
-        componentsViewModel.getMostCommonComponentsService(type: self.typeOpen == .detailOrder ?
-                                                            TypeMostCommonRequest.detailOrder.rawValue :
-                                                            TypeMostCommonRequest.inputRequest.rawValue)
+        let typeReq = getMostCommonTypeRequest()
+        componentsViewModel.getMostCommonComponentsService(type: typeReq)
     }
     func clearObservables() {
         componentsViewModel.clearObservables()
     }
-
+    func getMostCommonTypeRequest() -> String {
+        let dictTypes = [
+            TypeComponentsOpenDialog.supplies: TypeMostCommonRequest.inputRequest.rawValue,
+            TypeComponentsOpenDialog.detailOrder: TypeMostCommonRequest.detailOrder.rawValue,
+            TypeComponentsOpenDialog.bulkOrder: TypeMostCommonRequest.bulkOrder.rawValue,
+        ]
+        
+        return dictTypes[self.typeOpen] ?? String()
+    }
     func viewModelBindingCommon() {
         componentsViewModel.bindingData.map({ data -> Bool in
             return data.count > 0
@@ -125,7 +132,7 @@ class ComponentsViewController: UIViewController {
         self.tagsView.delegate = self
         self.tagsView.tagBackgroundColor = OmicronColors.blue
         self.tagsView.bounds = self.tagsView.bounds.inset(by: UIEdgeInsets(top: 0, left: -10, bottom: 0, right: 20))
-        self.heightMostCommonTableConstraint.constant = typeOpen == .bulkOrder ? 0 : 200
+        self.heightMostCommonTableConstraint.constant = 200
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: CommonStrings.cancel, style: .plain, target: self,
             action: #selector(ComponentsViewController.cancelButtonTap(sender:)))

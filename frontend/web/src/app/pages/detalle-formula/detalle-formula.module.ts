@@ -6,17 +6,21 @@ import {DetalleFormulaComponent} from './detalle-formula.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { FaborderListModule } from '../faborders-list/faborder-list.module';
 import {ComponentsModule} from '../../components/components.module';
+import { NgxMaskModule } from 'ngx-mask';
+import { DirectivesModule } from 'src/app/directives/directives.module';
 
 @NgModule({
   declarations: [DetalleFormulaComponent],
     imports: [
+        DirectivesModule,
         CommonModule,
         DetalleFormulaRoutingModule,
         MATERIAL_COMPONENTS,
         FormsModule,
         ReactiveFormsModule,
         FaborderListModule,
-        ComponentsModule
+        ComponentsModule,
+        NgxMaskModule
     ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

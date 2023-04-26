@@ -5,13 +5,13 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {ConsumeService} from './consume.service';
 import {IUserReq} from '../model/http/users';
 import {Endpoints} from '../../environments/endpoints';
+import { Observable, of } from 'rxjs';
 describe('UsersService', () => {
   let consumeServiceSpy: jasmine.SpyObj<ConsumeService>;
   beforeEach(() => {
     consumeServiceSpy = jasmine.createSpyObj<ConsumeService>('ConsumeService', [
       'httpGet', 'httpPost', 'httpPut', 'httpPatch'
     ]);
-
     TestBed.configureTestingModule({
 
       imports: [
@@ -65,5 +65,12 @@ describe('UsersService', () => {
     userReq.role = 1;
     service.updateUser(userReq);
     expect(consumeServiceSpy.httpPut).toHaveBeenCalledWith(Endpoints.users.update, userReq);
+  });
+  it('should getClasifications', () => {
+    const service: UsersService = TestBed.get(UsersService);
+    consumeServiceSpy.httpGet.and.returnValue(of());
+    expect(service.getClasifications() instanceof Observable).toBe(true);
+    expect(service.getTehcnicalUsers() instanceof Observable).toBe(true);
+    expect(service.getWorkTeam('') instanceof Observable).toBe(true);
   });
 });

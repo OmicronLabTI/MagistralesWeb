@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {DateformatPipe} from './dateformat.pipe';
+import { SanitizeHtmlPipe } from './sanitizeHtml/sanitize-html.pipe';
 
 
 
 @NgModule({
-  declarations: [DateformatPipe],
+  declarations: [DateformatPipe, SanitizeHtmlPipe],
   exports: [
-    DateformatPipe
+    DateformatPipe,
+    SanitizeHtmlPipe
   ],
   imports: [
-    CommonModule
+    CommonModule,
   ]
 })
 export class PipesModule { }

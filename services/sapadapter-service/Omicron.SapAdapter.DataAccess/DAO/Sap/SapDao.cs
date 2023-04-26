@@ -8,19 +8,20 @@
 
 namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.Json.Serialization;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using Omicron.SapAdapter.DataAccess.Extensions;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model;
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Serilog;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
+    using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Entities.Model.Wraps;
-    using Omicron.SapAdapter.DataAccess.Extensions;
+    using Serilog;
 
     /// <summary>
     /// Class for the dao.
@@ -59,6 +60,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
                 .Where(x => ids.Contains(x.OrderModel.DocNum))
+                .AsNoTracking()
                 .GetCompleteOrdery();
             return await this.RetryQuery(query);
         }
@@ -71,6 +73,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
                 .Where(s => s.OrderModel.DocNum >= init && s.OrderModel.DocNum <= end)
+                .AsNoTracking()
                 .GetCompleteOrdery();
             return await this.RetryQuery(query);
         }
@@ -80,6 +83,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
                 .Where(s => s.OrderModel.DocNumDxp == docNumDxp || s.OrderModel.DocNumDxp.Contains(docNumDxp))
+                .AsNoTracking()
                 .GetCompleteOrdery();
             return (await this.RetryQuery(query)).ToList();
         }
@@ -116,7 +120,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<IEnumerable<SalesPersonModel>> GetAsesorWithEmailByIdsFromTheAsesor(List<int> salesPrsonId)
         {
-            return await this.RetryQuery(this.databaseContext.SalesPersonModel.Where(x => salesPrsonId.Contains(x.AsesorId)));
+            return await this.RetryQuery(this.databaseContext.SalesPersonModel.Where(x => salesPrsonId.Contains(x.AsesorId)).AsNoTracking());
 
         }
 
@@ -265,7 +269,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<OrdenFabricacionModel>> GetFabOrderBySalesOrderId(List<int> salesOrderIds)
         {
-            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => salesOrderIds.Contains(x.PedidoId.Value)).ToListAsync();
+            var query = await this.databaseContext.OrdenFabricacionModel.Where(x => salesOrderIds.Contains(x.PedidoId.Value)).AsNoTracking().ToListAsync();
             return query;
         }
 
@@ -314,7 +318,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DetalleFormulaModel>> GetDetalleFormulaByProdOrdId(List<int> ordersId)
         {
-            return await this.RetryQuery(this.databaseContext.DetalleFormulaModel.Where(x => ordersId.Contains(x.OrderFabId)));
+            return await this.RetryQuery(this.databaseContext.DetalleFormulaModel.Where(x => ordersId.Contains(x.OrderFabId)).AsNoTracking());
         }
 
         /// <inheritdoc/>
@@ -327,14 +331,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(string value, string warehouse)
         {
-            var products = await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.ProductoId.ToLower().Contains(value)));
+            var products = await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.ProductoId.ToLower().Contains(value)).AsNoTracking());
             return await this.GetComponentes(products.ToList(), warehouse);
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(List<string> value, string warehouse)
+        public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsItemCode(List<string> value, string warehouse) 
         {
-            var products = await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => value.Contains(x.ProductoId.ToLower())));
+            var products = await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => value.Contains(x.ProductoId.ToLower())).AsNoTracking());
             return await this.GetComponentes(products.ToList(), warehouse);
         }
 
@@ -345,7 +349,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the value.</returns>
         public async Task<IEnumerable<CompleteDetalleFormulaModel>> GetItemsByContainsDescription(string value, string warehouse)
         {
-            var products = await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.ProductoName.ToLower().Contains(value)));
+            var products = await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.ProductoName.ToLower().Contains(value)).AsNoTracking());
             return await this.GetComponentes(products.ToList(), warehouse);
         }
 
@@ -421,7 +425,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<IEnumerable<ProductoModel>> GetProductById(string itemCode)
         {
-            return await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.ProductoId == itemCode));
+            return await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.ProductoId == itemCode).AsNoTracking());
         }
 
         /// <summary>
@@ -435,12 +439,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var listToReturn = new List<CompleteBatchesJoinModel>();
             var listItems = components.Select(x => x.ProductId).ToList();
 
-            var querybatches = (await this.databaseContext.BatchesQuantity.Where(x => listItems.Contains(x.ItemCode)).ToListAsync()).ToList();
+            var querybatches = (await this.databaseContext.BatchesQuantity.Where(x => listItems.Contains(x.ItemCode)).AsNoTracking().ToListAsync());
             querybatches = querybatches.Where(x => components.Any(y => y.ProductId == x.ItemCode && y.Warehouse == x.WhsCode)).ToList();
 
             var validBatches = querybatches.Select(x => x.SysNumber);
 
-            var batches = (await this.databaseContext.Batches.Where(x => listItems.Contains(x.ItemCode)).ToListAsync()).ToList();
+            var batches = (await this.databaseContext.Batches.Where(x => listItems.Contains(x.ItemCode)).AsNoTracking().ToListAsync());
             batches = batches.Where(x => validBatches.Contains(x.SysNumber)).ToList();
 
             querybatches.ForEach(x =>
@@ -465,13 +469,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(string itemCode, int orderId)
         {
-            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => x.DocNum == orderId && x.ItemCode.Equals(itemCode)));
+            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => x.DocNum == orderId && x.ItemCode.Equals(itemCode)).AsNoTracking());
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId)
         {
-            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum)));
+            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum)).AsNoTracking());
         }
 
         /// <summary>
@@ -481,7 +485,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(List<int> logEntry)
         {
-            return await this.RetryQuery(this.databaseContext.BatchesTransactionQtyModel.Where(x => logEntry.Contains(x.LogEntry)));
+            return await this.RetryQuery(this.databaseContext.BatchesTransactionQtyModel.Where(x => logEntry.Contains(x.LogEntry)).AsNoTracking());
         }
 
         /// <inheritdoc/>
@@ -517,13 +521,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                           select product;
             }
 
-            return await results.ToListAsync();
+            return await results.AsNoTracking().ToListAsync();
         }
 
         /// <inheritdoc/>
         public async Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids)
         {
-            return await this.databaseContext.AttachmentModel.Where(x => ids.Contains(x.AbsEntry)).ToListAsync();
+            return await this.databaseContext.AttachmentModel.Where(x => ids.Contains(x.AbsEntry)).AsNoTracking().ToListAsync();
         }
 
         /// <inheritdoc/>
@@ -690,7 +694,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailBySaleOrder(List<int> ordersId)
         {
-            return (await this.RetryQuery(this.databaseContext.DeliveryDetailModel.Where(x => x.BaseEntry.HasValue && ordersId.Contains(x.BaseEntry.Value))));
+            return (await this.RetryQuery(this.databaseContext.DeliveryDetailModel.Where(x => x.BaseEntry.HasValue && ordersId.Contains(x.BaseEntry.Value)).AsNoTracking()));
         }
 
         /// <inheritdoc/>
@@ -740,13 +744,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<ProductoModel>> GetProductByCodeBar(string codeBar)
         {
-            return await this.databaseContext.ProductoModel.Where(x => x.BarCode.Equals(codeBar)).ToListAsync();
+            return await this.databaseContext.ProductoModel.Where(x => x.BarCode.Equals(codeBar)).AsNoTracking().ToListAsync();
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<DeliverModel>> GetDeliveryModelByDocNum(List<int> docuNums)
         {
-            return await this.RetryQuery(this.databaseContext.DeliverModel.Where(x => docuNums.Contains(x.DocNum)));
+            return await this.RetryQuery(this.databaseContext.DeliverModel.Where(x => docuNums.Contains(x.DocNum)).AsNoTracking());
         }
 
         /// <inheritdoc/>
@@ -759,13 +763,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums)
         {
-            return await this.RetryQuery(this.databaseContext.DetallePedido.Where(x => docuNums.Contains(x.PedidoId.Value)));
+            return await this.RetryQuery(this.databaseContext.DetallePedido.Where(x => docuNums.Contains(x.PedidoId.Value)).AsNoTracking());
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderByInvoiceId(List<int> docNums)
         {
-            return await this.RetryQuery(this.databaseContext.InvoiceHeaderModel.Where(x => docNums.Contains(x.InvoiceId)));
+            return await this.RetryQuery(this.databaseContext.InvoiceHeaderModel.Where(x => docNums.Contains(x.InvoiceId)).AsNoTracking());
         }
 
         /// <inheritdoc/>
@@ -838,7 +842,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceDetailModel>> GetInvoiceDetailByDocEntry(List<int> docEntry)
         {
-            return await this.RetryQuery(this.databaseContext.InvoiceDetailModel.Where(x => docEntry.Contains(x.InvoiceId)));
+            return await this.RetryQuery(this.databaseContext.InvoiceDetailModel.Where(x => docEntry.Contains(x.InvoiceId)).AsNoTracking());
         }
 
         /// <inheritdoc/>
@@ -864,7 +868,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeadersByDocNum(List<int> docNum)
         {
-            return await this.RetryQuery(this.databaseContext.InvoiceHeaderModel.Where(x => docNum.Contains(x.DocNum)));
+            return await this.RetryQuery(this.databaseContext.InvoiceHeaderModel.Where(x => docNum.Contains(x.DocNum)).AsNoTracking());
         }
 
         /// <inheritdoc/>
@@ -962,7 +966,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<List<Batches>> GetBatchByProductDistNumber(List<string> productCode, List<string> batchCode)
         {
-            var batches = await this.RetryQuery(this.databaseContext.Batches.Where(x => batchCode.Contains(x.DistNumber)));
+            var batches = await this.RetryQuery(this.databaseContext.Batches.Where(x => batchCode.Contains(x.DistNumber)).AsNoTracking());
 
             return batches.Where(x => productCode.Contains(x.ItemCode)).ToList();
         }
@@ -970,7 +974,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<Repartidores>> GetDeliveryCompanyById(List<short> ids)
         {
-            return await this.RetryQuery(this.databaseContext.Repartidores.Where(x => ids.Contains(x.TrnspCode)));
+            return await this.RetryQuery(this.databaseContext.Repartidores.Where(x => ids.Contains(x.TrnspCode)).AsNoTracking());
         }
 
         /// <inheritdoc/>
@@ -992,13 +996,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<ProductoModel>> GetAllLineProducts()
         {
-            return await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.IsMagistral == "N" && x.IsLine == "Y"));
+            return await this.RetryQuery(this.databaseContext.ProductoModel.Where(x => x.IsMagistral == "N" && x.IsLine == "Y").AsNoTracking());
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<DetallePedidoModel>> GetDetailsbyDocDate(DateTime initDate, DateTime endDate)
         {
-            return await this.RetryQuery(this.databaseContext.DetallePedido.Where(x => x.DocDate >= initDate && x.DocDate <= endDate));
+            return await this.RetryQuery(this.databaseContext.DetallePedido.Where(x => x.DocDate >= initDate && x.DocDate <= endDate).AsNoTracking());
         }
 
         /// <inheritdoc/>
@@ -1030,19 +1034,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<Repartidores>> GetDeliveryCompanies()
         {
-            return await this.RetryQuery(this.databaseContext.Repartidores.Where(x => !string.IsNullOrEmpty(x.TrnspName)));
+            return await this.RetryQuery(this.databaseContext.Repartidores.Where(x => !string.IsNullOrEmpty(x.TrnspName)).AsNoTracking());
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<Batches>> GetBatchesByProdcuts(List<string> productsIds)
         {
-            return await this.RetryQuery(this.databaseContext.Batches.Where(x => productsIds.Contains(x.ItemCode)));
+            return await this.RetryQuery(this.databaseContext.Batches.Where(x => productsIds.Contains(x.ItemCode)).AsNoTracking());
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceByDocDate(DateTime date)
         {
-            return await this.RetryQuery(this.databaseContext.InvoiceHeaderModel.Where(x => x.FechaInicio >= date));
+            return await this.RetryQuery(this.databaseContext.InvoiceHeaderModel.Where(x => x.FechaInicio >= date).AsNoTracking());
         }
 
         /// <inheritdoc/>
@@ -1296,6 +1300,29 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return (await this.RetryQuery(query)).ToList();
         }
 
+        /// <inheritdoc/>
+        public async Task<List<CompleteRawMaterialRequestModel>> GetCompleteRawMaterialRequestByFilters(DateTime initDate, DateTime endDate, string userId)
+        {
+            var query = (from header in this.databaseContext.RawMaterialRequestModel
+                         join detail in this.databaseContext.RawMaterialRequestDetailModel on header.DocEntry equals detail.DocEntry
+                         where header.DocDate >= initDate && header.DocDate <= endDate && !string.IsNullOrEmpty(header.RequestedUserId) && (header.RequestedUserId == userId || userId == null)
+                         select new CompleteRawMaterialRequestModel
+                         {
+                             DocDate = header.DocDate.ToString("dd/MM/yyyy"),
+                             DocEntry = header.DocEntry,
+                             AdditionalComments = header.AdditionalComments,
+                             IsCanceled = header.Canceled == "Y",
+                             Description = detail.Description,
+                             ItemCode = detail.ItemCode,
+                             Quantity = detail.Quantity,
+                             TargetWarehosue = detail.TargetWarehosue,
+                             Unit = detail.Unit,
+                             Status = header.Status,
+                             RequestedUserId = header.RequestedUserId,
+                         }).OrderByDescending(raw => raw.DocEntry).AsNoTracking();
+            return (await this.RetryQuery(query)).ToList();
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>
@@ -1304,15 +1331,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         private async Task<IEnumerable<T>> RetryQuery<T>(IQueryable<T> query)
         {
-            try
-            {
-                return await query.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                this.logger.Error($"Error al correr query {ex.Message} --- {ex.StackTrace}");
-                return await query.ToListAsync();
-            }
+            return await query.ToListAsync();
         }
 
         private async Task<List<CompleteDetalleFormulaModel>> GetComponentes(List<ProductoModel> products, string warehouse)

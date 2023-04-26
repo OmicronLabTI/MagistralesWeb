@@ -108,8 +108,7 @@ class InboxViewController: UIViewController {
     func bindShowConfirmDialog() {
         inboxViewModel.showConfirmDialog.subscribe(onNext: { [weak self] _ in
             let alert = UIAlertController(title: CommonStrings.confirmationMessageFinishedStatus,
-                                          message: nil,
-                                          preferredStyle: .alert)
+                                          message: nil, preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive, handler: nil)
             let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
                 guard let self = self else { return }
@@ -154,8 +153,7 @@ class InboxViewController: UIViewController {
                     return cell
                 }
             })
-        dataSource
-            .configureSupplementaryView = { [weak self] (dataSource, collectionView, _, indexPath)
+        dataSource.configureSupplementaryView = { [weak self] (dataSource, collectionView, _, indexPath)
                 -> UICollectionReusableView in
                 guard let header = collectionView.dequeueReusableSupplementaryView(
                     ofKind: UICollectionView.elementKindSectionHeader,
@@ -224,8 +222,8 @@ class InboxViewController: UIViewController {
                 let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default, handler: { [weak self] _ in
                     guard let self = self else { return }
                     self.view.isUserInteractionEnabled = false
-                    self.inboxViewModel.changeStatus(
-                            indexPath: self.indexPathsSelected, typeOfStatus: data.typeOfStatus)
+                    self.inboxViewModel.changeStatus(indexPath: self.indexPathsSelected,
+                                                     typeOfStatus: data.typeOfStatus)
                 })
                 alert.addAction(cancelAction)
                 alert.addAction(okAction)
@@ -257,24 +255,15 @@ class InboxViewController: UIViewController {
         self.finishedButton.isEnabled = false
         self.packageButton.isEnabled = false
         UtilsManager.shared.setStyleButtonStatus(
-            button: self.finishedButton,
-            title: StatusNameConstants.finishedStatus,
-            color: OmicronColors.finishedStatus,
-            titleColor: OmicronColors.finishedStatus)
-        UtilsManager.shared.setStyleButtonStatus(
-            button: self.pendingButton,
-            title: StatusNameConstants.penddingStatus,
-            color: OmicronColors.pendingStatus,
-            titleColor: OmicronColors.pendingStatus)
-        UtilsManager.shared.setStyleButtonStatus(
-            button: self.processButton,
-            title: StatusNameConstants.inProcessStatus,
-            color: OmicronColors.processStatus,
+            button: self.finishedButton, title: StatusNameConstants.finishedStatus,
+            color: OmicronColors.finishedStatus, titleColor: OmicronColors.finishedStatus)
+        UtilsManager.shared.setStyleButtonStatus(button: self.pendingButton, title: StatusNameConstants.penddingStatus,
+            color: OmicronColors.pendingStatus, titleColor: OmicronColors.pendingStatus)
+        UtilsManager.shared.setStyleButtonStatus(button: self.processButton,
+            title: StatusNameConstants.inProcessStatus, color: OmicronColors.processStatus,
             titleColor: OmicronColors.processStatus)
-        UtilsManager.shared.setStyleButtonStatus(
-            button: self.packageButton,
-            title: StatusNameConstants.package,
-            color: OmicronColors.signColor,
+        UtilsManager.shared.setStyleButtonStatus(button: self.packageButton,
+            title: StatusNameConstants.package, color: OmicronColors.signColor,
             titleColor: OmicronColors.signColor)
     }
     func extensionInitComponents() {
@@ -380,10 +369,6 @@ class InboxViewController: UIViewController {
     }
 
     @IBAction func packageOrdersDidPressed(_ sender: Any) {
-//        if !self.inboxViewModel.validateSelectedOrdersAreSameSAPId(indexPathOfOrdersSelected: indexPathsSelected) {
-//            rootViewModel.error.onNext(Constants.Errors.invalidSapOrderId.rawValue)
-//            return
-//        }
         inboxViewModel.indexPathOfOrdersSelected = indexPathsSelected
         inboxViewModel.showSignatureVc.onNext(CommonStrings.signatureViewTitleTechnical)
     }

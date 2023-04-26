@@ -23,16 +23,16 @@ class UtilsManager {
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 10
         button.layer.borderColor = color.cgColor
-        button.titleLabel?.font = UIFont(name: FontsNames.SFProDisplayBold, size: 16)
+            button.titleLabel?.font = .fontDefaultBold(16)
         button.backgroundColor = backgroudColor
     }
     func labelsStyle(label: UILabel, text: String, fontSize: CGFloat, typeFont: String = "medium") {
         label.text = text
         switch typeFont {
         case "bold":
-            label.font = UIFont(name: FontsNames.SFProDisplayBold, size: fontSize)
+            label.font = .fontDefaultBold(fontSize)
         default:
-            label.font = UIFont(name: FontsNames.SFProDisplayMedium, size: fontSize)
+            label.font = .fontDefaultMedium(fontSize)
         }
     }
     func changeIconButton(button: UIButton, iconName: String) {
@@ -47,7 +47,7 @@ class UtilsManager {
                               options: .regularExpression, range: NSMakeRange(0, str.length))
         if range.length > 0 { att.addAttribute(NSAttributedString.Key.foregroundColor, value: textColor, range: range)
             att.addAttribute(NSAttributedString.Key.font,
-                             value: UIFont(name: FontsNames.SFProDisplayBold, size: fontSize) as Any, range: range)
+                             value: UIFont.fontDefaultBold(fontSize) as Any, range: range)
         }
         return att
     }
@@ -80,6 +80,12 @@ class UtilsManager {
         let formatter = NumberFormatter()
         formatter.minimumFractionDigits = 6
         formatter.numberStyle = .decimal
+        return formatter
+    }
+    func formatterDoublesToString() -> NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 6
+        formatter.numberStyle = .none
         return formatter
     }
     func buildMessageError(error: ValidateOrder, message: String, lastSeparator: String) -> String {
