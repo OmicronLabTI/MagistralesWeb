@@ -64,5 +64,13 @@
 		<sql endDelimiter=";"> 
 		delete from parameters where "Id"=117 and field='CardCodeResponsibleMedic';</sql>	
 	</changeSet>
+	<changeSet author="jcastillo" id="changelog-1.8">
+		<sql endDelimiter=";"> UPDATE parameters set value = 
+		'pedidos@o-lab.mx;atencion@o-lab.mx' where "Id" = 71;</sql>
+		<sql endDelimiter=";"> UPDATE parameters set value = 
+		'almacenmp@o-lab.mx' where "Id" = 2;</sql>
+		<sql endDelimiter=";"> UPDATE parameters set value = 
+		'almacen@o-lab.mx' where "Id" = 123;</sql>		
+	</changeSet>
 </databaseChangeLog>
 
