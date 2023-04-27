@@ -136,6 +136,10 @@ jobs:
       - name: Liquibase update
         working-directory: database/
         run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-prod.properties" update
+      
+      - name: Liquibase Soporte update
+        working-directory: database/
+        run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-soporte.xml" --defaultsFile="liquibase-prod.properties" update
 
       - name: Docker prune
         run: |
