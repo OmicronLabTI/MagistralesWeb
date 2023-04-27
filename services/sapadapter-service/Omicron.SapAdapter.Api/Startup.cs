@@ -20,6 +20,7 @@ namespace Omicron.SapAdapter.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.OpenApi.Models;
     using Omicron.SapAdapter.Api.Filters;
     using Omicron.SapAdapter.DependencyInjection;
@@ -167,22 +168,26 @@ namespace Omicron.SapAdapter.Api
         /// <param name="env">Hosting Environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseAllElasticApm(this.Configuration);
-            app.UseSwagger(c =>
+            if (env.IsProduction())
             {
-                var basepath = this.Configuration["SwaggerAddress"];
+                app.UseAllElasticApm(this.Configuration);
+            }
 
-                c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+            app.UseSwagger(c =>
+        {
+            var basepath = this.Configuration["SwaggerAddress"];
+
+            c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+            {
+                var paths = new OpenApiPaths();
+                foreach (var path in swaggerDoc.Paths)
                 {
-                    var paths = new OpenApiPaths();
-                    foreach (var path in swaggerDoc.Paths)
-                    {
-                        paths.Add(basepath + path.Key, path.Value);
-                    }
+                    paths.Add(basepath + path.Key, path.Value);
+                }
 
-                    swaggerDoc.Paths = paths;
-                });
+                swaggerDoc.Paths = paths;
             });
+        });
 
             app.UseStaticFiles();
             app.UseSwaggerUI(c =>

@@ -51,6 +51,7 @@ extension OrderDetailViewController {
         .subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             self.quantityTextField.isHidden = true
+            self.labelSpaceQuantity.isHidden = true
             self.quantityButtonChange.isHidden = true
             self.quantityPlannedDescriptionLabel.isHidden = false
             self.destinyLabel.isHidden = false
@@ -72,6 +73,7 @@ extension OrderDetailViewController {
                     self.destinyLabel.text = ""
                     self.codeDescriptionLabel.isHidden = true
                     self.containerDescriptionLabel.isHidden = true
+                    self.labelSpaceQuantity.isHidden = false
                     self.validateStatusIsolated()
                     let plannedQ = self.quantityTextField.isHidden ?
                         String(describing: detail.plannedQuantity ?? 0) :
