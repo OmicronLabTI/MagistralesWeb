@@ -133,7 +133,7 @@ namespace Omicron.Reporting.Services.ReportBuilder.SuppliesWarehouse
         {
             if (string.IsNullOrEmpty(this.request.Signature))
             {
-                return new Image(ImageDataFactory.Create(1, 1, 3, 8, new byte[] { 255, 255, 255 }, null));
+                return new Image(ImageDataFactory.Create(1, 1, 3, 8, new byte[] { 237, 237, 237 }, null));
             }
 
             byte[] imageBytes = Convert.FromBase64String(this.request.Signature);
