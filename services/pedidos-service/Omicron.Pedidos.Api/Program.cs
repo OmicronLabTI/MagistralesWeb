@@ -6,34 +6,25 @@
 // </copyright>
 // </summary>
 
-namespace Omicron.Pedidos.Api
+const string APP_NAME = "pedidos-svc";
+
+try
 {
-    using Microsoft.AspNetCore;
-    using Microsoft.AspNetCore.Hosting;
-    using Steeltoe.Extensions.Configuration.PlaceholderCore;
-
-    /// <summary>
-    /// Class Program.
-    /// </summary>
-    public static class Program
-    {
-        /// <summary>
-        /// Main Program.
-        /// </summary>
-        /// <param name="args">List of arguments.</param>
-        public static void Main(string[] args)
-        {
-            CreateWebHostBuilder(args).Build().Run();
-        }
-
-        /// <summary>
-        /// Method to execute app.
-        /// </summary>
-        /// <param name="args">List of arguments.</param>
-        /// <returns>Web Host Builder.</returns>
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-            .AddPlaceholderResolver()
-            .UseStartup<Startup>();
-    }
+    WebApplicationBuilder builder = WebApplication
+        .CreateBuilder(args)
+        .AddPlaceholderResolver();
+    Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
+                .WriteTo.Seq(builder.Configuration["SeqUrl"])
+                .CreateLogger();
+    builder.AppConfiguration()
+        .UseApplication()
+        .Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, $"{APP_NAME} service failed to start.");
+}
+finally
+{
+    Log.CloseAndFlush();
 }

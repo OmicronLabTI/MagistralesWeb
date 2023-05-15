@@ -1079,4 +1079,18 @@
 			<column name="field" value="EmailAlmacen2" />
 		</insert>
 	</changeSet>
+	<changeSet author="jarturoep" id="changelog-1.114">
+		<sql endDelimiter=";"> 
+			UPDATE parameters SET value='15' WHERE "field"='QrMagistralRectHeight';
+			UPDATE parameters SET value='24' WHERE "field"='QrMagistralRectWidth';
+			UPDATE parameters SET value='100' WHERE "field"='QrMagistralRectx';
+			UPDATE parameters SET value='-365' WHERE "field"='QrMagistralRectxTop';
+			UPDATE parameters SET value='365' WHERE "field"='QrMagistralRecty';
+			UPDATE parameters SET value='25' WHERE "field"='QrMagistralRectyTop';
+			UPDATE parameters SET value='15' WHERE "field"='QrDeliveryRectHeight';
+			UPDATE parameters SET value='24' WHERE "field"='QrDeliveryRectWidth';
+			UPDATE parameters SET value='410' WHERE "field"='QrDeliveryRecty';
+			UPDATE parameters SET value='70' WHERE "field"='QrDeliveryRectyTop';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
