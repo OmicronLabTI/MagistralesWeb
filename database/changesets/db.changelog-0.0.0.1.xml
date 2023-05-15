@@ -1079,7 +1079,7 @@
 			<column name="field" value="EmailAlmacen2" />
 		</insert>
 	</changeSet>
-	<changeSet author="jarturoep" id="changelog-1.114">
+	<changeSet author="jarturoep" id="changelog-1.115">
 		<sql endDelimiter=";"> 
 			UPDATE parameters SET value='15' WHERE "field"='QrMagistralRectHeight';
 			UPDATE parameters SET value='24' WHERE "field"='QrMagistralRectWidth';
