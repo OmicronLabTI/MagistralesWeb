@@ -483,6 +483,11 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: sap_di_api_url
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: redis
           ports:
             - containerPort: 80
           resources:
