@@ -73,6 +73,17 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
+        /// Calculate value from validation.
+        /// </summary>
+        /// <param name="value">True value.</param>
+        /// <param name="defaultValue">False value.</param>
+        /// <returns>the type T..</returns>
+        public static bool GetValueFromParamterBooleanParse(ParametersModel value, bool defaultValue)
+        {
+            return value != null ? bool.Parse(value.Value) : defaultValue;
+        }
+
+        /// <summary>
         /// get the line products order header.
         /// </summary>
         /// <typeparam name="T">the type.</typeparam>
