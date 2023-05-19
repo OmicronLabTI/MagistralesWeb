@@ -272,7 +272,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
                 var dxpDocNum = string.IsNullOrEmpty(modelQr.DocNumDxp) ? $"P:{modelQr.SaleOrder}" : $"S:{ServiceUtils.GetSubstring(modelQr.DocNumDxp, 6)} P:{modelQr.SaleOrder}";
                 var topText = string.Format(ServiceConstants.QrTopTextOrden, dxpDocNum, modelQr.ItemCode);
-                parameters.IsBoldFont = false;
+
                 var streamQr = this.AddTextToSKQr(surface, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, true, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");
                 streamQr.Position = 0;
@@ -298,7 +298,13 @@ namespace Omicron.Pedidos.Services.Pedidos
             return listUrls;
         }
 
-        private async Task<List<string>> GetUrlQrRemision(List<UserOrderModel> saleOrders, QrDimensionsModel parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
+        private async Task<List<string>> GetUrlQrRemision(
+            List<UserOrderModel> saleOrders,
+            QrDimensionsModel parameters,
+            List<string> existingUrls,
+            string azureAccount,
+            string azureKey,
+            string container)
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionRemisionQrModel>();
@@ -315,12 +321,11 @@ namespace Omicron.Pedidos.Services.Pedidos
                 }
 
                 var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
-                parameters.IsBoldFont = true;
                 var remisionType = ServiceShared.CalculateTernary(string.IsNullOrEmpty(modelQr.Omi) || modelQr.Omi == "N", ServiceConstants.RemisionType, ServiceConstants.RemisionOmiType);
+
                 var memoryStrem = this.AddTextToSKQr(surface, modelQr.NeedsCooling, $"{remisionType}{ServiceConstants.QrBottomTextRemision}", modelQr.RemisionId.ToString(), parameters, false, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
                 memoryStrem.Position = 0;
-
                 await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
 
                 var modelToSave = new ProductionRemisionQrModel
@@ -355,14 +360,13 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var surface = this.DrawFilledSkRectangle(parameters.QrWidth, parameters.QrHeight);
 
                 var topText = $"{modelQr.Ship}:";
-                parameters.IsBoldFont = true;
                 parameters.QrRectx = parameters.LabelSaleOrderRectx;
                 parameters.QrRecty = parameters.LabelSaleOrderRecty;
                 parameters.QrBottomTextSize = parameters.LabelMuestraFontSize;
                 parameters.QrRectxTop = parameters.LabelRectx;
                 parameters.QrRectyTop = parameters.LabelRecty;
 
-                var memoryStrem = this.AddTextToSKQr(surface, false, modelQr.PedidoId.ToString(), string.Empty, parameters, false, topText);
+                using var memoryStrem = this.AddTextToSKQr(surface, false, modelQr.PedidoId.ToString(), string.Empty, parameters, false, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"MU{modelQr.PedidoId}qr.png");
                 memoryStrem.Position = 0;
 
@@ -398,7 +402,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
                 var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
-                parameters.IsBoldFont = true;
                 var memoryStrem = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters, false);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
                 memoryStrem.Position = 0;
@@ -475,7 +478,14 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="needTopTextRotated">Bool need top text rotated.</param>
         /// <param name="topText">Top text.</param>
         /// <returns>the bitmap to return.</returns>
-        private MemoryStream AddTextToSKQr(SKSurface surface, bool needsCoolingFlag, string botomText, string identifierToPlace, QrDimensionsModel parameters, bool needTopTextRotated, string topText = null)
+        private MemoryStream AddTextToSKQr(
+            SKSurface surface,
+            bool needsCoolingFlag,
+            string botomText,
+            string identifierToPlace,
+            QrDimensionsModel parameters,
+            bool needTopTextRotated,
+            string topText = null)
         {
             var canvas = surface.Canvas;
             var needsCooling = needsCoolingFlag ? ServiceConstants.NeedsCooling : string.Empty;
@@ -485,9 +495,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             paint.Color = SKColors.Black;
             paint.IsAntialias = true;
             paint.TextSize = parameters.QrBottomTextSize + 5;
-
-            // paint.TextAlign = SKTextAlign.Center;
-            paint.Typeface = SKTypeface.FromFamilyName(ServiceConstants.QrTextFontType, parameters.IsBoldFont ? SKFontStyleWeight.Bold : SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright);
+            paint.Typeface = SKTypeface.FromFamilyName(ServiceConstants.QrTextFontType, parameters.QrTextIsBold ? SKFontStyleWeight.Bold : SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright);
 
             this.DrawRectangleSKText(paint, ref canvas, parameters.QrRectx, parameters.QrRecty, parameters.QrRectWidth, parameters.QrRectHeight, bottomText, false, 0);
             if (!string.IsNullOrEmpty(topText))
@@ -605,6 +613,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrWidth));
             var marginField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrMargin));
             var rotateAngleTop = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralAngleRotTop));
+            var textIsBold = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryTextIsBold));
 
             return new QrDimensionsModel
             {
@@ -619,6 +628,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 QrWidth = ServiceShared.GetValueFromParamterIntParse(widthField, DefaultHeightWidth),
                 QrMargin = ServiceShared.GetValueFromParamterIntParse(marginField, DefaultMargin),
                 QrTopTextRotationAngle = ServiceShared.GetValueFromParamterIntParse(rotateAngleTop, -90),
+                QrTextIsBold = ServiceShared.GetValueFromParamterBooleanParse(textIsBold, true),
             };
         }
 
@@ -632,15 +642,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             var rectyTopField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryRectyTop));
             var rectxLabelField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryLabelRectx));
             var rectyLabelField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryLabelRecty));
-
             var rectxLabelSaleField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryLabelSaleRectx));
             var rectyLabelSaleField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryLabelSaleRecty));
             var rectyLabelSaleFontSizeField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryLabelSaleFontSize));
-
             var sizeTextField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryBottomTextSize));
             var heigthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryHeight));
             var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryWidth));
             var marginField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryMargin));
+            var textIsBoldField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryTextIsBold));
 
             return new QrDimensionsModel
             {
@@ -659,6 +668,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 LabelMuestraFontSize = ServiceShared.GetValueFromParamterIntParse(rectyLabelSaleFontSizeField, 24),
                 LabelSaleOrderRectx = ServiceShared.GetValueFromParamterIntParse(rectxLabelSaleField, 150),
                 LabelSaleOrderRecty = ServiceShared.GetValueFromParamterIntParse(rectyLabelSaleField, 250),
+                QrTextIsBold = ServiceShared.GetValueFromParamterBooleanParse(textIsBoldField, true),
             };
         }
     }
