@@ -613,7 +613,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrWidth));
             var marginField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrMargin));
             var rotateAngleTop = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralAngleRotTop));
-            var textIsBold = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryTextIsBold));
+            var textIsBold = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralTextIsBold));
 
             return new QrDimensionsModel
             {
