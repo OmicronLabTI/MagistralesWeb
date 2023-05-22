@@ -1093,4 +1093,16 @@
 			UPDATE parameters SET value='70' WHERE "field"='QrDeliveryRectyTop';
 		</sql>
 	</changeSet>
+	<changeSet author="ahernandez" id="changelog-1.116">
+		<insert tableName="parameters">
+			<column name="value" value="true" />
+			<column name="type" value="bool" />
+			<column name="field" value="QrDeliveryTextIsBold" />
+		</insert>
+		<insert tableName="parameters">
+			<column name="value" value="true" />
+			<column name="type" value="bool" />
+			<column name="field" value="QrMagistralTextIsBold" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>

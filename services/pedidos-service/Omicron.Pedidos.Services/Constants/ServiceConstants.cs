@@ -916,6 +916,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string RedisBulkOrderKey = "redisComponentsBulkOrder";
 
         /// <summary>
+        /// gets the bold of label sale text.
+        /// </summary>
+        public const string QrDeliveryTextIsBold = "QrDeliveryTextIsBold";
+
+        /// <summary>
+        /// gets the bold of bootom text magistral text.
+        /// </summary>
+        public const string QrMagistralTextIsBold = "QrMagistralTextIsBold";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
