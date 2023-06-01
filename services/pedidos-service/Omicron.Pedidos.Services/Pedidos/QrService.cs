@@ -442,8 +442,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             var surface = SKSurface.Create(info);
             var canvas = surface.Canvas;
             canvas.Clear();
-            var rect = SKRect.Create((int)((parameters.QrWidth / 2) - (parameters.QrWidth * ServiceConstants.QrSize / 2)), (int)((parameters.QrHeight / 2) - (parameters.QrHeight * ServiceConstants.QrSize / 2)), (int)(parameters.QrWidth * ServiceConstants.QrSize), (int)(parameters.QrHeight * ServiceConstants.QrSize));
-            canvas.Render(qr, rect, SKColor.Parse("FFFFFF "), SKColor.Parse("000000"));
+            var rect = SKRect.Create(parameters.QrCodePositionX, parameters.QrCodePositionY, parameters.QrCodeSize, parameters.QrCodeSize);
+            canvas.Render(qr, rect, SKColor.Parse(ServiceConstants.HexWhiteColor), SKColor.Parse(ServiceConstants.HexBlackColor));
             return surface;
         }
 
@@ -614,6 +614,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             var marginField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.MagistralQrMargin));
             var rotateAngleTop = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralAngleRotTop));
             var textIsBold = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralTextIsBold));
+            var positionXQrCode = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralCodePositionX));
+            var positionYQrCode = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralCodePositionY));
+            var sizeQrCode = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrMagistralCodeSize));
 
             return new QrDimensionsModel
             {
@@ -629,6 +632,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 QrMargin = ServiceShared.GetValueFromParamterIntParse(marginField, DefaultMargin),
                 QrTopTextRotationAngle = ServiceShared.GetValueFromParamterIntParse(rotateAngleTop, -90),
                 QrTextIsBold = ServiceShared.GetValueFromParamterBooleanParse(textIsBold, true),
+                QrCodePositionX = ServiceShared.GetValueFromParamterIntParse(positionXQrCode, (int)((DefaultMargin / 2) - (DefaultMargin * ServiceConstants.QrSize / 2))),
+                QrCodePositionY = ServiceShared.GetValueFromParamterIntParse(positionYQrCode, (int)((DefaultMargin / 2) - (DefaultMargin * ServiceConstants.QrSize / 2))),
+                QrCodeSize = ServiceShared.GetValueFromParamterIntParse(sizeQrCode, (int)(DefaultHeightWidth * ServiceConstants.QrSize)),
             };
         }
 
@@ -650,6 +656,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             var widthField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryWidth));
             var marginField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryMargin));
             var textIsBoldField = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryTextIsBold));
+            var positionXQrCode = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryCodePositionX));
+            var positionYQrCode = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryCodePositionY));
+            var sizeQrCode = parameters.FirstOrDefault(x => x.Field.Equals(ServiceConstants.QrDeliveryCodeSize));
 
             return new QrDimensionsModel
             {
@@ -669,6 +678,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                 LabelSaleOrderRectx = ServiceShared.GetValueFromParamterIntParse(rectxLabelSaleField, 150),
                 LabelSaleOrderRecty = ServiceShared.GetValueFromParamterIntParse(rectyLabelSaleField, 250),
                 QrTextIsBold = ServiceShared.GetValueFromParamterBooleanParse(textIsBoldField, true),
+                QrCodePositionX = ServiceShared.GetValueFromParamterIntParse(positionXQrCode, (int)((DefaultMargin / 2) - (DefaultMargin * ServiceConstants.QrSize / 2))),
+                QrCodePositionY = ServiceShared.GetValueFromParamterIntParse(positionYQrCode, (int)((DefaultMargin / 2) - (DefaultMargin * ServiceConstants.QrSize / 2))),
+                QrCodeSize = ServiceShared.GetValueFromParamterIntParse(sizeQrCode, (int)(DefaultHeightWidth * ServiceConstants.QrSize)),
             };
         }
     }
