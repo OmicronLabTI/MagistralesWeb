@@ -926,6 +926,46 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrMagistralTextIsBold = "QrMagistralTextIsBold";
 
         /// <summary>
+        /// Gets the value of X position for the magistral qr.
+        /// </summary>
+        public const string QrMagistralCodePositionX = "QrMagistralCodePositionX";
+
+        /// <summary>
+        /// Gets the value of Y position for the magistral qr.
+        /// </summary>
+        public const string QrMagistralCodePositionY = "QrMagistralCodePositionY";
+
+        /// <summary>
+        /// Gets the value of widht and height value for the magistral qr code.
+        /// </summary>
+        public const string QrMagistralCodeSize = "QrMagistralCodeSize";
+
+        /// <summary>
+        /// Gets the value of X position for the delivery qr.
+        /// </summary>
+        public const string QrDeliveryCodePositionX = "QrDeliveryCodePositionX";
+
+        /// <summary>
+        /// Gets the value of Y position for the delivery qr.
+        /// </summary>
+        public const string QrDeliveryCodePositionY = "QrDeliveryCodePositionY";
+
+        /// <summary>
+        /// Gets the value of widht value for the delivery qr code.
+        /// </summary>
+        public const string QrDeliveryCodeSize = "QrDeliveryCodeSize";
+
+        /// <summary>
+        /// Gets the value for hex white color.
+        /// </summary>
+        public const string HexWhiteColor = "FFFFFF";
+
+        /// <summary>
+        /// Gets the value for hex black color.
+        /// </summary>
+        public const string HexBlackColor = "000000";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
