@@ -26,6 +26,24 @@ namespace Omicron.Pedidos.Entities.Model
         public int QrWidth { get; set; }
 
         /// <summary>
+        /// Gets or sets the QrCodePositionX.
+        /// </summary>
+        /// <value>QrCodePositionX.</value>
+        public int QrCodePositionX { get; set; }
+
+        /// <summary>
+        /// Gets or sets the QrCodePositionY.
+        /// </summary>
+        /// <value>QrCodePositionY.</value>
+        public int QrCodePositionY { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Qr Code Height and Width.
+        /// </summary>
+        /// <value>QrCodeHeight.</value>
+        public int QrCodeSize { get; set; }
+
+        /// <summary>
         /// Gets or sets the QR Height.
         /// </summary>
         /// <value>Qr Height.</value>

@@ -1105,4 +1105,36 @@
 			<column name="field" value="QrMagistralTextIsBold" />
 		</insert>
 	</changeSet>
+	<changeSet author="jarturoep" id="changelog-1.117">
+		<insert tableName="parameters">
+			<column name="value" value="360" />
+			<column name="type" value="int" />
+			<column name="field" value="QrMagistralCodeSize" />
+		</insert>
+		<insert tableName="parameters">
+			<column name="value" value="10" />
+			<column name="type" value="int" />
+			<column name="field" value="QrMagistralCodePositionY" />
+		</insert>
+		<insert tableName="parameters">
+			<column name="value" value="75" />
+			<column name="type" value="int" />
+			<column name="field" value="QrMagistralCodePositionX" />
+		</insert>
+		<insert tableName="parameters">
+			<column name="value" value="325" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryCodeSize" />
+		</insert>
+		<insert tableName="parameters">
+			<column name="value" value="78" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryCodePositionY" />
+		</insert>
+		<insert tableName="parameters">
+			<column name="value" value="78" />
+			<column name="type" value="int" />
+			<column name="field" value="QrDeliveryCodePositionX" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>
