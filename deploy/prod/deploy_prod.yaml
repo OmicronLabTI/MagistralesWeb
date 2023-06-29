@@ -340,11 +340,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 241m
-              memory: 1024Mi
+              cpu: 243m
+              memory: 1083Mi
             requests:
-              cpu: 111m
-              memory: 143Mi
+              cpu: 140m
+              memory: 458Mi
       imagePullSecrets:
         - name: pullsecret
 ---
