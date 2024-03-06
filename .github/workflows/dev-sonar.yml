@@ -21,19 +21,6 @@ jobs:
     name: run tests
     runs-on: [self-hosted, omicron-dev]
     steps:
-      
-      - name: Set up JDK 17
-        uses: actions/setup-java@v1
-        with:
-          java-version: 17
-
-      - name: Cache SonarQube packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
