@@ -452,7 +452,7 @@ describe('DetalleFormulaComponent', () => {
 
   it('should changeData', () => {
     component.changeData();
-    expect(component.changeData).toBeTruthy();
+    expect(dataServiceSpy.setIsToSaveAnything).toHaveBeenCalledWith(true);
   });
 
   it('should onSelectWareHouseChange', () => {
