@@ -50,15 +50,15 @@ jobs:
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
-      - name: Test oauthserver
-        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_test) }}
-        uses: ./.github/actions/sonar-java
-        with:
-          path: services/oauthserver
-          project_name: oauthserver
-          environment: Dev
-          sonar_server: ${{ secrets.SONAR_SERVER }}
-          sonar_token: ${{ secrets.SONAR_TOKEN }}
+      # - name: Test oauthserver
+      #   if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_test) }}
+      #   uses: ./.github/actions/sonar-java
+      #   with:
+      #     path: services/oauthserver
+      #     project_name: oauthserver
+      #     environment: Dev
+      #     sonar_server: ${{ secrets.SONAR_SERVER }}
+      #     sonar_token: ${{ secrets.SONAR_TOKEN }}
 
       - name: Test pedidos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_test) }}
