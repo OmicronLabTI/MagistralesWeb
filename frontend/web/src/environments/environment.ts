@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://201.163.179.28:8082',
+  baseUrl: 'http://192.168.0.83:8082',
   apiLogin: '/api/oauth/oauthrs',
   apiCatalogs: '/api/catalogos',
   apiUsers: '/api/usuarios',
