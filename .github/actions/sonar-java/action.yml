@@ -23,10 +23,6 @@ runs:
     - name: Setup Maven
       uses: stCarolas/setup-maven@v.4.5
     
-    - name: Set Java 1.8
-      run: jenv local 1.8
-      shell: bash
-
     - name: sonar-scanner
       run: |
         mvn package sonar:sonar \
