@@ -12,9 +12,9 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
     /// Class OrdersServiceTest.
     /// </summary>
     [TestFixture]
-    public class OrdersServiceTest : BaseTest
+    public class OrderServiceTest : BaseTest
     {
-        private IOrdersService ordersService;
+        private IOrderService ordersService;
 
         /// <summary>
         /// Method to GetOrdersHeaderStatus for dxp project.
@@ -49,7 +49,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                .Setup(x => x.GetAsync(It.IsAny<string>()))
                .Returns(Task.FromResult(resultServiceLayer));
 
-            var orderServiceMock = new OrdersService(mockServiceLayerClient.Object);
+            var orderServiceMock = new OrderService(mockServiceLayerClient.Object);
 
             // act
             var result = await orderServiceMock.GetLastGeneratedOrder();

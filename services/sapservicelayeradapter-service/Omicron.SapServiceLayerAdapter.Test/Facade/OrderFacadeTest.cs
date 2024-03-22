@@ -12,9 +12,9 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
     /// Class ProductValidationsFacadeTest.
     /// </summary>
     [TestFixture]
-    public class OrdersFacadeTest
+    public class OrderFacadeTest
     {
-        private OrdersFacade ordersFacade;
+        private OrderFacade ordersFacade;
 
         private IMapper mapper;
 
@@ -26,7 +26,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         {
             var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
             this.mapper = mapperConfiguration.CreateMapper();
-            var mockOrdersService = new Mock<IOrdersService>();
+            var mockOrdersService = new Mock<IOrderService>();
 
             var resultDto = new ResultModel()
             {
@@ -36,7 +36,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             };
 
             mockOrdersService.SetReturnsDefault(Task.FromResult(resultDto));
-            this.ordersFacade = new OrdersFacade(this.mapper, mockOrdersService.Object);
+            this.ordersFacade = new OrderFacade(this.mapper, mockOrdersService.Object);
         }
 
         /// <summary>

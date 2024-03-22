@@ -11,7 +11,7 @@ namespace Omicron.SapServiceLayerAdapter.Facade.Orders
     /// <summary>
     /// Interface IOrdersFacade.
     /// </summary>
-    public interface IOrdersFacade
+    public interface IOrderFacade
     {
         /// <summary>
         /// Method to get the last generated order.

@@ -11,7 +11,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders
     /// <summary>
     /// Interface for Orders Service.
     /// </summary>
-    public interface IOrdersService
+    public interface IOrderService
     {
         /// <summary>
         /// Method to get the last generated order.

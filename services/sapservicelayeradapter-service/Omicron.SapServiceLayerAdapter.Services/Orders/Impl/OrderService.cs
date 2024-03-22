@@ -11,15 +11,15 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
     /// <summary>
     /// Class Orders Service.
     /// </summary>
-    public class OrdersService : IOrdersService
+    public class OrderService : IOrderService
     {
         private readonly IServiceLayerClient serviceLayerClient;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OrdersService"/> class.
+        /// Initializes a new instance of the <see cref="OrderService"/> class.
         /// </summary>
         /// <param name="serviceLayerClient">Service layer client.</param>
-        public OrdersService(IServiceLayerClient serviceLayerClient)
+        public OrderService(IServiceLayerClient serviceLayerClient)
         {
             this.serviceLayerClient = serviceLayerClient.ThrowIfNull(nameof(serviceLayerClient));
         }

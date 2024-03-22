@@ -11,17 +11,17 @@ namespace Omicron.SapServiceLayerAdapter.Facade.Orders.Impl
     /// <summary>
     /// Class OrdersFacade.
     /// </summary>
-    public class OrdersFacade : IOrdersFacade
+    public class OrderFacade : IOrderFacade
     {
         private readonly IMapper mapper;
-        private readonly IOrdersService ordersService;
+        private readonly IOrderService ordersService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OrdersFacade"/> class.
+        /// Initializes a new instance of the <see cref="OrderFacade"/> class.
         /// </summary>
         /// <param name="mapper">Mapper.</param>
         /// <param name="ordersService">Orders Service.</param>
-        public OrdersFacade(IMapper mapper, IOrdersService ordersService)
+        public OrderFacade(IMapper mapper, IOrderService ordersService)
         {
             this.mapper = mapper;
             this.ordersService = ordersService.ThrowIfNull(nameof(ordersService));

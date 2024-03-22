@@ -21,7 +21,7 @@ namespace Omicron.SapServiceLayerAdapter.Facade
         /// <returns>Service collection.</returns>
         public static IServiceCollection AddFacade(this IServiceCollection services)
         {
-            services.AddScoped<IOrdersFacade, OrdersFacade>();
+            services.AddScoped<IOrderFacade, OrderFacade>();
             return services;
         }
     }

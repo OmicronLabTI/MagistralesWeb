@@ -13,15 +13,15 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersController : ControllerBase
+    public class OrderController : ControllerBase
     {
-        private readonly IOrdersFacade ordersFacade;
+        private readonly IOrderFacade ordersFacade;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OrdersController"/> class.
+        /// Initializes a new instance of the <see cref="OrderController"/> class.
         /// </summary>
         /// <param name="ordersFacade">Orders Facade.</param>
-        public OrdersController(IOrdersFacade ordersFacade)
+        public OrderController(IOrderFacade ordersFacade)
             => this.ordersFacade = ordersFacade ?? throw new ArgumentNullException(nameof(ordersFacade));
 
         /// <summary>
