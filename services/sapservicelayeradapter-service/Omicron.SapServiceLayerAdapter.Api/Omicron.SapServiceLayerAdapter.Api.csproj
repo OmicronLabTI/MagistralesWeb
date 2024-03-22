@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="7.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.86" />
     <PackageReference Include="Steeltoe.Extensions.Configuration.PlaceholderCore" Version="3.2.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />

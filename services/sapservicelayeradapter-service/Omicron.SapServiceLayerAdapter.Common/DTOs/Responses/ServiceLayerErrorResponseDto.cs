@@ -8,8 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Responses
 {
-    using Newtonsoft.Json;
-
     /// <summary>
     /// ServiceLayerErrorResponseDto class.
     /// </summary>

@@ -28,6 +28,13 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         public async Task<ResultModel> GetLastGeneratedOrder()
         {
             var result = await this.serviceLayerClient.GetAsync(ServiceQuerysConstants.QryGetLastGeneratedOrder);
+
+            if (!result.Success)
+            {
+                result.Response = JsonConvert.DeserializeObject<ServiceLayerErrorResponseDto>(result.Response.ToString());
+                return result;
+            }
+
             var response = JsonConvert.DeserializeObject<ServiceLayerResponseDto>(result.Response.ToString());
             var order = JsonConvert.DeserializeObject<List<OrderDto>>(response.Value.ToString());
             return ResponseUtils.CreateResult(
