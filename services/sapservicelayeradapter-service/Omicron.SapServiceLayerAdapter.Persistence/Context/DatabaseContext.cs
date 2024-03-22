@@ -23,14 +23,6 @@ namespace Omicron.SapServiceLayerAdapter.Persistence.Context
         }
 
         /// <summary>
-        /// Gets or sets Users.
-        /// </summary>
-        /// <value>
-        /// <see cref="DbSet{UserModel}"/> Users.
-        /// </value>
-        public DbSet<UserModel> Users { get; set; }
-
-        /// <summary>
         /// Metho On Model Creating.
         /// </summary>
         /// <param name="modelBuilder">ModelBuilder.</param>

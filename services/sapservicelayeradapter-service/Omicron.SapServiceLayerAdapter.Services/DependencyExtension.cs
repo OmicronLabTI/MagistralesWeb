@@ -36,7 +36,6 @@ namespace Omicron.SapServiceLayerAdapter.Services
         /// <returns>Service collection.</returns>
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IServiceLayerClient, ServiceLayerClient>();
             services.AddScoped<IServiceLayerAuth, ServiceLayerAuth>();
             services.AddScoped<IOrdersService, OrdersService>();

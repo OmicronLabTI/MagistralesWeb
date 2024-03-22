@@ -6,7 +6,6 @@
 // </copyright>
 // </summary>
 
-
 namespace Omicron.SapServiceLayerAdapter.Facade.Orders.Impl
 {
     /// <summary>

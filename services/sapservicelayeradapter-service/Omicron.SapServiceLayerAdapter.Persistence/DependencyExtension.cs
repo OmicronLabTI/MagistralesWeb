@@ -35,8 +35,6 @@ namespace Omicron.SapServiceLayerAdapter.Persistence
                     });
             });
 
-            services.AddScoped<IUsersDao, UsersDao>();
-            
             return services;
         }
     }

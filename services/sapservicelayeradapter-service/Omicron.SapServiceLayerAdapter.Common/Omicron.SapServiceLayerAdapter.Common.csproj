@@ -29,4 +29,8 @@
     <ProjectReference Include="..\Omicron.SapServiceLayerAdapter.Model\Omicron.SapServiceLayerAdapter.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\Requests\" />
+  </ItemGroup>
+
 </Project>

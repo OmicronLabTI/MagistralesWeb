@@ -7,29 +7,46 @@
 // </summary>
 namespace Omicron.SapServiceLayerAdapter.Test
 {
-    using System.Collections.Generic;
-
     /// <summary>
     /// Class Base Test.
     /// </summary>
     public abstract class BaseTest
     {
         /// <summary>
-        /// Get UserModel.
+        /// Returns the ressult model.
         /// </summary>
-        /// <returns>The UserModel.</returns>
-        public IEnumerable<UserModel> GetAllUserModel()
-            => new List<UserModel>()
+        /// <param name="code">Code.</param>
+        /// <param name="success">Is success.</param>
+        /// <param name="response">the object for response.</param>
+        /// <param name="userError">User error.</param>
+        /// <param name="exceptionMessage">Exception Message.</param>
+        /// <param name="comments">the comments.</param>
+        /// <returns>the data.</returns>
+        public ResultModel GetGenericResponseModel(
+            int code,
+            bool success,
+            object response,
+            string userError = null,
+            string exceptionMessage = null,
+            object comments = null)
+            => new ()
             {
-                new UserModel { Id = 1, Name = "User 1", UserName = "user1", Email = "user1@yopmail.com",  Active = true },
-                new UserModel { Id = 2, Name = "User 2", UserName = "user2", Email = "user2@yopmail.com",  Active = true },
-                new UserModel { Id = 3, Name = "User 3", UserName = "user3", Email = "user3@yopmail.com",  Active = true },
-                new UserModel { Id = 4, Name = "User 4", UserName = "user4", Email = "user4@yopmail.com",  Active = true },
-                new UserModel { Id = 5, Name = "User 5", UserName = "user5", Email = "user5@yopmail.com",  Active = true },
-                new UserModel { Id = 6, Name = "User 6", UserName = "user6", Email = "user6@yopmail.com",  Active = true },
-                new UserModel { Id = 7, Name = "User 7", UserName = "user7", Email = "user7@yopmail.com",  Active = true },
-                new UserModel { Id = 8, Name = "User 8", UserName = "user8", Email = "user8@yopmail.com",  Active = true },
-                new UserModel { Id = 9, Name = "User 9", UserName = "user9", Email = "user9@yopmail.com",  Active = true },
+                Code = code,
+                Success = success,
+                Response = JsonConvert.SerializeObject(response),
+                UserError = userError,
+                ExceptionMessage = exceptionMessage,
+                Comments = comments,
+            };
+
+        /// <summary>
+        /// Get OrderDto.
+        /// </summary>
+        /// <returns>The OrderDto.</returns>
+        public IEnumerable<OrderDto> GetOrdersDtol()
+            => new List<OrderDto>()
+            {
+                new () { DocumentEntry = 1 },
             };
     }
 }

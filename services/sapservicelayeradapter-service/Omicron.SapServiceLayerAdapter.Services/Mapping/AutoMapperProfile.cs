@@ -18,11 +18,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.Mapping
         /// </summary>
         public AutoMapperProfile()
         {
-            this.CreateMap<UserModel, UserDto>();
-            this.CreateMap<CreateUserDto, UserModel>();
-            this.CreateMap<ResultModel, ResultDto>();
             this.CreateMap<DateTime, string>().ConvertUsing(date => date.ToString("yyyy-MM-ddTHH:mm:ss.fff"));
             this.CreateMap<string, DateTime>().ConvertUsing(dateStr => DateTime.Parse(dateStr));
+            this.CreateMap<ResultModel, ResultDto>();
         }
     }
 }
