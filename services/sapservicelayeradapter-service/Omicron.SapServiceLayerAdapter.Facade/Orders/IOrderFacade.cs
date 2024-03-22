@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="IOrdersFacade.cs" company="Axity">
+// <copyright file="IOrderFacade.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
