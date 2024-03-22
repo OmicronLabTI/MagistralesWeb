@@ -28,7 +28,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             this.mapper = mapperConfiguration.CreateMapper();
             var mockOrdersService = new Mock<IOrdersService>();
 
-            var resultDto = new ResultDto
+            var resultDto = new ResultModel()
             {
                 Code = 200,
                 Success = true,
@@ -50,7 +50,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             var response = await this.ordersFacade.GetLastGeneratedOrder();
 
             // Assert
-            Assert.IsNull(response);
+            this.AssertResponse(response);
         }
 
         /// <summary>
