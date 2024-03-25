@@ -6,6 +6,7 @@
 // </copyright>
 // </summary>
 
+
 namespace Omicron.SapServiceLayerAdapter.Facade.Orders.Impl
 {
     /// <summary>
@@ -26,6 +27,10 @@ namespace Omicron.SapServiceLayerAdapter.Facade.Orders.Impl
             this.mapper = mapper;
             this.ordersService = ordersService.ThrowIfNull(nameof(ordersService));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CloseSampleOrders(List<CloseSampleOrderDto> sampleOrders)
+            => this.mapper.Map<ResultDto>(await this.ordersService.CloseSampleOrders(sampleOrders));
 
         /// <inheritdoc/>
         public async Task<ResultDto> GetLastGeneratedOrder()

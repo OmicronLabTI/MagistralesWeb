@@ -6,6 +6,9 @@
 // </copyright>
 // </summary>
 
+using Confluent.Kafka;
+using System.Linq;
+
 namespace Omicron.SapServiceLayerAdapter.Test.Services
 {
     /// <summary>
@@ -14,6 +17,17 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
     [TestFixture]
     public class OrderServiceTest : BaseTest
     {
+        private Mock<ILogger> logger;
+
+        /// <summary>
+        /// Init configuration.
+        /// </summary>
+        [OneTimeSetUp]
+        public void Init()
+        {
+            this.logger = new Mock<ILogger>();
+        }
+
         /// <summary>
         /// Method to GetOrdersHeaderStatus for dxp project.
         /// </summary>
@@ -47,7 +61,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                .Setup(x => x.GetAsync(It.IsAny<string>()))
                .Returns(Task.FromResult(resultServiceLayer));
 
-            var orderServiceMock = new OrderService(mockServiceLayerClient.Object);
+            var orderServiceMock = new OrderService(mockServiceLayerClient.Object, this.logger.Object);
 
             // act
             var result = await orderServiceMock.GetLastGeneratedOrder();
@@ -76,5 +90,114 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             Assert.IsNull(result.Comments);
         }
 
+        /// <summary>
+        /// Close sample orders.
+        /// </summary>
+        /// <param name="isResponseOrderSuccess">Is Response Order Success.</param>
+        /// <param name="isResponseInventoryGenExitSuccess">Is Response Inventory Gen Exit Success.</param>
+        /// <param name="isCloseOrderSuccess">Is Close Order Success.</param>
+        /// <param name="userError">User Error.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        [TestCase(false, true, true, "No existen registros coincidentes (ODBC -2028)")]
+        [TestCase(true, false, true, "Error al crear el Inventory Gen Exit")]
+        [TestCase(true, true, false, "Error al cerrar la orden")]
+        [TestCase(true, true, true, null)]
+        public async Task CloseSampleOrders(bool isResponseOrderSuccess, bool isResponseInventoryGenExitSuccess, bool isCloseOrderSuccess, string userError)
+        {
+            var sampleOrders = new List<CloseSampleOrderDto>
+            {
+                new ()
+                {
+                    SaleOrderId = 1,
+                    ItemsList = new List<CreateDeliveryDto>
+                    {
+                        new ()
+                        {
+                            OrderType = "linea",
+                            ItemCode = "Item Code 23",
+                            Batches = new List<BatchNumbersDto>
+                            {
+                                new () { BatchNumber = "BATCH1", Quantity = 1 },
+                                new () { BatchNumber = "BATCH2", Quantity = 2.5 },
+                            },
+                        },
+                        new ()
+                        {
+                            OrderType = "magistral",
+                            ItemCode = "DZ 50",
+                        },
+                        new ()
+                        {
+                            OrderType = "magistral",
+                            ItemCode = "FL 1",
+                        },
+                    },
+                },
+            };
+
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var orderDtoMock = new OrderDto();
+            if (isResponseOrderSuccess)
+            {
+                orderDtoMock = new OrderDto
+                {
+                    DocumentEntry = 3,
+                    OrderLines = new List<OrderLineDto>
+                    {
+                        new () { ItemCode = "Item Code 23", LineNum = 0, Quantity = 1 },
+                        new () { ItemCode = "DZ 50", LineNum = 1, Quantity = 1 },
+                        new () { ItemCode = "FL 1", LineNum = 2, Quantity = 1 },
+                    },
+                };
+            }
+
+            var responseOrder = this.GetGenericResponseModel(400, isResponseOrderSuccess, orderDtoMock, userError, null, null);
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(responseOrder));
+
+            var responseInventoryGenExit = this.GetGenericResponseModel(400, isResponseInventoryGenExitSuccess, null, userError, null, null);
+            var responseCloseOrder = this.GetGenericResponseModel(400, isCloseOrderSuccess, null, userError, null, null);
+
+            mockServiceLayerClient
+                .SetupSequence(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(responseInventoryGenExit))
+                .Returns(Task.FromResult(responseCloseOrder));
+
+            var orderServiceMock = new OrderService(mockServiceLayerClient.Object, this.logger.Object);
+
+            // act
+            var result = await orderServiceMock.CloseSampleOrders(sampleOrders);
+
+            // assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<ResultModel>(result);
+            if (!isResponseOrderSuccess)
+            {
+                KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
+                Assert.AreEqual("Error-No se encontró la factura.", resultDict.Value);
+            }
+            else if (!isResponseInventoryGenExitSuccess)
+            {
+                KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
+                Assert.AreEqual("Error-Error al crear el Inventory Gen Exit", resultDict.Value);
+            }
+            else if (!isCloseOrderSuccess)
+            {
+                KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
+                Assert.AreEqual("Error-Error al cerrar la orden", resultDict.Value);
+            }
+            else
+            {
+                KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
+                Assert.AreEqual("Ok", resultDict.Value);
+            }
+
+            Assert.IsNull(result.UserError);
+            Assert.IsTrue(result.Success);
+            Assert.IsNotNull(result.Response);
+            Assert.IsNull(result.Comments);
+        }
     }
 }

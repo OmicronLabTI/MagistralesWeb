@@ -51,22 +51,22 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// <summary>
         /// Update Tracking Update Invoice Error.
         /// </summary>
-        public const string UpdateTrackingUpdateInvoiceError = "Omicron.Almacen Service-Update tracking-Service Layer-The invoice {0} was tried to be updated {1}-{2}";
+        public const string UpdateTrackingUpdateInvoiceError = "Omicron.SapServiceLayerAdapter Service-Update tracking-Service Layer-The invoice {0} was tried to be updated {1}-{2}";
 
         /// <summary>
         /// Update Tracking Invoice Not Found Error.
         /// </summary>
-        public const string UpdateTrackingInvoiceNotFoundError = "Omicron.Almacen Service-Update tracking-Service Layer-The invoice {0} not found.";
+        public const string UpdateTrackingInvoiceNotFoundError = "Omicron.SapServiceLayerAdapter Service-Update tracking-Service Layer-The invoice {0} not found.";
 
         /// <summary>
         /// Update Tracking Invoice Updated Log.
         /// </summary>
-        public const string UpdateTrackingInvoiceUpdatedLog = "Omicron.Almacen Service-Update tracking-Service Layer-The invoice {0} was updated.";
+        public const string UpdateTrackingInvoiceUpdatedLog = "Omicron.SapServiceLayerAdapter Service-Update tracking-Service Layer-The invoice {0} was updated.";
 
         /// <summary>
         /// Close Sample Order Not Found Error.
         /// </summary>
-        public const string CloseSampleOrderNotFoundError = "Omicron.Almacen Service-Close Sample Order-Service Layer-The Order {0} not found.";
+        public const string CloseSampleOrderNotFoundError = "Omicron.SapServiceLayerAdapter Service-Close Sample Order-Service Layer-The Order {0} not found.";
 
         /// <summary>
         /// Update Tracking Invoice Error.
@@ -74,9 +74,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string UpdateTrackingInvoiceError = "Error while updating tracking invoice {0} {1} - ex: {2} - stackTrace: {3}";
 
         /// <summary>
-        /// Update Tracking Invoice Error Handled.
+        /// Service Layer Error Handled.
         /// </summary>
-        public const string UpdateTrackingInvoiceErrorHandled = "{0}-ErrorHandled";
+        public const string ServiceLayerErrorHandled = "{0}-ErrorHandled";
 
         /// <summary>
         /// Close Sample Order Comment.
@@ -122,6 +122,31 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// The line products.
         /// </summary>
         public const string LineaUpper = "Línea";
+
+        /// <summary>
+        /// Close Sample Order Comment.
+        /// </summary>
+        public const string CloseSampleOrderLogInfo = "Closing sample with {0}";
+
+        /// <summary>
+        /// Close Sample Order An Inventory Error.
+        /// </summary>
+        public const string CloseSampleOrderAnInventoryError = "Error while Closing and create inventory exit for {0} - ex: {1} - stackTrace: {2}";
+
+        /// <summary>
+        /// Close Sample Order Error To Close Order.
+        /// </summary>
+        public const string CloseSampleOrderErrorToCloseOrder = "An error has ocurred while closing sale order {0} {1}.";
+
+        /// <summary>
+        /// Close Sample Order Error To Create InventoryGenExit.
+        /// </summary>
+        public const string CloseSampleOrderErrorToCreateInventoryGenExit = "An error has ocurred on create oInventoryGenExit {0}.";
+
+        /// <summary>
+        /// Close Sample Order Inventory Error.
+        /// </summary>
+        public const string CloseSampleOrderInventoryError = "{0}-Inventory-Error";
 
         /// <summary>
         /// Gets the status of the order.

@@ -96,5 +96,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
         {
             return dic.ContainsKey(key) ? dic[key] : defaultValue;
         }
+
+        /// <summary>
+        /// Method to cast value to double.
+        /// </summary>
+        /// <param name="valueToCast">Value to cast.</param>
+        /// <param name="defaultValue">Default Value.</param>
+        /// <returns>Double value.</returns>
+        public static double ToParseDouble(this string valueToCast, double defaultValue)
+        {
+            if (string.IsNullOrEmpty(valueToCast))
+            {
+                return defaultValue;
+            }
+
+            return int.TryParse(valueToCast, out int result) ? result : defaultValue;
+        }
     }
 }

@@ -46,7 +46,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                             ServiceConstants.RelationMessagesServiceLayer,
                             responseInvoice.UserError,
                             string.Format(ServiceConstants.DictionaryValueErrorGenericFormat, responseInvoice.UserError)));
-                    return ServiceUtils.CreateResult(false, 400, responseInvoice.UserError, dictionaryResult, null, null);
+                    return ServiceUtils.CreateResult(true, 200, responseInvoice.UserError, dictionaryResult, null, null);
                 }
 
                 var resultInvoice = JsonConvert.DeserializeObject<InvoiceDto>(responseInvoice.Response.ToString());
@@ -68,7 +68,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                     {
                         this.logger.Error(string.Format(ServiceConstants.UpdateTrackingUpdateInvoiceError, invoiceId, responseUpdate.UserError, JsonConvert.SerializeObject(packageInformationSend)));
                         dictionaryResult.Add(string.Format(ServiceConstants.DictionaryKeyErrorGenericFormat, invoiceId), ServiceUtils.GetDictionaryValueString(ServiceConstants.RelationMessagesServiceLayer, responseUpdate.UserError, string.Format(ServiceConstants.DictionaryValueErrorGenericFormat, responseUpdate.UserError)));
-                        return ServiceUtils.CreateResult(false, 400, responseUpdate.UserError, dictionaryResult, null, null);
+                        return ServiceUtils.CreateResult(true, 200, responseUpdate.UserError, dictionaryResult, null, null);
                     }
                 }
 
@@ -82,7 +82,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
             {
                 this.logger.Error(string.Format(
                     ServiceConstants.UpdateTrackingInvoiceError, invoiceId, JsonConvert.SerializeObject(packageInformationSend), ex.Message, ex.StackTrace));
-                dictionaryResult.Add(string.Format(ServiceConstants.UpdateTrackingInvoiceErrorHandled, invoiceId), $"{ex.Message}");
+                dictionaryResult.Add(string.Format(ServiceConstants.ServiceLayerErrorHandled, invoiceId), $"{ex.Message}");
                 return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
             }
         }

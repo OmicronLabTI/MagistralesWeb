@@ -18,5 +18,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders
         /// </summary>
         /// <returns>Last generated order.</returns>
         Task<ResultModel> GetLastGeneratedOrder();
+
+        /// <summary>
+        /// Close sample orders.
+        /// </summary>
+        /// <param name="sampleOrders">Sample orders to close.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CloseSampleOrders(List<CloseSampleOrderDto> sampleOrders);
     }
 }

@@ -54,6 +54,23 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Test for selecting all models.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task CloseSampleOrders()
+        {
+            // Arrange
+            var sampleOrders = new List<CloseSampleOrderDto>();
+
+            // Act
+            var response = await this.ordersFacade.CloseSampleOrders(sampleOrders);
+
+            // Assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>
