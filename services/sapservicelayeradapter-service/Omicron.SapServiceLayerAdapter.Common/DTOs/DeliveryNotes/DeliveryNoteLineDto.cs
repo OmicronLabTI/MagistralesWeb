@@ -112,7 +112,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes
         /// </summary>
         /// <value>Base Line.</value>
         [JsonProperty("BaseLine")]
-        public int BaseLine { get; set; }
+        public int? BaseLine { get; set; }
 
         /// <summary>
         /// Gets or sets the BatchNumbers.
