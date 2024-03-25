@@ -10,6 +10,8 @@
     <Compile Remove="Enums\**" />
     <EmbeddedResource Remove="Enums\**" />
     <None Remove="Enums\**" />
+    <None Remove="DTOs\DeliveryNoteDto.cs\" />
+    <None Remove="DTOs\Batches\" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="$(SolutionDir)\StyleCop\stylecop.json" Link="stylecop.json" />
@@ -31,6 +33,8 @@
 
   <ItemGroup>
     <Folder Include="DTOs\Requests\" />
+    <Folder Include="DTOs\DeliveryNotes\" />
+    <Folder Include="DTOs\Batches\" />
   </ItemGroup>
 
 </Project>

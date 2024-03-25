@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="ServiceContants.cs" company="Axity">
+// <copyright file="ServiceConstants.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -82,6 +82,46 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Close Sample Order Comment.
         /// </summary>
         public const string CloseSampleOrderComment = "Pedido muestra basado en {0}";
+
+        /// <summary>
+        /// shippingcost item code.
+        /// </summary>
+        public const string ShippingCostItemCode = "FL 1";
+
+        /// <summary>
+        /// Si es pedido paquete.
+        /// </summary>
+        public const string IsPackage = "Y";
+
+        /// <summary>
+        /// Si a package.
+        /// </summary>
+        public const string IsNotPackage = "N";
+
+        /// <summary>
+        /// Gets the user orders.
+        /// </summary>
+        public const string Magistral = "magistral";
+
+        /// <summary>
+        /// Gets the user orders.
+        /// </summary>
+        public const string MagistralUpper = "Magistral";
+
+        /// <summary>
+        /// Gets the user orders.
+        /// </summary>
+        public const string Mixto = "mixto";
+
+        /// <summary>
+        /// The line products.
+        /// </summary>
+        public const string Linea = "linea";
+
+        /// <summary>
+        /// The line products.
+        /// </summary>
+        public const string LineaUpper = "Línea";
 
         /// <summary>
         /// Gets the status of the order.

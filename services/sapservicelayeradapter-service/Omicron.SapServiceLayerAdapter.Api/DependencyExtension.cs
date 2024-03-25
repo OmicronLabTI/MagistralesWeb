@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using Omicron.SapServiceLayerAdapter.Persistence.Context;
+using Omicron.SapServiceLayerAdapter.Services.DeliveryNotes;
 using Steeltoe.Extensions.Configuration;
 
 namespace Omicron.SapServiceLayerAdapter.Api
@@ -16,6 +18,19 @@ namespace Omicron.SapServiceLayerAdapter.Api
     public static class DependencyExtension
     {
         private const string AXITYURL = "https://www.axity.com/";
+
+        /// <summary>
+        /// Method to register Services.
+        /// </summary>
+        /// <param name="services">Service Collection.</param>
+        /// <returns>Interface Service Collection.</returns>
+        public static IServiceCollection RegisterServices(IServiceCollection services)
+        {
+            services.AddTransient<IServiceLayerClient, ServiceLayerClient>();
+            services.AddTransient<IServiceLayerAuth, ServiceLayerAuth>();
+            services.AddTransient<IDeliveryNoteService, DeliveryNoteService>();
+            return services;
+        }
 
         /// <summary>
         /// Config application.
@@ -44,6 +59,8 @@ namespace Omicron.SapServiceLayerAdapter.Api
 
             webApplication.Services.AddScoped<AddB1SessionCookieMiddleware>();
             webApplication.Services.AddScoped<RefreshSessionIdMiddleware>();
+
+            DependencyExtension.RegisterServices(webApplication.Services);
 
             webApplication.Services.AddHttpClient("service layer auth", c =>
             {

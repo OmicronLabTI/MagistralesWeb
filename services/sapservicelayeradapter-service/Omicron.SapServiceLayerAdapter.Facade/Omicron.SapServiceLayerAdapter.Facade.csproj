@@ -21,4 +21,12 @@
     <ProjectReference Include="..\Omicron.SapServiceLayerAdapter.Services\Omicron.SapServiceLayerAdapter.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="DeliveryNotes\" />
+    <None Remove="DeliveryNotes\Impl\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DeliveryNotes\" />
+    <Folder Include="DeliveryNotes\Impl\" />
+  </ItemGroup>
 </Project>
