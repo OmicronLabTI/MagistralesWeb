@@ -27,5 +27,72 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// The service layer companyDb env.
         /// </summary>
         public const string SAPServiceLayerDatabaseName = "SAPServiceLayer:CompanyDb";
+
+        /// <summary>
+        /// Query to get the Dictionary Key Error Generic Format.
+        /// </summary>
+        public const string DictionaryKeyErrorGenericFormat = "{0}-Error";
+
+        /// <summary>
+        /// Query to get the Dictionary Key Error Generic Format.
+        /// </summary>
+        public const string DictionaryValueErrorGenericFormat = "Error-{0}";
+
+        /// <summary>
+        /// Query to get the Dictionary Key Ok Generic Format.
+        /// </summary>
+        public const string DictionaryKeyOkGenericFormat = "{0}-Ok";
+
+        /// <summary>
+        /// Query to get the Ok Label response.
+        /// </summary>
+        public const string OkLabelResponse = "Ok";
+
+        /// <summary>
+        /// Update Tracking Update Invoice Error.
+        /// </summary>
+        public const string UpdateTrackingUpdateInvoiceError = "Omicron.Almacen Service-Update tracking-Service Layer-The invoice {0} was tried to be updated {1}-{2}";
+
+        /// <summary>
+        /// Update Tracking Invoice Not Found Error.
+        /// </summary>
+        public const string UpdateTrackingInvoiceNotFoundError = "Omicron.Almacen Service-Update tracking-Service Layer-The invoice {0} not found.";
+
+        /// <summary>
+        /// Update Tracking Invoice Updated Log.
+        /// </summary>
+        public const string UpdateTrackingInvoiceUpdatedLog = "Omicron.Almacen Service-Update tracking-Service Layer-The invoice {0} was updated.";
+
+        /// <summary>
+        /// Close Sample Order Not Found Error.
+        /// </summary>
+        public const string CloseSampleOrderNotFoundError = "Omicron.Almacen Service-Close Sample Order-Service Layer-The Order {0} not found.";
+
+        /// <summary>
+        /// Update Tracking Invoice Error.
+        /// </summary>
+        public const string UpdateTrackingInvoiceError = "Error while updating tracking invoice {0} {1} - ex: {2} - stackTrace: {3}";
+
+        /// <summary>
+        /// Update Tracking Invoice Error Handled.
+        /// </summary>
+        public const string UpdateTrackingInvoiceErrorHandled = "{0}-ErrorHandled";
+
+        /// <summary>
+        /// Close Sample Order Comment.
+        /// </summary>
+        public const string CloseSampleOrderComment = "Pedido muestra basado en {0}";
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> RelationMessagesServiceLayer { get; } = new Dictionary<string, string>
+        {
+            { "No existen registros coincidentes (ODBC -2028)", "Error-No se encontró la factura." },
+            { "Invalid session or session already timeout.", "Error-Sesión no válida o la sesión ya ha expirado." },
+        };
     }
 }

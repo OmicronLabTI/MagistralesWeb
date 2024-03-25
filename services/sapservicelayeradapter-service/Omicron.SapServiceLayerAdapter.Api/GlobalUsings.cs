@@ -10,6 +10,7 @@ global using Microsoft.AspNetCore.Mvc;
 global using Omicron.SapServiceLayerAdapter.Api;
 global using Omicron.SapServiceLayerAdapter.Api.Filters;
 global using Omicron.SapServiceLayerAdapter.Facade;
+global using Omicron.SapServiceLayerAdapter.Facade.Invoice;
 global using Omicron.SapServiceLayerAdapter.Facade.Orders;
 global using Omicron.SapServiceLayerAdapter.Persistence;
 global using Omicron.SapServiceLayerAdapter.Services;

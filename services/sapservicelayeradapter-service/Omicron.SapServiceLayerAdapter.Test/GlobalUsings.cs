@@ -7,13 +7,14 @@ global using AutoMapper;
 global using Moq;
 global using Newtonsoft.Json;
 global using NUnit.Framework;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Orders;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Responses;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Responses.Common;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.ShippingTypes;
 global using Omicron.SapServiceLayerAdapter.Facade.Orders.Impl;
 global using Omicron.SapServiceLayerAdapter.Model;
 global using Omicron.SapServiceLayerAdapter.Services.Mapping;
 global using Omicron.SapServiceLayerAdapter.Services.Orders;
 global using Omicron.SapServiceLayerAdapter.Services.Orders.Impl;
 global using Omicron.SapServiceLayerAdapter.Services.ServiceLayer;
-

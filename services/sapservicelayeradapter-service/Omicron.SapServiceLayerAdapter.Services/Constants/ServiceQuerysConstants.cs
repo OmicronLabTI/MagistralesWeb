@@ -17,5 +17,20 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Query to get the last generated order.
         /// </summary>
         public const string QryGetLastGeneratedOrder = "Orders?$orderby=DocEntry desc&$top=1";
+
+        /// <summary>
+        /// Query to get invoice document by doc entry.
+        /// </summary>
+        public const string QryInvoiceDocumentByDocEntry = "Invoices({0})";
+
+        /// <summary>
+        /// Query to get invoice document by doc entry.
+        /// </summary>
+        public const string QryGetShippingTypesByName = "ShippingTypes?$filter=Name eq '{0}'";
+
+        /// <summary>
+        /// Query to get invoice document by doc entry.
+        /// </summary>
+        public const string QryOrdersDocumentByDocEntry = "Orders({0})";
     }
 }

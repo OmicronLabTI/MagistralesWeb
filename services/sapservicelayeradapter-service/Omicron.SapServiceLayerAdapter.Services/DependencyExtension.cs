@@ -39,6 +39,7 @@ namespace Omicron.SapServiceLayerAdapter.Services
             services.AddScoped<IServiceLayerClient, ServiceLayerClient>();
             services.AddScoped<IServiceLayerAuth, ServiceLayerAuth>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IInvoiceService, InvoiceService>();
             return services;
         }
     }

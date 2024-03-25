@@ -6,7 +6,6 @@
 // </copyright>
 // </summary>
 
-
 namespace Omicron.SapServiceLayerAdapter.Facade
 {
     /// <summary>
@@ -22,6 +21,7 @@ namespace Omicron.SapServiceLayerAdapter.Facade
         public static IServiceCollection AddFacade(this IServiceCollection services)
         {
             services.AddScoped<IOrderFacade, OrderFacade>();
+            services.AddScoped<IInvoiceFacade, InvoiceFacade>();
             return services;
         }
     }

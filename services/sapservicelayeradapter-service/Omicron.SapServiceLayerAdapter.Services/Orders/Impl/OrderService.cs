@@ -37,7 +37,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 
             var response = JsonConvert.DeserializeObject<ServiceLayerResponseDto>(result.Response.ToString());
             var order = JsonConvert.DeserializeObject<List<OrderDto>>(response.Value.ToString());
-            return ResponseUtils.CreateResult(
+            return ServiceUtils.CreateResult(
                 result.Success,
                 result.Code,
                 result.UserError,

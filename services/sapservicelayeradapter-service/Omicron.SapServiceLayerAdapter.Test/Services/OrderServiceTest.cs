@@ -14,8 +14,6 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
     [TestFixture]
     public class OrderServiceTest : BaseTest
     {
-        private IOrderService ordersService;
-
         /// <summary>
         /// Method to GetOrdersHeaderStatus for dxp project.
         /// </summary>

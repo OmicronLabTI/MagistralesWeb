@@ -16,7 +16,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
     /// <summary>
     /// Response utils.
     /// </summary>
-    public static class ResponseUtils
+    public static class ServiceUtils
     {
         /// <summary>
         /// creates the result.
@@ -83,6 +83,18 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
             };
             logger.Information(message);
             return result;
+        }
+
+        /// <summary>
+        /// creates the result.
+        /// </summary>
+        /// <param name="dic">the dictioanry.</param><
+        /// <param name="key">the key to search.</param>
+        /// <param name="defaultValue">default value.</param>
+        /// <returns>the resultModel.</returns>
+        public static string GetDictionaryValueString(Dictionary<string, string> dic, string key, string defaultValue)
+        {
+            return dic.ContainsKey(key) ? dic[key] : defaultValue;
         }
     }
 }

@@ -22,11 +22,17 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new OrderDto(),
             new OrderLineDto(),
             new ResultDto(),
+            new ResultModel(),
             new ServiceLayerAuthResponseDto(),
             new ServiceLayerErrorDetailDto(),
             new ServiceLayerErrorMessageDto(),
             new ServiceLayerErrorResponseDto(),
             new ServiceLayerResponseDto(),
+            new InvoiceDto(),
+            new InvoiceLineDto(),
+            new InvoiceLineDto(),
+            new TrackingInformationDto(),
+            new ShippingTypesResponseDto(),
         };
 
         /// <summary>

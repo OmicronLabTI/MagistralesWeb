@@ -35,7 +35,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
             ResultModel result;
             using (var response = await this.httpClient.GetAsync(url))
             {
-                result = await ResponseUtils.GetServiceLayerResponse(response, this.logger);
+                result = await ServiceUtils.GetServiceLayerResponse(response, this.logger);
             }
 
             return result;
@@ -49,7 +49,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
             request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
             using (var response = await this.httpClient.SendAsync(request))
             {
-                result = await ResponseUtils.GetServiceLayerResponse(response, this.logger, requestBody);
+                result = await ServiceUtils.GetServiceLayerResponse(response, this.logger, requestBody);
             }
 
             return result;
@@ -62,7 +62,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
             HttpContent content = new StringContent(requestBody, Encoding.UTF8, "application/json");
             using (var response = await this.httpClient.PostAsync(url, content))
             {
-                result = await ResponseUtils.GetServiceLayerResponse(response, this.logger, requestBody);
+                result = await ServiceUtils.GetServiceLayerResponse(response, this.logger, requestBody);
             }
 
             return result;
@@ -74,7 +74,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
             ResultModel result;
             using (var response = await this.httpClient.DeleteAsync(url))
             {
-                result = await ResponseUtils.GetServiceLayerResponse(response, this.logger);
+                result = await ServiceUtils.GetServiceLayerResponse(response, this.logger);
             }
 
             return result;
