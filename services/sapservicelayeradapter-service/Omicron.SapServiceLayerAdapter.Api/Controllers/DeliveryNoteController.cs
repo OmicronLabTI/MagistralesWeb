@@ -13,7 +13,7 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
     using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes;
 
     /// <summary>
-    /// InvoiceController class.
+    /// DeliveryNoteController class.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -33,7 +33,8 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         /// </summary>
         /// <param name="createDelivery">The delivery notes.</param>
         /// <returns>Result.</returns>
-        [HttpPost("/deliverynotes/complete")]
+        [Route("/complete")]
+        [HttpPost]
         public async Task<IActionResult> CreateDelivery(List<CreateDeliveryNoteDto> createDelivery)
             => this.Ok(await this.deliveryNoteFacade.CreateDelivery(createDelivery));
 
@@ -42,7 +43,8 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         /// </summary>
         /// <param name="createDelivery">The delivery notes.</param>
         /// <returns>Result.</returns>
-        [HttpPost("/deliverynotes/partial")]
+        [Route("/partial")]
+        [HttpPost]
         public async Task<IActionResult> CreateDeliveryPartial(List<CreateDeliveryNoteDto> createDelivery)
             => this.Ok(await this.deliveryNoteFacade.CreateDeliveryPartial(createDelivery));
     }

@@ -144,7 +144,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 if (!response.Success)
                 {
                     this.logger.Information($"Error to get the order {saleOrderId}, {response.UserError}");
-                    dictionaryResult.Add($"{saleOrderId}-Error", response.UserError);
+                    dictionaryResult.Add($"{saleOrderId}-Error", $"Error- {response.UserError}");
                     return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
                 }
 
@@ -199,6 +199,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                         Label = shippingOrder.Label,
                         SalesPersonCode = shippingOrder.SalesPersonCode,
                         BaseEntry = null,
+                        BaseLine = null,
                     };
 
                     deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
