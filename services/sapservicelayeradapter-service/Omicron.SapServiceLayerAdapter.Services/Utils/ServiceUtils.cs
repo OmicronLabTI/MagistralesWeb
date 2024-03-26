@@ -112,5 +112,15 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
 
             return int.TryParse(valueToCast, out int result) ? result : defaultValue;
         }
+
+        /// <summary>
+        /// Calculates the left and right with and AND.
+        /// </summary>
+        /// <param name="list">list of bools to evaluate.</param>
+        /// <returns>the data.</returns>
+        public static bool CalculateAnd(params bool[] list)
+        {
+            return list.All(element => element);
+        }
     }
 }

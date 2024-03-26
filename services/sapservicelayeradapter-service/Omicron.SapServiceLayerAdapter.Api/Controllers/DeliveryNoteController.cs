@@ -47,5 +47,15 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateDeliveryPartial(List<CreateDeliveryNoteDto> createDelivery)
             => this.Ok(await this.deliveryNoteFacade.CreateDeliveryPartial(createDelivery));
+
+        /// <summary>
+        /// Update tracking process.
+        /// </summary>
+        /// <param name="type">Type.</param>
+        /// <param name="deliveryNotesToCancel">Delivery Notes To Cancel.</param>
+        /// <returns>Result.</returns>
+        [HttpPost("/cancel/{type}/delivery")]
+        public async Task<IActionResult> CancelDelivery(string type, [FromBody] List<CancelDeliveryDto> deliveryNotesToCancel)
+            => this.Ok(await this.deliveryNoteFacade.CancelDelivery(type, deliveryNotesToCancel));
     }
 }

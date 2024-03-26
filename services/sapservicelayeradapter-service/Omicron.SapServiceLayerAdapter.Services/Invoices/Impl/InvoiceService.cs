@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using Axity.Commons.Utils;
-
 namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
 {
     /// <summary>

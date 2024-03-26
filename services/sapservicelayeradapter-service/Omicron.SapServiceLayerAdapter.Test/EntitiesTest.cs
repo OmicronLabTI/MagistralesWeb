@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.SapServiceLayerAdapter.Common.DTOs.InventoryGenExit;
-
 namespace Omicron.SapServiceLayerAdapter.Test
 {
     /// <summary>
@@ -40,6 +38,8 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new InventoryGenExitDto(),
             new InventoryGenExitLineDto(),
             new CloseSampleOrderDto(),
+            new ProductDeliveryDto(),
+            new CancelDeliveryDto(),
         };
 
         /// <summary>

@@ -39,8 +39,23 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string QryPostInventoryGenExists = "InventoryGenExits";
 
         /// <summary>
-        /// Query Post Inventory Gen Exists.
+        /// Query Post Close Order By Id.
         /// </summary>
         public const string QryPostCloseOrderById = "Orders({0})/Close";
+
+        /// <summary>
+        /// Query Get Delivery Note By Id.
+        /// </summary>
+        public const string QryGetDeliveryNoteById = "DeliveryNotes({0})";
+
+        /// <summary>
+        /// Query To Create Delivery Note Cancel Document By Id.
+        /// </summary>
+        public const string QryToCreateDeliveryNoteCancelDocumentById = "DeliveryNotes({0})/Cancel";
+
+        /// <summary>
+        /// Query Qry Post Stock Transfers.
+        /// </summary>
+        public const string QryPostStockTransfers = "StockTransfers";
     }
 }

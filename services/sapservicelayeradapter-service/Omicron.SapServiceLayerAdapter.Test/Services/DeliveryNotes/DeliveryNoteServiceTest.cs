@@ -5,27 +5,16 @@
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
+
 namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.Batches;
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
-    using Omicron.SapServiceLayerAdapter.Services.DeliveryNotes;
-    using Serilog;
-
     /// <summary>
     /// Class DeliveryNoteServiceTest.
     /// </summary>
-    public class DeliveryNoteServiceTest
+    public class DeliveryNoteServiceTest : BaseTest
     {
         private IServiceLayerClient serviceLayerClient;
-        private ILogger logger;
+        private Mock<ILogger> mockLogger;
         private IDeliveryNoteService deliveryNoteService;
 
         /// <summary>
@@ -35,8 +24,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
         public void Init()
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
-            var mockLogger = new Mock<ILogger>();
-            this.deliveryNoteService = new DeliveryNoteService(mockServiceLayerClient.Object, mockLogger.Object);
+            this.mockLogger = new Mock<ILogger>();
+            this.deliveryNoteService = new DeliveryNoteService(mockServiceLayerClient.Object, this.mockLogger.Object);
         }
 
         /// <summary>
@@ -374,5 +363,104 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             Assert.IsTrue(result.Success);
             Assert.AreEqual(result.Code, 200);
         }
+
+        /// <summary>
+        /// Test for cancel delivery.
+        /// </summary>
+        /// <param name="isResponseDeliveryNoteSuccess">isResponseDeliveryNoteSuccess.</param>
+        /// <param name="isResponseCancellationDocumentSuccess">isResponseCancellationDocumentSuccess.</param>
+        /// <param name="isStockTransferSuccess">isStockTransferSuccess.</param>
+        /// <param name="userError">userError.</param>
+        /// <param name="type">type</param>
+        /// <returns>Result.</returns>
+        [Test]
+        [TestCase(false, true, true, "No se encontró el documento delivery notes", "total")]
+        [TestCase(true, false, true, "Error al cancelar el documento", "total")]
+        [TestCase(true, true, false, "Error al generar la tranferencia de stock", "total")]
+        [TestCase(true, true, true, null, "total")]
+        [TestCase(true, true, true, null, "partial")]
+        public async Task CancelDelivery(
+            bool isResponseDeliveryNoteSuccess,
+            bool isResponseCancellationDocumentSuccess,
+            bool isStockTransferSuccess,
+            string userError,
+            string type)
+        {
+            // Arrange
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockDeliveryNoteService = new DeliveryNoteService(mockServiceLayerClient.Object, this.mockLogger.Object);
+
+            var mockDeliveryNoteResponse = new DeliveryNoteDto
+            {
+                DeliveryOrderType = "MX",
+            };
+
+            var responseDeliveryNote = this.GetGenericResponseModel(400, isResponseDeliveryNoteSuccess, mockDeliveryNoteResponse, userError, null, null);
+            mockServiceLayerClient
+                .Setup(sl => sl.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(responseDeliveryNote));
+
+            var responseCancellationDocument = this.GetGenericResponseModel(400, isResponseCancellationDocumentSuccess, null, userError, null, null);
+            var responseStockTransfer = this.GetGenericResponseModel(400, isStockTransferSuccess, null, userError, null, null);
+
+            mockServiceLayerClient
+                .SetupSequence(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(responseCancellationDocument))
+                .Returns(Task.FromResult(responseStockTransfer));
+
+            var deliveryNotesToCancel = new List<CancelDeliveryDto>
+            {
+                new ()
+                {
+                    Delivery = 123,
+                    SaleOrderId = new List<int> { 1, 2, 3, 4 },
+                    MagistralProducts = new List<ProductDeliveryDto>
+                    {
+                        new ()
+                        {
+                            ItemCode = "ItemCode1",
+                            Pieces = 1,
+                        },
+                        new ()
+                        {
+                            ItemCode = "ItemCode2",
+                            Pieces = 2,
+                        },
+                    },
+                },
+            };
+
+            // Act
+            var result = await mockDeliveryNoteService.CancelDelivery(type, deliveryNotesToCancel);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<ResultModel>(result);
+            if (!isResponseDeliveryNoteSuccess)
+            {
+                KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
+                Assert.AreEqual("Error-No se encontró el documento delivery notes", resultDict.Value);
+            }
+            else if (!isResponseCancellationDocumentSuccess)
+            {
+                KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
+                Assert.AreEqual("Error-Error al cancelar el documento", resultDict.Value);
+            }
+            else if (!isStockTransferSuccess)
+            {
+                Assert.AreEqual(2, ((Dictionary<string, string>)result.Response).Count);
+            }
+            else
+            {
+                KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
+                Assert.AreEqual("Ok", resultDict.Value);
+            }
+
+            Assert.IsNull(result.UserError);
+            Assert.IsTrue(result.Success);
+            Assert.IsNotNull(result.Response);
+            Assert.IsNull(result.Comments);
+        }
+
     }
 }

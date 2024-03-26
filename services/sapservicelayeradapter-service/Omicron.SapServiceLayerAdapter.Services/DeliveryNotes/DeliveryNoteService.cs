@@ -14,10 +14,13 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
     using System.Linq;
     using System.Net;
     using System.Security.AccessControl;
+    using System.Text.Json.Serialization;
     using System.Threading.Tasks;
     using Azure;
+    using Confluent.Kafka;
     using Newtonsoft.Json;
     using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
+    using Omicron.SapServiceLayerAdapter.Common.DTOs.StockTransfer;
     using Omicron.SapServiceLayerAdapter.Services.Constants;
     using Serilog;
     using static System.Runtime.CompilerServices.RuntimeHelpers;
@@ -228,6 +231,19 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(dictionaryResult), null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> CancelDelivery(string type, List<CancelDeliveryDto> deliveryNotesToCancel)
+        {
+            this.logger.Information($"Deliveries to cancel: {JsonConvert.SerializeObject(deliveryNotesToCancel)}.");
+            var dictionaryResult = new Dictionary<string, string>();
+            foreach (var deliveryNote in deliveryNotesToCancel)
+            {
+                dictionaryResult = await this.CancelDeliveryNote(type, deliveryNote, dictionaryResult);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+        }
+
         private async Task UpdateShippingCostBaseLine(int saleOrderId, string isOmigenomics, int salesPersonCode, int documentsOwner)
         {
             var response = await this.serviceLayerClient.GetAsync($"Orders({saleOrderId})");
@@ -318,6 +334,108 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             }
 
             return correctBaseLineId;
+        }
+
+        private async Task<Dictionary<string, string>> CancelDeliveryNote(string type, CancelDeliveryDto deliveryNote, Dictionary<string, string> dictionaryResult)
+        {
+            try
+            {
+                var responseDeliveryNote = await this.serviceLayerClient.GetAsync(
+                            string.Format(ServiceQuerysConstants.QryGetDeliveryNoteById, deliveryNote.Delivery));
+
+                if (!responseDeliveryNote.Success)
+                {
+                    this.logger.Error(string.Format(ServiceConstants.CancelDeliveryNoteNotFoundError, deliveryNote.Delivery));
+                    dictionaryResult.Add(
+                        string.Format(ServiceConstants.DictionaryKeyErrorGenericFormat, deliveryNote.Delivery),
+                        ServiceUtils.GetDictionaryValueString(
+                            ServiceConstants.RelationMessagesServiceLayer,
+                            responseDeliveryNote.UserError,
+                            string.Format(ServiceConstants.DictionaryValueErrorGenericFormat, responseDeliveryNote.UserError)));
+                    return dictionaryResult;
+                }
+
+                var responseCreateCancellationDocument = await this.serviceLayerClient.PostAsync(
+                    string.Format(
+                        ServiceQuerysConstants.QryToCreateDeliveryNoteCancelDocumentById, deliveryNote.Delivery), string.Empty);
+
+                if (!responseCreateCancellationDocument.Success)
+                {
+                    this.logger.Error(
+                        string.Format(ServiceConstants.CancelDeliveryErrorToCreateDocument, deliveryNote.Delivery, responseCreateCancellationDocument.UserError));
+                    dictionaryResult.Add(
+                        string.Format(ServiceConstants.DictionaryKeyErrorGenericFormat, deliveryNote.Delivery),
+                        ServiceUtils.GetDictionaryValueString(
+                            ServiceConstants.RelationMessagesServiceLayer,
+                            responseCreateCancellationDocument.UserError,
+                            string.Format(ServiceConstants.DictionaryValueErrorGenericFormat, responseCreateCancellationDocument.UserError)));
+                    return dictionaryResult;
+                }
+
+                var resultDeliveryNote = JsonConvert.DeserializeObject<DeliveryNoteDto>(responseDeliveryNote.Response.ToString());
+                this.logger.Information(string.Format(ServiceConstants.CancelDeliveryLogToCancelDelivery, deliveryNote.Delivery));
+                dictionaryResult.Add(string.Format(ServiceConstants.DictionaryKeyOkGenericFormat, deliveryNote.Delivery), ServiceConstants.OkLabelResponse);
+
+                if (ServiceUtils.CalculateAnd(type == ServiceConstants.Total, deliveryNote.MagistralProducts.Any()))
+                {
+                    dictionaryResult = await this.CreateStockTransfer(deliveryNote, dictionaryResult, resultDeliveryNote);
+                }
+
+                return dictionaryResult;
+            }
+            catch (Exception ex)
+            {
+                dictionaryResult.Add(string.Format(ServiceConstants.ServiceLayerErrorHandled, deliveryNote.Delivery), $"{ex.Message}");
+                return dictionaryResult;
+            }
+        }
+
+        private async Task<Dictionary<string, string>> CreateStockTransfer(CancelDeliveryDto deliveryNote, Dictionary<string, string> dictionaryResult, DeliveryNoteDto resultDeliveryNote)
+        {
+            var finalWhs = ServiceConstants.DictWhs.ContainsKey(resultDeliveryNote.DeliveryOrderType) ? ServiceConstants.DictWhs[resultDeliveryNote.DeliveryOrderType] : "MG";
+            var saleOrders = JsonConvert.SerializeObject(deliveryNote.SaleOrderId).Replace("[", string.Empty).Replace("]", string.Empty);
+
+            var stockTransferLinesRequest = new List<StockTransferLineDto>();
+
+            foreach (var item in deliveryNote.MagistralProducts.Where(mp => mp.ItemCode != ServiceConstants.ShippingCostItemCode))
+            {
+                stockTransferLinesRequest.Add(
+                new StockTransferLineDto
+                {
+                    ItemCode = item.ItemCode,
+                    FromWarehouseCode = "PT",
+                    WarehouseCode = finalWhs,
+                    Quantity = item.Pieces,
+                });
+            }
+
+            var stockTransferRequest = new StockTransferDto
+            {
+                DocumentDate = DateTime.Today,
+                FromWarehouse = "PT",
+                ToWarehouse = finalWhs,
+                JournalMemo = $"Traspaso por Cancelación: {saleOrders}",
+                StockTransferLines = stockTransferLinesRequest,
+            };
+
+            var stockTransferResponse = await this.serviceLayerClient.PostAsync(
+                    ServiceQuerysConstants.QryPostStockTransfers, JsonConvert.SerializeObject(stockTransferRequest));
+
+            if (!stockTransferResponse.Success)
+            {
+                this.logger.Error(string.Format(ServiceConstants.CancelDeliveryErrorToCreateStockTransfer, deliveryNote.Delivery, stockTransferResponse.UserError));
+                dictionaryResult.Add(
+                    string.Format(ServiceConstants.CancelDeliveryTransferError, deliveryNote.Delivery),
+                    ServiceUtils.GetDictionaryValueString(
+                        ServiceConstants.RelationMessagesServiceLayer,
+                        stockTransferResponse.UserError,
+                        string.Format(ServiceConstants.DictionaryValueErrorGenericFormat, stockTransferResponse.UserError)));
+                return dictionaryResult;
+            }
+
+            this.logger.Information(string.Format(ServiceConstants.TransferRequestForDeliveryDone, deliveryNote.Delivery));
+            dictionaryResult.Add(string.Format(ServiceConstants.TransferRequestForDeliveryOk, deliveryNote.Delivery), ServiceConstants.OkLabelResponse);
+            return dictionaryResult;
         }
     }
 }

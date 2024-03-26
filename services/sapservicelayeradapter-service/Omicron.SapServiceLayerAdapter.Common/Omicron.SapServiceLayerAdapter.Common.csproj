@@ -33,7 +33,6 @@
 
   <ItemGroup>
     <Folder Include="DTOs\Requests\" />
-    <Folder Include="DTOs\DeliveryNotes\" />
     <Folder Include="DTOs\Batches\" />
   </ItemGroup>
 

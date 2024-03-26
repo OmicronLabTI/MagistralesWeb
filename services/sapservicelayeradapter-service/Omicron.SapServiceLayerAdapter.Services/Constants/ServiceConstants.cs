@@ -149,6 +149,47 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string CloseSampleOrderInventoryError = "{0}-Inventory-Error";
 
         /// <summary>
+        /// Cancel Delivery Note Not Found Error.
+        /// </summary>
+        public const string CancelDeliveryNoteNotFoundError = "Omicron.SapServiceLayerAdapter Service-Cancel Delivery Note-Service Layer-The Delivery Note {0} not found.";
+
+        /// <summary>
+        /// Cancel Delivery Error To Create Document.
+        /// </summary>
+        public const string CancelDeliveryErrorToCreateDocument = "The delivery {0} was triend to be CANCELLED. {1}.";
+
+        /// <summary>
+        /// Cancel Delivery Error To Create Document.
+        /// </summary>
+        public const string CancelDeliveryLogToCancelDelivery = "The delivery note {0} was cancelled.";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string Total = "total";
+
+        /// <summary>
+        /// Close Sample Order Error To Create InventoryGenExit.
+        /// </summary>
+        public const string CancelDeliveryErrorToCreateStockTransfer = "The transfer for delivery: {0} was tried to be made. {1}";
+
+        /// <summary>
+        /// Cancel Delivery Transfer Error.
+        /// </summary>
+        public const string CancelDeliveryTransferError = "{0}-Transfer-Error";
+
+        /// <summary>
+        /// Cancel Delivery Transfer Error.
+        /// </summary>
+        public const string TransferRequestForDeliveryDone = "The transfer for delivery: {0} was done.";
+
+        /// <summary>
+        /// Cancel Delivery Transfer Error.
+        /// </summary>
+        public const string TransferRequestForDeliveryOk = "{0}-Transfer-Ok";
+
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -158,6 +199,20 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         {
             { "No existen registros coincidentes (ODBC -2028)", "Error-No se encontró la factura." },
             { "Invalid session or session already timeout.", "Error-Sesión no válida o la sesión ya ha expirado." },
+        };
+
+        /// <summary>
+        /// Gets the status of the order.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static Dictionary<string, string> DictWhs { get; } = new Dictionary<string, string>
+        {
+            { "MN", "MN" },
+            { "MG", "MG" },
+            { "BE", "BE" },
+            { "MX", "MG" },
         };
     }
 }

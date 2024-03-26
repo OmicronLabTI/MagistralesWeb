@@ -1,25 +1,23 @@
 ﻿// <summary>
-// <copyright file="DeliveryNoteFacadeTest.cs" company="Axity">
+// <copyright file="InvoiceFacadeTest.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
+using Omicron.SapServiceLayerAdapter.Facade.Invoice.Impl;
+using Omicron.SapServiceLayerAdapter.Services.Invoices;
+
 namespace Omicron.SapServiceLayerAdapter.Test.Facade
 {
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
-    using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes;
-    using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes.Impl;
-    using Omicron.SapServiceLayerAdapter.Services.DeliveryNotes;
-
     /// <summary>
     /// Class ProductValidationsFacadeTest.
     /// </summary>
     [TestFixture]
-    public class DeliveryNoteFacadeTest
+    public class InvoiceFacadeTest
     {
-        private IDeliveryNoteFacade deliveryNoteFacade;
+        private InvoiceFacade invoiceFacade;
 
         private IMapper mapper;
 
@@ -31,7 +29,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         {
             var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
             this.mapper = mapperConfiguration.CreateMapper();
-            var mockOrdersService = new Mock<IDeliveryNoteService>();
+            var mockInvoiceService = new Mock<IInvoiceService>();
 
             var resultDto = new ResultModel()
             {
@@ -40,8 +38,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
                 Response = "response",
             };
 
-            mockOrdersService.SetReturnsDefault(Task.FromResult(resultDto));
-            this.deliveryNoteFacade = new DeliveryNoteFacade(this.mapper, mockOrdersService.Object);
+            mockInvoiceService.SetReturnsDefault(Task.FromResult(resultDto));
+            this.invoiceFacade = new InvoiceFacade(this.mapper, mockInvoiceService.Object);
         }
 
         /// <summary>
@@ -49,39 +47,14 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         /// </summary>
         /// <returns>nothing.</returns>
         [Test]
-        public async Task CreateDelivery()
-        {
-            // Act
-            var response = await this.deliveryNoteFacade.CreateDelivery(new List<CreateDeliveryNoteDto>());
-
-            // Assert
-            this.AssertResponse(response);
-        }
-
-        /// <summary>
-        /// Test for selecting all models.
-        /// </summary>
-        /// <returns>nothing.</returns>
-        [Test]
-        public async Task CreateDeliveryPartial()
-        {
-            // Act
-            var response = await this.deliveryNoteFacade.CreateDeliveryPartial(new List<CreateDeliveryNoteDto>());
-
-            // Assert
-            this.AssertResponse(response);
-        }
-
-        /// <summary>
-        /// Test for selecting all models.
-        /// </summary>
-        /// <returns>nothing.</returns>
-        [Test]
-        public async Task CancelDelivery()
+        public async Task CloseSampleOrders()
         {
             // Arrange
+            var invoiceId = 0;
+            var packageInformationSend = new TrackingInformationDto();
+
             // Act
-            var response = await this.deliveryNoteFacade.CancelDelivery(string.Empty, new List<CancelDeliveryDto>());
+            var response = await this.invoiceFacade.UpdateInvoiceTrackingInfo(invoiceId, packageInformationSend);
 
             // Assert
             this.AssertResponse(response);
