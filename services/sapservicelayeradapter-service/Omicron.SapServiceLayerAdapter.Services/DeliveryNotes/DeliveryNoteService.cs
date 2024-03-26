@@ -321,7 +321,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
                 var areAllSame = listOrderType.All(o => o == listOrderType.FirstOrDefault());
                 var tipoPedidos = areAllSame ? listOrderType.FirstOrDefault() : "MX";
-                deliveryNote.TypeOrder = tipoPedidos == "UN" ? "LN" : tipoPedidos;
+                deliveryNote.DeliveryOrderType = tipoPedidos == "UN" ? "LN" : tipoPedidos;
                 deliveryNote.Comments = commentMultiple.Length > 253 ? commentMultiple.ToString().Substring(0, 253) : commentMultiple.ToString();
 
                 var deliveryNotesStg = JsonConvert.SerializeObject(deliveryNote);
