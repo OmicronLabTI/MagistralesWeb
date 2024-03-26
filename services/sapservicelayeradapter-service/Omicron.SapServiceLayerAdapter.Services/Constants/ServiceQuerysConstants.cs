@@ -57,5 +57,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Query Qry Post Stock Transfers.
         /// </summary>
         public const string QryPostStockTransfers = "StockTransfers";
+
+        /// <summary>
+        /// Query Delivery Notes.
+        /// </summary>
+        public const string QryDeliveryNotes = "DeliveryNotes";
     }
 }

@@ -110,7 +110,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 }
 
                 var deliveryNotesStg = JsonConvert.SerializeObject(deliveryNote);
-                var result = await this.serviceLayerClient.PostAsync("DeliveryNotes", deliveryNotesStg);
+                var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryDeliveryNotes, deliveryNotesStg);
 
                 if (!result.Success)
                 {
@@ -209,7 +209,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 }
 
                 var deliveryNotesStg = JsonConvert.SerializeObject(deliveryNote);
-                var result = await this.serviceLayerClient.PostAsync("DeliveryNotes", deliveryNotesStg);
+                var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryDeliveryNotes, deliveryNotesStg);
 
                 if (!result.Success)
                 {
@@ -325,7 +325,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 deliveryNote.Comments = commentMultiple.Length > 253 ? commentMultiple.ToString().Substring(0, 253) : commentMultiple.ToString();
 
                 var deliveryNotesStg = JsonConvert.SerializeObject(deliveryNote);
-                var result = await this.serviceLayerClient.PostAsync("DeliveryNotes", deliveryNotesStg);
+                var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryDeliveryNotes deliveryNotesStg);
 
                 if (!result.Success)
                 {
