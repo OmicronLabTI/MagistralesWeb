@@ -28,15 +28,7 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
         /// <inheritdoc/>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (request.Headers.Count() == 0)
-            {
-                await this.AddCookie(request);
-                return await base.SendAsync(request, cancellationToken);
-            }
-
-            var cookies = request.Headers.GetValues("Cookie");
-            var cookie = Enumerable.ToList(cookies).First();
-            if (string.IsNullOrEmpty(cookie) || !cookie.Contains("B1SESSION"))
+            if (!request.Headers.Contains("Cookie"))
             {
                 await this.AddCookie(request);
             }

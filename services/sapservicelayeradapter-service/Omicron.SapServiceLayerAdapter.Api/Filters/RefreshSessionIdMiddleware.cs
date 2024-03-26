@@ -39,8 +39,8 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     var sessionId = await this.serviceLayerAuth.RefreshSession();
-                    var clonedRequest = await this.CloneRequest(request, sessionId);
-                    response = await base.SendAsync(clonedRequest, cancellationToken);
+                    this.AddNewSessionId(request, sessionId);
+                    response = await base.SendAsync(request, cancellationToken);
                 }
             }
             finally
@@ -51,29 +51,14 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
             return response;
         }
 
-        private async Task<HttpRequestMessage> CloneRequest(HttpRequestMessage request, string sessionId)
+        private void AddNewSessionId(HttpRequestMessage request, string sessionId)
         {
-            var clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
-            foreach (var header in request.Headers)
+            if (request.Headers.Contains("Cookie"))
             {
-                clonedRequest.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                request.Headers.Remove("Cookie");
             }
 
-            if (clonedRequest.Headers.Contains("Cookie"))
-            {
-                clonedRequest.Headers.Remove("Cookie");
-            }
-
-            clonedRequest.Headers.Add("Cookie", $"B1SESSION={sessionId}; Path=/b1s/v1; Secure; HttpOnly;");
-
-            if (request.Content != null)
-            {
-                var content = await request.Content.ReadAsByteArrayAsync();
-                clonedRequest.Content = new ByteArrayContent(content);
-                clonedRequest.Content.Headers.ContentType = request.Content.Headers.ContentType;
-            }
-
-            return clonedRequest;
+            request.Headers.Add("Cookie", $"B1SESSION={sessionId}; Path=/b1s/v1; Secure; HttpOnly;");
         }
     }
 }
