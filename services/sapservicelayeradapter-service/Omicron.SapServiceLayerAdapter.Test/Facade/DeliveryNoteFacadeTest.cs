@@ -88,6 +88,21 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Test for selecting all models.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task CreateDeliveryBatch()
+        {
+            // Arrange
+            // Act
+            var response = await this.deliveryNoteFacade.CreateDeliveryBatch(new List<CreateDeliveryNoteDto>());
+
+            // Assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>
