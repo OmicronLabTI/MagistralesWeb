@@ -325,7 +325,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 deliveryNote.Comments = commentMultiple.Length > 253 ? commentMultiple.ToString().Substring(0, 253) : commentMultiple.ToString();
 
                 var deliveryNotesStg = JsonConvert.SerializeObject(deliveryNote);
-                var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryDeliveryNotes deliveryNotesStg);
+                var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryDeliveryNotes, deliveryNotesStg);
 
                 if (!result.Success)
                 {
@@ -346,7 +346,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(dictionaryResult), null);
         }
-        
+
         /// <inheritdoc/>
         public async Task<ResultModel> CancelDelivery(string type, List<CancelDeliveryDto> deliveryNotesToCancel)
         {

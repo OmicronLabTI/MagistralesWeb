@@ -197,9 +197,9 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
         }
 
         /// <summary>
-        /// Method to create delivery partial with invalid order.
+        /// Method to verify Get All Almacens.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns></summary>
         [Test]
         public async Task CreateDeliveryPartialWithNotFoundOrder()
         {
@@ -237,9 +237,9 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
         }
 
         /// <summary>
-        /// Method to verify Get All Almacens.
+        /// Method to verify CreateDeliveryPartialWithShipping.
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns></summary>
         [Test]
         public async Task CreateDeliveryPartialWithShipping()
         {
@@ -462,5 +462,172 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             Assert.IsNull(result.Comments);
         }
 
+        /// <summary>
+        /// Method to create delivery partial with invalid order.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task CreateDeliveryBacthWithNotFoundOrder()
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new DeliveryNoteService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            var serviceLayerClientResult = new ResultModel()
+            {
+                Success = false,
+                UserError = "Error 401",
+            };
+
+            mockServiceLayerClient
+              .Setup(x => x.GetAsync(It.IsAny<string>()))
+              .Returns(Task.FromResult(serviceLayerClientResult));
+
+            var firstDelivery = new CreateDeliveryNoteDto()
+            {
+                SaleOrderId = 12,
+                ShippingCostOrderId = 0,
+                ItemCode = "REVE 14",
+                OrderType = string.Empty,
+                Batches = new List<AlmacenBatchDto>(),
+                IsPackage = "N",
+                IsOmigenomics = false,
+            };
+
+            List<CreateDeliveryNoteDto> createDelivery = new List<CreateDeliveryNoteDto>();
+            createDelivery.Add(firstDelivery);
+
+            var result = await service.CreateDeliveryBatch(createDelivery);
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(result.Code, 200);
+        }
+
+        /// <summary>
+        /// Method to verify Get All Almacens.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task CreateDeliveryBatchWithShipping()
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new DeliveryNoteService(mockServiceLayerClient.Object, mockLogger.Object);
+            var orderLines = new List<OrderLineDto>();
+
+            var orderLine = new OrderLineDto()
+            {
+                ItemCode = "REVE 14",
+                Quantity = 1,
+                DiscountPercent = 0,
+                TaxCode = string.Empty,
+                LineTotal = 150,
+                WarehouseCode = string.Empty,
+                Container = "NA",
+                Label = "NA",
+                LineNum = 10,
+                UnitPrice = 150,
+                SalesPersonCode = 30,
+            };
+            var orderLineShipping = new OrderLineDto()
+            {
+                ItemCode = "FL 1",
+                Quantity = 1,
+                DiscountPercent = 0,
+                TaxCode = string.Empty,
+                LineTotal = 300,
+                WarehouseCode = string.Empty,
+                Container = "NA",
+                Label = "NA",
+                LineNum = 10,
+                UnitPrice = 150,
+                SalesPersonCode = 30,
+                OwnerCode = 30,
+            };
+            orderLines.Add(orderLine);
+            orderLines.Add(orderLineShipping);
+
+            var saleOrder = new OrderDto()
+            {
+                IsOmigenomics = "N",
+                CardCode = "C03580",
+                SalesPersonCode = 30,
+                DocumentsOwner = 0,
+                BillingAddress = string.Empty,
+                ShippingAddress = string.Empty,
+                ShippingCode = string.Empty,
+                JournalMemo = string.Empty,
+                Comments = "Comentarios",
+                OrderLines = orderLines,
+            };
+
+            var serviceLayerClientResult = new ResultModel()
+            {
+                Success = true,
+                UserError = string.Empty,
+                Response = JsonConvert.SerializeObject(saleOrder),
+                Code = 200,
+            };
+
+            mockServiceLayerClient
+              .Setup(x => x.GetAsync(It.IsAny<string>()))
+              .Returns(Task.FromResult(serviceLayerClientResult));
+
+            var patchResul = new ResultModel()
+            {
+                Success = true,
+                UserError = string.Empty,
+                Response = string.Empty,
+                Code = 201,
+            };
+            mockServiceLayerClient.Setup(x => x.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(patchResul));
+
+            var createResult = new ResultModel()
+            {
+                Success = true,
+                UserError = string.Empty,
+                Response = string.Empty,
+                Code = 201,
+            };
+            mockServiceLayerClient.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(createResult));
+
+            var firstDelivery = new CreateDeliveryNoteDto()
+            {
+                SaleOrderId = 12,
+                ShippingCostOrderId = 0,
+                ItemCode = "REVE 14",
+                OrderType = "linea",
+                Batches = new List<AlmacenBatchDto>()
+                {
+                    new AlmacenBatchDto()
+                    {
+                        BatchNumber = "Axity.10",
+                        BatchQty = 1,
+                    },
+                },
+                IsPackage = "N",
+                IsOmigenomics = false,
+            };
+
+            var shippingItem = new CreateDeliveryNoteDto()
+            {
+                SaleOrderId = 12,
+                ShippingCostOrderId = 15,
+                ItemCode = "FL 1",
+                OrderType = "300",
+                Batches = new List<AlmacenBatchDto>(),
+                IsPackage = "N",
+                IsOmigenomics = false,
+            };
+
+            List<CreateDeliveryNoteDto> createDelivery = new List<CreateDeliveryNoteDto>();
+            createDelivery.Add(firstDelivery);
+            createDelivery.Add(shippingItem);
+
+            var result = await service.CreateDeliveryBatch(createDelivery);
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(result.Code, 200);
+        }
     }
 }
