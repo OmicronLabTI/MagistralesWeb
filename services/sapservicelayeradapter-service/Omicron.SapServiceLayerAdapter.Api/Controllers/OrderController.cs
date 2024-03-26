@@ -6,6 +6,9 @@
 // </copyright>
 // </summary>
 
+using Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices;
+using Omicron.SapServiceLayerAdapter.Common.DTOs.Orders;
+
 namespace Omicron.SapServiceLayerAdapter.Api.Controllers
 {
     /// <summary>
@@ -23,6 +26,15 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         /// <param name="ordersFacade">Orders Facade.</param>
         public OrderController(IOrderFacade ordersFacade)
             => this.ordersFacade = ordersFacade ?? throw new ArgumentNullException(nameof(ordersFacade));
+
+        /// <summary>
+        /// Close sample orders.
+        /// </summary>
+        /// <param name="sampleOrders">Sample orders.</param>
+        /// <returns>Result.</returns>
+        [HttpPost("/close/sampleorders")]
+        public async Task<IActionResult> CloseSampleOrders([FromBody] List<CloseSampleOrderDto> sampleOrders)
+            => this.Ok(await this.ordersFacade.CloseSampleOrders(sampleOrders));
 
         /// <summary>
         /// Method to get the last generated order.

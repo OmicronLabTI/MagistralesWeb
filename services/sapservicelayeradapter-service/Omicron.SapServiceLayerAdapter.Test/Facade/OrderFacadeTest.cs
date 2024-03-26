@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="OrdersFacadeTest.cs" company="Axity">
+// <copyright file="OrderFacadeTest.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -48,6 +48,23 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         {
             // Act
             var response = await this.ordersFacade.GetLastGeneratedOrder();
+
+            // Assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Test for selecting all models.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task CloseSampleOrders()
+        {
+            // Arrange
+            var sampleOrders = new List<CloseSampleOrderDto>();
+
+            // Act
+            var response = await this.ordersFacade.CloseSampleOrders(sampleOrders);
 
             // Assert
             this.AssertResponse(response);

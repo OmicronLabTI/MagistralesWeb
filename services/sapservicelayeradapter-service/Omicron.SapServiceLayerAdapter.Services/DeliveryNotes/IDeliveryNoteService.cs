@@ -38,5 +38,13 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
         /// <param name="createDelivery">the objects to create.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> CreateDeliveryBatch(List<CreateDeliveryNoteDto> createDelivery);
+        
+        /// <summary>
+        /// Cancel deliry notes.
+        /// </summary>
+        /// <param name="type">Type.</param>
+        /// <param name="deliveryNotesToCancel">Delivery notes to cancel.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CancelDelivery(string type, List<CancelDeliveryDto> deliveryNotesToCancel);
     }
 }

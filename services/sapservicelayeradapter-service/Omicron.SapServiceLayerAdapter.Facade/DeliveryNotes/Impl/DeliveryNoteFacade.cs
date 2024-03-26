@@ -31,6 +31,10 @@ namespace Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes.Impl
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> CancelDelivery(string type, List<CancelDeliveryDto> deliveryNotesToCancel)
+            => this.mapper.Map<ResultDto>(await this.deliveryService.CancelDelivery(type, deliveryNotesToCancel));
+
+        /// <inheritdoc/>
         public async Task<ResultDto> CreateDelivery(List<CreateDeliveryNoteDto> createDelivery)
             => this.mapper.Map<ResultDto>(await this.deliveryService.CreateDelivery(createDelivery));
 

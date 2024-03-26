@@ -33,6 +33,13 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new InvoiceLineDto(),
             new TrackingInformationDto(),
             new ShippingTypesResponseDto(),
+            new BatchNumbersDto(),
+            new CreateDeliveryDto(),
+            new InventoryGenExitDto(),
+            new InventoryGenExitLineDto(),
+            new CloseSampleOrderDto(),
+            new ProductDeliveryDto(),
+            new CancelDeliveryDto(),
         };
 
         /// <summary>

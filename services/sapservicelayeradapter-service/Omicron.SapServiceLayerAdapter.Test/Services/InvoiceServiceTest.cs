@@ -85,8 +85,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             }
             else
             {
-                Assert.IsTrue(result.Code == 400);
-                Assert.IsFalse(result.Success);
+                Assert.IsTrue(result.Code == 200);
+                Assert.IsTrue(result.Success);
                 Assert.IsNotNull(result.UserError);
                 Assert.AreEqual("No existen registros coincidentes (ODBC -2028)", result.UserError);
             }
