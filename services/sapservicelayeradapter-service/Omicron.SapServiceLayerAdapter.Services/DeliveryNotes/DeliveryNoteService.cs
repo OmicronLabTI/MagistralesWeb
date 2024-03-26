@@ -51,7 +51,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             var saleOrderId = createDeliveryFirst.SaleOrderId;
             try
             {
-                var response = await this.serviceLayerClient.GetAsync($"Orders({saleOrderId})");
+                var response = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, saleOrderId));
                 if (!response.Success)
                 {
                     this.logger.Information($"Error to get the order {saleOrderId}, {response.UserError}");
@@ -136,11 +136,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             var dictionaryResult = new Dictionary<string, string>();
             var createDeliveryFirst = createDelivery.First();
             var saleOrderId = createDeliveryFirst.SaleOrderId;
-            var productsIds = createDelivery.Where(x => x.ItemCode != ServiceConstants.ShippingCostItemCode).Select(x => x.ItemCode).ToList(); // ["REVE 14"]
+            var productsIds = createDelivery.Where(x => x.ItemCode != ServiceConstants.ShippingCostItemCode).Select(x => x.ItemCode).ToList();
 
             try
             {
-                var response = await this.serviceLayerClient.GetAsync($"Orders({saleOrderId})");
+                var response = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, saleOrderId));
                 if (!response.Success)
                 {
                     this.logger.Information($"Error to get the order {saleOrderId}, {response.UserError}");
@@ -228,9 +228,125 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(dictionaryResult), null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> CreateDeliveryBatch(List<CreateDeliveryNoteDto> createDelivery)
+        {
+            this.logger.Information($"order to be delivered batch {JsonConvert.SerializeObject(createDelivery)}");
+            var dictionaryResult = new Dictionary<string, string>();
+            var createDeliveryFirst = createDelivery.First();
+            var saleOrderId = createDeliveryFirst.SaleOrderId;
+
+            try
+            {
+                var response = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, saleOrderId));
+                if (!response.Success)
+                {
+                    this.logger.Information($"Error to get the order {saleOrderId}, {response.UserError}");
+                    dictionaryResult.Add($"{saleOrderId}-Error", $"Error- {response.UserError}");
+                    return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+                }
+
+                var ids = string.Join(", ", createDelivery.Select(x => x.SaleOrderId).Distinct().ToList());
+                var listOrderType = new List<string>();
+                var isOmigenomicsStr = createDeliveryFirst.IsOmigenomics ? "Y" : "N";
+
+                var saleOrder = JsonConvert.DeserializeObject<OrderDto>(response.Response.ToString());
+                var deliveryNote = new DeliveryNoteDto();
+
+                deliveryNote.CustomerCode = saleOrder.CardCode;
+                deliveryNote.SalesPersonCode = saleOrder.SalesPersonCode;
+                deliveryNote.DocumentType = "dDocument_Items";
+                deliveryNote.DocumentSubType = "bod_None";
+                deliveryNote.DocumentsOwner = saleOrder.DocumentsOwner;
+                deliveryNote.BillingAddress = saleOrder.BillingAddress;
+                deliveryNote.ShippingAddress = saleOrder.ShippingAddress;
+                deliveryNote.ShippingCode = saleOrder.ShippingCode;
+                deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
+                deliveryNote.RemissionComment = $"Basado en pedido: {saleOrderId}";
+                deliveryNote.IsOmigenomics = isOmigenomicsStr;
+                deliveryNote.DeliveryNoteLines = new List<DeliveryNoteLineDto>();
+
+                var commentMultiple = new StringBuilder();
+
+                var ordersGrouped = createDelivery.GroupBy(p => p.SaleOrderId).ToList();
+                foreach (var sale in ordersGrouped)
+                {
+                    var saleOrderFound = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, sale.FirstOrDefault().SaleOrderId));
+                    if (!saleOrderFound.Success)
+                    {
+                        this.logger.Information($"The sale Order {sale.FirstOrDefault().SaleOrderId} was not found for creating the delivery");
+                        dictionaryResult.Add($"{saleOrderId}-Error", $"Error- {saleOrderFound.UserError}");
+                        continue;
+                    }
+
+                    var saleOrderFoundJson = saleOrderFound.Response.ToString();
+                    var saleOrderFoundLocal = JsonConvert.DeserializeObject<OrderDto>(saleOrderFoundJson);
+
+                    listOrderType.Add(saleOrder.TypeOrder ?? string.Empty);
+                    commentMultiple.Append($"{saleOrder.Comments} |");
+
+                    for (var i = 0; i < saleOrderFoundLocal.OrderLines.Count; i++)
+                    {
+                        var itemCode = saleOrderFoundLocal.OrderLines[i].ItemCode;
+                        deliveryNote = this.UpdateDelivery(deliveryNote, saleOrderFoundLocal, sale.FirstOrDefault().SaleOrderId, i, createDelivery, itemCode);
+                    }
+
+                    if (createDelivery.Any(x => x.ItemCode == ServiceConstants.ShippingCostItemCode && x.SaleOrderId == sale.Key))
+                    {
+                        this.logger.Information($"Here Starts the fl 1 when its apart.");
+                        var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode && x.SaleOrderId == sale.Key);
+                        double.TryParse(shippingCost.OrderType, out var price);
+                        this.logger.Information($"The price is {price}");
+
+                        var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
+                        var newDeliveryNote = new DeliveryNoteLineDto()
+                        {
+                            ItemCode = shippingCost.ItemCode,
+                            Quantity = 1,
+                            BaseType = 17,
+                            BaseEntry = shippingCost.ShippingCostOrderId,
+                            UnitPrice = price,
+                            BaseLine = correctBaseLineId,
+                            SalesPersonCode = saleOrder.SalesPersonCode,
+                            Price = price,
+                            LineTotal = price,
+                        };
+                        deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
+                        await this.UpdateShippingCostBaseLine(shippingCost.ShippingCostOrderId, isOmigenomicsStr, saleOrder.SalesPersonCode, saleOrder.DocumentsOwner);
+                    }
+                }
+
+                var areAllSame = listOrderType.All(o => o == listOrderType.FirstOrDefault());
+                var tipoPedidos = areAllSame ? listOrderType.FirstOrDefault() : "MX";
+                deliveryNote.TypeOrder = tipoPedidos == "UN" ? "LN" : tipoPedidos;
+                deliveryNote.Comments = commentMultiple.Length > 253 ? commentMultiple.ToString().Substring(0, 253) : commentMultiple.ToString();
+
+                var deliveryNotesStg = JsonConvert.SerializeObject(deliveryNote);
+                var result = await this.serviceLayerClient.PostAsync("DeliveryNotes", deliveryNotesStg);
+
+                if (!result.Success)
+                {
+                    this.logger.Error($"The saleORder {saleOrderId} was tried to be delivered batch {result.Code} - {result.UserError} - {JsonConvert.SerializeObject(createDelivery)}");
+                    dictionaryResult.Add($"{saleOrderId}-Error", $"Error- {result.UserError}");
+                }
+                else
+                {
+                    this.logger.Information($"The saleORder {saleOrderId} was delivered batch - {result.Code}");
+                    dictionaryResult.Add($"{saleOrderId}-Ok", "Ok");
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error($"Error while Delivery {saleOrderId} {JsonConvert.SerializeObject(createDelivery)} - ex: {ex.Message} - stackTrace: {ex.StackTrace}");
+                dictionaryResult.Add($"{saleOrderId}-ErrorHandled", "Error mientras se crea remisión");
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(dictionaryResult), null);
+        }
+
         private async Task UpdateShippingCostBaseLine(int saleOrderId, string isOmigenomics, int salesPersonCode, int documentsOwner)
         {
-            var response = await this.serviceLayerClient.GetAsync($"Orders({saleOrderId})");
+            var response = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, saleOrderId));
             if (response.Code == (int)HttpStatusCode.NotFound)
             {
                 throw new CustomServiceException($"Almacen - Create Delivery Service - SaleOrderId {saleOrderId} Not found", HttpStatusCode.NotFound);
@@ -298,7 +414,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
         private async Task<int> GetShippingCostBaseLine(int saleOrderId)
         {
-            var saleOrderShipping = await this.serviceLayerClient.GetAsync($"Orders({saleOrderId})");
+            var saleOrderShipping = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, saleOrderId));
             if (saleOrderShipping.Code == (int)HttpStatusCode.NotFound)
             {
                 throw new CustomServiceException($"Almacen - Create Delivery Service - SaleOrderId {saleOrderId} Not found", HttpStatusCode.NotFound);

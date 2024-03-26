@@ -26,10 +26,17 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
         Task<ResultModel> CreateDelivery(List<CreateDeliveryNoteDto> createDelivery);
 
         /// <summary>
-        /// Creates the delivery.
+        /// Creates the delivery partial.
         /// </summary>
         /// <param name="createDelivery">the objects to create.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> CreateDeliveryPartial(List<CreateDeliveryNoteDto> createDelivery);
+
+        /// <summary>
+        /// Creates the delivery batch.
+        /// </summary>
+        /// <param name="createDelivery">the objects to create.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CreateDeliveryBatch(List<CreateDeliveryNoteDto> createDelivery);
     }
 }

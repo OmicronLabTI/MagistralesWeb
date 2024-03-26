@@ -37,5 +37,9 @@ namespace Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes.Impl
         /// <inheritdoc/>
         public async Task<ResultDto> CreateDeliveryPartial(List<CreateDeliveryNoteDto> createDelivery)
             => this.mapper.Map<ResultDto>(await this.deliveryService.CreateDeliveryPartial(createDelivery));
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CreateDeliveryBatch(List<CreateDeliveryNoteDto> createDelivery)
+            => this.mapper.Map<ResultDto>(await this.deliveryService.CreateDeliveryBatch(createDelivery));
     }
 }

@@ -374,5 +374,45 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             Assert.IsTrue(result.Success);
             Assert.AreEqual(result.Code, 200);
         }
+
+        /// <summary>
+        /// Method to create delivery partial with invalid order.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task CreateDeliveryBatchWithNotFoundOrder()
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new DeliveryNoteService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            var serviceLayerClientResult = new ResultModel()
+            {
+                Success = false,
+                UserError = "Error 401",
+            };
+
+            mockServiceLayerClient
+              .Setup(x => x.GetAsync(It.IsAny<string>()))
+              .Returns(Task.FromResult(serviceLayerClientResult));
+
+            var firstDelivery = new CreateDeliveryNoteDto()
+            {
+                SaleOrderId = 12,
+                ShippingCostOrderId = 0,
+                ItemCode = "REVE 14",
+                OrderType = string.Empty,
+                Batches = new List<AlmacenBatchDto>(),
+                IsPackage = "N",
+                IsOmigenomics = false,
+            };
+
+            List<CreateDeliveryNoteDto> createDelivery = new List<CreateDeliveryNoteDto>();
+            createDelivery.Add(firstDelivery);
+
+            var result = await service.CreateDeliveryBatch(createDelivery);
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(result.Code, 200);
+        }
     }
 }

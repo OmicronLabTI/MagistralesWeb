@@ -173,5 +173,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// <value>Journal Memo.</value>
         [JsonProperty("JournalMemo")]
         public string JournalMemo { get; set; }
+
+        /// <summary>
+        /// Gets or sets the TypeOrder.
+        /// </summary>
+        /// <value>TypeOrder.</value>
+        [JsonProperty("U_TipoPedido")]
+        public string? TypeOrder { get; set; }
     }
 }

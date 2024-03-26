@@ -47,5 +47,15 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateDeliveryPartial(List<CreateDeliveryNoteDto> createDelivery)
             => this.Ok(await this.deliveryNoteFacade.CreateDeliveryPartial(createDelivery));
+
+        /// <summary>
+        /// Create delivery notes partial.
+        /// </summary>
+        /// <param name="createDelivery">The delivery notes.</param>
+        /// <returns>Result.</returns>
+        [Route("/batch")]
+        [HttpPost]
+        public async Task<IActionResult> CreateDeliveryBatch(List<CreateDeliveryNoteDto> createDelivery)
+            => this.Ok(await this.deliveryNoteFacade.CreateDeliveryBatch(createDelivery));
     }
 }

@@ -29,5 +29,12 @@ namespace Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes
         /// <param name="createDelivery">Invoice Id.</param>
         /// <returns>Create delivery notes.</returns>
         Task<ResultDto> CreateDeliveryPartial(List<CreateDeliveryNoteDto> createDelivery);
+
+        /// <summary>
+        /// Method to create delivery notes batch to order.
+        /// </summary>
+        /// <param name="createDelivery">Invoice Id.</param>
+        /// <returns>Create delivery notes.</returns>
+        Task<ResultDto> CreateDeliveryBatch(List<CreateDeliveryNoteDto> createDelivery);
     }
 }

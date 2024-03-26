@@ -59,6 +59,11 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
                 clonedRequest.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
 
+            if (clonedRequest.Headers.Contains("Cookie"))
+            {
+                clonedRequest.Headers.Remove("Cookie");
+            }
+
             clonedRequest.Headers.Add("Cookie", $"B1SESSION={sessionId}; Path=/b1s/v1; Secure; HttpOnly;");
 
             if (request.Content != null)

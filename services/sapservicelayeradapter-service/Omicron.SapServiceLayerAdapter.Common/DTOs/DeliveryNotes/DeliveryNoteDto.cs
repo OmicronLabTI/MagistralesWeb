@@ -155,5 +155,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes
         /// <value>Is Omigenomics.</value>
         [JsonProperty("U_Omigenomicstp")]
         public string IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets the TypeOrder.
+        /// </summary>
+        /// <value>TypeOrder.</value>
+        [JsonProperty("U_TipoPedido")]
+        public string? TypeOrder { get; set; }
     }
 }
