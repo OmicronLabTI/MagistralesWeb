@@ -1,0 +1,66 @@
+﻿// <summary>
+// <copyright file="ServiceQuerysConstants.cs" company="Axity">
+// This source code is Copyright Axity and MAY NOT be copied, reproduced,
+// published, distributed or transmitted to or stored in any manner without prior
+// written consent from Axity (www.axity.com).
+// </copyright>
+// </summary>
+
+namespace Omicron.SapServiceLayerAdapter.Services.Constants
+{
+    /// <summary>
+    /// class for service querys constants.
+    /// </summary>
+    public static class ServiceQuerysConstants
+    {
+        /// <summary>
+        /// Query to get the last generated order.
+        /// </summary>
+        public const string QryGetLastGeneratedOrder = "Orders?$orderby=DocEntry desc&$top=1";
+
+        /// <summary>
+        /// Query to get invoice document by doc entry.
+        /// </summary>
+        public const string QryInvoiceDocumentByDocEntry = "Invoices({0})";
+
+        /// <summary>
+        /// Query to get invoice document by doc entry.
+        /// </summary>
+        public const string QryGetShippingTypesByName = "ShippingTypes?$filter=Name eq '{0}'";
+
+        /// <summary>
+        /// Query to get invoice document by doc entry.
+        /// </summary>
+        public const string QryOrdersDocumentByDocEntry = "Orders({0})";
+
+        /// <summary>
+        /// Query Post Inventory Gen Exists.
+        /// </summary>
+        public const string QryPostInventoryGenExists = "InventoryGenExits";
+
+        /// <summary>
+        /// Query Post Close Order By Id.
+        /// </summary>
+        public const string QryPostCloseOrderById = "Orders({0})/Close";
+
+        /// <summary>
+        /// Query Get Delivery Note By Id.
+        /// </summary>
+        public const string QryGetDeliveryNoteById = "DeliveryNotes({0})";
+
+        /// <summary>
+        /// Query To Create Delivery Note Cancel Document By Id.
+        /// </summary>
+        public const string QryToCreateDeliveryNoteCancelDocumentById = "DeliveryNotes({0})/Cancel";
+
+        /// <summary>
+        /// Query Qry Post Stock Transfers.
+        /// </summary>
+        public const string QryPostStockTransfers = "StockTransfers";
+
+        /// <summary>
+        /// Query Delivery Notes.
+        /// </summary>
+        public const string QryDeliveryNotes = "DeliveryNotes";
+    }
+}

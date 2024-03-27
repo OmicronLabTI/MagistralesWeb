@@ -15,6 +15,6 @@ spec:
                 name: oauthserver-svc
                 port:
                   number: 80
-            path: /api/oauth(/|$)(.*)
+            path: /omicronqa/api/oauth(/|$)(.*)
             pathType: Prefix
   ingressClassName: nginx

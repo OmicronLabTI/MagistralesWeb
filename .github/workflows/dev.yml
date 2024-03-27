@@ -34,7 +34,7 @@ jobs:
           path: frontend/web
           environment: dev
           registry: ${{ secrets.NEXUS_REGISTRY }}
-          href: /magistrales/
+          href: /omicrondev/magistrales/
 
       - name: Build catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
@@ -92,6 +92,16 @@ jobs:
           environment: dev
           registry: ${{ secrets.NEXUS_REGISTRY }}
 
+      - name: Build sapservicelayeradapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/sapservicelayeradapter-service
+          environment: dev
+          registry: ${{ secrets.NEXUS_REGISTRY }}
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
+
       - name: Kubernetes deploy
         working-directory: deploy/dev
         run: |
@@ -131,6 +141,10 @@ jobs:
       - name: Rollout warehouses-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
         run: kubectl rollout restart deploy warehouses-deployment
+      
+      - name: Rollout sapservicelayeradapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy sapservicelayeradapter-deployment
 
       - name: Liquibase update
         working-directory: database/
