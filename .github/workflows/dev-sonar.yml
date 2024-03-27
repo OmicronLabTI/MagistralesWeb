@@ -110,6 +110,16 @@ jobs:
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
 
+      - name: Test sapservicelayeradapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_test) }}
+        uses: ./.github/actions/sonar-net
+        with:
+          path: services/sapservicelayeradapter-service
+          project_name: SapServiceLayerAdapter
+          environment: Dev
+          sonar_server: ${{ secrets.SONAR_SERVER }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+
       - name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
         if: ${{ always() }}

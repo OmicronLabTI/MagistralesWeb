@@ -92,6 +92,14 @@ jobs:
           environment: dev
           registry: ${{ secrets.NEXUS_REGISTRY }}
 
+      - name: Build sapservicelayeradapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/sapservicelayeradapter-service
+          environment: dev
+          registry: ${{ secrets.NEXUS_REGISTRY }}
+
       - name: Kubernetes deploy
         working-directory: deploy/dev
         run: |
