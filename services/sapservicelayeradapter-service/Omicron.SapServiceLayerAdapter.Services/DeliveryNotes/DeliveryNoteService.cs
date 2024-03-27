@@ -104,6 +104,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                         BaseLine = correctBaseLineId,
                         SalesPersonCode = saleOrder.SalesPersonCode,
                         Price = price,
+                        LineTotal = price,
                     };
                     deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
                     await this.UpdateShippingCostBaseLine(shippingCost.ShippingCostOrderId, saleOrder.IsOmigenomics, saleOrder.SalesPersonCode, saleOrder.DocumentsOwner);

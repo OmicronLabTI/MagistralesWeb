@@ -38,8 +38,8 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    var sessionId = await this.serviceLayerAuth.RefreshSession();
-                    this.AddNewSessionId(request, sessionId);
+                    var cookies = await this.serviceLayerAuth.RefreshSession();
+                    this.AddNewSessionId(request, cookies);
                     response = await base.SendAsync(request, cancellationToken);
                 }
             }
@@ -51,14 +51,14 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
             return response;
         }
 
-        private void AddNewSessionId(HttpRequestMessage request, string sessionId)
+        private void AddNewSessionId(HttpRequestMessage request, string cookies)
         {
             if (request.Headers.Contains("Cookie"))
             {
                 request.Headers.Remove("Cookie");
             }
 
-            request.Headers.Add("Cookie", $"B1SESSION={sessionId}; Path=/b1s/v1; Secure; HttpOnly;");
+            request.Headers.Add("Cookie", cookies);
         }
     }
 }
