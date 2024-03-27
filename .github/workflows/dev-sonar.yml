@@ -116,7 +116,6 @@ jobs:
         with:
           path: services/sapservicelayeradapter-service
           project_name: SapServiceLayerAdapter
-          environment: Dev
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
           nexus_user: ${{ secrets.NEXUS_USER }}

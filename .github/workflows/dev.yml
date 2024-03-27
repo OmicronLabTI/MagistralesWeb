@@ -141,6 +141,10 @@ jobs:
       - name: Rollout warehouses-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
         run: kubectl rollout restart deploy warehouses-deployment
+      
+      - name: Rollout sapservicelayeradapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy sapservicelayeradapter-deployment
 
       - name: Liquibase update
         working-directory: database/
