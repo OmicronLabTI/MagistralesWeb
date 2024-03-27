@@ -38,8 +38,8 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
 
         private async Task AddCookie(HttpRequestMessage request)
         {
-            var sessionId = await this.serviceLayerAuth.GetSessionIdAsync();
-            request.Headers.Add("Cookie", $"B1SESSION={sessionId}; Path=/b1s/v1; Secure; HttpOnly;");
+            var cookies = await this.serviceLayerAuth.GetSessionIdAsync();
+            request.Headers.Add("Cookie", cookies);
         }
     }
 }

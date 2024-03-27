@@ -6,6 +6,9 @@
 // </copyright>
 // </summary>
 
+using System.Linq;
+using Azure;
+
 namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
 {
     /// <summary>
@@ -16,7 +19,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
         private readonly HttpClient httpClient;
         private readonly IConfiguration configuration;
         private readonly ILogger logger;
-        private string authToken;
+        private string cookiesString;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceLayerAuth"/> class.
@@ -34,23 +37,24 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
         /// <inheritdoc/>
         public async Task<string> GetSessionIdAsync()
         {
-            if (string.IsNullOrEmpty(this.authToken))
+            if (string.IsNullOrEmpty(this.cookiesString))
             {
                 await this.Login();
             }
 
-            return this.authToken;
+            return this.cookiesString;
         }
 
         /// <inheritdoc/>
         public async Task<string> RefreshSession()
         {
             await this.Login();
-            return this.authToken;
+            return this.cookiesString;
         }
 
         private async Task Login()
         {
+            this.cookiesString = string.Empty;
             string authUrl = "Login";
             var authData = new
             {
@@ -67,9 +71,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
                 {
                     if (authResponse.IsSuccessStatusCode)
                     {
-                        var authResponseContent = await authResponse.Content.ReadAsStringAsync();
-                        var authResponseObj = System.Text.Json.JsonSerializer.Deserialize<ServiceLayerAuthResponseDto>(authResponseContent);
-                        this.authToken = authResponseObj.SessionId;
+                        var cookies = authResponse.Headers.GetValues("Set-Cookie");
+                        this.cookiesString = string.Join("; ", cookies.ToList());
                     }
                     else
                     {
