@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="$(SolutionDir)\StyleCop\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Omicron.SapServiceLayerAdapter.Common\Omicron.SapServiceLayerAdapter.Common.csproj" />
+    <ProjectReference Include="..\Omicron.SapServiceLayerAdapter.Services\Omicron.SapServiceLayerAdapter.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="DeliveryNotes\" />
+    <None Remove="DeliveryNotes\Impl\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DeliveryNotes\" />
+    <Folder Include="DeliveryNotes\Impl\" />
+  </ItemGroup>
+</Project>
