@@ -99,6 +99,8 @@ jobs:
           path: services/sapservicelayeradapter-service
           environment: dev
           registry: ${{ secrets.NEXUS_REGISTRY }}
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
 
       - name: Kubernetes deploy
         working-directory: deploy/dev
