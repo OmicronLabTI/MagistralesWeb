@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapServiceLayerAdap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapServiceLayerAdapter.Persistence", "Omicron.SapServiceLayerAdapter.Persistence\Omicron.SapServiceLayerAdapter.Persistence.csproj", "{20B51FE3-B544-45A6-AA98-6E7081968806}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapServiceLayerAdapter.Test", "Omicron.SapServiceLayerAdapter.Test\Omicron.SapServiceLayerAdapter.Test\Omicron.SapServiceLayerAdapter.Test.csproj", "{74DA3280-9DB9-48D9-9114-ADCFBCFE74F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapServiceLayerAdapter.Test", "Omicron.SapServiceLayerAdapter.Test\Omicron.SapServiceLayerAdapter.Test.csproj", "{74DA3280-9DB9-48D9-9114-ADCFBCFE74F2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Omicron.SapServiceLayerAdapter.Model", "Omicron.SapServiceLayerAdapter.Model\Omicron.SapServiceLayerAdapter.Model.csproj", "{65EF2197-6E25-421A-BFBD-C318A5F1503B}"
 EndProject

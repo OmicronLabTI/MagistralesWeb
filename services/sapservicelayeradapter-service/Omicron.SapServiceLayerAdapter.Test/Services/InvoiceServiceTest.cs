@@ -1,14 +1,10 @@
 ﻿// <summary>
-// <copyright file="OrderServiceTest.cs" company="Axity">
+// <copyright file="InvoiceServiceTest.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
-
-using Microsoft.AspNetCore.Mvc;
-using Omicron.SapServiceLayerAdapter.Services.Invoices.Impl;
-using Serilog;
 
 namespace Omicron.SapServiceLayerAdapter.Test.Services
 {

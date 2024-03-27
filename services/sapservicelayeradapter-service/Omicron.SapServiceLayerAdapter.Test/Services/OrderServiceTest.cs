@@ -6,9 +6,6 @@
 // </copyright>
 // </summary>
 
-using Confluent.Kafka;
-using System.Linq;
-
 namespace Omicron.SapServiceLayerAdapter.Test.Services
 {
     /// <summary>

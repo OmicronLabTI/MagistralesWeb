@@ -6,9 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.SapServiceLayerAdapter.Facade.Invoice.Impl;
-using Omicron.SapServiceLayerAdapter.Services.Invoices;
-
 namespace Omicron.SapServiceLayerAdapter.Test.Facade
 {
     /// <summary>
