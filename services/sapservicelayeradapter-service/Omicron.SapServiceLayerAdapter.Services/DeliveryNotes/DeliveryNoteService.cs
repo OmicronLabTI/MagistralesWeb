@@ -8,24 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Net;
-    using System.Security.AccessControl;
-    using System.Text.Json.Serialization;
-    using System.Threading.Tasks;
-    using Azure;
-    using Confluent.Kafka;
-    using Newtonsoft.Json;
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.StockTransfer;
-    using Omicron.SapServiceLayerAdapter.Services.Constants;
-    using Serilog;
-    using static System.Runtime.CompilerServices.RuntimeHelpers;
-    using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-
     /// <summary>
     /// Class representing a generic service of create delivery.
     /// </summary>
@@ -492,6 +474,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 this.logger.Information(string.Format(ServiceConstants.CancelDeliveryLogToCancelDelivery, deliveryNote.Delivery));
                 dictionaryResult.Add(string.Format(ServiceConstants.DictionaryKeyOkGenericFormat, deliveryNote.Delivery), ServiceConstants.OkLabelResponse);
 
+                if (type == ServiceConstants.Total)
+                {
+                    dictionaryResult = await this.CancelOrdersFromDeliveryNote(dictionaryResult, deliveryNote.SaleOrderId);
+                }
+
                 if (ServiceUtils.CalculateAnd(type == ServiceConstants.Total, deliveryNote.MagistralProducts.Any()))
                 {
                     dictionaryResult = await this.CreateStockTransfer(deliveryNote, dictionaryResult, resultDeliveryNote);
@@ -551,6 +538,28 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
             this.logger.Information(string.Format(ServiceConstants.TransferRequestForDeliveryDone, deliveryNote.Delivery));
             dictionaryResult.Add(string.Format(ServiceConstants.TransferRequestForDeliveryOk, deliveryNote.Delivery), ServiceConstants.OkLabelResponse);
+            return dictionaryResult;
+        }
+
+        private async Task<Dictionary<string, string>> CancelOrdersFromDeliveryNote(Dictionary<string, string> dictionaryResult, List<int> ordersToCancel)
+        {
+            ResultModel cancelOrderResult;
+            foreach (var orderId in ordersToCancel)
+            {
+                cancelOrderResult = new ResultModel();
+                cancelOrderResult = await this.serviceLayerClient.PostAsync(string.Format(ServiceQuerysConstants.QryCancelOrders, orderId), string.Empty);
+                if (!cancelOrderResult.Success)
+                {
+                    this.logger.Error(string.Format(ServiceConstants.CancelDeliveryErrorToCancelOrder, orderId, cancelOrderResult.UserError));
+                    dictionaryResult.Add(
+                        string.Format(ServiceConstants.CancelDeliveryTransferError, orderId),
+                        ServiceUtils.GetDictionaryValueString(
+                            ServiceConstants.RelationMessagesServiceLayer,
+                            cancelOrderResult.UserError,
+                            string.Format(ServiceConstants.DictionaryValueErrorGenericFormat, cancelOrderResult.UserError)));
+                }
+            }
+
             return dictionaryResult;
         }
     }
