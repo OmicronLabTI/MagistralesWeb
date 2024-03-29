@@ -8,9 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes.Impl
 {
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
-    using Omicron.SapServiceLayerAdapter.Services.DeliveryNotes;
-
     /// <summary>
     /// Class for Invoice Facade.
     /// </summary>

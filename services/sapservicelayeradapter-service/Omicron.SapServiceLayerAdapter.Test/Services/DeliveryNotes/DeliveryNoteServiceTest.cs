@@ -370,19 +370,22 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
         /// <param name="isResponseDeliveryNoteSuccess">isResponseDeliveryNoteSuccess.</param>
         /// <param name="isResponseCancellationDocumentSuccess">isResponseCancellationDocumentSuccess.</param>
         /// <param name="isStockTransferSuccess">isStockTransferSuccess.</param>
+        /// <param name="isCancelOrderSuccess">Is Cancel Order Success.</param>
         /// <param name="userError">userError.</param>
-        /// <param name="type">type</param>
+        /// <param name="type">type.</param>
         /// <returns>Result.</returns>
         [Test]
-        [TestCase(false, true, true, "No se encontró el documento delivery notes", "total")]
-        [TestCase(true, false, true, "Error al cancelar el documento", "total")]
-        [TestCase(true, true, false, "Error al generar la tranferencia de stock", "total")]
-        [TestCase(true, true, true, null, "total")]
-        [TestCase(true, true, true, null, "partial")]
+        [TestCase(false, true, true, true, "No se encontró el documento delivery notes", "total")]
+        [TestCase(true, false, true, true, "Error al cancelar el documento", "total")]
+        [TestCase(true, true, false, true, "Error al generar la tranferencia de stock", "total")]
+        [TestCase(true, true, true, false, "Error al cancelar orden", "total")]
+        [TestCase(true, true, true, true, null, "total")]
+        [TestCase(true, true, true, true, null, "partial")]
         public async Task CancelDelivery(
             bool isResponseDeliveryNoteSuccess,
             bool isResponseCancellationDocumentSuccess,
             bool isStockTransferSuccess,
+            bool isCancelOrderSuccess,
             string userError,
             string type)
         {
@@ -402,10 +405,12 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
 
             var responseCancellationDocument = this.GetGenericResponseModel(400, isResponseCancellationDocumentSuccess, null, userError, null, null);
             var responseStockTransfer = this.GetGenericResponseModel(400, isStockTransferSuccess, null, userError, null, null);
+            var responseOrderCancel = this.GetGenericResponseModel(400, isCancelOrderSuccess, null, userError, null, null);
 
             mockServiceLayerClient
                 .SetupSequence(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(responseCancellationDocument))
+                .Returns(Task.FromResult(responseOrderCancel))
                 .Returns(Task.FromResult(responseStockTransfer));
 
             var deliveryNotesToCancel = new List<CancelDeliveryDto>
@@ -413,7 +418,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
                 new ()
                 {
                     Delivery = 123,
-                    SaleOrderId = new List<int> { 1, 2, 3, 4 },
+                    SaleOrderId = new List<int> { 1, 2 },
                     MagistralProducts = new List<ProductDeliveryDto>
                     {
                         new ()
@@ -448,7 +453,11 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             }
             else if (!isStockTransferSuccess)
             {
-                Assert.AreEqual(2, ((Dictionary<string, string>)result.Response).Count);
+                Assert.AreEqual(3, ((Dictionary<string, string>)result.Response).Count);
+            }
+            else if (!isResponseCancellationDocumentSuccess)
+            {
+                Assert.AreEqual(4, ((Dictionary<string, string>)result.Response).Count);
             }
             else
             {

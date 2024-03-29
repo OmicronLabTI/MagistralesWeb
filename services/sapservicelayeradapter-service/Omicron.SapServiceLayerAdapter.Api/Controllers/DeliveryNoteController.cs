@@ -8,10 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Api.Controllers
 {
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices;
-    using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes;
-
     /// <summary>
     /// DeliveryNoteController class.
     /// </summary>

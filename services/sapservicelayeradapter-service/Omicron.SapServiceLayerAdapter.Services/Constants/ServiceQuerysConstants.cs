@@ -62,5 +62,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Query Delivery Notes.
         /// </summary>
         public const string QryDeliveryNotes = "DeliveryNotes";
+
+        /// <summary>
+        /// Query Cancel Orders.
+        /// </summary>
+        public const string QryCancelOrders = "Orders({0})/Cancel";
     }
 }
