@@ -188,6 +188,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// </summary>
         public const string TransferRequestForDeliveryOk = "{0}-Transfer-Ok";
 
+        /// <summary>
+        /// Cancel Delivery Error To Cancel Order.
+        /// </summary>
+        public const string CancelDeliveryErrorToCancelOrder = "The order: {0} was tried to cancel. {1}";
 
         /// <summary>
         /// Gets the status of the order.

@@ -70,10 +70,15 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ServiceLayer
                     "SendAsync",
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage()
+                .ReturnsAsync((HttpRequestMessage request, CancellationToken token) =>
                 {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(JsonConvert.SerializeObject(result)),
+                    var response = new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(JsonConvert.SerializeObject(result)),
+                    };
+
+                    response.Headers.Add("Set-Cookie", "sessionId");
+                    return response;
                 })
                 .Verifiable();
 
@@ -103,10 +108,15 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ServiceLayer
                     "SendAsync",
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage()
+                .ReturnsAsync((HttpRequestMessage request, CancellationToken token) =>
                 {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(JsonConvert.SerializeObject(result)),
+                    var response = new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(JsonConvert.SerializeObject(result)),
+                    };
+
+                    response.Headers.Add("Set-Cookie", "sessionId");
+                    return response;
                 })
                 .Verifiable();
 
