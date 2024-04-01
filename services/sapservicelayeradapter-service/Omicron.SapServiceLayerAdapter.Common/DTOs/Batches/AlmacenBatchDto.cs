@@ -6,7 +6,6 @@
 // </copyright>
 // </summary>
 
-
 namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Batches
 {
     /// <summary>

@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using Omicron.SapServiceLayerAdapter.Common.DTOs.Batches;
+
 namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Delivery
 {
     /// <summary>
@@ -41,7 +43,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Delivery
         /// Gets or sets Batches.
         /// </summary>
         /// <value>Batches.</value>
-        public List<BatchNumbersDto> Batches { get; set; }
+        public List<AlmacenBatchDto> Batches { get; set; }
 
         /// <summary>
         /// Gets or sets IsPackage.

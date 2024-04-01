@@ -113,10 +113,10 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                         {
                             OrderType = "linea",
                             ItemCode = "Item Code 23",
-                            Batches = new List<BatchNumbersDto>
+                            Batches = new List<AlmacenBatchDto>
                             {
-                                new () { BatchNumber = "BATCH1", Quantity = 1 },
-                                new () { BatchNumber = "BATCH2", Quantity = 2.5 },
+                                new () { BatchNumber = "BATCH1", BatchQty = 1 },
+                                new () { BatchNumber = "BATCH2", BatchQty = 2.5M },
                             },
                         },
                         new ()

@@ -78,7 +78,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             var batchNumber = new BatchNumbersDto();
             foreach (var b in product.Batches)
             {
-                batchNumber.Quantity = b.Quantity.ToString().ToParseDouble(0);
+                batchNumber.Quantity = (double)b.BatchQty;
                 batchNumber.BatchNumber = b.BatchNumber;
                 batchNumbers.Add(batchNumber);
             }
@@ -95,7 +95,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                 inventoryGenExitLine = new InventoryGenExitLineDto
                 {
                     ItemCode = line.ItemCode,
-
                     BaseType = -1,
                     BaseLine = line.LineNum,
                     Quantity = line.Quantity,
