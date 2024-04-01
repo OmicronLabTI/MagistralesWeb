@@ -27,7 +27,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ServiceLayer
         {
             this.config = new Mock<IConfiguration>();
             this.config.SetupGet(x => x[It.Is<string>(s => s == ServiceConstants.SAPServiceLayerUserEnvName)]).Returns("user");
-            this.config.SetupGet(x => x[It.Is<string>(s => s == ServiceConstants.SAPServiceLayerPasswordEnvName)]).Returns("password");
+            this.config.SetupGet(x => x[It.Is<string>(s => s == ServiceConstants.SAPServiceLayerPwEnvName)]).Returns("password");
             this.config.SetupGet(x => x[It.Is<string>(s => s == ServiceConstants.SAPServiceLayerDatabaseName)]).Returns("database");
 
             var result = new { SessionId = "sessionId" }; // Crear el objeto de resultado manualmente
