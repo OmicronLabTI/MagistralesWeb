@@ -55,7 +55,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
             var authData = new
             {
                 UserName = this.configuration[ServiceConstants.SAPServiceLayerUserEnvName],
-                Password = this.configuration[ServiceConstants.SAPServiceLayerPasswordEnvName],
+                Password = this.configuration[ServiceConstants.SAPServiceLayerPwEnvName],
                 CompanyDB = this.configuration[ServiceConstants.SAPServiceLayerDatabaseName],
                 Language = 23,
             };

@@ -21,7 +21,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// <summary>
         /// The service layer password env.
         /// </summary>
-        public const string SAPServiceLayerPasswordEnvName = "SAPServiceLayer:Pwd";
+        public const string SAPServiceLayerPwEnvName = "SAPServiceLayer:Pwd";
 
         /// <summary>
         /// The service layer companyDb env.
