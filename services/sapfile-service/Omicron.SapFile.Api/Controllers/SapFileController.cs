@@ -93,7 +93,8 @@ namespace Omicron.SapFile.Api.Controllers
         [Route("save/prescriptiontoserver")]
         public async Task<IHttpActionResult> SavePresciptionToServer(List<PrescriptionServerRequestDto> prescriptionUrls)
         {
-            return this.Ok(await this.sapFacade.SavePresciptionToServer(prescriptionUrls));
+            var response = await this.sapFacade.SavePresciptionToServer(prescriptionUrls);
+            return this.Ok(response);
         }
 
 

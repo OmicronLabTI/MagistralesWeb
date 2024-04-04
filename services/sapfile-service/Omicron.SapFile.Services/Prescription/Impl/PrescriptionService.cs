@@ -33,9 +33,9 @@ namespace Omicron.SapFile.Services.Prescription.Impl
         {
             try
             {
+                this._loggerProxy.Info($"Omicron.SapFile.Prescription Service - The following medical prescriptions will be downloaded {JsonConvert.SerializeObject(prescriptionUrls)}");
                 var azureKey = ConfigurationManager.AppSettings[ServiceConstants.AzureKey];
                 var azureAccountName = ConfigurationManager.AppSettings[ServiceConstants.AzureAccountName];
-
                 var azureObj = new AzureServices(azureAccountName, azureKey);
                 List<string> routeArray = new List<string>();
                 string fileName = string.Empty;
@@ -71,7 +71,7 @@ namespace Omicron.SapFile.Services.Prescription.Impl
             }
             catch (Exception ex)
             {
-                _loggerProxy.Error(
+                this._loggerProxy.Error(
                    $"Omicron.SapFile.Prescription Service - Error to download the recipe to server {JsonConvert.SerializeObject(prescriptionUrls)}. Error: {ex.Message} - {ex.StackTrace}");
                 return new ResultModel
                 {
