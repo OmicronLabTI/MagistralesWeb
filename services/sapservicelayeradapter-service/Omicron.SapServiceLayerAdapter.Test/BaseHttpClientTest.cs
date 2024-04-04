@@ -86,5 +86,42 @@ namespace Omicron.SapServiceLayerAdapter.Test
 
             return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient, mockLog.Object });
         }
+
+        /// <summary>
+        /// Create a new client.
+        /// </summary>
+        /// <returns>Client.</returns>
+        public T CreateClientWithErrorResponse()
+        {
+            var fixture = new Fixture();
+            var result = fixture.Create<ResultModel>();
+            result.Success = false;
+            result.UserError = "Error controlado";
+
+            var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            handlerMock.Protected()
+               .Setup<Task<HttpResponseMessage>>(
+                  "SendAsync",
+                  ItExpr.IsAny<HttpRequestMessage>(),
+                  ItExpr.IsAny<CancellationToken>())
+               .ReturnsAsync(new HttpResponseMessage()
+               {
+                   StatusCode = HttpStatusCode.OK,
+                   Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(result)),
+               })
+               .Verifiable();
+
+            var httpClient = new HttpClient(handlerMock.Object)
+            {
+                BaseAddress = new Uri("http://test.com/"),
+            };
+
+            var mockLog = new Mock<ILogger>();
+
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient, mockLog.Object });
+        }
     }
 }

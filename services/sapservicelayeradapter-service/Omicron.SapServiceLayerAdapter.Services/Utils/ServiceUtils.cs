@@ -152,15 +152,23 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
         /// <param name="response">the response.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="serviceCalled">Service called name.</param>
+        /// <param name="genericError">Generic Error.</param>
         /// <returns>the data.</returns>
-        public static async Task<ResultModel> GetResponse(HttpResponseMessage response, ILogger logger, string serviceCalled)
+        public static async Task<ResultModel> GetResponse(HttpResponseMessage response, ILogger logger, string serviceCalled, string genericError)
         {
             var jsonString = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+
             if ((int)response.StatusCode >= 300)
             {
-                logger.Error($"SapServiceLayerdapter-{serviceCalled}-{result.UserError}-{result.ExceptionMessage}-{jsonString}");
+                logger.Error($"SapServiceLayerdapter-{serviceCalled}-{genericError}-{jsonString}");
                 throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
+            }
+
+            var result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+            if (!result.Success)
+            {
+                logger.Error($"SapServiceLayerdapter-{serviceCalled}-{result.UserError}-{result.ExceptionMessage}-{jsonString}");
+                throw new CustomServiceException(result.UserError, System.Net.HttpStatusCode.NotFound);
             }
 
             return result;

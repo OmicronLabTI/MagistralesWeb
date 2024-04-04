@@ -59,8 +59,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                .Returns(Task.FromResult(resultServiceLayer));
 
             var mockConfiguration = new Mock<IConfiguration>();
-
-            var orderServiceMock = new OrderService(mockServiceLayerClient.Object, this.logger.Object, mockConfiguration.Object);
+            var mockSapFile = new Mock<ISapFileService>();
+            var orderServiceMock = new OrderService(mockServiceLayerClient.Object, this.logger.Object, mockConfiguration.Object, mockSapFile.Object);
 
             // act
             var result = await orderServiceMock.GetLastGeneratedOrder();
@@ -165,8 +165,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 .Returns(Task.FromResult(responseCloseOrder));
 
             var mockConfiguration = new Mock<IConfiguration>();
-
-            var orderServiceMock = new OrderService(mockServiceLayerClient.Object, this.logger.Object, mockConfiguration.Object);
+            var mockSapFile = new Mock<ISapFileService>();
+            var orderServiceMock = new OrderService(mockServiceLayerClient.Object, this.logger.Object, mockConfiguration.Object, mockSapFile.Object);
 
             // act
             var result = await orderServiceMock.CloseSampleOrders(sampleOrders);

@@ -42,5 +42,18 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.SapFile
             // Act
             Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync(new { }, "endpoint"));
         }
+
+        /// <summary>
+        /// Action tests.
+        /// </summary>
+        [Test]
+        public void PostToSapFileWithErrorResponse()
+        {
+            // Arrange
+            var client = this.CreateClientWithErrorResponse();
+
+            // Act
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync(new { }, "endpoint"));
+        }
     }
 }

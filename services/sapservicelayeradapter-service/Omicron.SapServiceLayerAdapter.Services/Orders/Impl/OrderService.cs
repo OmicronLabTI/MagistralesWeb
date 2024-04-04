@@ -78,7 +78,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         {
             try
             {
-                var prescription = string.Empty;
+                var prescription = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
                 int? attachmentId = null;
                 if (!string.IsNullOrEmpty(prescription))
                 {
@@ -298,12 +298,23 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             }
         }
 
-        private async Task DownloadRecipeOnServer(string urlPrescription)
+        private async Task<string> DownloadRecipeOnServer(string urlPrescription)
         {
-            var resultSapFile = await this.sapFileService.PostAsync(
-                new PrescriptionServerRequestDto { AzurePrescriptionUrl = urlPrescription }, ServiceConstants.SavePrescriptionToServer);
-            var result = JsonConvert.DeserializeObject<List<PrescriptionServerResponseDto>>(resultSapFile.Response.ToString());
-            var serve
+            var serverPrescriptionPath = string.Empty;
+
+            if (!string.IsNullOrEmpty(urlPrescription))
+            {
+                var resultSapFile = await this.sapFileService.PostAsync(
+                                new List<PrescriptionServerRequestDto>
+                                {
+                                    new () { AzurePrescriptionUrl = urlPrescription, },
+                                },
+                                ServiceConstants.SavePrescriptionToServer);
+                var result = JsonConvert.DeserializeObject<List<PrescriptionServerResponseDto>>(resultSapFile.Response.ToString());
+                serverPrescriptionPath = result.First(ts => ts.AzurePrescriptionUrl.Equals(urlPrescription)).ServerPrescriptionUrl;
+            }
+
+            return serverPrescriptionPath;
         }
     }
 }

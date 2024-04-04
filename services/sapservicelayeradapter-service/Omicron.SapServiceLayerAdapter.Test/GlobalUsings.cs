@@ -34,6 +34,7 @@ global using Omicron.SapServiceLayerAdapter.Services.Invoices.Impl;
 global using Omicron.SapServiceLayerAdapter.Services.Mapping;
 global using Omicron.SapServiceLayerAdapter.Services.Orders;
 global using Omicron.SapServiceLayerAdapter.Services.Orders.Impl;
+global using Omicron.SapServiceLayerAdapter.Services.SapFile;
 global using Omicron.SapServiceLayerAdapter.Services.SapFile.Impl;
 global using Omicron.SapServiceLayerAdapter.Services.ServiceLayer;
 global using Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl;

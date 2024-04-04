@@ -43,7 +43,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.SapFile.Impl
 
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
-                result = await ServiceUtils.GetResponse(response, this.logger, "Sap File Service");
+                result = await ServiceUtils.GetResponse(response, this.logger, "Sap File Service", "Error en la petición hacia Sap Files Service.");
             }
 
             return result;
