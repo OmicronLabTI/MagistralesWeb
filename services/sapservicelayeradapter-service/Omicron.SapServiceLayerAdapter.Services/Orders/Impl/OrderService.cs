@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.SapServiceLayerAdapter.Common.DTOs.Requests;
-
 namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 {
     /// <summary>
