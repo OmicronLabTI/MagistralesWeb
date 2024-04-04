@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using System.Reflection;
+
 namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
 {
     /// <summary>
@@ -39,74 +41,63 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
                 return;
             }
 
+            var jsonObject = new JObject();
             var objectType = value.GetType();
-            if (this.propertyMappings.TryGetValue(objectType, out var propertyMappings))
-            {
-                var jsonObject = new JObject();
-                foreach (var propertyMapping in propertyMappings)
-                {
-                    var propertyName = propertyMapping.Key;
-                    var newPropertyName = propertyMapping.Value;
-                    var propertyValue = objectType.GetProperty(propertyName)?.GetValue(value);
-                    if (propertyValue == null)
-                    {
-                        jsonObject.Add(newPropertyName, JValue.CreateNull());
-                    }
-                    else
-                    {
-                        jsonObject.Add(newPropertyName, JToken.FromObject(propertyValue));
-                    }
-                }
 
-                foreach (var property in objectType.GetProperties().Where(p => !propertyMappings.ContainsKey(p.Name)))
-                {
-                    var propertyValue = property.GetValue(value);
-                    if (propertyValue == null)
-                    {
-                        jsonObject.Add(property.Name, JValue.CreateNull());
-                    }
-                    else
-                    {
-                        jsonObject.Add(property.Name, JToken.FromObject(propertyValue));
-                    }
-                }
-
-                jsonObject.WriteTo(writer);
-            }
-            else
+            foreach (var property in objectType.GetProperties())
             {
-                serializer.Serialize(writer, value);
+                var propertyName = property.Name;
+                var jsonPropertyName = this.GetJsonPropertyName(property);
+
+                var newPropertyName = this.GetPropertyChangeName(jsonPropertyName);
+                var propertyValue = property.GetValue(value);
+                if (propertyValue != null)
+                {
+                    jsonObject.Add(newPropertyName, JToken.FromObject(propertyValue, serializer));
+                }
+                else
+                {
+                    jsonObject.Add(newPropertyName, JValue.CreateNull());
+                }
             }
+
+            jsonObject.WriteTo(writer);
         }
 
         /// <inheritdoc/>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            if (reader.TokenType == JsonToken.Null)
-            {
-                return null;
-            }
-
             var jsonObject = JObject.Load(reader);
             var instance = Activator.CreateInstance(objectType);
 
             foreach (var property in objectType.GetProperties())
             {
-                if (jsonObject.TryGetValue(property.Name, out JToken value))
+                var jsonPropertyName = this.GetJsonPropertyName(property);
+                var jsonPropertyNameChange = this.GetPropertyChangeName(jsonPropertyName);
+                if (jsonObject.TryGetValue(jsonPropertyNameChange, out JToken value))
                 {
-                    var propertyName = property.Name;
-                    if (this.propertyMappings.TryGetValue(objectType, out var propertyMappings) && propertyMappings.TryGetValue(property.Name, out var newPropertyName))
-                    {
-                        property.SetValue(instance, jsonObject[newPropertyName].ToObject(property.PropertyType, serializer));
-                    }
-                    else
-                    {
-                        property.SetValue(instance, value.ToObject(property.PropertyType, serializer));
-                    }
+                    var propertyValue = value.ToObject(property.PropertyType, serializer);
+                    property.SetValue(instance, propertyValue);
                 }
             }
 
             return instance;
+        }
+
+        private string GetPropertyChangeName(string propertyName)
+        {
+            if (this.propertyMappings != null && this.propertyMappings.Count > 0)
+            {
+                return this.propertyMappings.FirstOrDefault().Value.TryGetValue(propertyName, out string newPropertyName) ? newPropertyName : propertyName;
+            }
+
+            return propertyName;
+        }
+
+        private string GetJsonPropertyName(PropertyInfo property)
+        {
+            var jsonPropertyAttribute = property.GetCustomAttribute<JsonPropertyAttribute>();
+            return jsonPropertyAttribute != null ? jsonPropertyAttribute.PropertyName : property.Name;
         }
     }
 }

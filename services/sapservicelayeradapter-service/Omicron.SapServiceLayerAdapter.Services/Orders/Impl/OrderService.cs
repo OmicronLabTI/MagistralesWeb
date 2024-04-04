@@ -92,8 +92,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 
                 var order = new OrderDto();
                 order.CardCode = saleOrderModel.CardCode;
-                order.DocumentDate = DateTime.Now.ToString();
-                order.DueDate = DateTime.Now.AddDays(10).ToString();
+                order.DocumentDate = DateTime.Now;
+                order.DueDate = DateTime.Now.AddDays(10);
                 order.ShippingCode = saleOrderModel.ShippinAddress;
                 order.PayToCode = saleOrderModel.BillingAddress;
                 order.ReferenceNumber = saleOrderModel.ProfecionalLicense;
@@ -152,7 +152,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     { ServiceConstants.OrdersCFDIProperty, this.configuration[ServiceConstants.CustomPropertyNameCFDI] },
                 };
 
-                var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryPostOrders, ServiceUtils.SerializeWithCustomProperties<OrderDto>(propertyMappings, order));
+                var body = ServiceUtils.SerializeWithCustomProperties<OrderDto>(propertyMappings, order);
+                var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryPostOrders, body);
                 if (!result.Success)
                 {
                     this.logger.Error($"The sale order was tried to be created: {result.Code} - {result.UserError} - {JsonConvert.SerializeObject(saleOrderModel)}");

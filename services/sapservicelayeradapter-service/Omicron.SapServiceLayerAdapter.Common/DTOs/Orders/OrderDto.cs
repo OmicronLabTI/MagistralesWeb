@@ -32,7 +32,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>Document Date.</value>
         [JsonProperty("DocDate")]
-        public string DocumentDate { get; set; }
+        public DateTime DocumentDate { get; set; }
 
         /// <summary>
         /// Gets or sets the Card Code.
@@ -102,7 +102,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>Due Date.</value>
         [JsonProperty("DocDueDate")]
-        public string DueDate { get; set; }
+        public DateTime DueDate { get; set; }
 
         /// <summary>
         /// Gets or sets the Contact Person.
