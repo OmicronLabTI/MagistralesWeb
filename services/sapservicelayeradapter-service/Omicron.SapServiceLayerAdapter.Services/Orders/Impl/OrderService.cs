@@ -22,6 +22,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         /// </summary>
         /// <param name="serviceLayerClient">Service layer client.</param>
         /// <param name="logger">The logger.</param>
+        /// <param name="configuration">The configuration.</param>
         public OrderService(IServiceLayerClient serviceLayerClient, ILogger logger, IConfiguration configuration)
         {
             this.serviceLayerClient = serviceLayerClient.ThrowIfNull(nameof(serviceLayerClient));
@@ -84,14 +85,14 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     }
                 }
 
-                var order = new OrderDto();
+                var order = new CreateOrderDto();
                 order.CardCode = saleOrderModel.CardCode;
                 order.DocumentDate = DateTime.Now;
                 order.DueDate = DateTime.Now.AddDays(10);
                 order.ShippingCode = saleOrderModel.ShippinAddress;
                 order.PayToCode = saleOrderModel.BillingAddress;
                 order.ReferenceNumber = saleOrderModel.ProfecionalLicense;
-                order.OrderLines = new List<OrderLineDto>();
+                order.OrderLines = new List<CreateOrderLineDto>();
 
                 if (!string.IsNullOrEmpty(saleOrderModel.UserRfc))
                 {
@@ -130,7 +131,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 
                 for (var i = 0; i < saleOrderModel.Items.Count; i++)
                 {
-                    var orderLine = new OrderLineDto();
+                    var orderLine = new CreateOrderLineDto();
                     orderLine.ItemCode = saleOrderModel.Items[i].ItemCode;
                     orderLine.Quantity = saleOrderModel.Items[i].Quantity;
                     orderLine.UnitPrice = saleOrderModel.Items[i].CostPerPiece;
@@ -146,7 +147,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     { ServiceConstants.OrdersCFDIProperty, this.configuration[ServiceConstants.CustomPropertyNameCFDI] },
                 };
 
-                var body = ServiceUtils.SerializeWithCustomProperties<OrderDto>(propertyMappings, order);
+                var body = ServiceUtils.SerializeWithCustomProperties<CreateOrderDto>(propertyMappings, order);
                 var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryPostOrders, body);
                 if (!result.Success)
                 {
