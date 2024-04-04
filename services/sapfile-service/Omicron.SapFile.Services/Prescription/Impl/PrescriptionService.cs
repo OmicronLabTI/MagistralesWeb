@@ -48,7 +48,6 @@ namespace Omicron.SapFile.Services.Prescription.Impl
                 string fileName = string.Empty;
                 var containerRoute = string.Empty;
                 var routeFile = string.Empty;
-                bool itDownloadCorrectly = false;
                 string messageAzure = string.Empty;
                 var downloadResult = new List<PrescriptionServerResponseDto>();
 
@@ -58,13 +57,13 @@ namespace Omicron.SapFile.Services.Prescription.Impl
                     fileName = routeArray.Last();
                     containerRoute = presurl.AzureRecipeUrl.Replace(fileName, string.Empty);
                     routeFile = $"{ConfigurationManager.AppSettings[ServiceConstants.PrescriptionFiles]}{fileName}";
-                    (itDownloadCorrectly, messageAzure) = await azureObj.SaveToPathFromAzure(containerRoute, fileName, routeFile);
+                    messageAzure = await azureObj.SaveToPathFromAzure(containerRoute, fileName, routeFile);
                     downloadResult.Add(
                         new PrescriptionServerResponseDto
                         {
                             AzureRecipeUrl = presurl.AzureRecipeUrl,
                             ServerRecipeUrl = routeFile,
-                            ItDownloadCorrectly = itDownloadCorrectly,
+                            ItDownloadCorrectly = !string.IsNullOrEmpty(messageAzure),
                             Error = messageAzure,
                         });
                 }

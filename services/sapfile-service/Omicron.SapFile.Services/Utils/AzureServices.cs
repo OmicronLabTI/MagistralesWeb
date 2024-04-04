@@ -43,7 +43,7 @@ namespace Omicron.SapFile.Services.Utils
         /// </summary>
         /// <param name="url">the url.</param>
         /// <returns>the stram.</returns>
-        public async Task<(bool, string)> SaveToPathFromAzure(string url, string fileName, string fileRoute)
+        public async Task<string> SaveToPathFromAzure(string url, string fileName, string fileRoute)
         {
             try
             {
@@ -52,13 +52,13 @@ namespace Omicron.SapFile.Services.Utils
                 var container = new CloudBlobContainer(blobUir, storageCredentials);
                 var blob = container.GetBlockBlobReference(fileName);
                 await blob.DownloadToFileAsync(fileRoute, FileMode.Create);
-                return (true, string.Empty);
+                return string.Empty;
             }
             catch (Exception ex)
             {
                 this._loggerProxy.Error(
                     $"Omicron.SapFile.Azure - Error to download the recipe to server in {fileRoute}. Error: {ex.Message} - {ex.StackTrace}");
-                return (false, ex.Message);
+                return ex.Message;
             }
         }
     }
