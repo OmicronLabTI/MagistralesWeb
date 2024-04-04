@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using System.Diagnostics;
-
 namespace Omicron.SapFile.Dtos.Models
 {
     /// <summary>
@@ -26,17 +24,5 @@ namespace Omicron.SapFile.Dtos.Models
         /// </summary>
         /// <value>The code.</value>
         public string ServerRecipeUrl { get; set; }
-
-        /// <summary>
-        /// Gets or sets Error.
-        /// </summary>
-        /// <value>The code.</value>
-        public string Error { get; set; }
-
-        /// <summary>
-        /// Gets or sets It Download Correctly.
-        /// </summary>
-        /// <value>The code.</value>
-        public bool ItDownloadCorrectly { get; set; }
     }
 }
