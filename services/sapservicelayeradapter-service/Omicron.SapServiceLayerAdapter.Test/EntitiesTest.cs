@@ -40,6 +40,8 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new CloseSampleOrderDto(),
             new ProductDeliveryDto(),
             new CancelDeliveryDto(),
+            new PrescriptionServerRequestDto(),
+            new PrescriptionServerResponseDto(),
         };
 
         /// <summary>

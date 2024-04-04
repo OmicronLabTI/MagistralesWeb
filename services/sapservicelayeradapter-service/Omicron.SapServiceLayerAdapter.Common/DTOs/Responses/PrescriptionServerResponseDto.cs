@@ -6,7 +6,7 @@
 // </copyright>
 // </summary>
 
-namespace Omicron.SapFile.Dtos.Models
+namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Responses
 {
     /// <summary>
     /// Class Prescription Server Response Dto.

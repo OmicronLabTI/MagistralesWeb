@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using Omicron.SapServiceLayerAdapter.Common.DTOs.Requests;
+
 namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 {
     /// <summary>
@@ -16,17 +18,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         private readonly IServiceLayerClient serviceLayerClient;
         private readonly ILogger logger;
         private readonly IConfiguration configuration;
+        private readonly ISapFileService sapFileService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderService"/> class.
         /// </summary>
         /// <param name="serviceLayerClient">Service layer client.</param>
         /// <param name="logger">The logger.</param>
-        public OrderService(IServiceLayerClient serviceLayerClient, ILogger logger, IConfiguration configuration)
+        /// <param name="configuration">Configuration.</param>
+        /// <param name="sapFileService">SapFile Service.</param>
+        public OrderService(IServiceLayerClient serviceLayerClient, ILogger logger, IConfiguration configuration, ISapFileService sapFileService)
         {
             this.serviceLayerClient = serviceLayerClient.ThrowIfNull(nameof(serviceLayerClient));
             this.logger = logger.ThrowIfNull(nameof(logger));
             this.configuration = configuration;
+            this.sapFileService = sapFileService;
         }
 
         /// <inheritdoc/>
@@ -162,29 +168,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             }
         }
 
-        private async Task<int?> CreateAttachment(string pathFile)
-        {
-            var attachment = new CreateAttachmentDto();
-            var attachmentLine = new AttachmentDto();
-
-            attachmentLine.FileName = Path.GetFileNameWithoutExtension(pathFile);
-            attachmentLine.FileExtension = Path.GetExtension(pathFile).Substring(1);
-            attachmentLine.SourcePath = Path.GetDirectoryName(pathFile);
-            attachmentLine.Override = "tYES";
-
-            attachment.AttachmentLines = new List<AttachmentDto>() { attachmentLine };
-
-            var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryAttachments2, JsonConvert.SerializeObject(attachment));
-            if (!result.Success)
-            {
-                this.logger.Error($"The attachement could not be saved {result.Code} - {result.ExceptionMessage}");
-                return null;
-            }
-
-            var attachmentCreated = JsonConvert.DeserializeObject<CreateAttachmentResponseDto>(result.Response.ToString());
-            return attachmentCreated.AbsoluteEntry;
-        }
-
         private static List<BatchNumbersDto> CreateBatchLine(OrderLineDto orderLine, List<CreateDeliveryDto> itemsList)
         {
             var batchNumbers = new List<BatchNumbersDto>();
@@ -227,6 +210,29 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             }
 
             return inventoryGenExitLines;
+        }
+
+        private async Task<int?> CreateAttachment(string pathFile)
+        {
+            var attachment = new CreateAttachmentDto();
+            var attachmentLine = new AttachmentDto();
+
+            attachmentLine.FileName = Path.GetFileNameWithoutExtension(pathFile);
+            attachmentLine.FileExtension = Path.GetExtension(pathFile).Substring(1);
+            attachmentLine.SourcePath = Path.GetDirectoryName(pathFile);
+            attachmentLine.Override = "tYES";
+
+            attachment.AttachmentLines = new List<AttachmentDto>() { attachmentLine };
+
+            var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryAttachments2, JsonConvert.SerializeObject(attachment));
+            if (!result.Success)
+            {
+                this.logger.Error($"The attachement could not be saved {result.Code} - {result.ExceptionMessage}");
+                return null;
+            }
+
+            var attachmentCreated = JsonConvert.DeserializeObject<CreateAttachmentResponseDto>(result.Response.ToString());
+            return attachmentCreated.AbsoluteEntry;
         }
 
         private async Task<(string, string)> CloseSampleOrder(CloseSampleOrderDto sampleOrder)
@@ -290,6 +296,14 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     ServiceConstants.CloseSampleOrderAnInventoryError, sampleOrder.SaleOrderId, ex.Message, ex.StackTrace));
                 return (string.Format(ServiceConstants.ServiceLayerErrorHandled, sampleOrder.SaleOrderId), $"{ex.Message}");
             }
+        }
+
+        private async Task DownloadRecipeOnServer(string urlPrescription)
+        {
+            var resultSapFile = await this.sapFileService.PostAsync(
+                new PrescriptionServerRequestDto { AzurePrescriptionUrl = urlPrescription }, ServiceConstants.SavePrescriptionToServer);
+            var result = JsonConvert.DeserializeObject<List<PrescriptionServerResponseDto>>(resultSapFile.Response.ToString());
+            var serve
         }
     }
 }
