@@ -85,6 +85,19 @@ namespace Omicron.SapFile.Api.Controllers
         }
 
         /// <summary>
+        /// Method to save the prescription to server.
+        /// </summary>
+        /// <param name="prescriptionUrls">Prescription Urls.</param>
+        /// <returns>the data.</returns>
+        [HttpPost]
+        [Route("save/prescriptiontoserver")]
+        public async Task<IHttpActionResult> SavePresciptionToServer(List<PrescriptionServerRequestDto> prescriptionUrls)
+        {
+            return this.Ok(await this.sapFacade.SavePresciptionToServer(prescriptionUrls));
+        }
+
+
+        /// <summary>
         /// the ping pong.
         /// </summary>
         /// <returns>rturn pong.</returns>
