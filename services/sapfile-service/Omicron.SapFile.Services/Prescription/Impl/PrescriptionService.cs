@@ -18,49 +18,70 @@ namespace Omicron.SapFile.Services.Prescription.Impl
     using Omicron.SapFile.Services.Constants;
     using Omicron.SapFile.Dtos.Models;
     using System.Web.UI.WebControls;
+    using System;
+    using Omicron.SapFile.Log;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Class to Prescription Service.
     /// </summary>
     public class PrescriptionService : IPrescriptionService
     {
+        private readonly ILoggerProxy _loggerProxy;
+
         public async Task<ResultModel> SavePresciptionToServer(List<PrescriptionServerRequestDto> prescriptionUrls)
         {
-            var azureKey = ConfigurationManager.AppSettings[ServiceConstants.AzureKey];
-            var azureAccountName = ConfigurationManager.AppSettings[ServiceConstants.AzureAccountName];
-
-            var azureObj = new AzureServices(azureAccountName, azureKey);
-            List<string> routeArray = new List<string>();
-            string fileName = string.Empty;
-            var containerRoute = string.Empty;
-            var routeFile = string.Empty;
-            bool itDownloadCorrectly = false;
-            string messageAzure = string.Empty;
-            var downloadResult = new List<PrescriptionServerResponseDto>();
-            prescriptionUrls.ForEach(async presurl =>
+            try
             {
-                routeArray = presurl.AzureRecipeUrl.Split(ServiceConstants.CharacterPathSeparator).ToList();
-                fileName = routeArray.Last();
-                containerRoute = presurl.AzureRecipeUrl.Replace(fileName, string.Empty);
-                routeFile = $"{ConfigurationManager.AppSettings[ServiceConstants.PrescriptionFiles]}{fileName}";
-                (itDownloadCorrectly, messageAzure) = await azureObj.SaveToPathFromAzure(containerRoute, fileName, routeFile);
-                downloadResult.Add(
-                    new PrescriptionServerResponseDto
-                    {
-                        AzureRecipeUrl = presurl.AzureRecipeUrl,
-                        ServerRecipeUrl = routeFile,
-                        ItDownloadCorrectly = itDownloadCorrectly,
-                        Error = messageAzure,
-                    });
-            });
+                var azureKey = ConfigurationManager.AppSettings[ServiceConstants.AzureKey];
+                var azureAccountName = ConfigurationManager.AppSettings[ServiceConstants.AzureAccountName];
 
+                var azureObj = new AzureServices(azureAccountName, azureKey);
+                List<string> routeArray = new List<string>();
+                string fileName = string.Empty;
+                var containerRoute = string.Empty;
+                var routeFile = string.Empty;
+                bool itDownloadCorrectly = false;
+                string messageAzure = string.Empty;
+                var downloadResult = new List<PrescriptionServerResponseDto>();
 
-            return new ResultModel
+                foreach (var presurl in prescriptionUrls)
+                {
+                    routeArray = presurl.AzureRecipeUrl.Split(ServiceConstants.CharacterPathSeparator).ToList();
+                    fileName = routeArray.Last();
+                    containerRoute = presurl.AzureRecipeUrl.Replace(fileName, string.Empty);
+                    routeFile = $"{ConfigurationManager.AppSettings[ServiceConstants.PrescriptionFiles]}{fileName}";
+                    (itDownloadCorrectly, messageAzure) = await azureObj.SaveToPathFromAzure(containerRoute, fileName, routeFile);
+                    downloadResult.Add(
+                        new PrescriptionServerResponseDto
+                        {
+                            AzureRecipeUrl = presurl.AzureRecipeUrl,
+                            ServerRecipeUrl = routeFile,
+                            ItDownloadCorrectly = itDownloadCorrectly,
+                            Error = messageAzure,
+                        });
+                }
+
+                return new ResultModel
+                {
+                    Response = downloadResult,
+                    Code = 200,
+                    Success = true
+                };
+            }
+            catch (Exception ex)
             {
-                Response = downloadResult,
-                Code = 200,
-                Success = true
-            };
+                _loggerProxy.Error(
+                   $"Omicron.SapFile.Prescription Service - Error to download the recipe to server {JsonConvert.SerializeObject(prescriptionUrls)}. Error: {ex.Message} - {ex.StackTrace}");
+                return new ResultModel
+                {
+                    Code = 400,
+                    Success = false,
+                    ExceptionMessage = ex.StackTrace,
+                    UserError = ex.Message
+                };
+            }
+
         }
     }
 }
