@@ -52,16 +52,16 @@ namespace Omicron.SapFile.Services.Prescription.Impl
 
                 foreach (var presurl in prescriptionUrls)
                 {
-                    routeArray = presurl.AzureRecipeUrl.Split(ServiceConstants.CharacterPathSeparator).ToList();
+                    routeArray = presurl.AzurePrescriptionUrl.Split(ServiceConstants.CharacterPathSeparator).ToList();
                     fileName = routeArray.Last();
-                    containerRoute = presurl.AzureRecipeUrl.Replace(fileName, string.Empty);
+                    containerRoute = presurl.AzurePrescriptionUrl.Replace(fileName, string.Empty);
                     routeFile = $"{ConfigurationManager.AppSettings[ServiceConstants.PrescriptionFiles]}{fileName}";
                     await azureObj.SaveToPathFromAzure(containerRoute, fileName, routeFile);
                     downloadResult.Add(
                         new PrescriptionServerResponseDto
                         {
-                            AzureRecipeUrl = presurl.AzureRecipeUrl,
-                            ServerRecipeUrl = routeFile,
+                            AzurePrescriptionUrl = presurl.AzurePrescriptionUrl,
+                            ServerPrescriptionUrl = routeFile,
                         });
                 }
 

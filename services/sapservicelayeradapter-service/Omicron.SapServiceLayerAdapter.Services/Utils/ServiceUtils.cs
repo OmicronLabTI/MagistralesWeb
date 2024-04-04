@@ -8,11 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Services.Utils
 {
-    using Newtonsoft.Json;
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.Responses;
-    using Omicron.SapServiceLayerAdapter.Model;
-    using Serilog;
-
     /// <summary>
     /// Response utils.
     /// </summary>
@@ -149,6 +144,34 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
             var converter = new CustomJsonConverter(new Dictionary<Type, Dictionary<string, string>> { { typeof(T), propertyMappings } });
             var settings = new JsonSerializerSettings { Converters = { converter } };
             return JsonConvert.DeserializeObject<T>(json, settings);
+        }
+
+        /// <summary>
+        /// Gets the response from a http response.
+        /// </summary>
+        /// <param name="response">the response.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="serviceCalled">Service called name.</param>
+        /// <param name="genericError">Generic Error.</param>
+        /// <returns>the data.</returns>
+        public static async Task<ResultModel> GetResponse(HttpResponseMessage response, ILogger logger, string serviceCalled, string genericError)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            if ((int)response.StatusCode >= 300)
+            {
+                logger.Error($"SapServiceLayerdapter-{serviceCalled}-{genericError}-{jsonString}");
+                throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
+            }
+
+            var result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+            if (!result.Success)
+            {
+                logger.Error($"SapServiceLayerdapter-{serviceCalled}-{result.UserError}-{result.ExceptionMessage}-{jsonString}");
+                throw new CustomServiceException(result.UserError, System.Net.HttpStatusCode.NotFound);
+            }
+
+            return result;
         }
     }
 }

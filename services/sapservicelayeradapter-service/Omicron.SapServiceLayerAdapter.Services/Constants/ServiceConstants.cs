@@ -194,6 +194,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string CancelDeliveryErrorToCancelOrder = "The order: {0} was tried to cancel. {1}";
 
         /// <summary>
+        /// Sap Files Save Prescription To Server Url.
+        /// </summary>
+        public const string SavePrescriptionToServer = "save/prescriptiontoserver";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
