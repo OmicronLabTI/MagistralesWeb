@@ -84,7 +84,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 
                     if (attachmentId == null)
                     {
-                        return ServiceUtils.CreateResult(false, 400, null, "The attachment could not be created", null);
+                        return ServiceUtils.CreateResult(false, 400, "The attachment could not be created", "The attachment could not be created", null);
                     }
                 }
 
@@ -155,10 +155,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                 if (!result.Success)
                 {
                     this.logger.Error($"The sale order was tried to be created: {result.Code} - {result.UserError} - {JsonConvert.SerializeObject(saleOrderModel)}");
-                    return ServiceUtils.CreateResult(false, 400, null, result.UserError, null);
+                    return ServiceUtils.CreateResult(false, 400, result.UserError, result.UserError, null);
                 }
 
-                return ServiceUtils.CreateResult(true, 200, null, result.Response, null);
+                var createdOrder = ServiceUtils.DeserializeWithCustomProperties<OrderDto>(propertyMappings, result.Response.ToString());
+                return ServiceUtils.CreateResult(true, 200, null, createdOrder, null);
             }
             catch (Exception ex)
             {

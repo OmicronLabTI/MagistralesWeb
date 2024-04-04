@@ -39,3 +39,5 @@ global using Omicron.SapServiceLayerAdapter.Services.SapFile.Impl;
 global using Omicron.SapServiceLayerAdapter.Services.ServiceLayer;
 global using Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl;
 global using Serilog;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.Attachments;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.StockTransfer;

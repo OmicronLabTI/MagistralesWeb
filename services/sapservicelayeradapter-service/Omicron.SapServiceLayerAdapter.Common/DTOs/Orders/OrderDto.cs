@@ -256,7 +256,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>AttachmentEntry.</value>
         [JsonProperty("AttachmentEntry")]
-        public int AttachmentEntry { get; set; }
+        public int? AttachmentEntry { get; set; }
 
         /// <summary>
         /// Gets or sets the CFDIProvisional.

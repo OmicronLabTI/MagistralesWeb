@@ -42,6 +42,21 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new CancelDeliveryDto(),
             new PrescriptionServerRequestDto(),
             new PrescriptionServerResponseDto(),
+            new AttachmentDto(),
+            new CreateAttachmentDto(),
+            new CreateAttachmentResponseDto(),
+            new AlmacenBatchDto(),
+            new CreateDeliveryNoteDto(),
+            new DeliveryNoteBatchNumbersDto(),
+            new DeliveryNoteDto(),
+            new DeliveryNoteLineDto(),
+            new CreateOrderDto(),
+            new CreateOrderLineDto(),
+            new CreateSaleOrderDto(),
+            new OrderLineDto(),
+            new ShoppingCartItemDto(),
+            new StockTransferDto(),
+            new StockTransferLineDto(),
         };
 
         /// <summary>
