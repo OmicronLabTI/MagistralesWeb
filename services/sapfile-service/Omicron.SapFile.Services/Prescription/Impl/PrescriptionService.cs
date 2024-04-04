@@ -8,19 +8,17 @@
 
 namespace Omicron.SapFile.Services.Prescription.Impl
 {
-    using Omicron.SapFile.Entities.Models;
+    using System;
     using System.Collections.Generic;
     using System.Configuration;
-    using System.Runtime.CompilerServices;
-    using System.Threading.Tasks;
-    using Omicron.SapFile.Services.Utils;
     using System.Linq;
-    using Omicron.SapFile.Services.Constants;
-    using Omicron.SapFile.Dtos.Models;
-    using System.Web.UI.WebControls;
-    using System;
-    using Omicron.SapFile.Log;
+    using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.SapFile.Dtos.Models;
+    using Omicron.SapFile.Entities.Models;
+    using Omicron.SapFile.Log;
+    using Omicron.SapFile.Services.Constants;
+    using Omicron.SapFile.Services.Utils;
 
     /// <summary>
     /// Class to Prescription Service.
@@ -28,6 +26,15 @@ namespace Omicron.SapFile.Services.Prescription.Impl
     public class PrescriptionService : IPrescriptionService
     {
         private readonly ILoggerProxy _loggerProxy;
+
+        /// <summary>
+        /// Prescription Service.
+        /// </summary>
+        /// <param name="loggerProxy">Logger Proxy.</param>
+        public PrescriptionService(ILoggerProxy loggerProxy)
+        {
+            this._loggerProxy = loggerProxy;
+        }
 
         public async Task<ResultModel> SavePresciptionToServer(List<PrescriptionServerRequestDto> prescriptionUrls)
         {
