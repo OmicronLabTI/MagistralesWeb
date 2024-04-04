@@ -15,16 +15,18 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
     {
         private readonly IServiceLayerClient serviceLayerClient;
         private readonly ILogger logger;
+        private readonly IConfiguration configuration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderService"/> class.
         /// </summary>
         /// <param name="serviceLayerClient">Service layer client.</param>
         /// <param name="logger">The logger.</param>
-        public OrderService(IServiceLayerClient serviceLayerClient, ILogger logger)
+        public OrderService(IServiceLayerClient serviceLayerClient, ILogger logger, IConfiguration configuration)
         {
             this.serviceLayerClient = serviceLayerClient.ThrowIfNull(nameof(serviceLayerClient));
             this.logger = logger.ThrowIfNull(nameof(logger));
+            this.configuration = configuration;
         }
 
         /// <inheritdoc/>
@@ -63,6 +65,124 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                 order,
                 result.ExceptionMessage,
                 result.Comments?.ToString());
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CreateSaleOrder(CreateSaleOrderDto saleOrderModel)
+        {
+            try
+            {
+                var prescription = string.Empty;
+                int? attachmentId = null;
+                if (!string.IsNullOrEmpty(prescription))
+                {
+                    attachmentId = await this.CreateAttachment(prescription);
+
+                    if (attachmentId == null)
+                    {
+                        return ServiceUtils.CreateResult(false, 400, null, "The attachment could not be created", null);
+                    }
+                }
+
+                var order = new OrderDto();
+                order.CardCode = saleOrderModel.CardCode;
+                order.DocumentDate = DateTime.Now.ToString();
+                order.DueDate = DateTime.Now.AddDays(10).ToString();
+                order.ShippingCode = saleOrderModel.ShippinAddress;
+                order.PayToCode = saleOrderModel.BillingAddress;
+                order.ReferenceNumber = saleOrderModel.ProfecionalLicense;
+                order.OrderLines = new List<OrderLineDto>();
+
+                if (!string.IsNullOrEmpty(saleOrderModel.UserRfc))
+                {
+                    order.TaxId = saleOrderModel.UserRfc;
+                }
+
+                order.DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial);
+                order.DxpOrder = saleOrderModel.TransactionId;
+                order.EcommerceComments = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}" : string.Empty;
+                order.BXPPaymentMethod = saleOrderModel.PaymentMethodSapCode;
+                order.BXPWayToPay = saleOrderModel.WayToPaySapCode;
+                order.OrderPackage = saleOrderModel.IsPackage ? ServiceConstants.IsPackage : ServiceConstants.IsNotPackage;
+                order.DXPNeedsShipCost = saleOrderModel.ShippingCost;
+                order.SampleOrder = saleOrderModel.IsSample ? "Si" : "No";
+                order.CFDIProvisional = saleOrderModel.CfdiValue;
+
+                if (saleOrderModel.IsOmigenomicsOrder != null)
+                {
+                    order.IsOmigenomics = (bool)saleOrderModel.IsOmigenomicsOrder ? "Y" : "N";
+                }
+
+                if (saleOrderModel.SlpCode != null)
+                {
+                    order.SalesPersonCode = (int)saleOrderModel.SlpCode;
+                }
+
+                if (saleOrderModel.EmployeeId != null)
+                {
+                    order.DocumentsOwner = (int)saleOrderModel.EmployeeId;
+                }
+
+                if (attachmentId != null)
+                {
+                    order.AttachmentEntry = (int)attachmentId;
+                }
+
+                for (var i = 0; i < saleOrderModel.Items.Count; i++)
+                {
+                    var orderLine = new OrderLineDto();
+                    orderLine.ItemCode = saleOrderModel.Items[i].ItemCode;
+                    orderLine.Quantity = saleOrderModel.Items[i].Quantity;
+                    orderLine.UnitPrice = saleOrderModel.Items[i].CostPerPiece;
+                    orderLine.DiscountPercent = saleOrderModel.Items[i].DiscountPercentage;
+                    orderLine.Container = saleOrderModel.Items[i].Container;
+                    orderLine.Label = saleOrderModel.Items[i].Label;
+                    orderLine.Prescription = saleOrderModel.Items[i].NeedRecipe == "Y" ? "Si" : "No";
+                    order.OrderLines.Add(orderLine);
+                }
+
+                var propertyMappings = new Dictionary<string, string>
+                {
+                    { ServiceConstants.OrdersCFDIProperty, this.configuration[ServiceConstants.CustomPropertyNameCFDI] },
+                };
+
+                var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryPostOrders, ServiceUtils.SerializeWithCustomProperties<OrderDto>(propertyMappings, order));
+                if (!result.Success)
+                {
+                    this.logger.Error($"The sale order was tried to be created: {result.Code} - {result.UserError} - {JsonConvert.SerializeObject(saleOrderModel)}");
+                    return ServiceUtils.CreateResult(false, 400, null, result.UserError, null);
+                }
+
+                return ServiceUtils.CreateResult(true, 200, null, result.Response, null);
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error($"There was an error while creating the sale order {ex.Message} - {ex.StackTrace} - {JsonConvert.SerializeObject(saleOrderModel)}");
+                return ServiceUtils.CreateResult(false, 400, null, ex.Message, null);
+            }
+        }
+
+        private async Task<int?> CreateAttachment(string pathFile)
+        {
+            var attachment = new CreateAttachmentDto();
+            var attachmentLine = new AttachmentDto();
+
+            attachmentLine.FileName = Path.GetFileNameWithoutExtension(pathFile);
+            attachmentLine.FileExtension = Path.GetExtension(pathFile).Substring(1);
+            attachmentLine.SourcePath = Path.GetDirectoryName(pathFile);
+            attachmentLine.Override = "tYES";
+
+            attachment.AttachmentLines = new List<AttachmentDto>() { attachmentLine };
+
+            var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryAttachments2, JsonConvert.SerializeObject(attachment));
+            if (!result.Success)
+            {
+                this.logger.Error($"The attachement could not be saved {result.Code} - {result.ExceptionMessage}");
+                return null;
+            }
+
+            var attachmentCreated = JsonConvert.DeserializeObject<CreateAttachmentResponseDto>(result.Response.ToString());
+            return attachmentCreated.AbsoluteEntry;
         }
 
         private static List<BatchNumbersDto> CreateBatchLine(OrderLineDto orderLine, List<CreateDeliveryDto> itemsList)

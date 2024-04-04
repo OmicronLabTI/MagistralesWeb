@@ -112,6 +112,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         public string Label { get; set; }
 
         /// <summary>
+        /// Gets or sets the Prescription .
+        /// </summary>
+        /// <value>Prescription .</value>
+        [JsonProperty("U_RECETA")]
+        public string Prescription { get; set; }
+
+        /// <summary>
         /// Gets or sets the BaseEntry.
         /// </summary>
         /// <value>Base Entry.</value>

@@ -218,5 +218,15 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
             { "BE", "BE" },
             { "MX", "MG" },
         };
+
+        /// <summary>
+        /// Custom property cfdi from environment.
+        /// </summary>
+        public const string CustomPropertyNameCFDI = "CustomPropertiesName:CFDI";
+
+        /// <summary>
+        /// Custom property cfdi from environment.
+        /// </summary>
+        public const string OrdersCFDIProperty = "U_CFDI_Provisional";
     }
 }
