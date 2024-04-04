@@ -6,10 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.SapServiceLayerAdapter.Persistence.Context;
-using Omicron.SapServiceLayerAdapter.Services.DeliveryNotes;
-using Steeltoe.Extensions.Configuration;
-
 namespace Omicron.SapServiceLayerAdapter.Api
 {
     /// <summary>

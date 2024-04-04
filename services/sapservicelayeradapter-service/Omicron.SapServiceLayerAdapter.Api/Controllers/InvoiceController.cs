@@ -8,8 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Api.Controllers
 {
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices;
-
     /// <summary>
     /// InvoiceController class.
     /// </summary>

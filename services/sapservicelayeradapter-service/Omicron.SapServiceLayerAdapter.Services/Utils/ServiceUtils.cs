@@ -122,5 +122,33 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
         {
             return list.All(element => element);
         }
+
+        /// <summary>
+        /// Serializes an object of type T with custom property mappings.
+        /// </summary>
+        /// <typeparam name="T">The type of object to serialize.</typeparam>
+        /// <param name="propertyMappings">The property mappings.</param>
+        /// <param name="objectToSerialize">The object to serialize.</param>
+        /// <returns>The serialized JSON string.</returns>
+        public static string SerializeWithCustomProperties<T>(Dictionary<string, string> propertyMappings, T objectToSerialize)
+        {
+            var converter = new CustomJsonConverter(new Dictionary<Type, Dictionary<string, string>> { { typeof(T), propertyMappings } });
+            var settings = new JsonSerializerSettings { Converters = { converter } };
+            return JsonConvert.SerializeObject(objectToSerialize, settings);
+        }
+
+        /// <summary>
+        /// Deserializes a JSON string with custom property mappings into an object of type T.
+        /// </summary>
+        /// <typeparam name="T">The type of object to deserialize.</typeparam>
+        /// <param name="propertyMappings">The property mappings.</param>
+        /// <param name="json">The JSON string to deserialize.</param>
+        /// <returns>The deserialized object of type T.</returns>
+        public static T DeserializeWithCustomProperties<T>(Dictionary<string, string> propertyMappings, string json)
+        {
+            var converter = new CustomJsonConverter(new Dictionary<Type, Dictionary<string, string>> { { typeof(T), propertyMappings } });
+            var settings = new JsonSerializerSettings { Converters = { converter } };
+            return JsonConvert.DeserializeObject<T>(json, settings);
+        }
     }
 }
