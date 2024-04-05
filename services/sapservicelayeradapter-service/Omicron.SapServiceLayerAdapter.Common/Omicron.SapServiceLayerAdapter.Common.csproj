@@ -12,6 +12,7 @@
     <None Remove="Enums\**" />
     <None Remove="DTOs\DeliveryNoteDto.cs\" />
     <None Remove="DTOs\Batches\" />
+    <None Remove="DTOs\Attachments\" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="$(SolutionDir)\StyleCop\stylecop.json" Link="stylecop.json" />
@@ -32,8 +33,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\Requests\" />
     <Folder Include="DTOs\Batches\" />
+    <Folder Include="DTOs\Attachments\" />
   </ItemGroup>
 
 </Project>

@@ -194,6 +194,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string CancelDeliveryErrorToCancelOrder = "The order: {0} was tried to cancel. {1}";
 
         /// <summary>
+        /// Sap Files Save Prescription To Server Url.
+        /// </summary>
+        public const string SavePrescriptionToServer = "save/prescriptiontoserver";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -218,5 +223,15 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
             { "BE", "BE" },
             { "MX", "MG" },
         };
+
+        /// <summary>
+        /// Custom property cfdi from environment.
+        /// </summary>
+        public const string CustomPropertyNameCFDI = "CustomPropertiesName:CFDI";
+
+        /// <summary>
+        /// Custom property cfdi from environment.
+        /// </summary>
+        public const string OrdersCFDIProperty = "U_CFDI_Provisional";
     }
 }

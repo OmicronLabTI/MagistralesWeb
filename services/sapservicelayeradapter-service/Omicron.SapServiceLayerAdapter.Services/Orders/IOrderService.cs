@@ -25,5 +25,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders
         /// <param name="sampleOrders">Sample orders to close.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> CloseSampleOrders(List<CloseSampleOrderDto> sampleOrders);
+
+        /// <summary>
+        /// Creates a sale order.
+        /// </summary>
+        /// <param name="saleOrderModel">the sale order.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CreateSaleOrder(CreateSaleOrderDto saleOrderModel);
     }
 }
