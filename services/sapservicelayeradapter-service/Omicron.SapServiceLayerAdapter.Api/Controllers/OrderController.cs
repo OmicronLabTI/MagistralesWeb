@@ -59,7 +59,7 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         /// Method Ping.
         /// </summary>
         /// <returns>Pong.</returns>
-        [Route("ping")]
+        [Route("/ping")]
         [HttpGet]
         public IActionResult Ping()
         {
