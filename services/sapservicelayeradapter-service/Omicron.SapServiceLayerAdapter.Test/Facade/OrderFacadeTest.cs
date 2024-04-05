@@ -58,6 +58,20 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         /// </summary>
         /// <returns>nothing.</returns>
         [Test]
+        public async Task CreateSaleOrder()
+        {
+            // Act
+            var response = await this.ordersFacade.CreateSaleOrder(new CreateSaleOrderDto());
+
+            // Assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Test for selecting all models.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
         public async Task CloseSampleOrders()
         {
             // Arrange
