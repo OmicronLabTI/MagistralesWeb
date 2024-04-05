@@ -48,7 +48,7 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         /// <param name="saleOrderDto">Doctor profile info.</param>
         /// <returns>Operation result.</returns>
         [HttpPost]
-        [Route("create/saleorder")]
+        [Route("/create/saleorder")]
         public async Task<IActionResult> CreateSaleOrder([FromBody] CreateSaleOrderDto saleOrderDto)
         {
             var result = await this.ordersFacade.CreateSaleOrder(saleOrderDto);
