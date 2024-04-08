@@ -97,11 +97,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 170m
-              memory: 300Mi
+              cpu: 38m
+              memory: 247Mi
             requests:
-              cpu: 85m
-              memory: 95Mi
+              cpu: 3m
+              memory: 174Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -163,11 +163,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 168m
-              memory: 292Mi
+              cpu: 223m
+              memory: 440Mi
             requests:
-              cpu: 84m
-              memory: 132Mi
+              cpu: 3m
+              memory: 206Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -239,11 +239,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 1233m
-              memory: 1240Mi
+              cpu: 1245m
+              memory: 798Mi
             requests:
-              cpu: 617m
-              memory: 396Mi
+              cpu: 8m
+              memory: 272Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -269,7 +269,7 @@ metadata:
   labels:
     app: pedidos
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: pedidos
@@ -340,8 +340,8 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 368m
-              memory: 3546Mi
+              cpu: 476m
+              memory: 1083Mi
             requests:
               cpu: 184m
               memory: 463Mi
@@ -411,11 +411,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 102m
-              memory: 150Mi
+              cpu: 128m
+              memory: 187Mi
             requests:
-              cpu: 51m
-              memory: 51Mi
+              cpu: 2m
+              memory: 143Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -492,11 +492,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 38m
-              memory: 396Mi
+              cpu: 48m
+              memory: 208Mi
             requests:
-              cpu: 19m
-              memory: 97Mi
+              cpu: 2m
+              memory: 152Mi
       imagePullSecrets:
         - name: pullsecret
 ---

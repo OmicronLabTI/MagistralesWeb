@@ -1137,4 +1137,9 @@
 			<column name="field" value="QrDeliveryCodePositionX" />
 		</insert>
 	</changeSet>
+	<changeSet author="jarturoep" id="changelog-1.118">
+		<sql endDelimiter=";"> 
+			UPDATE parameters SET value='88' WHERE "field"='QrDeliveryCodePositionY';
+		</sql>
+	</changeSet>		
 </databaseChangeLog>

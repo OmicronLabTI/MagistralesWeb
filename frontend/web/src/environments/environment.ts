@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://201.163.179.28:8082',
+  baseUrl: 'https://devtools.axity.com/omicrondev',
   apiLogin: '/api/oauth/oauthrs',
   apiCatalogs: '/api/catalogos',
   apiUsers: '/api/usuarios',

@@ -416,3 +416,48 @@ spec:
     - 192.168.0.83
   selector:
     app: seqlog
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sapservicelayeradapter-deployment
+  labels:
+    app: sapservicelayeradapter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sapservicelayeradapter
+  template:
+    metadata:
+      labels:
+        app: sapservicelayeradapter
+    spec:
+      containers:
+        - name: sapservicelayeradapter
+          image: 192.168.0.133:8083/omicronqa/omicron-appiosformulas-sapservicelayeradapter-repository:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Mexico_City
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: pullsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sapservicelayeradapter-svc
+  labels:
+    app: sapservicelayeradapter
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: sapservicelayeradapter
+  type: ClusterIP
