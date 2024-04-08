@@ -78,5 +78,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// </summary>
         public const string QryPostOrders = "Orders";
 
+        /// <summary>
+        /// Query to get update or delete the employee info by employee id.
+        /// </summary>
+        public const string QryEmployeesInfoByDocEntry = "EmployeesInfo({0})";
+
     }
 }

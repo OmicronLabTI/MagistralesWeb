@@ -57,6 +57,8 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new ShoppingCartItemDto(),
             new StockTransferDto(),
             new StockTransferLineDto(),
+            new AdviserProfileInfoDto(),
+            new EmployeeInfoDto(),
         };
 
         /// <summary>

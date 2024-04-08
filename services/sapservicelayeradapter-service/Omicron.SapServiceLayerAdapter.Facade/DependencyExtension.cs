@@ -10,6 +10,9 @@ namespace Omicron.SapServiceLayerAdapter.Facade
 {
     using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes;
     using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes.Impl;
+    using Omicron.SapServiceLayerAdapter.Facade.EmployeeInfo;
+    using Omicron.SapServiceLayerAdapter.Facade.EmployeeInfo.Impl;
+
     /// <summary>
     /// DependencyExtension class.
     /// </summary>
@@ -25,6 +28,7 @@ namespace Omicron.SapServiceLayerAdapter.Facade
             services.AddScoped<IOrderFacade, OrderFacade>();
             services.AddScoped<IInvoiceFacade, InvoiceFacade>();
             services.AddScoped<IDeliveryNoteFacade, DeliveryNoteFacade>();
+            services.AddScoped<IEmployeeInfoFacade, EmployeeInfoFacade>();
             return services;
         }
     }

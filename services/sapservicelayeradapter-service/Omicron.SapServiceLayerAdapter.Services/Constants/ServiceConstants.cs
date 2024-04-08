@@ -199,6 +199,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string SavePrescriptionToServer = "save/prescriptiontoserver";
 
         /// <summary>
+        /// Invalid adviser id message.
+        /// </summary>
+        public const string InvalidAdviserId = "El identificador del asesor no es valido";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
