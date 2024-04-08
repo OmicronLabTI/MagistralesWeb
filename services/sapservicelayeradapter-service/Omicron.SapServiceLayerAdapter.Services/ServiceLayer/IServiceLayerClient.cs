@@ -42,5 +42,13 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer
         /// <param name="url">The URL to send the request to.</param>
         /// <returns>A task representing the asynchronous operation. The task result contains the response data of type <typeparamref name="T"/>.</returns>
         Task<ResultModel> DeleteAsync(string url);
+
+        /// <summary>
+        /// Sends an HTTP PUT request to the specified URL with the provided request body and returns the response as an asynchronous operation.
+        /// </summary>
+        /// <param name="url">The URL to send the request to.</param>
+        /// <param name="requestBody">The request body to send with the PATCH request.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the response data of type <typeparamref name="T"/>.</returns>
+        Task<ResultModel> PutAsync(string url, string requestBody);
     }
 }

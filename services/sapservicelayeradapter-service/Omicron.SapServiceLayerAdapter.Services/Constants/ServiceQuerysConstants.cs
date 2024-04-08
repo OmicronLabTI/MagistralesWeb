@@ -83,5 +83,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// </summary>
         public const string QryEmployeesInfoByDocEntry = "EmployeesInfo({0})";
 
+        /// <summary>
+        /// Query Doctor By Id.
+        /// </summary>
+        public const string QryDoctorbyId = "BusinessPartners('{0}')";
     }
 }

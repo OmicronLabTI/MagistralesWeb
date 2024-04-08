@@ -29,3 +29,5 @@ global using Serilog;
 global using Serilog.Events;
 global using StackExchange.Redis;
 global using Steeltoe.Extensions.Configuration.Placeholder;
+global using Omicron.SapServiceLayerAdapter.Facade.Doctor;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.Doctor;

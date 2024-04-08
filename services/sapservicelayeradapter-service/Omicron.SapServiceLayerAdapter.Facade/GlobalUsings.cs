@@ -15,3 +15,8 @@ global using Omicron.SapServiceLayerAdapter.Services.EmployeesInfo;
 global using Omicron.SapServiceLayerAdapter.Services.Invoices;
 global using Omicron.SapServiceLayerAdapter.Services.Orders;
 global using Omicron.SapServiceLayerAdapter.Services.Utils;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.Doctor;
+global using Omicron.SapServiceLayerAdapter.Services.Doctors;
+global using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes;
+global using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes.Impl;
+global using Omicron.SapServiceLayerAdapter.Facade.Doctor;

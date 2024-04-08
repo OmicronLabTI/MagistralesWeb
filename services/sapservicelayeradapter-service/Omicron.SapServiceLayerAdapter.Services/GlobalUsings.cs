@@ -38,3 +38,6 @@ global using Omicron.SapServiceLayerAdapter.Services.ServiceLayer;
 global using Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl;
 global using Omicron.SapServiceLayerAdapter.Services.Utils;
 global using Serilog;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.Doctor;
+global using AutoMapper.Internal;
+global using Omicron.SapServiceLayerAdapter.Services.Doctors;
