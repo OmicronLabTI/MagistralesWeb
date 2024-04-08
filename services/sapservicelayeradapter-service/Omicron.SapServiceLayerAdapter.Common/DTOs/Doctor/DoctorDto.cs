@@ -189,10 +189,24 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Doctor
         public string ShipToDefault { get; set; }
 
         /// <summary>
+        /// Gets or sets ShipToDefault.
+        /// </summary>
+        /// <value>The ShipToDefault.</value>
+        [JsonProperty("Valid")]
+        public string Valid { get; set; }
+
+        /// <summary>
         /// Gets or sets Addresses.
         /// </summary>
         /// <value>The Addresses.</value>
         [JsonProperty("BPAddresses")]
         public List<DoctorAddressDto> Addresses { get; set; }
+
+        /// <summary>
+        /// Gets or sets ContactEmployees.
+        /// </summary>
+        /// <value>The ContactEmployees.</value>
+        [JsonProperty("ContactEmployees")]
+        public List<DoctorEmployeeDto> ContactEmployees { get; set; }
     }
 }
