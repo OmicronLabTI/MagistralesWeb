@@ -2,6 +2,7 @@
 global using AutoMapper;
 global using Microsoft.Extensions.DependencyInjection;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.EmployeesInfo;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Orders;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Responses.Common;
@@ -10,6 +11,7 @@ global using Omicron.SapServiceLayerAdapter.Facade.Invoice.Impl;
 global using Omicron.SapServiceLayerAdapter.Facade.Orders;
 global using Omicron.SapServiceLayerAdapter.Facade.Orders.Impl;
 global using Omicron.SapServiceLayerAdapter.Services.DeliveryNotes;
+global using Omicron.SapServiceLayerAdapter.Services.EmployeesInfo;
 global using Omicron.SapServiceLayerAdapter.Services.Invoices;
 global using Omicron.SapServiceLayerAdapter.Services.Orders;
 global using Omicron.SapServiceLayerAdapter.Services.Utils;

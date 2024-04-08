@@ -10,10 +10,12 @@ global using Microsoft.AspNetCore.Mvc;
 global using Omicron.SapServiceLayerAdapter.Api;
 global using Omicron.SapServiceLayerAdapter.Api.Filters;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.EmployeesInfo;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Orders;
 global using Omicron.SapServiceLayerAdapter.Facade;
 global using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes;
+global using Omicron.SapServiceLayerAdapter.Facade.EmployeeInfo.Impl;
 global using Omicron.SapServiceLayerAdapter.Facade.Invoice;
 global using Omicron.SapServiceLayerAdapter.Facade.Orders;
 global using Omicron.SapServiceLayerAdapter.Persistence;
@@ -27,4 +29,3 @@ global using Serilog;
 global using Serilog.Events;
 global using StackExchange.Redis;
 global using Steeltoe.Extensions.Configuration.Placeholder;
-
