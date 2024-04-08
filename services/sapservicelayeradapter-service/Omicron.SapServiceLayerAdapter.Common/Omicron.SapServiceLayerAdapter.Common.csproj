@@ -13,6 +13,7 @@
     <None Remove="DTOs\DeliveryNoteDto.cs\" />
     <None Remove="DTOs\Batches\" />
     <None Remove="DTOs\Attachments\" />
+    <None Remove="DTOs\Doctor\" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="$(SolutionDir)\StyleCop\stylecop.json" Link="stylecop.json" />
@@ -35,6 +36,7 @@
   <ItemGroup>
     <Folder Include="DTOs\Batches\" />
     <Folder Include="DTOs\Attachments\" />
+    <Folder Include="DTOs\Doctor\" />
   </ItemGroup>
 
 </Project>

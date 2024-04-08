@@ -202,6 +202,34 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Invalid adviser id message.
         /// </summary>
         public const string InvalidAdviserId = "El identificador del asesor no es valido";
+        /// Doctor not found.
+        /// </summary>
+        public const string DoctorNotFound = "El doctor no se encontró en SAP";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionUpdate = "u";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionInsert = "i";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionDelete = "d";
+
+        /// <summary>
+        /// the Delivery Address type.
+        /// </summary>
+        public const string DeliveryAddress = "bo_ShipTo";
+
+        /// <summary>
+        /// the Invoice Address type.
+        /// </summary>
+        public const string InvoiceAddress = "bo_BillTo";
 
         /// <summary>
         /// Gets the status of the order.

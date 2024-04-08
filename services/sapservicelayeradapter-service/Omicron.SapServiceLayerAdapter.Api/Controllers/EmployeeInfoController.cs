@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.SapServiceLayerAdapter.Facade.EmployeeInfo;
-
 namespace Omicron.SapServiceLayerAdapter.Api.Controllers
 {
     /// <summary>

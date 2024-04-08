@@ -42,6 +42,20 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> PutAsync(string url, string requestBody)
+        {
+            ResultModel result;
+            HttpRequestMessage request = new HttpRequestMessage(new HttpMethod("PUT"), url);
+            request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
+            using (var response = await this.httpClient.SendAsync(request))
+            {
+                result = await ServiceUtils.GetServiceLayerResponse(response, this.logger, requestBody);
+            }
+
+            return result;
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> PatchAsync(string url, string requestBody)
         {
             ResultModel result;
