@@ -20,3 +20,5 @@ global using Omicron.SapServiceLayerAdapter.Services.Doctors;
 global using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes;
 global using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes.Impl;
 global using Omicron.SapServiceLayerAdapter.Facade.Doctor;
+global using Omicron.SapServiceLayerAdapter.Facade.EmployeeInfo;
+global using Omicron.SapServiceLayerAdapter.Facade.EmployeeInfo.Impl;

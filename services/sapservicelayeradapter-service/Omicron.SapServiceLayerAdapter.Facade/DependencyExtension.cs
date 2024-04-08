@@ -8,7 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Facade
 {
-
     /// <summary>
     /// DependencyExtension class.
     /// </summary>
