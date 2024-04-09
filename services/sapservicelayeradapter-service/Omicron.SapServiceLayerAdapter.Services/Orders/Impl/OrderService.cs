@@ -76,6 +76,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         {
             try
             {
+                this.logger.Information($"Sap Service Layer Adapter - Order to create {JsonConvert.SerializeObject(saleOrderModel)}");
                 var prescription = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
                 int? attachmentId = null;
                 if (!string.IsNullOrEmpty(prescription))
@@ -151,6 +152,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                 };
 
                 var body = ServiceUtils.SerializeWithCustomProperties<CreateOrderDto>(propertyMappings, order);
+                this.logger.Information($"Sap Service Layer Adapter - Order to create on service layer - {body}");
                 var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryPostOrders, body);
                 if (!result.Success)
                 {
@@ -224,10 +226,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 
             attachment.AttachmentLines = new List<AttachmentDto>() { attachmentLine };
 
+            this.logger.Information($"Sap Service Layer Adapter - The attached document will try to create {JsonConvert.SerializeObject(attachment)}");
             var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryAttachments2, JsonConvert.SerializeObject(attachment));
             if (!result.Success)
             {
-                this.logger.Error($"The attachement could not be saved {result.Code} - {result.ExceptionMessage}");
+                this.logger.Error($"Sap Service Layer Adapter - The attachement could not be saved {result.Code} - {result.ExceptionMessage}");
                 return null;
             }
 
