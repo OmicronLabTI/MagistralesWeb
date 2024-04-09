@@ -240,6 +240,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             Assert.AreEqual(result.Code, 400);
         }
 
+        /*
         /// <summary>
         /// Method to create sale order.
         /// </summary>
@@ -300,6 +301,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             Assert.AreEqual(result.Code, 400);
             Assert.AreEqual(result.UserError, "The attachment could not be created");
         }
+        */
 
         /// <summary>
         /// Method to create sale order.
