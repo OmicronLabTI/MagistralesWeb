@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using Microsoft.IdentityModel.Tokens;
+
 namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 {
     /// <summary>
@@ -76,12 +78,13 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         {
             try
             {
-                var prescription = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
+                this.logger.Information($"Sap Service Layer Adapter - LOG  - Order to create {JsonConvert.SerializeObject(saleOrderModel)}");
+                var serverPrescriptionInfo = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
                 int? attachmentId = null;
-                if (!string.IsNullOrEmpty(prescription))
+                string messageError = string.Empty;
+                if (!string.IsNullOrEmpty(serverPrescriptionInfo.ServerSourcePath))
                 {
-                    attachmentId = await this.CreateAttachment(prescription);
-
+                    attachmentId = await this.CreateAttachment(serverPrescriptionInfo);
                     if (attachmentId == null)
                     {
                         return ServiceUtils.CreateResult(false, 400, "The attachment could not be created", "The attachment could not be created", null);
@@ -151,6 +154,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                 };
 
                 var body = ServiceUtils.SerializeWithCustomProperties<CreateOrderDto>(propertyMappings, order);
+                this.logger.Information($"Sap Service Layer Adapter - Order to create on service layer - {body}");
                 var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryPostOrders, body);
                 if (!result.Success)
                 {
@@ -212,22 +216,24 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             return inventoryGenExitLines;
         }
 
-        private async Task<int?> CreateAttachment(string pathFile)
+        private async Task<int?> CreateAttachment(PrescriptionServerResponseDto serverPathInfo)
         {
             var attachment = new CreateAttachmentDto();
-            var attachmentLine = new AttachmentDto();
-
-            attachmentLine.FileName = Path.GetFileNameWithoutExtension(pathFile);
-            attachmentLine.FileExtension = Path.GetExtension(pathFile).Substring(1);
-            attachmentLine.SourcePath = Path.GetDirectoryName(pathFile);
-            attachmentLine.Override = "tYES";
+            var attachmentLine = new AttachmentDto
+            {
+                FileName = serverPathInfo.PrescriptionFileName,
+                FileExtension = serverPathInfo.PrescriptionFileExtension,
+                SourcePath = serverPathInfo.ServerSourcePath,
+                Override = "tYES",
+            };
 
             attachment.AttachmentLines = new List<AttachmentDto>() { attachmentLine };
 
+            this.logger.Information($"Sap Service Layer Adapter - LOG - The attached document will try to create {JsonConvert.SerializeObject(attachment)}");
             var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryAttachments2, JsonConvert.SerializeObject(attachment));
             if (!result.Success)
             {
-                this.logger.Error($"The attachement could not be saved {result.Code} - {result.ExceptionMessage}");
+                this.logger.Error($"Sap Service Layer Adapter - The attachement could not be saved {result.Code} - {result.UserError} - {result.ExceptionMessage}");
                 return null;
             }
 
@@ -298,9 +304,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             }
         }
 
-        private async Task<string> DownloadRecipeOnServer(string urlPrescription)
+        private async Task<PrescriptionServerResponseDto> DownloadRecipeOnServer(string urlPrescription)
         {
-            var serverPrescriptionPath = string.Empty;
+            var serverPrescriptionInfo = new PrescriptionServerResponseDto();
 
             if (!string.IsNullOrEmpty(urlPrescription))
             {
@@ -311,10 +317,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                                 },
                                 ServiceConstants.SavePrescriptionToServer);
                 var result = JsonConvert.DeserializeObject<List<PrescriptionServerResponseDto>>(resultSapFile.Response.ToString());
-                serverPrescriptionPath = result.First(ts => ts.AzurePrescriptionUrl.Equals(urlPrescription)).ServerPrescriptionUrl;
+                serverPrescriptionInfo = result.First(ts => ts.AzurePrescriptionUrl.Equals(urlPrescription));
             }
 
-            return serverPrescriptionPath;
+            return serverPrescriptionInfo;
         }
     }
 }

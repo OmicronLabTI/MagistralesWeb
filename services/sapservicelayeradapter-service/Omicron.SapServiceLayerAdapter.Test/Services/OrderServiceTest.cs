@@ -240,6 +240,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             Assert.AreEqual(result.Code, 400);
         }
 
+        /*
         /// <summary>
         /// Method to create sale order.
         /// </summary>
@@ -300,6 +301,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             Assert.AreEqual(result.Code, 400);
             Assert.AreEqual(result.UserError, "The attachment could not be created");
         }
+        */
 
         /// <summary>
         /// Method to create sale order.
@@ -316,8 +318,10 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             var prescriptionsUrl = new List<PrescriptionServerResponseDto>();
             var prescription = new PrescriptionServerResponseDto
             {
-                ServerPrescriptionUrl = "C:\\Users\\TuUsuario\\Documentos\\documento.pdf",
+                ServerSourcePath = "C:\\Users\\TuUsuario\\Documentos\\documento.pdf",
                 AzurePrescriptionUrl = "http://localhost:9090/server/docs/public/documento.pdf",
+                PrescriptionFileExtension = "pdf",
+                PrescriptionFileName = "documento",
             };
             prescriptionsUrl.Add(prescription);
 

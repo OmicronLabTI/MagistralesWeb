@@ -20,9 +20,21 @@ namespace Omicron.SapFile.Dtos.Models
         public string AzurePrescriptionUrl { get; set; }
 
         /// <summary>
-        /// Gets or sets Azure Prescription Url.
+        /// Gets or sets Server Source Path.
         /// </summary>
         /// <value>The code.</value>
-        public string ServerPrescriptionUrl { get; set; }
+        public string ServerSourcePath { get; set; }
+
+        /// <summary>
+        /// Gets or sets Prescription File Name.
+        /// </summary>
+        /// <value>The code.</value>
+        public string PrescriptionFileName { get; set; }
+
+        /// <summary>
+        /// Gets or sets Prescription File Extension.
+        /// </summary>
+        /// <value>The code.</value>
+        public string PrescriptionFileExtension { get; set; }
     }
 }

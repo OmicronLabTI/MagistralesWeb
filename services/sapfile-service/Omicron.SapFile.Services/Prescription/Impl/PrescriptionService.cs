@@ -11,6 +11,7 @@ namespace Omicron.SapFile.Services.Prescription.Impl
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
@@ -61,8 +62,10 @@ namespace Omicron.SapFile.Services.Prescription.Impl
                         new PrescriptionServerResponseDto
                         {
                             AzurePrescriptionUrl = presurl.AzurePrescriptionUrl,
-                            ServerPrescriptionUrl = routeFile,
-                        });
+                            ServerSourcePath = ConfigurationManager.AppSettings[ServiceConstants.PrescriptionFiles],
+                            PrescriptionFileName = fileName,
+                            PrescriptionFileExtension = Path.GetExtension(fileName).Substring(1),
+                });
                 }
 
                 return new ResultModel
