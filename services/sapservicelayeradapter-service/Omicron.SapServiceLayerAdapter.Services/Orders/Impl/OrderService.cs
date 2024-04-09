@@ -76,16 +76,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         {
             try
             {
-                this.logger.Information($"Sap Service Layer Adapter - Order to create {JsonConvert.SerializeObject(saleOrderModel)}");
+                this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create {JsonConvert.SerializeObject(saleOrderModel)}");
                 var prescription = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
                 int? attachmentId = null;
+                string messageError = string.Empty;
                 if (!string.IsNullOrEmpty(prescription))
                 {
-                    attachmentId = await this.CreateAttachment(prescription);
-
+                    this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create PRESCRIPTION {prescription}");
+                    (attachmentId, messageError) = await this.CreateAttachment(prescription);
+                    this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create ATTACHMENT {prescription}");
                     if (attachmentId == null)
                     {
-                        return ServiceUtils.CreateResult(false, 400, "The attachment could not be created", "The attachment could not be created", null);
+                        var temporalMessage = $"Error: {messageError} - {prescription} - {attachmentId}";
+
+                        // return ServiceUtils.CreateResult(false, 400, "The attachment could not be created", "The attachment could not be created", null);
+                        return ServiceUtils.CreateResult(false, 400, temporalMessage, temporalMessage, null);
                     }
                 }
 
@@ -214,7 +219,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             return inventoryGenExitLines;
         }
 
-        private async Task<int?> CreateAttachment(string pathFile)
+        private async Task<(int?, string)> CreateAttachment(string pathFile)
         {
             var attachment = new CreateAttachmentDto();
             var attachmentLine = new AttachmentDto();
@@ -226,16 +231,17 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 
             attachment.AttachmentLines = new List<AttachmentDto>() { attachmentLine };
 
-            this.logger.Information($"Sap Service Layer Adapter - The attached document will try to create {JsonConvert.SerializeObject(attachment)}");
+            this.logger.Error($"Sap Service Layer Adapter - LOG - The attached document will try to create {JsonConvert.SerializeObject(attachment)}");
             var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryAttachments2, JsonConvert.SerializeObject(attachment));
             if (!result.Success)
             {
                 this.logger.Error($"Sap Service Layer Adapter - The attachement could not be saved {result.Code} - {result.ExceptionMessage}");
-                return null;
+                var messageError = $"{result.UserError} - {result.ExceptionMessage} - {result.Response}";
+                return (null, messageError);
             }
 
             var attachmentCreated = JsonConvert.DeserializeObject<CreateAttachmentResponseDto>(result.Response.ToString());
-            return attachmentCreated.AbsoluteEntry;
+            return (attachmentCreated.AbsoluteEntry, string.Empty);
         }
 
         private async Task<(string, string)> CloseSampleOrder(CloseSampleOrderDto sampleOrder)
