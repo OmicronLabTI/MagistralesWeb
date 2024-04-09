@@ -6,6 +6,8 @@
 // </copyright>
 // </summary>
 
+using Microsoft.IdentityModel.Tokens;
+
 namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 {
     /// <summary>
@@ -77,17 +79,17 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             try
             {
                 this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create {JsonConvert.SerializeObject(saleOrderModel)}");
-                var prescription = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
+                var serverPrescriptionInfo = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
                 int? attachmentId = null;
                 string messageError = string.Empty;
-                if (!string.IsNullOrEmpty(prescription))
+                if (!string.IsNullOrEmpty(serverPrescriptionInfo.ServerSourcePath))
                 {
-                    this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create PRESCRIPTION {prescription}");
-                    (attachmentId, messageError) = await this.CreateAttachment(prescription);
-                    this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create ATTACHMENT {prescription}");
+                    this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create PRESCRIPTION {JsonConvert.SerializeObject(serverPrescriptionInfo)}");
+                    (attachmentId, messageError) = await this.CreateAttachment(serverPrescriptionInfo);
+                    this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create ATTACHMENT {JsonConvert.SerializeObject(serverPrescriptionInfo)}");
                     if (attachmentId == null)
                     {
-                        var temporalMessage = $"Error: {messageError} - {prescription} - {attachmentId}";
+                        var temporalMessage = $"Error: {messageError} - {JsonConvert.SerializeObject(serverPrescriptionInfo)} - {attachmentId}";
 
                         // return ServiceUtils.CreateResult(false, 400, "The attachment could not be created", "The attachment could not be created", null);
                         return ServiceUtils.CreateResult(false, 400, temporalMessage, temporalMessage, null);
@@ -219,14 +221,14 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             return inventoryGenExitLines;
         }
 
-        private async Task<(int?, string)> CreateAttachment(string pathFile)
+        private async Task<(int?, string)> CreateAttachment(PrescriptionServerResponseDto serverPathInfo)
         {
             var attachment = new CreateAttachmentDto();
             var attachmentLine = new AttachmentDto();
 
-            attachmentLine.FileName = Path.GetFileNameWithoutExtension(pathFile);
-            attachmentLine.FileExtension = Path.GetExtension(pathFile).Substring(1);
-            attachmentLine.SourcePath = Path.GetDirectoryName(pathFile);
+            attachmentLine.FileName = serverPathInfo.PrescriptionFileName; // Path.GetFileNameWithoutExtension(pathFile);
+            attachmentLine.FileExtension = serverPathInfo.PrescriptionFileExtension; // Path.GetExtension(pathFile).Substring(1);
+            attachmentLine.SourcePath = serverPathInfo.ServerSourcePath; // Path.GetDirectoryName(pathFile);
             attachmentLine.Override = "tYES";
 
             attachment.AttachmentLines = new List<AttachmentDto>() { attachmentLine };
@@ -307,9 +309,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             }
         }
 
-        private async Task<string> DownloadRecipeOnServer(string urlPrescription)
+        private async Task<PrescriptionServerResponseDto> DownloadRecipeOnServer(string urlPrescription)
         {
-            var serverPrescriptionPath = string.Empty;
+            var serverPrescriptionInfo = new PrescriptionServerResponseDto();
 
             if (!string.IsNullOrEmpty(urlPrescription))
             {
@@ -320,10 +322,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                                 },
                                 ServiceConstants.SavePrescriptionToServer);
                 var result = JsonConvert.DeserializeObject<List<PrescriptionServerResponseDto>>(resultSapFile.Response.ToString());
-                serverPrescriptionPath = result.First(ts => ts.AzurePrescriptionUrl.Equals(urlPrescription)).ServerPrescriptionUrl;
+                serverPrescriptionInfo = result.First(ts => ts.AzurePrescriptionUrl.Equals(urlPrescription));
             }
 
-            return serverPrescriptionPath;
+            return serverPrescriptionInfo;
         }
     }
 }
