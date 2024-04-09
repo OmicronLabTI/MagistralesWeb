@@ -78,21 +78,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         {
             try
             {
-                this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create {JsonConvert.SerializeObject(saleOrderModel)}");
+                this.logger.Information($"Sap Service Layer Adapter - LOG  - Order to create {JsonConvert.SerializeObject(saleOrderModel)}");
                 var serverPrescriptionInfo = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
                 int? attachmentId = null;
                 string messageError = string.Empty;
                 if (!string.IsNullOrEmpty(serverPrescriptionInfo.ServerSourcePath))
                 {
-                    this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create PRESCRIPTION {JsonConvert.SerializeObject(serverPrescriptionInfo)}");
-                    (attachmentId, messageError) = await this.CreateAttachment(serverPrescriptionInfo);
-                    this.logger.Error($"Sap Service Layer Adapter - LOG  - Order to create ATTACHMENT {JsonConvert.SerializeObject(serverPrescriptionInfo)}");
+                    attachmentId = await this.CreateAttachment(serverPrescriptionInfo);
                     if (attachmentId == null)
                     {
-                        var temporalMessage = $"Error: {messageError} - {JsonConvert.SerializeObject(serverPrescriptionInfo)} - {attachmentId}";
-
-                        // return ServiceUtils.CreateResult(false, 400, "The attachment could not be created", "The attachment could not be created", null);
-                        return ServiceUtils.CreateResult(false, 400, temporalMessage, temporalMessage, null);
+                        return ServiceUtils.CreateResult(false, 400, "The attachment could not be created", "The attachment could not be created", null);
                     }
                 }
 
@@ -221,29 +216,29 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             return inventoryGenExitLines;
         }
 
-        private async Task<(int?, string)> CreateAttachment(PrescriptionServerResponseDto serverPathInfo)
+        private async Task<int?> CreateAttachment(PrescriptionServerResponseDto serverPathInfo)
         {
             var attachment = new CreateAttachmentDto();
-            var attachmentLine = new AttachmentDto();
-
-            attachmentLine.FileName = serverPathInfo.PrescriptionFileName; // Path.GetFileNameWithoutExtension(pathFile);
-            attachmentLine.FileExtension = serverPathInfo.PrescriptionFileExtension; // Path.GetExtension(pathFile).Substring(1);
-            attachmentLine.SourcePath = serverPathInfo.ServerSourcePath; // Path.GetDirectoryName(pathFile);
-            attachmentLine.Override = "tYES";
+            var attachmentLine = new AttachmentDto
+            {
+                FileName = serverPathInfo.PrescriptionFileName,
+                FileExtension = serverPathInfo.PrescriptionFileExtension,
+                SourcePath = serverPathInfo.ServerSourcePath,
+                Override = "tYES",
+            };
 
             attachment.AttachmentLines = new List<AttachmentDto>() { attachmentLine };
 
-            this.logger.Error($"Sap Service Layer Adapter - LOG - The attached document will try to create {JsonConvert.SerializeObject(attachment)}");
+            this.logger.Information($"Sap Service Layer Adapter - LOG - The attached document will try to create {JsonConvert.SerializeObject(attachment)}");
             var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryAttachments2, JsonConvert.SerializeObject(attachment));
             if (!result.Success)
             {
-                this.logger.Error($"Sap Service Layer Adapter - The attachement could not be saved {result.Code} - {result.ExceptionMessage}");
-                var messageError = $"{result.UserError} - {result.ExceptionMessage} - {result.Response}";
-                return (null, messageError);
+                this.logger.Error($"Sap Service Layer Adapter - The attachement could not be saved {result.Code} - {result.UserError} - {result.ExceptionMessage}");
+                return null;
             }
 
             var attachmentCreated = JsonConvert.DeserializeObject<CreateAttachmentResponseDto>(result.Response.ToString());
-            return (attachmentCreated.AbsoluteEntry, string.Empty);
+            return attachmentCreated.AbsoluteEntry;
         }
 
         private async Task<(string, string)> CloseSampleOrder(CloseSampleOrderDto sampleOrder)
