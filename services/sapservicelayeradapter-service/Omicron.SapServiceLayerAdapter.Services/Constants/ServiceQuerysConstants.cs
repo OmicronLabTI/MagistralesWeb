@@ -67,5 +67,25 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Query Cancel Orders.
         /// </summary>
         public const string QryCancelOrders = "Orders({0})/Cancel";
+
+        /// <summary>
+        /// Query Delivery Notes.
+        /// </summary>
+        public const string QryAttachments2 = "Attachments2";
+
+        /// <summary>
+        /// Query Create Order.
+        /// </summary>
+        public const string QryPostOrders = "Orders";
+
+        /// <summary>
+        /// Query to get update or delete the employee info by employee id.
+        /// </summary>
+        public const string QryEmployeesInfoByDocEntry = "EmployeesInfo({0})";
+
+        /// <summary>
+        /// Query Doctor By Id.
+        /// </summary>
+        public const string QryDoctorbyId = "BusinessPartners('{0}')";
     }
 }
