@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using Microsoft.IdentityModel.Tokens;
-
 namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 {
     /// <summary>

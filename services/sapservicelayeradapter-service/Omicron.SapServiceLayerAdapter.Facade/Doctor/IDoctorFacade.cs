@@ -26,5 +26,12 @@ namespace Omicron.SapServiceLayerAdapter.Facade.Doctor
         /// <param name="address">the address.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> UpdateDoctorAddress(List<DoctorInvoiceAddressDto> address);
+
+        /// <summary>
+        /// Update Doctor Profile Info.
+        /// </summary>
+        /// <param name="doctorProfileInfo">Doctor Profile Info.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateDoctorProfileInfo(DoctorProfileInfoDto doctorProfileInfo);
     }
 }
