@@ -11,7 +11,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
     /// <summary>
     /// Class DoctorServiceTest.
     /// </summary>
-    public class DoctorServiceTest
+    public class DoctorServiceTest : BaseTest
     {
         private IServiceLayerClient serviceLayerClient;
         private Mock<ILogger> mockLogger;
@@ -233,6 +233,52 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 Assert.IsFalse(result.Success);
                 Assert.AreEqual(result.Code, 400);
             }
+        }
+
+        /// <summary>
+        /// Test for Update Doctor Profile Info.
+        /// </summary>
+        /// <param name="isSuccess">Is Success.</param>
+        /// <param name="code">Response code.</param>
+        /// <param name="userError">User error.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        [TestCase(true, 200, null)]
+        [TestCase(false, 400, "No existe el usuario")]
+        public async Task UpdateDoctorProfileInfo(bool isSuccess, int code, string userError)
+        {
+            var request = new DoctorProfileInfoDto
+            {
+                DoctorId = "C00001",
+                BirthDate = DateTime.Now.AddYears(-25),
+                PhoneNumber = "5566778899",
+            };
+
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var resultUpdateServiceLayer = this.GetGenericResponseModel(code, isSuccess, null, userError);
+
+            mockServiceLayerClient
+                .Setup(ts => ts.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(resultUpdateServiceLayer));
+
+            var mockDoctorService = new DoctorService(mockServiceLayerClient.Object, this.mockLogger.Object);
+            var result = await mockDoctorService.UpdateDoctorProfileInfo(request);
+
+            if (isSuccess)
+            {
+                Assert.IsTrue(result.Success);
+                Assert.AreEqual(result.Code, 200);
+                Assert.IsNull(result.UserError);
+            }
+            else
+            {
+                Assert.IsFalse(result.Success);
+                Assert.AreEqual(result.Code, 400);
+                Assert.AreEqual(result.UserError, userError);
+            }
+
+            Assert.IsNull(result.Response);
+            Assert.IsNull(result.ExceptionMessage);
         }
 
         private ResultModel GetResult(object data, bool success, string userError)

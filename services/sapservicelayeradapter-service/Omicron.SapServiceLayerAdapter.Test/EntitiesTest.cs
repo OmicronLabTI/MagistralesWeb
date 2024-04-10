@@ -65,6 +65,8 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new DoctorDto(),
             new DoctorEmployeeDto(),
             new DoctorInvoiceAddressDto(),
+            new DoctorProfileInfoDto(),
+            new BusinessParterProfileInfoDto(),
         };
 
         /// <summary>
