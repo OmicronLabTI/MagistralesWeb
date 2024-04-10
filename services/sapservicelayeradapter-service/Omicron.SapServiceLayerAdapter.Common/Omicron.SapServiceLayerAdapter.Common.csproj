@@ -36,7 +36,6 @@
   <ItemGroup>
     <Folder Include="DTOs\Batches\" />
     <Folder Include="DTOs\Attachments\" />
-    <Folder Include="DTOs\Doctor\" />
   </ItemGroup>
 
 </Project>

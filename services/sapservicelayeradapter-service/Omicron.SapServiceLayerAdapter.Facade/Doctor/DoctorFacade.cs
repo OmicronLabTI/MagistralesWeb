@@ -34,5 +34,9 @@ namespace Omicron.SapServiceLayerAdapter.Facade.Doctor
         /// <inheritdoc/>
         public async Task<ResultDto> UpdateDoctorAddress(List<DoctorInvoiceAddressDto> address)
             => this.mapper.Map<ResultDto>(await this.doctorService.UpdateDoctorDeliveryAddress(address));
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateDoctorProfileInfo(DoctorProfileInfoDto doctorProfileInfo)
+            => this.mapper.Map<ResultDto>(await this.doctorService.UpdateDoctorProfileInfo(doctorProfileInfo));
     }
 }

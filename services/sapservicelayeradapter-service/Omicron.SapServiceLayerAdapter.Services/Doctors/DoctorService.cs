@@ -79,6 +79,35 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
             return ServiceUtils.CreateResult(true, 200, string.Empty, string.Empty, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> UpdateDoctorProfileInfo(DoctorProfileInfoDto doctorProfileInfo)
+        {
+            this.logger.Information(
+                $"Sap Service Layer Adapter - Update doctor profile info - {JsonConvert.SerializeObject(doctorProfileInfo)}");
+            var doctorProfileInfoRequest = new BusinessParterProfileInfoDto
+            {
+                PhoneNumber = doctorProfileInfo.PhoneNumber,
+            };
+
+            if (doctorProfileInfo.BirthDate.HasValue)
+            {
+                doctorProfileInfoRequest.BirthDate = (DateTime)doctorProfileInfo.BirthDate;
+            }
+
+            var doctorProfileInfoResponse = await this.serviceLayerClient.PatchAsync(
+                string.Format(ServiceQuerysConstants.QryDoctorbyId, doctorProfileInfo.DoctorId), JsonConvert.SerializeObject(doctorProfileInfoRequest));
+
+            if (!doctorProfileInfoResponse.Success)
+            {
+                this.logger.Error(
+                    $"Sap Service Layer Adapter - Update doctor profile info - ERROR: {doctorProfileInfoResponse.UserError} - {JsonConvert.SerializeObject(doctorProfileInfo)}");
+                return ServiceUtils.CreateResult(false, 400, doctorProfileInfoResponse.UserError, null, null);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, null, null);
+
+        }
+
         private async Task<DoctorDto> GetDoctorById(string cardCode)
         {
             var response = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryDoctorbyId, cardCode));
