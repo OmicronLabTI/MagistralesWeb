@@ -68,6 +68,34 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Test for Update Doctor Profile Info.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task UpdateDoctorProfileInfo()
+        {
+            // Act
+            var response = await this.doctorFacade.UpdateDoctorProfileInfo(new DoctorProfileInfoDto());
+
+            // Assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Test for Update Doctor Default Address.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task UpdateDoctorDefaultAddress()
+        {
+            // Act
+            var response = await this.doctorFacade.UpdateDoctorDefaultAddress(new DoctorDefaultAddressDto());
+
+            // Assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>

@@ -281,6 +281,79 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             Assert.IsNull(result.ExceptionMessage);
         }
 
+        /// <summary>
+        /// Test for Update Doctor Profile Info.
+        /// </summary>
+        /// <param name="isDoctorFound">Is doctor found.</param>
+        /// <param name="isAddressUpdateSuccess">Is Address Update Success.</param>
+        /// <param name="userError">User Error.</param>
+        /// <param name="addressType">Address Type.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        [TestCase(false, true, "No se encontró el médico", "B")]
+        [TestCase(true, false, "Error al actualizar la dirección", "B")]
+        [TestCase(true, true, null, "B")]
+        [TestCase(true, true, null, "S")]
+        public async Task UpdateDoctorDefaultAddress(
+            bool isDoctorFound,
+            bool isAddressUpdateSuccess,
+            string userError,
+            string addressType)
+        {
+            var request = new DoctorDefaultAddressDto
+            {
+                DoctorId = "C00001",
+                AddressName = "Address Test",
+                Type = addressType,
+            };
+
+            var sapServiceLayerResult = new BusinessPartnerDefaultAddressDto
+            {
+                BillToDefault = "Bill Default Address",
+                ShipToDefault = "Ship Default Address",
+            };
+
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var getDoctorCode = isDoctorFound ? 200 : 400;
+            var resultGetDoctor = this.GetGenericResponseModel(getDoctorCode, isDoctorFound, sapServiceLayerResult, userError);
+
+            mockServiceLayerClient
+                .Setup(ts => ts.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(resultGetDoctor));
+
+            var updateDoctorAddressCode = isAddressUpdateSuccess ? 200 : 400;
+            var resultUpdateAddressDoctor = this.GetGenericResponseModel(updateDoctorAddressCode, isAddressUpdateSuccess, null, userError);
+
+            mockServiceLayerClient
+                .Setup(ts => ts.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(resultUpdateAddressDoctor));
+
+            var mockDoctorService = new DoctorService(mockServiceLayerClient.Object, this.mockLogger.Object);
+            var result = await mockDoctorService.UpdateDoctorDefaultAddress(request);
+
+            if (!isDoctorFound)
+            {
+                Assert.IsFalse(result.Success);
+                Assert.AreEqual(result.Code, 400);
+                Assert.AreEqual(result.UserError, "No se encontró el médico");
+            }
+            else if (!isAddressUpdateSuccess)
+            {
+                Assert.IsFalse(result.Success);
+                Assert.AreEqual(result.Code, 400);
+                Assert.AreEqual(result.UserError, "Error al actualizar la dirección");
+            }
+            else
+            {
+                Assert.IsTrue(result.Success);
+                Assert.AreEqual(result.Code, 200);
+                Assert.IsNull(result.UserError);
+            }
+
+            Assert.IsNull(result.Response);
+            Assert.IsNull(result.ExceptionMessage);
+        }
+
         private ResultModel GetResult(object data, bool success, string userError)
         {
             return new ResultModel()

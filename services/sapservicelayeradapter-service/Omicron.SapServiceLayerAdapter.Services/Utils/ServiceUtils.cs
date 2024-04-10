@@ -173,5 +173,18 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
 
             return result;
         }
+
+        /// <summary>
+        /// Calculate value from validation.
+        /// </summary>
+        /// <typeparam name="T">the type.</typeparam>
+        /// <param name="validation">Validation.</param>
+        /// <param name="value">True value.</param>
+        /// <param name="defaultValue">False value.</param>
+        /// <returns>Result.</returns>
+        public static T CalculateTernary<T>(bool validation, T value, T defaultValue)
+        {
+            return validation ? value : defaultValue;
+        }
     }
 }

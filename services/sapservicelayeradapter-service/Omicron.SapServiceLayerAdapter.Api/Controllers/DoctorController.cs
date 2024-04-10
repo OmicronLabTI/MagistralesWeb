@@ -53,10 +53,19 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         /// <summary>
         /// Update doctor profile info.
         /// </summary>
-        /// <param name="doctorProfileInfo">Adviser profile info.</param>
+        /// <param name="doctorProfileInfo">Doctor profile info.</param>
         /// <returns>Result.</returns>
         [HttpPatch("/doctor/profileinfo")]
         public async Task<IActionResult> UpdateAdviserProfileInfo([FromBody] DoctorProfileInfoDto doctorProfileInfo)
             => this.Ok(await this.doctorFacade.UpdateDoctorProfileInfo(doctorProfileInfo));
+
+        /// <summary>
+        /// Update doctor profile info.
+        /// </summary>
+        /// <param name="doctorDefaultAddress">Doctor Default Address.</param>
+        /// <returns>Result.</returns>
+        [HttpPatch("/doctor/default/address")]
+        public async Task<IActionResult> UpdateDoctorDefaultAddress([FromBody] DoctorDefaultAddressDto doctorDefaultAddress)
+            => this.Ok(await this.doctorFacade.UpdateDoctorDefaultAddress(doctorDefaultAddress));
     }
 }

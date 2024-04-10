@@ -84,15 +84,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
         {
             this.logger.Information(
                 $"Sap Service Layer Adapter - Update doctor profile info - {JsonConvert.SerializeObject(doctorProfileInfo)}");
-            var doctorProfileInfoRequest = new BusinessParterProfileInfoDto
+            var doctorProfileInfoRequest = new BusinessPartnerProfileInfoDto
             {
                 PhoneNumber = doctorProfileInfo.PhoneNumber,
+                BirthDate = doctorProfileInfo.BirthDate,
             };
-
-            if (doctorProfileInfo.BirthDate.HasValue)
-            {
-                doctorProfileInfoRequest.BirthDate = (DateTime)doctorProfileInfo.BirthDate;
-            }
 
             var doctorProfileInfoResponse = await this.serviceLayerClient.PatchAsync(
                 string.Format(ServiceQuerysConstants.QryDoctorbyId, doctorProfileInfo.DoctorId), JsonConvert.SerializeObject(doctorProfileInfoRequest));
@@ -106,6 +102,43 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
 
             return ServiceUtils.CreateResult(true, 200, null, null, null);
 
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> UpdateDoctorDefaultAddress(DoctorDefaultAddressDto doctorDefaultAddress)
+        {
+            var resultGetDoctor = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryDoctorbyId, doctorDefaultAddress.DoctorId));
+
+            if (!resultGetDoctor.Success)
+            {
+                this.logger.Error(
+                   $"Sap Service Layer Adapter - GET - Update doctor default address - ERROR: {resultGetDoctor.UserError} - {JsonConvert.SerializeObject(doctorDefaultAddress)}");
+                return ServiceUtils.CreateResult(false, 400, resultGetDoctor.UserError, null, null);
+            }
+
+            var doctorInfo = JsonConvert.DeserializeObject<BusinessPartnerDefaultAddressDto>(resultGetDoctor.Response.ToString());
+
+            doctorInfo.BillToDefault = ServiceUtils.CalculateTernary(
+                doctorDefaultAddress.Type.Equals(ServiceConstants.AddresBillType),
+                doctorDefaultAddress.AddressName,
+                doctorInfo.BillToDefault);
+
+            doctorInfo.ShipToDefault = ServiceUtils.CalculateTernary(
+                doctorDefaultAddress.Type.Equals(ServiceConstants.AddresShipType),
+                doctorDefaultAddress.AddressName,
+                doctorInfo.ShipToDefault);
+
+            var updateResult = await this.serviceLayerClient.PatchAsync(
+                string.Format(ServiceQuerysConstants.QryDoctorbyId, doctorDefaultAddress.DoctorId), JsonConvert.SerializeObject(doctorInfo));
+
+            if (!updateResult.Success)
+            {
+                this.logger.Error(
+                   $"Sap Service Layer Adapter - UPDATE - Update doctor default address - ERROR: {updateResult.UserError} - {JsonConvert.SerializeObject(doctorInfo)}");
+                return ServiceUtils.CreateResult(false, 400, updateResult.UserError, null, null);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
 
         private async Task<DoctorDto> GetDoctorById(string cardCode)
