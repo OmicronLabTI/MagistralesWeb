@@ -161,6 +161,6 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes
         /// </summary>
         /// <value>Is Omigenomics.</value>
         [JsonProperty("U_TipoPedido")]
-        public string? DeliveryOrderType { get; set; }
+        public string DeliveryOrderType { get; set; }
     }
 }
