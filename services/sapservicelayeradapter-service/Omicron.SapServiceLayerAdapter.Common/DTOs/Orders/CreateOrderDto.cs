@@ -67,14 +67,14 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>PayToCode.</value>
         [JsonProperty("PayToCode")]
-        public string? PayToCode { get; set; }
+        public string PayToCode { get; set; }
 
         /// <summary>
         /// Gets or sets the TaxId.
         /// </summary>
         /// <value>TaxId.</value>
         [JsonProperty("FederalTaxID")]
-        public string? TaxId { get; set; }
+        public string TaxId { get; set; }
 
         /// <summary>
         /// Gets or sets the DiscountPercent.
@@ -95,7 +95,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>EcommerceComments.</value>
         [JsonProperty("U_Comentarios_Ecommerce")]
-        public string? EcommerceComments { get; set; }
+        public string EcommerceComments { get; set; }
 
         /// <summary>
         /// Gets or sets the BXPPaymentMethod.
@@ -144,7 +144,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>CFDIProvisional.</value>
         [JsonProperty("U_CFDI_Provisional")]
-        public string? CFDIProvisional { get; set; }
+        public string CFDIProvisional { get; set; }
 
         /// <summary>
         /// Gets or sets the Sales Person Code.

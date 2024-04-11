@@ -67,7 +67,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Attachments
         /// </summary>
         /// <value>The FreeText.</value>
         [JsonProperty("FreeText")]
-        public string? FreeText { get; set; }
+        public string FreeText { get; set; }
 
         /// <summary>
         /// Gets or sets CopyToTargetDoc.
