@@ -47,13 +47,13 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 };
             }
 
-            var responseInvoice = this.GetGenericResponseModel(responseCode, isResponseInvoiceSuccess, invoiceResult, userError);
+            var responseInvoice = GetGenericResponseModel(responseCode, isResponseInvoiceSuccess, invoiceResult, userError);
             var shippingTypesObject = new List<ShippingTypesResponseDto>
             {
                 new () { TransportCode = 1, TransportName = "DHL" },
             };
 
-            var resultShippingTypes = this.GetGenericResponseModel(
+            var resultShippingTypes = GetGenericResponseModel(
                 200,
                 true,
                 new ServiceLayerResponseDto

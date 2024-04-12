@@ -2,3 +2,6 @@
 global using Newtonsoft.Json;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Delivery;
 global using Newtonsoft.Json.Linq;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.Batches;
+global using System.Collections.Generic;
+global using System.Reflection;

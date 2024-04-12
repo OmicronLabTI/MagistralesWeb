@@ -8,16 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Test.Extensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text.RegularExpressions;
-    using Microsoft.EntityFrameworkCore;
-    using Newtonsoft.Json;
-
     /// <summary>
     /// Class TestExtensions.
     /// </summary>

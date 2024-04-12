@@ -14,6 +14,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// Custom property cfdi from environment.
+        /// </summary>
+        public const string CustomPropertyNameCFDI = "CustomPropertiesName:CFDI";
+
+        /// <summary>
+        /// Custom property cfdi from environment.
+        /// </summary>
+        public const string OrdersCFDIProperty = "U_CFDI_Provisional";
+
+        /// <summary>
         /// The service layer user env.
         /// </summary>
         public const string SAPServiceLayerUserEnvName = "SAPServiceLayer:User";
@@ -268,15 +278,5 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
             { "BE", "BE" },
             { "MX", "MG" },
         };
-
-        /// <summary>
-        /// Custom property cfdi from environment.
-        /// </summary>
-        public const string CustomPropertyNameCFDI = "CustomPropertiesName:CFDI";
-
-        /// <summary>
-        /// Custom property cfdi from environment.
-        /// </summary>
-        public const string OrdersCFDIProperty = "U_CFDI_Provisional";
     }
 }

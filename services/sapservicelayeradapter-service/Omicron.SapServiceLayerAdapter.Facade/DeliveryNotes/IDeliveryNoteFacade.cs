@@ -8,9 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes
 {
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
-    using Omicron.SapServiceLayerAdapter.Model;
-
     /// <summary>
     /// Interface for Delivery Note Facade.
     /// </summary>
@@ -36,7 +33,7 @@ namespace Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes
         /// <param name="createDelivery">Invoice Id.</param>
         /// <returns>Create delivery notes.</returns>
         Task<ResultDto> CreateDeliveryBatch(List<CreateDeliveryNoteDto> createDelivery);
-        
+
         /// <summary>
         /// Cancel deliry notes.
         /// </summary>
