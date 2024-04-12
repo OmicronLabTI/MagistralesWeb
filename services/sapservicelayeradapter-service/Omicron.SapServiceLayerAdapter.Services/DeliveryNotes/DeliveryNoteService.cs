@@ -65,17 +65,15 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 for (var i = 0; i < saleOrder.OrderLines.Count; i++)
                 {
                     var itemCode = saleOrder.OrderLines[i].ItemCode;
-                    deliveryNote = this.UpdateDelivery(deliveryNote, saleOrder, saleOrderId, i, createDelivery, itemCode);
+                    deliveryNote = UpdateDelivery(deliveryNote, saleOrder, saleOrderId, i, createDelivery, itemCode);
                 }
 
-                if (createDelivery.Any(x => x.ItemCode == ServiceConstants.ShippingCostItemCode))
+                var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
+                if (shippingCost != null)
                 {
-                    var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
-                    var correctBaseLineId = await this.GetShippingCostBaseLine((int)shippingCost?.ShippingCostOrderId);
+                    var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
 
-                    double price = 0;
-                    double.TryParse(shippingCost.OrderType, out price);
-
+                    var price = CastStringToDouble(shippingCost.OrderType);
                     var newDeliveryNote = new DeliveryNoteLineDto()
                     {
                         ItemCode = shippingCost.ItemCode,
@@ -159,7 +157,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                         continue;
                     }
 
-                    deliveryNote = this.UpdateDelivery(deliveryNote, saleOrder, saleOrderId, i, createDelivery, itemCode);
+                    deliveryNote = UpdateDelivery(deliveryNote, saleOrder, saleOrderId, i, createDelivery, itemCode);
                 }
 
                 if (createDelivery.Any(x => x.ItemCode == ServiceConstants.ShippingCostItemCode))
@@ -167,14 +165,13 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                     var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
                     var shippingOrder = saleOrder.OrderLines.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode);
 
-                    double price = 0;
-                    double.TryParse(shippingCost.OrderType, out price);
+                    var price = CastStringToDouble(shippingCost.OrderType);
 
                     var newDeliveryNote = new DeliveryNoteLineDto()
                     {
                         ItemCode = shippingCost.ItemCode,
                         Quantity = 1,
-                        DiscountPercent = (double)shippingOrder?.DiscountPercent,
+                        DiscountPercent = shippingOrder?.DiscountPercent ?? 0,
                         TaxCode = shippingOrder.TaxCode,
                         BaseType = -1,
                         WarehouseCode = shippingOrder.WarehouseCode,
@@ -274,7 +271,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                     for (var i = 0; i < saleOrderFoundLocal.OrderLines.Count; i++)
                     {
                         var itemCode = saleOrderFoundLocal.OrderLines[i].ItemCode;
-                        deliveryNote = this.UpdateDelivery(deliveryNote, saleOrderFoundLocal, sale.FirstOrDefault().SaleOrderId, i, createDelivery, itemCode);
+                        deliveryNote = UpdateDelivery(deliveryNote, saleOrderFoundLocal, sale.FirstOrDefault().SaleOrderId, i, createDelivery, itemCode);
                     }
 
                     if (createDelivery.Any(x => x.ItemCode == ServiceConstants.ShippingCostItemCode && x.SaleOrderId == sale.Key))
@@ -282,11 +279,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                         this.logger.Information($"Here Starts the fl 1 when its apart.");
                         var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode && x.SaleOrderId == sale.Key);
 
-                        double price = 0;
-                        double.TryParse(shippingCost.OrderType, out price);
+                        var price = CastStringToDouble(shippingCost.OrderType);
                         this.logger.Information($"The price is {price}");
 
-                        var correctBaseLineId = await this.GetShippingCostBaseLine((int)shippingCost?.ShippingCostOrderId);
+                        var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost?.ShippingCostOrderId ?? 0);
                         var newDeliveryNote = new DeliveryNoteLineDto()
                         {
                             ItemCode = shippingCost.ItemCode,
@@ -345,35 +341,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
         }
 
-        private async Task UpdateShippingCostBaseLine(int saleOrderId, string isOmigenomics, int salesPersonCode, int documentsOwner)
-        {
-            var response = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, saleOrderId));
-            if (response.Code == (int)HttpStatusCode.NotFound)
-            {
-                throw new CustomServiceException($"Almacen - Create Delivery Service - SaleOrderId {saleOrderId} Not found", HttpStatusCode.NotFound);
-            }
-
-            var saleOrderShipping = JsonConvert.DeserializeObject<OrderDto>(response.Response.ToString());
-
-            saleOrderShipping.DocumentsOwner = documentsOwner;
-            saleOrderShipping.SalesPersonCode = salesPersonCode;
-            saleOrderShipping.IsOmigenomics = isOmigenomics;
-
-            for (var i = 0; i < saleOrderShipping.OrderLines.Count; i++)
-            {
-                var orderLine = saleOrderShipping.OrderLines[i];
-                if (orderLine.ItemCode == ServiceConstants.ShippingCostItemCode)
-                {
-                    orderLine.OwnerCode = documentsOwner;
-                    orderLine.SalesPersonCode = salesPersonCode;
-                    break;
-                }
-            }
-
-            await this.serviceLayerClient.PatchAsync("Orders", JsonConvert.SerializeObject(saleOrderShipping));
-        }
-
-        private DeliveryNoteDto UpdateDelivery(DeliveryNoteDto deliveryNote, OrderDto saleOrder, int saleOrderId, int i, List<CreateDeliveryNoteDto> createDelivery, string itemCode)
+        private static DeliveryNoteDto UpdateDelivery(DeliveryNoteDto deliveryNote, OrderDto saleOrder, int saleOrderId, int i, List<CreateDeliveryNoteDto> createDelivery, string itemCode)
         {
             var orderLine = saleOrder.OrderLines[i];
             var newDeliveryNote = new DeliveryNoteLineDto()
@@ -401,7 +369,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             {
                 foreach (var b in product.Batches)
                 {
-                    double.TryParse(b.BatchQty.ToString(), out var doubleQuantity);
+                    var doubleQuantity = CastStringToDouble(b.BatchQty.ToString());
                     var batch = new DeliveryNoteBatchNumbersDto();
                     batch.Quantity = doubleQuantity;
                     batch.BatchNumber = b.BatchNumber;
@@ -411,6 +379,39 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
             deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
             return deliveryNote;
+        }
+
+        private static double CastStringToDouble(string value)
+        {
+            return ServiceUtils.CalculateTernary(double.TryParse(value, out var result), result, 0);
+        }
+
+        private async Task UpdateShippingCostBaseLine(int saleOrderId, string isOmigenomics, int salesPersonCode, int documentsOwner)
+        {
+            var response = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, saleOrderId));
+            if (response.Code == (int)HttpStatusCode.NotFound)
+            {
+                throw new CustomServiceException($"Almacen - Create Delivery Service - SaleOrderId {saleOrderId} Not found", HttpStatusCode.NotFound);
+            }
+
+            var saleOrderShipping = JsonConvert.DeserializeObject<OrderDto>(response.Response.ToString());
+
+            saleOrderShipping.DocumentsOwner = documentsOwner;
+            saleOrderShipping.SalesPersonCode = salesPersonCode;
+            saleOrderShipping.IsOmigenomics = isOmigenomics;
+
+            for (var i = 0; i < saleOrderShipping.OrderLines.Count; i++)
+            {
+                var orderLine = saleOrderShipping.OrderLines[i];
+                if (orderLine.ItemCode == ServiceConstants.ShippingCostItemCode)
+                {
+                    orderLine.OwnerCode = documentsOwner;
+                    orderLine.SalesPersonCode = salesPersonCode;
+                    break;
+                }
+            }
+
+            await this.serviceLayerClient.PatchAsync("Orders", JsonConvert.SerializeObject(saleOrderShipping));
         }
 
         private async Task<int> GetShippingCostBaseLine(int saleOrderId)

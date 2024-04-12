@@ -81,6 +81,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
             return instance;
         }
 
+        private static string GetJsonPropertyName(PropertyInfo property)
+        {
+            var jsonPropertyAttribute = property.GetCustomAttribute<JsonPropertyAttribute>();
+            return jsonPropertyAttribute != null ? jsonPropertyAttribute.PropertyName : property.Name;
+        }
+
         private string GetPropertyChangeName(string propertyName)
         {
             if (this.propertyMappings != null && this.propertyMappings.Count > 0)
@@ -89,12 +95,6 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
             }
 
             return propertyName;
-        }
-
-        private static string GetJsonPropertyName(PropertyInfo property)
-        {
-            var jsonPropertyAttribute = property.GetCustomAttribute<JsonPropertyAttribute>();
-            return jsonPropertyAttribute != null ? jsonPropertyAttribute.PropertyName : property.Name;
         }
     }
 }
