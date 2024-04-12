@@ -44,8 +44,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
 
             foreach (var property in objectType.GetProperties())
             {
-                var propertyName = property.Name;
-                var jsonPropertyName = this.GetJsonPropertyName(property);
+                var jsonPropertyName = GetJsonPropertyName(property);
 
                 var newPropertyName = this.GetPropertyChangeName(jsonPropertyName);
                 var propertyValue = property.GetValue(value);
@@ -70,7 +69,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
 
             foreach (var property in objectType.GetProperties())
             {
-                var jsonPropertyName = this.GetJsonPropertyName(property);
+                var jsonPropertyName = GetJsonPropertyName(property);
                 var jsonPropertyNameChange = this.GetPropertyChangeName(jsonPropertyName);
                 if (jsonObject.TryGetValue(jsonPropertyNameChange, out JToken value))
                 {
@@ -92,7 +91,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
             return propertyName;
         }
 
-        private string GetJsonPropertyName(PropertyInfo property)
+        private static string GetJsonPropertyName(PropertyInfo property)
         {
             var jsonPropertyAttribute = property.GetCustomAttribute<JsonPropertyAttribute>();
             return jsonPropertyAttribute != null ? jsonPropertyAttribute.PropertyName : property.Name;

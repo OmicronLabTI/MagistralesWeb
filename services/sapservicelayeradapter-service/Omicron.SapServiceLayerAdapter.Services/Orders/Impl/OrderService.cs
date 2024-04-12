@@ -311,7 +311,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             this.logger.Information($"Sap Service Layer Adapter - LOG  - Order to create {JsonConvert.SerializeObject(saleOrderModel)}");
             var serverPrescriptionInfo = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
             int? attachmentId = null;
-            string messageError = string.Empty;
             if (!string.IsNullOrEmpty(serverPrescriptionInfo.ServerSourcePath))
             {
                 attachmentId = await this.CreateAttachment(serverPrescriptionInfo);

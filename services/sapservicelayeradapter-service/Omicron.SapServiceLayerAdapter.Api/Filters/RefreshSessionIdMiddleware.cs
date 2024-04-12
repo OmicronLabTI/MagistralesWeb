@@ -33,7 +33,7 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
 
             try
             {
-                await this.semaphore.WaitAsync();
+                await this.semaphore.WaitAsync(cancellationToken);
                 response = await base.SendAsync(request, cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
