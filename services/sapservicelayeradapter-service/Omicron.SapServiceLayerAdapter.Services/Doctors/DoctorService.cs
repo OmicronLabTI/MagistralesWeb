@@ -32,7 +32,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
         {
             try
             {
-                var doctor = addresses.FirstOrDefault().DoctorId;
+                var doctor = addresses.FirstOrDefault()?.DoctorId;
                 var doctorSap = await this.GetDoctorById(doctor);
 
                 var addressToInsert = addresses.Where(x => x.Action == ServiceConstants.ActionInsert).ToList();
@@ -40,8 +40,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
                 var addressToDelete = addresses.Where(x => x.Action == ServiceConstants.ActionDelete).Select(y => y.AddressId).ToList();
 
                 doctorSap = this.AddLocalItems(addressToInsert, new List<DoctorInvoiceAddressDto>(), doctorSap);
-                doctorSap = this.UpdateLocalItems(doctorSap, addressToUpdate, new List<DoctorInvoiceAddressDto>());
-                doctorSap = this.DeleteLocalItems(doctorSap, addressToDelete, ServiceConstants.DeliveryAddress);
+                doctorSap = UpdateLocalItems(doctorSap, addressToUpdate, new List<DoctorInvoiceAddressDto>());
+                doctorSap = DeleteLocalItems(doctorSap, addressToDelete, ServiceConstants.DeliveryAddress);
 
                 await this.SaveChanges(doctorSap);
             }
@@ -58,7 +58,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
         {
             try
             {
-                var doctor = addresses.FirstOrDefault().DoctorId;
+                var doctor = addresses.FirstOrDefault()?.DoctorId;
                 var doctorSap = await this.GetDoctorById(doctor);
 
                 var addressToInsert = addresses.Where(x => x.Action == ServiceConstants.ActionInsert).ToList();
@@ -66,8 +66,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
                 var addressToDelete = addresses.Where(x => x.Action == ServiceConstants.ActionDelete).Select(y => y.NickName).ToList();
 
                 doctorSap = this.AddLocalItems(new List<DoctorDeliveryAddressDto>(), addressToInsert, doctorSap);
-                doctorSap = this.UpdateLocalItems(doctorSap, new List<DoctorDeliveryAddressDto>(), addressToUpdate);
-                doctorSap = this.DeleteLocalItems(doctorSap, addressToDelete, ServiceConstants.InvoiceAddress);
+                doctorSap = UpdateLocalItems(doctorSap, new List<DoctorDeliveryAddressDto>(), addressToUpdate);
+                doctorSap = DeleteLocalItems(doctorSap, addressToDelete, ServiceConstants.InvoiceAddress);
 
                 await this.SaveChanges(doctorSap);
             }
@@ -101,7 +101,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
             }
 
             return ServiceUtils.CreateResult(true, 200, null, null, null);
-
         }
 
         /// <inheritdoc/>
@@ -156,24 +155,22 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
         {
             foreach (var address in addressesDelivery)
             {
-                doctorSap = this.SetDeliveryFieldData(doctorSap, address);
+                doctorSap = SetDeliveryFieldData(doctorSap, address);
             }
 
             foreach (var address in addressInvoice)
             {
-                doctorSap = this.SetInvoiceFieldData(doctorSap, address);
+                doctorSap = SetInvoiceFieldData(doctorSap, address);
             }
 
             return doctorSap;
         }
 
-        private DoctorDto UpdateLocalItems(DoctorDto doctorSap, List<DoctorDeliveryAddressDto> deliveryAddresses, List<DoctorInvoiceAddressDto> invoiceAddresses)
+        private static DoctorDto UpdateLocalItems(DoctorDto doctorSap, List<DoctorDeliveryAddressDto> deliveryAddresses, List<DoctorInvoiceAddressDto> invoiceAddresses)
         {
             doctorSap.Addresses.ForEach(item =>
             {
-                var updatedAddres = deliveryAddresses
-                    .Where(x => x.AddressId.Equals(item.AddressName))
-                    .FirstOrDefault();
+                var updatedAddres = deliveryAddresses.FirstOrDefault(x => x.AddressId.Equals(item.AddressName));
                 if (updatedAddres != null && item.AddressType == ServiceConstants.DeliveryAddress)
                 {
                     item.AddressName = updatedAddres.AddressId;
@@ -192,9 +189,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
 
             doctorSap.Addresses.ForEach(item =>
             {
-                var updatedAddres = invoiceAddresses
-                    .Where(x => x.NickName.Equals(item.AddressName))
-                    .FirstOrDefault();
+                var updatedAddres = invoiceAddresses.FirstOrDefault(x => x.NickName.Equals(item.AddressName));
                 if (updatedAddres != null && item.AddressType == ServiceConstants.InvoiceAddress)
                 {
                     item.AddressName = updatedAddres.NickName;
@@ -217,7 +212,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
             return doctorSap;
         }
 
-        private DoctorDto DeleteLocalItems(DoctorDto doctorSap, List<string> address, string type)
+        private static DoctorDto DeleteLocalItems(DoctorDto doctorSap, List<string> address, string type)
         {
             doctorSap.Addresses = doctorSap.Addresses
                 .Where(x => !address.Contains(x.AddressName) || (address.Contains(x.AddressName) && x.AddressType != type))
@@ -225,7 +220,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
             return doctorSap;
         }
 
-        private DoctorDto SetInvoiceFieldData(DoctorDto doctorSap, DoctorInvoiceAddressDto address)
+        private static DoctorDto SetInvoiceFieldData(DoctorDto doctorSap, DoctorInvoiceAddressDto address)
         {
             var newAddres = new DoctorAddressDto();
             newAddres.AddressName = address.NickName;
@@ -247,7 +242,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
             return doctorSap;
         }
 
-        private DoctorDto SetDeliveryFieldData(DoctorDto doctorSap, DoctorDeliveryAddressDto address)
+        private static DoctorDto SetDeliveryFieldData(DoctorDto doctorSap, DoctorDeliveryAddressDto address)
         {
             var newAddres = new DoctorAddressDto();
             newAddres.AddressName = address.AddressId;
