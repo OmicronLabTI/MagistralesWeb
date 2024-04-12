@@ -81,14 +81,14 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Doctor
         /// </summary>
         /// <value>The AddressName2.</value>
         [JsonProperty("AddressName2")]
-        public string? AddressName2 { get; set; }
+        public string AddressName2 { get; set; }
 
         /// <summary>
         /// Gets or sets AddressName3.
         /// </summary>
         /// <value>The AddressName3.</value>
         [JsonProperty("AddressName3")]
-        public string? AddressName3 { get; set; }
+        public string AddressName3 { get; set; }
 
         /// <summary>
         /// Gets or sets StreetNo.
@@ -123,14 +123,14 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Doctor
         /// </summary>
         /// <value>The Advisor.</value>
         [JsonProperty("U_ASESOR")]
-        public string? Advisor { get; set; }
+        public string Advisor { get; set; }
 
         /// <summary>
         /// Gets or sets Reason.
         /// </summary>
         /// <value>The Reason.</value>
         [JsonProperty("U_RAZON")]
-        public string? Reason { get; set; }
+        public string Reason { get; set; }
 
         /// <summary>
         /// Gets or sets AddressType.
