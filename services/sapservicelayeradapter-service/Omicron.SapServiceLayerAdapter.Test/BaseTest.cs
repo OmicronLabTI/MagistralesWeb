@@ -22,7 +22,7 @@ namespace Omicron.SapServiceLayerAdapter.Test
         /// <param name="exceptionMessage">Exception Message.</param>
         /// <param name="comments">the comments.</param>
         /// <returns>the data.</returns>
-        public ResultModel GetGenericResponseModel(
+        public static ResultModel GetGenericResponseModel(
             int code,
             bool success,
             object response,
@@ -43,7 +43,7 @@ namespace Omicron.SapServiceLayerAdapter.Test
         /// Get OrderDto.
         /// </summary>
         /// <returns>The OrderDto.</returns>
-        public IEnumerable<OrderDto> GetOrdersDtol()
+        public static IEnumerable<OrderDto> GetOrdersDtol()
             => new List<OrderDto>()
             {
                 new () { DocumentEntry = 1 },

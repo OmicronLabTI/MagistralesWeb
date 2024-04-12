@@ -8,9 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes
 {
-    using System.Collections.Generic;
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.Batches;
-
     /// <summary>
     /// Class for the delivery model.
     /// </summary>

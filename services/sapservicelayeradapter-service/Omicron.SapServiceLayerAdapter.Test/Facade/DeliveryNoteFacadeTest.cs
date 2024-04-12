@@ -8,11 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Test.Facade
 {
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
-    using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes;
-    using Omicron.SapServiceLayerAdapter.Facade.DeliveryNotes.Impl;
-    using Omicron.SapServiceLayerAdapter.Services.DeliveryNotes;
-
     /// <summary>
     /// Class ProductValidationsFacadeTest.
     /// </summary>

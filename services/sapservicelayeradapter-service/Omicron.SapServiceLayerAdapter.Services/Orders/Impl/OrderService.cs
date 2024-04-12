@@ -76,18 +76,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         {
             try
             {
-                this.logger.Information($"Sap Service Layer Adapter - LOG  - Order to create {JsonConvert.SerializeObject(saleOrderModel)}");
-                var serverPrescriptionInfo = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
-                int? attachmentId = null;
-                string messageError = string.Empty;
-                if (!string.IsNullOrEmpty(serverPrescriptionInfo.ServerSourcePath))
-                {
-                    attachmentId = await this.CreateAttachment(serverPrescriptionInfo);
-                    if (attachmentId == null)
-                    {
-                        return ServiceUtils.CreateResult(false, 400, "The attachment could not be created", "The attachment could not be created", null);
-                    }
-                }
+                var attachmentId = await this.GetPrescriptionId(saleOrderModel);
 
                 var order = new CreateOrderDto();
                 order.CardCode = saleOrderModel.CardCode;
@@ -97,11 +86,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                 order.PayToCode = saleOrderModel.BillingAddress;
                 order.ReferenceNumber = saleOrderModel.ProfecionalLicense;
                 order.OrderLines = new List<CreateOrderLineDto>();
-
-                if (!string.IsNullOrEmpty(saleOrderModel.UserRfc))
-                {
-                    order.TaxId = saleOrderModel.UserRfc;
-                }
+                order.TaxId = saleOrderModel.UserRfc;
 
                 order.DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial);
                 order.DxpOrder = saleOrderModel.TransactionId;
@@ -319,6 +304,23 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             }
 
             return serverPrescriptionInfo;
+        }
+
+        private async Task<int?> GetPrescriptionId(CreateSaleOrderDto saleOrderModel)
+        {
+            this.logger.Information($"Sap Service Layer Adapter - LOG  - Order to create {JsonConvert.SerializeObject(saleOrderModel)}");
+            var serverPrescriptionInfo = await this.DownloadRecipeOnServer(saleOrderModel.PrescriptionUrl);
+            int? attachmentId = null;
+            if (!string.IsNullOrEmpty(serverPrescriptionInfo.ServerSourcePath))
+            {
+                attachmentId = await this.CreateAttachment(serverPrescriptionInfo);
+                if (attachmentId == null)
+                {
+                    throw new CustomServiceException("The attachment could not be created", HttpStatusCode.BadRequest);
+                }
+            }
+
+            return attachmentId;
         }
     }
 }

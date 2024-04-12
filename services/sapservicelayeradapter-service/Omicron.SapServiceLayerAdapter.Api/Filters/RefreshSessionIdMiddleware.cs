@@ -33,13 +33,13 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
 
             try
             {
-                await this.semaphore.WaitAsync();
+                await this.semaphore.WaitAsync(cancellationToken);
                 response = await base.SendAsync(request, cancellationToken);
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     var cookies = await this.serviceLayerAuth.RefreshSession();
-                    this.AddNewSessionId(request, cookies);
+                    AddNewSessionId(request, cookies);
                     response = await base.SendAsync(request, cancellationToken);
                 }
             }
@@ -51,7 +51,7 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
             return response;
         }
 
-        private void AddNewSessionId(HttpRequestMessage request, string cookies)
+        private static void AddNewSessionId(HttpRequestMessage request, string cookies)
         {
             if (request.Headers.Contains("Cookie"))
             {

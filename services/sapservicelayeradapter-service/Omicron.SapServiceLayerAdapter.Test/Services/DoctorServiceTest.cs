@@ -127,12 +127,12 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             if (success)
             {
                 Assert.IsTrue(result.Success);
-                Assert.AreEqual(result.Code, 200);
+                Assert.AreEqual(200, result.Code);
             }
             else
             {
                 Assert.IsFalse(result.Success);
-                Assert.AreEqual(result.Code, 400);
+                Assert.AreEqual(400, result.Code);
             }
         }
 
@@ -226,12 +226,12 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             if (success)
             {
                 Assert.IsTrue(result.Success);
-                Assert.AreEqual(result.Code, 200);
+                Assert.AreEqual(200, result.Code);
             }
             else
             {
                 Assert.IsFalse(result.Success);
-                Assert.AreEqual(result.Code, 400);
+                Assert.AreEqual(400, result.Code);
             }
         }
 
@@ -255,7 +255,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             };
 
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
-            var resultUpdateServiceLayer = this.GetGenericResponseModel(code, isSuccess, null, userError);
+            var resultUpdateServiceLayer = GetGenericResponseModel(code, isSuccess, null, userError);
 
             mockServiceLayerClient
                 .Setup(ts => ts.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
@@ -267,13 +267,13 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             if (isSuccess)
             {
                 Assert.IsTrue(result.Success);
-                Assert.AreEqual(result.Code, 200);
+                Assert.AreEqual(200, result.Code);
                 Assert.IsNull(result.UserError);
             }
             else
             {
                 Assert.IsFalse(result.Success);
-                Assert.AreEqual(result.Code, 400);
+                Assert.AreEqual(400, result.Code);
                 Assert.AreEqual(result.UserError, userError);
             }
 
@@ -315,14 +315,14 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
 
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var getDoctorCode = isDoctorFound ? 200 : 400;
-            var resultGetDoctor = this.GetGenericResponseModel(getDoctorCode, isDoctorFound, sapServiceLayerResult, userError);
+            var resultGetDoctor = GetGenericResponseModel(getDoctorCode, isDoctorFound, sapServiceLayerResult, userError);
 
             mockServiceLayerClient
                 .Setup(ts => ts.GetAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(resultGetDoctor));
 
             var updateDoctorAddressCode = isAddressUpdateSuccess ? 200 : 400;
-            var resultUpdateAddressDoctor = this.GetGenericResponseModel(updateDoctorAddressCode, isAddressUpdateSuccess, null, userError);
+            var resultUpdateAddressDoctor = GetGenericResponseModel(updateDoctorAddressCode, isAddressUpdateSuccess, null, userError);
 
             mockServiceLayerClient
                 .Setup(ts => ts.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
@@ -334,19 +334,19 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             if (!isDoctorFound)
             {
                 Assert.IsFalse(result.Success);
-                Assert.AreEqual(result.Code, 400);
+                Assert.AreEqual(400, result.Code);
                 Assert.AreEqual(result.UserError, "No se encontró el médico");
             }
             else if (!isAddressUpdateSuccess)
             {
                 Assert.IsFalse(result.Success);
-                Assert.AreEqual(result.Code, 400);
+                Assert.AreEqual(400, result.Code);
                 Assert.AreEqual(result.UserError, "Error al actualizar la dirección");
             }
             else
             {
                 Assert.IsTrue(result.Success);
-                Assert.AreEqual(result.Code, 200);
+                Assert.AreEqual(200, result.Code);
                 Assert.IsNull(result.UserError);
             }
 

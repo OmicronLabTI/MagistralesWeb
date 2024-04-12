@@ -43,7 +43,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.EmployeeInfo
                 PhoneNumber = string.Empty,
             };
 
-            var responseUpdateInfo = this.GetGenericResponseModel(responseCode, isSuccesfully, null, userError);
+            var responseUpdateInfo = GetGenericResponseModel(responseCode, isSuccesfully, null, userError);
 
             mockServiceLayerClient
                 .Setup(ts => ts.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
