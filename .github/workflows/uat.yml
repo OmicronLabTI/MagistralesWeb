@@ -92,6 +92,14 @@ jobs:
           environment: uat
           registry: omicron.azurecr.io
 
+      - name: Build sapservicelayeradapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/sapservicelayeradapter-service
+          environment: uat
+          registry: omicron.azurecr.io
+
       - name: Azure WebApp
         uses: Azure/webapps-deploy@v2.2.4
         with:
@@ -132,6 +140,10 @@ jobs:
       - name: Rollout warehouses-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
         run: kubectl rollout restart deploy warehouses-deployment --context omicron_aks_uat
+
+      - name: Rollout sapservicelayeradapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy sapservicelayeradapter-deployment --context omicron_aks_uat
 
       - name: Liquibase update
         working-directory: database/
