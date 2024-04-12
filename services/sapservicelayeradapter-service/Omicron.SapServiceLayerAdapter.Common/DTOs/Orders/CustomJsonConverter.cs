@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using System.Reflection;
-
 namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
 {
     /// <summary>

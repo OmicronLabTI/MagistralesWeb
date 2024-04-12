@@ -151,13 +151,13 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 };
             }
 
-            var responseOrder = this.GetGenericResponseModel(400, isResponseOrderSuccess, orderDtoMock, userError, null, null);
+            var responseOrder = GetGenericResponseModel(400, isResponseOrderSuccess, orderDtoMock, userError, null, null);
             mockServiceLayerClient
                 .Setup(sl => sl.GetAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(responseOrder));
 
-            var responseInventoryGenExit = this.GetGenericResponseModel(400, isResponseInventoryGenExitSuccess, null, userError, null, null);
-            var responseCloseOrder = this.GetGenericResponseModel(400, isCloseOrderSuccess, null, userError, null, null);
+            var responseInventoryGenExit = GetGenericResponseModel(400, isResponseInventoryGenExitSuccess, null, userError, null, null);
+            var responseCloseOrder = GetGenericResponseModel(400, isCloseOrderSuccess, null, userError, null, null);
 
             mockServiceLayerClient
                 .SetupSequence(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
@@ -237,7 +237,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             request.PrescriptionUrl = "https://localhost:9090/myfile.pdf";
             var result = await orderServiceMock.CreateSaleOrder(request);
 
-            Assert.AreEqual(result.Code, 400);
+            Assert.AreEqual(400, result.Code);
         }
 
         /*
@@ -298,7 +298,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             request.PrescriptionUrl = "http://localhost:9090/server/docs/public/documento.pdf";
             var result = await orderServiceMock.CreateSaleOrder(request);
 
-            Assert.AreEqual(result.Code, 400);
+            Assert.AreEqual(400, result.Code);
             Assert.AreEqual(result.UserError, "The attachment could not be created");
         }
         */
@@ -456,12 +456,12 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
 
             if (success)
             {
-                Assert.AreEqual(result.Code, 200);
+                Assert.AreEqual(200, result.Code);
                 Assert.AreEqual(result.Success, true);
             }
             else
             {
-                Assert.AreEqual(result.Code, 400);
+                Assert.AreEqual(400, result.Code);
                 Assert.AreEqual(result.Success, false);
                 Assert.AreEqual(result.UserError, userError);
             }

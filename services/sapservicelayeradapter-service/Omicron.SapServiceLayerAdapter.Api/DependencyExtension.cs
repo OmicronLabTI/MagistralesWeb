@@ -13,8 +13,6 @@ namespace Omicron.SapServiceLayerAdapter.Api
     /// </summary>
     public static class DependencyExtension
     {
-        private const string AXITYURL = "https://www.axity.com/";
-
         /// <summary>
         /// Method to register Services.
         /// </summary>

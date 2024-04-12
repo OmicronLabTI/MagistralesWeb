@@ -8,11 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes;
-
     /// <summary>
     /// Interface for delivery.
     /// </summary>
@@ -38,7 +33,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
         /// <param name="createDelivery">the objects to create.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> CreateDeliveryBatch(List<CreateDeliveryNoteDto> createDelivery);
-        
+
         /// <summary>
         /// Cancel deliry notes.
         /// </summary>
