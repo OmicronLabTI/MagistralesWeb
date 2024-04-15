@@ -19,6 +19,19 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         private IMapper mapper;
 
         /// <summary>
+        /// Assert response.
+        /// </summary>
+        /// <param name="response">Response to validate.</param>
+        public static void AssertResponse(ResultDto response)
+        {
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
         /// The init.
         /// </summary>
         [OneTimeSetUp]
@@ -50,7 +63,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             var response = await this.doctorFacade.UpdateDoctorAddress(new List<DoctorDeliveryAddressDto>());
 
             // Assert
-            this.AssertResponse(response);
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -64,7 +77,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             var response = await this.doctorFacade.UpdateDoctorAddress(new List<DoctorInvoiceAddressDto>());
 
             // Assert
-            this.AssertResponse(response);
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -78,7 +91,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             var response = await this.doctorFacade.UpdateDoctorProfileInfo(new DoctorProfileInfoDto());
 
             // Assert
-            this.AssertResponse(response);
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -92,20 +105,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             var response = await this.doctorFacade.UpdateDoctorDefaultAddress(new DoctorDefaultAddressDto());
 
             // Assert
-            this.AssertResponse(response);
-        }
-
-        /// <summary>
-        /// Assert response.
-        /// </summary>
-        /// <param name="response">Response to validate.</param>
-        public void AssertResponse(ResultDto response)
-        {
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            AssertResponse(response);
         }
     }
 }

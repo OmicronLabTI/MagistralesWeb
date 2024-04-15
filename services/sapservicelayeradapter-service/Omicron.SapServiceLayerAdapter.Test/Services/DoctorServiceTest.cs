@@ -13,7 +13,6 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
     /// </summary>
     public class DoctorServiceTest : BaseTest
     {
-        private IServiceLayerClient serviceLayerClient;
         private Mock<ILogger> mockLogger;
         private IDoctorService doctorService;
 
@@ -108,7 +107,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResult(doctorSap, success, userError)));
+                .Returns(Task.FromResult(GetResult(doctorSap, success, userError)));
 
             var created = new ResultModel
             {
@@ -207,7 +206,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResult(doctorSap, success, userError)));
+                .Returns(Task.FromResult(GetResult(doctorSap, success, userError)));
 
             var created = new ResultModel
             {
@@ -335,13 +334,13 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             {
                 Assert.IsFalse(result.Success);
                 Assert.AreEqual(400, result.Code);
-                Assert.AreEqual(result.UserError, "No se encontró el médico");
+                Assert.AreEqual("No se encontró el médico", result.UserError);
             }
             else if (!isAddressUpdateSuccess)
             {
                 Assert.IsFalse(result.Success);
                 Assert.AreEqual(400, result.Code);
-                Assert.AreEqual(result.UserError, "Error al actualizar la dirección");
+                Assert.AreEqual("Error al actualizar la dirección", result.UserError);
             }
             else
             {
@@ -354,7 +353,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             Assert.IsNull(result.ExceptionMessage);
         }
 
-        private ResultModel GetResult(object data, bool success, string userError)
+        private static ResultModel GetResult(object data, bool success, string userError)
         {
             return new ResultModel()
             {

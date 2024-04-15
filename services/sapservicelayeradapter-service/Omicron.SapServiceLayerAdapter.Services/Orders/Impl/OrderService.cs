@@ -90,33 +90,14 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 
                 order.DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial);
                 order.DxpOrder = saleOrderModel.TransactionId;
-                order.EcommerceComments = saleOrderModel.IsNamePrinted == 1 ? $"Nombre del paciente: {saleOrderModel.PatientName}" : string.Empty;
+                order.EcommerceComments = ServiceUtils.CalculateTernary(saleOrderModel.IsNamePrinted == 1, $"Nombre del paciente: {saleOrderModel.PatientName}", string.Empty);
                 order.BXPPaymentMethod = saleOrderModel.PaymentMethodSapCode;
                 order.BXPWayToPay = saleOrderModel.WayToPaySapCode;
-                order.OrderPackage = saleOrderModel.IsPackage ? ServiceConstants.IsPackage : ServiceConstants.IsNotPackage;
+                order.OrderPackage = ServiceUtils.CalculateTernary(saleOrderModel.IsPackage, ServiceConstants.IsPackage, ServiceConstants.IsNotPackage);
                 order.DXPNeedsShipCost = saleOrderModel.ShippingCost;
-                order.SampleOrder = saleOrderModel.IsSample ? "Si" : "No";
+                order.SampleOrder = ServiceUtils.CalculateTernary(saleOrderModel.IsSample, "Si", "No");
                 order.CFDIProvisional = saleOrderModel.CfdiValue;
-
-                if (saleOrderModel.IsOmigenomicsOrder != null)
-                {
-                    order.IsOmigenomics = (bool)saleOrderModel.IsOmigenomicsOrder ? "Y" : "N";
-                }
-
-                if (saleOrderModel.SlpCode != null)
-                {
-                    order.SalesPersonCode = (int)saleOrderModel.SlpCode;
-                }
-
-                if (saleOrderModel.EmployeeId != null)
-                {
-                    order.DocumentsOwner = (int)saleOrderModel.EmployeeId;
-                }
-
-                if (attachmentId != null)
-                {
-                    order.AttachmentEntry = (int)attachmentId;
-                }
+                AssingValues(order, saleOrderModel, attachmentId);
 
                 for (var i = 0; i < saleOrderModel.Items.Count; i++)
                 {
@@ -127,7 +108,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     orderLine.DiscountPercent = saleOrderModel.Items[i].DiscountPercentage;
                     orderLine.Container = saleOrderModel.Items[i].Container;
                     orderLine.Label = saleOrderModel.Items[i].Label;
-                    orderLine.Prescription = saleOrderModel.Items[i].NeedRecipe == "Y" ? "Si" : "No";
+                    orderLine.Prescription = ServiceUtils.CalculateTernary(saleOrderModel.Items[i].NeedRecipe == "Y", "Si", "No");
                     order.OrderLines.Add(orderLine);
                 }
 
@@ -152,6 +133,29 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             {
                 this.logger.Error($"There was an error while creating the sale order {ex.Message} - {ex.StackTrace} - {JsonConvert.SerializeObject(saleOrderModel)}");
                 return ServiceUtils.CreateResult(false, 400, null, ex.Message, null);
+            }
+        }
+
+        private static void AssingValues(CreateOrderDto order, CreateSaleOrderDto saleOrderModel, int? attachmentId)
+        {
+            if (saleOrderModel.IsOmigenomicsOrder != null)
+            {
+                order.IsOmigenomics = (bool)saleOrderModel.IsOmigenomicsOrder ? "Y" : "N";
+            }
+
+            if (saleOrderModel.SlpCode != null)
+            {
+                order.SalesPersonCode = (int)saleOrderModel.SlpCode;
+            }
+
+            if (saleOrderModel.EmployeeId != null)
+            {
+                order.DocumentsOwner = (int)saleOrderModel.EmployeeId;
+            }
+
+            if (attachmentId != null)
+            {
+                order.AttachmentEntry = (int)attachmentId;
             }
         }
 
