@@ -170,7 +170,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
         {
             doctorSap.Addresses.ForEach(item =>
             {
-                var updatedAddres = deliveryAddresses.FirstOrDefault(x => x.AddressId.Equals(item.AddressName));
+                var updatedAddres = deliveryAddresses.FirstOrDefault(x => x.AddressId.ToUpper().Equals(item.AddressName.ToUpper()));
                 if (updatedAddres != null && item.AddressType == ServiceConstants.DeliveryAddress)
                 {
                     item.AddressName = updatedAddres.AddressId;
@@ -189,7 +189,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
 
             doctorSap.Addresses.ForEach(item =>
             {
-                var updatedAddres = invoiceAddresses.FirstOrDefault(x => x.NickName.Equals(item.AddressName));
+                var updatedAddres = invoiceAddresses.FirstOrDefault(x => x.NickName.ToUpper().Equals(item.AddressName.ToUpper()));
                 if (updatedAddres != null && item.AddressType == ServiceConstants.InvoiceAddress)
                 {
                     item.AddressName = updatedAddres.NickName;
