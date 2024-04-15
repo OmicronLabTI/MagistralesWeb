@@ -456,14 +456,14 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
 
             if (success)
             {
-                Assert.AreEqual(200, result.Code);
-                Assert.AreEqual(result.Success, true);
+                Assert.AreEqual(result.Code, 200);
+                Assert.IsTrue(result.Success);
             }
             else
             {
                 Assert.AreEqual(400, result.Code);
-                Assert.AreEqual(result.Success, false);
-                Assert.AreEqual(result.UserError, userError);
+                Assert.IsFalse(result.Success);
+                Assert.AreEqual(userError, result.UserError);
             }
         }
     }

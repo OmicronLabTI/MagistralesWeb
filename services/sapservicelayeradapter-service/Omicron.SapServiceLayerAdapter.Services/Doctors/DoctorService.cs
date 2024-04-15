@@ -140,32 +140,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
             return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
 
-        private async Task<DoctorDto> GetDoctorById(string cardCode)
-        {
-            var response = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryDoctorbyId, cardCode));
-            if (!response.Success)
-            {
-                throw new CustomServiceException(response.UserError, (HttpStatusCode)response.Code);
-            }
-
-            return JsonConvert.DeserializeObject<DoctorDto>(response.Response.ToString());
-        }
-
-        private DoctorDto AddLocalItems(List<DoctorDeliveryAddressDto> addressesDelivery, List<DoctorInvoiceAddressDto> addressInvoice, DoctorDto doctorSap)
-        {
-            foreach (var address in addressesDelivery)
-            {
-                doctorSap = SetDeliveryFieldData(doctorSap, address);
-            }
-
-            foreach (var address in addressInvoice)
-            {
-                doctorSap = SetInvoiceFieldData(doctorSap, address);
-            }
-
-            return doctorSap;
-        }
-
         private static DoctorDto UpdateLocalItems(DoctorDto doctorSap, List<DoctorDeliveryAddressDto> deliveryAddresses, List<DoctorInvoiceAddressDto> invoiceAddresses)
         {
             doctorSap.Addresses.ForEach(item =>
@@ -270,6 +244,32 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
             {
                 throw new CustomServiceException(result.UserError, (HttpStatusCode)result.Code);
             }
+        }
+
+        private async Task<DoctorDto> GetDoctorById(string cardCode)
+        {
+            var response = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryDoctorbyId, cardCode));
+            if (!response.Success)
+            {
+                throw new CustomServiceException(response.UserError, (HttpStatusCode)response.Code);
+            }
+
+            return JsonConvert.DeserializeObject<DoctorDto>(response.Response.ToString());
+        }
+
+        private DoctorDto AddLocalItems(List<DoctorDeliveryAddressDto> addressesDelivery, List<DoctorInvoiceAddressDto> addressInvoice, DoctorDto doctorSap)
+        {
+            foreach (var address in addressesDelivery)
+            {
+                doctorSap = SetDeliveryFieldData(doctorSap, address);
+            }
+
+            foreach (var address in addressInvoice)
+            {
+                doctorSap = SetInvoiceFieldData(doctorSap, address);
+            }
+
+            return doctorSap;
         }
     }
 }
