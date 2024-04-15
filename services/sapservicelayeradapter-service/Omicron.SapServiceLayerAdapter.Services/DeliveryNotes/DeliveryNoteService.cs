@@ -231,7 +231,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 }
 
                 var listOrderType = new List<string>();
-                var isOmigenomicsStr = createDeliveryFirst.IsOmigenomics ? "Y" : "N";
+                var isOmigenomicsStr = ServiceUtils.CalculateTernary(createDeliveryFirst.IsOmigenomics, "Y", "N");
 
                 var saleOrder = JsonConvert.DeserializeObject<OrderDto>(response.Response.ToString());
                 var deliveryNote = new DeliveryNoteDto();
@@ -249,61 +249,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 deliveryNote.IsOmigenomics = isOmigenomicsStr;
                 deliveryNote.DeliveryNoteLines = new List<DeliveryNoteLineDto>();
 
-                var commentMultiple = new StringBuilder();
-
-                var ordersGrouped = createDelivery.GroupBy(p => p.SaleOrderId).ToList();
-                foreach (var sale in ordersGrouped)
-                {
-                    var saleOrderFound = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, sale.FirstOrDefault().SaleOrderId));
-                    if (!saleOrderFound.Success)
-                    {
-                        this.logger.Information($"The sale Order {sale.FirstOrDefault().SaleOrderId} was not found for creating the delivery");
-                        dictionaryResult.Add($"{saleOrderId}-Error", $"Error- {saleOrderFound.UserError}");
-                        continue;
-                    }
-
-                    var saleOrderFoundJson = saleOrderFound.Response.ToString();
-                    var saleOrderFoundLocal = JsonConvert.DeserializeObject<OrderDto>(saleOrderFoundJson);
-
-                    listOrderType.Add(saleOrder.TypeOrder ?? string.Empty);
-                    commentMultiple.Append($"{saleOrder.Comments} |");
-
-                    for (var i = 0; i < saleOrderFoundLocal.OrderLines.Count; i++)
-                    {
-                        var itemCode = saleOrderFoundLocal.OrderLines[i].ItemCode;
-                        deliveryNote = UpdateDelivery(deliveryNote, saleOrderFoundLocal, sale.FirstOrDefault().SaleOrderId, i, createDelivery, itemCode);
-                    }
-
-                    if (createDelivery.Any(x => x.ItemCode == ServiceConstants.ShippingCostItemCode && x.SaleOrderId == sale.Key))
-                    {
-                        this.logger.Information($"Here Starts the fl 1 when its apart.");
-                        var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode && x.SaleOrderId == sale.Key);
-
-                        var price = CastStringToDouble(shippingCost.OrderType);
-                        this.logger.Information($"The price is {price}");
-
-                        var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost?.ShippingCostOrderId ?? 0);
-                        var newDeliveryNote = new DeliveryNoteLineDto()
-                        {
-                            ItemCode = shippingCost.ItemCode,
-                            Quantity = 1,
-                            BaseType = 17,
-                            BaseEntry = shippingCost.ShippingCostOrderId,
-                            UnitPrice = price,
-                            BaseLine = correctBaseLineId,
-                            SalesPersonCode = saleOrder.SalesPersonCode,
-                            Price = price,
-                            LineTotal = price,
-                        };
-                        deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
-                        await this.UpdateShippingCostBaseLine(shippingCost.ShippingCostOrderId, isOmigenomicsStr, saleOrder.SalesPersonCode, saleOrder.DocumentsOwner);
-                    }
-                }
+                var commentMultiple = await this.ManageDeliveryNotes(createDelivery, saleOrderId, listOrderType, dictionaryResult, isOmigenomicsStr, saleOrder, deliveryNote);
 
                 var areAllSame = listOrderType.All(o => o == listOrderType.FirstOrDefault());
-                var tipoPedidos = areAllSame ? listOrderType.FirstOrDefault() : "MX";
-                deliveryNote.DeliveryOrderType = tipoPedidos == "UN" ? "LN" : tipoPedidos;
-                deliveryNote.Comments = commentMultiple.Length > 253 ? commentMultiple.ToString().Substring(0, 253) : commentMultiple.ToString();
+                var tipoPedidos = ServiceUtils.CalculateTernary(areAllSame, listOrderType.FirstOrDefault(), "MX");
+                deliveryNote.DeliveryOrderType = ServiceUtils.CalculateTernary(tipoPedidos == "UN", "LN", tipoPedidos);
+                deliveryNote.Comments = ServiceUtils.CalculateTernary(commentMultiple.Length > 253, commentMultiple.ToString().Substring(0, 253), commentMultiple.ToString());
 
                 var deliveryNotesStg = JsonConvert.SerializeObject(deliveryNote);
                 var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryDeliveryNotes, deliveryNotesStg);
@@ -339,6 +290,68 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             }
 
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
+        }
+
+        private async Task<StringBuilder> ManageDeliveryNotes(
+            List<CreateDeliveryNoteDto> createDelivery,
+            int saleOrderId,
+            List<string> listOrderType,
+            Dictionary<string, string> dictionaryResult,
+            string isOmigenomicsStr,
+            OrderDto saleOrder,
+            DeliveryNoteDto deliveryNote)
+        {
+            var commentMultiple = new StringBuilder();
+            var ordersGrouped = createDelivery.GroupBy(p => p.SaleOrderId).ToList();
+            foreach (var sale in ordersGrouped)
+            {
+                var saleOrderFound = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryOrdersDocumentByDocEntry, sale.FirstOrDefault().SaleOrderId));
+                if (!saleOrderFound.Success)
+                {
+                    this.logger.Information($"The sale Order {sale.FirstOrDefault().SaleOrderId} was not found for creating the delivery");
+                    dictionaryResult.Add($"{saleOrderId}-Error", $"Error- {saleOrderFound.UserError}");
+                    continue;
+                }
+
+                var saleOrderFoundJson = saleOrderFound.Response.ToString();
+                var saleOrderFoundLocal = JsonConvert.DeserializeObject<OrderDto>(saleOrderFoundJson);
+
+                listOrderType.Add(saleOrder.TypeOrder ?? string.Empty);
+                commentMultiple.Append($"{saleOrder.Comments} |");
+
+                for (var i = 0; i < saleOrderFoundLocal.OrderLines.Count; i++)
+                {
+                    var itemCode = saleOrderFoundLocal.OrderLines[i].ItemCode;
+                    deliveryNote = UpdateDelivery(deliveryNote, saleOrderFoundLocal, sale.FirstOrDefault().SaleOrderId, i, createDelivery, itemCode);
+                }
+
+                if (createDelivery.Any(x => x.ItemCode == ServiceConstants.ShippingCostItemCode && x.SaleOrderId == sale.Key))
+                {
+                    this.logger.Information($"Here Starts the fl 1 when its apart.");
+                    var shippingCost = createDelivery.FirstOrDefault(x => x.ItemCode == ServiceConstants.ShippingCostItemCode && x.SaleOrderId == sale.Key);
+
+                    var price = CastStringToDouble(shippingCost.OrderType);
+                    this.logger.Information($"The price is {price}");
+
+                    var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost?.ShippingCostOrderId ?? 0);
+                    var newDeliveryNote = new DeliveryNoteLineDto()
+                    {
+                        ItemCode = shippingCost.ItemCode,
+                        Quantity = 1,
+                        BaseType = 17,
+                        BaseEntry = shippingCost.ShippingCostOrderId,
+                        UnitPrice = price,
+                        BaseLine = correctBaseLineId,
+                        SalesPersonCode = saleOrder.SalesPersonCode,
+                        Price = price,
+                        LineTotal = price,
+                    };
+                    deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
+                    await this.UpdateShippingCostBaseLine(shippingCost.ShippingCostOrderId, isOmigenomicsStr, saleOrder.SalesPersonCode, saleOrder.DocumentsOwner);
+                }
+            }
+
+            return commentMultiple;
         }
 
         private static DeliveryNoteDto UpdateDelivery(DeliveryNoteDto deliveryNote, OrderDto saleOrder, int saleOrderId, int i, List<CreateDeliveryNoteDto> createDelivery, string itemCode)
