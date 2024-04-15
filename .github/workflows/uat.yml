@@ -99,6 +99,8 @@ jobs:
           path: services/sapservicelayeradapter-service
           environment: uat
           registry: omicron.azurecr.io
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
 
       - name: Azure WebApp
         uses: Azure/webapps-deploy@v2.2.4
