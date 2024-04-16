@@ -456,7 +456,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
 
             if (success)
             {
-                Assert.AreEqual(result.Code, 200);
+                Assert.AreEqual(200, result.Code);
                 Assert.IsTrue(result.Success);
             }
             else

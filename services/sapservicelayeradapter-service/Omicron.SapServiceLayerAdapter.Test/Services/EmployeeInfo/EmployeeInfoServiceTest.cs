@@ -62,7 +62,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.EmployeeInfo
             else if (isSuccesfully)
             {
                 Assert.IsTrue(response.Success);
-                Assert.AreEqual(response.Code, 200);
+                Assert.AreEqual(200, response.Code);
                 Assert.IsNull(response.UserError);
                 Assert.IsNull(response.Response);
             }
@@ -70,7 +70,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.EmployeeInfo
             {
                 Assert.IsFalse(response.Success);
                 Assert.AreEqual(400, response.Code);
-                Assert.AreEqual(response.UserError, userError);
+                Assert.AreEqual(userError, response.UserError);
                 Assert.IsNull(response.Response);
             }
 

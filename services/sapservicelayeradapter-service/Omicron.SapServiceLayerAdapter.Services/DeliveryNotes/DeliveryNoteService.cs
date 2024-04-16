@@ -292,6 +292,51 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
         }
 
+        private static DeliveryNoteDto UpdateDelivery(DeliveryNoteDto deliveryNote, OrderDto saleOrder, int saleOrderId, int i, List<CreateDeliveryNoteDto> createDelivery, string itemCode)
+        {
+            var orderLine = saleOrder.OrderLines[i];
+            var newDeliveryNote = new DeliveryNoteLineDto()
+            {
+                ItemCode = orderLine.ItemCode,
+                Quantity = orderLine.Quantity,
+                DiscountPercent = orderLine.DiscountPercent,
+                TaxCode = orderLine.TaxCode,
+                LineTotal = orderLine.LineTotal,
+                BaseType = 17,
+                WarehouseCode = orderLine.WarehouseCode,
+                Container = orderLine.Container,
+                Label = orderLine.Label,
+                BaseEntry = saleOrderId,
+                BaseLine = orderLine.LineNum,
+                BatchNumbers = new List<DeliveryNoteBatchNumbersDto>(),
+                UnitPrice = orderLine.UnitPrice,
+                SalesPersonCode = orderLine.SalesPersonCode,
+            };
+
+            var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId);
+            product = product ?? new CreateDeliveryNoteDto { OrderType = ServiceConstants.Magistral };
+
+            if (product.OrderType != ServiceConstants.Magistral)
+            {
+                foreach (var b in product.Batches)
+                {
+                    var doubleQuantity = CastStringToDouble(b.BatchQty.ToString());
+                    var batch = new DeliveryNoteBatchNumbersDto();
+                    batch.Quantity = doubleQuantity;
+                    batch.BatchNumber = b.BatchNumber;
+                    newDeliveryNote.BatchNumbers.Add(batch);
+                }
+            }
+
+            deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
+            return deliveryNote;
+        }
+
+        private static double CastStringToDouble(string value)
+        {
+            return ServiceUtils.CalculateTernary(double.TryParse(value, out var result), result, 0);
+        }
+
         private async Task<StringBuilder> ManageDeliveryNotes(
             List<CreateDeliveryNoteDto> createDelivery,
             int saleOrderId,
@@ -352,51 +397,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             }
 
             return commentMultiple;
-        }
-
-        private static DeliveryNoteDto UpdateDelivery(DeliveryNoteDto deliveryNote, OrderDto saleOrder, int saleOrderId, int i, List<CreateDeliveryNoteDto> createDelivery, string itemCode)
-        {
-            var orderLine = saleOrder.OrderLines[i];
-            var newDeliveryNote = new DeliveryNoteLineDto()
-            {
-                ItemCode = orderLine.ItemCode,
-                Quantity = orderLine.Quantity,
-                DiscountPercent = orderLine.DiscountPercent,
-                TaxCode = orderLine.TaxCode,
-                LineTotal = orderLine.LineTotal,
-                BaseType = 17,
-                WarehouseCode = orderLine.WarehouseCode,
-                Container = orderLine.Container,
-                Label = orderLine.Label,
-                BaseEntry = saleOrderId,
-                BaseLine = orderLine.LineNum,
-                BatchNumbers = new List<DeliveryNoteBatchNumbersDto>(),
-                UnitPrice = orderLine.UnitPrice,
-                SalesPersonCode = orderLine.SalesPersonCode,
-            };
-
-            var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId);
-            product = product ?? new CreateDeliveryNoteDto { OrderType = ServiceConstants.Magistral };
-
-            if (product.OrderType != ServiceConstants.Magistral)
-            {
-                foreach (var b in product.Batches)
-                {
-                    var doubleQuantity = CastStringToDouble(b.BatchQty.ToString());
-                    var batch = new DeliveryNoteBatchNumbersDto();
-                    batch.Quantity = doubleQuantity;
-                    batch.BatchNumber = b.BatchNumber;
-                    newDeliveryNote.BatchNumbers.Add(batch);
-                }
-            }
-
-            deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
-            return deliveryNote;
-        }
-
-        private static double CastStringToDouble(string value)
-        {
-            return ServiceUtils.CalculateTernary(double.TryParse(value, out var result), result, 0);
         }
 
         private async Task UpdateShippingCostBaseLine(int saleOrderId, string isOmigenomics, int salesPersonCode, int documentsOwner)
