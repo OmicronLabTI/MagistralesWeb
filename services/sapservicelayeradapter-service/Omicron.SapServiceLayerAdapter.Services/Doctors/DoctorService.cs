@@ -39,7 +39,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
                 var addressToUpdate = addresses.Where(x => x.Action == ServiceConstants.ActionUpdate).ToList();
                 var addressToDelete = addresses.Where(x => x.Action == ServiceConstants.ActionDelete).Select(y => y.AddressId).ToList();
 
-                doctorSap = this.AddLocalItems(addressToInsert, new List<DoctorInvoiceAddressDto>(), doctorSap);
+                doctorSap = AddLocalItems(addressToInsert, new List<DoctorInvoiceAddressDto>(), doctorSap);
                 doctorSap = UpdateLocalItems(doctorSap, addressToUpdate, new List<DoctorInvoiceAddressDto>());
                 doctorSap = DeleteLocalItems(doctorSap, addressToDelete, ServiceConstants.DeliveryAddress);
 
@@ -65,7 +65,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
                 var addressToUpdate = addresses.Where(x => x.Action == ServiceConstants.ActionUpdate).ToList();
                 var addressToDelete = addresses.Where(x => x.Action == ServiceConstants.ActionDelete).Select(y => y.NickName).ToList();
 
-                doctorSap = this.AddLocalItems(new List<DoctorDeliveryAddressDto>(), addressToInsert, doctorSap);
+                doctorSap = AddLocalItems(new List<DoctorDeliveryAddressDto>(), addressToInsert, doctorSap);
                 doctorSap = UpdateLocalItems(doctorSap, new List<DoctorDeliveryAddressDto>(), addressToUpdate);
                 doctorSap = DeleteLocalItems(doctorSap, addressToDelete, ServiceConstants.InvoiceAddress);
 
@@ -235,6 +235,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
             return doctorSap;
         }
 
+        private static DoctorDto AddLocalItems(List<DoctorDeliveryAddressDto> addressesDelivery, List<DoctorInvoiceAddressDto> addressInvoice, DoctorDto doctorSap)
+        {
+            foreach (var address in addressesDelivery)
+            {
+                doctorSap = SetDeliveryFieldData(doctorSap, address);
+            }
+
+            foreach (var address in addressInvoice)
+            {
+                doctorSap = SetInvoiceFieldData(doctorSap, address);
+            }
+
+            return doctorSap;
+        }
+
         private async Task SaveChanges(DoctorDto doctor)
         {
             var body = JsonConvert.SerializeObject(doctor);
@@ -255,21 +270,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.Doctors
             }
 
             return JsonConvert.DeserializeObject<DoctorDto>(response.Response.ToString());
-        }
-
-        private DoctorDto AddLocalItems(List<DoctorDeliveryAddressDto> addressesDelivery, List<DoctorInvoiceAddressDto> addressInvoice, DoctorDto doctorSap)
-        {
-            foreach (var address in addressesDelivery)
-            {
-                doctorSap = SetDeliveryFieldData(doctorSap, address);
-            }
-
-            foreach (var address in addressInvoice)
-            {
-                doctorSap = SetInvoiceFieldData(doctorSap, address);
-            }
-
-            return doctorSap;
         }
     }
 }

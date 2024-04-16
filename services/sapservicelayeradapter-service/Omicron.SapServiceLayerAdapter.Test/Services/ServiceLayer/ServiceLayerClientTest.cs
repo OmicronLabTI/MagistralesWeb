@@ -15,7 +15,6 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ServiceLayer
     public class ServiceLayerClientTest : BaseTest
     {
         private ServiceLayerClient serviceLayerClient;
-        private Mock<IServiceLayerAuth> authMock;
         private HttpClient httpClientMock;
         private Mock<ILogger> loggerMock;
 
