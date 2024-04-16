@@ -54,7 +54,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
         /// <inheritdoc/>
         public async Task<ResultModel> CreateDeliveryBatch(List<CreateDeliveryNoteDto> createDelivery)
         {
-            return await this.CreateDeliveryGeneral(createDelivery, ServiceQuerysConstants.QryDeliveryNotes, this.CreateDeliveryNoteComplete, "delivery batch", new List<string>());
+            return await this.CreateDeliveryGeneral(createDelivery, ServiceQuerysConstants.QryDeliveryNotes, this.CreateDeliveryNoteBatch, "delivery batch", new List<string>());
         }
 
         /// <inheritdoc/>
