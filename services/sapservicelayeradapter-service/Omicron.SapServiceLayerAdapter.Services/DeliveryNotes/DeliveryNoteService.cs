@@ -539,7 +539,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             var areAllSame = listOrderType.All(o => o == listOrderType.FirstOrDefault());
             var tipoPedidos = ServiceUtils.CalculateTernary(areAllSame, listOrderType.FirstOrDefault(), "MX");
             deliveryNote.DeliveryOrderType = ServiceUtils.CalculateTernary(tipoPedidos == "UN", "LN", tipoPedidos);
-            deliveryNote.Comments = ServiceUtils.CalculateTernary(commentMultiple.Length > 253, commentMultiple.ToString().Substring(0, 253), commentMultiple.ToString());
+            deliveryNote.Comments = commentMultiple.Length > 253 ? commentMultiple.ToString().Substring(0, 253) : commentMultiple.ToString();
 
             return deliveryNote;
         }
