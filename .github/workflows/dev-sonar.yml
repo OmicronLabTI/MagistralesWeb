@@ -121,11 +121,11 @@ jobs:
           nexus_user: ${{ secrets.NEXUS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
           
-      - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@master
-        if: ${{ always() }}
-        with:
-          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
+      # - name: Microsoft Teams Notification
+      #   uses: skitionek/notify-microsoft-teams@master
+      #   if: ${{ always() }}
+      #   with:
+      #     webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+      #     needs: ${{ toJson(needs) }}
+      #     job: ${{ toJson(job) }}
+      #     steps: ${{ toJson(steps) }}
