@@ -99,18 +99,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                 order.CFDIProvisional = saleOrderModel.CfdiValue;
                 AssingValues(order, saleOrderModel, attachmentId);
 
-                for (var i = 0; i < saleOrderModel.Items.Count; i++)
+                order.OrderLines = saleOrderModel.Items.Select(x => new CreateOrderLineDto()
                 {
-                    var orderLine = new CreateOrderLineDto();
-                    orderLine.ItemCode = saleOrderModel.Items[i].ItemCode;
-                    orderLine.Quantity = saleOrderModel.Items[i].Quantity;
-                    orderLine.UnitPrice = saleOrderModel.Items[i].CostPerPiece;
-                    orderLine.DiscountPercent = saleOrderModel.Items[i].DiscountPercentage;
-                    orderLine.Container = saleOrderModel.Items[i].Container;
-                    orderLine.Label = saleOrderModel.Items[i].Label;
-                    orderLine.Prescription = ServiceUtils.CalculateTernary(saleOrderModel.Items[i].NeedRecipe == "Y", "Si", "No");
-                    order.OrderLines.Add(orderLine);
-                }
+                    ItemCode = x.ItemCode,
+                    Quantity = x.Quantity,
+                    UnitPrice = x.CostPerPiece,
+                    DiscountPercent = x.DiscountPercentage,
+                    Container = x.Container,
+                    Label = x.Label,
+                    Prescription = ServiceUtils.CalculateTernary(x.NeedRecipe == "Y", "Si", "No"),
+                }).ToList();
 
                 var propertyMappings = new Dictionary<string, string>
                 {
