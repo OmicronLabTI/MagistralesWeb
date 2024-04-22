@@ -28,3 +28,8 @@ global using Omicron.SapServiceLayerAdapter.Services.Invoices;
 global using Omicron.SapServiceLayerAdapter.Services.Orders;
 global using Omicron.SapServiceLayerAdapter.Services.ProductionOrders;
 global using Omicron.SapServiceLayerAdapter.Services.Utils;
+global using Omicron.SapServiceLayerAdapter.Model;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders;
+global using Omicron.SapServiceLayerAdapter.Services.ProductionOrders;
+global using Omicron.SapServiceLayerAdapter.Facade.ProductionOrder;
+global using Omicron.SapServiceLayerAdapter.Facade.ProductionOrder.Impl;

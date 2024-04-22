@@ -44,6 +44,7 @@ namespace Omicron.SapServiceLayerAdapter.Services
             services.AddScoped<IEmployeeInfoService, EmployeeInfoService>();
             services.AddScoped<IDoctorService, DoctorService>();
             services.AddScoped<IInventoryTransferRequestService, InventoryTransferRequestService>();
+            services.AddScoped<IProductionOrderService, ProductionOrderService>();
             return services;
         }
     }
