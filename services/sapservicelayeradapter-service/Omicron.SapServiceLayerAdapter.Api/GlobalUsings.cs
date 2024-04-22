@@ -32,3 +32,5 @@ global using Steeltoe.Extensions.Configuration.Placeholder;
 global using Omicron.SapServiceLayerAdapter.Facade.Doctor;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Doctor;
 global using Omicron.SapServiceLayerAdapter.Facade.EmployeeInfo;
+global using Omicron.SapServiceLayerAdapter.Facade.ProductionOrder;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders;

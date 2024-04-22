@@ -23,3 +23,5 @@ global using Omicron.SapServiceLayerAdapter.Facade.Doctor;
 global using Omicron.SapServiceLayerAdapter.Facade.EmployeeInfo;
 global using Omicron.SapServiceLayerAdapter.Facade.EmployeeInfo.Impl;
 global using Omicron.SapServiceLayerAdapter.Model;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders;
+global using Omicron.SapServiceLayerAdapter.Services.ProductionOrders;

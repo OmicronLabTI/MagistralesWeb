@@ -14,6 +14,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.InventoryGenExit
     public class InventoryGenExitLineDto
     {
         /// <summary>
+        /// Gets or sets BaseEntry.
+        /// </summary>
+        /// <value>BaseEntry.</value>
+        [JsonProperty("BaseEntry")]
+        public int? BaseEntry { get; set; }
+
+        /// <summary>
         /// Gets or sets thePrice.
         /// </summary>
         /// <value>Price.</value>
