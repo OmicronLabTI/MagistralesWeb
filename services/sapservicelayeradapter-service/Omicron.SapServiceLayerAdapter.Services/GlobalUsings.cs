@@ -41,3 +41,8 @@ global using Serilog;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Doctor;
 global using AutoMapper.Internal;
 global using Omicron.SapServiceLayerAdapter.Services.Doctors;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.Items;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.BatchNumberDetails;
+global using Omicron.SapServiceLayerAdapter.Common;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.InventoryGenEntry;

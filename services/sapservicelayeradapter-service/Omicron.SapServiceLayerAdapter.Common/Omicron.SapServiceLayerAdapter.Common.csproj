@@ -14,6 +14,10 @@
     <None Remove="DTOs\Batches\" />
     <None Remove="DTOs\Attachments\" />
     <None Remove="DTOs\Doctor\" />
+    <None Remove="DTOs\ProductionOrders\" />
+    <None Remove="DTOs\Items\" />
+    <None Remove="DTOs\BatchNumberDetails\" />
+    <None Remove="DTOs\InventoryGenEntry\" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="$(SolutionDir)\StyleCop\stylecop.json" Link="stylecop.json" />
@@ -36,6 +40,10 @@
   <ItemGroup>
     <Folder Include="DTOs\Batches\" />
     <Folder Include="DTOs\Attachments\" />
+    <Folder Include="DTOs\ProductionOrders\" />
+    <Folder Include="DTOs\Items\" />
+    <Folder Include="DTOs\BatchNumberDetails\" />
+    <Folder Include="DTOs\InventoryGenEntry\" />
   </ItemGroup>
 
 </Project>

@@ -254,6 +254,71 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string AddresShipType = "S";
 
         /// <summary>
+        /// Production Order status closed.
+        /// </summary>
+        public const string ProductionOrderClosed = "boposClosed";
+
+        /// <summary>
+        /// Production Order status released.
+        /// </summary>
+        public const string ProductionOrderReleased = "boposReleased";
+
+        /// <summary>
+        /// Production Order type B.
+        /// </summary>
+        public const string ProductionOrderTypeB = "im_Backflush";
+
+        /// <summary>
+        /// Production Order type B.
+        /// </summary>
+        public const string ProductionOrderTypeM = "im_Manual";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotReleasedProductionOrder = "La orden de producción {0} no esta liberada.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailConsumedQuantity = "No es posible finalizar la siguiente orden {0}, la cantidad a consumir ya cuenta con un registro";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailGetProduct = "No fue posible obtener la información del producto {0}";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonBatchAlreadyExists = "El lote {0} ya existe para el producto {1}.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotAvailableRequiredQuantity = "No se ha podido generar recibo de producción para la orden de fabricación {0}, no hay componentes disponibles ({1}).";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotGetExitCreated = "No se ha podido generar la entrega de componentes a producción para la orden de fabricación {0}.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotReceipProductionCreated = "No se ha podido crear recepción de producción para la orden de fabricación {0}.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotProductionStatusClosed = "La orden de producción {0} no se ha podido cerrar.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonUnexpectedError = "Ocurrió un error inesperado en SAP.";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -39,6 +39,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string QryPostInventoryGenExists = "InventoryGenExits";
 
         /// <summary>
+        /// Query Post Inventory Gen Entries.
+        /// </summary>
+        public const string QryPostInventoryGenEntries = "InventoryGenEntries";
+
+        /// <summary>
         /// Query Post Close Order By Id.
         /// </summary>
         public const string QryPostCloseOrderById = "Orders({0})/Close";
@@ -87,5 +92,15 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Query Doctor By Id.
         /// </summary>
         public const string QryDoctorbyId = "BusinessPartners('{0}')";
+
+        /// <summary>
+        /// Query to get the production order by id.
+        /// </summary>
+        public const string QryProductionOrderById = "ProductionOrders({0})";
+
+        /// <summary>
+        /// Query to get the product by id.
+        /// </summary>
+        public const string QryProductById = "Items('{0}')?$select=ItemCode,ItemName,ManageBatchNumbers,ItemWarehouseInfoCollection";
     }
 }
