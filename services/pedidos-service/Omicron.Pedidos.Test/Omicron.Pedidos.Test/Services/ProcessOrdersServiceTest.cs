@@ -26,6 +26,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
+    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -49,6 +50,8 @@ namespace Omicron.Pedidos.Test.Services
         private Mock<IRedisService> redisService;
 
         private Mock<IKafkaConnector> kafkaConnector;
+
+        private Mock<ISapServiceLayerAdapterService> sapServiceLayer;
 
         /// <summary>
         /// The set up.
@@ -99,8 +102,9 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PushMessage(It.IsAny<object>()))
                 .Returns(Task.FromResult(true));
 
+            this.sapServiceLayer = new Mock<ISapServiceLayerAdapterService>();
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, sapfileMock.Object, configMock.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object);
+            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, sapfileMock.Object, configMock.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayer.Object);
         }
 
         /// <summary>

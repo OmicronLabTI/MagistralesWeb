@@ -89,6 +89,12 @@ namespace Omicron.Pedidos.Api
             })
             .AddTypedClient<IReportingService, ReportingService>();
 
+            webApplication.Services.AddHttpClient("saporderadapter", c =>
+            {
+                c.BaseAddress = new Uri(webApplication.Configuration["SapOrderAdapterUrl"]);
+            })
+            .AddTypedClient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
+
             webApplication.AddRedis();
             webApplication.AddCorsSvc();
 
