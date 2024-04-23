@@ -15,7 +15,9 @@ namespace Omicron.Reporting.Test
     using AutoFixture;
     using Moq;
     using Moq.Protected;
+    using Omicron.Reporting.Dtos.Model;
     using Omicron.Reporting.Entities.Model;
+    using Serilog;
 
     /// <summary>
     /// Base class for http clients.
@@ -55,6 +57,117 @@ namespace Omicron.Reporting.Test
             };
 
             return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient });
+        }
+
+        /// <summary>
+        /// Create a new client.
+        /// </summary>
+        /// <returns>Client.</returns>
+        public T CreateClientResultModel()
+        {
+            var fixture = new Fixture();
+            var result = fixture.Create<ResultModel>();
+            result.Success = true;
+            result.Code = 200;
+
+            var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            handlerMock.Protected()
+               .Setup<Task<HttpResponseMessage>>(
+                  "SendAsync",
+                  ItExpr.IsAny<HttpRequestMessage>(),
+                  ItExpr.IsAny<CancellationToken>())
+               .ReturnsAsync(new HttpResponseMessage()
+               {
+                   StatusCode = HttpStatusCode.OK,
+                   Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(result)),
+               })
+               .Verifiable();
+
+            var httpClient = new HttpClient(handlerMock.Object)
+            {
+                BaseAddress = new Uri("http://test.com/"),
+            };
+
+            var mockLog = new Mock<ILogger>();
+
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient, mockLog.Object });
+        }
+
+        /// <summary>
+        /// Create a new client.
+        /// </summary>
+        /// <returns>Client.</returns>
+        public T CreateClientFailure()
+        {
+            var fixture = new Fixture();
+            var result = fixture.Create<ResultModel>();
+            result.Success = true;
+
+            var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            handlerMock.Protected()
+               .Setup<Task<HttpResponseMessage>>(
+                  "SendAsync",
+                  ItExpr.IsAny<HttpRequestMessage>(),
+                  ItExpr.IsAny<CancellationToken>())
+               .ReturnsAsync(new HttpResponseMessage()
+               {
+                   StatusCode = HttpStatusCode.BadRequest,
+                   Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(result)),
+               })
+               .Verifiable();
+
+            var httpClient = new HttpClient(handlerMock.Object)
+            {
+                BaseAddress = new Uri("http://test.com/"),
+            };
+
+            var mockLog = new Mock<ILogger>();
+
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient, mockLog.Object });
+        }
+
+        /// <summary>
+        /// Create a new client.
+        /// </summary>
+        /// <returns>Client.</returns>
+        public T CreateClientWithErrorResponse()
+        {
+            var fixture = new Fixture();
+            var result = fixture.Create<ResultModel>();
+            result.Success = false;
+            result.UserError = "Error controlado";
+            result.Code = 400;
+
+            var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            handlerMock.Protected()
+               .Setup<Task<HttpResponseMessage>>(
+                  "SendAsync",
+                  ItExpr.IsAny<HttpRequestMessage>(),
+                  ItExpr.IsAny<CancellationToken>())
+               .ReturnsAsync(new HttpResponseMessage()
+               {
+                   StatusCode = HttpStatusCode.OK,
+                   Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(result)),
+               })
+               .Verifiable();
+
+            var httpClient = new HttpClient(handlerMock.Object)
+            {
+                BaseAddress = new Uri("http://test.com/"),
+            };
+
+            var mockLog = new Mock<ILogger>();
+
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            return (T)Activator.CreateInstance(typeof(T), new object[] { httpClient, mockLog.Object });
         }
     }
 }

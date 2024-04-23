@@ -19,6 +19,7 @@ namespace Omicron.Reporting.DependencyInjection
     using Omicron.Reporting.Services.Clients;
     using Omicron.Reporting.Services.Mapping;
     using Omicron.Reporting.Services.SapDiApi;
+    using Omicron.Reporting.Services.ServiceLayerAdapter;
 
     /// <summary>
     /// Class for DependencyInjector.
@@ -42,6 +43,7 @@ namespace Omicron.Reporting.DependencyInjection
             Services.AddTransient<ISendMailWrapper, SendMailWrapper>();
             Services.AddTransient<IAzureService, AzureServices>();
             Services.AddTransient<ISapDiApi, SapDiApi>();
+            Services.AddTransient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
             return Services;
         }
 

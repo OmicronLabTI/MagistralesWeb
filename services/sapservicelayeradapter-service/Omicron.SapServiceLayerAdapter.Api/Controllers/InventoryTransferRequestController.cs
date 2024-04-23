@@ -32,6 +32,5 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         [HttpPost("/create/transferrequest")]
         public async Task<IActionResult> CreateTransferRequest([FromBody] List<TransferRequestHeaderDto> transferRequestHeader)
             => this.Ok(await this.inventoryTransferRequestFacade.CreateTransferRequest(transferRequestHeader));
-
     }
 }
