@@ -72,6 +72,12 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new DoctorElectronicProtocolDto(),
             new DoctorPaymentMethodDto(),
             new BaseOrderDto(),
+            new TransferRequestDetailDto(),
+            new TransferRequestHeaderDto(),
+            new InventoryTransferRequestResult(),
+            new InventoryTransferRequestsDto(),
+            new InventoryTransferRequestsResponseDto(),
+            new StockTransferLinesDto(),
         };
 
         /// <summary>

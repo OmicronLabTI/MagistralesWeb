@@ -43,6 +43,7 @@ namespace Omicron.SapServiceLayerAdapter.Services
             services.AddScoped<ISapFileService, SapFileService>();
             services.AddScoped<IEmployeeInfoService, EmployeeInfoService>();
             services.AddScoped<IDoctorService, DoctorService>();
+            services.AddScoped<IInventoryTransferRequestService, InventoryTransferRequestService>();
             return services;
         }
     }

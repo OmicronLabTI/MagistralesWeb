@@ -102,5 +102,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Query to get the product by id.
         /// </summary>
         public const string QryProductById = "Items('{0}')?$select=ItemCode,ItemName,ManageBatchNumbers,ItemWarehouseInfoCollection";
+
+        /// <summary>
+        /// Query Post Inventory Transfer Requests.
+        /// </summary>
+        public const string QryPostInventoryTransferRequests = "InventoryTransferRequests";
     }
 }
