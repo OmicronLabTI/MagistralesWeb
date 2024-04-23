@@ -319,6 +319,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string FailReasonUnexpectedError = "Ocurrió un error inesperado en SAP.";
 
         /// <summary>
+        /// error while create transfer request.
+        /// </summary>
+        public const string ErrorTransferRequest = "ErrorTransferRequest";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

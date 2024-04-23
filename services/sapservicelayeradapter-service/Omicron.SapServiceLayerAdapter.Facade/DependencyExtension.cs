@@ -25,6 +25,7 @@ namespace Omicron.SapServiceLayerAdapter.Facade
             services.AddScoped<IDeliveryNoteFacade, DeliveryNoteFacade>();
             services.AddScoped<IEmployeeInfoFacade, EmployeeInfoFacade>();
             services.AddScoped<IDoctorFacade, DoctorFacade>();
+            services.AddScoped<IInventoryTransferRequestFacade, InventoryTransferRequestFacade>();
             return services;
         }
     }
