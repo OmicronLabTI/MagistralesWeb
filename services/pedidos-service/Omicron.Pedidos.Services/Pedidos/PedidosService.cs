@@ -28,6 +28,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
+    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
 
@@ -54,6 +55,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IKafkaConnector kafkaConnector;
 
+        private readonly ISapServiceLayerAdapterService serviceLayerAdapterService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -66,7 +69,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="reporting"> The reporting service. </param>
         /// <param name="redisService">The redis Service.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector)
+        /// <param name="sapServiceLayerAdapterService">The sapServiceLayerAdapterService.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService sapServiceLayerAdapterService)
         {
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
@@ -77,6 +81,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.reportingService = reporting.ThrowIfNull(nameof(reporting));
             this.redis = redisService.ThrowIfNull(nameof(redisService));
             this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
+            this.serviceLayerAdapterService = sapServiceLayerAdapterService.ThrowIfNull(nameof(sapServiceLayerAdapterService));
         }
 
         /// <inheritdoc/>
@@ -273,7 +278,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 // Update in SAP
                 var payload = localProductionOrders.Select(x => new { OrderId = x.Productionorderid });
-                var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.FinishFabOrder);
+                var result = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.FinishFabOrder);
 
                 if (!result.Success)
                 {
@@ -469,7 +474,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 // Update in SAP
                 var payload = new List<object> { orderToFinish };
-                var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.FinishFabOrder);
+                var result = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.FinishFabOrder);
 
                 if (!result.Success)
                 {
