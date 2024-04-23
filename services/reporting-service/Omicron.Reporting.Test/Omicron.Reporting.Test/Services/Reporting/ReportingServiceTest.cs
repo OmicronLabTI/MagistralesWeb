@@ -22,7 +22,6 @@ namespace Omicron.Reporting.Test.Services.Request
     using Omicron.Reporting.Services.AzureServices;
     using Omicron.Reporting.Services.Clients;
     using Omicron.Reporting.Services.ReportBuilder.SuppliesWarehouse;
-    using Omicron.Reporting.Services.SapDiApi;
     using Omicron.Reporting.Services.ServiceLayerAdapter;
 
     /// <summary>
