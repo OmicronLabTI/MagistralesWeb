@@ -23,7 +23,6 @@ namespace Omicron.Reporting.Services
     using Omicron.Reporting.Services.Constants;
     using Omicron.Reporting.Services.ReportBuilder;
     using Omicron.Reporting.Services.ReportBuilder.SuppliesWarehouse;
-    using Omicron.Reporting.Services.SapDiApi;
     using Omicron.Reporting.Services.ServiceLayerAdapter;
     using Omicron.Reporting.Services.Utils;
 
