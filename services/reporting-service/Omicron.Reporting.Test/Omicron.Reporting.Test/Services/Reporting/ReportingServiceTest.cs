@@ -23,6 +23,7 @@ namespace Omicron.Reporting.Test.Services.Request
     using Omicron.Reporting.Services.Clients;
     using Omicron.Reporting.Services.ReportBuilder.SuppliesWarehouse;
     using Omicron.Reporting.Services.SapDiApi;
+    using Omicron.Reporting.Services.ServiceLayerAdapter;
 
     /// <summary>
     /// class for the test.
@@ -74,8 +75,8 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var mockDiApi = new Mock<ISapDiApi>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
+            var mockSapServiceLayerAdapter = new Mock<ISapServiceLayerAdapterService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockSapServiceLayerAdapter.Object);
 
             // act
             var result = await service.SendEmailForeignPackage(request);
@@ -139,8 +140,8 @@ namespace Omicron.Reporting.Test.Services.Request
                     .Returns(Task.FromResult(It.IsAny<BlobDownloadInfo>()));
             }
 
-            var mockDiApi = new Mock<ISapDiApi>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
+            var mockSapServiceLayerAdapter = new Mock<ISapServiceLayerAdapterService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockSapServiceLayerAdapter.Object);
 
             // act
             var result = await service.SendEmailLocalPackage(request);
@@ -203,8 +204,8 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var mockDiApi = new Mock<ISapDiApi>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
+            var mockSapServiceLayerAdapter = new Mock<ISapServiceLayerAdapterService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockSapServiceLayerAdapter.Object);
 
             // act
             var result = await service.SendEmailRejectedOrder(request);
@@ -283,8 +284,8 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var mockDiApi = new Mock<ISapDiApi>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
+            var mockSapServiceLayerAdapter = new Mock<ISapServiceLayerAdapterService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockSapServiceLayerAdapter.Object);
 
             // act
             var result = await service.SendEmailCancelDeliveryOrders(request);
@@ -329,8 +330,8 @@ namespace Omicron.Reporting.Test.Services.Request
             var mockEmail = new Mock<IOmicronMailClient>();
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var mockDiApi = new Mock<ISapDiApi>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
+            var mockSapServiceLayerAdapter = new Mock<ISapServiceLayerAdapterService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockSapServiceLayerAdapter.Object);
 
             // act
             var result = service.CreateRawMaterialRequestPdf(request, true);
@@ -374,8 +375,8 @@ namespace Omicron.Reporting.Test.Services.Request
             var mockEmail = new Mock<IOmicronMailClient>();
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var mockDiApi = new Mock<ISapDiApi>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
+            var mockSapServiceLayerAdapter = new Mock<ISapServiceLayerAdapterService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockSapServiceLayerAdapter.Object);
 
             // act
             var result = service.CreateRawMaterialRequestPdf(request, false);
@@ -434,7 +435,7 @@ namespace Omicron.Reporting.Test.Services.Request
                 OrderedProducts = rawMaterial,
             };
 
-            var resultDiApi = new List<TransferRequestResult>
+            var resultSapServiceLayerAdapter = new List<TransferRequestResult>
             {
                 new TransferRequestResult
                 {
@@ -468,15 +469,15 @@ namespace Omicron.Reporting.Test.Services.Request
                 .Setup(m => m.SendMail(It.IsAny<SmtpConfigModel>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, MemoryStream>>()))
                 .Returns(Task.FromResult(true));
 
-            var mockDiApi = new Mock<ISapDiApi>();
-            mockDiApi
-                .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultDiApi(resultDiApi)));
+            var mockSapServiceLayerAdapter = new Mock<ISapServiceLayerAdapterService>();
+            mockSapServiceLayerAdapter
+                .Setup(m => m.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultSapServiceLayerAdapter(resultSapServiceLayerAdapter)));
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
 
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockSapServiceLayerAdapter.Object);
 
             // act
             var result = await service.SubmitRawMaterialRequestPdf(request);
@@ -566,8 +567,8 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var mockDiApi = new Mock<ISapDiApi>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
+            var mockSapServiceLayerAdapter = new Mock<ISapServiceLayerAdapterService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockSapServiceLayerAdapter.Object);
 
             // act
             var result = await service.SubmitIncidentsExel(request);
@@ -613,8 +614,8 @@ namespace Omicron.Reporting.Test.Services.Request
 
             var mockConfig = new Mock<IConfiguration>();
             var mockAzure = new Mock<IAzureService>();
-            var mockDiApi = new Mock<ISapDiApi>();
-            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockDiApi.Object);
+            var mockSapServiceLayerAdapter = new Mock<ISapServiceLayerAdapterService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockSapServiceLayerAdapter.Object);
 
             // act
             var result = await service.SendEmails(listDoctor);
