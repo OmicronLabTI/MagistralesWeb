@@ -43,7 +43,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                         continue;
                     }
 
-                    if (productionOrder.ProductionOrderStatus.Equals(ServiceConstants.ProductionOrderReleased))
+                    if (!productionOrder.ProductionOrderStatus.Equals(ServiceConstants.ProductionOrderReleased))
                     {
                         results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderId));
                     }
@@ -52,7 +52,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     await this.ValidateRequiredQuantityForRetroactiveIssues(productionOrder);
                     await this.ValidateNewBatches(productionOrder.ItemNo, productionOrderConfig.Batches);
                     await this.CreateInventoryGenExit(productionOrder, productionOrderId);
-                    await this.CreateReceiptFromProductionOrderId(productionOrderId, productionOrderConfig, productionOrder);
+
+                    // actualizar para que obtenga los nuevos datos
+                    var productionOrderUpdated = await this.GetFromServiceLayer<ProductionOrderDto>(string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderId), $"La orden de produción {productionOrderId} no existe.");
+                    await this.CreateReceiptFromProductionOrderId(productionOrderId, productionOrderConfig, productionOrderUpdated);
+                    await this.CloseProductionOrder(productionOrderId, productionOrderUpdated);
                 }
                 catch (CustomServiceException ex)
                 {
@@ -66,6 +70,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 }
             }
 
+            if (!results.Any()) {
+                results.Add(0, "Ok");
+            }
+
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
@@ -76,10 +84,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             var separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
             closeConfiguration.Batches = closeConfiguration.Batches ?? new List<BatchesConfigurationDto>();
 
-            var product = await this.GetFromServiceLayer<ItemDto>(string.Format(ServiceQuerysConstants.QryProductById, productionOrder.ItemNo), $"{string.Format(ServiceConstants.FailGetProduct, productionOrder.ItemNo)}");
             var quantityToReceipt = productionOrder.PlannedQuantity;
             receiptProduction.DocumentLines = new List<InventoryGenEntryLineDto>();
             var line = new InventoryGenEntryLineDto();
+            line.BatchNumbers = new List<BatchInventoryGenEntryDto>();
+
+            var product = await this.GetFromServiceLayer<ItemDto>(string.Format(ServiceQuerysConstants.QryProductById, productionOrder.ItemNo), $"{string.Format(ServiceConstants.FailGetProduct, productionOrder.ItemNo)}");
             if (product.ManageBatchNumbers.Equals("tYES"))
             {
                 this.logger.Information($"Log batches quantity with decimal separator {separator}.");
@@ -103,6 +113,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             line.TransactionType = "botrntComplete";
             line.WarehouseCode = productionOrder.Warehouse;
             receiptProduction.DocumentLines.Add(line);
+
             await this.SaveInventoryGenEntry(receiptProduction, productionOrderId);
         }
 
@@ -174,10 +185,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             var response = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryPostInventoryGenExists, JsonConvert.SerializeObject(inventoryGen));
             if (!response.Success)
             {
+                this.logger.Error($"An error has ocurred on create oInventoryGenExit {response.Code} - {response.UserError}.");
                 throw new CustomServiceException($"{string.Format(ServiceConstants.FailReasonNotGetExitCreated, productionOrderId)} - {response.UserError}");
             }
-
-            this.logger.Error($"An error has ocurred on create oInventoryGenExit {response.Code} - {response.UserError}.");
         }
 
         private async Task ValidateRequiredQuantityForRetroactiveIssues(ProductionOrderDto productionOrder)
@@ -224,7 +234,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
             foreach (var batche in batches)
             {
-                var batchDetail = await this.GetFromServiceLayer<BatchNumberResponseDto>(string.Format(ServiceQuerysConstants.QryProductById, itemCode), $"{string.Format(ServiceConstants.FailGetProduct, itemCode)}");
+                var batchDetail = await this.GetFromServiceLayer<BatchNumberResponseDto>(string.Format(ServiceQuerysConstants.QryBatchNumbers, itemCode, batche.BatchCode), $"{string.Format(ServiceConstants.FailGetProduct, itemCode)}");
                 if (batchDetail.Results.Count != 0)
                 {
                     throw new CustomServiceException(string.Format(ServiceConstants.FailReasonBatchAlreadyExists, batche.BatchCode, itemCode));

@@ -39,21 +39,21 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// </summary>
         /// <value>ProductionOrderOriginNumber.</value>
         [JsonProperty("ProductionOrderOriginNumber")]
-        public int ProductionOrderOriginNumber { get; set; }
+        public int? ProductionOrderOriginNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the ProductionOrderOriginEntry.
         /// </summary>
         /// <value>ProductionOrderOriginEntry.</value>
         [JsonProperty("ProductionOrderOriginEntry")]
-        public int ProductionOrderOriginEntry { get; set; }
+        public int? ProductionOrderOriginEntry { get; set; }
 
         /// <summary>
         /// Gets or sets the TransactionNumber.
         /// </summary>
         /// <value>TransactionNumber.</value>
         [JsonProperty("TransactionNumber")]
-        public int TransactionNumber { get; set; }
+        public int? TransactionNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the Priority.
