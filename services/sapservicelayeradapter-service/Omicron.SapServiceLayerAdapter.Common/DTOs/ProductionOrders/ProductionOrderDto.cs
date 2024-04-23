@@ -60,21 +60,21 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// </summary>
         /// <value>Priority.</value>
         [JsonProperty("Priority")]
-        public int Priority { get; set; }
+        public int? Priority { get; set; }
 
         /// <summary>
         /// Gets or sets the UoMEntry.
         /// </summary>
         /// <value>UoMEntry.</value>
         [JsonProperty("UoMEntry")]
-        public int UoMEntry { get; set; }
+        public int? UoMEntry { get; set; }
 
         /// <summary>
         /// Gets or sets the UserSignature.
         /// </summary>
         /// <value>UserSignature.</value>
         [JsonProperty("UserSignature")]
-        public int UserSignature { get; set; }
+        public int? UserSignature { get; set; }
 
         /// <summary>
         /// Gets or sets the PlannedQuantity.

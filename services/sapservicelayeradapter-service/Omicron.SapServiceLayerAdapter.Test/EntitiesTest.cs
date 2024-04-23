@@ -78,6 +78,17 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new InventoryTransferRequestsDto(),
             new InventoryTransferRequestsResponseDto(),
             new StockTransferLinesDto(),
+            new BatchNumberDetailDto(),
+            new BatchNumberResponseDto(),
+            new BatchInventoryGenEntryDto(),
+            new InventoryGenEntryDto(),
+            new InventoryGenEntryLineDto(),
+            new ItemWarehouseInfoDto(),
+            new BatchesConfigurationDto(),
+            new CloseProductionOrderDto(),
+            new ProductionOrderDto(),
+            new ProductionOrderItemBatchDto(),
+            new ProductionOrderLineDto(),
         };
 
         /// <summary>

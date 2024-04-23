@@ -53,7 +53,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                     await this.ValidateNewBatches(productionOrder.ItemNo, productionOrderConfig.Batches);
                     await this.CreateInventoryGenExit(productionOrder, productionOrderId);
 
-                    // actualizar para que obtenga los nuevos datos
                     var productionOrderUpdated = await this.GetFromServiceLayer<ProductionOrderDto>(string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderId), $"La orden de produción {productionOrderId} no existe.");
                     await this.CreateReceiptFromProductionOrderId(productionOrderId, productionOrderConfig, productionOrderUpdated);
                     await this.CloseProductionOrder(productionOrderId, productionOrderUpdated);
@@ -70,7 +69,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 }
             }
 
-            if (!results.Any()) {
+            if (!results.Any())
+            {
                 results.Add(0, "Ok");
             }
 
