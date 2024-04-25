@@ -11,7 +11,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
     /// <summary>
     /// the class ProductionOrderDto.
     /// </summary>
-    public class ProductionOrderDto
+    public class ProductionOrderDto : BaseProductionOrder
     {
         /// <summary>
         /// Gets or sets the AbsoluteEntry.
@@ -77,13 +77,6 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         public int? UserSignature { get; set; }
 
         /// <summary>
-        /// Gets or sets the PlannedQuantity.
-        /// </summary>
-        /// <value>PlannedQuantity.</value>
-        [JsonProperty("PlannedQuantity")]
-        public double PlannedQuantity { get; set; }
-
-        /// <summary>
         /// Gets or sets the CompletedQuantity.
         /// </summary>
         /// <value>CompletedQuantity.</value>
@@ -96,13 +89,6 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// <value>RejectedQuantity.</value>
         [JsonProperty("RejectedQuantity")]
         public double RejectedQuantity { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ItemNo.
-        /// </summary>
-        /// <value>ItemNo.</value>
-        [JsonProperty("ItemNo")]
-        public string ItemNo { get; set; }
 
         /// <summary>
         /// Gets or sets the ProductionOrderStatus.
@@ -161,13 +147,6 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         public string Printed { get; set; }
 
         /// <summary>
-        /// Gets or sets the ProductDescription.
-        /// </summary>
-        /// <value>ProductDescription.</value>
-        [JsonProperty("ProductDescription")]
-        public string ProductDescription { get; set; }
-
-        /// <summary>
         /// Gets or sets the RoutingDateCalculation.
         /// </summary>
         /// <value>RoutingDateCalculation.</value>
@@ -189,25 +168,11 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         public string PostingDate { get; set; }
 
         /// <summary>
-        /// Gets or sets the DueDate.
-        /// </summary>
-        /// <value>DueDate.</value>
-        [JsonProperty("DueDate")]
-        public DateTime DueDate { get; set; }
-
-        /// <summary>
         /// Gets or sets the CreationDate.
         /// </summary>
         /// <value>CreationDate.</value>
         [JsonProperty("CreationDate")]
         public string CreationDate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the StartDate.
-        /// </summary>
-        /// <value>StartDate.</value>
-        [JsonProperty("StartDate")]
-        public string StartDate { get; set; }
 
         /// <summary>
         /// Gets or sets the ClosingDate.
