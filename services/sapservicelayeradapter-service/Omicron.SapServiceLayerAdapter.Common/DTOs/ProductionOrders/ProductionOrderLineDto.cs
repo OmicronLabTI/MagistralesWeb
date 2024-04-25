@@ -25,28 +25,28 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// </summary>
         /// <value>LineNumber.</value>
         [JsonProperty("LineNumber")]
-        public int LineNumber { get; set; }
+        public int? LineNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the VisualOrder.
         /// </summary>
         /// <value>VisualOrder.</value>
         [JsonProperty("VisualOrder")]
-        public int VisualOrder { get; set; }
+        public int? VisualOrder { get; set; }
 
         /// <summary>
         /// Gets or sets the UoMEntry.
         /// </summary>
         /// <value>UoMEntry.</value>
         [JsonProperty("UoMEntry")]
-        public int UoMEntry { get; set; }
+        public int? UoMEntry { get; set; }
 
         /// <summary>
         /// Gets or sets the UoMCode.
         /// </summary>
         /// <value>UoMCode.</value>
         [JsonProperty("UoMCode")]
-        public int UoMCode { get; set; }
+        public int? UoMCode { get; set; }
 
         /// <summary>
         /// Gets or sets the BaseQuantity.
@@ -103,13 +103,6 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// <value>Warehouse.</value>
         [JsonProperty("Warehouse")]
         public string Warehouse { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ItemType.
-        /// </summary>
-        /// <value>ItemType.</value>
-        [JsonProperty("ItemType")]
-        public string ItemType { get; set; }
 
         /// <summary>
         /// Gets or sets the ItemName.

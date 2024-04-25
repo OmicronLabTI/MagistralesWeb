@@ -54,5 +54,22 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             Assert.IsNull(response.UserError);
             Assert.AreEqual(200, response.Code);
         }
+
+        /// <summary>
+        /// Test for update formula.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task UpdateFormula()
+        {
+            // Act
+            var response = await this.productionOrderfacade.UpdateFormula(new UpdateFormulaDto());
+
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
     }
 }

@@ -141,6 +141,122 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             Assert.AreEqual(8, dictResult.Count);
         }
 
+        /// <summary>
+        /// validate update formula.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        public async Task UpdateFormulaTest()
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            mockServiceLayerClient
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, GetProductionOrder("boposReleased", 0, 0))));
+
+            mockServiceLayerClient
+                .Setup(x => x.PutAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, null)));
+
+            var deleteComponent = new CompleteDetalleFormulaDto()
+            {
+                Action = "delete",
+                ProductId = "EM-123",
+                BaseQuantity = 1,
+                RequiredQuantity = 1,
+                Warehouse = "MN",
+            };
+            var newComponent = new CompleteDetalleFormulaDto()
+            {
+                Action = "insert",
+                ProductId = "XML-1234",
+                BaseQuantity = 10,
+                RequiredQuantity = 10,
+                Warehouse = "MN",
+            };
+            var editedComponent = new CompleteDetalleFormulaDto()
+            {
+                Action = "edit",
+                ProductId = "EN-123",
+                BaseQuantity = 10,
+                RequiredQuantity = 10,
+                Warehouse = "MN",
+            };
+
+            var request = new UpdateFormulaDto()
+            {
+                FabOrderId = 1,
+                FechaFin = DateTime.Now,
+                PlannedQuantity = 1,
+                Warehouse = "MN",
+                Components = new List<CompleteDetalleFormulaDto>() { deleteComponent, newComponent, editedComponent },
+            };
+            var result = await service.UpdateFormula(request);
+
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(200, result.Code);
+        }
+
+        /// <summary>
+        /// validate update formula.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        public async Task UpdateFormulaWithErrorTest()
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            mockServiceLayerClient
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, GetProductionOrder("boposReleased", 0, 0))));
+
+            mockServiceLayerClient
+                .Setup(x => x.PutAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(false, null)));
+
+            var deleteComponent = new CompleteDetalleFormulaDto()
+            {
+                Action = "delete",
+                ProductId = "EM-123",
+                BaseQuantity = 1,
+                RequiredQuantity = 1,
+                Warehouse = "MN",
+            };
+            var newComponent = new CompleteDetalleFormulaDto()
+            {
+                Action = "insert",
+                ProductId = "XML-1234",
+                BaseQuantity = 10,
+                RequiredQuantity = 10,
+                Warehouse = "MN",
+            };
+            var editedComponent = new CompleteDetalleFormulaDto()
+            {
+                Action = "edit",
+                ProductId = "EN-123",
+                BaseQuantity = 10,
+                RequiredQuantity = 10,
+                Warehouse = "MN",
+            };
+
+            var request = new UpdateFormulaDto()
+            {
+                FabOrderId = 1,
+                FechaFin = DateTime.Now,
+                PlannedQuantity = 1,
+                Warehouse = "MN",
+                Components = new List<CompleteDetalleFormulaDto>() { deleteComponent, newComponent, editedComponent },
+            };
+            var result = await service.UpdateFormula(request);
+
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(400, result.Code);
+        }
+
         private static CloseProductionOrderDto GetCloseProductionOrderDto(int orderId, bool batches)
         {
             var batch = new BatchesConfigurationDto()

@@ -324,6 +324,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string ErrorTransferRequest = "ErrorTransferRequest";
 
         /// <summary>
+        /// error while updating.
+        /// </summary>
+        public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
+
+        /// <summary>
+        /// the order was not found.
+        /// </summary>
+        public const string OrderNotFound = "OrderNotFound";
+
+        /// <summary>
+        /// the value to delete the conmponent.
+        /// </summary>
+        public const string DeleteComponent = "delete";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
