@@ -35,5 +35,18 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
         [Route("/finishProducionOrders")]
         public async Task<IActionResult> FinishOrder([FromBody] List<CloseProductionOrderDto> productionOrdes)
             => this.Ok(await this.productionOrderFacade.FinishOrder(productionOrdes));
+
+        /// <summary>
+        /// updates a fabrication order.
+        /// </summary>
+        /// <param name="updateFormula">the list of fabrication orders.</param>
+        /// <returns>the result.</returns>
+        [HttpPost]
+        [Route("/updateFormula")]
+        public async Task<IActionResult> UpdateFormula([FromBody] UpdateFormulaDto updateFormula)
+        {
+            var result = await this.productionOrderFacade.UpdateFormula(updateFormula);
+            return this.Ok(result);
+        }
     }
 }

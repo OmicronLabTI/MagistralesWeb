@@ -77,6 +77,77 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             return ServiceUtils.CreateResult(true, 200, null, results, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> UpdateFormula(UpdateFormulaDto updateFormula)
+        {
+            var dictResult = new Dictionary<string, string>();
+            try
+            {
+                var productionOrder = await this.GetFromServiceLayer<ProductionOrderDto>(
+                    string.Format(ServiceQuerysConstants.QryProductionOrderById, updateFormula.FabOrderId),
+                    $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}");
+
+                productionOrder.DueDate = updateFormula.FechaFin;
+                productionOrder.PlannedQuantity = updateFormula.PlannedQuantity;
+                productionOrder.Warehouse = updateFormula.Warehouse;
+
+                var deleteItems = updateFormula.Components.Where(x => x.Action.Equals(ServiceConstants.DeleteComponent)).ToList();
+
+                productionOrder.ProductionOrderLines = AddComponents(productionOrder.ProductionOrderLines, updateFormula.Components, updateFormula.FabOrderId);
+                productionOrder.ProductionOrderLines = UpdateComponents(productionOrder.ProductionOrderLines, updateFormula.Components);
+                productionOrder.ProductionOrderLines = DeleteComponents(productionOrder.ProductionOrderLines, deleteItems);
+
+                await this.SaveChanges(productionOrder, updateFormula.FabOrderId);
+            }
+            catch (Exception ex)
+            {
+                dictResult.Add($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", ex.Message);
+                return ServiceUtils.CreateResult(false, 400, null, dictResult, null);
+            }
+
+            dictResult.Add($"{updateFormula.FabOrderId}-{updateFormula.FabOrderId}", "Ok");
+            return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
+        private static List<ProductionOrderLineDto> DeleteComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> componentsToDelete)
+        {
+            return completeList.Where(component => !componentsToDelete.Any(x => x.ProductId.Equals(component.ItemNo))).ToList();
+        }
+
+        private static List<ProductionOrderLineDto> UpdateComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> componentsToUpdate)
+        {
+            completeList.ForEach(itemToUpdate =>
+            {
+                var updatedData = componentsToUpdate.FirstOrDefault(x => x.ProductId.Equals(itemToUpdate.ItemNo));
+                if (updatedData != null)
+                {
+                    itemToUpdate.BaseQuantity = (double)updatedData.BaseQuantity;
+                    itemToUpdate.PlannedQuantity = (double)updatedData.RequiredQuantity;
+                    itemToUpdate.Warehouse = updatedData.Warehouse;
+                }
+            });
+
+            return completeList;
+        }
+
+        private static List<ProductionOrderLineDto> AddComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> components, int orderId)
+        {
+            var componentsToAdd = components.Where(x => !completeList.Any(c => c.ItemNo.Equals(x.ProductId))).ToList();
+            foreach (var component in componentsToAdd)
+            {
+                var newComponent = new ProductionOrderLineDto();
+                newComponent.ItemNo = component.ProductId;
+                newComponent.Warehouse = component.Warehouse;
+                newComponent.BaseQuantity = (double)component.BaseQuantity;
+                newComponent.PlannedQuantity = (double)component.RequiredQuantity;
+                newComponent.DocumentAbsoluteEntry = orderId;
+                newComponent.BatchNumbers = new List<ProductionOrderItemBatchDto>();
+                completeList.Add(newComponent);
+            }
+
+            return completeList;
+        }
+
         private async Task CreateReceiptFromProductionOrderId(int productionOrderId, CloseProductionOrderDto closeConfiguration, ProductionOrderDto productionOrder)
         {
             this.logger.Information($"Create oInventoryGenEntry for {productionOrderId}");
@@ -158,7 +229,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 var line = new InventoryGenExitLineDto();
                 line.BaseType = 202;
                 line.BaseEntry = productionOrderId;
-                line.BaseLine = productOrderLine.LineNumber;
+                line.BaseLine = productOrderLine.LineNumber ?? 0;
                 line.Quantity = productOrderLine.PlannedQuantity;
                 line.WarehouseCode = productOrderLine.Warehouse;
                 line.BatchNumbers = this.GetBatchNumbers(productOrderLine);
@@ -251,6 +322,17 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             }
 
             return JsonConvert.DeserializeObject<T>(response.Response.ToString());
+        }
+
+        private async Task SaveChanges(ProductionOrderDto productionOrder, int id)
+        {
+            var body = JsonConvert.SerializeObject(productionOrder);
+            var result = await this.serviceLayerClient.PutAsync(string.Format(ServiceQuerysConstants.QryProductionOrderById, id), body);
+
+            if (!result.Success)
+            {
+                throw new CustomServiceException(result.UserError);
+            }
         }
     }
 }

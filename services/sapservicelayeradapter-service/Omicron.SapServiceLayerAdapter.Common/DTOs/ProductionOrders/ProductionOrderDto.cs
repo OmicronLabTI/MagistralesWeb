@@ -193,7 +193,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// </summary>
         /// <value>DueDate.</value>
         [JsonProperty("DueDate")]
-        public string DueDate { get; set; }
+        public DateTime DueDate { get; set; }
 
         /// <summary>
         /// Gets or sets the CreationDate.

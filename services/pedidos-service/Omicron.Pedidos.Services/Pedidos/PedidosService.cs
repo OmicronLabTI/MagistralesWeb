@@ -146,7 +146,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula)
         {
-            var resultSapApi = await this.sapDiApi.PostToSapDiApi(updateFormula, ServiceConstants.UpdateFormula);
+            var resultSapApi = await this.serviceLayerAdapterService.PostAsync(updateFormula, ServiceConstants.UpdateFormula);
             if (ServiceShared.CalculateAnd(resultSapApi.Success, !string.IsNullOrEmpty(updateFormula.Comments)))
             {
                 await this.UpdateFabOrderComments(updateFormula.FabOrderId, updateFormula.Comments);
