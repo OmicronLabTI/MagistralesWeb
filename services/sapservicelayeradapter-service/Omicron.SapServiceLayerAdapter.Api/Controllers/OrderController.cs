@@ -6,9 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices;
-using Omicron.SapServiceLayerAdapter.Common.DTOs.Orders;
-
 namespace Omicron.SapServiceLayerAdapter.Api.Controllers
 {
     /// <summary>
@@ -46,10 +43,23 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
             => this.Ok(await this.ordersFacade.GetLastGeneratedOrder());
 
         /// <summary>
+        /// Update the profile the doctor profile info.
+        /// </summary>
+        /// <param name="saleOrderDto">Doctor profile info.</param>
+        /// <returns>Operation result.</returns>
+        [HttpPost]
+        [Route("/create/saleorder")]
+        public async Task<IActionResult> CreateSaleOrder([FromBody] CreateSaleOrderDto saleOrderDto)
+        {
+            var result = await this.ordersFacade.CreateSaleOrder(saleOrderDto);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Method Ping.
         /// </summary>
         /// <returns>Pong.</returns>
-        [Route("ping")]
+        [Route("/ping")]
         [HttpGet]
         public IActionResult Ping()
         {

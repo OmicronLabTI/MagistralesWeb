@@ -41,7 +41,4 @@
   <ItemGroup>
     <None Remove="Services\DeliveryNotes\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\DeliveryNotes\" />
-  </ItemGroup>
 </Project>

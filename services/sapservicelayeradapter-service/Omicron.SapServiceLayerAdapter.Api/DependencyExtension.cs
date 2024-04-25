@@ -6,10 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.SapServiceLayerAdapter.Persistence.Context;
-using Omicron.SapServiceLayerAdapter.Services.DeliveryNotes;
-using Steeltoe.Extensions.Configuration;
-
 namespace Omicron.SapServiceLayerAdapter.Api
 {
     /// <summary>
@@ -17,8 +13,6 @@ namespace Omicron.SapServiceLayerAdapter.Api
     /// </summary>
     public static class DependencyExtension
     {
-        private const string AXITYURL = "https://www.axity.com/";
-
         /// <summary>
         /// Method to register Services.
         /// </summary>
@@ -29,6 +23,7 @@ namespace Omicron.SapServiceLayerAdapter.Api
             services.AddTransient<IServiceLayerClient, ServiceLayerClient>();
             services.AddTransient<IServiceLayerAuth, ServiceLayerAuth>();
             services.AddTransient<IDeliveryNoteService, DeliveryNoteService>();
+            services.AddTransient<ISapFileService, SapFileService>();
             return services;
         }
 
@@ -86,6 +81,12 @@ namespace Omicron.SapServiceLayerAdapter.Api
             })
             .AddHttpMessageHandler<AddB1SessionCookieMiddleware>()
             .AddHttpMessageHandler<RefreshSessionIdMiddleware>();
+
+            webApplication.Services.AddHttpClient("sapfileService", c =>
+            {
+                c.BaseAddress = new Uri(webApplication.Configuration["SapFileUrl"]);
+            })
+            .AddTypedClient<ISapFileService, SapFileService>();
 
             webApplication.Services.AddKafka(webApplication.Configuration, Log.Logger);
 

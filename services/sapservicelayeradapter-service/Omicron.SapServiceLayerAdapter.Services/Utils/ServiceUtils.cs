@@ -8,11 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Services.Utils
 {
-    using Newtonsoft.Json;
-    using Omicron.SapServiceLayerAdapter.Common.DTOs.Responses;
-    using Omicron.SapServiceLayerAdapter.Model;
-    using Serilog;
-
     /// <summary>
     /// Response utils.
     /// </summary>
@@ -121,6 +116,75 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
         public static bool CalculateAnd(params bool[] list)
         {
             return list.All(element => element);
+        }
+
+        /// <summary>
+        /// Serializes an object of type T with custom property mappings.
+        /// </summary>
+        /// <typeparam name="T">The type of object to serialize.</typeparam>
+        /// <param name="propertyMappings">The property mappings.</param>
+        /// <param name="objectToSerialize">The object to serialize.</param>
+        /// <returns>The serialized JSON string.</returns>
+        public static string SerializeWithCustomProperties<T>(Dictionary<string, string> propertyMappings, T objectToSerialize)
+        {
+            var converter = new CustomJsonConverter(new Dictionary<Type, Dictionary<string, string>> { { typeof(T), propertyMappings } });
+            var settings = new JsonSerializerSettings { Converters = { converter } };
+            return JsonConvert.SerializeObject(objectToSerialize, settings);
+        }
+
+        /// <summary>
+        /// Deserializes a JSON string with custom property mappings into an object of type T.
+        /// </summary>
+        /// <typeparam name="T">The type of object to deserialize.</typeparam>
+        /// <param name="propertyMappings">The property mappings.</param>
+        /// <param name="json">The JSON string to deserialize.</param>
+        /// <returns>The deserialized object of type T.</returns>
+        public static T DeserializeWithCustomProperties<T>(Dictionary<string, string> propertyMappings, string json)
+        {
+            var converter = new CustomJsonConverter(new Dictionary<Type, Dictionary<string, string>> { { typeof(T), propertyMappings } });
+            var settings = new JsonSerializerSettings { Converters = { converter } };
+            return JsonConvert.DeserializeObject<T>(json, settings);
+        }
+
+        /// <summary>
+        /// Gets the response from a http response.
+        /// </summary>
+        /// <param name="response">the response.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="serviceCalled">Service called name.</param>
+        /// <param name="genericError">Generic Error.</param>
+        /// <returns>the data.</returns>
+        public static async Task<ResultModel> GetResponse(HttpResponseMessage response, ILogger logger, string serviceCalled, string genericError)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            if ((int)response.StatusCode >= 300)
+            {
+                logger.Error($"SapServiceLayerdapter-{serviceCalled}-{genericError}-{jsonString}");
+                throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
+            }
+
+            var result = JsonConvert.DeserializeObject<ResultModel>(await response.Content.ReadAsStringAsync());
+            if (!result.Success)
+            {
+                logger.Error($"SapServiceLayerdapter-{serviceCalled}-{result.UserError}-{result.ExceptionMessage}-{jsonString}");
+                throw new CustomServiceException(result.UserError, System.Net.HttpStatusCode.NotFound);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Calculate value from validation.
+        /// </summary>
+        /// <typeparam name="T">the type.</typeparam>
+        /// <param name="validation">Validation.</param>
+        /// <param name="value">True value.</param>
+        /// <param name="defaultValue">False value.</param>
+        /// <returns>Result.</returns>
+        public static T CalculateTernary<T>(bool validation, T value, T defaultValue)
+        {
+            return validation ? value : defaultValue;
         }
     }
 }

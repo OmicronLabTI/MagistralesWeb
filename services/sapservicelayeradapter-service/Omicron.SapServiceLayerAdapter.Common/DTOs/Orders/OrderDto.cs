@@ -11,7 +11,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
     /// <summary>
     /// The class for the OrderDto.
     /// </summary>
-    public class OrderDto
+    public class OrderDto : BaseOrderDto
     {
         /// <summary>
         /// Gets or sets the Document Entry.
@@ -32,7 +32,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>Document Date.</value>
         [JsonProperty("DocDate")]
-        public string DocumentDate { get; set; }
+        public DateTime DocumentDate { get; set; }
 
         /// <summary>
         /// Gets or sets the Card Code.
@@ -102,7 +102,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>Due Date.</value>
         [JsonProperty("DocDueDate")]
-        public string DueDate { get; set; }
+        public DateTime DueDate { get; set; }
 
         /// <summary>
         /// Gets or sets the Contact Person.
@@ -179,6 +179,6 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>TypeOrder.</value>
         [JsonProperty("U_TipoPedido")]
-        public string? TypeOrder { get; set; }
+        public string TypeOrder { get; set; }
     }
 }

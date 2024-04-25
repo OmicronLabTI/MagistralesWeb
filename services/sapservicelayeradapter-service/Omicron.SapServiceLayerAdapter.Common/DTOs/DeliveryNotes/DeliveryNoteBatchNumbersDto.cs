@@ -8,8 +8,6 @@
 
 namespace Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes
 {
-    using Newtonsoft.Json;
-
     /// <summary>
     /// The class for the DeliveryNoteBatchNumbersDto.
     /// </summary>

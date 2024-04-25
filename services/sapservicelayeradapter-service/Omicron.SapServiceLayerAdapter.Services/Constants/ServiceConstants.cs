@@ -14,6 +14,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// Custom property cfdi from environment.
+        /// </summary>
+        public const string CustomPropertyNameCFDI = "CustomPropertiesName:CFDI";
+
+        /// <summary>
+        /// Custom property cfdi from environment.
+        /// </summary>
+        public const string OrdersCFDIProperty = "U_CFDI_Provisional";
+
+        /// <summary>
         /// The service layer user env.
         /// </summary>
         public const string SAPServiceLayerUserEnvName = "SAPServiceLayer:User";
@@ -192,6 +202,56 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Cancel Delivery Error To Cancel Order.
         /// </summary>
         public const string CancelDeliveryErrorToCancelOrder = "The order: {0} was tried to cancel. {1}";
+
+        /// <summary>
+        /// Sap Files Save Prescription To Server Url.
+        /// </summary>
+        public const string SavePrescriptionToServer = "save/prescriptiontoserver";
+
+        /// <summary>
+        /// Invalid adviser id message.
+        /// </summary>
+        public const string InvalidAdviserId = "El identificador del asesor no es valido";
+
+        /// <summary>
+        /// Doctor not found.
+        /// </summary>
+        public const string DoctorNotFound = "El doctor no se encontró en SAP";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionUpdate = "u";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionInsert = "i";
+
+        /// <summary>
+        /// the total values.
+        /// </summary>
+        public const string ActionDelete = "d";
+
+        /// <summary>
+        /// the Delivery Address type.
+        /// </summary>
+        public const string DeliveryAddress = "bo_ShipTo";
+
+        /// <summary>
+        /// the Invoice Address type.
+        /// </summary>
+        public const string InvoiceAddress = "bo_BillTo";
+
+        /// <summary>
+        /// Get the address bill type.
+        /// </summary>
+        public const string AddresBillType = "B";
+
+        /// <summary>
+        /// Get the address ship type.
+        /// </summary>
+        public const string AddresShipType = "S";
 
         /// <summary>
         /// Gets the status of the order.

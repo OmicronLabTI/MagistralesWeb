@@ -6,9 +6,6 @@
 // </copyright>
 // </summary>
 
-using System.Linq;
-using Azure;
-
 namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
 {
     /// <summary>

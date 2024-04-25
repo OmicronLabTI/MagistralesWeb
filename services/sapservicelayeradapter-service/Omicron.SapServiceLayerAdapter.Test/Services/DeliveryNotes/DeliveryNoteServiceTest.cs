@@ -13,7 +13,6 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
     /// </summary>
     public class DeliveryNoteServiceTest : BaseTest
     {
-        private IServiceLayerClient serviceLayerClient;
         private Mock<ILogger> mockLogger;
         private IDeliveryNoteService deliveryNoteService;
 
@@ -65,7 +64,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
 
             var result = await service.CreateDelivery(createDelivery);
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(result.Code, 200);
+            Assert.AreEqual(200, result.Code);
         }
 
         /// <summary>
@@ -193,7 +192,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
 
             var result = await service.CreateDelivery(createDelivery);
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(result.Code, 200);
+            Assert.AreEqual(200, result.Code);
         }
 
         /// <summary>
@@ -233,7 +232,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
 
             var result = await service.CreateDeliveryPartial(createDelivery);
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(result.Code, 200);
+            Assert.AreEqual(200, result.Code);
         }
 
         /// <summary>
@@ -361,7 +360,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
 
             var result = await service.CreateDeliveryPartial(createDelivery);
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(result.Code, 200);
+            Assert.AreEqual(200, result.Code);
         }
 
         /// <summary>
@@ -398,14 +397,14 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
                 DeliveryOrderType = "MX",
             };
 
-            var responseDeliveryNote = this.GetGenericResponseModel(400, isResponseDeliveryNoteSuccess, mockDeliveryNoteResponse, userError, null, null);
+            var responseDeliveryNote = GetGenericResponseModel(400, isResponseDeliveryNoteSuccess, mockDeliveryNoteResponse, userError, null, null);
             mockServiceLayerClient
                 .Setup(sl => sl.GetAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(responseDeliveryNote));
 
-            var responseCancellationDocument = this.GetGenericResponseModel(400, isResponseCancellationDocumentSuccess, null, userError, null, null);
-            var responseStockTransfer = this.GetGenericResponseModel(400, isStockTransferSuccess, null, userError, null, null);
-            var responseOrderCancel = this.GetGenericResponseModel(400, isCancelOrderSuccess, null, userError, null, null);
+            var responseCancellationDocument = GetGenericResponseModel(400, isResponseCancellationDocumentSuccess, null, userError, null, null);
+            var responseStockTransfer = GetGenericResponseModel(400, isStockTransferSuccess, null, userError, null, null);
+            var responseOrderCancel = GetGenericResponseModel(400, isCancelOrderSuccess, null, userError, null, null);
 
             mockServiceLayerClient
                 .SetupSequence(sl => sl.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
@@ -508,7 +507,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
 
             var result = await service.CreateDeliveryBatch(createDelivery);
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(result.Code, 200);
+            Assert.AreEqual(200, result.Code);
         }
 
         /// <summary>
@@ -636,7 +635,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
 
             var result = await service.CreateDeliveryBatch(createDelivery);
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(result.Code, 200);
+            Assert.AreEqual(200, result.Code);
         }
     }
 }

@@ -25,11 +25,11 @@ jobs:
         working-directory: deploy/prod
         run: kubectl apply -f deploy_prod.yaml --context omicron-aks      
 
-      - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@master
-        if: ${{ always() }}
-        with:
-          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
+      # - name: Microsoft Teams Notification
+      #   uses: skitionek/notify-microsoft-teams@master
+      #   if: ${{ always() }}
+      #   with:
+      #     webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+      #     needs: ${{ toJson(needs) }}
+      #     job: ${{ toJson(job) }}
+      #     steps: ${{ toJson(steps) }}

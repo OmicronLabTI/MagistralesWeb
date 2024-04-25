@@ -6,7 +6,6 @@
 // </copyright>
 // </summary>
 
-
 namespace Omicron.SapServiceLayerAdapter.Facade.Orders.Impl
 {
     /// <summary>
@@ -35,5 +34,9 @@ namespace Omicron.SapServiceLayerAdapter.Facade.Orders.Impl
         /// <inheritdoc/>
         public async Task<ResultDto> GetLastGeneratedOrder()
             => this.mapper.Map<ResultDto>(await this.ordersService.GetLastGeneratedOrder());
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CreateSaleOrder(CreateSaleOrderDto saleOrderDto)
+            => this.mapper.Map<ResultDto>(await this.ordersService.CreateSaleOrder(saleOrderDto));
     }
 }

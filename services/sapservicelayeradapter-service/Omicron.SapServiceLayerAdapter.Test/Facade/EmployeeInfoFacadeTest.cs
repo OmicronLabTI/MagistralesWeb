@@ -1,0 +1,72 @@
+﻿// <summary>
+// <copyright file="EmployeeInfoFacadeTest.cs" company="Axity">
+// This source code is Copyright Axity and MAY NOT be copied, reproduced,
+// published, distributed or transmitted to or stored in any manner without prior
+// written consent from Axity (www.axity.com).
+// </copyright>
+// </summary>
+
+namespace Omicron.SapServiceLayerAdapter.Test.Facade
+{
+    /// <summary>
+    /// Class ProductValidationsFacadeTest.
+    /// </summary>
+    [TestFixture]
+    public class EmployeeInfoFacadeTest
+    {
+        private IMapper mapper;
+
+        private EmployeeInfoFacade employeeFacade;
+
+        /// <summary>
+        /// The init.
+        /// </summary>
+        [OneTimeSetUp]
+        public void Init()
+        {
+            var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
+            this.mapper = mapperConfiguration.CreateMapper();
+            var mockEmployeeInfoService = new Mock<IEmployeeInfoService>();
+
+            var resultDto = new ResultModel()
+            {
+                Code = 200,
+                Success = true,
+                Response = "response",
+            };
+
+            mockEmployeeInfoService.SetReturnsDefault(Task.FromResult(resultDto));
+            this.employeeFacade = new EmployeeInfoFacade(this.mapper, mockEmployeeInfoService.Object);
+        }
+
+        /// <summary>
+        /// Test for selecting all models.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task UpdateAdviserProfileInfo()
+        {
+            // Arrange
+            var adviserProfileInfo = new AdviserProfileInfoDto();
+
+            // Act
+            var response = await this.employeeFacade.UpdateAdviserProfileInfo(adviserProfileInfo);
+
+            // Assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Assert response.
+        /// </summary>
+        /// <param name="response">Response to validate.</param>
+        public void AssertResponse(ResultDto response)
+        {
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+    }
+}

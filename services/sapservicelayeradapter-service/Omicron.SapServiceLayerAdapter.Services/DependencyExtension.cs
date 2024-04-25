@@ -40,6 +40,9 @@ namespace Omicron.SapServiceLayerAdapter.Services
             services.AddScoped<IServiceLayerAuth, ServiceLayerAuth>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
+            services.AddScoped<ISapFileService, SapFileService>();
+            services.AddScoped<IEmployeeInfoService, EmployeeInfoService>();
+            services.AddScoped<IDoctorService, DoctorService>();
             return services;
         }
     }
