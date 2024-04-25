@@ -327,7 +327,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: omicron-uat
-                  key: redis            
+                  key: redis
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -467,6 +467,11 @@ spec:
                 secretKeyRef:
                   name: omicron-uat
                   key: sap_service_layer_db
+            - name: SAP_FILE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-uat
+                  key: sap_file_url
           ports:
             - containerPort: 80
           resources:
