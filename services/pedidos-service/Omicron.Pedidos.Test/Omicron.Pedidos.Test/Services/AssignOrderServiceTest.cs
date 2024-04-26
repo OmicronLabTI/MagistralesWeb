@@ -23,6 +23,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.Pedidos;
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -87,8 +88,14 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PushMessage(It.IsAny<object>()))
                 .Returns(Task.FromResult(true));
 
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+
+            serviceLayer
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
+
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, this.usersService.Object, this.kafkaConnector.Object);
+            this.pedidosService = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object, this.kafkaConnector.Object, serviceLayer.Object);
         }
 
         /// <summary>
@@ -110,11 +117,11 @@ namespace Omicron.Pedidos.Test.Services
                 UserLogistic = "abd",
             };
 
-            var mockSaDiApi = new Mock<ISapDiApi>();
             var mockUsers = new Mock<IUsersService>();
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
 
-            mockSaDiApi
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+            serviceLayer
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             this.sapAdapter
@@ -125,7 +132,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetQfbInfoDto(isValidtecnic)));
 
-            var pedidosServiceLocal = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var pedidosServiceLocal = new AssignPedidosService(this.sapAdapter.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
 
             // act
             var response = await pedidosServiceLocal.AssignOrder(assign);
@@ -167,9 +174,9 @@ namespace Omicron.Pedidos.Test.Services
                 UserLogistic = "abd",
             };
 
-            var mockSaDiApi = new Mock<ISapDiApi>();
-            mockSaDiApi
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+            serviceLayer
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var mockSapAdapter = new Mock<ISapAdapter>();
@@ -182,7 +189,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetQfbInfoDto(true)));
 
-            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
 
             // act
             var response = await pedidosServiceLocal.AssignOrder(assign);
@@ -216,17 +223,17 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersByRole()));
 
-            var mockSaDiApiLocal = new Mock<ISapDiApi>();
-            mockSaDiApiLocal
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+            serviceLayer
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var sapAdapterLocal = new Mock<ISapAdapter>();
             sapAdapterLocal
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
-            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
 
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.AutomaticAssign(assign));
@@ -250,10 +257,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersByRoleWithDZ(false)));
 
-            var mockSaDiApiLocal = new Mock<ISapDiApi>();
-            mockSaDiApiLocal
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+            serviceLayer
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 1", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
             var detalle901 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 2", IsOmigenomics = true, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 901, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -291,7 +298,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(resultSap));
 
-            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
             var result = await pedidoServiceLocal.AutomaticAssign(assign);
 
             Assert.IsNotNull(result);
@@ -317,10 +324,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersByRoleWithDZ(true, null)));
 
-            var mockSaDiApiLocal = new Mock<ISapDiApi>();
-            mockSaDiApiLocal
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+            serviceLayer
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 1", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
             var detalle901 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 2", IsOmigenomics = true, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 901, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -358,7 +365,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(resultSap));
 
-            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
             Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.AutomaticAssign(assign));
         }
 
@@ -380,10 +387,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersByRoleWithDZ()));
 
-            var mockSaDiApiLocal = new Mock<ISapDiApi>();
-            mockSaDiApiLocal
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+            serviceLayer
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "DZ Test 1", IsOmigenomics = false, DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "P", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
 
@@ -418,7 +425,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(resultSap));
 
-            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
             var result = await pedidoServiceLocal.AutomaticAssign(assign);
 
             Assert.IsNotNull(result);
@@ -444,17 +451,17 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersByRole()));
 
-            var mockSaDiApiLocal = new Mock<ISapDiApi>();
-            mockSaDiApiLocal
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+            serviceLayer
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var sapAdapterLocal = new Mock<ISapAdapter>();
             sapAdapterLocal
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailDZModel()));
 
-            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
 
             // act
             Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.AutomaticAssign(assign), ServiceConstants.ErrorUsersDZAutomatico);
@@ -478,10 +485,10 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.SimpleGetUsers(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUsersByRole()));
 
-            var mockSaDiApiLocal = new Mock<ISapDiApi>();
-            mockSaDiApiLocal
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+            serviceLayer
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var detalle900 = new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 900, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
             var detalle901 = new CompleteDetailOrderModel { CodigoProducto = "Aspirina", DescripcionProducto = "dec", FechaOf = "2020/01/01", FechaOfFin = "2020/01/01", IsChecked = false, OrdenFabricacionId = 901, Qfb = "qfb", QtyPlanned = 1, QtyPlannedDetalle = 1, Status = "L", CreatedDate = DateTime.Now, Label = "Pesonalizada", ProductFirmName = string.Empty };
@@ -523,7 +530,7 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(resultSap));
 
-            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
 
             // act
             var result = await pedidoServiceLocal.AutomaticAssign(assign);
@@ -555,14 +562,14 @@ namespace Omicron.Pedidos.Test.Services
 
             var sapAdapterLocal = new Mock<ISapAdapter>();
             var mockUsers = new Mock<IUsersService>();
-            var mockSaDiApiLocal = new Mock<ISapDiApi>();
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
 
             mockUsers
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetQfbInfoDto(isValidtecnic)));
 
             // act
-            var assignPedidosService = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var assignPedidosService = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
             var result = await assignPedidosService.ReassignOrder(reassign);
 
             // assert
@@ -605,21 +612,17 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(x => x.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultModelCompleteDetailModel()));
 
-            var mockSaDiApi = new Mock<ISapDiApi>();
-            mockSaDiApi
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultCreateOrder()));
-
-            mockSaDiApi
-                .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
-                .Returns(Task.FromResult(new ResultModel()));
+            var serviceLayer = new Mock<ISapServiceLayerAdapterService>();
+            serviceLayer
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultUpdateOrder()));
 
             var mockUsers = new Mock<IUsersService>();
             mockUsers
                 .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetQfbInfoDto(true)));
 
-            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockSaDiApi.Object, mockUsers.Object, this.kafkaConnector.Object);
+            var pedidosServiceLocal = new AssignPedidosService(mockSapAdapter.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
 
             // act
             var result = await pedidosServiceLocal.ReassignOrder(reassign);

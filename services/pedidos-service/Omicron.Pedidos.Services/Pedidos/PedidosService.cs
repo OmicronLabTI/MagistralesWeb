@@ -745,7 +745,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     new ManualAssignModel { DocEntry = new List<int> { productionOrderId }, UserId = isolatedFabOrder.UserId, UserLogistic = isolatedFabOrder.UserId },
                     new Dtos.Models.QfbTecnicInfoDto(),
                     this.pedidosDao,
-                    this.sapDiApi,
+                    this.serviceLayerAdapterService,
                     this.sapAdapter,
                     this.kafkaConnector);
             }

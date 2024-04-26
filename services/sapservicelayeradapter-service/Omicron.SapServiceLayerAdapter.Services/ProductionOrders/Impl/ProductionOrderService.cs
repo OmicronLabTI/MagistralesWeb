@@ -109,6 +109,73 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> CreateFabOrder(List<OrderWithDetailDto> orderWithDetail)
+        {
+            var dictResult = new Dictionary<string, string>();
+            foreach (var order in orderWithDetail)
+            {
+                this.logger.Information($"The next order will be tried to be created: {order.Order.PedidoId} - {JsonConvert.SerializeObject(order.Detalle)}");
+                var count = 0;
+                foreach (var detail in order.Detalle)
+                {
+                    var plannedQtyNumber = detail.QtyPlannedDetalle ?? 0;
+                    var productionOrder = new CreateProductionOrderDto();
+                    productionOrder.StartDate = order.Order.FechaInicio;
+                    productionOrder.DueDate = order.Order.FechaFin;
+                    productionOrder.ItemNo = detail.CodigoProducto;
+                    productionOrder.ProductDescription = detail.DescripcionProducto;
+                    productionOrder.PlannedQuantity = plannedQtyNumber;
+                    productionOrder.ProductionOrderOriginEntry = order.Order.PedidoId;
+
+                    var body = JsonConvert.SerializeObject(productionOrder);
+                    var result = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryProductionOrder, body);
+                    if (!result.Success)
+                    {
+                        dictResult.Add(string.Format("{0}-{1}-{2}", order.Order.PedidoId, detail.CodigoProducto, count), string.Format("{0}-{1}-{2}", ServiceConstants.ErrorCreateFabOrd, result.UserError, result.UserError));
+                    }
+                    else
+                    {
+                        dictResult.Add(string.Format("{0}-{1}-{2}", order.Order.PedidoId, detail.CodigoProducto, count), "Ok");
+                    }
+
+                    count++;
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(dictResult), null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> UpdateFabOrders(List<UpdateFabOrderDto> orderModels)
+        {
+            var dictResult = new Dictionary<string, string>();
+            foreach (var order in orderModels)
+            {
+                try
+                {
+                    var productionOrder = await this.GetFromServiceLayer<ProductionOrderDto>(
+                        string.Format(ServiceQuerysConstants.QryProductionOrderById, order.OrderFabId),
+                        string.Format("{0}-{1}", ServiceConstants.ErrorUpdateFabOrd, ServiceConstants.OrderNotFound));
+
+                    if (order.Status.Equals(ServiceConstants.StatusLiberado))
+                    {
+                        productionOrder.ProductionOrderStatus = ServiceConstants.ProductionOrderReleased;
+                        await this.EditFabOrder(productionOrder, order.OrderFabId);
+                    }
+
+                    dictResult.Add(string.Format("{0}-{1}", order.OrderFabId, order.OrderFabId), "Ok");
+                }
+                catch (Exception ex)
+                {
+                    dictResult.Add(string.Format("{0}-{1}", order.OrderFabId, order.OrderFabId), ex.Message);
+                    this.logger.Error(ex.StackTrace, ex.Message);
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
         private static List<ProductionOrderLineDto> DeleteComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> componentsToDelete)
         {
             return completeList.Where(component => !componentsToDelete.Any(x => x.ProductId.Equals(component.ItemNo))).ToList();
@@ -332,6 +399,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             if (!result.Success)
             {
                 throw new CustomServiceException(result.UserError);
+            }
+        }
+
+        private async Task EditFabOrder(ProductionOrderDto productionOrder, int orderId)
+        {
+            var body = JsonConvert.SerializeObject(productionOrder);
+            var result = await this.serviceLayerClient.PutAsync(string.Format(ServiceQuerysConstants.QryProductionOrderById, orderId), body);
+            if (!result.Success)
+            {
+                throw new CustomServiceException(string.Format("{0}-{1}-{2}", ServiceConstants.ErrorUpdateFabOrd, result.UserError, result.UserError));
             }
         }
     }

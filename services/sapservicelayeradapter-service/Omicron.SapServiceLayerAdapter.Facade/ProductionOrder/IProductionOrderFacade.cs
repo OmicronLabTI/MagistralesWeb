@@ -14,6 +14,20 @@ namespace Omicron.SapServiceLayerAdapter.Facade.ProductionOrder
     public interface IProductionOrderFacade
     {
         /// <summary>
+        /// insert the fab orders.
+        /// </summary>
+        /// <param name="orderWithDetail">the list of data.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CreateFabOrder(List<OrderWithDetailDto> orderWithDetail);
+
+        /// <summary>
+        /// Update the fabrication orders.
+        /// </summary>
+        /// <param name="orderModels">the models to update.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> UpdateFabOrders(List<UpdateFabOrderDto> orderModels);
+
+        /// <summary>
         /// Finish production orders.
         /// </summary>
         /// <param name="productionOrders">Production orders to finish.</param>

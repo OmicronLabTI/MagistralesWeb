@@ -71,5 +71,39 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             Assert.IsNull(response.UserError);
             Assert.AreEqual(200, response.Code);
         }
+
+        /// <summary>
+        /// Test for Create FabOrder.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task CreateFabOrder()
+        {
+            // Act
+            var response = await this.productionOrderfacade.CreateFabOrder(new List<OrderWithDetailDto>());
+
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+
+        /// <summary>
+        /// Test for Create FabOrder.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task UpdateFabOrders()
+        {
+            // Act
+            var response = await this.productionOrderfacade.UpdateFabOrders(new List<UpdateFabOrderDto>());
+
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
     }
 }
