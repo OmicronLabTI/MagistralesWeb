@@ -37,6 +37,16 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
             => this.Ok(await this.productionOrderFacade.FinishOrder(productionOrdes));
 
         /// <summary>
+        /// Update Production Orders Batches.
+        /// </summary>
+        /// <param name="batchesToAssign">Batches to assign.</param>
+        /// <returns>Operation results.</returns>
+        [HttpPatch]
+        [Route("/productionorders/batches")]
+        public async Task<IActionResult> UpdateProductionOrdersBatches([FromBody] List<AssignBatchDto> batchesToAssign)
+            => this.Ok(await this.productionOrderFacade.UpdateProductionOrdersBatches(batchesToAssign));
+
+        /// <summary>
         /// updates a fabrication order.
         /// </summary>
         /// <param name="updateFormula">the list of fabrication orders.</param>

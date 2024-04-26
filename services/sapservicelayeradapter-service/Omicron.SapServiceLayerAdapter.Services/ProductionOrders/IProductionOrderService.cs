@@ -35,6 +35,13 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         Task<ResultModel> FinishOrder(List<CloseProductionOrderDto> productionOrders);
 
         /// <summary>
+        /// Update Production Orders Batches.
+        /// </summary>
+        /// <param name="batchesToAssign">Batches To Assign.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> UpdateProductionOrdersBatches(List<AssignBatchDto> batchesToAssign);
+
+        /// <summary>
         /// Updates the formula.
         /// </summary>
         /// <param name="updateFormula">the formula.</param>

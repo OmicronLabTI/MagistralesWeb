@@ -329,6 +329,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string ErrorTransferRequest = "ErrorTransferRequest";
 
         /// <summary>
+        /// deletes the batch.
+        /// </summary>
+        public const string DeleteBatch = "delete";
+
+        /// <summary>
         /// error while updating.
         /// </summary>
         public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
@@ -342,6 +347,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// the value to delete the conmponent.
         /// </summary>
         public const string DeleteComponent = "delete";
+
 
         /// <summary>
         /// error while inserting.

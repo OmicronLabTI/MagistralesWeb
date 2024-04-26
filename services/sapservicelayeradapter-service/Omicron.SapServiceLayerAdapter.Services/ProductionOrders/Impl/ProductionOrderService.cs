@@ -78,6 +78,20 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> UpdateProductionOrdersBatches(List<AssignBatchDto> batchesToAssign)
+        {
+            var groupedByProductionOrderId = batchesToAssign.GroupBy(x => x.OrderId).ToList();
+            var dictResult = new Dictionary<string, string>();
+            var result = new ProductionOrderDto();
+            foreach (var productionOrderGrouped in groupedByProductionOrderId)
+            {
+                dictResult = await this.ProcessToUpdateBatches(dictResult, productionOrderGrouped);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, result, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> UpdateFormula(UpdateFormulaDto updateFormula)
         {
             var dictResult = new Dictionary<string, string>();
@@ -410,6 +424,45 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             {
                 throw new CustomServiceException(string.Format("{0}-{1}-{2}", ServiceConstants.ErrorUpdateFabOrd, result.UserError, result.UserError));
             }
+        }
+
+        private async Task<Dictionary<string, string>> ProcessToUpdateBatches(Dictionary<string, string> dictResult, IGrouping<int, AssignBatchDto> productionOrderGrouped)
+        {
+            var responseGetProductionOrder = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderGrouped.Key));
+            if (!responseGetProductionOrder.Success)
+            {
+                this.logger.Error($"Sap Service Layer Adapter - ProductionOrderService - The production order {productionOrderGrouped.Key} was not found.");
+                dictResult.Add(
+                    $"{productionOrderGrouped.Key}-{productionOrderGrouped.Key}",
+                    $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}-{responseGetProductionOrder.UserError}-{responseGetProductionOrder.ExceptionMessage}");
+                return dictResult;
+            }
+
+            var productionOrder = JsonConvert.DeserializeObject<ProductionOrderDto>(responseGetProductionOrder.Response.ToString());
+            var productsByProductionOrder = productionOrderGrouped.Select(prod => prod.ItemCode).ToList();
+            foreach (var productionProducts in productionOrder.ProductionOrderLines.Where(pd => productsByProductionOrder.Contains(pd.ItemNo)))
+            {
+                productionOrderGrouped
+                    .Where(x => x.ItemCode == productionProducts.ItemNo)
+                    .GroupBy(z => z.Action)
+                    .OrderBy(a => a.Key)
+                    .ToList()
+                    .ForEach(sg =>
+                    {
+                        sg
+                        .ToList()
+                        .ForEach(z =>
+                        {
+                            productionProducts.BatchNumbers.Add(new ProductionOrderItemBatchDto
+                            {
+                                BatchNumber = z.BatchNumber,
+                                Quantity = z.Action.Equals(ServiceConstants.DeleteBatch) ? -z.AssignedQty : z.AssignedQty,
+                            });
+                        });
+                    });
+            }
+
+            return dictResult;
         }
     }
 }

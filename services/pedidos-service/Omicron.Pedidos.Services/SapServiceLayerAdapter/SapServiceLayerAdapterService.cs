@@ -43,6 +43,23 @@ namespace Omicron.Pedidos.Services.SapServiceLayerAdapter
             this.logger = logger;
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> PatchAsync(string url, string requestBody)
+        {
+            ResultModel result;
+            HttpRequestMessage request = new (new HttpMethod("PATCH"), url)
+            {
+                Content = new StringContent(requestBody, Encoding.UTF8, "application/json"),
+            };
+
+            using (var response = await this.httpClient.SendAsync(request))
+            {
+                result = await ServiceShared.GetResponse(response, this.logger, "Advisor Service - PatchAsync - Error peticion Sap Service Layer.");
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// get orders with the data.
         /// </summary>

@@ -32,6 +32,10 @@ namespace Omicron.SapServiceLayerAdapter.Facade.ProductionOrder.Impl
             => this.mapper.Map<ResultDto>(await this.productionOrderService.FinishOrder(productionOrders));
 
         /// <inheritdoc/>
+        public async Task<ResultDto> UpdateProductionOrdersBatches(List<AssignBatchDto> batchesToAssign)
+            => this.mapper.Map<ResultDto>(await this.productionOrderService.UpdateProductionOrdersBatches(batchesToAssign));
+
+        /// <inheritdoc/>
         public async Task<ResultDto> UpdateFormula(UpdateFormulaDto updateFormula)
             => this.mapper.Map<ResultDto>(await this.productionOrderService.UpdateFormula(updateFormula));
 

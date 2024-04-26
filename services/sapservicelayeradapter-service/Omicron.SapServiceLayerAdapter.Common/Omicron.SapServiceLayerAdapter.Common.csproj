@@ -40,7 +40,6 @@
   <ItemGroup>
     <Folder Include="DTOs\Batches\" />
     <Folder Include="DTOs\Attachments\" />
-    <Folder Include="DTOs\ProductionOrders\" />
     <Folder Include="DTOs\Items\" />
     <Folder Include="DTOs\BatchNumberDetails\" />
     <Folder Include="DTOs\InventoryGenEntry\" />

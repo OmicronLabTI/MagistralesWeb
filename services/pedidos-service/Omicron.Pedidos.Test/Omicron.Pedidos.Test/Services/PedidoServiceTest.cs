@@ -564,14 +564,16 @@ namespace Omicron.Pedidos.Test.Services
             };
 
             var mockSaDiApiLocal = new Mock<ISapDiApi>();
-            mockSaDiApiLocal
-                .Setup(m => m.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+            var mockSapServiceLayer = new Mock<ISapServiceLayerAdapterService>();
+
+            mockSapServiceLayer
+                .Setup(m => m.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultAssignBatch()));
 
             var mockUsers = new Mock<IUsersService>();
             var localSapAdapter = new Mock<ISapAdapter>();
             var mockSapFile = new Mock<ISapFileService>();
-            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object);
+            var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockSaDiApiLocal.Object, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, mockSapServiceLayer.Object);
 
             // act
             var response = await pedidoServiceLocal.UpdateBatches(new List<AssignBatchModel> { update });
