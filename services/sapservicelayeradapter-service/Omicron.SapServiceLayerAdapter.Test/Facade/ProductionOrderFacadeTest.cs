@@ -121,6 +121,23 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Test for Cancel FabOrder.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task CancelFabOrders()
+        {
+            // Act
+            var response = await this.productionOrderfacade.CancelProductionOrder(new CancelOrderDto());
+
+            Assert.IsTrue(response.Success);
+            Assert.IsNotNull(response.Response);
+            Assert.IsNull(response.ExceptionMessage);
+            Assert.IsNull(response.UserError);
+            Assert.AreEqual(200, response.Code);
+        }
+        
+        /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>

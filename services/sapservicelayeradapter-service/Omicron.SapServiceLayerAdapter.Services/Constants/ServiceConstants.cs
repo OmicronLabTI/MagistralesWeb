@@ -14,6 +14,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// Unexpected error.
+        /// </summary>
+        public const string UnexpectedError = "UnexpectedError";
+
+        /// <summary>
+        /// the resource was not found.
+        /// </summary>
+        public const string NotFound = "NotFound";
+
+        /// <summary>
         /// Status Liberado.
         /// </summary>
         public const string StatusLiberado = "R";
@@ -353,6 +363,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// error while inserting.
         /// </summary>
         public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";
+
+        /// <summary>
+        /// status cancelled.
+        /// </summary>
+        public const string ProductionOrderCancelled = "boposCancelled";
+
+        /// <summary>
+        /// error the sales order is closed.
+        /// </summary>
+        public const string ErrorProductionOrderCancelled = "ErrorProductionOrderCancelled";
 
         /// <summary>
         /// Gets the status of the order.

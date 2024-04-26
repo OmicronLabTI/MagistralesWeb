@@ -6,6 +6,9 @@
 // </copyright>
 // </summary>
 
+using Confluent.Kafka;
+using Omicron.SapServiceLayerAdapter.Common;
+
 namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 {
     /// <summary>
@@ -188,6 +191,39 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             }
 
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CancelProductionOrder(CancelOrderDto order)
+        {
+            this.logger.Information($"Production order to cancel: {order.OrderId}.");
+            try
+            {
+                var productionOrder = await this.GetFromServiceLayer<ProductionOrderDto>(
+                     string.Format(ServiceQuerysConstants.QryProductionOrderById, order.OrderId),
+                     ServiceConstants.NotFound);
+
+                if (productionOrder.ProductionOrderStatus == ServiceConstants.ProductionOrderCancelled)
+                {
+                    this.logger.Information($"The production order {order.OrderId} is cancelled.");
+                    throw new CustomServiceException(ServiceConstants.ErrorProductionOrderCancelled);
+                }
+
+                var body = JsonConvert.SerializeObject(productionOrder);
+                var result = await this.serviceLayerClient.PostAsync(string.Format(ServiceQuerysConstants.QryProductionOrderByIdCancel, order.OrderId), body);
+
+                if (!result.Success)
+                {
+                    this.logger.Error(result.UserError);
+                    return ServiceUtils.CreateResult(true, 200, null, ServiceConstants.UnexpectedError, $"{result.Code} - {result.UserError}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ServiceUtils.CreateResult(true, 200, null, ex.Message, null);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, ServiceConstants.OkLabelResponse, null);
         }
 
         private static List<ProductionOrderLineDto> DeleteComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> componentsToDelete)
@@ -399,6 +435,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             var response = await this.serviceLayerClient.GetAsync(url);
             if (!response.Success)
             {
+                this.logger.Error(response.UserError);
                 throw new CustomServiceException(errorMessage);
             }
 
@@ -412,6 +449,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
             if (!result.Success)
             {
+                this.logger.Error(result.UserError);
                 throw new CustomServiceException(result.UserError);
             }
         }

@@ -25,6 +25,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
+    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -39,9 +40,9 @@ namespace Omicron.Pedidos.Test.Services
 
         private Mock<ISapAdapter> mockSapAdapter;
 
-        private Mock<ISapDiApi> mockDiApiService;
-
         private Mock<IKafkaConnector> kafkaConnector;
+
+        private Mock<ISapServiceLayerAdapterService> serviceLayerAdapterService;
 
         private DatabaseContext context;
 
@@ -171,15 +172,15 @@ namespace Omicron.Pedidos.Test.Services
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetFabOrdersByFilter))
                 .Returns(Task.FromResult(mockResultProdutionOrdersSapAdapter));
 
-            this.mockDiApiService = new Mock<ISapDiApi>();
-            this.mockDiApiService
-                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+            this.serviceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            this.serviceLayerAdapterService
+                .Setup(x => x.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(mockResultDiapi));
 
             var mockUserService = new Mock<IUsersService>();
             var mockSapFile = new Mock<ISapFileService>();
 
-            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, this.mockDiApiService.Object, mockSapFile.Object, mockUserService.Object, this.kafkaConnector.Object);
+            return new CancelPedidosService(this.mockSapAdapter.Object, this.pedidosDao, mockSapFile.Object, mockUserService.Object, this.kafkaConnector.Object, this.serviceLayerAdapterService.Object);
         }
 
         /// <summary>
@@ -206,7 +207,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 1, 0, 1));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
 
         /// <summary>
@@ -231,7 +232,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 1, 0, 0));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
         /// <summary>
@@ -255,7 +256,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
         /// <summary>
@@ -279,7 +280,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
         /// <summary>
@@ -303,7 +304,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 1, 0, 1));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetFabOrdersByFilter), Times.Once);
         }
@@ -329,7 +330,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 1, 0, 1));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetFabOrdersByFilter), Times.Once);
         }
@@ -356,7 +357,7 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.IsTrue(response.Success);
             Assert.IsTrue(this.CheckAction(response, true, 1, 0, 1));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
 
         /// <summary>
@@ -380,7 +381,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
 
         /// <summary>
@@ -405,7 +406,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 1, 0, affectedRecords));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Exactly(affectedRecords - 1));
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Exactly(affectedRecords - 1));
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -430,7 +431,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -455,7 +456,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -481,7 +482,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 1, 0, affectedRecords));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Exactly(affectedRecords - 1));
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Exactly(affectedRecords - 1));
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
         }
 
@@ -506,7 +507,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
         }
 
@@ -531,7 +532,7 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
-            this.mockDiApiService.Verify(v => v.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
+            this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
         }
 
