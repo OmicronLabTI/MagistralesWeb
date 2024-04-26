@@ -257,6 +257,93 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             Assert.AreEqual(400, result.Code);
         }
 
+        /// <summary>
+        /// validate CreateFabOrder.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        public async Task CreateFabOrderTest()
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            mockServiceLayerClient
+                .SetupSequence(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, null)))
+                .Returns(Task.FromResult(GetResult(false, null)));
+
+            var order = new CreateOrderRequestDto()
+            {
+                PedidoId = 1,
+                FechaInicio = DateTime.Now,
+                FechaFin = DateTime.Now,
+            };
+
+            var detailItem = new CompleteDetailDto()
+            {
+                QtyPlannedDetalle = 10,
+                CodigoProducto = "REVE 14",
+                DescripcionProducto = "REVE",
+            };
+
+            var detailItem2 = new CompleteDetailDto()
+            {
+                QtyPlannedDetalle = 1,
+                CodigoProducto = "REVE 11",
+                DescripcionProducto = "REVE",
+            };
+
+            var request = new OrderWithDetailDto()
+            {
+                Order = order,
+                Detalle = new List<CompleteDetailDto>() { detailItem, detailItem2 },
+            };
+
+            var result = await service.CreateFabOrder(new List<OrderWithDetailDto>() { request });
+
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(200, result.Code);
+        }
+
+        /// <summary>
+        /// validate UpdateFabOrder.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        public async Task UpdateFabOrderTest()
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            mockServiceLayerClient
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, GetProductionOrder("boposReleased", 0, 0))));
+
+            mockServiceLayerClient
+                .SetupSequence(x => x.PutAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, null)))
+                .Returns(Task.FromResult(GetResult(false, null)));
+
+            var order1 = new UpdateFabOrderDto()
+            {
+                Status = "R",
+                OrderFabId = 1,
+            };
+
+            var order2 = new UpdateFabOrderDto()
+            {
+                Status = "R",
+                OrderFabId = 2,
+            };
+
+            var result = await service.UpdateFabOrders(new List<UpdateFabOrderDto>() { order1, order2 });
+
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(200, result.Code);
+        }
+
         private static CloseProductionOrderDto GetCloseProductionOrderDto(int orderId, bool batches)
         {
             var batch = new BatchesConfigurationDto()

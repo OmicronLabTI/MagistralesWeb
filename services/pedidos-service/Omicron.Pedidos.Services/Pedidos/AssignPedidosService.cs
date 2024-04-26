@@ -24,7 +24,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.Builders;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
 
@@ -37,27 +37,27 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IPedidosDao pedidosDao;
 
-        private readonly ISapDiApi sapDiApi;
-
         private readonly IUsersService userService;
 
         private readonly IKafkaConnector kafkaConnector;
+
+        private readonly ISapServiceLayerAdapterService serviceLayerAdapterService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AssignPedidosService"/> class.
         /// </summary>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="pedidosDao">pedidos dao.</param>
-        /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="userService">The user service.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
-        public AssignPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, IKafkaConnector kafkaConnector)
+        /// <param name="serviceLayerAdapterService">The serviceLayerAdapterService.</param>
+        public AssignPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, IUsersService userService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService serviceLayerAdapterService)
         {
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
-            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
             this.userService = userService.ThrowIfNull(nameof(userService));
             this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
+            this.serviceLayerAdapterService = serviceLayerAdapterService.ThrowIfNull(nameof(serviceLayerAdapterService));
         }
 
         /// <summary>
@@ -78,11 +78,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             if (manualAssign.OrderType.Equals(ServiceConstants.TypePedido))
             {
-                return await AsignarLogic.AssignPedido(manualAssign, qfbInfoValidated, this.pedidosDao, this.sapAdapter, this.sapDiApi, this.kafkaConnector);
+                return await AsignarLogic.AssignPedido(manualAssign, qfbInfoValidated, this.pedidosDao, this.sapAdapter, this.serviceLayerAdapterService, this.kafkaConnector);
             }
             else
             {
-                return await AsignarLogic.AssignOrder(manualAssign, qfbInfoValidated, this.pedidosDao, this.sapDiApi, this.sapAdapter, this.kafkaConnector);
+                return await AsignarLogic.AssignOrder(manualAssign, qfbInfoValidated, this.pedidosDao, this.serviceLayerAdapterService, this.sapAdapter, this.kafkaConnector);
             }
         }
 
@@ -171,7 +171,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 throw new CustomServiceException(string.Format(ServiceConstants.QfbWithoutTecnic, string.Join(",", invalidQfbs.Distinct().Select(x => $"{x.FirstName} {x.LastName}"))), HttpStatusCode.BadRequest);
             }
 
-            var resultSap = await this.sapDiApi.PostToSapDiApi(listToUpdateSAP, ServiceConstants.UpdateFabOrder);
+            var resultSap = await this.serviceLayerAdapterService.PostAsync(listToUpdateSAP, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);

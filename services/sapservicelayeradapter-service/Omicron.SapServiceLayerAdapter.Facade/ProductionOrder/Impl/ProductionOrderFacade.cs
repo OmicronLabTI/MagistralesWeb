@@ -34,5 +34,13 @@ namespace Omicron.SapServiceLayerAdapter.Facade.ProductionOrder.Impl
         /// <inheritdoc/>
         public async Task<ResultDto> UpdateFormula(UpdateFormulaDto updateFormula)
             => this.mapper.Map<ResultDto>(await this.productionOrderService.UpdateFormula(updateFormula));
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CreateFabOrder(List<OrderWithDetailDto> orderWithDetail)
+            => this.mapper.Map<ResultDto>(await this.productionOrderService.CreateFabOrder(orderWithDetail));
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UpdateFabOrders(List<UpdateFabOrderDto> orderModels)
+            => this.mapper.Map<ResultDto>(await this.productionOrderService.UpdateFabOrders(orderModels));
     }
 }

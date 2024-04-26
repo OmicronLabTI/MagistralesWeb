@@ -48,5 +48,31 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
             var result = await this.productionOrderFacade.UpdateFormula(updateFormula);
             return this.Ok(result);
         }
+
+        /// <summary>
+        /// the create order.
+        /// </summary>
+        /// <param name="orderWithDetailDto">the detail.</param>
+        /// <returns>the reult.</returns>
+        [HttpPost]
+        [Route("/createFabOrder")]
+        public async Task<IActionResult> CreateFabOrder([FromBody] List<OrderWithDetailDto> orderWithDetailDto)
+        {
+            var result = await this.productionOrderFacade.CreateFabOrder(orderWithDetailDto);
+            return this.Ok(result);
+        }
+
+        /// <summary>
+        /// updates a fabrication order.
+        /// </summary>
+        /// <param name="updateFabOrderDto">the list of fabrication orders..</param>
+        /// <returns>the result.</returns>
+        [HttpPost]
+        [Route("/updateFabOrder")]
+        public async Task<IActionResult> UpdateFabOrder([FromBody] List<UpdateFabOrderDto> updateFabOrderDto)
+        {
+            var result = await this.productionOrderFacade.UpdateFabOrders(updateFabOrderDto);
+            return this.Ok(result);
+        }
     }
 }

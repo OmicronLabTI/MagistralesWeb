@@ -14,6 +14,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// Status Liberado.
+        /// </summary>
+        public const string StatusLiberado = "R";
+
+        /// <summary>
         /// Custom property cfdi from environment.
         /// </summary>
         public const string CustomPropertyNameCFDI = "CustomPropertiesName:CFDI";
@@ -337,6 +342,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// the value to delete the conmponent.
         /// </summary>
         public const string DeleteComponent = "delete";
+
+        /// <summary>
+        /// error while inserting.
+        /// </summary>
+        public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";
 
         /// <summary>
         /// Gets the status of the order.
