@@ -117,5 +117,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
                 /// Query to get the product by id.
                 /// </summary>
                 public const string QryBatchNumbers = "BatchNumberDetails?$filter=ItemCode eq '{0}' and Batch eq '{1}'";
-        }
+
+                /// <summary>
+                /// Query to get the production order by id to cancel.
+                /// </summary>
+                public const string QryProductionOrderByIdCancel = "ProductionOrders({0})/Cancel";
+    }
 }

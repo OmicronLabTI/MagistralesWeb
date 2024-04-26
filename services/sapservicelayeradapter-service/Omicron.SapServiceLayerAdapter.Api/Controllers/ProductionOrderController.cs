@@ -84,5 +84,18 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
             var result = await this.productionOrderFacade.UpdateFabOrders(updateFabOrderDto);
             return this.Ok(result);
         }
+
+        /// <summary>
+        /// Cancel production order by id.
+        /// </summary>
+        /// <param name="productionOrder">Production order to update.</param>
+        /// <returns>the reult.</returns>
+        [HttpPost]
+        [Route("/cancelProductionOrder")]
+        public async Task<IActionResult> CancelProcutionOrder([FromBody] CancelOrderDto productionOrder)
+        {
+            var result = await this.productionOrderFacade.CancelProductionOrder(productionOrder);
+            return this.Ok(result);
+        }
     }
 }
