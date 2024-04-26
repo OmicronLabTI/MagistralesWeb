@@ -24,5 +24,13 @@ namespace Omicron.Pedidos.Services.SapServiceLayerAdapter
         /// <param name="route">route to send.</param>
         /// <returns>the return.</returns>
         Task<ResultModel> PostAsync(object dataToSend, string route);
+
+        /// <summary>
+        /// Sends an HTTP PATCH request to the specified URL with the provided request body and returns the response as an asynchronous operation.
+        /// </summary>
+        /// <param name="url">The URL to send the request to.</param>
+        /// <param name="requestBody">The request body to send with the PATCH request.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the response data of type <typeparamref name="T"/>.</returns>
+        Task<ResultModel> PatchAsync(string url, string requestBody);
     }
 }
