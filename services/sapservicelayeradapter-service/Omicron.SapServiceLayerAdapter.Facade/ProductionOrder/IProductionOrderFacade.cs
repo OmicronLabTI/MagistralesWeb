@@ -54,5 +54,12 @@ namespace Omicron.SapServiceLayerAdapter.Facade.ProductionOrder
         /// <param name="productionOrder">Production order to update.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> CancelProductionOrder(CancelOrderDto productionOrder);
+
+        /// <summary>
+        /// Create new isolated production order.
+        /// </summary>
+        /// <param name="isolatedFabOrder">Isolated production order.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultDto> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolatedFabOrder);
     }
 }

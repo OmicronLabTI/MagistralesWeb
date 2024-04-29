@@ -6,8 +6,9 @@
 // </copyright>
 // </summary>
 
-using Confluent.Kafka;
+using NetTopologySuite.Index.HPRtree;
 using Omicron.SapServiceLayerAdapter.Common;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 {
@@ -224,6 +225,52 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             }
 
             return ServiceUtils.CreateResult(true, 200, null, ServiceConstants.OkLabelResponse, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolatedFabOrder)
+        {
+            KeyValuePair<string, string> result;
+            var uniqueId = Guid.NewGuid().ToString();
+            this.logger.Information($"Trying to CreateIsolatedProductionOrder to product {isolatedFabOrder.ProductCode}");
+            try
+            {
+                var product = await this.GetFromServiceLayer<ItemDto>(
+                    string.Format(ServiceQuerysConstants.QryProductById, isolatedFabOrder.ProductCode),
+                    string.Format(ServiceConstants.FailReasonProductCodeNotExists, isolatedFabOrder.ProductCode));
+
+                var productionOrder = new CreateIsolateProductionOrderDto();
+                productionOrder.ProductionOrderType = "bopotStandard";
+                productionOrder.StartDate = DateTime.Now;
+                productionOrder.DueDate = DateTime.Now;
+                productionOrder.ItemNo = product.ItemCode;
+                productionOrder.ProductDescription = product.ItemName;
+                productionOrder.PlannedQuantity = 1;
+                productionOrder.DistributionRule = string.Empty;
+                productionOrder.DistributionRule2 = string.Empty;
+                productionOrder.DistributionRule3 = string.Empty;
+                productionOrder.DistributionRule4 = string.Empty;
+                productionOrder.DistributionRule5 = string.Empty;
+                productionOrder.Project = string.Empty;
+                productionOrder.Remarks = uniqueId;
+
+                var body = JsonConvert.SerializeObject(productionOrder);
+                var response = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryProductionOrder, body);
+                if (!response.Success)
+                {
+                    this.logger.Error(string.Format(ServiceConstants.FailReasonUnexpectedErrorToCreateIsolatedProductionOrder, isolatedFabOrder.ProductCode, response.UserError));
+                    throw new CustomServiceException(string.Format(ServiceConstants.FailReasonUnexpectedErrorToCreateIsolatedProductionOrder, isolatedFabOrder.ProductCode, response.UserError));
+                }
+
+                result = new KeyValuePair<string, string>(uniqueId, ServiceConstants.OkLabelResponse);
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex.StackTrace, ex.Message);
+                result = new KeyValuePair<string, string>(string.Empty, ex.Message);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, result, null);
         }
 
         private static List<ProductionOrderLineDto> DeleteComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> componentsToDelete)

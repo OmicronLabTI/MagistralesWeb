@@ -380,6 +380,38 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             Assert.AreEqual(200, result.Code);
         }
 
+        /// <summary>
+        /// validate CancelFabOrderTest.
+        /// </summary>
+        /// <param name="success">The success.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task CreateIsolatedProductionOrderTest(bool success)
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            mockServiceLayerClient
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, GetProduct("EM-123", "tYES", 100))));
+
+            mockServiceLayerClient
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(success, null)));
+
+            var request = new CreateIsolatedFabOrderDto()
+            {
+                ProductCode = "EM-123",
+            };
+            var result = await service.CreateIsolatedProductionOrder(request);
+
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(200, result.Code);
+        }
+
         private static CloseProductionOrderDto GetCloseProductionOrderDto(int orderId, bool batches)
         {
             var batch = new BatchesConfigurationDto()

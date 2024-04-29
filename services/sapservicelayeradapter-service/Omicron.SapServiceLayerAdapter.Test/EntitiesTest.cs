@@ -101,6 +101,8 @@ namespace Omicron.SapServiceLayerAdapter.Test
             new ProductionOrderDto(),
             new UpdateFabOrderDto(),
             new UpdateFormulaDto(),
+            new CreateIsolatedFabOrderDto(),
+            new CreateIsolateProductionOrderDto(),
         };
 
         /// <summary>
