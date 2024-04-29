@@ -705,7 +705,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listOrderLogToInsert = new List<SalesLogs>();
             var payload = new { isolatedFabOrder.ProductCode };
-            var diapiResult = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CreateIsolatedFabOrder);
+            var diapiResult = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.CreateIsolatedFabOrder);
 
             if (!diapiResult.Success)
             {

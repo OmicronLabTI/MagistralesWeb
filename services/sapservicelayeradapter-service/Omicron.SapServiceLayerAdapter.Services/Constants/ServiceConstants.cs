@@ -14,6 +14,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonProductCodeNotExists = "El producto con código {0} no existe.";
+
+        /// <summary>
         /// Unexpected error.
         /// </summary>
         public const string UnexpectedError = "UnexpectedError";
@@ -373,6 +378,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// error the sales order is closed.
         /// </summary>
         public const string ErrorProductionOrderCancelled = "ErrorProductionOrderCancelled";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonUnexpectedErrorToCreateIsolatedProductionOrder = "Ocurrió un problema inesperado al crear la orden de fabricación para el producto {0} - {1}.";
 
         /// <summary>
         /// Gets the status of the order.
