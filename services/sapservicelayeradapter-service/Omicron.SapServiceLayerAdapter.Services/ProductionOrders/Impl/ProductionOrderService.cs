@@ -6,10 +6,6 @@
 // </copyright>
 // </summary>
 
-using NetTopologySuite.Index.HPRtree;
-using Omicron.SapServiceLayerAdapter.Common;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-
 namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 {
     /// <summary>
@@ -79,20 +75,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             }
 
             return ServiceUtils.CreateResult(true, 200, null, results, null);
-        }
-
-        /// <inheritdoc/>
-        public async Task<ResultModel> UpdateProductionOrdersBatches(List<AssignBatchDto> batchesToAssign)
-        {
-            var groupedByProductionOrderId = batchesToAssign.GroupBy(x => x.OrderId).ToList();
-            var dictResult = new Dictionary<string, string>();
-            var result = new ProductionOrderDto();
-            foreach (var productionOrderGrouped in groupedByProductionOrderId)
-            {
-                dictResult = await this.ProcessToUpdateBatches(dictResult, productionOrderGrouped);
-            }
-
-            return ServiceUtils.CreateResult(true, 200, null, result, null);
         }
 
         /// <inheritdoc/>
@@ -273,6 +255,57 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             return ServiceUtils.CreateResult(true, 200, null, result, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> UpdateProductionOrdersBatches(List<AssignBatchDto> batchesToAssign)
+        {
+            var groupedByProductionOrderId = batchesToAssign.GroupBy(x => x.OrderId).ToList();
+
+            var dictResult = new Dictionary<string, string>();
+            var result = new ProductionOrderDto();
+            foreach (var productionOrderGrouped in groupedByProductionOrderId)
+            {
+                dictResult = await this.ProcessToUpdateBatches(dictResult, productionOrderGrouped);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
+        private static Dictionary<string, string> GetDictionaryResult(Dictionary<string, string> dictResult, int code, string error, List<AssignBatchDto> batches, int productionOrderId, bool success)
+        {
+            var errorItems = batches.Select((x, index) => new KeyValuePair<string, string>(
+                    $"{productionOrderId}-{x.ItemCode}-{index}",
+                    success ? "Ok" : $"{ServiceConstants.ErrorUpdateFabOrd}-{code}-{error}"))
+                    .ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            return dictResult.Concat(errorItems).GroupBy(kv => kv.Key).ToDictionary(g => g.Key, g => g.First().Value);
+        }
+
+        private static ProductionOrderDto AddBatches(ProductionOrderDto productionOrder, List<AssignBatchDto> batchesToAdd)
+        {
+            foreach (var component in productionOrder.ProductionOrderLines)
+            {
+                var batchesToAddInComponent = batchesToAdd.Where(x => x.ItemCode.Equals(component.ItemNo)).ToList();
+                component.BatchNumbers.AddRange(batchesToAddInComponent.Select(x => new ProductionOrderItemBatchDto()
+                {
+                    BatchNumber = x.BatchNumber,
+                    Quantity = x.AssignedQty,
+                }));
+            }
+
+            return productionOrder;
+        }
+
+        private static ProductionOrderDto DeleteBatches(ProductionOrderDto productionOrder, List<AssignBatchDto> batchesToDelete)
+        {
+            foreach (var component in productionOrder.ProductionOrderLines)
+            {
+                var batchesToDeleteInComponent = batchesToDelete.Where(x => x.ItemCode.Equals(component.ItemNo)).Select(x => x.BatchNumber).ToList();
+                component.BatchNumbers = component.BatchNumbers.Where(x => !batchesToDeleteInComponent.Contains(x.BatchNumber)).ToList();
+            }
+
+            return productionOrder;
+        }
+
         private static List<ProductionOrderLineDto> DeleteComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> componentsToDelete)
         {
             return completeList.Where(component => !componentsToDelete.Any(x => x.ProductId.Equals(component.ItemNo))).ToList();
@@ -310,6 +343,39 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             }
 
             return completeList;
+        }
+
+        private async Task<Dictionary<string, string>> ProcessToUpdateBatches(Dictionary<string, string> dictResult, IGrouping<int, AssignBatchDto> productionOrderGrouped)
+        {
+            var batches = productionOrderGrouped.Select(x => x).ToList();
+            var responseGetProductionOrder = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderGrouped.Key));
+
+            if (!responseGetProductionOrder.Success)
+            {
+                this.logger.Error($"Sap Service Layer Adapter - ProductionOrderService - The production order {productionOrderGrouped.Key} was not found.");
+                dictResult.Add(
+                    $"{productionOrderGrouped.Key}-{productionOrderGrouped.Key}",
+                    $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}-{responseGetProductionOrder.UserError}-{responseGetProductionOrder.ExceptionMessage}");
+                return dictResult;
+            }
+
+            var productionOrder = JsonConvert.DeserializeObject<ProductionOrderDto>(responseGetProductionOrder.Response.ToString());
+
+            var batchesToDelete = batches.Where(x => x.Action.Equals(ServiceConstants.DeleteBatch)).ToList();
+            var batchesToAdd = batches.Where(x => !x.Action.Equals(ServiceConstants.DeleteBatch)).ToList();
+            productionOrder = DeleteBatches(productionOrder, batchesToDelete);
+            productionOrder = AddBatches(productionOrder, batchesToAdd);
+
+            var body = JsonConvert.SerializeObject(productionOrder);
+            var result = await this.serviceLayerClient.PutAsync(string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderGrouped.Key), body);
+
+            dictResult = GetDictionaryResult(dictResult, result.Code, result.UserError, batches, productionOrderGrouped.Key, result.Success);
+            if (!result.Success)
+            {
+                this.logger.Error($"Error updating production order {productionOrderGrouped.Key} - Error: {result.Code} - {result.UserError}");
+            }
+
+            return dictResult;
         }
 
         private async Task CreateReceiptFromProductionOrderId(int productionOrderId, CloseProductionOrderDto closeConfiguration, ProductionOrderDto productionOrder)
@@ -509,45 +575,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             {
                 throw new CustomServiceException(string.Format("{0}-{1}-{2}", ServiceConstants.ErrorUpdateFabOrd, result.UserError, result.UserError));
             }
-        }
-
-        private async Task<Dictionary<string, string>> ProcessToUpdateBatches(Dictionary<string, string> dictResult, IGrouping<int, AssignBatchDto> productionOrderGrouped)
-        {
-            var responseGetProductionOrder = await this.serviceLayerClient.GetAsync(string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderGrouped.Key));
-            if (!responseGetProductionOrder.Success)
-            {
-                this.logger.Error($"Sap Service Layer Adapter - ProductionOrderService - The production order {productionOrderGrouped.Key} was not found.");
-                dictResult.Add(
-                    $"{productionOrderGrouped.Key}-{productionOrderGrouped.Key}",
-                    $"{ServiceConstants.ErrorUpdateFabOrd}-{ServiceConstants.OrderNotFound}-{responseGetProductionOrder.UserError}-{responseGetProductionOrder.ExceptionMessage}");
-                return dictResult;
-            }
-
-            var productionOrder = JsonConvert.DeserializeObject<ProductionOrderDto>(responseGetProductionOrder.Response.ToString());
-            var productsByProductionOrder = productionOrderGrouped.Select(prod => prod.ItemCode).ToList();
-            foreach (var productionProducts in productionOrder.ProductionOrderLines.Where(pd => productsByProductionOrder.Contains(pd.ItemNo)))
-            {
-                productionOrderGrouped
-                    .Where(x => x.ItemCode == productionProducts.ItemNo)
-                    .GroupBy(z => z.Action)
-                    .OrderBy(a => a.Key)
-                    .ToList()
-                    .ForEach(sg =>
-                    {
-                        sg
-                        .ToList()
-                        .ForEach(z =>
-                        {
-                            productionProducts.BatchNumbers.Add(new ProductionOrderItemBatchDto
-                            {
-                                BatchNumber = z.BatchNumber,
-                                Quantity = z.Action.Equals(ServiceConstants.DeleteBatch) ? -z.AssignedQty : z.AssignedQty,
-                            });
-                        });
-                    });
-            }
-
-            return dictResult;
         }
     }
 }

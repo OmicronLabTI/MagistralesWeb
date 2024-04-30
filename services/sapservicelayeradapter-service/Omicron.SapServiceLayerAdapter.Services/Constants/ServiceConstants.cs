@@ -363,7 +363,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// </summary>
         public const string DeleteComponent = "delete";
 
-
         /// <summary>
         /// error while inserting.
         /// </summary>

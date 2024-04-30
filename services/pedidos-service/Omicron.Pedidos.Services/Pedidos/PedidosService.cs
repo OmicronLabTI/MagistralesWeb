@@ -562,8 +562,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 assignBatches
                 .Select(x => x.OrderId.ToString()).ToList())).ToList();
             orders.ForEach(x => x.AreBatchesComplete = assignBatches.FirstOrDefault().AreBatchesComplete);
-            await this.pedidosDao.UpdateUserOrders(orders);
 
+            await this.pedidosDao.UpdateUserOrders(orders);
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
