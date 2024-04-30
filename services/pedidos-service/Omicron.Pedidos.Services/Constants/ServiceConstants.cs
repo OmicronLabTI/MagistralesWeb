@@ -306,9 +306,9 @@ namespace Omicron.Pedidos.Services.Constants
         public const string UpdateFormula = "updateFormula";
 
         /// <summary>
-        /// the update batches.
+        /// Update Production Order Batches Service Layer.
         /// </summary>
-        public const string UpdateBatches = "batches";
+        public const string UpdateProductionOrderBatchesServiceLayer = "productionorders/batches";
 
         /// <summary>
         /// route to cancel orders.

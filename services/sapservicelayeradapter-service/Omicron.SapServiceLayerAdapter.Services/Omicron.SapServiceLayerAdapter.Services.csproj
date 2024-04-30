@@ -24,9 +24,13 @@
   <ItemGroup>
     <None Remove="DeliveryNotes\" />
     <None Remove="Doctors\" />
+    <None Remove="ProductionOrders\" />
+    <None Remove="ProductionOrders\Impl\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DeliveryNotes\" />
     <Folder Include="Doctors\" />
+    <Folder Include="ProductionOrders\" />
+    <Folder Include="ProductionOrders\Impl\" />
   </ItemGroup>
 </Project>
