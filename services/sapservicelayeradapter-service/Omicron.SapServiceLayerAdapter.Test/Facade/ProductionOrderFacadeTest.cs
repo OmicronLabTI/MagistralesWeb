@@ -136,7 +136,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             Assert.IsNull(response.UserError);
             Assert.AreEqual(200, response.Code);
         }
-        
+
         /// <summary>
         /// Assert response.
         /// </summary>
