@@ -412,6 +412,54 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             Assert.AreEqual(200, result.Code);
         }
 
+        /// <summary>
+        /// validate UpdateProductionOrdersBatches.
+        /// </summary>
+        /// <param name="successGet">The successGet.</param>
+        /// <param name="successPut">The successPut.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        [TestCase(true, true)]
+        [TestCase(false, false)]
+        [TestCase(true, false)]
+        public async Task UpdateProductionOrdersBatchesTest(bool successGet, bool successPut)
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+
+            mockServiceLayerClient
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(successGet, GetProductionOrder("boposReleased", 0, 0))));
+
+            mockServiceLayerClient
+                .Setup(x => x.PutAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(successPut, null)));
+
+            var firstBatch = new AssignBatchDto()
+            {
+                Action = "insert",
+                ItemCode = "EN-123",
+                OrderId = 1,
+                BatchNumber = "Axity-1",
+                AssignedQty = 1,
+            };
+
+            var secondBatch = new AssignBatchDto()
+            {
+                Action = "delete",
+                ItemCode = "EN-123",
+                OrderId = 1,
+                BatchNumber = "X-111",
+                AssignedQty = 1,
+            };
+
+            var result = await service.UpdateProductionOrdersBatches(new List<AssignBatchDto> { firstBatch, secondBatch });
+
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(200, result.Code);
+        }
+
         private static CloseProductionOrderDto GetCloseProductionOrderDto(int orderId, bool batches)
         {
             var batch = new BatchesConfigurationDto()
@@ -439,12 +487,14 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
                 Warehouse = "MN",
                 PlannedQuantity = 1,
                 IssuedQuantity = issuedQuantityB,
+                BatchNumbers = new List<ProductionOrderItemBatchDto>(),
             };
 
             var batch = new ProductionOrderItemBatchDto()
             {
                 BatchNumber = "X-111",
                 Quantity = 1,
+                ItemCode = "EN-123",
             };
 
             var secondProduct = new ProductionOrderLineDto()
