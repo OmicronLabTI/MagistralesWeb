@@ -51,9 +51,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         /// <summary>
         /// Cancel a prodution order.
         /// </summary>
-        /// <param name="productionOrder">Production order to update.</param>
+        /// <param name="order">Production order to update.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> CancelProductionOrder(CancelOrderDto productionOrder);
+        Task<ResultModel> CancelProductionOrder(CancelOrderDto order);
 
         /// <summary>
         /// Create new isolated production order.
