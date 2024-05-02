@@ -261,7 +261,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             var groupedByProductionOrderId = batchesToAssign.GroupBy(x => x.OrderId).ToList();
 
             var dictResult = new Dictionary<string, string>();
-            var result = new ProductionOrderDto();
             foreach (var productionOrderGrouped in groupedByProductionOrderId)
             {
                 dictResult = await this.ProcessToUpdateBatches(dictResult, productionOrderGrouped);
@@ -343,6 +342,15 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             }
 
             return completeList;
+        }
+
+        private static List<BatchNumbersDto> GetBatchNumbers(ProductionOrderLineDto productionOrderProducts)
+        {
+            return productionOrderProducts.BatchNumbers.Select(x => new BatchNumbersDto()
+            {
+                BatchNumber = x.BatchNumber,
+                Quantity = x.Quantity,
+            }).ToList();
         }
 
         private async Task<Dictionary<string, string>> ProcessToUpdateBatches(Dictionary<string, string> dictResult, IGrouping<int, AssignBatchDto> productionOrderGrouped)
@@ -462,7 +470,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 line.BaseLine = productOrderLine.LineNumber ?? 0;
                 line.Quantity = productOrderLine.PlannedQuantity;
                 line.WarehouseCode = productOrderLine.Warehouse;
-                line.BatchNumbers = this.GetBatchNumbers(productOrderLine);
+                line.BatchNumbers = GetBatchNumbers(productOrderLine);
                 inventoryGenExit.InventoryGenExitLines.Add(line);
             }
 
@@ -470,15 +478,6 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             {
                 await this.SaveInventoryGenExit(inventoryGenExit, productionOrderId);
             }
-        }
-
-        private List<BatchNumbersDto> GetBatchNumbers(ProductionOrderLineDto productionOrderProducts)
-        {
-            return productionOrderProducts.BatchNumbers.Select(x => new BatchNumbersDto()
-            {
-                BatchNumber = x.BatchNumber,
-                Quantity = x.Quantity,
-            }).ToList();
         }
 
         private async Task SaveInventoryGenExit(InventoryGenExitDto inventoryGen, int productionOrderId)
