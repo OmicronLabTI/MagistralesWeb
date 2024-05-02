@@ -48,11 +48,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             // Act
             var response = await this.productionOrderfacade.FinishOrder(new List<CloseProductionOrderDto>());
 
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // Assert
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -65,11 +62,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             // Act
             var response = await this.productionOrderfacade.UpdateFormula(new UpdateFormulaDto());
 
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // Assert
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -82,11 +76,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             // Act
             var response = await this.productionOrderfacade.CreateFabOrder(new List<OrderWithDetailDto>());
 
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // Assert
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -99,11 +90,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             // Act
             var response = await this.productionOrderfacade.UpdateFabOrders(new List<UpdateFabOrderDto>());
 
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // Assert
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -117,7 +105,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             var response = await this.productionOrderfacade.UpdateProductionOrdersBatches(new List<AssignBatchDto>());
 
             // Assert
-            this.AssertResponse(response);
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -130,24 +118,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             // Act
             var response = await this.productionOrderfacade.CancelProductionOrder(new CancelOrderDto());
 
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.UserError);
-            Assert.AreEqual(200, response.Code);
-        }
-
-        /// <summary>
-        /// Assert response.
-        /// </summary>
-        /// <param name="response">Response to validate.</param>
-        public void AssertResponse(ResultDto response)
-        {
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            // Assert
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -160,6 +132,16 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             // Act
             var response = await this.productionOrderfacade.CreateIsolatedProductionOrder(new CreateIsolatedFabOrderDto());
 
+            // Assert
+            AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Assert response.
+        /// </summary>
+        /// <param name="response">Response to validate.</param>
+        private static void AssertResponse(ResultDto response)
+        {
             Assert.IsTrue(response.Success);
             Assert.IsNotNull(response.Response);
             Assert.IsNull(response.ExceptionMessage);
