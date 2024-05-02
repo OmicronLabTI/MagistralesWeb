@@ -52,18 +52,11 @@ namespace Omicron.Pedidos.Api
                 c.OperationFilter<AddAuthorizationHeaderParameterOperationFilter>();
             });
 
-            var sapDiApiUrl = webApplication.Configuration["DiApiAddress"];
             webApplication.Services.AddHttpClient("sapadapter", c =>
             {
                 c.BaseAddress = new Uri(webApplication.Configuration["SapAdapterUrl"]);
             })
             .AddTypedClient<ISapAdapter, SapAdapter>();
-
-            webApplication.Services.AddHttpClient("sapdiapi", c =>
-            {
-                c.BaseAddress = new Uri(sapDiApiUrl);
-            })
-            .AddTypedClient<ISapDiApi, SapDiApi>();
 
             webApplication.Services.AddHttpClient("usuariosservice", c =>
             {

@@ -301,11 +301,6 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: eventhub_net_connection
-            - name: SAP_DI_API_URL
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-prod
-                  key: sap_di_api_url
             - name: SAP_FILE_URL
               valueFrom:
                 secretKeyRef:
@@ -478,11 +473,6 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: elastic_apm_url
-            - name: SAP_DI_API_URL
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-prod
-                  key: sap_di_api_url
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:

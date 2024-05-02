@@ -26,7 +26,6 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
@@ -40,8 +39,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         private readonly ISapAdapter sapAdapter;
 
         private readonly IPedidosDao pedidosDao;
-
-        private readonly ISapDiApi sapDiApi;
 
         private readonly IUsersService userService;
 
@@ -62,7 +59,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// </summary>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="pedidosDao">pedidos dao.</param>
-        /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="userService">The user service.</param>
         /// <param name="sapFileService">The sap file service.</param>
         /// <param name="configuration">The configuration.</param>
@@ -70,11 +66,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="redisService">The redis Service.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
         /// <param name="sapServiceLayerAdapterService">The sapServiceLayerAdapterService.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService sapServiceLayerAdapterService)
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService sapServiceLayerAdapterService)
         {
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
-            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
             this.userService = userService.ThrowIfNull(nameof(userService));
             this.sapFileService = sapFileService.ThrowIfNull(nameof(sapFileService));
             this.configuration = configuration.ThrowIfNull(nameof(configuration));
@@ -251,13 +246,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             fabOrderToUpdate.Comments = comments;
             await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { fabOrderToUpdate });
             return fabOrderToUpdate;
-        }
-
-        /// <inheritdoc/>
-        public async Task<ResultModel> ConnectDiApi()
-        {
-            var sapResponse = await this.sapDiApi.GetSapDiApi(ServiceConstants.ConnectSapDiApi);
-            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(sapResponse.Response), null);
         }
 
         /// <inheritdoc/>

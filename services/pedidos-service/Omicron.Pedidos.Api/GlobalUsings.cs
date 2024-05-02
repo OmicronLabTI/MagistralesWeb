@@ -13,7 +13,6 @@ global using Omicron.Pedidos.DependencyInjection;
 global using Omicron.Pedidos.Services.AlmacenService;
 global using Omicron.Pedidos.Services.Reporting;
 global using Omicron.Pedidos.Services.SapAdapter;
-global using Omicron.Pedidos.Services.SapDiApi;
 global using Omicron.Pedidos.Services.SapFile;
 global using Omicron.Pedidos.Services.User;
 global using Prometheus;
