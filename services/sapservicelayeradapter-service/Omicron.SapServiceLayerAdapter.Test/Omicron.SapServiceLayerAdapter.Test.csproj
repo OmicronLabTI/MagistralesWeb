@@ -40,5 +40,9 @@
 
   <ItemGroup>
     <None Remove="Services\DeliveryNotes\" />
+    <None Remove="Services\ProductionOrder\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\ProductionOrder\" />
   </ItemGroup>
 </Project>

@@ -21,7 +21,7 @@ namespace Omicron.Reporting.Api
     using Omicron.Reporting.Api.Filters;
     using Omicron.Reporting.DependencyInjection;
     using Omicron.Reporting.Services.Clients;
-    using Omicron.Reporting.Services.SapDiApi;
+    using Omicron.Reporting.Services.ServiceLayerAdapter;
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
@@ -99,11 +99,11 @@ namespace Omicron.Reporting.Api
             })
             .AddTypedClient<ICatalogsService, CatalogsService>();
 
-            services.AddHttpClient("sapdiapi", c =>
+            services.AddHttpClient("SapServiceLayerAdapterUrl", c =>
             {
-                c.BaseAddress = new Uri(this.Configuration["DiApiAddress"]);
+                c.BaseAddress = new Uri(this.Configuration["SapServiceLayerAdapterUrl"]);
             })
-            .AddTypedClient<ISapDiApi, SapDiApi>();
+           .AddTypedClient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
 
             this.AddRedis(services, Log.Logger);
             this.AddCorsSvc(services);

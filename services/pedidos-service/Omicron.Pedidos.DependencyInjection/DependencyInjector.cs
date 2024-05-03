@@ -23,8 +23,8 @@ namespace Omicron.Pedidos.DependencyInjection
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
+    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -52,7 +52,6 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IFormulaPedidosService, FormulaPedidosService>();
             Services.AddTransient<IProcessOrdersService, ProcessOrdersService>();
             Services.AddTransient<IPedidosDao, PedidosDao>();
-            Services.AddTransient<ISapDiApi, SapDiApi>();
             Services.AddTransient<ISapAdapter, SapAdapter>();
             Services.AddTransient<IQrFacade, QrFacade>();
             Services.AddTransient<IQrService, QrService>();
@@ -68,6 +67,7 @@ namespace Omicron.Pedidos.DependencyInjection
             Services.AddTransient<IPedidosDxpFacade, PedidosDxpFacade>();
             Services.AddTransient<IPedidosDxpService, PedidosDxpService>();
             Services.AddTransient<IAzureService, AzureServices>();
+            Services.AddTransient<ISapServiceLayerAdapterService, SapServiceLayerAdapterService>();
             return Services;
         }
 
