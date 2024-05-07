@@ -441,7 +441,32 @@ spec:
             - name: TZ
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
-              value: Development
+              value: Staging
+            - name: SAP_SERVICE_LAYER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: sap_service_layer_url
+            - name: SAP_SERVICE_LAYER_USER
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: sap_service_layer_user
+            - name: SAP_SERVICE_LAYER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: sap_service_layer_pwd
+            - name: SAP_SERVICE_LAYER_DB
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: sap_service_layer_db
+            - name: SAP_FILE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: sap_file_url
           ports:
             - containerPort: 80
       imagePullSecrets:
