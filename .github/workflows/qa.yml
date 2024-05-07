@@ -9,7 +9,7 @@ on:
         required: false
   push:
     branches:
-      - release/Sprint12
+      - release/qa
     paths:
       - frontend/web/**
       - services/**
