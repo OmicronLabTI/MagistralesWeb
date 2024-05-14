@@ -1141,5 +1141,15 @@
 		<sql endDelimiter=";"> 
 			UPDATE parameters SET value='88' WHERE "field"='QrDeliveryCodePositionY';
 		</sql>
-	</changeSet>		
+	</changeSet>
+	<changeSet author="dvargas" id="changelog-1.119">
+		<sql endDelimiter=";"> 
+			UPDATE parameters SET value='450' WHERE field='QrMagistralWidth'; 
+			UPDATE parameters SET value='-385' WHERE field='QrMagistralRectxTop';
+			UPDATE parameters SET value='450' WHERE field = 'QrMagistralHeight';
+			UPDATE parameters SET value='32' WHERE field = 'QrDeliveryLabelSaleFontSize';
+			UPDATE parameters SET value='50' WHERE field = 'QrDeliveryLabelRecty';
+			UPDATE parameters SET value='32' WHERE field = 'QrMagistralBottomTextSizeDelivery';
+		</sql>
+	</changeSet>	
 </databaseChangeLog>
