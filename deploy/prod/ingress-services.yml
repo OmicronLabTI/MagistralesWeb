@@ -79,3 +79,10 @@ spec:
                   number: 80
             path: /api/reporting(/|$)(.*)
             pathType: Prefix
+          - backend:
+              service:
+                name: sapservicelayeradapter-svc
+                port:
+                  number: 80
+            path: /api/sapservicelayeradapter(/|$)(.*)
+            pathType: Prefix
