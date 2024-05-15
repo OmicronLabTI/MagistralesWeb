@@ -111,6 +111,11 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: omicron_net_postgress_db
           ports:
             - containerPort: 9010
       imagePullSecrets:
@@ -156,6 +161,11 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: omicron_net_postgress_db
           ports:
             - containerPort: 5101
       imagePullSecrets:
@@ -201,6 +211,11 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: SAP_CONNECTION_STRING_SQL_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: sap_connection_string_sql_server
           ports:
             - containerPort: 5102
           livenessProbe:
@@ -253,6 +268,11 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: omicron_net_postgress_db
           ports:
             - containerPort: 5103
       imagePullSecrets:
@@ -298,6 +318,11 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: POSTGRESS_NET_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: omicron_net_postgress_db
           ports:
             - containerPort: 5104
       imagePullSecrets:
