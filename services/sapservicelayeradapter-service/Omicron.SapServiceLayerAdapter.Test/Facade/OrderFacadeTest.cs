@@ -50,7 +50,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             var response = await this.ordersFacade.GetLastGeneratedOrder();
 
             // Assert
-            this.AssertResponse(response);
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             var response = await this.ordersFacade.CreateSaleOrder(new CreateSaleOrderDto());
 
             // Assert
-            this.AssertResponse(response);
+            AssertResponse(response);
         }
 
         /// <summary>
@@ -81,14 +81,14 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
             var response = await this.ordersFacade.CloseSampleOrders(sampleOrders);
 
             // Assert
-            this.AssertResponse(response);
+            AssertResponse(response);
         }
 
         /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>
-        public void AssertResponse(ResultDto response)
+        private static void AssertResponse(ResultDto response)
         {
             Assert.IsTrue(response.Success);
             Assert.IsNotNull(response.Response);

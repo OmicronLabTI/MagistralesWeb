@@ -39,9 +39,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Services\SapServiceLayer\" />
+	</ItemGroup>
+	<ItemGroup>
 		<None Update="SignatureBase64.txt">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Services\SapServiceLayer\" />
+	</ItemGroup>
 </Project>

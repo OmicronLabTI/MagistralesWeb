@@ -14,6 +14,26 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonProductCodeNotExists = "El producto con código {0} no existe.";
+
+        /// <summary>
+        /// Unexpected error.
+        /// </summary>
+        public const string UnexpectedError = "UnexpectedError";
+
+        /// <summary>
+        /// the resource was not found.
+        /// </summary>
+        public const string NotFound = "NotFound";
+
+        /// <summary>
+        /// Status Liberado.
+        /// </summary>
+        public const string StatusLiberado = "R";
+
+        /// <summary>
         /// Custom property cfdi from environment.
         /// </summary>
         public const string CustomPropertyNameCFDI = "CustomPropertiesName:CFDI";
@@ -252,6 +272,116 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// Get the address ship type.
         /// </summary>
         public const string AddresShipType = "S";
+
+        /// <summary>
+        /// Production Order status closed.
+        /// </summary>
+        public const string ProductionOrderClosed = "boposClosed";
+
+        /// <summary>
+        /// Production Order status released.
+        /// </summary>
+        public const string ProductionOrderReleased = "boposReleased";
+
+        /// <summary>
+        /// Production Order type B.
+        /// </summary>
+        public const string ProductionOrderTypeB = "im_Backflush";
+
+        /// <summary>
+        /// Production Order type B.
+        /// </summary>
+        public const string ProductionOrderTypeM = "im_Manual";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotReleasedProductionOrder = "La orden de producción {0} no esta liberada.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailConsumedQuantity = "No es posible finalizar la siguiente orden {0}, la cantidad a consumir ya cuenta con un registro";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailGetProduct = "No fue posible obtener la información del producto {0}";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonBatchAlreadyExists = "El lote {0} ya existe para el producto {1}.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotAvailableRequiredQuantity = "No se ha podido generar recibo de producción para la orden de fabricación {0}, no hay componentes disponibles ({1}).";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotGetExitCreated = "No se ha podido generar la entrega de componentes a producción para la orden de fabricación {0}.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotReceipProductionCreated = "No se ha podido crear recepción de producción para la orden de fabricación {0}.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonNotProductionStatusClosed = "La orden de producción {0} no se ha podido cerrar.";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonUnexpectedError = "Ocurrió un error inesperado en SAP.";
+
+        /// <summary>
+        /// error while create transfer request.
+        /// </summary>
+        public const string ErrorTransferRequest = "ErrorTransferRequest";
+
+        /// <summary>
+        /// deletes the batch.
+        /// </summary>
+        public const string DeleteBatch = "delete";
+
+        /// <summary>
+        /// error while updating.
+        /// </summary>
+        public const string ErrorUpdateFabOrd = "ErrorUpdateFabOrd";
+
+        /// <summary>
+        /// the order was not found.
+        /// </summary>
+        public const string OrderNotFound = "OrderNotFound";
+
+        /// <summary>
+        /// the value to delete the conmponent.
+        /// </summary>
+        public const string DeleteComponent = "delete";
+
+        /// <summary>
+        /// error while inserting.
+        /// </summary>
+        public const string ErrorCreateFabOrd = "ErrorCreateFabOrd";
+
+        /// <summary>
+        /// status cancelled.
+        /// </summary>
+        public const string ProductionOrderCancelled = "boposCancelled";
+
+        /// <summary>
+        /// error the sales order is closed.
+        /// </summary>
+        public const string ErrorProductionOrderCancelled = "ErrorProductionOrderCancelled";
+
+        /// <summary>
+        /// Fail reason.
+        /// </summary>
+        public const string FailReasonUnexpectedErrorToCreateIsolatedProductionOrder = "Ocurrió un problema inesperado al crear la orden de fabricación para el producto {0} - {1}.";
 
         /// <summary>
         /// Gets the status of the order.
