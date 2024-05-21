@@ -1,0 +1,158 @@
+name: Deploy QA to AWS
+on:
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: Force Build
+        type: boolean
+        default: false
+        required: false
+  push:
+    branches:
+      - release/qa
+    paths:
+      - frontend/**
+      - services/**
+jobs:
+  build:
+    name: Deploy AWS
+    runs-on: ubuntu-latest
+    environment: QA
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changeset
+        id: changeset
+        run: |
+          echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      
+      # - name: Web
+      #   if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_build) }}
+      #   uses: ./.github/actions/deploy-web-aws-s3
+      #   with:
+      #     bucket_name: ${{ secrets.AWS_BUCKET_MAGISTRALES }}
+      #     environment: qa
+      #     working_directory: ./frontend/web
+
+
+      - name: Docker Build an Push Catalogos
+        if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build-aws
+        with:
+          working_directory: ./services/catalogos-service
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          repository: catalogosmagistrales
+          tag: ${{ github.sha }}
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
+
+      - name: Docker Build an Push OauthServer
+        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build-aws
+        with:
+          working_directory: ./services/oauthserver
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          repository: oauthservermagistrales
+          tag: ${{ github.sha }}
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
+
+      - name: Docker Build an Push Pedidos
+        if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build-aws
+        with:
+          working_directory: ./services/pedidos-service
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          repository: pedidosmagistrales
+          tag: ${{ github.sha }}
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
+  
+      - name: Docker Build an Push Reporting
+        if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build-aws
+        with:
+          working_directory: ./services/reporting-service
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          repository: reportingmagistrales
+          tag: ${{ github.sha }}
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
+        
+      - name: Docker Build an Push SapAdapter
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build-aws
+        with:
+          working_directory: ./services/sapadapter-service
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          repository: sapadaptermagistrales
+          tag: ${{ github.sha }}
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
+
+      - name: Docker Build an Push Usuarios
+        if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build-aws
+        with:
+          working_directory: ./services/usuarios-service
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          repository: usuariosmagistrales
+          tag: ${{ github.sha }}
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
+
+      - name: Docker Build an Push Warehouses
+        if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build-aws
+        with:
+          working_directory: ./services/warehouses-service
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          repository: warehousesmagistrales
+          tag: ${{ github.sha }}
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
+
+      - name: Docker Build an Push SapServiceLayerAdapter
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build-aws
+        with:
+          working_directory: ./services/sapservicelayeradapter-service
+          registry: ${{ steps.login-ecr.outputs.registry }}
+          repository: sapservicelayeradaptermagistrales
+          tag: ${{ github.sha }}
+          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_pass: ${{ secrets.NEXUS_PASS }}
+
+      - name: Kubernetes deploy
+        working-directory: ./deploy/aws/qa
+        run: |
+          kubectl apply -f deploy.yaml
+          kubectl apply -f ingress-services.yaml
+
+      - name: Docker prune
+        run: |
+          docker builder prune -f -a
+          docker image prune -f -a
+
+      # - name: Microsoft Teams Notification
+      #   uses: skitionek/notify-microsoft-teams@master
+      #   if: ${{ always() }}
+      #   with:
+      #     webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+      #     needs: ${{ toJson(needs) }}
+      #     job: ${{ toJson(job) }}
+      #     steps: ${{ toJson(steps) }}
