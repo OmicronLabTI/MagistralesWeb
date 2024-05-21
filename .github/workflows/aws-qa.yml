@@ -143,6 +143,10 @@ jobs:
           kubectl apply -f deploy.yaml
           kubectl apply -f ingress-services.yaml
 
+      # - name: Liquibase update
+      #   working-directory: database/
+      #   run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-qa.properties" update
+
       - name: Docker prune
         run: |
           docker builder prune -f -a
