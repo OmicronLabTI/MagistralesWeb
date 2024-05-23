@@ -15,22 +15,24 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
     {
         private readonly IServiceLayerAuth serviceLayerAuth;
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private readonly Serilog.ILogger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RefreshSessionIdMiddleware"/> class.
         /// </summary>
-        /// <param name="innerHandler">The handler.</param>
         /// <param name="serviceLayerAuth">The serviceLayerAuth.</param>
-        public RefreshSessionIdMiddleware(IServiceLayerAuth serviceLayerAuth)
+        /// <param name="logger">The logger.</param>
+        public RefreshSessionIdMiddleware(IServiceLayerAuth serviceLayerAuth, Serilog.ILogger logger)
         {
             this.serviceLayerAuth = serviceLayerAuth;
+            this.logger = logger;
         }
 
         /// <inheritdoc/>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             HttpResponseMessage response = null;
-
+            var uuid = Guid.NewGuid().ToString("D");
             try
             {
                 await this.semaphore.WaitAsync(cancellationToken);
@@ -38,10 +40,19 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
 
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
+                    request.Headers.TryGetValues("Cookie", out var token);
+                    this.logger.Error($"SAP Service Layer Refresh {uuid} - Cookie a refrescar: {JsonConvert.SerializeObject(token)}");
                     var cookies = await this.serviceLayerAuth.RefreshSession();
-                    AddNewSessionId(request, cookies);
-                    response = await base.SendAsync(request, cancellationToken);
+                    var clonedRequest = await CloneHttpRequestMessageAsync(request);
+                    AddNewSessionId(clonedRequest, cookies);
+                    this.logger.Error($"SAP Service Layer Refresh {uuid} - {JsonConvert.SerializeObject(clonedRequest)}");
+                    this.logger.Error($"SAP Service Layer Refresh {uuid} - Cookie nuevo: {cookies}");
+                    response = await base.SendAsync(clonedRequest, cancellationToken);
                 }
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error($"SAP Service Layer Refresh {uuid} RefreshSessionIdError: {ex.Message} - {ex.StackTrace}");
             }
             finally
             {
@@ -59,6 +70,34 @@ namespace Omicron.SapServiceLayerAdapter.Api.Filters
             }
 
             request.Headers.Add("Cookie", cookies);
+        }
+
+        private static async Task<HttpRequestMessage> CloneHttpRequestMessageAsync(HttpRequestMessage request)
+        {
+            var clone = new HttpRequestMessage(request.Method, request.RequestUri)
+            {
+                Content = request.Content,
+                Version = request.Version,
+            };
+
+            // Copiar los encabezados
+            foreach (var header in request.Headers)
+            {
+                var value = header.Value;
+                clone.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            }
+
+            // Copiar los encabezados de contenido
+            if (request.Content != null)
+            {
+                clone.Content = new StreamContent(await request.Content.ReadAsStreamAsync());
+                foreach (var contentHeader in request.Content.Headers)
+                {
+                    clone.Content.Headers.TryAddWithoutValidation(contentHeader.Key, contentHeader.Value);
+                }
+            }
+
+            return clone;
         }
     }
 }
