@@ -165,7 +165,8 @@ namespace Omicron.Reporting.Services
 
             var greeting = string.Format(ServiceConstants.SentForeignPackage, request.ClientName, request.SalesOrders, request.PackageId, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, ServiceConstants.RefundPolicy);
-            var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId });
+            using var streamDocuments = new MemoryStream();
+            var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId }, streamDocuments);
 
             var destinityEmail = request.DestinyEmail.Split(";").FirstOrDefault(x => !string.IsNullOrEmpty(x)) ?? string.Empty;
             var mailStatus = await this.omicronMailClient.SendMail(
@@ -198,10 +199,11 @@ namespace Omicron.Reporting.Services
             copyEmails = CommonCall.CalculateTernary(sendLocalPackage.Status == ServiceConstants.NoEntregado, $"{copyEmails};{config.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value}", copyEmails);
 
             var text = this.GetBodyForLocal(sendLocalPackage, logoUrl);
-            var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage);
+            using var streamDocuments = new MemoryStream();
+            var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage, streamDocuments);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
-                string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
+                "jose.espinosa@axity.com",
                 text.Item1,
                 text.Item2,
                 copyEmails,
@@ -297,7 +299,8 @@ namespace Omicron.Reporting.Services
         public async Task<ResultModel> SubmitIncidentsExel(List<IncidentDataModel> request)
         {
             var eb = new ExcelBuilder();
-            var ms = eb.CreateIncidentExcel(request);
+            using var ms = new MemoryStream();
+            var fileName = eb.CreateIncidentExcelAnGetFileName(request, ms);
 
             var listToLook = new List<string> { ServiceConstants.EmailIncidentReport };
             listToLook.AddRange(ServiceConstants.ValuesForEmail);
@@ -308,7 +311,7 @@ namespace Omicron.Reporting.Services
 
             var dictFile = new Dictionary<string, MemoryStream>
             {
-                { ms.Item2, ms.Item1 },
+                { fileName, ms },
             };
 
             var text = this.GetBodyForIncidentEmail(request);
@@ -332,9 +335,10 @@ namespace Omicron.Reporting.Services
 
             foreach (var orderList in newListEmails)
             {
+                using var stream = new MemoryStream();
                 await Task.WhenAll(orderList.Select(async x =>
                 {
-                    var atachments = this.GetAtachments(x.Atachments, x.AtachmentFormat, x.AtachmentName);
+                    var atachments = this.GetAtachments(x.Atachments, x.AtachmentFormat, x.AtachmentName, stream);
 
                     var mailStatus = await this.omicronMailClient.SendMail(
                     smtpConfig,
@@ -563,7 +567,7 @@ namespace Omicron.Reporting.Services
             }
         }
 
-        private Dictionary<string, MemoryStream> GetAtachments(List<byte[]> atachments, string format, string name)
+        private Dictionary<string, MemoryStream> GetAtachments(List<byte[]> atachments, string format, string name, MemoryStream stream)
         {
             if (atachments == null || !atachments.Any())
             {
@@ -574,7 +578,7 @@ namespace Omicron.Reporting.Services
             var count = 0;
             atachments.ForEach(x =>
             {
-                var stream = new MemoryStream(x);
+                stream = new MemoryStream(x);
                 var fileName = string.IsNullOrEmpty(name) ? $"File{count}.{format}" : name;
                 dictionaryToReturn.Add(fileName, stream);
                 count++;
@@ -583,7 +587,7 @@ namespace Omicron.Reporting.Services
             return dictionaryToReturn;
         }
 
-        private async Task<Dictionary<string, MemoryStream>> GetInvoiceAttachment(SendLocalPackageModel localPackage)
+        private async Task<Dictionary<string, MemoryStream>> GetInvoiceAttachment(SendLocalPackageModel localPackage, MemoryStream streamDocuments)
         {
             if (!ServiceConstants.ValidStatusToGetInvoiceAttachment.Contains(localPackage.Status))
             {
@@ -599,10 +603,10 @@ namespace Omicron.Reporting.Services
 
                 if (invoicePdf != null)
                 {
-                    var ms = new MemoryStream();
-                    invoicePdf.Content.CopyTo(ms);
-                    ms.Position = 0;
-                    dictFiles.Add($"{file}", ms);
+                    streamDocuments = new MemoryStream();
+                    invoicePdf.Content.CopyTo(streamDocuments);
+                    streamDocuments.Position = 0;
+                    dictFiles.Add($"{file}", streamDocuments);
                 }
             }
 
