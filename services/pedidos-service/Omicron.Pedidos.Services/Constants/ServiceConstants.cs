@@ -966,6 +966,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string HexBlackColor = "000000";
 
         /// <summary>
+        /// Get the value for png file format.
+        /// </summary>
+        public const string PngFileFormat = "png";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
