@@ -23,9 +23,11 @@ namespace Omicron.Pedidos.Services.Azure
         /// </summary>
         /// <param name="azureAccount">the account.</param>
         /// <param name="azureKey">the key.</param>
-        /// <param name="filesToUpload">Files To Upload.</param>
+        /// <param name="pathToSave">Path to Save.</param>
+        /// <param name="fileToUpload">Files To Upload.</param>
+        /// <param name="fileFormat">File Format.</param>
         /// <returns>the stream.</returns>
-        Task<bool> UploadElementToAzure(string azureAccount, string azureKey, Tuple<string, MemoryStream, string> filesToUpload);
+        Task<bool> UploadElementToAzure(string azureAccount, string azureKey, string pathToSave, MemoryStream fileToUpload, string fileFormat);
 
         /// <summary>
         /// Validates if the file exist.
