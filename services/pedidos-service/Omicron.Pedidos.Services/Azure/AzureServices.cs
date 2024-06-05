@@ -30,20 +30,25 @@ namespace Omicron.Pedidos.Services.Azure
         }
 
         /// <inheritdoc/>
-        public async Task<bool> UploadElementToAzure(string azureAccount, string azureKey, Tuple<string, MemoryStream, string> filesToUpload)
+        public async Task<bool> UploadElementToAzure(
+            string azureAccount,
+            string azureKey,
+            string pathToSave,
+            MemoryStream fileToUpload,
+            string fileFormat)
         {
             try
             {
-                var blobUir = new Uri(filesToUpload.Item1);
+                var blobUir = new Uri(pathToSave);
                 var credentials = new StorageSharedKeyCredential(azureAccount, azureKey);
                 var blobClient = new BlobClient(blobUir, credentials);
                 var config = new BlobHttpHeaders
                 {
-                    ContentType = filesToUpload.Item3,
+                    ContentType = fileFormat,
                 };
 
                 await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
-                await blobClient.UploadAsync(filesToUpload.Item2, config);
+                await blobClient.UploadAsync(fileToUpload, config);
                 return true;
             }
             catch (Exception ex)

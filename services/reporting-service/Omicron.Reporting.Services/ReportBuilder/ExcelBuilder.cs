@@ -26,8 +26,9 @@ namespace Omicron.Reporting.Services.ReportBuilder
         /// Creates the excel.
         /// </summary>
         /// <param name="incidents">the incidets.</param>
+        /// <param name="streamOut">StreamOut.</param>
         /// <returns>the data.</returns>
-        public (MemoryStream, string) CreateIncidentExcel(List<IncidentDataModel> incidents)
+        public string CreateIncidentExcelAnGetFileName(List<IncidentDataModel> incidents,  Stream streamOut)
         {
             var day = DateTime.Today.Day.ToString().Length <= 1 ? $"0{DateTime.Today.Day}" : DateTime.Today.Day.ToString();
             var month = DateTime.Today.Month.ToString().Length <= 1 ? $"0{DateTime.Today.Month}" : DateTime.Today.Month.ToString();
@@ -36,12 +37,11 @@ namespace Omicron.Reporting.Services.ReportBuilder
             var fileName = $"{ServiceConstants.IncidentFileName}{day}{month}{year}.xlsx";
             var dataTable = this.CreateIncidentDataTable(incidents, ServiceConstants.IncidentKeys);
 
-            var mss = new MemoryStream();
             var wb = new XLWorkbook();
             wb.Worksheets.Add(dataTable);
-            wb.SaveAs(mss);
-            mss.Position = 0;
-            return (mss, fileName);
+            wb.SaveAs(streamOut);
+            streamOut.Position = 0;
+            return fileName;
         }
 
         /// <summary>
