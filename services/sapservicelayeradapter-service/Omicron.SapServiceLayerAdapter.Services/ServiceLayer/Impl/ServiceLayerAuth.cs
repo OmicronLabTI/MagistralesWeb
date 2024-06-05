@@ -73,7 +73,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ServiceLayer.Impl
                     }
                     else
                     {
-                        this.logger.Error($"Omicron.SapServiceLayerAdapter Service. POST - Service Layer Auth {authResponse.Content.ToString()}, StatusCode: {authResponse.StatusCode}");
+                        this.logger.Error($"Omicron.SapServiceLayerAdapter Service. POST - Service Layer Auth {JsonConvert.SerializeObject(authResponse.Content)}, StatusCode: {authResponse.StatusCode}");
                         throw new CustomServiceException($"Service Layer Auth Error: {authResponse.StatusCode}", authResponse.StatusCode);
                     }
                 }
