@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "https://json.schemastore.org/yamllint.json": "file:///Users/daniel.vargas/Documents/repo/GitHub/20_App-iOS-Formulas/deploy/aws/qa/deploy.yaml"
+    }
+}
