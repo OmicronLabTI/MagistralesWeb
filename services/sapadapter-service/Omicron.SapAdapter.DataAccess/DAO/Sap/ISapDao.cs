@@ -89,9 +89,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="pedidoId">the product id.</param>
         /// <param name="productId">the product id.</param>
-        /// <param name="productId">the datasources.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<OrdenFabricacionModel>> GetProdOrderByOrderProduct(int pedidoId, string productId, List<string> datasources);
+        Task<IEnumerable<OrdenFabricacionModel>> GetProdOrderByOrderProduct(int pedidoId, string productId);
 
         /// <summary>
         /// gets the orders by orderid.
@@ -235,9 +234,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="productId">the product id.</param>
         /// <param name="uniqueId">the unique record id.</param>
-        /// <param name="datasources">the datasources.</param>
         /// <returns>the data.</returns>
-        Task<int> GetlLastIsolatedProductionOrderId(string productId, string uniqueId, List<string> datasources);
+        Task<int> GetlLastIsolatedProductionOrderId(string productId, string uniqueId);
 
         /// <summary>
         /// Get next batch code.

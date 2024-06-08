@@ -32,11 +32,11 @@ spec:
             - containerPort: 8090
           resources:
             limits:
-              cpu: 244m
-              memory: 853Mi
+              cpu: 1413m
+              memory: 403Mi
             requests:
-              cpu: 3m
-              memory: 432Mi
+              cpu: 354m
+              memory: 101Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -89,11 +89,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 36m
-              memory: 217Mi
+              cpu: 99m
+              memory: 218Mi
             requests:
-              cpu: 3m
-              memory: 152Mi
+              cpu: 23m
+              memory: 55Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -146,11 +146,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 279m
-              memory: 550Mi
+              cpu: 168m
+              memory: 330Mi
             requests:
-              cpu: 4m
-              memory: 232Mi
+              cpu: 42m
+              memory: 83Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -208,11 +208,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 623m
-              memory: 989Mi
+              cpu: 308m
+              memory: 1145Mi
             requests:
-              cpu: 9m
-              memory: 371Mi
+              cpu: 77m
+              memory: 287Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -275,11 +275,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 519m
-              memory: 1106Mi
+              cpu: 183m
+              memory: 2675Mi
             requests:
-              cpu: 87m
-              memory: 460Mi
+              cpu: 46m
+              memory: 669Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -327,7 +327,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: omicron-uat
-                  key: redis
+                  key: redis            
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -337,11 +337,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 88m
-              memory: 223Mi
+              cpu: 124m
+              memory: 97Mi
             requests:
-              cpu: 2m
-              memory: 172Mi
+              cpu: 31m
+              memory: 25Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -394,11 +394,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 58m
-              memory: 215Mi
+              cpu: 45m
+              memory: 178Mi
             requests:
-              cpu: 4m
-              memory: 117Mi
+              cpu: 12m
+              memory: 45Mi
       imagePullSecrets:
         - name: pullsecret
 ---
@@ -415,87 +415,5 @@ spec:
       targetPort: 80
   selector:
     app: reporting
-  type: ClusterIP
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: sapservicelayeradapter-deployment
-  labels:
-    app: sapservicelayeradapter
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: sapservicelayeradapter
-  template:
-    metadata:
-      labels:
-        app: sapservicelayeradapter
-    spec:
-      containers:
-        - name: sapservicelayeradapter
-          image: omicron.azurecr.io/omicronuat/omicron-appiosformulas-sapservicelayeradapter-repository:latest
-          imagePullPolicy: Always
-          env:
-            - name: TZ
-              value: America/Mexico_City
-            - name: ASPNETCORE_ENVIRONMENT
-              value: Uat
-            - name: REDIS_CONNECTION_STRING
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-uat
-                  key: redis
-            - name: SAP_SERVICE_LAYER_URL
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-uat
-                  key: sap_service_layer_url
-            - name: SAP_SERVICE_LAYER_USER
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-uat
-                  key: sap_service_layer_user
-            - name: SAP_SERVICE_LAYER_PWD
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-uat
-                  key: sap_service_layer_pwd
-            - name: SAP_SERVICE_LAYER_DB
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-uat
-                  key: sap_service_layer_db
-            - name: SAP_FILE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-uat
-                  key: sap_file_url
-          ports:
-            - containerPort: 80
-          resources:
-            limits:
-              cpu: 50m
-              memory: 100Mi
-            requests:
-              cpu: 1m
-              memory: 40Mi
-      imagePullSecrets:
-        - name: pullsecret
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: sapservicelayeradapter-svc
-  labels:
-    app: sapservicelayeradapter
-spec:
-  ports:
-    - name: http
-      port: 80
-      targetPort: 80
-  selector:
-    app: sapservicelayeradapter
   type: ClusterIP
 ---

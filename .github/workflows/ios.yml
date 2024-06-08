@@ -64,11 +64,11 @@ jobs:
           app: ArquitecturaSWD/${{ env.APPCENTER_APPNAME }}
           group: ${{ env.APPCENTER_GROUP }}
 
-      # - name: Microsoft Teams Notification
-      #   uses: skitionek/notify-microsoft-teams@master
-      #   if: ${{ always() }}
-      #   with:
-      #     webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-      #     needs: ${{ toJson(needs) }}
-      #     job: ${{ toJson(job) }}
-      #     steps: ${{ toJson(steps) }}
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: ${{ always() }}
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          needs: ${{ toJson(needs) }}
+          job: ${{ toJson(job) }}
+          steps: ${{ toJson(steps) }}

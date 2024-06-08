@@ -23,7 +23,7 @@ namespace Omicron.Reporting.Services
     using Omicron.Reporting.Services.Constants;
     using Omicron.Reporting.Services.ReportBuilder;
     using Omicron.Reporting.Services.ReportBuilder.SuppliesWarehouse;
-    using Omicron.Reporting.Services.ServiceLayerAdapter;
+    using Omicron.Reporting.Services.SapDiApi;
     using Omicron.Reporting.Services.Utils;
 
     /// <summary>
@@ -35,7 +35,7 @@ namespace Omicron.Reporting.Services
         private readonly IOmicronMailClient omicronMailClient;
         private readonly IConfiguration configuration;
         private readonly IAzureService azureService;
-        private readonly ISapServiceLayerAdapterService sapServiceLayerAdapterService;
+        private readonly ISapDiApi sapDiApi;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReportingService"/> class.
@@ -44,19 +44,14 @@ namespace Omicron.Reporting.Services
         /// <param name="omicronMailClient">The email service.</param>
         /// <param name="azureService">the azure service.</param>
         /// <param name="configuration">the configuration.</param>
-        /// <param name="sapServiceLayerAdapterService">Sap Service Layer Adapter Service.</param>
-        public ReportingService(
-            ICatalogsService catalogsService,
-            IOmicronMailClient omicronMailClient,
-            IConfiguration configuration,
-            IAzureService azureService,
-            ISapServiceLayerAdapterService sapServiceLayerAdapterService)
+        /// <param name="sapDiApi">the sapdiapi.</param>
+        public ReportingService(ICatalogsService catalogsService, IOmicronMailClient omicronMailClient, IConfiguration configuration, IAzureService azureService, ISapDiApi sapDiApi)
         {
             this.catalogsService = catalogsService;
             this.omicronMailClient = omicronMailClient;
             this.configuration = configuration;
             this.azureService = azureService;
-            this.sapServiceLayerAdapterService = sapServiceLayerAdapterService.ThrowIfNull(nameof(sapServiceLayerAdapterService));
+            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
         }
 
         /// <summary>
@@ -102,8 +97,8 @@ namespace Omicron.Reporting.Services
         public async Task<ResultModel> SubmitRawMaterialRequestPdf(RawMaterialRequestModel request)
         {
             var mailStatus = true;
-            var resultSapServiceLayer = await this.CreateRawMaterialRequestOnSapServiceLayer(request);
-            if (resultSapServiceLayer.All(x => !string.IsNullOrEmpty(x.Error)))
+            var resultDiApi = await this.CreateRawMaterialRequestOnDiApi(request);
+            if (resultDiApi.All(x => !string.IsNullOrEmpty(x.Error)))
             {
                 return new ResultModel { Success = true, Code = 200, Response = false, UserError = ServiceConstants.ErrorToCreateTransferRequestOnDiApi, Comments = new List<string>() };
             }
@@ -114,7 +109,7 @@ namespace Omicron.Reporting.Services
             var allProducts = request.OrderedProducts;
             var productsWithError = new List<string>();
             var mailStatusList = new List<bool>();
-            foreach (var result in resultSapServiceLayer)
+            foreach (var result in resultDiApi)
             {
                 isLabelProducts = result.IsLabel;
                 var products = allProducts.Where(op => op.IsLabel == isLabelProducts).ToList();
@@ -134,7 +129,7 @@ namespace Omicron.Reporting.Services
             if (productsWithError.Any())
             {
                 mailStatus = false;
-                var transferRequestIdOk = resultSapServiceLayer.First(x => string.IsNullOrEmpty(x.Error)).TransferRequestId;
+                var transferRequestIdOk = resultDiApi.First(x => string.IsNullOrEmpty(x.Error)).TransferRequestId;
                 message = string.Format(ServiceConstants.ErrorWithOneRequestCreatedOnSap, transferRequestIdOk, string.Join(", ", productsWithError));
             }
             else
@@ -165,8 +160,7 @@ namespace Omicron.Reporting.Services
 
             var greeting = string.Format(ServiceConstants.SentForeignPackage, request.ClientName, request.SalesOrders, request.PackageId, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, ServiceConstants.RefundPolicy);
-            using var streamDocuments = new MemoryStream();
-            var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId }, streamDocuments);
+            var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId });
 
             var destinityEmail = request.DestinyEmail.Split(";").FirstOrDefault(x => !string.IsNullOrEmpty(x)) ?? string.Empty;
             var mailStatus = await this.omicronMailClient.SendMail(
@@ -199,11 +193,10 @@ namespace Omicron.Reporting.Services
             copyEmails = CommonCall.CalculateTernary(sendLocalPackage.Status == ServiceConstants.NoEntregado, $"{copyEmails};{config.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value}", copyEmails);
 
             var text = this.GetBodyForLocal(sendLocalPackage, logoUrl);
-            using var streamDocuments = new MemoryStream();
-            var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage, streamDocuments);
+            var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
-                "jose.espinosa@axity.com",
+                string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
                 text.Item1,
                 text.Item2,
                 copyEmails,
@@ -299,8 +292,7 @@ namespace Omicron.Reporting.Services
         public async Task<ResultModel> SubmitIncidentsExel(List<IncidentDataModel> request)
         {
             var eb = new ExcelBuilder();
-            using var ms = new MemoryStream();
-            var fileName = eb.CreateIncidentExcelAnGetFileName(request, ms);
+            var ms = eb.CreateIncidentExcel(request);
 
             var listToLook = new List<string> { ServiceConstants.EmailIncidentReport };
             listToLook.AddRange(ServiceConstants.ValuesForEmail);
@@ -311,7 +303,7 @@ namespace Omicron.Reporting.Services
 
             var dictFile = new Dictionary<string, MemoryStream>
             {
-                { fileName, ms },
+                { ms.Item2, ms.Item1 },
             };
 
             var text = this.GetBodyForIncidentEmail(request);
@@ -335,10 +327,9 @@ namespace Omicron.Reporting.Services
 
             foreach (var orderList in newListEmails)
             {
-                using var stream = new MemoryStream();
                 await Task.WhenAll(orderList.Select(async x =>
                 {
-                    var atachments = this.GetAtachments(x.Atachments, x.AtachmentFormat, x.AtachmentName, stream);
+                    var atachments = this.GetAtachments(x.Atachments, x.AtachmentFormat, x.AtachmentName);
 
                     var mailStatus = await this.omicronMailClient.SendMail(
                     smtpConfig,
@@ -567,7 +558,7 @@ namespace Omicron.Reporting.Services
             }
         }
 
-        private Dictionary<string, MemoryStream> GetAtachments(List<byte[]> atachments, string format, string name, MemoryStream stream)
+        private Dictionary<string, MemoryStream> GetAtachments(List<byte[]> atachments, string format, string name)
         {
             if (atachments == null || !atachments.Any())
             {
@@ -578,7 +569,7 @@ namespace Omicron.Reporting.Services
             var count = 0;
             atachments.ForEach(x =>
             {
-                stream = new MemoryStream(x);
+                var stream = new MemoryStream(x);
                 var fileName = string.IsNullOrEmpty(name) ? $"File{count}.{format}" : name;
                 dictionaryToReturn.Add(fileName, stream);
                 count++;
@@ -587,7 +578,7 @@ namespace Omicron.Reporting.Services
             return dictionaryToReturn;
         }
 
-        private async Task<Dictionary<string, MemoryStream>> GetInvoiceAttachment(SendLocalPackageModel localPackage, MemoryStream streamDocuments)
+        private async Task<Dictionary<string, MemoryStream>> GetInvoiceAttachment(SendLocalPackageModel localPackage)
         {
             if (!ServiceConstants.ValidStatusToGetInvoiceAttachment.Contains(localPackage.Status))
             {
@@ -603,10 +594,10 @@ namespace Omicron.Reporting.Services
 
                 if (invoicePdf != null)
                 {
-                    streamDocuments = new MemoryStream();
-                    invoicePdf.Content.CopyTo(streamDocuments);
-                    streamDocuments.Position = 0;
-                    dictFiles.Add($"{file}", streamDocuments);
+                    var ms = new MemoryStream();
+                    invoicePdf.Content.CopyTo(ms);
+                    ms.Position = 0;
+                    dictFiles.Add($"{file}", ms);
                 }
             }
 
@@ -650,21 +641,21 @@ namespace Omicron.Reporting.Services
         }
 
         /// <summary>
-        /// Create Raw Material Request On Sap Service Layer.
+        /// Create Raw Material Request On DiApi.
         /// </summary>
         /// <param name="request">Request.</param>
         /// <returns>Result.</returns>
-        private async Task<List<TransferRequestResult>> CreateRawMaterialRequestOnSapServiceLayer(RawMaterialRequestModel request)
+        private async Task<List<TransferRequestResult>> CreateRawMaterialRequestOnDiApi(RawMaterialRequestModel request)
         {
             var isLabelProducts = false;
-            var transferRequestToSapServiceLayer = new List<TransferRequestHeaderDto>();
+            var transferRequestToDiApi = new List<TransferRequestHeaderDto>();
 
             foreach (var category in ServiceConstants.LabelProductCategory)
             {
                 isLabelProducts = category == ServiceConstants.LabelProduct;
                 if (request.OrderedProducts.Any(x => x.IsLabel == isLabelProducts))
                 {
-                    transferRequestToSapServiceLayer.Add(this.CreateTransferRequestHeaderDto(
+                    transferRequestToDiApi.Add(this.CreateTransferRequestHeaderDto(
                         request.SigningUserName,
                         request.SigningUserId,
                         request.OrderedProducts.Where(x => x.IsLabel == isLabelProducts).ToList(),
@@ -672,8 +663,7 @@ namespace Omicron.Reporting.Services
                 }
             }
 
-            var response = await this.sapServiceLayerAdapterService.PostAsync(
-                ServiceConstants.EndpointCreateTransferRequestSapServiceLayer, JsonConvert.SerializeObject(transferRequestToSapServiceLayer));
+            var response = await this.sapDiApi.PostToSapDiApi(transferRequestToDiApi, ServiceConstants.EndpointCreateTransferRequest);
             var result = JsonConvert.DeserializeObject<List<TransferRequestResult>>(response.Response.ToString());
             return result;
         }

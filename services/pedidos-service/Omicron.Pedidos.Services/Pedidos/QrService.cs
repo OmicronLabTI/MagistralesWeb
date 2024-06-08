@@ -62,7 +62,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> CreateMagistralQr(List<int> ordersId)
         {
-            var parameters = await this.pedidosDao.GetParamsByFieldContainsQueryOnly(ServiceConstants.MagistralQr);
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.MagistralQr);
             var azureAccount = this.configuration[ServiceConstants.AzureAccountName];
             var azureKey = this.configuration[ServiceConstants.AzureAccountKey];
             var azureContainer = this.configuration[ServiceConstants.OrderQrContainer];
@@ -104,7 +104,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var idsStrings = ordersId.Select(x => x.ToString()).ToList();
 
-            var parameters = await this.pedidosDao.GetParamsByFieldContainsQueryOnly(ServiceConstants.DeliveryQr);
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
             var saleOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(idsStrings)).ToList();
 
             if (!saleOrders.Any())
@@ -152,7 +152,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return ServiceUtils.CreateResult(true, 200, null, savedQrRoutes, null, null);
             }
 
-            var parameters = await this.pedidosDao.GetParamsByFieldContainsQueryOnly(ServiceConstants.DeliveryQr);
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
             var saleOrders = (await this.pedidosDao.GetUserOrderByDeliveryId(ordersId)).ToList();
 
             if (ServiceShared.CalculateOr(!saleOrders.Any(), saleOrders.Select(x => x.DeliveryId).Distinct().Count() < ordersId.Count))
@@ -202,7 +202,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return ServiceUtils.CreateResult(true, 200, null, savedQrRoutes, null, null);
             }
 
-            var parameters = await this.pedidosDao.GetParamsByFieldContainsQueryOnly(ServiceConstants.DeliveryQr);
+            var parameters = await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.DeliveryQr);
             var saleOrders = await this.pedidosDao.GetUserOrdersByInvoiceId(invoiceIds);
 
             if (!saleOrders.Any())
@@ -262,18 +262,22 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listUrls = new List<string>();
             var listToSave = new List<ProductionOrderQr>();
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.MagistralQr)).ToList();
-            byte[] dataQrBuffer;
+
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<MagistralQrModel>(so.MagistralQr);
                 modelQr.Quantity = Math.Round(modelQr.Quantity, 1);
-                using var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(new { modelQr.SaleOrder, modelQr.ProductionOrder, modelQr.Quantity, modelQr.NeedsCooling, modelQr.ItemCode, Dxp = modelQr.DocNumDxp }));
+                var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(new { modelQr.SaleOrder, modelQr.ProductionOrder, modelQr.Quantity, modelQr.NeedsCooling, modelQr.ItemCode, Dxp = modelQr.DocNumDxp }));
+
                 var needsCooling = modelQr.NeedsCooling.Equals("Y");
                 var dxpDocNum = string.IsNullOrEmpty(modelQr.DocNumDxp) ? $"P:{modelQr.SaleOrder}" : $"S:{ServiceUtils.GetSubstring(modelQr.DocNumDxp, 6)} P:{modelQr.SaleOrder}";
                 var topText = string.Format(ServiceConstants.QrTopTextOrden, dxpDocNum, modelQr.ItemCode);
+
+                var streamQr = this.AddTextToSKQr(surface, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, true, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{so.Productionorderid}qr.png");
-                dataQrBuffer = this.AddTextToSKQr(surface, needsCooling, ServiceConstants.QrBottomTextOrden, modelQr.ProductionOrder.ToString(), parameters, true, topText);
-                await this.UploadQrToAzure(dataQrBuffer, azureAccount, azureKey, pathTosave);
+                streamQr.Position = 0;
+
+                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, streamQr, "png"));
 
                 var modelToSave = new ProductionOrderQr
                 {
@@ -305,11 +309,11 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listUrls = new List<string>();
             var listToSave = new List<ProductionRemisionQrModel>();
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).ToList();
-            byte[] dataQrBuffer;
+
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
-                using var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
+                var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
 
                 if (!string.IsNullOrEmpty(modelQr.Ship))
                 {
@@ -318,9 +322,11 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var topText = string.Format(ServiceConstants.QrTopTextRemision, modelQr.Ship);
                 var remisionType = ServiceShared.CalculateTernary(string.IsNullOrEmpty(modelQr.Omi) || modelQr.Omi == "N", ServiceConstants.RemisionType, ServiceConstants.RemisionOmiType);
+
+                var memoryStrem = this.AddTextToSKQr(surface, modelQr.NeedsCooling, $"{remisionType}{ServiceConstants.QrBottomTextRemision}", modelQr.RemisionId.ToString(), parameters, false, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.RemisionId}qr.png");
-                dataQrBuffer = this.AddTextToSKQr(surface, modelQr.NeedsCooling, $"{remisionType}{ServiceConstants.QrBottomTextRemision}", modelQr.RemisionId.ToString(), parameters, false, topText);
-                await this.UploadQrToAzure(dataQrBuffer, azureAccount, azureKey, pathTosave);
+                memoryStrem.Position = 0;
+                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
 
                 var modelToSave = new ProductionRemisionQrModel
                 {
@@ -347,11 +353,11 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listUrls = new List<string>();
             var listToSave = new List<ProductionRemisionQrModel>();
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.RemisionQr)).ToList();
-            byte[] dataQrBuffer;
+
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<RemisionQrModel>(so.RemisionQr);
-                using var surface = this.DrawFilledSkRectangle(parameters.QrWidth, parameters.QrHeight);
+                var surface = this.DrawFilledSkRectangle(parameters.QrWidth, parameters.QrHeight);
 
                 var topText = $"{modelQr.Ship}:";
                 parameters.QrRectx = parameters.LabelSaleOrderRectx;
@@ -359,9 +365,12 @@ namespace Omicron.Pedidos.Services.Pedidos
                 parameters.QrBottomTextSize = parameters.LabelMuestraFontSize;
                 parameters.QrRectxTop = parameters.LabelRectx;
                 parameters.QrRectyTop = parameters.LabelRecty;
+
+                using var memoryStrem = this.AddTextToSKQr(surface, false, modelQr.PedidoId.ToString(), string.Empty, parameters, false, topText);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"MU{modelQr.PedidoId}qr.png");
-                dataQrBuffer = this.AddTextToSKQr(surface, false, modelQr.PedidoId.ToString(), string.Empty, parameters, false, topText);
-                await this.UploadQrToAzure(dataQrBuffer, azureAccount, azureKey, pathTosave);
+                memoryStrem.Position = 0;
+
+                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
 
                 var modelToSave = new ProductionRemisionQrModel
                 {
@@ -388,14 +397,17 @@ namespace Omicron.Pedidos.Services.Pedidos
             var listUrls = new List<string>();
             var listToSave = new List<ProductionFacturaQrModel>();
             saleOrders = saleOrders.Where(x => !string.IsNullOrEmpty(x.InvoiceQr)).ToList();
-            byte[] dataQrBuffer;
+
             foreach (var so in saleOrders)
             {
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
-                using var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
+                var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
+                var memoryStrem = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters, false);
                 var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
-                dataQrBuffer = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters, false);
-                await this.UploadQrToAzure(dataQrBuffer, azureAccount, azureKey, pathTosave);
+                memoryStrem.Position = 0;
+
+                await this.azureService.UploadElementToAzure(azureAccount, azureKey, new Tuple<string, MemoryStream, string>(pathTosave, memoryStrem, "png"));
+
                 var modelToSave = new ProductionFacturaQrModel
                 {
                     Id = Guid.NewGuid().ToString("D"),
@@ -413,17 +425,6 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             await this.pedidosDao.InsertQrRouteFactura(listToSave);
             return listUrls;
-        }
-
-        private async Task UploadQrToAzure(
-            byte[] dataQrBuffer,
-            string azureAccount,
-            string azureKey,
-            string pathTosave)
-        {
-            using var streamQr = new MemoryStream(dataQrBuffer);
-            streamQr.Position = 0;
-            await this.azureService.UploadElementToAzure(azureAccount, azureKey, pathTosave, streamQr, ServiceConstants.PngFileFormat);
         }
 
         /// <summary>
@@ -457,7 +458,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var info = new SKImageInfo(width, heigth, SKColorType.Rgba8888, SKAlphaType.Premul);
             var surface = SKSurface.Create(info);
             var canvas = surface.Canvas;
-            using var paint = new SKPaint();
+            var paint = new SKPaint();
             paint.Style = SKPaintStyle.Fill;
             paint.IsAntialias = true;
             canvas.Clear(SKColors.White);
@@ -476,7 +477,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="parameters">the parameters.</param>
         /// <param name="needTopTextRotated">Bool need top text rotated.</param>
         /// <param name="topText">Top text.</param>
-        private byte[] AddTextToSKQr(
+        /// <returns>the bitmap to return.</returns>
+        private MemoryStream AddTextToSKQr(
             SKSurface surface,
             bool needsCoolingFlag,
             string botomText,
@@ -489,7 +491,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var needsCooling = needsCoolingFlag ? ServiceConstants.NeedsCooling : string.Empty;
             var bottomText = string.Format(botomText, identifierToPlace, needsCooling);
 
-            using var paint = new SKPaint();
+            var paint = new SKPaint();
             paint.Color = SKColors.Black;
             paint.IsAntialias = true;
             paint.TextSize = parameters.QrBottomTextSize + 5;
@@ -501,9 +503,10 @@ namespace Omicron.Pedidos.Services.Pedidos
                 this.CreateQrTopSkText(paint, ref canvas, parameters, topText, needTopTextRotated);
             }
 
-            using SKImage image = surface.Snapshot();
-            using SKData data = image.Encode(SKEncodedImageFormat.Png, 90);
-            return data.ToArray();
+            SKImage image = surface.Snapshot();
+            SKData data = image.Encode(SKEncodedImageFormat.Png, 90);
+            MemoryStream streamQr = new MemoryStream(data.ToArray());
+            return streamQr;
         }
 
         /// <summary>

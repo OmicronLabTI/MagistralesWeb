@@ -111,11 +111,6 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
-            - name: POSTGRESS_NET_CONNECTION_STRING
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-dev
-                  key: omicron_net_postgress_db
           ports:
             - containerPort: 80
       imagePullSecrets:
@@ -161,11 +156,6 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
-            - name: POSTGRESS_NET_CONNECTION_STRING
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-dev
-                  key: omicron_net_postgress_db
           ports:
             - containerPort: 80
       imagePullSecrets:
@@ -211,11 +201,6 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
-            - name: SAP_CONNECTION_STRING_SQL_SERVER
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-dev
-                  key: sap_connection_string_sql_server
           ports:
             - containerPort: 80
           livenessProbe:
@@ -268,11 +253,6 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
-            - name: POSTGRESS_NET_CONNECTION_STRING
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-dev
-                  key: omicron_net_postgress_db
           ports:
             - containerPort: 80
       imagePullSecrets:
@@ -318,11 +298,6 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
-            - name: POSTGRESS_NET_CONNECTION_STRING
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-dev
-                  key: omicron_net_postgress_db
           ports:
             - containerPort: 80
       imagePullSecrets:
@@ -480,74 +455,3 @@ spec:
     - 192.168.0.101
   selector:
     app: redisdata
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: sapservicelayeradapter-deployment
-  labels:
-    app: sapservicelayeradapter
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: sapservicelayeradapter
-  template:
-    metadata:
-      labels:
-        app: sapservicelayeradapter
-    spec:
-      containers:
-        - name: sapservicelayeradapter
-          image: 192.168.0.133:8083/omicrondev/omicron-appiosformulas-sapservicelayeradapter-repository:latest
-          imagePullPolicy: Always
-          env:
-            - name: TZ
-              value: America/Mexico_City
-            - name: ASPNETCORE_ENVIRONMENT
-              value: Development
-            - name: SAP_SERVICE_LAYER_URL
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-dev
-                  key: sap_service_layer_url
-            - name: SAP_SERVICE_LAYER_USER
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-dev
-                  key: sap_service_layer_user
-            - name: SAP_SERVICE_LAYER_PWD
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-dev
-                  key: sap_service_layer_pwd
-            - name: SAP_SERVICE_LAYER_DB
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-dev
-                  key: sap_service_layer_db
-            - name: SAP_FILE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: omicron-dev
-                  key: sap_file_url
-              
-          ports:
-            - containerPort: 80
-      imagePullSecrets:
-        - name: pullsecret
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: sapservicelayeradapter-svc
-  labels:
-    app: sapservicelayeradapter
-spec:
-  ports:
-    - name: http
-      port: 80
-      targetPort: 80
-  selector:
-    app: sapservicelayeradapter
-  type: ClusterIP

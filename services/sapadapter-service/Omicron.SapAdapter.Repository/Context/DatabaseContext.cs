@@ -24,7 +24,6 @@ namespace Omicron.SapAdapter.Entities.Context
         public DatabaseContext(DbContextOptions options)
             : base(options)
         {
-            this.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         /// <inheritdoc/>

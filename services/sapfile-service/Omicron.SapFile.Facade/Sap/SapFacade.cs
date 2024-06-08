@@ -13,7 +13,6 @@ namespace Omicron.SapFile.Facade.Sap
     using AutoMapper;
     using Omicron.SapFile.Dtos.Models;
     using Omicron.SapFile.Entities.Models;
-    using Omicron.SapFile.Services.Prescription;
     using Omicron.SapFile.Services.SapFile;
 
     public class SapFacade : ISapFacade
@@ -22,18 +21,14 @@ namespace Omicron.SapFile.Facade.Sap
 
         private readonly ISapFileService sapFileService;
 
-        private readonly IPrescriptionService prescriptionService;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SapFacade"/> class.
         /// </summary>        
         /// <param name="mapper"></param>
-        /// <param name="prescriptionService">Prescription Service.</param>
-        public SapFacade(IMapper mapper, ISapFileService sapFileService, IPrescriptionService prescriptionService)
+        public SapFacade(IMapper mapper, ISapFileService sapFileService)
         {
             this.mapper = mapper;
             this.sapFileService = sapFileService;
-            this.prescriptionService = prescriptionService;
         }
 
         /// <summary>
@@ -69,16 +64,6 @@ namespace Omicron.SapFile.Facade.Sap
         public async Task<ResultDto> DeleteFiles()
         {
             return this.mapper.Map<ResultDto>(await this.sapFileService.DeleteFiles());
-        }
-
-        /// <summary>
-        /// Save recipe to server.
-        /// </summary>
-        /// <param name="prescriptionUrls">Prescription urls to save.</param>
-        /// <returns>Result Dto.</returns>
-        public async Task<ResultDto> SavePresciptionToServer(List<PrescriptionServerRequestDto> prescriptionUrls)
-        {
-            return this.mapper.Map<ResultDto>(await this.prescriptionService.SavePresciptionToServer(prescriptionUrls));
         }
     }
 }

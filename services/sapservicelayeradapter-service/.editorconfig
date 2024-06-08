@@ -1,3 +1,0 @@
-root = true
-[*.{cs,vb}]
-dotnet_diagnostic.SA1636.severity = none

@@ -251,7 +251,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var data = o.Split("-");
                 int.TryParse(data[0], out int pedidoId);
 
-                var orders = await this.sapDao.GetProdOrderByOrderProduct(pedidoId, data[1], ServiceConstants.DataSources);
+                var orders = await this.sapDao.GetProdOrderByOrderProduct(pedidoId, data[1]);
                 result.AddRange(orders);
             }
 
@@ -556,7 +556,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         public async Task<ResultModel> GetlLastIsolatedProductionOrderId(string productId, string uniqueId)
         {
-            var lastId = await this.sapDao.GetlLastIsolatedProductionOrderId(productId, uniqueId, ServiceConstants.DataSources);
+            var lastId = await this.sapDao.GetlLastIsolatedProductionOrderId(productId, uniqueId);
             return ServiceUtils.CreateResult(true, 200, null, lastId, null, null);
         }
 

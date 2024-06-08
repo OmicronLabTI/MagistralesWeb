@@ -68,6 +68,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> UpdateFabOrderComments(List<UpdateOrderCommentsModel> updateComments);
 
         /// <summary>
+        /// Gets the connection to sap di api.
+        /// </summary>
+        /// <returns>the conection.</returns>
+        Task<ResultModel> ConnectDiApi();
+
+        /// <summary>
         /// Change order status to finish.
         /// </summary>
         /// <param name="finishOrders">Orders to finish.</param>

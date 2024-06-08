@@ -18,8 +18,8 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
-    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
 
@@ -32,31 +32,31 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IPedidosDao pedidosDao;
 
+        private readonly ISapDiApi sapDiApi;
+
         private readonly ISapFileService sapFileService;
 
         private readonly IUsersService userService;
 
         private readonly IKafkaConnector kafkaConnector;
 
-        private readonly ISapServiceLayerAdapterService serviceLayerAdapterService;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CancelPedidosService"/> class.
         /// </summary>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="pedidosDao">pedidos dao.</param>
+        /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="sapFileService">The sap file.</param>
         /// <param name="usersService">The user service.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
-        /// <param name="serviceLayerAdapterService">The serviceLayerAdapterService.</param>
-        public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapFileService sapFileService, IUsersService usersService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService serviceLayerAdapterService)
+        public CancelPedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapFileService sapFileService, IUsersService usersService, IKafkaConnector kafkaConnector)
         {
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
+            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
             this.sapFileService = sapFileService.ThrowIfNull(nameof(sapFileService));
             this.userService = usersService.ThrowIfNull(nameof(usersService));
             this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
-            this.serviceLayerAdapterService = serviceLayerAdapterService.ThrowIfNull(nameof(serviceLayerAdapterService));
         }
 
         /// <summary>
@@ -654,7 +654,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         private async Task<bool> CancelProductionOrderInSap(string productionOrderId)
         {
             var payload = new { OrderId = productionOrderId };
-            var result = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.CancelFabOrder);
+            var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CancelFabOrder);
             var resultResponse = result.Response.ToString();
             var anyOkOrWithError = ServiceShared.CalculateOr(resultResponse.Equals(ServiceConstants.Ok), resultResponse.Equals(ServiceConstants.ErrorProductionOrderCancelled));
             return ServiceShared.CalculateAnd(result.Success, anyOkOrWithError);
