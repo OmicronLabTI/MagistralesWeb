@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  baseUrl: 'https://devtools.axity.com/omicronqa', // qa
+  baseUrl: 'http://201.163.179.28:8082', // qa
   apiLogin: '/api/oauth/oauthrs',
   apiCatalogs: '/api/catalogos',
   apiUsers: '/api/usuarios',

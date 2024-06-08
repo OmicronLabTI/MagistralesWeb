@@ -349,9 +349,14 @@ namespace Omicron.Reporting.Services.Constants
         public const string NoLabelProduct = "NoLabelProduct";
 
         /// <summary>
-        /// Endpoint Create Transfer Request Sap Service Layer.
+        /// status NoLabelProduct.
         /// </summary>
-        public const string EndpointCreateTransferRequestSapServiceLayer = "create/transferrequest";
+        public const string EndpointCreateTransferRequest = "create/transferrequest";
+
+        /// <summary>
+        /// status NoLabelProduct.
+        /// </summary>
+        public const string Default = "create/transferrequest";
 
         /// <summary>
         /// value for refactua.

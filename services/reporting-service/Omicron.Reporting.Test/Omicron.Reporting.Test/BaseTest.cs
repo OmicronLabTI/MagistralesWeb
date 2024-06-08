@@ -101,7 +101,7 @@ namespace Omicron.Reporting.Test
         /// </summary>
         /// <param name="response">Response.</param>
         /// <returns>the user.</returns>
-        public ResultModel GetResultSapServiceLayerAdapter(object response)
+        public ResultModel GetResultDiApi(object response)
         {
             return new ResultModel
             {

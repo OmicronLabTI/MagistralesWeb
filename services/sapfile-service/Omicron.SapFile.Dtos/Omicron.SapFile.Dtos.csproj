@@ -63,8 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\FinalizaGeneratePdfDto.cs" />
-    <Compile Include="Models\PrescriptionServerRequestDto.cs" />
-    <Compile Include="Models\PrescriptionServerResponseDto.cs" />
     <Compile Include="Models\ResultDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

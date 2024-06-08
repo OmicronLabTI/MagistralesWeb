@@ -32,10 +32,4 @@
     <ProjectReference Include="..\Omicron.Pedidos.Resources\Omicron.Pedidos.Resources.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="SapOrderAdapterService\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SapOrderAdapterService\" />
-  </ItemGroup>
 </Project>

@@ -6,9 +6,6 @@
 // </copyright>
 // </summary>
 
-using Omicron.SapFile.Services.Utils;
-using System.Collections.Generic;
-
 namespace Omicron.SapFile.Services.Constants
 {
     /// <summary>
@@ -50,26 +47,5 @@ namespace Omicron.SapFile.Services.Constants
         /// Text for production order reference.
         /// </summary>
         public const string Delivery = "delivery";
-
-        /// <summary>
-        /// Azure Key.
-        /// </summary>
-        public const string AzureKey = "AzureKey";
-
-        /// <summary>
-        /// Azure Account Name.
-        /// </summary>
-        public const string AzureAccountName = "AzureAccountName";
-
-
-        /// <summary>
-        /// Character Path Separator.
-        /// </summary>
-        public const char CharacterPathSeparator = '/';
-
-        /// <summary>
-        /// Prescription Files.
-        /// </summary>
-        public const string PrescriptionFiles = "PrescriptionFiles";
     }
 }

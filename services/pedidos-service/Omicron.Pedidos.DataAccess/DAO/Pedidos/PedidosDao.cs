@@ -267,23 +267,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <summary>
-        /// Gets the data by field.
-        /// </summary>
-        /// <param name="fieldName">The field name.</param>
-        /// <returns>the data.</returns>
-        public async Task<List<ParametersModel>> GetParamsByFieldContainsQueryOnly(string fieldName)
-        {
-            return await this.databaseContext.ParametersModel.Where(x => x.Field.Contains(fieldName)).AsNoTracking().ToListAsync();
-        }
-
-        /// <summary>
         /// Gets the qr if exist in table.
         /// </summary>
         /// <param name="userOrderId">the orders ids.</param>
         /// <returns>the data.</returns>
         public async Task<List<ProductionOrderQr>> GetQrRoute(List<int> userOrderId)
         {
-            return await this.databaseContext.ProductionOrderQr.Where(x => userOrderId.Contains(x.UserOrderId)).AsNoTracking().ToListAsync();
+            return await this.databaseContext.ProductionOrderQr.Where(x => userOrderId.Contains(x.UserOrderId)).ToListAsync();
         }
 
         /// <summary>

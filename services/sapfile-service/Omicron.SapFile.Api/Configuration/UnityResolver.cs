@@ -14,8 +14,6 @@ namespace Omicron.SapFile.Api.Configuration
     using Omicron.SapFile.Entities.Models;
     using Omicron.SapFile.Facade.Sap;
     using Omicron.SapFile.Log;
-    using Omicron.SapFile.Services.Prescription;
-    using Omicron.SapFile.Services.Prescription.Impl;
     using Omicron.SapFile.Services.SapFile;
     using Unity;    
 
@@ -46,7 +44,6 @@ namespace Omicron.SapFile.Api.Configuration
             container.RegisterType<ISapFacade, SapFacade>();
             container.RegisterType<ISapFileService, SapFileService>();
             container.RegisterType<ILoggerProxy, LoggerProxy>();
-            container.RegisterType<IPrescriptionService, PrescriptionService>();
 
             if (container == null)
             {

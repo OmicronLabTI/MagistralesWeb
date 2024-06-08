@@ -121,16 +121,6 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string AbiertoSap = "O";
 
         /// <summary>
-        /// the datasource di api.
-        /// </summary>
-        public const string DataSourceDiApi = "O";
-
-        /// <summary>
-        /// the datasource di api.
-        /// </summary>
-        public const string DataSourceServiceLayer = "S";
-
-        /// <summary>
         /// value for chips.
         /// </summary>
         public const string Chips = "chips";
@@ -960,18 +950,6 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             Almacenado,
             Empaquetado,
-        };
-
-        /// <summary>
-        /// Gets list of thw datasources for the orders.
-        /// </summary>
-        /// <value>
-        /// List of thw status for the orders.
-        /// </value>
-        public static List<string> DataSources { get; } = new List<string>
-        {
-            DataSourceDiApi,
-            DataSourceServiceLayer,
         };
     }
 }

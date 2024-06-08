@@ -9,7 +9,7 @@ on:
         required: false
   push:
     branches:
-      - release/qa
+      - release/Sprint12
     paths:
       - frontend/web/**
       - services/**
@@ -35,7 +35,7 @@ jobs:
           environment: qa
           registry: ${{ secrets.NEXUS_REGISTRY }}
           configuration: staging
-          href: /omicronqa/magistrales/
+          href: /magistrales/
 
       - name: Build catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
@@ -93,16 +93,6 @@ jobs:
           environment: qa
           registry: ${{ secrets.NEXUS_REGISTRY }}
 
-      - name: Build sapservicelayeradapter-service
-        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
-        uses: ./.github/actions/docker-build
-        with:
-          path: services/sapservicelayeradapter-service
-          environment: qa
-          registry: ${{ secrets.NEXUS_REGISTRY }}
-          nexus_user: ${{ secrets.NEXUS_USER }}
-          nexus_pass: ${{ secrets.NEXUS_PASS }}
-
       - name: Kubernetes deploy
         working-directory: deploy/qa
         run: |
@@ -143,10 +133,6 @@ jobs:
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
         run: kubectl rollout restart deploy warehouses-deployment --context kubernetes-admin@kubernetes
 
-      - name: Rollout sapservicelayeradapter-service
-        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
-        run: kubectl rollout restart deploy sapservicelayeradapter-deployment --context kubernetes-admin@kubernetes
-
       - name: Liquibase update
         working-directory: database/
         run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-qa.properties" update
@@ -156,11 +142,11 @@ jobs:
           docker builder prune -f -a
           docker image prune -f -a
 
-      # - name: Microsoft Teams Notification
-      #   uses: skitionek/notify-microsoft-teams@master
-      #   if: ${{ always() }}
-      #   with:
-      #     webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-      #     needs: ${{ toJson(needs) }}
-      #     job: ${{ toJson(job) }}
-      #     steps: ${{ toJson(steps) }}
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: ${{ always() }}
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          needs: ${{ toJson(needs) }}
+          job: ${{ toJson(job) }}
+          steps: ${{ toJson(steps) }}

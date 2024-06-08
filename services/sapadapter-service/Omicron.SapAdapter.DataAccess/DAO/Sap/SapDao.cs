@@ -225,9 +225,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<OrdenFabricacionModel>> GetProdOrderByOrderProduct(int pedidoId, string productId, List<string> datasources)
+        public async Task<IEnumerable<OrdenFabricacionModel>> GetProdOrderByOrderProduct(int pedidoId, string productId)
         {
-            return (await (from order in this.databaseContext.OrdenFabricacionModel.Where(x => x.PedidoId == pedidoId && x.ProductoId == productId && datasources.Contains(x.DataSource))
+            return (await (from order in this.databaseContext.OrdenFabricacionModel.Where(x => x.PedidoId == pedidoId && x.ProductoId == productId && x.DataSource == "O")
                            join prod in this.databaseContext.ProductoModel on order.ProductoId equals prod.ProductoId
                            join catalog in this.databaseContext.CatalogProductModel on prod.ProductGroupId equals catalog.ProductGroupId
                            select new { order, catalog })
@@ -239,14 +239,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             });
         }
         /// <inheritdoc/>
-        public async Task<int> GetlLastIsolatedProductionOrderId(string productId, string uniqueId, List<string> datasources)
+        public async Task<int> GetlLastIsolatedProductionOrderId(string productId, string uniqueId)
         {
             var query = await this.databaseContext.OrdenFabricacionModel
                                     .Where(
                                         x => x.ProductoId.Equals(productId) &&
                                         x.Comments.Equals(uniqueId) &&
                                         string.IsNullOrEmpty(x.CardCode) &&
-                                        datasources.Contains(x.DataSource))
+                                        x.DataSource.Equals("O"))
                                     .MaxAsync(x => x.OrdenId);
             return query;
         }
