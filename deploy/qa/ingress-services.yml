@@ -27,48 +27,55 @@ spec:
                 name: catalogos-svc
                 port:
                   number: 80
-            path: /api/catalogos(/|$)(.*)
+            path: /omicronqa/api/catalogos(/|$)(.*)
             pathType: Prefix
           - backend:
               service:
                 name: usuarios-svc
                 port:
                   number: 80
-            path: /api/usuarios(/|$)(.*)
+            path: /omicronqa/api/usuarios(/|$)(.*)
             pathType: Prefix
           - backend:
               service:
                 name: sapadapter-svc
                 port:
                   number: 80
-            path: /api/sapadapter(/|$)(.*)
+            path: /omicronqa/api/sapadapter(/|$)(.*)
             pathType: Prefix
           - backend:
               service:
                 name: pedidos-svc
                 port:
                   number: 80
-            path: /api/pedidos(/|$)(.*)
+            path: /omicronqa/api/pedidos(/|$)(.*)
             pathType: Prefix
           - backend:
               service:
                 name: warehouses-svc
                 port:
                   number: 80
-            path: /api/warehouses(/|$)(.*)
+            path: /omicronqa/api/warehouses(/|$)(.*)
             pathType: Prefix
           - backend:
               service:
                 name: reporting-svc
                 port:
                   number: 80
-            path: /api/reporting(/|$)(.*)
+            path: /omicronqa/api/reporting(/|$)(.*)
             pathType: Prefix
           - backend:
               service:
                 name: reporting-svc
                 port:
                   number: 80
-            path: /api/reporting(/|$)(.*)
+            path: /omicronqa/api/reporting(/|$)(.*)
+            pathType: Prefix
+          - backend:
+              service:
+                name: sapservicelayeradapter-svc
+                port:
+                  number: 80
+            path: /omicronqa/api/sapservicelayeradapter(/|$)(.*)
             pathType: Prefix
   ingressClassName: nginx

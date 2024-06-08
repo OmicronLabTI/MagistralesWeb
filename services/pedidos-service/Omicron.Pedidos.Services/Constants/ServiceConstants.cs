@@ -306,9 +306,9 @@ namespace Omicron.Pedidos.Services.Constants
         public const string UpdateFormula = "updateFormula";
 
         /// <summary>
-        /// the update batches.
+        /// Update Production Order Batches Service Layer.
         /// </summary>
-        public const string UpdateBatches = "batches";
+        public const string UpdateProductionOrderBatchesServiceLayer = "productionorders/batches";
 
         /// <summary>
         /// route to cancel orders.
@@ -964,6 +964,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// Gets the value for hex black color.
         /// </summary>
         public const string HexBlackColor = "000000";
+
+        /// <summary>
+        /// Get the value for png file format.
+        /// </summary>
+        public const string PngFileFormat = "png";
 
         /// <summary>
         /// Gets the status of the order.

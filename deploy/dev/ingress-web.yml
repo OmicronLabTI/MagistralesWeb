@@ -15,6 +15,6 @@ spec:
                 name: web-svc
                 port:
                   number: 80
-            path: /magistrales(/|$)(.*)
+            path: /omicrondev/magistrales(/|$)(.*)
             pathType: Prefix
   ingressClassName: nginx
