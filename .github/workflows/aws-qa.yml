@@ -13,7 +13,6 @@ on:
     paths:
       - frontend/**
       - services/**
-      - keycloak/**
       - database/**
 jobs:
   db: 
@@ -175,7 +174,7 @@ jobs:
       - name: Update kube config 
         run: aws eks update-kubeconfig --name ${{ secrets.AWS_EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_EKS_REGION }}
   
-      - name: Deploy to EKS
+      - name: Deploy to EKS Magistrales
         working-directory: ./deploy/aws/qa
         run: |
           kubectl apply -f deploy.yml
