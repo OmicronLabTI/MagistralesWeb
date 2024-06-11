@@ -1,4 +1,4 @@
-name: Deploy QA to AWS
+name: omicron-magistrales-qa-aws
 on:
   workflow_dispatch:
     inputs:
