@@ -1,30 +1,30 @@
-name: "Docker build and push to ECR"
-description: "Deploy a web Angular to ECR"
+name: 'Docker build and push to ECR'
+description: 'Deploy a web Angular to ECR'
 inputs:
   working_directory:
-    description: "Working directory"
+    description: 'Working directory'
     required: true
   registry:
-    description: "Elastic Container Registry Name"
+    description: 'Elastic Container Registry Name'
     required: true
   repository:
-    description: "Repository Name (Exist)"
+    description: 'Repository Name (Exist)'
     required: true
   tag:
-    description: "Tag Docker Image"
+    description: 'Tag Docker Image'
     required: true
   nexus_user:
-    description: "Nexus user"
+    description: 'Nexus user'
     required: false
   nexus_pass:
-    description: "Nexus password"
+    description: 'Nexus password'
     required: false
   dockerfile:
-    description: "Dockerfile name"
+    description: 'Dockerfile name'
     required: false
     default: Dockerfile
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Build and push docker image to Amazon ECR
       working-directory: ${{ inputs.working_directory }}
