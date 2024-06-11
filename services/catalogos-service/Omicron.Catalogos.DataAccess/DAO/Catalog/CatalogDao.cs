@@ -44,7 +44,7 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// <inheritdoc/>
         public async Task<IEnumerable<ClassificationQfbModel>> GetActiveClassificationQfb()
         {
-            return await this.databaseContext.ClassificationQfbModel.Where(c => c.Active == true).ToListAsync();
+            return await this.databaseContext.ClassificationQfbModel.Where(c => c.Active).ToListAsync();
         }
 
         /// <summary>
