@@ -202,7 +202,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 }
             }
 
-            await this.serviceLayerClient.PatchAsync("Orders", JsonConvert.SerializeObject(saleOrderShipping));
+            await this.serviceLayerClient.PatchAsync($"Orders({saleOrderId})", JsonConvert.SerializeObject(saleOrderShipping));
         }
 
         private async Task<int> GetShippingCostBaseLine(int saleOrderId)
