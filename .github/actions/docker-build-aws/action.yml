@@ -20,11 +20,11 @@ inputs:
     description: 'Nexus password'
     required: false
   dockerfile:
-    description: 'Dockerfile name'
+    description: "Dockerfile name"
     required: false
     default: Dockerfile
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Build and push docker image to Amazon ECR
       working-directory: ${{ inputs.working_directory }}
