@@ -13,11 +13,47 @@ on:
     paths:
       - frontend/**
       - services/**
+      - keycloak/**
+      - database/**
 jobs:
+  db: 
+    name: Deploy DB
+    runs-on: ubuntu-latest
+    environment: QA
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changeset
+        id: changeset
+        run: |
+          echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
+  
+      - name: Create Bastion SSH Tunnel
+        if: ${{ (contains(steps.changeset.outputs.changes, 'database')) || (inputs.force_build) }}
+        uses: ./.github/actions/bastion
+        with:
+          bastion_pem: ${{ secrets.BASTION_PEM }}
+          ec2_user: ${{ secrets.AWS_EC2_USER }}
+          bastion_host: ${{ secrets.AWS_BASTION_HOST }}
+          db_host: ${{ secrets.AWS_DATABASE_HOST }}
+          db_port: ${{ secrets.AWS_DATABASE_PORT }}
+
+      - name: Update database
+        if: ${{ (contains(steps.changeset.outputs.changes, 'database')) || (inputs.force_build) }}
+        uses: ./.github/actions/liquibase
+        with: 
+          db_name: ${{ secrets.AWS_DATABASE_NAME }}
+          db_username: ${{ secrets.AWS_DATABASE_USER }}
+          db_password: ${{ secrets.AWS_DATABASE_PASSWORD }}
+
   build:
     name: Deploy AWS
     runs-on: ubuntu-latest
     environment: QA
+    needs: db
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,14 +76,13 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       
-      # - name: Web
-      #   if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_build) }}
-      #   uses: ./.github/actions/deploy-web-aws-s3
-      #   with:
-      #     bucket_name: ${{ secrets.AWS_BUCKET_MAGISTRALES }}
-      #     environment: qa
-      #     working_directory: ./frontend/web
-
+      - name: Web
+        if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_build) }}
+        uses: ./.github/actions/deploy-web-aws-s3
+        with:
+          bucket_name: ${{ secrets.AWS_BUCKET_MAGISTRALES }}
+          environment: aws-qa
+          working_directory: ./frontend/web
 
       - name: Docker Build an Push Catalogos
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
@@ -137,26 +172,16 @@ jobs:
           nexus_user: ${{ secrets.NEXUS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
 
-      - name: Kubernetes deploy
+      - name: Update kube config 
+        run: aws eks update-kubeconfig --name ${{ secrets.AWS_EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_EKS_REGION }}
+  
+      - name: Deploy to EKS
         working-directory: ./deploy/aws/qa
         run: |
-          kubectl apply -f deploy.yaml
-          kubectl apply -f ingress-services.yaml
-
-      # - name: Liquibase update
-      #   working-directory: database/
-      #   run: /opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" --defaultsFile="liquibase-qa.properties" update
+          kubectl apply -f deploy.yml
+          kubectl apply -f ingress-services.yml
 
       - name: Docker prune
         run: |
           docker builder prune -f -a
           docker image prune -f -a
-
-      # - name: Microsoft Teams Notification
-      #   uses: skitionek/notify-microsoft-teams@master
-      #   if: ${{ always() }}
-      #   with:
-      #     webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-      #     needs: ${{ toJson(needs) }}
-      #     job: ${{ toJson(job) }}
-      #     steps: ${{ toJson(steps) }}
