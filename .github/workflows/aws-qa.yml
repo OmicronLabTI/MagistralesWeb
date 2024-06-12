@@ -75,6 +75,9 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       
+      - name: Login to Oracle container registry
+        run: echo ${{ secrets.ORACLE_PASSWORD }} | docker login container-registry.oracle.com -u ${{ secrets.ORACLE_USERNAME }} --password-stdin
+
       - name: Web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_build) }}
         uses: ./.github/actions/deploy-web-aws-s3
