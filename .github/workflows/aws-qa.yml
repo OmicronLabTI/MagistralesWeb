@@ -83,7 +83,7 @@ jobs:
         uses: ./.github/actions/deploy-web-aws-s3
         with:
           bucket_name: ${{ secrets.AWS_BUCKET_MAGISTRALES }}
-          environment: staging
+          environment: qa-aws
           working_directory: ./frontend/web
 
       - name: Docker Build an Push Catalogos
