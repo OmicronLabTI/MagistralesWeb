@@ -7,6 +7,11 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-buffer-size: "8k"
     nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
 spec:
+  ingressClassName: nginx-omicron
+  tls:
+    - hosts:
+        - omicronqa.axity.com
+      secretName: secure-tls-2024
   rules:
     - http:
         paths:
@@ -17,4 +22,3 @@ spec:
                   number: 80
             path: /api/oauth(/|$)(.*)
             pathType: Prefix
-  ingressClassName: nginx
