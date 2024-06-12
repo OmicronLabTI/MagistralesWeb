@@ -179,6 +179,7 @@ jobs:
         run: |
           kubectl apply -f deploy.yml
           kubectl apply -f ingress-services.yml
+          kubectl apply -f ingress-oauth.yml
           kubectl apply -f secrets.yml
 
       - name: Docker prune
