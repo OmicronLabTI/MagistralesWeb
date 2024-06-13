@@ -5,14 +5,14 @@ spring:
     hikari:
       maximumPoolSize: 1000
       minimumIdle: 3
-    #datasource:
-    #url: jdbc:sqlserver://localhost;databaseName=securitydb
-    #username: sa
-    #password: Axity&2019Arq
-    #driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non-contextual-creation: true   
   application:
     name: oauth-service
   profiles: qa
