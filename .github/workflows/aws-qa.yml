@@ -15,7 +15,7 @@ on:
       - services/**
       - database/**
 jobs:
-  db: 
+  db:
     name: Deploy DB
     runs-on: ubuntu-latest
     environment: QA
@@ -29,7 +29,7 @@ jobs:
         id: changeset
         run: |
           echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
-  
+
       - name: Create Bastion SSH Tunnel
         if: ${{ (contains(steps.changeset.outputs.changes, 'database')) || (inputs.force_build) }}
         uses: ./.github/actions/bastion
@@ -43,7 +43,7 @@ jobs:
       - name: Update database
         if: ${{ (contains(steps.changeset.outputs.changes, 'database')) || (inputs.force_build) }}
         uses: ./.github/actions/liquibase
-        with: 
+        with:
           db_name: ${{ secrets.AWS_DATABASE_NAME }}
           db_username: ${{ secrets.AWS_DATABASE_USER }}
           db_password: ${{ secrets.AWS_DATABASE_PASSWORD }}
@@ -74,7 +74,7 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      
+
       - name: Login to Oracle container registry
         run: echo ${{ secrets.ORACLE_PASSWORD }} | docker login container-registry.oracle.com -u ${{ secrets.ORACLE_USERNAME }} --password-stdin
 
@@ -118,7 +118,7 @@ jobs:
           tag: ${{ github.sha }}
           nexus_user: ${{ secrets.NEXUS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
-  
+
       - name: Docker Build an Push Reporting
         if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build-aws
@@ -129,7 +129,7 @@ jobs:
           tag: ${{ github.sha }}
           nexus_user: ${{ secrets.NEXUS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
-        
+
       - name: Docker Build an Push SapAdapter
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build-aws
@@ -174,9 +174,9 @@ jobs:
           nexus_user: ${{ secrets.NEXUS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
 
-      - name: Update kube config 
+      - name: Update kube config
         run: aws eks update-kubeconfig --name ${{ secrets.AWS_EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_EKS_REGION }}
-  
+
       - name: Deploy to EKS Magistrales
         working-directory: ./deploy/aws/qa
         run: |
@@ -184,6 +184,38 @@ jobs:
           kubectl apply -f ingress-services.yml
           kubectl apply -f ingress-oauth.yml
           kubectl apply -f secrets.yml
+
+      - name: Rollout catalogos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy catalogos-deployment
+
+      - name: Rollout oauthserver
+        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy oauthserver-deployment
+
+      - name: Rollout pedidos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy pedidos-deployment
+
+      - name: Rollout reporting-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy reporting-deployment
+
+      - name: Rollout sapadapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy sapadapter-deployment
+
+      - name: Rollout usuarios-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy usuarios-deployment
+
+      - name: Rollout warehouses-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy warehouses-deployment
+
+      - name: Rollout sapservicelayeradapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy sapservicelayeradapter-deployment
 
       - name: Docker prune
         run: |
