@@ -23,6 +23,11 @@ spec:
               value: America/Mexico_City
             - name: SPRING_PROFILES_ACTIVE
               value: qa
+            - name: POSTGRESS_JDBC_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: omicron_jdbc_postgress_db
           ports:
             - containerPort: 8090
           resources:

@@ -1,0 +1,42 @@
+name: 'Deploy Angular to AWS S3'
+description: 'Deploy a web Angular to AWS S3'
+inputs:
+  bucket_name:
+    description: 'Bucket name'
+    required: true
+  environment:
+    description: 'Environment'
+    required: true
+  working_directory:
+    description: 'Working directory'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install Node.js version 14.15.5
+      uses: actions/setup-node@v4
+      with:
+        node-version: 14.15.5
+
+    - name: Install Angular 11.2.6
+      run: npm install -g @angular/cli@11.2.6
+      shell: bash
+
+    - name: Install Dependencies
+      working-directory: ${{ inputs.working_directory }}
+      run: npm install
+      shell: bash
+
+    - name: Build Angular app
+      working-directory: ${{ inputs.working_directory }}
+      run: ng build --configuration=${{ inputs.environment }}
+      shell: bash
+
+    - name: Empty S3 bucket
+      run: aws s3 rm s3://${{ inputs.bucket_name }} --recursive
+      shell: bash
+
+    - name: Upload build artifacts to S3
+      working-directory: ${{ inputs.working_directory }}
+      run: aws s3 sync dist/ s3://${{ inputs.bucket_name }}
+      shell: bash
