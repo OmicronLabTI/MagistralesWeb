@@ -12,7 +12,7 @@ spring:
       hibernate:
         jdbc:
           lob:
-            non-contextual-creation: true   
+            non_contextual_creation: true   
   application:
     name: oauth-service
   profiles: qa
