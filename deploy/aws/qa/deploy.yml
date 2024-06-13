@@ -120,7 +120,7 @@ metadata:
   labels:
     app: usuarios
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: usuarios
@@ -180,7 +180,7 @@ metadata:
   labels:
     app: sapadapter
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: sapadapter
@@ -247,7 +247,7 @@ metadata:
   labels:
     app: pedidos
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: pedidos
