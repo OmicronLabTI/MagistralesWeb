@@ -285,8 +285,8 @@ struct Base64 {
 }
 
 struct URLRoot {
-    static let DEBUG = "https://devtools.axity.com/omicrondev/api"
-    static let QAURL = "https://devtools.axity.com/omicronqa/api"
+    static let DEBUG = "https://omicrondev.axity.com/api"
+    static let QAURL = "https://omicronqa.axity.com/api"
     static let RELEASE = "https://magistralesprod.omicronlab.com.mx/api"
 //    static let RELEASE = "https://omicron-api.eastus2.cloudapp.azure.com/api"
     static let omicronServer = "http://172.31.55.11:5000/"
