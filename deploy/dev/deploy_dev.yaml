@@ -116,6 +116,11 @@ spec:
                 secretKeyRef:
                   name: omicron-dev
                   key: omicron_net_postgress_db
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-dev
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 80
       imagePullSecrets:
@@ -166,6 +171,11 @@ spec:
                 secretKeyRef:
                   name: omicron-dev
                   key: omicron_net_postgress_db
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-dev
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 80
       imagePullSecrets:
@@ -216,6 +226,11 @@ spec:
                 secretKeyRef:
                   name: omicron-dev
                   key: sap_connection_string_sql_server
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-dev
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 80
           livenessProbe:
@@ -273,6 +288,11 @@ spec:
                 secretKeyRef:
                   name: omicron-dev
                   key: omicron_net_postgress_db
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-dev
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 80
       imagePullSecrets:
@@ -323,6 +343,11 @@ spec:
                 secretKeyRef:
                   name: omicron-dev
                   key: omicron_net_postgress_db
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-dev
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 80
       imagePullSecrets:
@@ -368,6 +393,11 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-dev
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 80
       imagePullSecrets:
@@ -531,6 +561,11 @@ spec:
                 secretKeyRef:
                   name: omicron-dev
                   key: sap_file_url
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-dev
+                  key: seqlog_svc_service_host_name
               
           ports:
             - containerPort: 80

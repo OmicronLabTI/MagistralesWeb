@@ -88,6 +88,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: redis_connection_string
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 9010
           resources:
@@ -148,6 +153,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: redis_connection_string
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 5101
           resources:
@@ -208,6 +218,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: redis_connection_string
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 5102
           resources:
@@ -285,6 +300,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: kafka_insertlogs_eh_name
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 5103
           resources:
@@ -345,6 +365,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: redis_connection_string
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 5104
           resources:
@@ -400,6 +425,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: redis_connection_string
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 5105
           resources:
@@ -480,6 +510,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: redis_connection_string
+            - name: SEQLOG_SVC_SERVICE_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: seqlog_svc_service_host_name
           ports:
             - containerPort: 80
           resources:
