@@ -57,6 +57,7 @@ jobs:
           project_name: Pedidos
           sonar_server: ${{ secrets.SONAR_SERVER }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
+          net_version: 6.0.x
 
       - name: Test reporting-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_test) }}
@@ -104,3 +105,4 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
           nexus_user: ${{ secrets.NEXUS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
+          net_version: 6.0.x
