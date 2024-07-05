@@ -23,7 +23,7 @@ platform :ios do
       code_coverage: true,
       derived_data_path: "./DerivedData",
       output_directory: "./sonar-reports",
-      devices: "iPad Pro (9.7-inch)")
+      devices: "iPad Pro (12.9-inch) (6th generation)")
     
     slather(cobertura_xml: true,
       build_directory: "./DerivedData",
