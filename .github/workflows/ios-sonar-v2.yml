@@ -13,30 +13,30 @@ concurrency:
 jobs:
   build:
     runs-on: macos-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '2.7'
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
 
-    - name: Install dependencies
-      working-directory: frontend/ios
-      run: |
-        sudo gem install cocoapods
-        pod install
-        brew install swiftlint
+      - name: Install dependencies
+        working-directory: frontend/ios
+        run: |
+          sudo gem install cocoapods
+          pod install
+          brew install swiftlint
 
-    - name: Install Fastlane
-      run: sudo gem install fastlane -NV
-      working-directory: frontend/ios
+      - name: Install Fastlane
+        uses: tashi-iu/setup-fastlane@v1
+        with:
+          version: '2.219.0'
 
-    - name: Run ios sonar
-      working-directory: frontend/ios
-      run: bundle exec fastlane metrics
-      env:
-        SONAR_HOST_URL: ${{ secrets.SONAR_SERVER }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Run ios sonar
+        working-directory: frontend/ios
+        run: bundle exec fastlane metrics
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_SERVER }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
