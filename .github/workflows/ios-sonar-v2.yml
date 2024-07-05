@@ -24,6 +24,7 @@ jobs:
         ruby-version: '2.7'
 
     - name: Install dependencies
+      working-directory: frontend/ios
       run: |
         sudo gem install cocoapods
         pod install
@@ -31,6 +32,7 @@ jobs:
 
     - name: Install Fastlane
       run: gem install fastlane -NV
+      working-directory: frontend/ios
 
     - name: Run ios sonar
       working-directory: frontend/ios
