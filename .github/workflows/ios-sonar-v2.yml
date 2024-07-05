@@ -20,7 +20,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
+          ruby-version: "3.3"
 
       - name: Install dependencies
         working-directory: frontend/ios
@@ -32,11 +32,11 @@ jobs:
       - name: Install Fastlane
         uses: tashi-iu/setup-fastlane@v1
         with:
-          version: '2.219.0'
+          version: "2.219.0"
 
       - name: Run ios sonar
         working-directory: frontend/ios
-        run: bundle exec fastlane metrics
+        run: fastlane ios metrics
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_SERVER }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
