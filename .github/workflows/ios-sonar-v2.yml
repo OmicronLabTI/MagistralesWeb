@@ -25,7 +25,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo gem install bundler
+        sudo gem install bundler -v 2.4.22
         bundle install
         sudo gem install cocoapods
         pod install
