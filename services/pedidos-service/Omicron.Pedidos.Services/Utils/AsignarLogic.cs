@@ -19,7 +19,7 @@ namespace Omicron.Pedidos.Services.Utils
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
 
     /// <summary>
@@ -45,10 +45,10 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="qfbInfoValidated"> QfbINfoValidated.</param>
         /// <param name="pedidosDao">the pedidos dao.</param>
         /// <param name="sapAdapter">the sap adapter.</param>
-        /// <param name="sapDiApi">The sap di api.</param>
+        /// <param name="serviceLayerAdapterService">The service layer service.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
         /// <returns>the result.</returns>
-        public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, QfbTecnicInfoDto qfbInfoValidated, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapDiApi sapDiApi, IKafkaConnector kafkaConnector)
+        public static async Task<ResultModel> AssignPedido(ManualAssignModel assignModel, QfbTecnicInfoDto qfbInfoValidated, IPedidosDao pedidosDao, ISapAdapter sapAdapter, ISapServiceLayerAdapterService serviceLayerAdapterService, IKafkaConnector kafkaConnector)
         {
             var listSalesOrders = assignModel.DocEntry.Select(x => x.ToString()).ToList();
             var userOrders = (await pedidosDao.GetUserOrderBySaleOrder(listSalesOrders)).ToList();
@@ -58,7 +58,7 @@ namespace Omicron.Pedidos.Services.Utils
                 .Select(y => new UpdateFabOrderModel { Status = ServiceConstants.StatusSapLiberado, OrderFabId = int.Parse(y.Productionorderid) })
                 .ToList();
 
-            var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
+            var resultSap = await serviceLayerAdapterService.PostAsync(listToUpdate, ServiceConstants.UpdateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
@@ -88,11 +88,11 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="assignModel">the assign model.</param>
         /// <param name="qfbInfoValidated">Qfb Info Validated.</param>
         /// <param name="pedidosDao">the pedido dao.</param>
-        /// <param name="sapDiApi">the di api.</param>
+        /// <param name="serviceLayerAdapterService">the serviceLayerAdapterService.</param>
         /// <param name="sapAdapter">Sap adapter.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
         /// <returns>the data.</returns>
-        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, QfbTecnicInfoDto qfbInfoValidated, IPedidosDao pedidosDao, ISapDiApi sapDiApi, ISapAdapter sapAdapter, IKafkaConnector kafkaConnector)
+        public static async Task<ResultModel> AssignOrder(ManualAssignModel assignModel, QfbTecnicInfoDto qfbInfoValidated, IPedidosDao pedidosDao, ISapServiceLayerAdapterService serviceLayerAdapterService, ISapAdapter sapAdapter, IKafkaConnector kafkaConnector)
         {
             var listToUpdate = new List<UpdateFabOrderModel>();
             var listProdOrders = new List<string>();
@@ -107,7 +107,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 listProdOrders.Add(x.ToString());
             });
-            Dictionary<string, string> dictResult = await UpdateSapOrders(sapDiApi, listToUpdate);
+            Dictionary<string, string> dictResult = await UpdateSapOrders(serviceLayerAdapterService, listToUpdate);
 
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
@@ -340,12 +340,12 @@ namespace Omicron.Pedidos.Services.Utils
         /// <summary>
         /// Sends to update.
         /// </summary>
-        /// <param name="sapDiApi">the di api.</param>
+        /// <param name="serviceLayerAdapterService">the service layer.</param>
         /// <param name="listToUpdate">the list to update.</param>
         /// <returns>teh dict result.</returns>
-        private static async Task<Dictionary<string, string>> UpdateSapOrders(ISapDiApi sapDiApi, List<UpdateFabOrderModel> listToUpdate)
+        private static async Task<Dictionary<string, string>> UpdateSapOrders(ISapServiceLayerAdapterService serviceLayerAdapterService, List<UpdateFabOrderModel> listToUpdate)
         {
-            var resultSap = await sapDiApi.PostToSapDiApi(listToUpdate, ServiceConstants.UpdateFabOrder);
+            var resultSap = await serviceLayerAdapterService.PostAsync(listToUpdate, ServiceConstants.UpdateFabOrder);
             return JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
         }
     }

@@ -274,18 +274,6 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
-        /// connects the DI api.
-        /// </summary>
-        /// <returns>the connection.</returns>
-        [Route("/connectDiApi")]
-        [HttpGet]
-        public async Task<IActionResult> ConnectDiApi()
-        {
-            var response = await this.pedidoFacade.ConnectDiApi();
-            return this.Ok(response);
-        }
-
-        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="assignBatches">Orders to cancel.</param>
@@ -396,7 +384,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>Custom lists.</returns>
         [Route("/components/custom")]
         [HttpGet]
-        public async Task<IActionResult> GetCustomComponentListByProductId([FromQuery]string productId)
+        public async Task<IActionResult> GetCustomComponentListByProductId([FromQuery] string productId)
         {
             var response = await this.pedidoFacade.GetCustomComponentListByProductId(productId);
             return this.Ok(response);

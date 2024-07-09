@@ -20,7 +20,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
+    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.Utils;
 
     /// <summary>
@@ -30,29 +30,29 @@ namespace Omicron.Pedidos.Services.Pedidos
     {
         private readonly ISapAdapter sapAdapter;
 
-        private readonly ISapDiApi sapDiApi;
-
         private readonly IPedidosDao pedidosDao;
 
         private readonly IKafkaConnector kafkaConnector;
 
         private readonly IRedisService redisService;
 
+        private readonly ISapServiceLayerAdapterService serviceLayerAdapterService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProcessOrdersService"/> class.
         /// </summary>
         /// <param name="sapAdapter">the sap adapter.</param>
-        /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="pedidosDao">pedidos dao.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
         /// <param name="redisService">The redis service.</param>
-        public ProcessOrdersService(ISapAdapter sapAdapter, ISapDiApi sapDiApi, IPedidosDao pedidosDao, IKafkaConnector kafkaConnector, IRedisService redisService)
+        /// <param name="sapServiceLayerAdapterService">Sap Service Layer.</param>
+        public ProcessOrdersService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, IKafkaConnector kafkaConnector, IRedisService redisService, ISapServiceLayerAdapterService sapServiceLayerAdapterService)
         {
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
-            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
             this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
             this.redisService = redisService.ThrowIfNull(nameof(redisService));
+            this.serviceLayerAdapterService = sapServiceLayerAdapterService.ThrowIfNull(nameof(sapServiceLayerAdapterService));
         }
 
         /// <summary>
@@ -248,7 +248,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the values.</returns>
         private async Task<Dictionary<string, List<string>>> CreateFabOrders(List<OrderWithDetailModel> listToSend)
         {
-            var resultSap = await this.sapDiApi.PostToSapDiApi(listToSend, ServiceConstants.CreateFabOrder);
+            var resultSap = await this.serviceLayerAdapterService.PostAsync(listToSend, ServiceConstants.CreateFabOrder);
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSap.Response.ToString());
 
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);

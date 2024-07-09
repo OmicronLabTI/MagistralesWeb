@@ -190,6 +190,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<List<ParametersModel>> GetParamsByFieldContains(string fieldName);
 
         /// <summary>
+        /// Gets the data by field.
+        /// </summary>
+        /// <param name="fieldName">The field name.</param>
+        /// <returns>the data.</returns>
+        Task<List<ParametersModel>> GetParamsByFieldContainsQueryOnly(string fieldName);
+
+        /// <summary>
         /// Gets the qr if exist in table.
         /// </summary>
         /// <param name="userOrderId">the orders ids.</param>
