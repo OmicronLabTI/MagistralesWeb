@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -77,6 +77,10 @@
 		11ACB7D929AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */; };
 		11ACB7DA29AE7F9200FE3E32 /* SupplieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */; };
 		11AFF02F29CBACE400DBB32D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11AFF02E29CBACE400DBB32D /* GoogleService-Info.plist */; };
+		11C645232BFE7F020037C74E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 11C645222BFE7F020037C74E /* PrivacyInfo.xcprivacy */; };
+		11C645242BFE7F020037C74E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 11C645222BFE7F020037C74E /* PrivacyInfo.xcprivacy */; };
+		11C645252BFE7F020037C74E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 11C645222BFE7F020037C74E /* PrivacyInfo.xcprivacy */; };
+		11C645262BFE7F020037C74E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 11C645222BFE7F020037C74E /* PrivacyInfo.xcprivacy */; };
 		11D4D58329E5AF61005E22A7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11D4D58029E5AF61005E22A7 /* GoogleService-Info.plist */; };
 		11E7879C29B65AC100B888C6 /* SuppliesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E7879B29B65AC100B888C6 /* SuppliesTest.swift */; };
 		11EB7A2729C0EC950002DCB5 /* DateRangeSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */; };
@@ -630,6 +634,7 @@
 		11ACB7D129AE7BDA00FE3E32 /* SupplieViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieViewControllerExtension.swift; sourceTree = "<group>"; };
 		11ACB7D629AE7F9200FE3E32 /* SupplieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCell.swift; sourceTree = "<group>"; };
 		11AFF02E29CBACE400DBB32D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		11C645222BFE7F020037C74E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		11D4D58029E5AF61005E22A7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		11E7879B29B65AC100B888C6 /* SuppliesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuppliesTest.swift; sourceTree = "<group>"; };
 		11EB7A2629C0EC950002DCB5 /* DateRangeSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateRangeSelectorViewController.swift; sourceTree = "<group>"; };
@@ -1389,6 +1394,7 @@
 		98015CAE24AFBC6C00E7772F /* Omicron */ = {
 			isa = PBXGroup;
 			children = (
+				11C645222BFE7F020037C74E /* PrivacyInfo.xcprivacy */,
 				4989CCB525ED954500257CA2 /* MVVM */,
 				98532B2C24B390870015BBC6 /* Assets */,
 				98532B3024B393240015BBC6 /* Utilities */,
@@ -1791,6 +1797,7 @@
 				490B69D7268E98ED00DBE9F1 /* assingBatchesResponse.json in Resources */,
 				490B69D8268E98ED00DBE9F1 /* refresh_token.json in Resources */,
 				490B69D9268E98ED00DBE9F1 /* GetMostCommonComponnets.json in Resources */,
+				11C645262BFE7F020037C74E /* PrivacyInfo.xcprivacy in Resources */,
 				490B69DA268E98ED00DBE9F1 /* getLots.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1837,6 +1844,7 @@
 				49CF661825F2D4AB002CD598 /* assingBatchesResponse.json in Resources */,
 				49CF661925F2D4AB002CD598 /* refresh_token.json in Resources */,
 				49CF661A25F2D4AB002CD598 /* GetMostCommonComponnets.json in Resources */,
+				11C645242BFE7F020037C74E /* PrivacyInfo.xcprivacy in Resources */,
 				49CF661B25F2D4AB002CD598 /* getLots.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1883,6 +1891,7 @@
 				49CF669B25F2D821002CD598 /* assingBatchesResponse.json in Resources */,
 				49CF669C25F2D821002CD598 /* refresh_token.json in Resources */,
 				49CF669D25F2D821002CD598 /* GetMostCommonComponnets.json in Resources */,
+				11C645252BFE7F020037C74E /* PrivacyInfo.xcprivacy in Resources */,
 				49CF669E25F2D821002CD598 /* getLots.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1927,6 +1936,7 @@
 				7F878B1729EF4C770071BB91 /* FrutigerNextLT-Bold.ttf in Resources */,
 				98015CB724AFBC6C00E7772F /* Main.storyboard in Resources */,
 				1E85E51B25222A7F007636E8 /* CardIsolatedOrderCollectionViewCell.xib in Resources */,
+				11C645232BFE7F020037C74E /* PrivacyInfo.xcprivacy in Resources */,
 				4930D96C25EEFFF30080B8F7 /* FinishOrdersErrorResponse.json in Resources */,
 				7C5DFB12251C7DFE0041B2AC /* assingBatchesResponse.json in Resources */,
 				980F234324DA11900073E2C8 /* refresh_token.json in Resources */,
@@ -2868,7 +2878,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.1.20;
+				CURRENT_PROJECT_VERSION = 1.1.21;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -2918,12 +2928,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 110;
+				CURRENT_PROJECT_VERSION = 116;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2995,7 +3006,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 19;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -3020,7 +3031,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 19;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -3045,7 +3056,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 19;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -3070,7 +3081,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 19;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -3143,12 +3154,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 110;
+				CURRENT_PROJECT_VERSION = 116;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3171,12 +3183,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 110;
+				CURRENT_PROJECT_VERSION = 116;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3259,7 +3272,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.1.20;
+				CURRENT_PROJECT_VERSION = 1.1.21;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -3358,12 +3371,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 110;
+				CURRENT_PROJECT_VERSION = 116;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "Omicron/Omicron-QA.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3500,7 +3514,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.1.20;
+				CURRENT_PROJECT_VERSION = 1.1.21;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -3525,7 +3539,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.1.20;
+				CURRENT_PROJECT_VERSION = 1.1.21;
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

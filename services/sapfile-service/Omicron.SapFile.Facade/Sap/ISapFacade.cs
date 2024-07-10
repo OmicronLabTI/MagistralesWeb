@@ -41,5 +41,12 @@ namespace Omicron.SapFile.Facade.Sap
         /// </summary>
         /// <returns>the data.</returns>
         Task<ResultDto> DeleteFiles();
+
+        /// <summary>
+        /// Save recipe to server.
+        /// </summary>
+        /// <param name="prescriptionUrls">Prescription urls to save.</param>
+        /// <returns>Result Dto.</returns>
+        Task<ResultDto> SavePresciptionToServer(List<PrescriptionServerRequestDto> prescriptionUrls);
     }
 }

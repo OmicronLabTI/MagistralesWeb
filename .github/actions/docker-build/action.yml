@@ -22,6 +22,12 @@ inputs:
     required: false
     type: string
     default: Dockerfile
+  nexus_user:
+    required: false
+    type: string
+  nexus_pass:
+    required: false
+    type: string
 
 runs:
   using: "composite"
@@ -40,7 +46,7 @@ runs:
       shell: bash
     - name: Docker build ${{ inputs.path }}
       working-directory: ${{ inputs.path }}
-      run: docker build -f ${{ inputs.dockerfile }} --build-arg BUILDKIT_INLINE_CACHE=1 --build-arg CONFIGURATION=${{ inputs.configuration }} --build-arg BASE_HREF=${{ inputs.href }} -t ${{ inputs.registry }}/omicron${{ inputs.environment }}/omicron-appiosformulas-${{ steps.split_name.outputs.item_name }}-repository:latest --cache-from ${{ inputs.registry }}/omicron${{ inputs.environment }}/omicron-appiosformulas-${{ steps.split_name.outputs.item_name }}-repository:latest . --progress=plain
+      run: docker build -f ${{ inputs.dockerfile }} --build-arg NUGET_AUTH_TOKEN=${{ inputs.nexus_pass }} --build-arg NUGET_USER_NAME=${{ inputs.nexus_user }} --build-arg BUILDKIT_INLINE_CACHE=1 --build-arg CONFIGURATION=${{ inputs.configuration }} --build-arg BASE_HREF=${{ inputs.href }} -t ${{ inputs.registry }}/omicron${{ inputs.environment }}/omicron-appiosformulas-${{ steps.split_name.outputs.item_name }}-repository:latest --cache-from ${{ inputs.registry }}/omicron${{ inputs.environment }}/omicron-appiosformulas-${{ steps.split_name.outputs.item_name }}-repository:latest . --progress=plain
       shell: bash
     - name: Docker push ${{ inputs.path }}
       working-directory: ${{ inputs.path }}

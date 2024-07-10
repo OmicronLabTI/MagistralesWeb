@@ -324,19 +324,6 @@ namespace Omicron.Pedidos.Test.Api
         /// Action tests.
         /// </summary>
         [Test]
-        public void ConnectDiApi()
-        {
-            // Act
-            var result = this.controller.ConnectDiApi().Result as OkObjectResult;
-
-            // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
-        }
-
-        /// <summary>
-        /// Action tests.
-        /// </summary>
-        [Test]
         public void UpdateBatches()
         {
             // Arrange.

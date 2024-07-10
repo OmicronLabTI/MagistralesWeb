@@ -26,8 +26,8 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
+    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
 
@@ -39,8 +39,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         private readonly ISapAdapter sapAdapter;
 
         private readonly IPedidosDao pedidosDao;
-
-        private readonly ISapDiApi sapDiApi;
 
         private readonly IUsersService userService;
 
@@ -54,29 +52,31 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly IKafkaConnector kafkaConnector;
 
+        private readonly ISapServiceLayerAdapterService serviceLayerAdapterService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
         /// <param name="sapAdapter">the sap adapter.</param>
         /// <param name="pedidosDao">pedidos dao.</param>
-        /// <param name="sapDiApi">the sapdiapi.</param>
         /// <param name="userService">The user service.</param>
         /// <param name="sapFileService">The sap file service.</param>
         /// <param name="configuration">The configuration.</param>
         /// <param name="reporting"> The reporting service. </param>
         /// <param name="redisService">The redis Service.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, ISapDiApi sapDiApi, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector)
+        /// <param name="sapServiceLayerAdapterService">The sapServiceLayerAdapterService.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService sapServiceLayerAdapterService)
         {
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
-            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
             this.userService = userService.ThrowIfNull(nameof(userService));
             this.sapFileService = sapFileService.ThrowIfNull(nameof(sapFileService));
             this.configuration = configuration.ThrowIfNull(nameof(configuration));
             this.reportingService = reporting.ThrowIfNull(nameof(reporting));
             this.redis = redisService.ThrowIfNull(nameof(redisService));
             this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
+            this.serviceLayerAdapterService = sapServiceLayerAdapterService.ThrowIfNull(nameof(sapServiceLayerAdapterService));
         }
 
         /// <inheritdoc/>
@@ -141,7 +141,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateComponents(UpdateFormulaModel updateFormula)
         {
-            var resultSapApi = await this.sapDiApi.PostToSapDiApi(updateFormula, ServiceConstants.UpdateFormula);
+            var resultSapApi = await this.serviceLayerAdapterService.PostAsync(updateFormula, ServiceConstants.UpdateFormula);
             if (ServiceShared.CalculateAnd(resultSapApi.Success, !string.IsNullOrEmpty(updateFormula.Comments)))
             {
                 await this.UpdateFabOrderComments(updateFormula.FabOrderId, updateFormula.Comments);
@@ -249,13 +249,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> ConnectDiApi()
-        {
-            var sapResponse = await this.sapDiApi.GetSapDiApi(ServiceConstants.ConnectSapDiApi);
-            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(sapResponse.Response), null);
-        }
-
-        /// <inheritdoc/>
         public async Task<ResultModel> CloseSalesOrders(List<OrderIdModel> finishOrders)
         {
             var successfuly = new List<object>();
@@ -273,7 +266,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 // Update in SAP
                 var payload = localProductionOrders.Select(x => new { OrderId = x.Productionorderid });
-                var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.FinishFabOrder);
+                var result = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.FinishFabOrder);
 
                 if (!result.Success)
                 {
@@ -469,7 +462,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 // Update in SAP
                 var payload = new List<object> { orderToFinish };
-                var result = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.FinishFabOrder);
+                var result = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.FinishFabOrder);
 
                 if (!result.Success)
                 {
@@ -547,8 +540,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches)
         {
-            var resultSapApi = await this.sapDiApi.PostToSapDiApi(assignBatches, ServiceConstants.UpdateBatches);
-            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapApi.Response.ToString());
+            var resultSapServiceLayer = await this.serviceLayerAdapterService.PatchAsync(ServiceConstants.UpdateProductionOrderBatchesServiceLayer, JsonConvert.SerializeObject(assignBatches));
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapServiceLayer.Response.ToString());
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
@@ -557,8 +550,8 @@ namespace Omicron.Pedidos.Services.Pedidos
                 assignBatches
                 .Select(x => x.OrderId.ToString()).ToList())).ToList();
             orders.ForEach(x => x.AreBatchesComplete = assignBatches.FirstOrDefault().AreBatchesComplete);
-            await this.pedidosDao.UpdateUserOrders(orders);
 
+            await this.pedidosDao.UpdateUserOrders(orders);
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
 
@@ -700,7 +693,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var listOrderLogToInsert = new List<SalesLogs>();
             var payload = new { isolatedFabOrder.ProductCode };
-            var diapiResult = await this.sapDiApi.PostToSapDiApi(payload, ServiceConstants.CreateIsolatedFabOrder);
+            var diapiResult = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.CreateIsolatedFabOrder);
 
             if (!diapiResult.Success)
             {
@@ -740,7 +733,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     new ManualAssignModel { DocEntry = new List<int> { productionOrderId }, UserId = isolatedFabOrder.UserId, UserLogistic = isolatedFabOrder.UserId },
                     new Dtos.Models.QfbTecnicInfoDto(),
                     this.pedidosDao,
-                    this.sapDiApi,
+                    this.serviceLayerAdapterService,
                     this.sapAdapter,
                     this.kafkaConnector);
             }
