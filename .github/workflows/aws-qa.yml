@@ -263,7 +263,7 @@ jobs:
     name: Stop self-hosted EC2 runner
     needs:
       - start-runner
-      - de
+      - db
       - build
     runs-on: [aws-bridge]
     permissions:
