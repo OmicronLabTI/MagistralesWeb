@@ -26,6 +26,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
@@ -54,6 +55,8 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly ISapServiceLayerAdapterService serviceLayerAdapterService;
 
+        private readonly ISapDiApi sapDiApi;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -66,7 +69,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="redisService">The redis Service.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
         /// <param name="sapServiceLayerAdapterService">The sapServiceLayerAdapterService.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService sapServiceLayerAdapterService)
+        /// <param name="sapDiApi">the sapdiapi.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService sapServiceLayerAdapterService, ISapDiApi sapDiApi)
         {
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
@@ -76,6 +80,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.reportingService = reporting.ThrowIfNull(nameof(reporting));
             this.redis = redisService.ThrowIfNull(nameof(redisService));
             this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
+            this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
             this.serviceLayerAdapterService = sapServiceLayerAdapterService.ThrowIfNull(nameof(sapServiceLayerAdapterService));
         }
 
@@ -246,6 +251,13 @@ namespace Omicron.Pedidos.Services.Pedidos
             fabOrderToUpdate.Comments = comments;
             await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { fabOrderToUpdate });
             return fabOrderToUpdate;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> ConnectDiApi()
+        {
+            var sapResponse = await this.sapDiApi.GetSapDiApi(ServiceConstants.ConnectSapDiApi);
+            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(sapResponse.Response), null);
         }
 
         /// <inheritdoc/>
@@ -540,8 +552,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches)
         {
-            var resultSapServiceLayer = await this.serviceLayerAdapterService.PatchAsync(ServiceConstants.UpdateProductionOrderBatchesServiceLayer, JsonConvert.SerializeObject(assignBatches));
-            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapServiceLayer.Response.ToString());
+            // var resultSapServiceLayer = await this.serviceLayerAdapterService.PatchAsync(ServiceConstants.UpdateProductionOrderBatchesServiceLayer, JsonConvert.SerializeObject(assignBatches));
+            // var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapServiceLayer.Response.ToString());
+            var resultSapApi = await this.sapDiApi.PostToSapDiApi(assignBatches, ServiceConstants.UpdateBatches);
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapApi.Response.ToString());
+
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;

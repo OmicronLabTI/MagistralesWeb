@@ -34,8 +34,10 @@
 
   <ItemGroup>
     <None Remove="SapOrderAdapterService\" />
+    <None Remove="SapDiApi\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SapOrderAdapterService\" />
+    <Folder Include="SapDiApi\" />
   </ItemGroup>
 </Project>

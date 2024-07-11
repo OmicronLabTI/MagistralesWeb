@@ -203,7 +203,7 @@ namespace Omicron.Reporting.Services
             var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage, streamDocuments);
             var mailStatus = await this.omicronMailClient.SendMail(
                 smtpConfig,
-                "jose.espinosa@axity.com",
+                string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
                 text.Item1,
                 text.Item2,
                 copyEmails,
