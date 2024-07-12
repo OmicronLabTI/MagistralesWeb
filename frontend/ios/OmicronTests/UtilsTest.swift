@@ -37,7 +37,11 @@ class UtilsTest: XCTestCase {
         XCTAssertNotNil(result)
     }
     func testFormattedDateToString() {
-        let result = utils!.formattedDateToString(date: Date(timeIntervalSinceReferenceDate: -123456789.0))
+        let dateString = "01/02/1997"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM/yyyy"
+        let testDate = dateFormatter.date(from: dateString) ?? Date()
+        let result = utils!.formattedDateToString(date: testDate)
         XCTAssertEqual(result, "01/02/1997")
     }
 }
