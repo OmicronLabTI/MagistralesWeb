@@ -16,6 +16,11 @@ namespace Omicron.Pedidos.Services.Constants
     public static class ServiceConstants
     {
         /// <summary>
+        /// the update batches.
+        /// </summary>
+        public const string UpdateBatches = "batches";
+
+        /// <summary>
         /// status planificada.
         /// </summary>
         public const string Planificado = "Planificado";

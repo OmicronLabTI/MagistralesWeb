@@ -116,6 +116,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> ConnectDiApi()
+        {
+            return this.mapper.Map<ResultDto>(await this.pedidoService.ConnectDiApi());
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> ProcessByOrder(ProcessByOrderDto processByOrder)
         {
             return this.mapper.Map<ResultDto>(await this.processOrdersService.ProcessByOrder(this.mapper.Map<ProcessByOrderModel>(processByOrder)));

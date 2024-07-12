@@ -274,6 +274,18 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// connects the DI api.
+        /// </summary>
+        /// <returns>the connection.</returns>
+        [Route("/connectDiApi")]
+        [HttpGet]
+        public async Task<IActionResult> ConnectDiApi()
+        {
+            var response = await this.pedidoFacade.ConnectDiApi();
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Cancel fabrication orders.
         /// </summary>
         /// <param name="assignBatches">Orders to cancel.</param>
