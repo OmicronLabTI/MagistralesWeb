@@ -552,11 +552,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches)
         {
-            // var resultSapServiceLayer = await this.serviceLayerAdapterService.PatchAsync(ServiceConstants.UpdateProductionOrderBatchesServiceLayer, JsonConvert.SerializeObject(assignBatches));
-            // var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapServiceLayer.Response.ToString());
-            var resultSapApi = await this.sapDiApi.PostToSapDiApi(assignBatches, ServiceConstants.UpdateBatches);
-            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapApi.Response.ToString());
-
+            var resultSapServiceLayer = await this.serviceLayerAdapterService.PatchAsync(ServiceConstants.UpdateProductionOrderBatchesServiceLayer, JsonConvert.SerializeObject(assignBatches));
+            var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(resultSapServiceLayer.Response.ToString());
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorUpdateFabOrd);
             var listErrorId = ServiceUtils.GetErrorsFromSapDiDic(listWithError);
             var userError = listErrorId.Any() ? ServiceConstants.ErroAlAsignar : null;
