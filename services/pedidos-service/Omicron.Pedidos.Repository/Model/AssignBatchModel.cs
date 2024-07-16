@@ -48,5 +48,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The user that is assigning.</value>
         public int AreBatchesComplete { get; set; }
+
+        /// <summary>
+        /// Gets or sets SysNumber.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
+        public int SysNumber { get; set; }
     }
 }

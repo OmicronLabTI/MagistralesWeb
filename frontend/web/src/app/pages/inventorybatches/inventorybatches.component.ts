@@ -360,6 +360,7 @@ export class InventorybatchesComponent implements OnInit {
             action: lote.action,
             batchNumber: lote.numeroLote,
             areBatchesComplete: this.dataService.calculateTernary(areBatchesCompleteSubmit, 1, 0),
+            sysNumber: lote.sysNumber,
           };
           objectToSave.push(objectSAP);
         }

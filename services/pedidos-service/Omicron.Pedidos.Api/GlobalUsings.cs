@@ -24,3 +24,4 @@ global using System.Diagnostics;
 global using System.IO;
 global using System.Threading.Tasks;
 global using Omicron.Pedidos.Services.SapServiceLayerAdapter;
+global using Omicron.Pedidos.Services.SapDiApi;
