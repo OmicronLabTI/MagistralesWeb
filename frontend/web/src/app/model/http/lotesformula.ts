@@ -56,4 +56,5 @@ export class ILotesToSaveReq {
     itemCode: string;
     action: string;
     areBatchesComplete: number;
+    sysNumber: number;
 }

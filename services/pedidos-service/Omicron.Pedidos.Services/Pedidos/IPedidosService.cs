@@ -104,6 +104,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         Task<ResultModel> UpdateBatches(List<AssignBatchModel> assignBatches);
 
         /// <summary>
+        /// Gets the connection to sap di api.
+        /// </summary>
+        /// <returns>the conection.</returns>
+        Task<ResultModel> ConnectDiApi();
+
+        /// <summary>
         /// Save signatures.
         /// </summary>
         /// <param name="signatureType">The signature type.</param>

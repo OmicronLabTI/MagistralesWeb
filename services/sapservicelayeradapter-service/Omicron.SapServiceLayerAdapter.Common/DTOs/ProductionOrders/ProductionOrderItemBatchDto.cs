@@ -40,5 +40,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// <value>SystemSerialNumber.</value>
         [JsonProperty("SystemSerialNumber")]
         public int SystemSerialNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the BaseLineNumber.
+        /// </summary>
+        /// <value>BaseLineNumber.</value>
+        [JsonProperty("BaseLineNumber")]
+        public int BaseLineNumber { get; set; }
     }
 }

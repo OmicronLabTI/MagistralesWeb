@@ -114,6 +114,7 @@ jobs:
           kubectl apply -f deploy_prod.yaml --context omicron-aks
           kubectl apply -f ingress-oauth.yml --context omicron-aks
           kubectl apply -f ingress-services.yml --context omicron-aks
+          kubectl apply -f secretsprod.yml --context omicron-aks
 
       - name: Rollout catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}

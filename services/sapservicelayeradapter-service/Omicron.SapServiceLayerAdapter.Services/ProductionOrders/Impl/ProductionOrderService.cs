@@ -288,6 +288,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 {
                     BatchNumber = x.BatchNumber,
                     Quantity = x.AssignedQty,
+                    ItemCode = x.ItemCode,
+                    BaseLineNumber = component.LineNumber ?? 0,
+                    SystemSerialNumber = x.SysNumber,
                 }));
             }
 

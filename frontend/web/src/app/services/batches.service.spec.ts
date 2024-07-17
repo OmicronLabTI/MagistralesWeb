@@ -37,7 +37,8 @@ describe('BatchesService', () => {
         assignedQty: 222,
         itemCode: 'MP   009',
         action: 'insert',
-        areBatchesComplete: 0
+        areBatchesComplete: 0,
+        sysNumber: 2,
       }
     ];
     const service: BatchesService = TestBed.get(BatchesService);

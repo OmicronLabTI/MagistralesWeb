@@ -154,6 +154,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> UpdateOrderSignature(SignatureType signatureType, UpdateOrderSignatureDto signatureModel);
 
         /// <summary>
+        /// gets the connection to DI api.
+        /// </summary>
+        /// <returns>the connectin.</returns>
+        Task<ResultDto> ConnectDiApi();
+
+        /// <summary>
         /// Get production order signatures.
         /// </summary>
         /// <param name="productionOrderId">Production order id.</param>
