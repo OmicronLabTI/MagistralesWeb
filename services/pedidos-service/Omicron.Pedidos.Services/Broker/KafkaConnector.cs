@@ -53,6 +53,10 @@ namespace Omicron.Pedidos.Services.Broker
                 this.producer.SaslPassword = this.configuration["kafka:EH_CONNECTION_STRING"];
                 this.producer.SslCaLocation = string.Empty;
             }
+            else
+            {
+                this.producer.SecurityProtocol = SecurityProtocol.Plaintext;
+            }
         }
 
         /// <inheritdoc/>

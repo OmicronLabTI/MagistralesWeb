@@ -116,6 +116,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: omicron_net_postgress_db
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: redis_connection_string
           ports:
             - containerPort: 9010
       imagePullSecrets:
@@ -166,6 +171,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: omicron_net_postgress_db
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: redis_connection_string
           ports:
             - containerPort: 5101
       imagePullSecrets:
@@ -216,6 +226,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: sap_connection_string_sql_server
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: redis_connection_string
           ports:
             - containerPort: 5102
           livenessProbe:
@@ -273,6 +288,21 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: omicron_net_postgress_db
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: redis_connection_string
+            - name: KAFKA_EH_FQDN
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_eh_fqdn
+            - name: KAFKA_INSERTLOGS_EH_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: kafka_insertlogs_eh_name
           ports:
             - containerPort: 5103
       imagePullSecrets:
@@ -323,6 +353,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: omicron_net_postgress_db
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: redis_connection_string
           ports:
             - containerPort: 5104
       imagePullSecrets:
@@ -368,6 +403,11 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: redis_connection_string
           ports:
             - containerPort: 5105
       imagePullSecrets:
@@ -492,6 +532,11 @@ spec:
                 secretKeyRef:
                   name: omicron-qa
                   key: sap_file_url
+            - name: REDIS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-qa
+                  key: redis_connection_string
           ports:
             - containerPort: 80
       imagePullSecrets:

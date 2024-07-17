@@ -1,0 +1,38 @@
+name: "Deploy Angular to AWS S3"
+description: "Deploy a web Angular to AWS S3"
+inputs:
+  db_host:
+    description: "Database host"
+    required: true
+  db_port:
+    description: "Database port"
+    required: true
+  ec2_user:
+    description: "EC2 ssh user"
+    required: true
+  bastion_host:
+    description: "EC2 Bastion host"
+    required: true
+  bastion_pem: 
+    description: "Bastion PEM"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Set up environment
+      env:
+        TEMP_PEM_FILE: "temp.pem"
+        DB_HOST: ${{ inputs.db_host }}
+        DB_PORT: ${{ inputs.db_port }}
+        EC2_USER: ${{ inputs.ec2_user }}
+        BASTION_HOST: ${{ inputs.bastion_host }}
+        BASTION_PEM: ${{ inputs.bastion_pem }}
+      run: |
+          echo "${BASTION_PEM}" > ${TEMP_PEM_FILE}
+          chmod 400 "${TEMP_PEM_FILE}"
+          echo "Trying to establish SSH tunnel..."
+          # ssh -N -L 5433:${DB_HOST}:${DB_PORT} -o StrictHostKeyChecking=no -i "${TEMP_PEM_FILE}" ${EC2_USER}@${BASTION_HOST} &
+          nohup ssh -N -L 5433:${DB_HOST}:${DB_PORT} -o StrictHostKeyChecking=no -i "${TEMP_PEM_FILE}" ${EC2_USER}@${BASTION_HOST} > ssh.log 2>&1 &
+          sleep 5 # Espera a que el túnel SSH se establezca
+          echo "SSH tunnel established."
+      shell: bash

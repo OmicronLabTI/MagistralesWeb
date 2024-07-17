@@ -24,6 +24,7 @@ namespace Omicron.Pedidos.Test.Services
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
+    using Omicron.Pedidos.Services.SapDiApi;
     using Omicron.Pedidos.Services.SapFile;
     using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
@@ -93,8 +94,18 @@ namespace Omicron.Pedidos.Test.Services
                 .Returns(Task.FromResult(true));
 
             this.sapServiceLayer = new Mock<ISapServiceLayerAdapterService>();
+
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            mockSaDiApi
+                .Setup(x => x.PostToSapDiApi(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCreateOrder()));
+
+            mockSaDiApi
+                .Setup(x => x.GetSapDiApi(It.IsAny<string>()))
+                .Returns(Task.FromResult(new ResultModel()));
+
             this.pedidosDao = new PedidosDao(this.context);
-            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object, sapfileMock.Object, configMock.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayer.Object);
+            this.pedidosService = new PedidosService(this.sapAdapter.Object, this.pedidosDao, this.usersService.Object, sapfileMock.Object, configMock.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayer.Object, mockSaDiApi.Object);
         }
 
         /// <summary>

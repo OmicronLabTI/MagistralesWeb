@@ -68,6 +68,14 @@
                 }
               ]
             },
+            "qa-aws": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.qa.aws.ts"
+                }
+              ]
+            },
             "uat": {
               "fileReplacements": [
                 {
@@ -110,6 +118,9 @@
             },
             "staging": {
               "browserTarget": "omicron:build:staging"
+            },
+            "qa-aws": {
+              "browserTarget": "omicron:build:qa-aws"
             },
             "uat": {
               "browserTarget": "omicron:build:uat"
@@ -157,6 +168,9 @@
             },
             "staging": {
               "devServerTarget": "omicron:serve:staging"
+            },
+            "qa-aws": {
+              "devServerTarget": "omicron:serve:qa-aws"
             },
             "uat": {
               "devServerTarget": "omicron:serve:uat"

@@ -42,5 +42,11 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// </summary>
         /// <value>The user that is assigning.</value>
         public string Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets SysNumber.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
+        public int SysNumber { get; set; }
     }
 }

@@ -2876,20 +2876,20 @@
 			baseConfigurationReference = ED296F3371E49FD5E72A6016 /* Pods-Omicron.uat.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.1.21;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = NFYY63TQQ2;
+				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
+				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
-				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = UAT;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2928,7 +2928,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 116;
+				CURRENT_PROJECT_VERSION = 118;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3154,7 +3154,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 116;
+				CURRENT_PROJECT_VERSION = 118;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3183,7 +3183,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 116;
+				CURRENT_PROJECT_VERSION = 118;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3270,20 +3270,20 @@
 			baseConfigurationReference = 0A4BE9F3CB565F9C5BB8E3F8 /* Pods-Omicron.qa.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.1.21;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = NFYY63TQQ2;
+				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
+				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
-				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = QA;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -3371,7 +3371,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 116;
+				CURRENT_PROJECT_VERSION = 118;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = NFYY63TQQ2;
@@ -3512,20 +3512,20 @@
 			baseConfigurationReference = 4DCEFD1333E1F7354626C710 /* Pods-Omicron.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.1.21;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = NFYY63TQQ2;
+				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
+				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
-				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -3537,19 +3537,19 @@
 			baseConfigurationReference = A315F48FFB2D2AF9DE34457B /* Pods-Omicron.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.1.21;
-				DEVELOPMENT_TEAM = NFYY63TQQ2;
+				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.axity.Omicron;
+				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
-				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
