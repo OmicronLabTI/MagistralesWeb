@@ -859,5 +859,509 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Doctor
         /// <value>The PaymentMethods.</value>
         [JsonProperty("BPPaymentMethods")]
         public List<DoctorPaymentMethodDto> PaymentMethods { get; set; }
+
+        /// <summary>
+        /// Gets or sets MainUsage.
+        /// </summary>
+        /// <value>The MainUsage.</value>
+        [JsonProperty("U_B1SYS_MainUsage")]
+        public string MainUsage { get; set; }
+
+        /// <summary>
+        /// Gets or sets BxpRegimen.
+        /// </summary>
+        /// <value>The BxpRegimen.</value>
+        [JsonProperty("U_BXP_REGIMENF")]
+        public string BxpRegimen { get; set; }
+
+        /// <summary>
+        /// Gets or sets BxpUsoCFDI.
+        /// </summary>
+        /// <value>The BxpUsoCFDI.</value>
+        [JsonProperty("U_BXP_USOCFDI")]
+        public string BxpUsoCFDI { get; set; }
+
+        /// <summary>
+        /// Gets or sets BxpAddenda.
+        /// </summary>
+        /// <value>The BxpAddenda.</value>
+        [JsonProperty("U_BXP_ADDENDA")]
+        public string BxpAddenda { get; set; }
+
+        /// <summary>
+        /// Gets or sets BxpDesglosaIEPS.
+        /// </summary>
+        /// <value>The BxpDesglosaIEPS.</value>
+        [JsonProperty("U_BXP_DESGLOSAIEPS")]
+        public string BxpDesglosaIEPS { get; set; }
+
+        /// <summary>
+        /// Gets or sets BxpNumRegIdTrib.
+        /// </summary>
+        /// <value>The BxpNumRegIdTrib.</value>
+        [JsonProperty("U_BXP_NUMREGIDTRIB")]
+        public string BxpNumRegIdTrib { get; set; }
+
+        /// <summary>
+        /// Gets or sets BxpNombre.
+        /// </summary>
+        /// <value>The BxpNombre.</value>
+        [JsonProperty("U_BXP_NOMBRE")]
+        public string BxpNombre { get; set; }
+
+        /// <summary>
+        /// Gets or sets BxpEsfactorante.
+        /// </summary>
+        /// <value>The BxpEsfactorante.</value>
+        [JsonProperty("U_BXP_ESFACTORANTE")]
+        public string BxpEsfactorante { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties1.
+        /// </summary>
+        /// <value>The Properties1.</value>
+        [JsonProperty("Properties1")]
+        public string Properties1 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties2.
+        /// </summary>
+        /// <value>The Properties2.</value>
+        [JsonProperty("Properties2")]
+        public string Properties2 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties3.
+        /// </summary>
+        /// <value>The Properties3.</value>
+        [JsonProperty("Properties3")]
+        public string Properties3 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties4.
+        /// </summary>
+        /// <value>The Properties4.</value>
+        [JsonProperty("Properties4")]
+        public string Properties4 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties5.
+        /// </summary>
+        /// <value>The Properties5.</value>
+        [JsonProperty("Properties5")]
+        public string Properties5 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties6.
+        /// </summary>
+        /// <value>The Properties6.</value>
+        [JsonProperty("Properties6")]
+        public string Properties6 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties7.
+        /// </summary>
+        /// <value>The Properties7.</value>
+        [JsonProperty("Properties7")]
+        public string Properties7 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties8.
+        /// </summary>
+        /// <value>The Properties8.</value>
+        [JsonProperty("Properties8")]
+        public string Properties8 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties9.
+        /// </summary>
+        /// <value>The Properties9.</value>
+        [JsonProperty("Properties9")]
+        public string Properties9 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties10.
+        /// </summary>
+        /// <value>The Properties10.</value>
+        [JsonProperty("Properties10")]
+        public string Properties10 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties11.
+        /// </summary>
+        /// <value>The Properties11.</value>
+        [JsonProperty("Properties11")]
+        public string Properties11 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties12.
+        /// </summary>
+        /// <value>The Properties12.</value>
+        [JsonProperty("Properties12")]
+        public string Properties12 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties13.
+        /// </summary>
+        /// <value>The Properties13.</value>
+        [JsonProperty("Properties13")]
+        public string Properties13 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties14.
+        /// </summary>
+        /// <value>The Properties14.</value>
+        [JsonProperty("Properties14")]
+        public string Properties14 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties15.
+        /// </summary>
+        /// <value>The Properties15.</value>
+        [JsonProperty("Properties15")]
+        public string Properties15 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties16.
+        /// </summary>
+        /// <value>The Properties16.</value>
+        [JsonProperty("Properties16")]
+        public string Properties16 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties17.
+        /// </summary>
+        /// <value>The Properties17.</value>
+        [JsonProperty("Properties17")]
+        public string Properties17 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties18.
+        /// </summary>
+        /// <value>The Properties18.</value>
+        [JsonProperty("Properties18")]
+        public string Properties18 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties19.
+        /// </summary>
+        /// <value>The Properties19.</value>
+        [JsonProperty("Properties19")]
+        public string Properties19 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties20.
+        /// </summary>
+        /// <value>The Properties20.</value>
+        [JsonProperty("Properties20")]
+        public string Properties20 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties21.
+        /// </summary>
+        /// <value>The Properties21.</value>
+        [JsonProperty("Properties21")]
+        public string Properties21 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties22.
+        /// </summary>
+        /// <value>The Properties22.</value>
+        [JsonProperty("Properties22")]
+        public string Properties22 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties23.
+        /// </summary>
+        /// <value>The Properties23.</value>
+        [JsonProperty("Properties23")]
+        public string Properties23 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties24.
+        /// </summary>
+        /// <value>The Properties24.</value>
+        [JsonProperty("Properties24")]
+        public string Properties24 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties25.
+        /// </summary>
+        /// <value>The Properties25.</value>
+        [JsonProperty("Properties25")]
+        public string Properties25 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties26.
+        /// </summary>
+        /// <value>The Properties26.</value>
+        [JsonProperty("Properties26")]
+        public string Properties26 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties27.
+        /// </summary>
+        /// <value>The Properties27.</value>
+        [JsonProperty("Properties27")]
+        public string Properties27 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties28.
+        /// </summary>
+        /// <value>The Properties28.</value>
+        [JsonProperty("Properties28")]
+        public string Properties28 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties29.
+        /// </summary>
+        /// <value>The Properties29.</value>
+        [JsonProperty("Properties29")]
+        public string Properties29 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties30.
+        /// </summary>
+        /// <value>The Properties30.</value>
+        [JsonProperty("Properties30")]
+        public string Properties30 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties31.
+        /// </summary>
+        /// <value>The Properties31.</value>
+        [JsonProperty("Properties31")]
+        public string Properties31 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties32.
+        /// </summary>
+        /// <value>The Properties32.</value>
+        [JsonProperty("Properties32")]
+        public string Properties32 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties33.
+        /// </summary>
+        /// <value>The Properties33.</value>
+        [JsonProperty("Properties33")]
+        public string Properties33 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties34.
+        /// </summary>
+        /// <value>The Properties34.</value>
+        [JsonProperty("Properties34")]
+        public string Properties34 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties35.
+        /// </summary>
+        /// <value>The Properties35.</value>
+        [JsonProperty("Properties35")]
+        public string Properties35 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties36.
+        /// </summary>
+        /// <value>The Properties36.</value>
+        [JsonProperty("Properties36")]
+        public string Properties36 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties37.
+        /// </summary>
+        /// <value>The Properties37.</value>
+        [JsonProperty("Properties37")]
+        public string Properties37 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties38.
+        /// </summary>
+        /// <value>The Properties38.</value>
+        [JsonProperty("Properties38")]
+        public string Properties38 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties39.
+        /// </summary>
+        /// <value>The Properties39.</value>
+        [JsonProperty("Properties39")]
+        public string Properties39 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties40.
+        /// </summary>
+        /// <value>The Properties40.</value>
+        [JsonProperty("Properties40")]
+        public string Properties40 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties41.
+        /// </summary>
+        /// <value>The Properties41.</value>
+        [JsonProperty("Properties41")]
+        public string Properties41 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties42.
+        /// </summary>
+        /// <value>The Properties42.</value>
+        [JsonProperty("Properties42")]
+        public string Properties42 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties43.
+        /// </summary>
+        /// <value>The Properties43.</value>
+        [JsonProperty("Properties43")]
+        public string Properties43 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties44.
+        /// </summary>
+        /// <value>The Properties44.</value>
+        [JsonProperty("Properties44")]
+        public string Properties44 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties45.
+        /// </summary>
+        /// <value>The Properties45.</value>
+        [JsonProperty("Properties45")]
+        public string Properties45 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties46.
+        /// </summary>
+        /// <value>The Properties46.</value>
+        [JsonProperty("Properties46")]
+        public string Properties46 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties47.
+        /// </summary>
+        /// <value>The Properties47.</value>
+        [JsonProperty("Properties47")]
+        public string Properties47 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties48.
+        /// </summary>
+        /// <value>The Properties48.</value>
+        [JsonProperty("Properties48")]
+        public string Properties48 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties49.
+        /// </summary>
+        /// <value>The Properties49.</value>
+        [JsonProperty("Properties49")]
+        public string Properties49 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties50.
+        /// </summary>
+        /// <value>The Properties50.</value>
+        [JsonProperty("Properties50")]
+        public string Properties50 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties51.
+        /// </summary>
+        /// <value>The Properties51.</value>
+        [JsonProperty("Properties51")]
+        public string Properties51 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties52.
+        /// </summary>
+        /// <value>The Properties52.</value>
+        [JsonProperty("Properties52")]
+        public string Properties52 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties53.
+        /// </summary>
+        /// <value>The Properties53.</value>
+        [JsonProperty("Properties53")]
+        public string Properties53 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties54.
+        /// </summary>
+        /// <value>The Properties54.</value>
+        [JsonProperty("Properties54")]
+        public string Properties54 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties55.
+        /// </summary>
+        /// <value>The Properties55.</value>
+        [JsonProperty("Properties55")]
+        public string Properties55 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties56.
+        /// </summary>
+        /// <value>The Properties56.</value>
+        [JsonProperty("Properties56")]
+        public string Properties56 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties57.
+        /// </summary>
+        /// <value>The Properties57.</value>
+        [JsonProperty("Properties57")]
+        public string Properties57 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties58.
+        /// </summary>
+        /// <value>The Properties58.</value>
+        [JsonProperty("Properties58")]
+        public string Properties58 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties59.
+        /// </summary>
+        /// <value>The Properties59.</value>
+        [JsonProperty("Properties59")]
+        public string Properties59 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties60.
+        /// </summary>
+        /// <value>The Properties60.</value>
+        [JsonProperty("Properties60")]
+        public string Properties60 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties61.
+        /// </summary>
+        /// <value>The Properties61.</value>
+        [JsonProperty("Properties61")]
+        public string Properties61 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties62.
+        /// </summary>
+        /// <value>The Properties62.</value>
+        [JsonProperty("Properties62")]
+        public string Properties62 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties63.
+        /// </summary>
+        /// <value>The Properties63.</value>
+        [JsonProperty("Properties63")]
+        public string Properties63 { get; set; }
+
+        /// <summary>
+        /// Gets or sets Properties64.
+        /// </summary>
+        /// <value>The Properties64.</value>
+        [JsonProperty("Properties64")]
+        public string Properties64 { get; set; }
     }
 }
