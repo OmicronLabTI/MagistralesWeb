@@ -280,5 +280,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetRawMaterialRequest(parameters));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrderInformationByTransaction(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetOrderInformationByTransaction(parameters));
+        }
     }
 }
