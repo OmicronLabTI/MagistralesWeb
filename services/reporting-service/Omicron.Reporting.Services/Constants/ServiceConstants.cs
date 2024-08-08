@@ -405,6 +405,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string PackageNotDeliveredBodyPatient = "<p>Estimado {0}.<br/><br/> La entrega del pedido <b>{1}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li> Al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p></br>";
 
         /// <summary>
+        /// The local.
+        /// </summary>
+        public const string DeliveryEmailSubjectPatient = "El pedido {0} se entregó con éxito";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
