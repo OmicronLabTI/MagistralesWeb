@@ -10,6 +10,7 @@ namespace Omicron.Reporting.Services.Constants
 {
     using System;
     using System.Collections.Generic;
+    using System.IO.Packaging;
 
     /// <summary>
     /// the class for constatns.
@@ -382,6 +383,26 @@ namespace Omicron.Reporting.Services.Constants
         /// Error to submit request.
         /// </summary>
         public const string ErrorWithOneRequestCreatedOnSap = "Se creo la solicitud No. {0}, ocurrió un error al generar la solicitud de los siguientes componentes: {1}.";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SendingPatientBody = "<p>Estimado {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> ha sido enviado por medio de paquetería a la dirección {2}, el número de guía correspondiente es <b>{3}</b>.</p><p>{4}<br/>{5}</p>";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SentLocalPackagePatient = "<p>Estimado {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> se encuentra en ruta para ser entregado en la dirección {2}</p><br/>";
+
+        /// <summary>
+        /// Sent local package.
+        /// </summary>
+        public const string SentLocalPackageDeliveryPatient = "<p> Buen día, {0} <br/><br/> Se le informa que la entrega <b>{1}</b> fue entregada de manera satisfactoria con los siguientes comentarios del repartidor:.</p> </br> Nombre del repartidor:<b>{2}</b> <br> Comentarios del repartidor: <b>{3}</b>";
+
+        /// <summary>
+        /// not delivered body.
+        /// </summary>
+        public const string PackageNotDeliveredBodyPatient = "<p>Estimado {0}.<br/><br/> La entrega del pedido <b>{1}</b> no pudo ser realizada. Para programar una nueva visita le pedimos de la manera más atenta se comunique:<ul><li> Al teléfono 81 15 22 2896 y/o al correo <u>atencion@o-lab.mx</u></li></ul></p></br>";
 
         /// <summary>
         /// Gets the status of the order.

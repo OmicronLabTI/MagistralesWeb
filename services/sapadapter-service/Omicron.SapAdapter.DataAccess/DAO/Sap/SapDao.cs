@@ -1323,6 +1323,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return (await this.RetryQuery(query)).ToList();
         }
 
+        /// <inheritdoc/>
+        public async Task<OrderModel> GetOrderInformationByTransaction(string idtransaction)
+        {
+            return await this.databaseContext.OrderModel.Where(x => x.DocNumDxp == idtransaction).FirstOrDefaultAsync();
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

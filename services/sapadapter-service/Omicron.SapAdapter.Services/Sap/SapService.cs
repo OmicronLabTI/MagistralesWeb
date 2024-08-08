@@ -34,6 +34,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
+    using Omicron.SapAdapter.Dtos.Models;
 
     /// <summary>
     /// The sap class.
@@ -811,6 +812,21 @@ namespace Omicron.SapAdapter.Services.Sap
             filteredRawMaterialInfo = ServiceShared.GetOffsetLimit(filteredRawMaterialInfo, parameters);
 
             return ServiceUtils.CreateResult(true, 200, null, filteredRawMaterialInfo, null, rawMaterialCount);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrderInformationByTransaction(Dictionary<string, string> parameters)
+        {
+            var idtransaction = ServiceUtils.GetDictionaryValueString(parameters, ServiceConstants.IdTransaction, string.Empty);
+
+            var response = await this.sapDao.GetOrderInformationByTransaction(idtransaction);
+
+            if (response != null)
+            {
+                return ServiceUtils.CreateResult(true, 200, null, response, null, $"{1}-{1}");
+            }
+
+            return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
         }
 
         /// <summary>

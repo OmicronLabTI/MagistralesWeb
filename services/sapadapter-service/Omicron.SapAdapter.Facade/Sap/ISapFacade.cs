@@ -198,5 +198,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="parameters">The paremeteres.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetRawMaterialRequest(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the doctor by id transaction.
+        /// </summary>
+        /// <param name="parameters"> parameters. </param>
+        /// <returns> information.</returns>
+        Task<ResultDto> GetOrderInformationByTransaction(Dictionary<string, string> parameters);
     }
 }

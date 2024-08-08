@@ -544,5 +544,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="userId">User id.</param>
         /// <returns>WRaw material request information.</returns>
         Task<List<CompleteRawMaterialRequestModel>> GetCompleteRawMaterialRequestByFilters(DateTime initDate, DateTime endDate, string userId);
+
+        /// <summary>
+        /// Gets the doctor by id transaction.
+        /// </summary>
+        /// <param name="idtransaction"> id transaction.</param>
+        /// <returns> information.</returns>
+        Task<OrderModel> GetOrderInformationByTransaction(string idtransaction);
     }
 }
