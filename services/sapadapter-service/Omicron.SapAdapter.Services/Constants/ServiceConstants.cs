@@ -736,6 +736,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string BulkOrderParameter = "bulkOrder";
 
         /// <summary>
+        /// Bulk Order Parameter.
+        /// </summary>
+        public const string IdTransaction = "idtransaction";
+
+        /// <summary>
+        /// Bulk Order Parameter.
+        /// </summary>
+        public const string SearchMesssage400 = "Search query is required";
+
+        /// <summary>
         /// Gets the clasification user DZ.
         /// </summary>
         /// <value>
@@ -746,6 +756,9 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// Gets the close status.
         /// </summary>
+        /// <value>
+        /// The close status.
+        /// </value>
         public static string CloseStatus => "Cerrado";
 
         /// <summary>

@@ -432,5 +432,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapFacade.GetRawMaterialRequest(parameters);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the doctor by id transaction.
+        /// </summary>
+        /// <param name="parameters"> parameters. </param>
+        /// <returns> information.</returns>
+        [Route("/transaction")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrderInformationByTransaction([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapFacade.GetOrderInformationByTransaction(parameters);
+            return this.Ok(response);
+        }
     }
 }

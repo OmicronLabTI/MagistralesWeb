@@ -13,6 +13,7 @@ namespace Omicron.Reporting.Services
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.EntityFrameworkCore.Internal;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
@@ -160,11 +161,7 @@ namespace Omicron.Reporting.Services
             var email = deliveryEmailModel == null ? string.Empty : deliveryEmailModel.Value;
             var logoUrl = string.Format(ServiceConstants.LogoMailHeader, config.FirstOrDefault(x => x.Field == ServiceConstants.EmailLogoUrl).Value);
 
-            var sendEmailOrTel = email.Contains("http") ? ServiceConstants.PaqueteEmail : ServiceConstants.TelefonoEmail;
-            var sendEmailLink = email.Contains("http") ? string.Format(ServiceConstants.PlaceLink, email) : email;
-
-            var greeting = string.Format(ServiceConstants.SentForeignPackage, request.ClientName, request.SalesOrders, request.PackageId, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
-            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, ServiceConstants.RefundPolicy);
+            string body = this.BodyCreation(logoUrl, request, email);
             using var streamDocuments = new MemoryStream();
             var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId }, streamDocuments);
 
@@ -198,7 +195,7 @@ namespace Omicron.Reporting.Services
             copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{customerServiceEmail};{sendLocalPackage.SalesPersonEmail}" : customerServiceEmail;
             copyEmails = CommonCall.CalculateTernary(sendLocalPackage.Status == ServiceConstants.NoEntregado, $"{copyEmails};{config.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value}", copyEmails);
 
-            var text = this.GetBodyForLocal(sendLocalPackage, logoUrl);
+            var text = !sendLocalPackage.IsPatient ? this.GetBodyForLocal(sendLocalPackage, logoUrl) : this.GetBodyForLocalPatient(sendLocalPackage, logoUrl);
             using var streamDocuments = new MemoryStream();
             var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage, streamDocuments);
             var mailStatus = await this.omicronMailClient.SendMail(
@@ -355,6 +352,25 @@ namespace Omicron.Reporting.Services
             return new ResultModel { Success = true, Code = 200, Response = true };
         }
 
+        private string BodyCreation(string logoUrl, SendPackageModel request, string email)
+        {
+            var sendEmailOrTel = email.Contains("http") ? ServiceConstants.PaqueteEmail : ServiceConstants.TelefonoEmail;
+            var sendEmailLink = email.Contains("http") ? string.Format(ServiceConstants.PlaceLink, email) : email;
+            string greeting;
+            if (request.IsPatient)
+            {
+                greeting = string.Format(ServiceConstants.SendingPatientBody, request.ClientName, request.SalesOrders, request.Address.ToUpper(), request.PackageId, sendEmailOrTel, sendEmailLink);
+            }
+            else
+            {
+                greeting = string.Format(ServiceConstants.SentForeignPackage, request.ClientName, request.SalesOrders, request.PackageId, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
+            }
+
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, ServiceConstants.RefundPolicy);
+
+            return body;
+        }
+
         /// <summary>
         /// Gets the smtp config.
         /// </summary>
@@ -403,6 +419,41 @@ namespace Omicron.Reporting.Services
 
             var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
             var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBody, package.ClientName, orders, button, package.PackageId);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, string.Empty, ServiceConstants.RefundPolicy);
+
+            return new Tuple<string, string>(subjectError, bodyError);
+        }
+
+        /// <summary>
+        /// Gets the text for the subjkect.
+        /// </summary>
+        /// <param name="package">the data.</param>
+        /// <returns>the text.</returns>
+        private Tuple<string, string> GetBodyForLocalPatient(SendLocalPackageModel package, string logo)
+        {
+            package.SalesOrders = string.IsNullOrEmpty(package.SalesOrders) ? string.Empty : package.SalesOrders;
+            var orders = package.SalesOrders.Replace('[', ' ').Replace(']', ' ').Replace("\"", string.Empty);
+
+            var button = string.Format(ServiceConstants.ButtonEmail, package.DxpRoute);
+
+            if (string.IsNullOrEmpty(package.ReasonNotDelivered) && package.Status != ServiceConstants.Entregado)
+            {
+                var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackagePatient, package.ClientName, orders, package.Address);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, string.Empty, ServiceConstants.RefundPolicy);
+                return new Tuple<string, string>(subject, body);
+            }
+
+            if (package.Status == ServiceConstants.Entregado)
+            {
+                var subject = string.Format(ServiceConstants.DeliveryEmailSubject, orders);
+                var greeting = string.Format(ServiceConstants.SentLocalPackageDeliveryPatient, package.ClientName, orders, package.Comments, package.DeliveredComments);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, string.Empty, string.Empty);
+                return new Tuple<string, string>(subject, body);
+            }
+
+            var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
+            var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBodyPatient, package.ClientName, orders);
             var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, string.Empty, ServiceConstants.RefundPolicy);
 
             return new Tuple<string, string>(subjectError, bodyError);

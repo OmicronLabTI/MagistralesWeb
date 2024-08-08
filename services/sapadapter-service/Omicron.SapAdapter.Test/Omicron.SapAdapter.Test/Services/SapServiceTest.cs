@@ -1236,5 +1236,23 @@ namespace Omicron.SapAdapter.Test.Services
                 Assert.AreEqual(1, rawMaterial.Count);
             }
         }
+
+        /// <summary>
+        /// Test to get recipes.
+        /// </summary>
+        /// <returns>The data.</returns>
+        [Test]
+        public async Task GetOrderInformationByTransaction()
+        {
+            // arrange
+            var dict = new Dictionary<string, string>()
+            { { "idtransaction", "123" } };
+
+            // act
+            var response = await this.sapService.GetOrderInformationByTransaction(dict);
+
+            // assert
+            Assert.IsNotNull(response);
+        }
     }
 }
