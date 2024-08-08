@@ -171,7 +171,7 @@ namespace Omicron.Reporting.Services
                 destinityEmail,
                 string.Format(ServiceConstants.ForeignEmailSubject, request.SalesOrders),
                 body,
-                $"{smtpConfig.EmailCCDelivery};{request.SalesPrsonEmail}",
+                request.IsPatient ? string.Empty : $"{smtpConfig.EmailCCDelivery};{request.SalesPrsonEmail}",
                 invoiceAttachment);
 
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
@@ -203,7 +203,7 @@ namespace Omicron.Reporting.Services
                 string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
                 text.Item1,
                 text.Item2,
-                copyEmails,
+                sendLocalPackage.IsPatient ? string.Empty : copyEmails,
                 invoiceAttachment);
 
             await this.SendDeliveredNotDeliveredCommentsEmail(sendLocalPackage, smtpConfig, config, logoUrl);
