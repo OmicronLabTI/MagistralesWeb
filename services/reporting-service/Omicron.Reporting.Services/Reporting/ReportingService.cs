@@ -198,7 +198,8 @@ namespace Omicron.Reporting.Services
             var text = !sendLocalPackage.IsPatient ? this.GetBodyForLocal(sendLocalPackage, logoUrl) : this.GetBodyForLocalPatient(sendLocalPackage, logoUrl);
             using var streamDocuments = new MemoryStream();
             var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage, streamDocuments);
-            var mailStatus = await this.omicronMailClient.SendMail(
+
+            var mailStatus = !string.IsNullOrEmpty(destinityEmail) && await this.omicronMailClient.SendMail(
                 smtpConfig,
                 string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
                 text.Item1,
@@ -206,7 +207,11 @@ namespace Omicron.Reporting.Services
                 sendLocalPackage.IsPatient ? string.Empty : copyEmails,
                 invoiceAttachment);
 
-            await this.SendDeliveredNotDeliveredCommentsEmail(sendLocalPackage, smtpConfig, config, logoUrl);
+            if (mailStatus)
+            {
+                await this.SendDeliveredNotDeliveredCommentsEmail(sendLocalPackage, smtpConfig, config, logoUrl);
+            }
+
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
 
