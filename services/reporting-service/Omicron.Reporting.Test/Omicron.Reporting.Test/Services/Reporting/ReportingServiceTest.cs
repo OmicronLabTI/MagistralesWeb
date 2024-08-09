@@ -623,5 +623,71 @@ namespace Omicron.Reporting.Test.Services.Request
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Success);
         }
+
+        /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <param name="status">The status.</param>
+        /// <param name="reasonNotDelivered"> reason why not was delivered.</param>
+        /// <returns>the orders.</returns>
+        [Test]
+        [TestCase("En Camino", null)]
+        [TestCase("No Entregado", "domicilio no encontrado")]
+        [TestCase("Entregado", null)]
+        public async Task SendEmailLocalPackageMailNull(string status, string reasonNotDelivered)
+        {
+            // arrange
+            var request = new SendLocalPackageModel
+            {
+                DestinyEmail = null,
+                PackageId = 1,
+                Status = status,
+                ReasonNotDelivered = reasonNotDelivered,
+                SalesOrders = "100",
+            };
+
+            var listParams = new List<ParametersModel>
+            {
+                new ParametersModel { Field = "SmtpServer", Value = string.Empty },
+                new ParametersModel { Field = "SmtpPort", Value = "0" },
+                new ParametersModel { Field = "EmailMiddlewarePassword", Value = string.Empty },
+                new ParametersModel { Field = "EmailMiddleware", Value = string.Empty },
+                new ParametersModel { Field = "EmailCCDelivery", Value = string.Empty },
+                new ParametersModel { Field = "EmailLogoUrl", Value = "string" },
+                new ParametersModel { Field = "DeliveryNotDeliveryCopy", Value = "string" },
+                new ParametersModel { Field = "EmailAtencionAClientes", Value = "string" },
+                new ParametersModel { Field = "EmailMiddlewareUser", Value = "string" },
+            };
+
+            var mockCatalog = new Mock<ICatalogsService>();
+            mockCatalog
+                .Setup(m => m.GetParams(It.IsAny<List<string>>()))
+                .Returns(Task.FromResult(listParams));
+
+            var mockEmail = new Mock<IOmicronMailClient>();
+            mockEmail
+                .SetReturnsDefault(Task.FromResult(true));
+
+            var mockConfig = new Mock<IConfiguration>();
+            mockConfig.SetupGet(x => x[It.Is<string>(s => s == "InvoicePdfAzureroute")]).Returns("test");
+            mockConfig.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountName")]).Returns("test3");
+            mockConfig.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountKey")]).Returns("test4");
+            var mockAzure = new Mock<IAzureService>();
+
+            if (status == "Entregado")
+            {
+                mockAzure
+                    .Setup(x => x.GetlementFromAzure(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    .Returns(Task.FromResult(It.IsAny<BlobDownloadInfo>()));
+            }
+
+            var mockSapServiceLayerAdapter = new Mock<ISapServiceLayerAdapterService>();
+            var service = new ReportingService(mockCatalog.Object, mockEmail.Object, mockConfig.Object, mockAzure.Object, mockSapServiceLayerAdapter.Object);
+
+            // act
+            var result = await service.SendEmailLocalPackage(request);
+
+            Assert.IsNotNull(result);
+        }
     }
 }
