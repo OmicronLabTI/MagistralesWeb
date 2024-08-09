@@ -688,6 +688,9 @@ namespace Omicron.Reporting.Test.Services.Request
             var result = await service.SendEmailLocalPackage(request);
 
             Assert.IsNotNull(result);
+            Assert.IsTrue(result.Success);
+            Assert.IsTrue(result.Response.Equals(false));
+            Assert.IsTrue(result.Code.Equals(200));
         }
     }
 }
