@@ -180,6 +180,7 @@ namespace Omicron.Reporting.Services
         /// <inheritdoc/>
         public async Task<ResultModel> SendEmailLocalPackage(SendLocalPackageModel sendLocalPackage)
         {
+            var destinityEmailList = new List<string>();
             var listToLook = new List<string> { ServiceConstants.EmailLogoUrl, ServiceConstants.EmailDeliveredNotDeliveredCopy, ServiceConstants.CustomerServiceEmail };
             listToLook.AddRange(ServiceConstants.ValuesForEmail);
 
@@ -188,17 +189,22 @@ namespace Omicron.Reporting.Services
 
             var customerServiceEmail = config.FirstOrDefault(x => x.Field == ServiceConstants.CustomerServiceEmail).Value;
             var logoUrl = string.Format(ServiceConstants.LogoMailHeader, config.FirstOrDefault(x => x.Field == ServiceConstants.EmailLogoUrl).Value);
-            var destinityEmailList = sendLocalPackage.DestinyEmail.Split(";").Where(x => !string.IsNullOrEmpty(x)).ToList();
+            if (!string.IsNullOrEmpty(sendLocalPackage?.DestinyEmail))
+            {
+                destinityEmailList = sendLocalPackage.DestinyEmail.Split(";").Where(x => !string.IsNullOrEmpty(x)).ToList();
+            }
+
             var destinityEmail = destinityEmailList.FirstOrDefault();
             var copyEmails = string.Empty;
             destinityEmailList.Where(x => x != destinityEmail).Select(x => $"{x};").ToList().ForEach(x => copyEmails += x.Trim());
-            copyEmails += sendLocalPackage.SalesPersonEmail != string.Empty ? $"{customerServiceEmail};{sendLocalPackage.SalesPersonEmail}" : customerServiceEmail;
-            copyEmails = CommonCall.CalculateTernary(sendLocalPackage.Status == ServiceConstants.NoEntregado, $"{copyEmails};{config.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value}", copyEmails);
+            copyEmails += !string.IsNullOrEmpty(sendLocalPackage?.SalesPersonEmail) ? $"{customerServiceEmail};{sendLocalPackage.SalesPersonEmail}" : customerServiceEmail;
+            copyEmails = CommonCall.CalculateTernary(sendLocalPackage?.Status == ServiceConstants.NoEntregado, $"{copyEmails};{config.FirstOrDefault(x => x.Field == ServiceConstants.EmailDeliveredNotDeliveredCopy).Value}", copyEmails);
 
             var text = !sendLocalPackage.IsPatient ? this.GetBodyForLocal(sendLocalPackage, logoUrl) : this.GetBodyForLocalPatient(sendLocalPackage, logoUrl);
             using var streamDocuments = new MemoryStream();
             var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage, streamDocuments);
-            var mailStatus = await this.omicronMailClient.SendMail(
+
+            var mailStatus = !string.IsNullOrEmpty(destinityEmail) && await this.omicronMailClient.SendMail(
                 smtpConfig,
                 string.IsNullOrEmpty(destinityEmail) ? smtpConfig.EmailCCDelivery : destinityEmail,
                 text.Item1,
@@ -206,7 +212,11 @@ namespace Omicron.Reporting.Services
                 sendLocalPackage.IsPatient ? string.Empty : copyEmails,
                 invoiceAttachment);
 
-            await this.SendDeliveredNotDeliveredCommentsEmail(sendLocalPackage, smtpConfig, config, logoUrl);
+            if (mailStatus)
+            {
+                await this.SendDeliveredNotDeliveredCommentsEmail(sendLocalPackage, smtpConfig, config, logoUrl);
+            }
+
             return new ResultModel { Success = true, Code = 200, Response = mailStatus };
         }
 
