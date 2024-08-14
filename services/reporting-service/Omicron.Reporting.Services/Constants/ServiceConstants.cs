@@ -387,7 +387,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SendingPatientBody = "<p>Estimado {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> ha sido enviado por medio de paquetería a la dirección {2}, el número de guía correspondiente es <b>{3}</b>.</p><p>{4}<br/>{5}</p>";
+        public const string SendingPatientBody = "<p>Estimado {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> ha sido enviado por medio de paquetería a la dirección {2}, el número de guía correspondiente es <b>{3}</b>.</p> </br> <p>{4}<br/>{5}</p>";
 
         /// <summary>
         /// Sent local package.
