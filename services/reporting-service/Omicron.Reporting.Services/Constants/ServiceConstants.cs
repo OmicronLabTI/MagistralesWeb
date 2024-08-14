@@ -397,7 +397,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentLocalPackageDeliveryPatient = "<p> Buen día, {0} <br/><br/> Se le informa que la entrega <b>{1}</b> fue entregada de manera satisfactoria con los siguientes comentarios del repartidor:.</p> </br> Nombre del repartidor:<b>{2}</b> <br> Comentarios del repartidor: <b>{3}</b>";
+        public const string SentLocalPackageDeliveryPatient = "<p> Buen día, {0} <br/><br/> Se le informa que la entrega <b>{1}</b> fue entregada de manera satisfactoria con los siguientes comentarios del repartidor:</p> </br> Nombre del repartidor:<b>{2}</b> <br> Comentarios del repartidor: <b>{3}</b>";
 
         /// <summary>
         /// not delivered body.
