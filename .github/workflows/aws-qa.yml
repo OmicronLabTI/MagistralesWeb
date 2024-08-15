@@ -15,44 +15,45 @@ on:
       - services/**
       - database/**
 jobs:
-  start-runner:
-    timeout-minutes: 5
-    name: Start self-hosted EC2 runner
-    runs-on: [aws-bridge]
-    outputs:
-      label: ${{ steps.start-ec2-runner.outputs.label }}
-      ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
-    permissions:
-      actions: write
-      contents: read
-      id-token: write
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: "us-east-2"
-          role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
-      - name: Start EC2 runner
-        id: start-ec2-runner
-        uses: machulav/ec2-github-runner@v2
-        with:
-          mode: start
-          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-          ec2-image-id: ami-08be1e3e6c338b037
-          ec2-instance-type: t3.medium
-          subnet-id: subnet-073b7bac3af8d3c53
-          security-group-id: sg-09c9844682ec712ca
-          aws-resource-tags: >
-            [
-              {"Key": "Name", "Value": "ec2-github-runner"},
-              {"Key": "GitHubRepository", "Value": "${{ github.repository }}"}
-            ]
+  # start-runner:
+  #   timeout-minutes: 5
+  #   name: Start self-hosted EC2 runner
+  #   runs-on: [aws-bridge]
+  #   outputs:
+  #     label: ${{ steps.start-ec2-runner.outputs.label }}
+  #     ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+  #   permissions:
+  #     actions: write
+  #     contents: read
+  #     id-token: write
+  #   steps:
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-region: "us-east-2"
+  #         role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
+  #     - name: Start EC2 runner
+  #       id: start-ec2-runner
+  #       uses: machulav/ec2-github-runner@v2
+  #       with:
+    #       mode: start
+    #       github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+    #       ec2-image-id: ami-08be1e3e6c338b037
+    #       ec2-instance-type: t3.medium
+    #       subnet-id: subnet-073b7bac3af8d3c53
+    #       security-group-id: sg-09c9844682ec712ca
+    #       aws-resource-tags: >
+    #         [
+    #           {"Key": "Name", "Value": "ec2-github-runner"},
+    #           {"Key": "GitHubRepository", "Value": "${{ github.repository }}"}
+    #         ]
 
   db:
     name: Deploy DB
-    needs:
-      - start-runner
-    runs-on: ${{ needs.start-runner.outputs.label }}
+    # needs:
+    #   - start-runner
+    # runs-on: ${{ needs.start-runner.outputs.label }}
+    runs-on: [self-hosted, omicron-qa]
     environment: QA
     steps:
       - name: Checkout
@@ -86,9 +87,10 @@ jobs:
   build:
     name: Deploy AWS
     needs:
-      - start-runner
+      # - start-runner
       - db
-    runs-on: ${{ needs.start-runner.outputs.label }}
+    # runs-on: ${{ needs.start-runner.outputs.label }}
+    runs-on: [self-hosted, omicron-qa]
     environment: QA
     steps:
       - name: Checkout
@@ -259,28 +261,28 @@ jobs:
           docker builder prune -f -a
           docker image prune -f -a
 
-  stop-runner:
-    name: Stop self-hosted EC2 runner
-    needs:
-      - start-runner
-      - db
-      - build
-    runs-on: [aws-bridge]
-    permissions:
-        actions: write
-        contents: read
-        id-token: write
-    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: "us-east-2"
-          role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
-      - name: Stop EC2 runner
-        uses: machulav/ec2-github-runner@v2
-        with:
-          mode: stop
-          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-          label: ${{ needs.start-runner.outputs.label }}
-          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+#  stop-runner:
+#    name: Stop self-hosted EC2 runner
+#    needs:
+#      - start-runner
+#      - db
+#      - build
+#    runs-on: [aws-bridge]
+#    permissions:
+#        actions: write
+#        contents: read
+#        id-token: write
+#    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
+#    steps:
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          aws-region: "us-east-2"
+#         role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
+#      - name: Stop EC2 runner
+#        uses: machulav/ec2-github-runner@v2
+#        with:
+#          mode: stop
+#          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+#          label: ${{ needs.start-runner.outputs.label }}
+#          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
