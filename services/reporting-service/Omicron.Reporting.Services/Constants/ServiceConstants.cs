@@ -410,6 +410,11 @@ namespace Omicron.Reporting.Services.Constants
         public const string DeliveryEmailSubjectPatient = "El pedido {0} se entregó con éxito";
 
         /// <summary>
+        /// refund policy.
+        /// </summary>
+        public const string RefundPolicyPatient = "<p>*Política de Cambios y Devoluciones*</p><ul><li>Una vez recibido el pedido se otorgan 15 días calendario para notificar cualquier inconsistencia o inconformidad con su solicitud.</li><li>Para notificar cualquier incidencia favor enviar un correo a: <u>incidencias@o-lab.mx</u>; por WhatsApp al número:  8118106776</b>.</li></ul><center>Agradecemos su preferencia.</center><center>OmicronLab SA de CV</center>";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
