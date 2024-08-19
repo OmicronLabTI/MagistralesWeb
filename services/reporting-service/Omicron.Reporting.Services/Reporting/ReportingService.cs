@@ -376,7 +376,7 @@ namespace Omicron.Reporting.Services
                 greeting = string.Format(ServiceConstants.SentForeignPackage, request.ClientName, request.SalesOrders, request.PackageId, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             }
 
-            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, ServiceConstants.RefundPolicy);
+            var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, request.IsPatient ? ServiceConstants.RefundPolicyPatient : ServiceConstants.RefundPolicy);
 
             return body;
         }
@@ -450,7 +450,7 @@ namespace Omicron.Reporting.Services
             {
                 var subject = string.Format(ServiceConstants.InWayEmailSubject, orders);
                 var greeting = string.Format(ServiceConstants.SentLocalPackagePatient, package.ClientName, orders, package.Address);
-                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, string.Empty, ServiceConstants.RefundPolicy);
+                var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greeting, string.Empty, ServiceConstants.RefundPolicyPatient);
                 return new Tuple<string, string>(subject, body);
             }
 
@@ -464,7 +464,7 @@ namespace Omicron.Reporting.Services
 
             var subjectError = string.Format(ServiceConstants.PackageNotDelivered, orders);
             var greetingError = string.Format(ServiceConstants.PackageNotDeliveredBodyPatient, package.ClientName, orders);
-            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, string.Empty, ServiceConstants.RefundPolicy);
+            var bodyError = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logo, greetingError, string.Empty, ServiceConstants.RefundPolicyPatient);
 
             return new Tuple<string, string>(subjectError, bodyError);
         }
