@@ -1,0 +1,53 @@
+name: sonar-aws-web
+description: Create SonarQube report
+inputs:
+  path:
+    required: true
+    description: Project path
+  project_name:
+    required: true
+    description: project name
+  sonar_server:
+    required: true
+    description: Sonar server url
+  sonar_token:
+    required: true
+    description: sonar token
+
+runs:
+  using: "composite"
+  steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: npm install
+        run: npm ci
+        working-directory: ${{ inputs.path }}
+        shell: bash
+
+      - name: npm run lint
+        run: npm run lint
+        working-directory: ${{ inputs.path }}
+        shell: bash
+
+      - name: npm run test-ci
+        run: npm run test-ci
+        working-directory: ${{ inputs.path }}
+        shell: bash
+
+      - name: SonarQube Scanner
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ inputs.sonar_token }}
+          SONAR_HOST_URL: ${{ inputs.sonar_server }}
+        with:
+          projectBaseDir: ${{ inputs.path }}
+          args: >
+            -Dsonar.projectKey=20_Omicron_AppiOSFormulas_${{ inputs.project_name }}
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.sources=src/app
+            -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts,**/*.module.ts,**/app.child.imports.ts
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info

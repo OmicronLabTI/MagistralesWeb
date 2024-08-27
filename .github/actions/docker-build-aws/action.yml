@@ -1,0 +1,35 @@
+name: 'Docker build and push to ECR'
+description: 'Deploy a web Angular to ECR'
+inputs:
+  working_directory:
+    description: 'Working directory'
+    required: true
+  registry:
+    description: 'Elastic Container Registry Name'
+    required: true
+  repository:
+    description: 'Repository Name (Exist)'
+    required: true
+  tag:
+    description: 'Tag Docker Image'
+    required: true
+  nexus_user:
+    description: 'Nexus user'
+    required: false
+  nexus_pass:
+    description: 'Nexus password'
+    required: false
+  dockerfile:
+    description: "Dockerfile name"
+    required: false
+    default: Dockerfile
+runs:
+  using: "composite"
+  steps:
+    - name: Build and push docker image to Amazon ECR
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        docker build -f ${{ inputs.dockerfile }} --build-arg NUGET_AUTH_TOKEN=${{ inputs.nexus_pass }} --build-arg NUGET_USER_NAME=${{ inputs.nexus_user }} -t ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }} -t ${{ inputs.registry }}/${{ inputs.repository }}:latest . --progress=plain
+        docker push ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
+        docker push ${{ inputs.registry }}/${{ inputs.repository }}:latest
+      shell: bash

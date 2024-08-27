@@ -1,21 +1,18 @@
 spring:
   datasource:
-    #url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    url: jdbc:postgresql://192.168.0.83:5432/omicrondev
-    username: omicronuser
-    password: Axity2020
+    url: ${POSTGRESS_JDBC_CONNECTION_STRING}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximumPoolSize: 1000
       minimumIdle: 3
-    #datasource:
-    #url: jdbc:sqlserver://localhost;databaseName=securitydb
-    #username: sa
-    #password: Axity&2019Arq
-    #driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true   
   application:
     name: oauth-service
   profiles: qa

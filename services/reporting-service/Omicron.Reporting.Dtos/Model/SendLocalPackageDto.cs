@@ -114,5 +114,21 @@ namespace Omicron.Reporting.Dtos.Model
         /// String FirstName.
         /// </value>
         public string ClientName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets IsPatient.
+        /// </summary>
+        /// <value>
+        /// String IsPatient.
+        /// </value>
+        public bool IsPatient { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Address.
+        /// </summary>
+        /// <value>
+        /// String Address.
+        /// </value>
+        public string Address { get; set; }
     }
 }
