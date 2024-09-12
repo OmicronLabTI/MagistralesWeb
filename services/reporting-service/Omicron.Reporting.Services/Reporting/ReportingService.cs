@@ -13,7 +13,6 @@ namespace Omicron.Reporting.Services
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.EntityFrameworkCore.Internal;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
@@ -163,7 +162,10 @@ namespace Omicron.Reporting.Services
 
             string body = this.BodyCreation(logoUrl, request, email);
             using var streamDocuments = new MemoryStream();
-            var invoiceAttachment = await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId }, streamDocuments);
+            var invoiceAttachment =
+                !request.IsPatient ?
+                await this.GetInvoiceAttachment(new SendLocalPackageModel { Status = ServiceConstants.Enviado, PackageId = request.PackageId }, streamDocuments) :
+                null;
 
             var destinityEmail = request.DestinyEmail.Split(";").FirstOrDefault(x => !string.IsNullOrEmpty(x)) ?? string.Empty;
             var mailStatus = await this.omicronMailClient.SendMail(
@@ -202,7 +204,10 @@ namespace Omicron.Reporting.Services
 
             var text = !sendLocalPackage.IsPatient ? this.GetBodyForLocal(sendLocalPackage, logoUrl) : this.GetBodyForLocalPatient(sendLocalPackage, logoUrl);
             using var streamDocuments = new MemoryStream();
-            var invoiceAttachment = await this.GetInvoiceAttachment(sendLocalPackage, streamDocuments);
+            var invoiceAttachment =
+                !sendLocalPackage.IsPatient ?
+                await this.GetInvoiceAttachment(sendLocalPackage, streamDocuments) :
+                null;
 
             var mailStatus = !string.IsNullOrEmpty(destinityEmail) && await this.omicronMailClient.SendMail(
                 smtpConfig,
