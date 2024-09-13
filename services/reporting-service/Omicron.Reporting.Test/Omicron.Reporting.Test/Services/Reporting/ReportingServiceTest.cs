@@ -48,6 +48,9 @@ namespace Omicron.Reporting.Test.Services.Request
                 TransportMode = party,
                 ClientName = "Gustavo ramirez",
                 SalesOrders = "AASSs",
+                Address = "Address",
+                IsPatient = true,
+                SalesPrsonEmail = "mail@mail.com",
             };
 
             var listParams = new List<ParametersModel>
