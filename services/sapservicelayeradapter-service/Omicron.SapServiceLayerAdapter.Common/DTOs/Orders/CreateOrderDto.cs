@@ -75,5 +75,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// <value>Documents Owner.</value>
         [JsonProperty("DocumentsOwner")]
         public int? DocumentsOwner { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Owner code.
+        /// </summary>
+        /// <value>Documents Owner.</value>
+        [JsonProperty("ContactPersonCode")]
+        public int? ContactPersonCode { get; set; }
     }
 }
