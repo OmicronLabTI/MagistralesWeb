@@ -390,15 +390,22 @@ export class PedidosComponent implements OnInit, OnDestroy {
         });
   }
 
-  openNewTabByOrder(order: number) {
+  openNewTabByOrder(order: IPedidoReq) {
     this.filterDataOrders.offset = this.offset;
     this.filterDataOrders.limit = this.limit;
     this.filterDataOrders.pageIndex = this.pageIndex;
+    this.filterDataOrders.clientType = order.clientType;
     this.localStorageService.setFiltersActives(JSON.stringify(this.filterDataOrders));
-    this.router.navigate([RouterPaths.orderDetail, order]);
+    this.router.navigate([RouterPaths.orderDetail, order.docNum]);
   }
   viewPedidosWithPdf() {
-    this.pedidosService.getOrdersPdfViews(this.dataSource.data.filter(order => order.isChecked).map(order => order.docNum))
+    const selected = this.dataSource.data.filter(order => order.isChecked);
+    this.pedidosService.getOrdersPdfViews(selected.map((order) => {
+      return {
+        orderId: order.docNum,
+        clientType: order.clientType
+      };
+    }))
       .subscribe(viewPdfResult => {
         viewPdfResult.response.forEach(pdfUrl => {
           this.dataService.openNewTapByUrl(

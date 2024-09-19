@@ -61,6 +61,7 @@ export class ParamsPedidos {
     clasification?: string;
     docNumUntil?: any;
     pageIndex?: any;
+    clientType: string;
 }
 
 export class ProcessOrders {
@@ -95,6 +96,7 @@ export class IPedidoReq {
     finishedLabel: number;
     orderType: string;
     canceled?: string;
+    clientType: string;
 }
 
 export class CancelOrderReq {
@@ -129,6 +131,11 @@ export class WorkLoad {
     totalOrders: any;
     totalFabOrders: any;
     totalPieces: any;
+}
+
+export class CreatePdfOrder {
+    orderId: number;
+    clientType: string;
 }
 export class ICreatePdfOrdersRes extends BaseResponseHttp {
     response: string[];
