@@ -98,8 +98,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     SampleOrder = ServiceUtils.CalculateTernary(saleOrderModel.IsSample, "Si", "No"),
                     CFDIProvisional = saleOrderModel.CfdiValue,
                     ContactPersonCode = saleOrderModel.TypeClientOrder == ServiceConstants.ClientTypeInstitucional ? 0 : null,
-
-                    // order.TypeClientOrder = saleOrderModel.TypeClientOrder
+                    ClientTypeOrder = saleOrderModel.TypeClientOrder,
                 };
 
                 AssingValues(order, saleOrderModel, attachmentId);
