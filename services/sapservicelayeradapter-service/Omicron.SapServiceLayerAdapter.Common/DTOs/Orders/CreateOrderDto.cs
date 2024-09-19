@@ -82,5 +82,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// <value>Documents Owner.</value>
         [JsonProperty("ContactPersonCode")]
         public int? ContactPersonCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Client Type Order.
+        /// </summary>
+        /// <value>Client Type Order.</value>
+        [JsonProperty("U_Paciente")]
+        public string ClientTypeOrder { get; set; }
     }
 }
