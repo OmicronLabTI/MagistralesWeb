@@ -76,5 +76,11 @@ namespace Omicron.SapFile.Services.Constants
         /// Azure Account Name.
         /// </summary>
         public const string InstitutionalClientType = "institucional";
+
+        /// <summary>
+        /// Azure Account Name.
+        /// </summary>
+        public const string GeneralClientType = "general";
+        
     }
 }

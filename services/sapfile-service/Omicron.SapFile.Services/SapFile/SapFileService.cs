@@ -77,7 +77,7 @@ namespace Omicron.SapFile.Services.SapFile
                     {
                         if (order.OrderId != 0 && !dictOrdersCreated.ContainsKey(order.OrderId))
                         {
-                            order.OrderPdfRoute = this.CreateOrderReport(order.OrderId, ServiceConstants.InstitutionalClientType, ConfigurationManager.AppSettings["PdfCreated"]);
+                            order.OrderPdfRoute = this.CreateOrderReport(order.OrderId, ServiceConstants.GeneralClientType, ConfigurationManager.AppSettings["PdfCreated"]);
                             dictOrdersCreated.Add(order.OrderId, order.OrderId);
                         }
 
@@ -133,6 +133,7 @@ namespace Omicron.SapFile.Services.SapFile
                 }
                 catch (Exception ex)
                 {
+                    this._loggerProxy.Error(ex.StackTrace, ex);
                     this._loggerProxy.Error(ex.Message, ex);
                     dictResult.Add($"Error-{o}", "ErrorCreatePdf");
                 }
@@ -210,8 +211,11 @@ namespace Omicron.SapFile.Services.SapFile
             var report = new ReportDocument();
             string localRoute;
 
+            this._loggerProxy.Debug(ConfigurationManager.AppSettings["PedidoInstitucionalRtp"]);
+
             if (clientType.Equals(ServiceConstants.InstitutionalClientType))
             {
+                this._loggerProxy.Debug("Creando pdf de cliente institucional");
                 localRoute = ConfigurationManager.AppSettings["PedidoInstitucionalRtp"];
             } else
             {
