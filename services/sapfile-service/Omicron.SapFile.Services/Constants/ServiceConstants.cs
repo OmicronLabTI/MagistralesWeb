@@ -71,5 +71,10 @@ namespace Omicron.SapFile.Services.Constants
         /// Prescription Files.
         /// </summary>
         public const string PrescriptionFiles = "PrescriptionFiles";
+
+        /// <summary>
+        /// Azure Account Name.
+        /// </summary>
+        public const string InstitutionalClientType = "institucional";
     }
 }

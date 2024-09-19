@@ -25,6 +25,7 @@ namespace Omicron.SapFile.Services.SapFile
     using System.Threading.Tasks;
     using iTextSharp.text;
     using iTextSharp.text.pdf;
+    using Omicron.SapFile.Dtos.Models;
 
     /// <summary>
     /// Class to create pdfs.
@@ -76,7 +77,7 @@ namespace Omicron.SapFile.Services.SapFile
                     {
                         if (order.OrderId != 0 && !dictOrdersCreated.ContainsKey(order.OrderId))
                         {
-                            order.OrderPdfRoute = this.CreateOrderReport(order.OrderId, ConfigurationManager.AppSettings["PdfCreated"]);
+                            order.OrderPdfRoute = this.CreateOrderReport(order.OrderId, ServiceConstants.InstitutionalClientType, ConfigurationManager.AppSettings["PdfCreated"]);
                             dictOrdersCreated.Add(order.OrderId, order.OrderId);
                         }
 
@@ -118,16 +119,16 @@ namespace Omicron.SapFile.Services.SapFile
         /// <summary>
         /// Creates the sale order pdf.
         /// </summary>
-        /// <param name="ordersId">the orders id.</param>
+        /// <param name="orders">the orders id.</param>
         /// <returns>the data to return.</returns>
-        public async Task<ResultModel> CreateSaleOrderPdf(List<int> ordersId)
+        public async Task<ResultModel> CreateSaleOrderPdf(List<CreateOrderPdfDto> orders)
         {
             var dictResult = new Dictionary<string, string>();
-            ordersId.ForEach(o =>
+            orders.ForEach(o =>
             {
                 try
                 {
-                    var routePDf = this.CreateOrderReport(o, ConfigurationManager.AppSettings["SalePdfCreated"]);
+                    var routePDf = this.CreateOrderReport(o.OrderId, o.ClientType, ConfigurationManager.AppSettings["SalePdfCreated"]);
                     dictResult.Add($"{o}", $"Ok-{routePDf}");
                 }
                 catch (Exception ex)
@@ -204,10 +205,18 @@ namespace Omicron.SapFile.Services.SapFile
         /// </summary>
         /// <param name="orderId">the order id.</param>
         /// <returns>the name and route of the file.</returns>
-        private string CreateOrderReport(int orderId, string fileRoute)
+        private string CreateOrderReport(int orderId, string clientType, string fileRoute)
         {
             var report = new ReportDocument();
-            var localRoute = ConfigurationManager.AppSettings["PedidoRtp"];
+            string localRoute;
+
+            if (clientType.Equals(ServiceConstants.InstitutionalClientType))
+            {
+                localRoute = ConfigurationManager.AppSettings["PedidoInstitucionalRtp"];
+            } else
+            {
+                localRoute = ConfigurationManager.AppSettings["PedidoRtp"];
+            }
 
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             var root = Directory.GetCurrentDirectory();
