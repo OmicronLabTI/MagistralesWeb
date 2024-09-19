@@ -551,5 +551,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="idtransaction"> id transaction.</param>
         /// <returns> information.</returns>
         Task<OrderModel> GetOrderInformationByTransaction(string idtransaction);
+
+        /// <summary>
+        /// Gets institutional client names.
+        /// </summary>
+        /// <param name="cardcodes"> collection cardcodes. </param>
+        /// <param name="docNums"> collection doc nums. </param>
+        /// <returns> information. </returns>
+        Task<List<InstitutionalClientNamesModel>> GetInstitutionalClientNames(List<string> cardcodes, List<int> docNums);
     }
 }

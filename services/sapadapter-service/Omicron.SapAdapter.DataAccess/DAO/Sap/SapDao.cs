@@ -1329,6 +1329,23 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.databaseContext.OrderModel.Where(x => x.DocNumDxp == idtransaction).FirstOrDefaultAsync();
         }
 
+        public async Task<List<InstitutionalClientNamesModel>> GetInstitutionalClientNames(List<string> cardcodes, List<int> docNums)
+        {
+            var response = await (from order in this.databaseContext.OrderModel
+                                  where cardcodes.Contains(order.Codigo) &&
+                                  docNums.Contains(order.DocNum)
+                                  && order.ClientType == "institucional"
+                                  select new InstitutionalClientNamesModel
+                                  {
+                                      CardCode = order.Codigo,
+                                      NameClient = order.Medico,
+                                      NameDoctor = order.ShippingAddressName,
+                                      DocNum = order.DocNum,
+                                      ClientType = order.ClientType,
+                                  }).ToListAsync();
+            return response;
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

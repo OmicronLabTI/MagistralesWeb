@@ -14,16 +14,19 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Net;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+    using System.Xml.Linq;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
-    using Omicron.SapAdapter.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Resources.Exceptions;
     using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
@@ -34,7 +37,6 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
-    using Omicron.SapAdapter.Dtos.Models;
 
     /// <summary>
     /// The sap class.
@@ -143,7 +145,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 o.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == o.Codigo), o.ShippingAddressName, doctor.DoctorName);
             });
 
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);
+            List<CompleteOrderModel> response = await this.RefillOrders(orderToReturn);
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, orders.Count);
         }
 
         /// <summary>
@@ -827,6 +831,33 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
+        }
+
+        private async Task<List<CompleteOrderModel>> RefillOrders(List<CompleteOrderModel> orderToReturn)
+        {
+            var institutionalClients = await this.sapDao.GetInstitutionalClientNames(orderToReturn.Select(x => x.Codigo).ToList(), orderToReturn.Select(x => x.DocNum).ToList());
+
+            orderToReturn.ForEach(order =>
+            {
+                var matching = institutionalClients.FirstOrDefault(client => client.CardCode == order.Codigo && client.DocNum == order.DocNum);
+
+                if (matching != null)
+                {
+                    Regex regex = new Regex(ServiceConstants.RegexNameDoctor);
+                    Match match = regex.Match(matching.NameDoctor);
+                    string name = match.Success ? match.Groups[1].Value.Trim() : matching.NameDoctor;
+
+                    order.Cliente = matching.NameClient;
+                    order.Medico = name;
+                    order.ClientType = matching.ClientType;
+                }
+                else
+                {
+                    order.ClientType = ServiceConstants.ClientTypeGeneral;
+                }
+            });
+
+            return orderToReturn;
         }
 
         /// <summary>
