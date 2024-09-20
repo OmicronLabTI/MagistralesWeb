@@ -174,5 +174,11 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The IsChecked.</value>
         public string SubOrderType { get; set; }
+
+        /// <summary>
+        /// Gets or sets client type.
+        /// </summary>
+        /// <value> client type. </value>
+        public string ClientType { get; set; }
     }
 }

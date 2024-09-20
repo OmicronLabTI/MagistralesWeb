@@ -858,10 +858,10 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task CreateSaleOrderPdf()
         {
             // arrange
-            var orderId = new List<int>();
+            var orders = new List<CreateOrderPdfDto>();
 
             // act
-            var response = await this.pedidoFacade.CreateSaleOrderPdf(orderId);
+            var response = await this.pedidoFacade.CreateSaleOrderPdf(orders);
 
             // Assert
             Assert.IsNotNull(response);

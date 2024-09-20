@@ -160,6 +160,13 @@ namespace Omicron.SapAdapter.Entities.Model
         public string IsOmigenomics { get; set; }
 
         /// <summary>
+        /// Gets or sets client type.
+        /// </summary>
+        /// <value> client type. </value>
+        [Column("U_Paciente")]
+        public string ClientType { get; set; }
+
+        /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
