@@ -208,10 +208,10 @@ describe('ObservableService', () => {
     const service: ObservableService = TestBed.get(ObservableService);
     service.getNewSearchOrdersModal().subscribe(newSearchOrdersModal => {
       expect(newSearchOrdersModal).toEqual({dateType: 'Pedido', docNum: 1234, fini: new Date('01/12/2020'),
-        ffin: new Date('01/12/2020'), status: 'Finalizado', finlabel: '1'});
+        ffin: new Date('01/12/2020'), status: 'Finalizado', finlabel: '1', clientType: 'general'});
     });
     service.setNewSearchOrderModal({dateType: 'Pedido', docNum: 1234, fini: new Date('01/12/2020'), ffin: new Date('01/12/2020'),
-      status: 'Finalizado', finlabel: '1'});
+      status: 'Finalizado', finlabel: '1', clientType: 'general'});
   });
 
 });

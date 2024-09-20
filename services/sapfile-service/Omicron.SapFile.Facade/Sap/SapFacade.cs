@@ -49,11 +49,11 @@ namespace Omicron.SapFile.Facade.Sap
         /// <summary>
         /// Created the pdf.
         /// </summary>
-        /// <param name="ordersId">the orders id.</param>
+        /// <param name="orders">the orders.</param>
         /// <returns>the data.</returns>
-        public async Task<ResultDto> CreateSaleOrderPdf(List<int> ordersId)
+        public async Task<ResultDto> CreateSaleOrderPdf(List<CreateOrderPdfDto> orders)
         {
-            return this.mapper.Map<ResultDto>(await this.sapFileService.CreateSaleOrderPdf(ordersId));
+            return this.mapper.Map<ResultDto>(await this.sapFileService.CreateSaleOrderPdf(orders));
         }
 
         /// <inheritdoc/>

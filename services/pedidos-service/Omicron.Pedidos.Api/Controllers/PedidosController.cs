@@ -474,7 +474,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>the data.</returns>
         [Route("/saleorder/pdf")]
         [HttpPost]
-        public async Task<IActionResult> CreateSaleOrderPdf(List<int> ordersId)
+        public async Task<IActionResult> CreateSaleOrderPdf(List<CreateOrderPdfDto> ordersId)
         {
             var response = await this.pedidoFacade.CreateSaleOrderPdf(ordersId);
             return this.Ok(response);
