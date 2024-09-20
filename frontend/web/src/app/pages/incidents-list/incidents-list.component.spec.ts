@@ -114,7 +114,8 @@ describe('IncidentsListComponent', () => {
       status: ConstStatus.enProceso,
       dateFull: '20/12/2020-20/01/2021',
       isFromIncidents: true,
-      finlabel: ''
+      finlabel: '',
+      clientType: 'general'
     });
     expect(component.pageIndex).toEqual(0);
     expect(component.offset).toEqual(0);

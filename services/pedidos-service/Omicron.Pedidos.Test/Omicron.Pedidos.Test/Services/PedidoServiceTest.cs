@@ -18,6 +18,7 @@ namespace Omicron.Pedidos.Test.Services
     using Newtonsoft.Json;
     using NUnit.Framework;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Context;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
@@ -1186,7 +1187,8 @@ namespace Omicron.Pedidos.Test.Services
         [Test]
         public async Task CreateSaleOrderPdf()
         {
-            var details = new List<int> { 100 };
+            var order = new CreateOrderPdfDto { OrderId = 100, ClientType = "general" };
+            var details = new List<CreateOrderPdfDto> { order };
 
             var dictResponse = new Dictionary<string, string>
             {

@@ -22,7 +22,10 @@ import {
 } from '../../constants/const';
 import { Subscription } from 'rxjs';
 import { Title } from '@angular/platform-browser';
-import { CancelOrderReq, Catalogs, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq } from '../../model/http/pedidos';
+import {
+  CancelOrderReq, Catalogs,
+  CreatePdfOrder, OrderToDelivered, ParamsPedidos, ProcessOrdersDetailReq
+} from '../../model/http/pedidos';
 import { Messages } from '../../constants/messages';
 import { ErrorService } from '../../services/error.service';
 import { DownloadImagesService } from '../../services/download-images.service';
@@ -384,7 +387,10 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   }
 
   viewOrdersWithPdf() {
-    this.pedidosService.getOrdersPdfViews([Number(this.paramsDetailOrder.current)])
+    const data = new CreatePdfOrder();
+    data.orderId = Number(this.paramsDetailOrder.current);
+    data.clientType = this.paramsDetailOrder.clientType;
+    this.pedidosService.getOrdersPdfViews([data])
       .subscribe(viewPdfResult => {
         viewPdfResult.response.forEach(pdfUrl =>
           this.dataService.openNewTapByUrl(pdfUrl, TypeToSeeTap.order, Number(this.paramsDetailOrder.current)));
@@ -429,6 +435,7 @@ export class PedidoDetalleComponent implements OnInit, OnDestroy {
   successNewComments(newCommentsResult: CommentsConfig) {
     this.addCommentsOnService(newCommentsResult.comments);
   }
+
   generateParamsToGetDetail(order: string) {
     this.paramsDetailOrder = JSON.parse(this.localStorageService.getFiltersActives());
     this.paramsDetailOrder = { ...this.paramsDetailOrder, current: order };

@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
@@ -862,10 +863,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> CreateSaleOrderPdf(List<int> ordersId)
+        public async Task<ResultModel> CreateSaleOrderPdf(List<CreateOrderPdfDto> orders)
         {
             var listRoutes = new List<string>();
-            var responseFile = await this.sapFileService.PostSimple(ordersId, ServiceConstants.CreateSalePdf);
+            var responseFile = await this.sapFileService.PostSimple(orders, ServiceConstants.CreateSalePdf);
 
             var dictResult = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseFile.Response.ToString());
             ServiceUtils.GetValuesContains(dictResult, ServiceConstants.Ok)
