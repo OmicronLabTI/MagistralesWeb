@@ -12,6 +12,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -139,12 +140,13 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listDoctors = await this.GetDoctors(orderToReturn.Select(x => x.Codigo).Distinct().ToList(), ServiceConstants.GetResponsibleDoctors);
 
-            orderToReturn.ForEach(async o =>
+            orderToReturn.ForEach(o =>
             {
                 var doctor = listDoctors.FirstOrDefault(x => x.CardCode == o.Codigo);
                 doctor ??= new DoctorPrescriptionInfoModel { DoctorName = o.Medico };
                 o.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == o.Codigo), o.ShippingAddressName, doctor.DoctorName);
-                var (medico, clientType, client) = this.RefillOrders(o);
+
+                var (medico, clientType, client) = this.RefillOrders(o, doctor.DoctorName, specialCardCodes);
 
                 o.Medico = medico;
                 o.ClientType = clientType;
@@ -837,17 +839,18 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
         }
 
-        private (string, string, string) RefillOrders(CompleteOrderModel order)
+        private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes)
         {
+            order.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == order.Codigo), order.ShippingAddressName, doctorName);
+
             if (order.ClientType == ServiceConstants.ClientTypeInstitutional)
             {
                 order.Cliente = order.Medico;
 
                 Regex regex = new Regex(ServiceConstants.RegexNameDoctor);
                 Match match = regex.Match(order.ShippingAddressName);
-                string name = match.Success ? match.Groups[1].Value.Trim() : order.Medico;
 
-                order.Medico = name;
+                order.Medico = match.Success ? match.Groups[1].Value.Trim() : order.Medico;
             }
             else
             {
