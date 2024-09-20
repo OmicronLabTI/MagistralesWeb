@@ -37,6 +37,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
+    using StackExchange.Redis;
 
     /// <summary>
     /// The sap class.
@@ -138,16 +139,19 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listDoctors = await this.GetDoctors(orderToReturn.Select(x => x.Codigo).Distinct().ToList(), ServiceConstants.GetResponsibleDoctors);
 
-            orderToReturn.ForEach(o =>
+            orderToReturn.ForEach(async o =>
             {
                 var doctor = listDoctors.FirstOrDefault(x => x.CardCode == o.Codigo);
                 doctor ??= new DoctorPrescriptionInfoModel { DoctorName = o.Medico };
                 o.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == o.Codigo), o.ShippingAddressName, doctor.DoctorName);
+                var (medico, clientType, client) = this.RefillOrders(o);
+
+                o.Medico = medico;
+                o.ClientType = clientType;
+                o.Cliente = client;
             });
 
-            List<CompleteOrderModel> response = await this.RefillOrders(orderToReturn);
-
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, response, null, orders.Count);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);
         }
 
         /// <summary>
@@ -833,31 +837,24 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
         }
 
-        private async Task<List<CompleteOrderModel>> RefillOrders(List<CompleteOrderModel> orderToReturn)
+        private (string, string, string) RefillOrders(CompleteOrderModel order)
         {
-            var institutionalClients = await this.sapDao.GetInstitutionalClientNames(orderToReturn.Select(x => x.Codigo).ToList(), orderToReturn.Select(x => x.DocNum).ToList());
-
-            orderToReturn.ForEach(order =>
+            if (order.ClientType == ServiceConstants.ClientTypeInstitutional)
             {
-                var matching = institutionalClients.FirstOrDefault(client => client.CardCode == order.Codigo && client.DocNum == order.DocNum);
+                order.Cliente = order.Medico;
 
-                if (matching != null)
-                {
-                    Regex regex = new Regex(ServiceConstants.RegexNameDoctor);
-                    Match match = regex.Match(matching.NameDoctor);
-                    string name = match.Success ? match.Groups[1].Value.Trim() : matching.NameDoctor;
+                Regex regex = new Regex(ServiceConstants.RegexNameDoctor);
+                Match match = regex.Match(order.ShippingAddressName);
+                string name = match.Success ? match.Groups[1].Value.Trim() : order.Medico;
 
-                    order.Cliente = matching.NameClient;
-                    order.Medico = name;
-                    order.ClientType = matching.ClientType;
-                }
-                else
-                {
-                    order.ClientType = ServiceConstants.ClientTypeGeneral;
-                }
-            });
+                order.Medico = name;
+            }
+            else
+            {
+                order.ClientType = ServiceConstants.ClientTypeGeneral;
+            }
 
-            return orderToReturn;
+            return (order.Medico, order.ClientType, order.Cliente);
         }
 
         /// <summary>

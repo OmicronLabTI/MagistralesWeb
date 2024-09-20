@@ -756,6 +756,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string ClientTypeGeneral = "general";
 
         /// <summary>
+        /// ClientTypeGeneral.
+        /// </summary>
+        public const string ClientTypeInstitutional = "institucional";
+
+        /// <summary>
         /// Gets the clasification user DZ.
         /// </summary>
         /// <value>

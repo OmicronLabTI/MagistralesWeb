@@ -42,6 +42,7 @@ namespace Omicron.SapAdapter.DataAccess.Extensions
                 PedidoMuestra = s.OrderModel.PedidoMuestra,
                 DocNumDxp = s.OrderModel.DocNumDxp,
                 ShippingAddressName = s.OrderModel.ShippingAddressName,
+                ClientType = s.OrderModel.ClientType,
             });
         }
     }
