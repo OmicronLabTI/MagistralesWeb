@@ -261,9 +261,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// Create the pdf for the sale order.
         /// </summary>
-        /// <param name="orderIds">the orders id.</param>
+        /// <param name="orders">the orders id.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> CreateSaleOrderPdf(List<int> orderIds);
+        Task<ResultDto> CreateSaleOrderPdf(List<CreateOrderPdfDto> orders);
 
         /// <summary>
         /// Deletes the files.

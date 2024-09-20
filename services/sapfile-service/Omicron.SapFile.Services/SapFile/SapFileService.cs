@@ -222,7 +222,9 @@ namespace Omicron.SapFile.Services.SapFile
                 localRoute = ConfigurationManager.AppSettings["PedidoRtp"];
             }
 
+            this._loggerProxy.Debug("set Current directory");
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            this._loggerProxy.Debug("get current directory");
             var root = Directory.GetCurrentDirectory();
             root += localRoute;
             

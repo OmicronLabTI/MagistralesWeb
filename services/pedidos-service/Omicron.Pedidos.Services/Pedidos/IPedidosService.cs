@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
 
@@ -176,9 +177,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Creates the pdf for the sale orders.
         /// </summary>
-        /// <param name="ordersId">the orders.</param>
+        /// <param name="orders">the orders.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> CreateSaleOrderPdf(List<int> ordersId);
+        Task<ResultModel> CreateSaleOrderPdf(List<CreateOrderPdfDto> orders);
 
         /// <summary>
         /// Send the petition to delete.
