@@ -7,9 +7,6 @@
 // </summary>
 namespace Omicron.Warehouses.Test.Resourses.Extensions
 {
-    using NUnit.Framework;
-    using Omicron.Warehouses.Resources.Extensions;
-
     /// <summary>
     /// Type extensions tests.
     /// </summary>
@@ -24,7 +21,7 @@ namespace Omicron.Warehouses.Test.Resourses.Extensions
         [TestCase("1,2,,3", 3)]
         public void ToIntList(string baseString, int expectedItems)
         {
-            Assert.AreEqual(expectedItems, baseString.ToIntList().Count);
+            ClassicAssert.AreEqual(expectedItems, baseString.ToIntList().Count);
         }
     }
 }

@@ -8,19 +8,6 @@
 
 namespace Omicron.Warehouses.Test.Services.Request
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Warehouses.DataAccess.DAO.Request;
-    using Omicron.Warehouses.Entities.Context;
-    using Omicron.Warehouses.Entities.Model;
-    using Omicron.Warehouses.Services.Clients;
-    using Omicron.Warehouses.Services.Constants;
-    using Omicron.Warehouses.Services.Redis;
-    using Omicron.Warehouses.Services.Request;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -190,8 +177,8 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.CreateRawMaterialRequest(this.userId, request);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.AreEqual(ErrorReasonConstants.ErrorToSubmitFile, response.UserError);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.AreEqual(ErrorReasonConstants.ErrorToSubmitFile, response.UserError);
         }
 
         /// <summary>
@@ -227,7 +214,7 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.CreateRawMaterialRequest("otherUser", request);
 
             // assert
-            Assert.AreEqual(false, response.Success);
+            ClassicAssert.AreEqual(false, response.Success);
         }
 
         /// <summary>
@@ -242,10 +229,10 @@ namespace Omicron.Warehouses.Test.Services.Request
 
             // assert
             var request = (RawMaterialRequestModel)response.Response;
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsTrue(response.Success);
 
-            Assert.AreEqual(4, request.ProductionOrderIds[0]);
-            Assert.AreEqual(1, request.OrderedProducts.Count);
+            ClassicAssert.AreEqual(4, request.ProductionOrderIds[0]);
+            ClassicAssert.AreEqual(1, request.OrderedProducts.Count);
         }
 
         /// <summary>
@@ -259,8 +246,8 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.GetRawMaterialRequestByProductionOrderId(2000);
 
             // assert
-            Assert.IsTrue(response.Success);
-            Assert.IsNull(response.Response);
+            ClassicAssert.IsTrue(response.Success);
+            ClassicAssert.IsNull(response.Response);
         }
 
         /// <summary>
@@ -278,14 +265,14 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.GetRawMaterialPreRequest(salesOrders, productionOrderIds);
 
             // assert
-            Assert.IsTrue(response.Success);
-            Assert.NotNull(response.Response);
+            ClassicAssert.IsTrue(response.Success);
+            ClassicAssert.NotNull(response.Response);
 
             var preRequest = (RawMaterialRequestModel)response.Response;
-            Assert.AreEqual(2, preRequest.ProductionOrderIds.Count);
-            Assert.IsTrue(!preRequest.ProductionOrderIds.Contains(3));
-            Assert.AreEqual(3, preRequest.OrderedProducts.Count);
-            Assert.IsTrue(!preRequest.OrderedProducts.Any(x => x.ProductId.Equals("2")));
+            ClassicAssert.AreEqual(2, preRequest.ProductionOrderIds.Count);
+            ClassicAssert.IsTrue(!preRequest.ProductionOrderIds.Contains(3));
+            ClassicAssert.AreEqual(3, preRequest.OrderedProducts.Count);
+            ClassicAssert.IsTrue(!preRequest.OrderedProducts.Any(x => x.ProductId.Equals("2")));
         }
 
         /// <summary>
@@ -298,9 +285,9 @@ namespace Omicron.Warehouses.Test.Services.Request
         private void CheckAction(ResultModel result, bool success, int numberOfSucceess, int numberOfFails)
         {
             var content = (SuccessFailResults<object>)result.Response;
-            Assert.AreEqual(success, result.Success);
-            Assert.AreEqual(numberOfFails, content.Failed.Count);
-            Assert.AreEqual(numberOfSucceess, content.Success.Count);
+            ClassicAssert.AreEqual(success, result.Success);
+            ClassicAssert.AreEqual(numberOfFails, content.Failed.Count);
+            ClassicAssert.AreEqual(numberOfSucceess, content.Success.Count);
         }
     }
 }

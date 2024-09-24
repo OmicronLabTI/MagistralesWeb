@@ -125,13 +125,13 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             var result = await service.UpdateDoctorDeliveryAddress(data);
             if (success)
             {
-                Assert.IsTrue(result.Success);
-                Assert.AreEqual(200, result.Code);
+                ClassicAssert.IsTrue(result.Success);
+                ClassicAssert.AreEqual(200, result.Code);
             }
             else
             {
-                Assert.IsFalse(result.Success);
-                Assert.AreEqual(400, result.Code);
+                ClassicAssert.IsFalse(result.Success);
+                ClassicAssert.AreEqual(400, result.Code);
             }
         }
 
@@ -224,13 +224,13 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             var result = await service.UpdateDoctorDeliveryAddress(data);
             if (success)
             {
-                Assert.IsTrue(result.Success);
-                Assert.AreEqual(200, result.Code);
+                ClassicAssert.IsTrue(result.Success);
+                ClassicAssert.AreEqual(200, result.Code);
             }
             else
             {
-                Assert.IsFalse(result.Success);
-                Assert.AreEqual(400, result.Code);
+                ClassicAssert.IsFalse(result.Success);
+                ClassicAssert.AreEqual(400, result.Code);
             }
         }
 
@@ -265,19 +265,19 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
 
             if (isSuccess)
             {
-                Assert.IsTrue(result.Success);
-                Assert.AreEqual(200, result.Code);
-                Assert.IsNull(result.UserError);
+                ClassicAssert.IsTrue(result.Success);
+                ClassicAssert.AreEqual(200, result.Code);
+                ClassicAssert.IsNull(result.UserError);
             }
             else
             {
-                Assert.IsFalse(result.Success);
-                Assert.AreEqual(400, result.Code);
-                Assert.AreEqual(result.UserError, userError);
+                ClassicAssert.IsFalse(result.Success);
+                ClassicAssert.AreEqual(400, result.Code);
+                ClassicAssert.AreEqual(result.UserError, userError);
             }
 
-            Assert.IsNull(result.Response);
-            Assert.IsNull(result.ExceptionMessage);
+            ClassicAssert.IsNull(result.Response);
+            ClassicAssert.IsNull(result.ExceptionMessage);
         }
 
         /// <summary>
@@ -332,25 +332,25 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
 
             if (!isDoctorFound)
             {
-                Assert.IsFalse(result.Success);
-                Assert.AreEqual(400, result.Code);
-                Assert.AreEqual("No se encontró el médico", result.UserError);
+                ClassicAssert.IsFalse(result.Success);
+                ClassicAssert.AreEqual(400, result.Code);
+                ClassicAssert.AreEqual("No se encontró el médico", result.UserError);
             }
             else if (!isAddressUpdateSuccess)
             {
-                Assert.IsFalse(result.Success);
-                Assert.AreEqual(400, result.Code);
-                Assert.AreEqual("Error al actualizar la dirección", result.UserError);
+                ClassicAssert.IsFalse(result.Success);
+                ClassicAssert.AreEqual(400, result.Code);
+                ClassicAssert.AreEqual("Error al actualizar la dirección", result.UserError);
             }
             else
             {
-                Assert.IsTrue(result.Success);
-                Assert.AreEqual(200, result.Code);
-                Assert.IsNull(result.UserError);
+                ClassicAssert.IsTrue(result.Success);
+                ClassicAssert.AreEqual(200, result.Code);
+                ClassicAssert.IsNull(result.UserError);
             }
 
-            Assert.IsNull(result.Response);
-            Assert.IsNull(result.ExceptionMessage);
+            ClassicAssert.IsNull(result.Response);
+            ClassicAssert.IsNull(result.ExceptionMessage);
         }
 
         private static ResultModel GetResult(object data, bool success, string userError)

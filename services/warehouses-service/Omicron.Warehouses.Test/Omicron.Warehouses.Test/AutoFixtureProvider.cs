@@ -8,10 +8,6 @@
 
 namespace Omicron.Warehouses.Test
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using AutoFixture;
-
     /// <summary>
     /// Provider of autofixture.
     /// </summary>

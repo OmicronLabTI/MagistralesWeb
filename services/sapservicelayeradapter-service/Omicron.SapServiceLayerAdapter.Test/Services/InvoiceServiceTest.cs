@@ -71,24 +71,24 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             var result = await invoiceServiceMock.UpdateInvoiceTrackingInfo(invoiceId, trackingInfo);
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<ResultModel>(result);
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.IsInstanceOf<ResultModel>(result);
             if (isResponseInvoiceSuccess)
             {
-                Assert.IsTrue(result.Code == 200);
-                Assert.IsTrue(result.Success);
-                Assert.IsNull(result.UserError);
+                ClassicAssert.IsTrue(result.Code == 200);
+                ClassicAssert.IsTrue(result.Success);
+                ClassicAssert.IsNull(result.UserError);
             }
             else
             {
-                Assert.IsTrue(result.Code == 200);
-                Assert.IsTrue(result.Success);
-                Assert.IsNotNull(result.UserError);
-                Assert.AreEqual("No existen registros coincidentes (ODBC -2028)", result.UserError);
+                ClassicAssert.IsTrue(result.Code == 200);
+                ClassicAssert.IsTrue(result.Success);
+                ClassicAssert.IsNotNull(result.UserError);
+                ClassicAssert.AreEqual("No existen registros coincidentes (ODBC -2028)", result.UserError);
             }
 
-            Assert.IsNotNull(result.Response);
-            Assert.IsNull(result.Comments);
+            ClassicAssert.IsNotNull(result.Response);
+            ClassicAssert.IsNull(result.Comments);
         }
     }
 }

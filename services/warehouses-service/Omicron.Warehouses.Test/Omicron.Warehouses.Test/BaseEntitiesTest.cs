@@ -7,9 +7,6 @@
 // </summary>
 namespace Omicron.Warehouses.Test
 {
-    using NUnit.Framework;
-    using Omicron.Warehouses.Test;
-
     /// <summary>
     /// Class for tests entities.
     /// </summary>
@@ -27,7 +24,7 @@ namespace Omicron.Warehouses.Test
             instance = AutoFixtureProvider.Create<T>();
 
             // Assert
-            Assert.IsTrue(IsValid(instance));
+            ClassicAssert.IsTrue(IsValid(instance));
         }
 
         /// <summary>
@@ -38,10 +35,10 @@ namespace Omicron.Warehouses.Test
         /// <returns>Assertion result.</returns>
         internal static bool IsValid<T>(T instance)
         {
-            Assert.IsNotNull(instance);
+            ClassicAssert.IsNotNull(instance);
             foreach (var prop in instance.GetType().GetProperties())
             {
-                Assert.IsNotNull(GetPropValue(instance, prop.Name));
+                ClassicAssert.IsNotNull(GetPropValue(instance, prop.Name));
             }
 
             return true;

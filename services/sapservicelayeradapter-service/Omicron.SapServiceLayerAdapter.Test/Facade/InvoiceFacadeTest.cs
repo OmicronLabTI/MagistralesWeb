@@ -63,11 +63,11 @@ namespace Omicron.SapServiceLayerAdapter.Test.Facade
         /// <param name="response">Response to validate.</param>
         private static void AssertResponse(ResultDto response)
         {
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            ClassicAssert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response.Response);
+            ClassicAssert.IsNull(response.ExceptionMessage);
+            ClassicAssert.IsNull(response.UserError);
+            ClassicAssert.AreEqual(200, response.Code);
         }
     }
 }
