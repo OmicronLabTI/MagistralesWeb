@@ -7,15 +7,6 @@
 // </summary>
 namespace Omicron.Reporting.Test.Services.SapAdapter
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Net.Mail;
-    using System.Threading.Tasks;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Reporting.Entities.Model;
-    using Omicron.Reporting.Services.Clients;
-
     /// <summary>
     /// Test class for OmicronMailClient.
     /// </summary>
@@ -49,8 +40,8 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = this.omicronMailClient.GetSmtpClient(smtpConfig);
 
             // Assert
-            Assert.AreEqual(smtpConfig.SmtpServer, result.Host);
-            Assert.AreEqual(smtpConfig.SmtpPort, result.Port);
+            ClassicAssert.AreEqual(smtpConfig.SmtpServer, result.Host);
+            ClassicAssert.AreEqual(smtpConfig.SmtpPort, result.Port);
         }
 
         /// <summary>
@@ -68,7 +59,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = await this.omicronMailClient.SendMail(smtpConfig, "to@mail.com", "subject", "body", "cc1@mail.com;cc2@mail.com", files);
 
             // Assert
-            Assert.IsTrue(result);
+            ClassicAssert.IsTrue(result);
         }
 
         /// <summary>
@@ -86,7 +77,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = await this.omicronMailClient.SendMail(smtpConfig, "to@mail.com", "subject", "body", "cc1@mail.com;cc2@mail.com", files);
 
             // Assert
-            Assert.IsTrue(result);
+            ClassicAssert.IsTrue(result);
         }
 
         private SmtpConfigModel GetMockSmtpConfigModel()

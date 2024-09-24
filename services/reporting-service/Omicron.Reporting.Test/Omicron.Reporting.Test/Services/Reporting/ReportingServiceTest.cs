@@ -8,22 +8,6 @@
 
 namespace Omicron.Reporting.Test.Services.Request
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading.Tasks;
-    using Azure.Storage.Blobs.Models;
-    using Microsoft.Extensions.Configuration;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Reporting.Dtos.Model;
-    using Omicron.Reporting.Entities.Model;
-    using Omicron.Reporting.Services;
-    using Omicron.Reporting.Services.AzureServices;
-    using Omicron.Reporting.Services.Clients;
-    using Omicron.Reporting.Services.ReportBuilder.SuppliesWarehouse;
-    using Omicron.Reporting.Services.ServiceLayerAdapter;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -82,7 +66,7 @@ namespace Omicron.Reporting.Test.Services.Request
 
             // act
             var result = await service.SendEmailForeignPackage(request);
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -148,7 +132,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = await service.SendEmailLocalPackage(request);
 
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -211,7 +195,7 @@ namespace Omicron.Reporting.Test.Services.Request
 
             // act
             var result = await service.SendEmailRejectedOrder(request);
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -292,7 +276,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = await service.SendEmailCancelDeliveryOrders(request);
 
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -338,7 +322,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = service.CreateRawMaterialRequestPdf(request, true);
 
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -383,7 +367,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = service.CreateRawMaterialRequestPdf(request, false);
 
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -484,19 +468,19 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = await service.SubmitRawMaterialRequestPdf(request);
 
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.IsTrue(result.Success);
+            ClassicAssert.AreEqual(200, result.Code);
 
             if (hasDiApiError)
             {
-                Assert.IsFalse((bool)result.Response);
-                Assert.IsEmpty((List<string>)result.Comments);
+                ClassicAssert.IsFalse((bool)result.Response);
+                ClassicAssert.IsEmpty((List<string>)result.Comments);
             }
             else
             {
-                Assert.IsTrue((bool)result.Response);
-                Assert.IsTrue(((List<string>)result.Comments).Count > 0);
+                ClassicAssert.IsTrue((bool)result.Response);
+                ClassicAssert.IsTrue(((List<string>)result.Comments).Count > 0);
             }
         }
 
@@ -575,7 +559,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = await service.SubmitIncidentsExel(request);
 
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -623,8 +607,8 @@ namespace Omicron.Reporting.Test.Services.Request
             var result = await service.SendEmails(listDoctor);
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Success);
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.IsTrue(result.Success);
         }
 
         /// <summary>
@@ -690,10 +674,10 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = await service.SendEmailLocalPackage(request);
 
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Success);
-            Assert.IsTrue(result.Response.Equals(false));
-            Assert.IsTrue(result.Code.Equals(200));
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Response.Equals(false));
+            ClassicAssert.IsTrue(result.Code.Equals(200));
         }
     }
 }

@@ -8,10 +8,6 @@
 
 namespace Omicron.Reporting.Test.Services.ServiceLayerAdapter
 {
-    using NUnit.Framework;
-    using Omicron.Reporting.Resources.Exceptions;
-    using Omicron.Reporting.Services.ServiceLayerAdapter;
-
     /// <summary>
     /// The test.
     /// </summary>
@@ -31,7 +27,7 @@ namespace Omicron.Reporting.Test.Services.ServiceLayerAdapter
             var result = client.PostAsync("endpoint", "{\"key\": \"value\"}").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Success);
         }
 
         /// <summary>
@@ -44,7 +40,7 @@ namespace Omicron.Reporting.Test.Services.ServiceLayerAdapter
             var client = this.CreateClientFailure();
 
             // Act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync("endpoint", "{\"key\": \"value\"}"));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync("endpoint", "{\"key\": \"value\"}"));
         }
 
         /// <summary>
@@ -57,7 +53,7 @@ namespace Omicron.Reporting.Test.Services.ServiceLayerAdapter
             var client = this.CreateClientWithErrorResponse();
 
             // Act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync("endpoint", "{\"key\": \"value\"}"));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync("endpoint", "{\"key\": \"value\"}"));
         }
     }
 }
