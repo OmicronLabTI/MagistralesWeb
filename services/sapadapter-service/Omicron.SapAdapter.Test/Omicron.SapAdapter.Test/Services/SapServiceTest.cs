@@ -1095,8 +1095,7 @@ namespace Omicron.SapAdapter.Test.Services
         /// Get packing required for order in assigned status.
         /// </summary>
         /// <returns>the detail.</returns>
-        /// Incomplete test
-        /*[Test]
+        [Test]
         public async Task GetPackingRequiredForOrderInAssignedStatus()
         {
             // arrange
@@ -1107,7 +1106,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             ClassicAssert.IsNotNull(result);
-        }*/
+        }
 
         /// <summary>
         /// gets the orders test.

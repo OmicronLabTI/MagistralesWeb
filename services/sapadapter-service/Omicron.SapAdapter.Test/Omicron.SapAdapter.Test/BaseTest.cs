@@ -768,7 +768,7 @@ namespace Omicron.SapAdapter.Test
                 Success = true,
                 Code = 200,
                 ExceptionMessage = string.Empty,
-                Response = string.Empty,
+                Response = users,
                 UserError = string.Empty,
             };
         }

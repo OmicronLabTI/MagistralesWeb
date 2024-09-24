@@ -779,8 +779,8 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var resultOrders = await this.pedidosService.GetUserPedidos(string.Format(ServiceConstants.GetOrdersByStatusAndUserId, ServiceConstants.Asignado, userId));
             var userOrders = JsonConvert.DeserializeObject<List<int>>(JsonConvert.SerializeObject(resultOrders.Response));
-            var detailsFormula = userOrders != null ? (await this.sapDao.GetDetalleFormulaByProdOrdId(userOrders)).Where(x => ServiceShared.CalculateOr(x.ItemCode.Contains("EN"), x.ItemCode.Contains("EM"))).ToList() : throw new ArgumentNullException(nameof(userOrders), "User orders cannot be null or empty");
-            var products = detailsFormula != null ? (await this.sapDao.GetProductByIds(detailsFormula.Select(x => x.ItemCode).Distinct().ToList())).ToList() : throw new ArgumentNullException(nameof(detailsFormula), "Details formula cannot be null or empty");
+            var detailsFormula = (await this.sapDao.GetDetalleFormulaByProdOrdId(userOrders)).Where(x => ServiceShared.CalculateOr(x.ItemCode.Contains("EN"), x.ItemCode.Contains("EM"))).ToList();
+            var products = (await this.sapDao.GetProductByIds(detailsFormula.Select(x => x.ItemCode).Distinct().ToList())).ToList();
             var packaginList = products.Select(product =>
             new PackingRequiredModel
             {
