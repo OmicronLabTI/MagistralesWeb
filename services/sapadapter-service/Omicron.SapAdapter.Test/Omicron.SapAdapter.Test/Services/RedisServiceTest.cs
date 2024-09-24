@@ -8,14 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System;
-    using System.Threading.Tasks;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Services.Redis;
-    using Serilog;
-    using StackExchange.Redis;
-
     /// <summary>
     /// Class FavoritiesServiceTest.
     /// </summary>
@@ -48,7 +40,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await localService.GetRedisKey("C001");
 
             // Assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -68,7 +60,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await localService.WriteToRedis("C001", "C001", new TimeSpan(0, 0, 5));
 
             // Assert
-            Assert.IsTrue(result);
+            ClassicAssert.IsTrue(result);
         }
 
         /// <summary>
@@ -90,7 +82,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = localService.IsConnectedRedis();
 
             // Assert
-            Assert.IsTrue(result);
+            ClassicAssert.IsTrue(result);
         }
     }
 }

@@ -8,18 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Resources.Exceptions;
-    using Omicron.SapAdapter.Services.Catalog;
-    using Serilog;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -57,7 +45,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.GetParams("salesOrder");
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -87,7 +75,7 @@ namespace Omicron.SapAdapter.Test.Services
             var pedidoService = new CatalogsService(clientMock, mockLogger.Object);
 
             // act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetParams("salesOrder"));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetParams("salesOrder"));
         }
     }
 }

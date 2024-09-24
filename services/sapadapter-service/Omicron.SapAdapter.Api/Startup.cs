@@ -156,9 +156,11 @@ namespace Omicron.SapAdapter.Api
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
             services.AddResponseCompression();
 
-            services.AddMediatR(
-                typeof(PaymentsByTransactionHandler),
-                typeof(DoctorDeliveryAddressHandler));
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(typeof(PaymentsByTransactionHandler).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(DoctorDeliveryAddressHandler).Assembly);
+            });
         }
 
         /// <summary>

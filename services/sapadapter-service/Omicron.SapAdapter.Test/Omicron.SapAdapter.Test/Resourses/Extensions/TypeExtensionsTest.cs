@@ -7,11 +7,6 @@
 // </summary>
 namespace Omicron.SapAdapter.Test.Resourses.Extensions
 {
-    using System;
-    using System.Collections.Generic;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Resources.Extensions;
-
     /// <summary>
     /// Type extensions tests.
     /// </summary>
@@ -26,7 +21,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
         [TestCase(typeof(double))]
         public void IsNumericType(Type type)
         {
-            Assert.IsTrue(type.IsNumericType());
+            ClassicAssert.IsTrue(type.IsNumericType());
         }
 
         /// <summary>
@@ -38,7 +33,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
         [TestCase(typeof(List<string>))]
         public void IsNumericType_NotNumeric(Type type)
         {
-            Assert.IsFalse(type.IsNumericType());
+            ClassicAssert.IsFalse(type.IsNumericType());
         }
     }
 }

@@ -148,7 +148,7 @@ namespace Omicron.SapAdapter.Services.Sap
             response.CardOrder = response.CardOrder.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
             response.CardDelivery = response.CardDelivery.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
             response.CardInvoice = response.CardInvoice.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower())))
-                .DistinctBy(cd => cd.Invoice).ToList();
+                .UtilsDistinctBy(cd => cd.Invoice).ToList();
             response.CardDistribution = response.CardDistribution.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);

@@ -8,16 +8,6 @@
 
 namespace Omicron.SapAdapter.Test
 {
-    using AutoFixture;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Dtos.DxpModels;
-    using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-
     /// <summary>
     /// Class for tests entities.
     /// </summary>
@@ -127,15 +117,15 @@ namespace Omicron.SapAdapter.Test
             instance = this.fixture.Create<T>();
 
             // Assert
-            Assert.IsTrue(IsValid(instance));
+            ClassicAssert.IsTrue(IsValid(instance));
         }
 
         private static bool IsValid<T>(T instance)
         {
-            Assert.IsNotNull(instance);
+            ClassicAssert.IsNotNull(instance);
             foreach (var prop in instance.GetType().GetProperties())
             {
-                Assert.IsNotNull(GetPropValue(instance, prop.Name));
+                ClassicAssert.IsNotNull(GetPropValue(instance, prop.Name));
             }
 
             return true;

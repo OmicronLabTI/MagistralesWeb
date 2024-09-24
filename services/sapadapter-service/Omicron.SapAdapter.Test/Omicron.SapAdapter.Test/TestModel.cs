@@ -8,14 +8,6 @@
 
 namespace Omicron.SapAdapter.Test
 {
-    using System;
-    using System.Collections.Generic;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-
     /// <summary>
     /// this testmodels.
     /// </summary>
@@ -34,9 +26,9 @@ namespace Omicron.SapAdapter.Test
                 AsesorName = "Gustavo",
             };
 
-            Assert.IsNotNull(asesor);
-            Assert.IsNotNull(asesor.AsesorId);
-            Assert.IsNotNull(asesor.AsesorName);
+            ClassicAssert.IsNotNull(asesor);
+            ClassicAssert.IsNotNull(asesor.AsesorId);
+            ClassicAssert.IsNotNull(asesor.AsesorName);
         }
 
         /// <summary>
@@ -47,13 +39,13 @@ namespace Omicron.SapAdapter.Test
         {
             var asesor = new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 100, ProductoId = "Abc Aspirina", Container = "container", Label = "label", Quantity = 10 };
 
-            Assert.IsNotNull(asesor.Description);
-            Assert.IsNotNull(asesor.DetalleId);
-            Assert.IsNotNull(asesor.Container);
-            Assert.IsNotNull(asesor.Label);
-            Assert.IsNotNull(asesor.PedidoId);
-            Assert.IsNotNull(asesor.ProductoId);
-            Assert.IsNotNull(asesor.Quantity);
+            ClassicAssert.IsNotNull(asesor.Description);
+            ClassicAssert.IsNotNull(asesor.DetalleId);
+            ClassicAssert.IsNotNull(asesor.Container);
+            ClassicAssert.IsNotNull(asesor.Label);
+            ClassicAssert.IsNotNull(asesor.PedidoId);
+            ClassicAssert.IsNotNull(asesor.ProductoId);
+            ClassicAssert.IsNotNull(asesor.Quantity);
         }
 
         /// <summary>
@@ -63,25 +55,25 @@ namespace Omicron.SapAdapter.Test
         public void OrdenFabricaionModel()
         {
             var asesor = new OrdenFabricacionModel { ProductoId = "Abc Aspirina", OrdenId = 100, PostDate = DateTime.Now, Quantity = 2, Status = "L", PedidoId = 100, CardCode = "card", Comments = "comment", CompleteQuantity = 10, CreatedDate = DateTime.Now, DataSource = "0", DueDate = DateTime.Now, OriginType = "0", ProdName = "name", StartDate = DateTime.Now, Type = "y", Unit = "U", User = 1, Wharehouse = "w" };
-            Assert.IsNotNull(asesor.CardCode);
-            Assert.IsNotNull(asesor.Comments);
-            Assert.IsNotNull(asesor.CompleteQuantity);
-            Assert.IsNotNull(asesor.CreatedDate);
-            Assert.IsNotNull(asesor.DataSource);
-            Assert.IsNotNull(asesor.DueDate);
-            Assert.IsNotNull(asesor.OrdenId);
-            Assert.IsNotNull(asesor.OriginType);
-            Assert.IsNotNull(asesor.PedidoId);
-            Assert.IsNotNull(asesor.PostDate);
-            Assert.IsNotNull(asesor.ProdName);
-            Assert.IsNotNull(asesor.ProductoId);
-            Assert.IsNotNull(asesor.Quantity);
-            Assert.IsNotNull(asesor.StartDate);
-            Assert.IsNotNull(asesor.Status);
-            Assert.IsNotNull(asesor.Type);
-            Assert.IsNotNull(asesor.Unit);
-            Assert.IsNotNull(asesor.User);
-            Assert.IsNotNull(asesor.Wharehouse);
+            ClassicAssert.IsNotNull(asesor.CardCode);
+            ClassicAssert.IsNotNull(asesor.Comments);
+            ClassicAssert.IsNotNull(asesor.CompleteQuantity);
+            ClassicAssert.IsNotNull(asesor.CreatedDate);
+            ClassicAssert.IsNotNull(asesor.DataSource);
+            ClassicAssert.IsNotNull(asesor.DueDate);
+            ClassicAssert.IsNotNull(asesor.OrdenId);
+            ClassicAssert.IsNotNull(asesor.OriginType);
+            ClassicAssert.IsNotNull(asesor.PedidoId);
+            ClassicAssert.IsNotNull(asesor.PostDate);
+            ClassicAssert.IsNotNull(asesor.ProdName);
+            ClassicAssert.IsNotNull(asesor.ProductoId);
+            ClassicAssert.IsNotNull(asesor.Quantity);
+            ClassicAssert.IsNotNull(asesor.StartDate);
+            ClassicAssert.IsNotNull(asesor.Status);
+            ClassicAssert.IsNotNull(asesor.Type);
+            ClassicAssert.IsNotNull(asesor.Unit);
+            ClassicAssert.IsNotNull(asesor.User);
+            ClassicAssert.IsNotNull(asesor.Wharehouse);
         }
 
         /// <summary>
@@ -91,14 +83,14 @@ namespace Omicron.SapAdapter.Test
         public void OrdenModel()
         {
             var asesor = new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C" };
-            Assert.IsNotNull(asesor.AsesorId);
-            Assert.IsNotNull(asesor.Codigo);
-            Assert.IsNotNull(asesor.DocNum);
-            Assert.IsNotNull(asesor.FechaFin);
-            Assert.IsNotNull(asesor.FechaInicio);
-            Assert.IsNotNull(asesor.Medico);
-            Assert.IsNotNull(asesor.PedidoId);
-            Assert.IsNotNull(asesor.PedidoStatus);
+            ClassicAssert.IsNotNull(asesor.AsesorId);
+            ClassicAssert.IsNotNull(asesor.Codigo);
+            ClassicAssert.IsNotNull(asesor.DocNum);
+            ClassicAssert.IsNotNull(asesor.FechaFin);
+            ClassicAssert.IsNotNull(asesor.FechaInicio);
+            ClassicAssert.IsNotNull(asesor.Medico);
+            ClassicAssert.IsNotNull(asesor.PedidoId);
+            ClassicAssert.IsNotNull(asesor.PedidoStatus);
         }
 
         /// <summary>
@@ -108,13 +100,13 @@ namespace Omicron.SapAdapter.Test
         public void ProductoModel()
         {
             var asesor = new ProductoModel { IsMagistral = "Y", ProductoId = "Abc Aspirina", ProductoName = "Aspirina", LargeDescription = "large", ManagedBatches = "batches", OnHand = 10, Unit = "KG" };
-            Assert.IsNotNull(asesor.IsMagistral);
-            Assert.IsNotNull(asesor.LargeDescription);
-            Assert.IsNotNull(asesor.ManagedBatches);
-            Assert.IsNotNull(asesor.OnHand);
-            Assert.IsNotNull(asesor.ProductoId);
-            Assert.IsNotNull(asesor.ProductoName);
-            Assert.IsNotNull(asesor.Unit);
+            ClassicAssert.IsNotNull(asesor.IsMagistral);
+            ClassicAssert.IsNotNull(asesor.LargeDescription);
+            ClassicAssert.IsNotNull(asesor.ManagedBatches);
+            ClassicAssert.IsNotNull(asesor.OnHand);
+            ClassicAssert.IsNotNull(asesor.ProductoId);
+            ClassicAssert.IsNotNull(asesor.ProductoName);
+            ClassicAssert.IsNotNull(asesor.Unit);
         }
 
         /// <summary>
@@ -125,19 +117,19 @@ namespace Omicron.SapAdapter.Test
         {
             var asesor = new CompleteDetailOrderModel { CodigoProducto = "Abc Aspirina", DescripcionProducto = "Aspirina", FechaOf = "28/03/2020", FechaOfFin = "28/03/2020", IsChecked = false, OrdenFabricacionId = 100, Qfb = "Gustavo", QtyPlanned = 1, Status = "L", DescripcionCorta = "corta", PedidoStatus = "S", QtyPlannedDetalle = 10, HasMissingStock = false };
 
-            Assert.IsNotNull(asesor.CodigoProducto);
-            Assert.IsNotNull(asesor.DescripcionCorta);
-            Assert.IsNotNull(asesor.DescripcionProducto);
-            Assert.IsNotNull(asesor.FechaOf);
-            Assert.IsNotNull(asesor.FechaOfFin);
-            Assert.IsNotNull(asesor.IsChecked);
-            Assert.IsNotNull(asesor.OrdenFabricacionId);
-            Assert.IsNotNull(asesor.PedidoStatus);
-            Assert.IsNotNull(asesor.Qfb);
-            Assert.IsNotNull(asesor.QtyPlanned);
-            Assert.IsNotNull(asesor.QtyPlannedDetalle);
-            Assert.IsNotNull(asesor.Status);
-            Assert.IsNotNull(asesor.HasMissingStock);
+            ClassicAssert.IsNotNull(asesor.CodigoProducto);
+            ClassicAssert.IsNotNull(asesor.DescripcionCorta);
+            ClassicAssert.IsNotNull(asesor.DescripcionProducto);
+            ClassicAssert.IsNotNull(asesor.FechaOf);
+            ClassicAssert.IsNotNull(asesor.FechaOfFin);
+            ClassicAssert.IsNotNull(asesor.IsChecked);
+            ClassicAssert.IsNotNull(asesor.OrdenFabricacionId);
+            ClassicAssert.IsNotNull(asesor.PedidoStatus);
+            ClassicAssert.IsNotNull(asesor.Qfb);
+            ClassicAssert.IsNotNull(asesor.QtyPlanned);
+            ClassicAssert.IsNotNull(asesor.QtyPlannedDetalle);
+            ClassicAssert.IsNotNull(asesor.Status);
+            ClassicAssert.IsNotNull(asesor.HasMissingStock);
         }
 
         /// <summary>
@@ -147,16 +139,16 @@ namespace Omicron.SapAdapter.Test
         public void CompleteOrderModel()
         {
             var asesor = new CompleteOrderModel { AsesorName = "asesor", Cliente = "cliente", Codigo = "codigo", DocNum = 100, FechaFin = "fecha", FechaInicio = "fecha", IsChecked = true, Medico = "Medico", PedidoStatus = "L", Qfb = "qfb" };
-            Assert.IsNotNull(asesor.AsesorName);
-            Assert.IsNotNull(asesor.Cliente);
-            Assert.IsNotNull(asesor.Codigo);
-            Assert.IsNotNull(asesor.DocNum);
-            Assert.IsNotNull(asesor.FechaFin);
-            Assert.IsNotNull(asesor.FechaInicio);
-            Assert.IsNotNull(asesor.Medico);
-            Assert.IsNotNull(asesor.IsChecked);
-            Assert.IsNotNull(asesor.PedidoStatus);
-            Assert.IsNotNull(asesor.Qfb);
+            ClassicAssert.IsNotNull(asesor.AsesorName);
+            ClassicAssert.IsNotNull(asesor.Cliente);
+            ClassicAssert.IsNotNull(asesor.Codigo);
+            ClassicAssert.IsNotNull(asesor.DocNum);
+            ClassicAssert.IsNotNull(asesor.FechaFin);
+            ClassicAssert.IsNotNull(asesor.FechaInicio);
+            ClassicAssert.IsNotNull(asesor.Medico);
+            ClassicAssert.IsNotNull(asesor.IsChecked);
+            ClassicAssert.IsNotNull(asesor.PedidoStatus);
+            ClassicAssert.IsNotNull(asesor.Qfb);
         }
 
         /// <summary>
@@ -166,13 +158,13 @@ namespace Omicron.SapAdapter.Test
         public void BatchesComponentModel()
         {
             var asesor = new BatchesComponentModel { Almacen = "Almacen", CodigoProducto = "codogp", DescripcionProducto = "dsc", Lotes = new List<ValidBatches>(), LotesAsignados = new List<AssignedBatches>(), TotalNecesario = 10, TotalSeleccionado = 10 };
-            Assert.IsNotNull(asesor.Almacen);
-            Assert.IsNotNull(asesor.CodigoProducto);
-            Assert.IsNotNull(asesor.DescripcionProducto);
-            Assert.IsNotNull(asesor.Lotes);
-            Assert.IsNotNull(asesor.LotesAsignados);
-            Assert.IsNotNull(asesor.TotalNecesario);
-            Assert.IsNotNull(asesor.TotalSeleccionado);
+            ClassicAssert.IsNotNull(asesor.Almacen);
+            ClassicAssert.IsNotNull(asesor.CodigoProducto);
+            ClassicAssert.IsNotNull(asesor.DescripcionProducto);
+            ClassicAssert.IsNotNull(asesor.Lotes);
+            ClassicAssert.IsNotNull(asesor.LotesAsignados);
+            ClassicAssert.IsNotNull(asesor.TotalNecesario);
+            ClassicAssert.IsNotNull(asesor.TotalSeleccionado);
         }
 
         /// <summary>
@@ -183,30 +175,30 @@ namespace Omicron.SapAdapter.Test
         {
             var asesor = new CompleteFormulaWithDetalle { BaseDocument = 1, Client = "C", Code = "C", Comments = "C", CompleteQuantity = 10, Container = "L", Details = new List<CompleteDetalleFormulaModel>(), DueDate = "D", EndDate = "E", FabDate = "F", IsChecked = true, Number = 1, Origin = "O", PlannedQuantity = 1, ProductDescription = "P", ProductionOrderId = 1, ProductLabel = "l", RealEndDate = "L", StartDate = "S", Status = "S", Type = "T", Unit = "U", User = "U", Warehouse = "w" };
 
-            Assert.IsNotNull(asesor.BaseDocument);
-            Assert.IsNotNull(asesor.Client);
-            Assert.IsNotNull(asesor.Code);
-            Assert.IsNotNull(asesor.Comments);
-            Assert.IsNotNull(asesor.CompleteQuantity);
-            Assert.IsNotNull(asesor.Container);
-            Assert.IsNotNull(asesor.Details);
-            Assert.IsNotNull(asesor.DueDate);
-            Assert.IsNotNull(asesor.EndDate);
-            Assert.IsNotNull(asesor.FabDate);
-            Assert.IsNotNull(asesor.IsChecked);
-            Assert.IsNotNull(asesor.Number);
-            Assert.IsNotNull(asesor.Origin);
-            Assert.IsNotNull(asesor.PlannedQuantity);
-            Assert.IsNotNull(asesor.ProductDescription);
-            Assert.IsNotNull(asesor.ProductionOrderId);
-            Assert.IsNotNull(asesor.ProductLabel);
-            Assert.IsNotNull(asesor.RealEndDate);
-            Assert.IsNotNull(asesor.StartDate);
-            Assert.IsNotNull(asesor.Status);
-            Assert.IsNotNull(asesor.Type);
-            Assert.IsNotNull(asesor.Unit);
-            Assert.IsNotNull(asesor.User);
-            Assert.IsNotNull(asesor.Warehouse);
+            ClassicAssert.IsNotNull(asesor.BaseDocument);
+            ClassicAssert.IsNotNull(asesor.Client);
+            ClassicAssert.IsNotNull(asesor.Code);
+            ClassicAssert.IsNotNull(asesor.Comments);
+            ClassicAssert.IsNotNull(asesor.CompleteQuantity);
+            ClassicAssert.IsNotNull(asesor.Container);
+            ClassicAssert.IsNotNull(asesor.Details);
+            ClassicAssert.IsNotNull(asesor.DueDate);
+            ClassicAssert.IsNotNull(asesor.EndDate);
+            ClassicAssert.IsNotNull(asesor.FabDate);
+            ClassicAssert.IsNotNull(asesor.IsChecked);
+            ClassicAssert.IsNotNull(asesor.Number);
+            ClassicAssert.IsNotNull(asesor.Origin);
+            ClassicAssert.IsNotNull(asesor.PlannedQuantity);
+            ClassicAssert.IsNotNull(asesor.ProductDescription);
+            ClassicAssert.IsNotNull(asesor.ProductionOrderId);
+            ClassicAssert.IsNotNull(asesor.ProductLabel);
+            ClassicAssert.IsNotNull(asesor.RealEndDate);
+            ClassicAssert.IsNotNull(asesor.StartDate);
+            ClassicAssert.IsNotNull(asesor.Status);
+            ClassicAssert.IsNotNull(asesor.Type);
+            ClassicAssert.IsNotNull(asesor.Unit);
+            ClassicAssert.IsNotNull(asesor.User);
+            ClassicAssert.IsNotNull(asesor.Warehouse);
         }
 
         /// <summary>
@@ -216,14 +208,14 @@ namespace Omicron.SapAdapter.Test
         public void DetalleFormulaModel()
         {
             var asesor = new DetalleFormulaModel { Almacen = "A", BaseQuantity = 1, ConsumidoQty = 1, ItemCode = "I", LineNum = 1, OrderFabId = 1, RequiredQty = 1, UnidadCode = "U" };
-            Assert.IsNotNull(asesor.Almacen);
-            Assert.IsNotNull(asesor.BaseQuantity);
-            Assert.IsNotNull(asesor.ConsumidoQty);
-            Assert.IsNotNull(asesor.ItemCode);
-            Assert.IsNotNull(asesor.LineNum);
-            Assert.IsNotNull(asesor.OrderFabId);
-            Assert.IsNotNull(asesor.RequiredQty);
-            Assert.IsNotNull(asesor.UnidadCode);
+            ClassicAssert.IsNotNull(asesor.Almacen);
+            ClassicAssert.IsNotNull(asesor.BaseQuantity);
+            ClassicAssert.IsNotNull(asesor.ConsumidoQty);
+            ClassicAssert.IsNotNull(asesor.ItemCode);
+            ClassicAssert.IsNotNull(asesor.LineNum);
+            ClassicAssert.IsNotNull(asesor.OrderFabId);
+            ClassicAssert.IsNotNull(asesor.RequiredQty);
+            ClassicAssert.IsNotNull(asesor.UnidadCode);
         }
 
         /// <summary>
@@ -233,8 +225,8 @@ namespace Omicron.SapAdapter.Test
         public void OrderWithDetailModel()
         {
             var asesor = new OrderWithDetailModel { Detalle = new List<CompleteDetailOrderModel>(), Order = new OrderModel() };
-            Assert.IsNotNull(asesor.Detalle);
-            Assert.IsNotNull(asesor.Order);
+            ClassicAssert.IsNotNull(asesor.Detalle);
+            ClassicAssert.IsNotNull(asesor.Order);
         }
 
         /// <summary>
@@ -244,9 +236,9 @@ namespace Omicron.SapAdapter.Test
         public void AssignedBatches()
         {
             var asesor = new AssignedBatches { CantidadSeleccionada = 1, NumeroLote = "S", SysNumber = 1 };
-            Assert.IsNotNull(asesor.CantidadSeleccionada);
-            Assert.IsNotNull(asesor.NumeroLote);
-            Assert.IsNotNull(asesor.SysNumber);
+            ClassicAssert.IsNotNull(asesor.CantidadSeleccionada);
+            ClassicAssert.IsNotNull(asesor.NumeroLote);
+            ClassicAssert.IsNotNull(asesor.SysNumber);
         }
 
         /// <summary>
@@ -256,18 +248,18 @@ namespace Omicron.SapAdapter.Test
         public void CompleteDetalleFormulaModel()
         {
             var asesor = new CompleteDetalleFormulaModel { Available = 1,  BaseQuantity = 1, Consumed = 1, Description = "D2", OrderFabId = 1, PendingQuantity = 1, ProductId = "P", RequiredQuantity = 1, Stock = 1, Unit = "U", Warehouse = "W", WarehouseQuantity = 1 };
-            Assert.IsNotNull(asesor.Available);
-            Assert.IsNotNull(asesor.BaseQuantity);
-            Assert.IsNotNull(asesor.Consumed);
-            Assert.IsNotNull(asesor.Description);
-            Assert.IsNotNull(asesor.OrderFabId);
-            Assert.IsNotNull(asesor.PendingQuantity);
-            Assert.IsNotNull(asesor.ProductId);
-            Assert.IsNotNull(asesor.RequiredQuantity);
-            Assert.IsNotNull(asesor.Stock);
-            Assert.IsNotNull(asesor.Unit);
-            Assert.IsNotNull(asesor.Warehouse);
-            Assert.IsNotNull(asesor.WarehouseQuantity);
+            ClassicAssert.IsNotNull(asesor.Available);
+            ClassicAssert.IsNotNull(asesor.BaseQuantity);
+            ClassicAssert.IsNotNull(asesor.Consumed);
+            ClassicAssert.IsNotNull(asesor.Description);
+            ClassicAssert.IsNotNull(asesor.OrderFabId);
+            ClassicAssert.IsNotNull(asesor.PendingQuantity);
+            ClassicAssert.IsNotNull(asesor.ProductId);
+            ClassicAssert.IsNotNull(asesor.RequiredQuantity);
+            ClassicAssert.IsNotNull(asesor.Stock);
+            ClassicAssert.IsNotNull(asesor.Unit);
+            ClassicAssert.IsNotNull(asesor.Warehouse);
+            ClassicAssert.IsNotNull(asesor.WarehouseQuantity);
         }
 
         /// <summary>
@@ -277,10 +269,10 @@ namespace Omicron.SapAdapter.Test
         public void Batches()
         {
             var asesor = new Batches { AbsEntry = 1, DistNumber = "S", ItemCode = "S", SysNumber = 1 };
-            Assert.IsNotNull(asesor.AbsEntry);
-            Assert.IsNotNull(asesor.DistNumber);
-            Assert.IsNotNull(asesor.ItemCode);
-            Assert.IsNotNull(asesor.SysNumber);
+            ClassicAssert.IsNotNull(asesor.AbsEntry);
+            ClassicAssert.IsNotNull(asesor.DistNumber);
+            ClassicAssert.IsNotNull(asesor.ItemCode);
+            ClassicAssert.IsNotNull(asesor.SysNumber);
         }
 
         /// <summary>
@@ -290,12 +282,12 @@ namespace Omicron.SapAdapter.Test
         public void BatchesQuantity()
         {
             var asesor = new BatchesQuantity { AbsEntry = 1, CommitQty = 1, ItemCode = "S", Quantity = 1, SysNumber = 1, WhsCode = "S" };
-            Assert.IsNotNull(asesor.AbsEntry);
-            Assert.IsNotNull(asesor.CommitQty);
-            Assert.IsNotNull(asesor.ItemCode);
-            Assert.IsNotNull(asesor.Quantity);
-            Assert.IsNotNull(asesor.SysNumber);
-            Assert.IsNotNull(asesor.WhsCode);
+            ClassicAssert.IsNotNull(asesor.AbsEntry);
+            ClassicAssert.IsNotNull(asesor.CommitQty);
+            ClassicAssert.IsNotNull(asesor.ItemCode);
+            ClassicAssert.IsNotNull(asesor.Quantity);
+            ClassicAssert.IsNotNull(asesor.SysNumber);
+            ClassicAssert.IsNotNull(asesor.WhsCode);
         }
 
         /// <summary>
@@ -305,10 +297,10 @@ namespace Omicron.SapAdapter.Test
         public void BatchesTransactionQtyModel()
         {
             var asesor = new BatchesTransactionQtyModel { AllocQty = 1, ItemCode = "S", LogEntry = 1, SysNumber = 1 };
-            Assert.IsNotNull(asesor.AllocQty);
-            Assert.IsNotNull(asesor.LogEntry);
-            Assert.IsNotNull(asesor.ItemCode);
-            Assert.IsNotNull(asesor.SysNumber);
+            ClassicAssert.IsNotNull(asesor.AllocQty);
+            ClassicAssert.IsNotNull(asesor.LogEntry);
+            ClassicAssert.IsNotNull(asesor.ItemCode);
+            ClassicAssert.IsNotNull(asesor.SysNumber);
         }
 
         /// <summary>
@@ -318,10 +310,10 @@ namespace Omicron.SapAdapter.Test
         public void BatchTransacitions()
         {
             var asesor = new BatchTransacitions { DocNum = 2, DocQuantity = 2, ItemCode = "S", LogEntry = 1 };
-            Assert.IsNotNull(asesor.DocNum);
-            Assert.IsNotNull(asesor.LogEntry);
-            Assert.IsNotNull(asesor.ItemCode);
-            Assert.IsNotNull(asesor.DocQuantity);
+            ClassicAssert.IsNotNull(asesor.DocNum);
+            ClassicAssert.IsNotNull(asesor.LogEntry);
+            ClassicAssert.IsNotNull(asesor.ItemCode);
+            ClassicAssert.IsNotNull(asesor.DocQuantity);
         }
 
         /// <summary>
@@ -331,10 +323,10 @@ namespace Omicron.SapAdapter.Test
         public void ValidBatches()
         {
             var asesor = new ValidBatches { CantidadAsignada = 1, CantidadDisponible = 1, NumeroLote = "W", SysNumber = 1 };
-            Assert.IsNotNull(asesor.CantidadAsignada);
-            Assert.IsNotNull(asesor.CantidadDisponible);
-            Assert.IsNotNull(asesor.NumeroLote);
-            Assert.IsNotNull(asesor.SysNumber);
+            ClassicAssert.IsNotNull(asesor.CantidadAsignada);
+            ClassicAssert.IsNotNull(asesor.CantidadDisponible);
+            ClassicAssert.IsNotNull(asesor.NumeroLote);
+            ClassicAssert.IsNotNull(asesor.SysNumber);
         }
 
         /// <summary>
@@ -344,11 +336,11 @@ namespace Omicron.SapAdapter.Test
         public void ItemWarehouseModel()
         {
             var asesor = new ItemWarehouseModel { IsCommited = 1, ItemCode = "S", OnHand = 1, OnOrder = 2, WhsCode = "S" };
-            Assert.IsNotNull(asesor.IsCommited);
-            Assert.IsNotNull(asesor.ItemCode);
-            Assert.IsNotNull(asesor.OnHand);
-            Assert.IsNotNull(asesor.OnOrder);
-            Assert.IsNotNull(asesor.WhsCode);
+            ClassicAssert.IsNotNull(asesor.IsCommited);
+            ClassicAssert.IsNotNull(asesor.ItemCode);
+            ClassicAssert.IsNotNull(asesor.OnHand);
+            ClassicAssert.IsNotNull(asesor.OnOrder);
+            ClassicAssert.IsNotNull(asesor.WhsCode);
         }
 
         /// <summary>
@@ -358,9 +350,9 @@ namespace Omicron.SapAdapter.Test
         public void SalesAsesorModel()
         {
             var asesor = new SalesAsesorModel { Email = "test@test.com", Cliente = "Juan perez", OrderId = 100 };
-            Assert.IsNotNull(asesor.Email);
-            Assert.IsNotNull(asesor.Cliente);
-            Assert.IsNotNull(asesor.OrderId);
+            ClassicAssert.IsNotNull(asesor.Email);
+            ClassicAssert.IsNotNull(asesor.Cliente);
+            ClassicAssert.IsNotNull(asesor.OrderId);
         }
 
         /// <summary>
@@ -370,10 +362,10 @@ namespace Omicron.SapAdapter.Test
         public void PackingRequiredModel()
         {
             var packing = new PackingRequiredModel { CodeItem = "123-abc", Description = "this is a description", Quantity = 14, Unit = "pz" };
-            Assert.IsNotNull(packing.CodeItem);
-            Assert.IsNotNull(packing.Description);
-            Assert.IsNotNull(packing.Quantity);
-            Assert.IsNotNull(packing.Unit);
+            ClassicAssert.IsNotNull(packing.CodeItem);
+            ClassicAssert.IsNotNull(packing.Description);
+            ClassicAssert.IsNotNull(packing.Quantity);
+            ClassicAssert.IsNotNull(packing.Unit);
         }
 
         /// <summary>
@@ -383,8 +375,8 @@ namespace Omicron.SapAdapter.Test
         public void OrderRecipeModel()
         {
             var order = new OrderRecipeModel { Order = 123, Recipe = "pz" };
-            Assert.IsNotNull(order.Order);
-            Assert.IsNotNull(order.Recipe);
+            ClassicAssert.IsNotNull(order.Order);
+            ClassicAssert.IsNotNull(order.Recipe);
         }
 
         /// <summary>
@@ -394,8 +386,8 @@ namespace Omicron.SapAdapter.Test
         public void OrderValidationResponse()
         {
             var order = new OrderValidationResponse { Type = "pz", ListItems = new List<string>() { "ab", "cd" } };
-            Assert.IsNotNull(order.Type);
-            Assert.IsNotNull(order.ListItems);
+            ClassicAssert.IsNotNull(order.Type);
+            ClassicAssert.IsNotNull(order.ListItems);
         }
 
         /// <summary>
@@ -405,11 +397,11 @@ namespace Omicron.SapAdapter.Test
         public void SalesPersonModel()
         {
             var salesPerson = new SalesPersonModel { AsesorId = 123, FirstName = "abc", LastName = "sanchez", EmpleadoId = 1, Email = "test@test.com" };
-            Assert.IsNotNull(salesPerson.AsesorId);
-            Assert.IsNotNull(salesPerson.FirstName);
-            Assert.IsNotNull(salesPerson.LastName);
-            Assert.IsNotNull(salesPerson.EmpleadoId);
-            Assert.IsNotNull(salesPerson.Email);
+            ClassicAssert.IsNotNull(salesPerson.AsesorId);
+            ClassicAssert.IsNotNull(salesPerson.FirstName);
+            ClassicAssert.IsNotNull(salesPerson.LastName);
+            ClassicAssert.IsNotNull(salesPerson.EmpleadoId);
+            ClassicAssert.IsNotNull(salesPerson.Email);
         }
 
         /// <summary>
@@ -419,8 +411,8 @@ namespace Omicron.SapAdapter.Test
         public void UserModel()
         {
             var user = new Users { UserId = 123, UserName = "myname123" };
-            Assert.IsNotNull(user.UserId);
-            Assert.IsNotNull(user.UserName);
+            ClassicAssert.IsNotNull(user.UserId);
+            ClassicAssert.IsNotNull(user.UserName);
         }
 
         /// <summary>
@@ -430,13 +422,13 @@ namespace Omicron.SapAdapter.Test
         public void AttachmentModel()
         {
             var attachment = new AttachmentModel { AbsEntry = 1, TargetPath = "C:/target/", SourcePath = "C:/folder/", FileExt = "txt", FileName = "users", Line = 1, };
-            Assert.IsNotNull(attachment.AbsEntry);
-            Assert.IsNotNull(attachment.TargetPath);
-            Assert.IsNotNull(attachment.SourcePath);
-            Assert.IsNotNull(attachment.FileName);
-            Assert.IsNotNull(attachment.FileExt);
-            Assert.IsNotNull(attachment.Line);
-            Assert.IsNotNull(attachment.CompletePath);
+            ClassicAssert.IsNotNull(attachment.AbsEntry);
+            ClassicAssert.IsNotNull(attachment.TargetPath);
+            ClassicAssert.IsNotNull(attachment.SourcePath);
+            ClassicAssert.IsNotNull(attachment.FileName);
+            ClassicAssert.IsNotNull(attachment.FileExt);
+            ClassicAssert.IsNotNull(attachment.Line);
+            ClassicAssert.IsNotNull(attachment.CompletePath);
         }
     }
 }
