@@ -8,12 +8,6 @@
 
 namespace Omicron.Usuarios.Test
 {
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// Abstract Class Base Test.
     /// </summary>

@@ -8,17 +8,6 @@
 
 namespace Omicron.Usuarios.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.Usuarios.Entities.Model;
-    using Omicron.Usuarios.Resources.Exceptions;
-    using Omicron.Usuarios.Services.Constants;
-    using Omicron.Usuarios.Services.SapAdapter;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -52,7 +41,7 @@ namespace Omicron.Usuarios.Test.Services
             var result = await pedidoService.PostSapAdapter(new List<int>(), ServiceConstants.QfbOrders);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -78,7 +67,7 @@ namespace Omicron.Usuarios.Test.Services
             var pedidoService = new SapAdapter(clientMock);
 
             // act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.PostSapAdapter(new List<int>(), ServiceConstants.GetFabOrders));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.PostSapAdapter(new List<int>(), ServiceConstants.GetFabOrders));
         }
     }
 }
