@@ -8,17 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Facade
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Facade.Sap;
-    using Omicron.SapAdapter.Services.Mapping;
-    using Omicron.SapAdapter.Services.Sap;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -500,12 +489,12 @@ namespace Omicron.SapAdapter.Test.Facade
         /// <param name="response">Response to validate.</param>
         public void AssertResponse(ResultDto response)
         {
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response.Response);
+            ClassicAssert.IsEmpty(response.ExceptionMessage);
+            ClassicAssert.IsEmpty(response.UserError);
+            ClassicAssert.AreEqual(200, response.Code);
         }
     }
 }

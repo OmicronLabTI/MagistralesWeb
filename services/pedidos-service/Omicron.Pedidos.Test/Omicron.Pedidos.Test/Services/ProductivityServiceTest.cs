@@ -8,17 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.Pedidos;
-    using Omicron.Pedidos.Services.User;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -81,7 +70,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosServiceLocal.GetProductivityData(assign);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -103,7 +92,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosServiceLocal.GetWorkLoad(assign);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -126,7 +115,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosServiceLocal.GetWorkLoad(assign);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
     }
 }

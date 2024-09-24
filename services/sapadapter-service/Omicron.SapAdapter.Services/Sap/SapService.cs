@@ -171,7 +171,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var listUsers = await this.GetUsers(userOrders);
 
             var listToProcess = details.Where(y => y.OrdenFabricacionId == 0).ToList();
-            listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).DistinctBy(y => y.OrdenFabricacionId));
+            listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).UtilsDistinctBy(y => y.OrdenFabricacionId));
             listToProcess = listToProcess.OrderBy(x => x.OrdenFabricacionId).ThenBy(x => x.DescripcionProducto).ToList();
 
             foreach (var x in listToProcess)

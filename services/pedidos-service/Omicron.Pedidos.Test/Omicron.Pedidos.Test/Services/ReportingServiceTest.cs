@@ -8,10 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using NUnit.Framework;
-    using Omicron.Pedidos.Resources.Exceptions;
-    using Omicron.Pedidos.Services.Reporting;
-
     /// <summary>
     /// Test class for Sap Adapter.
     /// </summary>
@@ -31,7 +27,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = client.GetReportingService("endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Success);
         }
 
         /// <summary>
@@ -44,7 +40,7 @@ namespace Omicron.Pedidos.Test.Services
             var client = this.CreateClientFailure();
 
             // Act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await client.GetReportingService("endpoint"));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.GetReportingService("endpoint"));
         }
 
         /// <summary>
@@ -60,7 +56,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = client.PostReportingService(new { }, "endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Success);
         }
 
         /// <summary>
@@ -73,7 +69,7 @@ namespace Omicron.Pedidos.Test.Services
             var client = this.CreateClientFailure();
 
             // Act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostReportingService(new { }, "endpoint"));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostReportingService(new { }, "endpoint"));
         }
     }
 }

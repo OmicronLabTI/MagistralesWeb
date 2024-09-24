@@ -8,20 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Facade
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Pedidos.Dtos.Models;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Entities.Model.Db;
-    using Omicron.Pedidos.Facade.Pedidos;
-    using Omicron.Pedidos.Resources.Enums;
-    using Omicron.Pedidos.Services.Mapping;
-    using Omicron.Pedidos.Services.Pedidos;
-
     /// <summary>
     /// Class for the QR test.
     /// </summary>
@@ -69,7 +55,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.qrsFacade.CreateMagistralQr(order);
 
             // arrange
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -86,7 +72,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.qrsFacade.CreateRemisionQr(order);
 
             // arrange
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -103,7 +89,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.qrsFacade.CreateSampleLabel(order);
 
             // arrange
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -120,7 +106,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.qrsFacade.CreateInvoiceQr(order);
 
             // arrange
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
     }
 }

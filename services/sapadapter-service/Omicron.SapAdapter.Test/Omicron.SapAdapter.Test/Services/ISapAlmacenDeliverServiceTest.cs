@@ -8,28 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Dtos.DxpModels;
-    using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Services.Almacen;
-    using Omicron.SapAdapter.Services.Catalog;
-    using Omicron.SapAdapter.Services.Constants;
-    using Omicron.SapAdapter.Services.Doctors;
-    using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.ProccessPayments;
-    using Omicron.SapAdapter.Services.Redis;
-    using Omicron.SapAdapter.Services.Sap;
-    using Serilog;
-
     /// <summary>
     /// Class for the QR test.
     /// </summary>
@@ -149,7 +127,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetDelivery(dictionary);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -190,7 +168,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetDelivery(dictionary);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -238,7 +216,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetDelivery(dictionary);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -288,7 +266,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetDelivery(dictionary);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -328,10 +306,10 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetOrdersDeliveryDetail(chip);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsTrue(response.Code == 200);
-            Assert.IsInstanceOf<SalesModel>(response.Response);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
+            ClassicAssert.IsTrue(response.Code == 200);
+            ClassicAssert.IsInstanceOf<SalesModel>(response.Response);
         }
 
         /// <summary>
@@ -371,7 +349,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetProductsDelivery(chip);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
     }
 }

@@ -7,11 +7,6 @@
 // </summary>
 namespace Omicron.SapAdapter.Test.Services.Mapping
 {
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Services.Mapping;
-
     /// <summary>
     /// Test for <see cref="CompleteFormulaWithDetalleMap" />.
     /// </summary>
@@ -32,11 +27,11 @@ namespace Omicron.SapAdapter.Test.Services.Mapping
             baseObject.Map(objectToMap);
 
             // Assert
-            Assert.AreEqual(objectToMap.OrdenId, baseObject.ProductionOrderId);
-            Assert.AreEqual(objectToMap.ProductoId, baseObject.Code);
-            Assert.AreEqual(objectToMap.Wharehouse, baseObject.Warehouse);
-            Assert.AreEqual(objectToMap.Unit, baseObject.Unit);
-            Assert.AreEqual(objectToMap.Status, baseObject.Status);
+            ClassicAssert.AreEqual(objectToMap.OrdenId, baseObject.ProductionOrderId);
+            ClassicAssert.AreEqual(objectToMap.ProductoId, baseObject.Code);
+            ClassicAssert.AreEqual(objectToMap.Wharehouse, baseObject.Warehouse);
+            ClassicAssert.AreEqual(objectToMap.Unit, baseObject.Unit);
+            ClassicAssert.AreEqual(objectToMap.Status, baseObject.Status);
         }
 
         /// <summary>
@@ -53,7 +48,7 @@ namespace Omicron.SapAdapter.Test.Services.Mapping
             baseObject.Map(objectToMap);
 
             // Assert
-            Assert.AreEqual(objectToMap.Count, baseObject.Details.Count);
+            ClassicAssert.AreEqual(objectToMap.Count, baseObject.Details.Count);
         }
 
         /// <summary>
@@ -70,8 +65,8 @@ namespace Omicron.SapAdapter.Test.Services.Mapping
             baseObject.Map(objectToMap);
 
             // Assert
-            Assert.AreEqual(objectToMap.Status, baseObject.Status);
-            Assert.AreEqual(objectToMap.Comments, baseObject.Comments);
+            ClassicAssert.AreEqual(objectToMap.Status, baseObject.Status);
+            ClassicAssert.AreEqual(objectToMap.Comments, baseObject.Comments);
         }
     }
 }

@@ -8,16 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Resources.Exceptions;
-    using Omicron.SapAdapter.Services.Almacen;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -51,7 +41,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.GetAlmacenOrders("salesOrder");
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -77,7 +67,7 @@ namespace Omicron.SapAdapter.Test.Services
             var pedidoService = new AlmacenService(clientMock);
 
             // act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetAlmacenOrders("salesOrder"));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetAlmacenOrders("salesOrder"));
         }
 
         /// <summary>
@@ -107,7 +97,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.PostAlmacenOrders("salesOrder", new { });
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
     }
 }

@@ -8,8 +8,6 @@
 
 namespace Omicron.SapAdapter.Test
 {
-    using System.Net;
-
     /// <summary>
     /// Abstract Class Base Test.
     /// </summary>

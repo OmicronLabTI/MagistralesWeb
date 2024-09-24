@@ -8,14 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using NUnit.Framework;
-    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Services.Pedidos;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -62,7 +54,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.busqedaService.GetOrders(listIds);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
     }
 }

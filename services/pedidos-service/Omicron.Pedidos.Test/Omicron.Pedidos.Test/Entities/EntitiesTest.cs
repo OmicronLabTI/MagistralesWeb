@@ -7,12 +7,6 @@
 // </summary>
 namespace Omicron.Pedidos.Test.Entities
 {
-    using AutoFixture;
-    using NUnit.Framework;
-    using Omicron.Pedidos.Dtos.Models;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Entities.Model.Db;
-
     /// <summary>
     /// Class for tests entities.
     /// </summary>
@@ -100,15 +94,15 @@ namespace Omicron.Pedidos.Test.Entities
             instance = this.fixture.Create<T>();
 
             // Assert
-            Assert.IsTrue(IsValid(instance));
+            ClassicAssert.IsTrue(IsValid(instance));
         }
 
         private static bool IsValid<T>(T instance)
         {
-            Assert.IsNotNull(instance);
+            ClassicAssert.IsNotNull(instance);
             foreach (var prop in instance.GetType().GetProperties())
             {
-                Assert.IsNotNull(GetPropValue(instance, prop.Name));
+                ClassicAssert.IsNotNull(GetPropValue(instance, prop.Name));
             }
 
             return true;

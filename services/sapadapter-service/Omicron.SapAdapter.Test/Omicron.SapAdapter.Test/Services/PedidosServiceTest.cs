@@ -8,18 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Resources.Exceptions;
-    using Omicron.SapAdapter.Services.Pedidos;
-    using Serilog;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -56,7 +44,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.PostPedidos(new List<int>(), "salesOrder");
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -88,7 +76,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.GetUserPedidos("qfbOrders/");
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -111,7 +99,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.GetUserPedidos("qfbOrders/");
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -130,7 +118,7 @@ namespace Omicron.SapAdapter.Test.Services
             var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // assert
-            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetUserPedidos("qfbOrders/"));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetUserPedidos("qfbOrders/"));
         }
 
         /// <summary>
@@ -149,7 +137,7 @@ namespace Omicron.SapAdapter.Test.Services
             var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // assert
-            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetUserPedidos("qfbOrders/"));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetUserPedidos("qfbOrders/"));
         }
 
         private Dictionary<string, MockResponse> GetMockResponse(HttpStatusCode statusCode)

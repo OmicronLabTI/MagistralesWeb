@@ -7,16 +7,6 @@
 // </summary>
 namespace Omicron.Pedidos.Test.Api
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AutoFixture;
-    using Microsoft.AspNetCore.Mvc;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Pedidos.Api.Controllers;
-    using Omicron.Pedidos.Dtos.Models;
-    using Omicron.Pedidos.Facade.Pedidos;
-
     /// <summary>
     /// Class for tests pedidos controller.
     /// </summary>
@@ -58,7 +48,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.ProcessOrders(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -74,7 +64,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.ProcessByOrder(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -90,7 +80,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.GetUserOrderBySalesOrder(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -106,7 +96,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.GetUserOrderByFabOrder(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -122,7 +112,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.GetQfbOrders(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -138,7 +128,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.GetAllQfbOrders(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -154,7 +144,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.AsignarManual(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -170,7 +160,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.AssignarAutomatico(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -186,7 +176,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.UpdateFormula(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -202,7 +192,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.UpdateStatusOrder(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -218,7 +208,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.CancelOrder(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -234,7 +224,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.CloseSalesOrders(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -250,7 +240,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.CancelFabOrder(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -266,7 +256,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.CloseFabOrders(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -282,7 +272,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.UpdateFabOrderComments(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -301,7 +291,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.UpdateOrderSignature(signatureType, request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -317,7 +307,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.GetOrderSignatures(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -330,7 +320,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.ConnectDiApi().Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -346,7 +336,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.UpdateBatches(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -362,7 +352,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.FinishOrder(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -378,7 +368,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.CreateIsolatedFabricationOrder(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -394,7 +384,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.GetFabOrders(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -410,7 +400,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.ReassignOrder(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -426,7 +416,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.GetProductivityData(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -442,7 +432,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.CreateCustomComponentList(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -458,7 +448,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.GetCustomComponentListByProductId(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -474,7 +464,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.GetWorkLoad(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
         }
 
         /// <summary>
@@ -487,7 +477,7 @@ namespace Omicron.Pedidos.Test.Api
             var result = this.controller.Ping() as OkObjectResult;
 
             // Assert
-            Assert.AreEqual("Pong", result.Value as string);
+            ClassicAssert.AreEqual("Pong", result.Value as string);
         }
     }
 }
