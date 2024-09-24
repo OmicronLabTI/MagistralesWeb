@@ -30,7 +30,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Mapper
 
             var result = mapper.Map<DateTime>(fecha);
             Type typeDateType2 = result.GetType();
-            Assert.AreEqual(typeDateType, typeDateType2);
+            ClassicAssert.AreEqual(typeDateType, typeDateType2);
         }
     }
 }

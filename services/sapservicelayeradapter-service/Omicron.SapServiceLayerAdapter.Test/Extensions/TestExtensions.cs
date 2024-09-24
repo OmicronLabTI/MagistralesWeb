@@ -111,7 +111,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Extensions
         /// <exception cref="Exception">Exception.</exception>
         private static string GetPathFromFiletCsv(string fileName)
         {
-            string rootDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location.Replace("bin\\Debug\\net6.0", string.Empty));
+            string rootDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location.Replace("bin\\Debug\\net8", string.Empty));
             string csvFile = Path.Combine(rootDirectory, "Setup", $"{fileName}");
 
             if (!File.Exists(csvFile))

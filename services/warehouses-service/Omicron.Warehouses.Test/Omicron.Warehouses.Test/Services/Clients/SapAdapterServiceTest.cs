@@ -7,11 +7,6 @@
 // </summary>
 namespace Omicron.Warehouses.Test.Services.SapAdapter
 {
-    using System.Collections.Generic;
-    using NUnit.Framework;
-    using Omicron.Warehouses.Entities.Model;
-    using Omicron.Warehouses.Services.Clients;
-
     /// <summary>
     /// Test class for catalogs service.
     /// </summary>
@@ -31,7 +26,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.GetAsync("endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Success);
         }
 
         /// <summary>
@@ -47,7 +42,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.PostAsync(new { }, "endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Success);
         }
 
         /// <summary>
@@ -63,7 +58,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.GetProductionOrdersByCriterial(new List<int>() { 1, 2 }, new List<int>() { 1, 2 }).Result;
 
             // Assert
-            Assert.AreEqual(3, result.Count);
+            ClassicAssert.AreEqual(3, result.Count);
         }
 
         private ResultModel GetProductionOrderModels()

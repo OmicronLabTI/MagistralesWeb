@@ -63,8 +63,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(firstDelivery);
 
             var result = await service.CreateDelivery(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            ClassicAssert.IsTrue(result.Success);
+            ClassicAssert.AreEqual(200, result.Code);
         }
 
         /// <summary>
@@ -191,8 +191,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(shippingItem);
 
             var result = await service.CreateDelivery(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            ClassicAssert.IsTrue(result.Success);
+            ClassicAssert.AreEqual(200, result.Code);
         }
 
         /// <summary>
@@ -231,8 +231,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(firstDelivery);
 
             var result = await service.CreateDeliveryPartial(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            ClassicAssert.IsTrue(result.Success);
+            ClassicAssert.AreEqual(200, result.Code);
         }
 
         /// <summary>
@@ -359,8 +359,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(shippingItem);
 
             var result = await service.CreateDeliveryPartial(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            ClassicAssert.IsTrue(result.Success);
+            ClassicAssert.AreEqual(200, result.Code);
         }
 
         /// <summary>
@@ -438,36 +438,36 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             var result = await mockDeliveryNoteService.CancelDelivery(type, deliveryNotesToCancel);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<ResultModel>(result);
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.IsInstanceOf<ResultModel>(result);
             if (!isResponseDeliveryNoteSuccess)
             {
                 KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
-                Assert.AreEqual("Error-No se encontró el documento delivery notes", resultDict.Value);
+                ClassicAssert.AreEqual("Error-No se encontró el documento delivery notes", resultDict.Value);
             }
             else if (!isResponseCancellationDocumentSuccess)
             {
                 KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
-                Assert.AreEqual("Error-Error al cancelar el documento", resultDict.Value);
+                ClassicAssert.AreEqual("Error-Error al cancelar el documento", resultDict.Value);
             }
             else if (!isStockTransferSuccess)
             {
-                Assert.AreEqual(3, ((Dictionary<string, string>)result.Response).Count);
+                ClassicAssert.AreEqual(3, ((Dictionary<string, string>)result.Response).Count);
             }
             else if (!isResponseCancellationDocumentSuccess)
             {
-                Assert.AreEqual(4, ((Dictionary<string, string>)result.Response).Count);
+                ClassicAssert.AreEqual(4, ((Dictionary<string, string>)result.Response).Count);
             }
             else
             {
                 KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
-                Assert.AreEqual("Ok", resultDict.Value);
+                ClassicAssert.AreEqual("Ok", resultDict.Value);
             }
 
-            Assert.IsNull(result.UserError);
-            Assert.IsTrue(result.Success);
-            Assert.IsNotNull(result.Response);
-            Assert.IsNull(result.Comments);
+            ClassicAssert.IsNull(result.UserError);
+            ClassicAssert.IsTrue(result.Success);
+            ClassicAssert.IsNotNull(result.Response);
+            ClassicAssert.IsNull(result.Comments);
         }
 
         /// <summary>
@@ -506,8 +506,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(firstDelivery);
 
             var result = await service.CreateDeliveryBatch(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            ClassicAssert.IsTrue(result.Success);
+            ClassicAssert.AreEqual(200, result.Code);
         }
 
         /// <summary>
@@ -634,8 +634,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(shippingItem);
 
             var result = await service.CreateDeliveryBatch(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            ClassicAssert.IsTrue(result.Success);
+            ClassicAssert.AreEqual(200, result.Code);
         }
     }
 }

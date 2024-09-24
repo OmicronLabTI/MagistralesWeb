@@ -73,7 +73,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ServiceLayer
             var result = await this.serviceLayerClient.GetAsync(url);
 
             // Assert
-            Assert.AreEqual(fakeResponse, result.Response.ToString().Trim('"'));
+            ClassicAssert.AreEqual(fakeResponse, result.Response.ToString().Trim('"'));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ServiceLayer
             var result = await this.serviceLayerClient.PostAsync(url, requestBody);
 
             // Assert
-            Assert.AreEqual(fakeResponse, result.Response.ToString().Trim('"'));
+            ClassicAssert.AreEqual(fakeResponse, result.Response.ToString().Trim('"'));
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ServiceLayer
             var result = await this.serviceLayerClient.PatchAsync(url, requestBody);
 
             // Assert
-            Assert.AreEqual(fakeResponse, result.Response.ToString().Trim('"'));
+            ClassicAssert.AreEqual(fakeResponse, result.Response.ToString().Trim('"'));
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ServiceLayer
             var result = await this.serviceLayerClient.DeleteAsync(url);
 
             // Assert
-            Assert.AreEqual(fakeResponse, result.Response.ToString().Trim('"'));
+            ClassicAssert.AreEqual(fakeResponse, result.Response.ToString().Trim('"'));
         }
     }
 }
