@@ -8,16 +8,6 @@
 
 namespace Omicron.Catalogos.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Microsoft.EntityFrameworkCore;
-    using NUnit.Framework;
-    using Omicron.Catalogos.DataAccess.DAO.Catalog;
-    using Omicron.Catalogos.Entities.Context;
-    using Omicron.Catalogos.Services.Catalogs;
-    using Omicron.Catalogos.Services.Mapping;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -64,8 +54,8 @@ namespace Omicron.Catalogos.Test.Services
         {
             var result = await this.catalogService.GetRoles();
 
-            Assert.True(result != null);
-            Assert.IsNotNull(result.Response);
+            ClassicAssert.True(result != null);
+            ClassicAssert.IsNotNull(result.Response);
         }
 
         /// <summary>
@@ -82,8 +72,8 @@ namespace Omicron.Catalogos.Test.Services
 
             var result = await this.catalogService.GetParamsContains(dictValues);
 
-            Assert.True(result != null);
-            Assert.IsNotNull(result.Response);
+            ClassicAssert.True(result != null);
+            ClassicAssert.IsNotNull(result.Response);
         }
 
         /// <summary>
@@ -96,12 +86,12 @@ namespace Omicron.Catalogos.Test.Services
             var result = await this.catalogService.GetActiveClassificationQfb();
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Success);
-            Assert.IsTrue(result.Code == 200);
-            Assert.IsNotNull(result.Response);
-            Assert.IsNull(result.UserError);
-            Assert.IsInstanceOf<object>(result.Response);
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Code == 200);
+            ClassicAssert.IsNotNull(result.Response);
+            ClassicAssert.IsNull(result.UserError);
+            ClassicAssert.IsInstanceOf<object>(result.Response);
         }
     }
 }

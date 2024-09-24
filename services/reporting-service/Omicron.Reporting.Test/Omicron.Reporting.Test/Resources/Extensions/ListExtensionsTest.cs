@@ -7,10 +7,6 @@
 // </summary>
 namespace Omicron.Reporting.Test.Resourses.Extensions
 {
-    using System.Collections.Generic;
-    using NUnit.Framework;
-    using Omicron.Reporting.Resources.Extensions;
-
     /// <summary>
     /// Type extensions tests.
     /// </summary>
@@ -29,10 +25,10 @@ namespace Omicron.Reporting.Test.Resourses.Extensions
             var sublists = intList.Split(3);
 
             // assert
-            Assert.AreEqual(3, sublists.Count);
-            Assert.AreEqual(3, sublists[0].Count);
-            Assert.AreEqual(3, sublists[1].Count);
-            Assert.AreEqual(2, sublists[2].Count);
+            ClassicAssert.AreEqual(3, sublists.Count);
+            ClassicAssert.AreEqual(3, sublists[0].Count);
+            ClassicAssert.AreEqual(3, sublists[1].Count);
+            ClassicAssert.AreEqual(2, sublists[2].Count);
         }
     }
 }

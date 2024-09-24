@@ -8,19 +8,6 @@
 
 namespace Omicron.Reporting.Test.Facade.Request
 {
-    using System.IO;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Reporting.Dtos.Model;
-    using Omicron.Reporting.Entities.Model;
-    using Omicron.Reporting.Facade.Request;
-    using Omicron.Reporting.Services;
-    using Omicron.Reporting.Services.Mapping;
-    using DocumentFormat.OpenXml.Bibliography;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -92,10 +79,10 @@ namespace Omicron.Reporting.Test.Facade.Request
             // act
             var response = this.reportingFacade.CreateRawMaterialRequestPdf(requests, false);
 
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
             response.ForEach(report =>
             {
-                Assert.IsNotNull(report);
+                ClassicAssert.IsNotNull(report);
             });
         }
 
@@ -114,8 +101,8 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SubmitRawMaterialRequestPdf(requests);
 
             // arrange
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -132,8 +119,8 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SendEmailForeignPackage(requests);
 
             // arrange
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -150,8 +137,8 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SendEmailLocalPackage(requests);
 
             // arrange
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -168,7 +155,7 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SendEmailRejectedOrder(requests);
 
             // arrange
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -185,8 +172,8 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SendEmailCancelDeliveryOrders(requests);
 
             // arrange
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -203,8 +190,8 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SubmitIncidentsExel(requests);
 
             // arrange
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -224,11 +211,11 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SendEmails(requests);
 
             // arrange
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsTrue(response.Code == 200);
-            Assert.IsNotNull(response.ExceptionMessage);
-            Assert.IsNotNull(response.UserError);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
+            ClassicAssert.IsTrue(response.Code == 200);
+            ClassicAssert.IsNotNull(response.ExceptionMessage);
+            ClassicAssert.IsNotNull(response.UserError);
         }
     }
 }

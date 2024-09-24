@@ -8,16 +8,6 @@
 
 namespace Omicron.Catalogos.Test.Services.Catalogs
 {
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Omicron.Catalogos.DataAccess.DAO.User;
-    using Omicron.Catalogos.Entities.Context;
-    using Omicron.Catalogos.Services.Mapping;
-    using Omicron.Catalogos.Services.User;
-    using Microsoft.EntityFrameworkCore;
-    using NUnit.Framework;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -62,8 +52,8 @@ namespace Omicron.Catalogos.Test.Services.Catalogs
         {
             var result = await this.userServices.GetAllUsersAsync();
 
-            Assert.True(result != null);
-            Assert.True(result.Any());
+            ClassicAssert.True(result != null);
+            ClassicAssert.True(result.Any());
         }
 
         /// <summary>
@@ -75,8 +65,8 @@ namespace Omicron.Catalogos.Test.Services.Catalogs
         {
             var result = await this.userServices.GetUserAsync(2);
 
-            Assert.True(result != null);
-            Assert.True(result.FirstName == "Jorge");
+            ClassicAssert.True(result != null);
+            ClassicAssert.True(result.FirstName == "Jorge");
         }
 
         /// <summary>
@@ -93,8 +83,8 @@ namespace Omicron.Catalogos.Test.Services.Catalogs
             var result = await this.userServices.InsertUser(user);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result);
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.IsTrue(result);
         }
     }
 }
