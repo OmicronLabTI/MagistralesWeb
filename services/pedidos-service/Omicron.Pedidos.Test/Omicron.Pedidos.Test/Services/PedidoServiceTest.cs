@@ -8,33 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Dtos.Models;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Resources.Enums;
-    using Omicron.Pedidos.Resources.Exceptions;
-    using Omicron.Pedidos.Services.Broker;
-    using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.Pedidos;
-    using Omicron.Pedidos.Services.Redis;
-    using Omicron.Pedidos.Services.Reporting;
-    using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
-    using Omicron.Pedidos.Services.SapFile;
-    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
-    using Omicron.Pedidos.Services.User;
-    using Omicron.Pedidos.Services.Utils;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -128,7 +101,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosService.GetUserOrderBySalesOrder(listIds);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -145,7 +118,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosService.GetUserOrderByFabOrder(listIds);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -173,7 +146,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosServiceLocal.GetFabOrderByUserId(id);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -207,7 +180,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosServiceLocal.GetFabOrderByUserId(id);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -224,7 +197,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosService.GetUserOrdersByUserId(id);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -246,7 +219,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosService.GetQfbOrdersByStatus(status, iduser);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -285,7 +258,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosServiceLocal.UpdateComponents(asignar);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -319,22 +292,22 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosService.UpdateStatusOrder(components);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsNull(response.Comments);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsNull(response.Comments);
 
             if (isValidtecnic)
             {
-                Assert.IsNull(response.UserError);
-                Assert.IsTrue(response.Success);
-                Assert.AreEqual(200, response.Code);
-                Assert.IsNotNull(response.Response);
+                ClassicAssert.IsNull(response.UserError);
+                ClassicAssert.IsTrue(response.Success);
+                ClassicAssert.AreEqual(200, response.Code);
+                ClassicAssert.IsNotNull(response.Response);
             }
             else
             {
-                Assert.IsNotNull(response.UserError);
-                Assert.IsFalse(response.Success);
-                Assert.AreEqual(400, response.Code);
-                Assert.IsNull(response.Response);
+                ClassicAssert.IsNotNull(response.UserError);
+                ClassicAssert.IsFalse(response.Success);
+                ClassicAssert.AreEqual(400, response.Code);
+                ClassicAssert.IsNull(response.Response);
             }
         }
 
@@ -369,22 +342,22 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosService.UpdateStatusOrder(components);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsNull(response.Comments);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsNull(response.Comments);
 
             if (isValidtecnic)
             {
-                Assert.IsNull(response.UserError);
-                Assert.IsTrue(response.Success);
-                Assert.AreEqual(200, response.Code);
-                Assert.IsNotNull(response.Response);
+                ClassicAssert.IsNull(response.UserError);
+                ClassicAssert.IsTrue(response.Success);
+                ClassicAssert.AreEqual(200, response.Code);
+                ClassicAssert.IsNotNull(response.Response);
             }
             else
             {
-                Assert.IsNotNull(response.UserError);
-                Assert.IsFalse(response.Success);
-                Assert.AreEqual(400, response.Code);
-                Assert.IsNull(response.Response);
+                ClassicAssert.IsNotNull(response.UserError);
+                ClassicAssert.IsFalse(response.Success);
+                ClassicAssert.AreEqual(400, response.Code);
+                ClassicAssert.IsNull(response.Response);
             }
         }
 
@@ -415,7 +388,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosService.UpdateStatusOrder(components);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -446,7 +419,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosService.UpdateStatusOrder(components);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -470,8 +443,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosService.UpdateOrderSignature(SignatureType.LOGISTICS, signatures);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -495,8 +468,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosService.UpdateFabOrderComments(orderToUpdate);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -513,8 +486,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosService.GetOrderSignatures(productionOrderId);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -554,7 +527,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidoServiceLocal.UpdateBatches(new List<AssignBatchModel> { update });
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -596,7 +569,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidoServiceLocal.FinishOrder(update);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -634,7 +607,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidoServiceLocal.FinishOrder(update);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -657,7 +630,7 @@ namespace Omicron.Pedidos.Test.Services
             var pedidoServiceLocal = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object);
 
             // act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.CompletedBatches(orderId));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await pedidoServiceLocal.CompletedBatches(orderId));
         }
 
         /// <summary>
@@ -709,8 +682,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidoServiceLocal.CloseSalesOrders(salesOrders);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -757,8 +730,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidoServiceLocal.RejectSalesOrders(salesOrders);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -814,8 +787,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidoServiceLocal.CloseSalesOrders(salesOrders);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -875,8 +848,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidoServiceLocal.CloseFabOrders(salesOrders);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -920,8 +893,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidoServiceLocal.CreateIsolatedProductionOrder(order);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsTrue(response.Success);
         }
 
         /// <summary>
@@ -941,7 +914,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosService.GetFabOrders(dic);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -961,7 +934,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosService.GetFabOrders(dic);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -981,7 +954,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosService.GetFabOrders(dic);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -1002,7 +975,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosService.GetFabOrders(dicParams);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -1025,7 +998,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosService.GetFabOrders(dicParams);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -1051,7 +1024,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidoServiceLocal.CompletedBatches(orderId);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -1086,7 +1059,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidoServiceLocal.PrintOrders(orderId);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -1118,7 +1091,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await SendToGeneratePdfUtils.CreateModelGeneratePdf(new List<int>(), orderId, mockSapAdapter.Object, this.pedidosDao, mockSapFile.Object, mockUsers.Object, true);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -1144,7 +1117,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidoServiceLocal.UpdateSaleOrders(orderId);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -1177,7 +1150,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidoServiceLocal.UpdateDesignerLabel(orderId);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -1216,7 +1189,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidoServiceLocal.CreateSaleOrderPdf(details);
 
             // assert
-            Assert.IsNotNull(result);
+            ClassicAssert.IsNotNull(result);
         }
 
         /// <summary>
@@ -1245,7 +1218,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidoServiceLocal.SignOrdersByTecnic(update);
 
             // assert
-            Assert.IsNotNull(response);
+            ClassicAssert.IsNotNull(response);
         }
 
         /// <summary>
@@ -1277,20 +1250,20 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidoServiceLocal.GetInvalidOrdersByMissingTecnicSign(productionOrderIds);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.Comments);
-            Assert.IsNull(response.UserError);
-            Assert.IsTrue(response.Success);
-            Assert.AreEqual(200, response.Code);
+            ClassicAssert.IsNotNull(response);
+            ClassicAssert.IsNull(response.ExceptionMessage);
+            ClassicAssert.IsNull(response.Comments);
+            ClassicAssert.IsNull(response.UserError);
+            ClassicAssert.IsTrue(response.Success);
+            ClassicAssert.AreEqual(200, response.Code);
 
             if (productionOrderId.Equals("224212") || productionOrderId.Equals("224159"))
             {
-                Assert.IsNotNull(response.Response);
+                ClassicAssert.IsNotNull(response.Response);
             }
             else
             {
-                Assert.AreEqual(new List<string>(), response.Response);
+                ClassicAssert.AreEqual(new List<string>(), response.Response);
             }
         }
     }

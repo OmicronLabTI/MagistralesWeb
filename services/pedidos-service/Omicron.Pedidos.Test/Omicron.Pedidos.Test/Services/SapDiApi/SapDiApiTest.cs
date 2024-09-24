@@ -8,7 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services.SapDiApi
 {
-    using NUnit.Framework;
     using Omicron.Pedidos.Services.SapDiApi;
 
     /// <summary>
@@ -30,7 +29,7 @@ namespace Omicron.Pedidos.Test.Services.SapDiApi
             var result = client.GetSapDiApi("endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Success);
         }
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace Omicron.Pedidos.Test.Services.SapDiApi
             var result = client.PostToSapDiApi(new { }, "endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Success);
         }
     }
 }

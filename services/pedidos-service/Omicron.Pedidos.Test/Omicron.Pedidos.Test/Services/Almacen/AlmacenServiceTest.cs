@@ -8,10 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services.Almacen
 {
-    using NUnit.Framework;
-    using Omicron.Pedidos.Resources.Exceptions;
-    using Omicron.Pedidos.Services.AlmacenService;
-
     /// <summary>
     /// Test class for Sap Adapter.
     /// </summary>
@@ -31,7 +27,7 @@ namespace Omicron.Pedidos.Test.Services.Almacen
             var result = client.GetAlmacenData("endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Success);
         }
 
         /// <summary>
@@ -44,7 +40,7 @@ namespace Omicron.Pedidos.Test.Services.Almacen
             var client = this.CreateClientFailure();
 
             // Act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await client.GetAlmacenData("endpoint"));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.GetAlmacenData("endpoint"));
         }
 
         /// <summary>
@@ -60,7 +56,7 @@ namespace Omicron.Pedidos.Test.Services.Almacen
             var result = client.PostAlmacenData("endpoint", new { }).Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            ClassicAssert.IsTrue(result.Success);
         }
 
         /// <summary>
@@ -73,7 +69,7 @@ namespace Omicron.Pedidos.Test.Services.Almacen
             var client = this.CreateClientFailure();
 
             // Act
-            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAlmacenData("endpoint", new { }));
+            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostAlmacenData("endpoint", new { }));
         }
     }
 }
