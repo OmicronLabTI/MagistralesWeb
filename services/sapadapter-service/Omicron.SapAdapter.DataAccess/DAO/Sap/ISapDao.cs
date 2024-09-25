@@ -556,6 +556,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="cardCode"> parameter cardcode. </param>
         /// <returns> information.</returns>
-        Task<ClientCatalogModel> GetClientCatalogCardCode(string cardCode);
+        Task<List<ClientCatalogModel>> GetClientCatalogCardCode(List<string> cardCode);
     }
 }

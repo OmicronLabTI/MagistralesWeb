@@ -1330,9 +1330,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ClientCatalogModel> GetClientCatalogCardCode(string cardCode)
+        public async Task<List<ClientCatalogModel>> GetClientCatalogCardCode(List<string> cardCode)
         {
-            return await this.databaseContext.ClientCatalogModel.Where(x => x.ClientId == cardCode).FirstOrDefaultAsync();
+            return await this.databaseContext.ClientCatalogModel.Where(x => cardCode.Contains(x.ClientId)).ToListAsync();
         }
 
         /// <summary>

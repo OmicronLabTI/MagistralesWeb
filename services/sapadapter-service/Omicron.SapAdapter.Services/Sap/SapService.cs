@@ -138,14 +138,17 @@ namespace Omicron.SapAdapter.Services.Sap
             var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
-            var listDoctors = await this.GetDoctors(orderToReturn.Select(x => x.Codigo).Distinct().ToList(), ServiceConstants.GetResponsibleDoctors);
+            var cardcodes = orderToReturn.Select(x => x.Codigo).Distinct().ToList();
+            var listDoctors = await this.GetDoctors(cardcodes, ServiceConstants.GetResponsibleDoctors);
+
+            var alias = await this.sapDao.GetClientCatalogCardCode(cardcodes);
 
             orderToReturn.ForEach(async o =>
             {
                 var doctor = listDoctors.FirstOrDefault(x => x.CardCode == o.Codigo);
                 doctor ??= new DoctorPrescriptionInfoModel { DoctorName = o.Medico };
 
-                var (medico, clientType, client) = await this.RefillOrders(o, doctor.DoctorName, specialCardCodes);
+                var (medico, clientType, client) = this.RefillOrders(o, doctor.DoctorName, specialCardCodes, alias);
 
                 o.Medico = medico;
                 o.ClientType = clientType;
@@ -838,11 +841,12 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
         }
 
-        private async Task<(string, string, string)> RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes)
+        private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)
         {
             if (order.ClientType == ServiceConstants.ClientTypeInstitutional)
             {
-                order.Cliente = (await this.sapDao.GetClientCatalogCardCode(order.Codigo)).AliasName ?? string.Empty;
+                var data = alias.FirstOrDefault(x => x.ClientId == order.Codigo);
+                order.Cliente = data != null ? data.AliasName : string.Empty;
 
                 Regex regex = new Regex(ServiceConstants.RegexNameDoctor);
                 Match match = regex.Match(order.ShippingAddressName);
