@@ -1329,6 +1329,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.databaseContext.OrderModel.Where(x => x.DocNumDxp == idtransaction).FirstOrDefaultAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<ClientCatalogModel> GetClientCatalogCardCode(string cardCode)
+        {
+            return await this.databaseContext.ClientCatalogModel.Where(x => x.ClientId == cardCode).FirstOrDefaultAsync();
+        }
+
         /// <summary>
         /// Gets the retry.
         /// </summary>

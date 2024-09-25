@@ -140,13 +140,12 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var listDoctors = await this.GetDoctors(orderToReturn.Select(x => x.Codigo).Distinct().ToList(), ServiceConstants.GetResponsibleDoctors);
 
-            orderToReturn.ForEach(o =>
+            orderToReturn.ForEach(async o =>
             {
                 var doctor = listDoctors.FirstOrDefault(x => x.CardCode == o.Codigo);
                 doctor ??= new DoctorPrescriptionInfoModel { DoctorName = o.Medico };
-                o.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == o.Codigo), o.ShippingAddressName, doctor.DoctorName);
 
-                var (medico, clientType, client) = this.RefillOrders(o, doctor.DoctorName, specialCardCodes);
+                var (medico, clientType, client) = await this.RefillOrders(o, doctor.DoctorName, specialCardCodes);
 
                 o.Medico = medico;
                 o.ClientType = clientType;
@@ -839,13 +838,11 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
         }
 
-        private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes)
+        private async Task<(string, string, string)> RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes)
         {
-            order.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == order.Codigo), order.ShippingAddressName, doctorName);
-
             if (order.ClientType == ServiceConstants.ClientTypeInstitutional)
             {
-                order.Cliente = order.Medico;
+                order.Cliente = (await this.sapDao.GetClientCatalogCardCode(order.Codigo)).AliasName ?? string.Empty;
 
                 Regex regex = new Regex(ServiceConstants.RegexNameDoctor);
                 Match match = regex.Match(order.ShippingAddressName);
@@ -854,6 +851,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
             else
             {
+                order.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == order.Codigo), order.ShippingAddressName, doctorName);
                 order.ClientType = ServiceConstants.ClientTypeGeneral;
             }
 
