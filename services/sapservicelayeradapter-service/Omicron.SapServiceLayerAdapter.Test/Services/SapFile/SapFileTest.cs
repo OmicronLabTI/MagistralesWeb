@@ -27,7 +27,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.SapFile
             var result = client.PostAsync(new { }, "endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.SapFile
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync(new { }, "endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync(new { }, "endpoint"));
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.SapFile
             var client = this.CreateClientWithErrorResponse();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync(new { }, "endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync(new { }, "endpoint"));
         }
     }
 }

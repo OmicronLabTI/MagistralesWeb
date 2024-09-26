@@ -52,8 +52,8 @@ namespace Omicron.Catalogos.Test.Services.Catalogs
         {
             var result = await this.userServices.GetAllUsersAsync();
 
-            ClassicAssert.True(result != null);
-            ClassicAssert.True(result.Any());
+            Assert.That(result != null);
+            Assert.That(result.Any());
         }
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace Omicron.Catalogos.Test.Services.Catalogs
         {
             var result = await this.userServices.GetUserAsync(2);
 
-            ClassicAssert.True(result != null);
-            ClassicAssert.True(result.FirstName == "Jorge");
+            Assert.That(result != null);
+            Assert.That(result.FirstName == "Jorge");
         }
 
         /// <summary>
@@ -83,8 +83,8 @@ namespace Omicron.Catalogos.Test.Services.Catalogs
             var result = await this.userServices.InsertUser(user);
 
             // Assert
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsTrue(result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.True);
         }
     }
 }

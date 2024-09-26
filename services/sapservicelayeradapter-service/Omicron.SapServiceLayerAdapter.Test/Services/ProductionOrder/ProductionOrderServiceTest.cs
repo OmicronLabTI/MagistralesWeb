@@ -63,10 +63,10 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
 
             var result = await service.FinishOrder(request);
             var dictResult = (Dictionary<int, string>)result.Response;
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(200, result.Code);
-            ClassicAssert.AreEqual(1, dictResult.Count);
-            ClassicAssert.AreEqual("Ok", dictResult[0]);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
+            Assert.That(dictResult.Count, Is.EqualTo(1));
+            Assert.That(dictResult[0], Is.EqualTo("Ok"));
         }
 
         /// <summary>
@@ -135,10 +135,10 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             request.Add(GetCloseProductionOrderDto(9, true));
 
             var result = await service.FinishOrder(request);
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
             var dictResult = (Dictionary<int, string>)result.Response;
-            ClassicAssert.AreEqual(8, dictResult.Count);
+            Assert.That(dictResult.Count, Is.EqualTo(8));
         }
 
         /// <summary>
@@ -195,8 +195,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             };
             var result = await service.UpdateFormula(request);
 
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         /// <summary>
@@ -253,8 +253,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             };
             var result = await service.UpdateFormula(request);
 
-            ClassicAssert.IsFalse(result.Success);
-            ClassicAssert.AreEqual(400, result.Code);
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Code, Is.EqualTo(400));
         }
 
         /// <summary>
@@ -302,8 +302,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
 
             var result = await service.CreateFabOrder(new List<OrderWithDetailDto>() { request });
 
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         /// <summary>
@@ -340,8 +340,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
 
             var result = await service.UpdateFabOrders(new List<UpdateFabOrderDto>() { order1, order2 });
 
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         /// <summary>
@@ -376,8 +376,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             };
             var result = await service.CancelProductionOrder(request);
 
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         /// <summary>
@@ -408,8 +408,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             };
             var result = await service.CreateIsolatedProductionOrder(request);
 
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         /// <summary>
@@ -456,8 +456,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
 
             var result = await service.UpdateProductionOrdersBatches(new List<AssignBatchDto> { firstBatch, secondBatch });
 
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         private static CloseProductionOrderDto GetCloseProductionOrderDto(int orderId, bool batches)

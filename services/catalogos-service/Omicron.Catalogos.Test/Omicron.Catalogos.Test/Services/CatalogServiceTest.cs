@@ -54,8 +54,8 @@ namespace Omicron.Catalogos.Test.Services
         {
             var result = await this.catalogService.GetRoles();
 
-            ClassicAssert.True(result != null);
-            ClassicAssert.IsNotNull(result.Response);
+            Assert.That(result != null);
+            Assert.That(result.Response, Is.Not.Null);
         }
 
         /// <summary>
@@ -72,8 +72,8 @@ namespace Omicron.Catalogos.Test.Services
 
             var result = await this.catalogService.GetParamsContains(dictValues);
 
-            ClassicAssert.True(result != null);
-            ClassicAssert.IsNotNull(result.Response);
+            Assert.That(result != null);
+            Assert.That(result.Response, Is.Not.Null);
         }
 
         /// <summary>
@@ -86,12 +86,12 @@ namespace Omicron.Catalogos.Test.Services
             var result = await this.catalogService.GetActiveClassificationQfb();
 
             // assert
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.IsTrue(result.Code == 200);
-            ClassicAssert.IsNotNull(result.Response);
-            ClassicAssert.IsNull(result.UserError);
-            ClassicAssert.IsInstanceOf<object>(result.Response);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code == 200, Is.True);
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Response, Is.InstanceOf<object>());
         }
     }
 }

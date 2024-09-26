@@ -27,7 +27,7 @@ namespace Omicron.Reporting.Test.Services.ServiceLayerAdapter
             var result = client.PostAsync("endpoint", "{\"key\": \"value\"}").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Omicron.Reporting.Test.Services.ServiceLayerAdapter
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync("endpoint", "{\"key\": \"value\"}"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync("endpoint", "{\"key\": \"value\"}"));
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Omicron.Reporting.Test.Services.ServiceLayerAdapter
             var client = this.CreateClientWithErrorResponse();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync("endpoint", "{\"key\": \"value\"}"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAsync("endpoint", "{\"key\": \"value\"}"));
         }
     }
 }

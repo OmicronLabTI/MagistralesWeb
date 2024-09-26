@@ -25,10 +25,10 @@ namespace Omicron.Reporting.Test.Resourses.Extensions
             var sublists = intList.Split(3);
 
             // assert
-            ClassicAssert.AreEqual(3, sublists.Count);
-            ClassicAssert.AreEqual(3, sublists[0].Count);
-            ClassicAssert.AreEqual(3, sublists[1].Count);
-            ClassicAssert.AreEqual(2, sublists[2].Count);
+            Assert.That(sublists.Count, Is.EqualTo(3));
+            Assert.That(sublists[0].Count, Is.EqualTo(3));
+            Assert.That(sublists[1].Count, Is.EqualTo(3));
+            Assert.That(sublists[2].Count, Is.EqualTo(2));
         }
     }
 }
