@@ -66,7 +66,7 @@ namespace Omicron.Reporting.Test.Services.Request
 
             // act
             var result = await service.SendEmailForeignPackage(request);
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = await service.SendEmailLocalPackage(request);
 
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace Omicron.Reporting.Test.Services.Request
 
             // act
             var result = await service.SendEmailRejectedOrder(request);
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = await service.SendEmailCancelDeliveryOrders(request);
 
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -322,7 +322,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = service.CreateRawMaterialRequestPdf(request, true);
 
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -367,7 +367,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = service.CreateRawMaterialRequestPdf(request, false);
 
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -468,19 +468,19 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = await service.SubmitRawMaterialRequestPdf(request);
 
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.AreEqual(200, result.Code);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
 
             if (hasDiApiError)
             {
-                ClassicAssert.IsFalse((bool)result.Response);
-                ClassicAssert.IsEmpty((List<string>)result.Comments);
+                Assert.That((bool)result.Response, Is.False);
+                Assert.That((List<string>)result.Comments, Is.Empty);
             }
             else
             {
-                ClassicAssert.IsTrue((bool)result.Response);
-                ClassicAssert.IsTrue(((List<string>)result.Comments).Count > 0);
+                Assert.That((bool)result.Response, Is.True);
+                Assert.That(((List<string>)result.Comments).Count > 0, Is.True);
             }
         }
 
@@ -559,7 +559,7 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = await service.SubmitIncidentsExel(request);
 
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -607,8 +607,8 @@ namespace Omicron.Reporting.Test.Services.Request
             var result = await service.SendEmails(listDoctor);
 
             // assert
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -674,10 +674,10 @@ namespace Omicron.Reporting.Test.Services.Request
             // act
             var result = await service.SendEmailLocalPackage(request);
 
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.IsTrue(result.Response.Equals(false));
-            ClassicAssert.IsTrue(result.Code.Equals(200));
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Response.Equals(false), Is.True);
+            Assert.That(result.Code.Equals(200), Is.True);
         }
     }
 }

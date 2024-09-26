@@ -68,25 +68,25 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             // assert
             if (isSuccess)
             {
-                ClassicAssert.True(result.Success);
-                ClassicAssert.True(result.Code == 200);
-                ClassicAssert.IsNotNull(result.Response);
-                ClassicAssert.IsNull(result.UserError);
-                ClassicAssert.IsInstanceOf<List<OrderDto>>(result.Response);
+                Assert.That(result.Success);
+                Assert.That(result.Code == 200);
+                Assert.That(result.Response, Is.Not.Null);
+                Assert.That(result.UserError, Is.Null);
+                Assert.That(result.Response, Is.InstanceOf<List<OrderDto>>());
             }
             else
             {
-                ClassicAssert.IsFalse(result.Success);
-                ClassicAssert.True(result.Code == 401);
-                ClassicAssert.IsNotNull(result.Response);
-                ClassicAssert.IsNotNull(result.UserError);
-                ClassicAssert.AreEqual("Invalid session or session already timeout.", result.UserError);
-                ClassicAssert.IsInstanceOf<ServiceLayerErrorResponseDto>(result.Response);
+                Assert.That(result.Success, Is.False);
+                Assert.That(result.Code == 401);
+                Assert.That(result.Response, Is.Not.Null);
+                Assert.That(result.UserError, Is.Not.Null);
+                Assert.That(result.UserError, Is.EqualTo("Invalid session or session already timeout."));
+                Assert.That(result.Response, Is.InstanceOf<ServiceLayerErrorResponseDto>());
             }
 
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsNull(result.ExceptionMessage);
-            ClassicAssert.IsNull(result.Comments);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.ExceptionMessage, Is.Null);
+            Assert.That(result.Comments, Is.Null);
         }
 
         /// <summary>
@@ -172,33 +172,33 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             var result = await orderServiceMock.CloseSampleOrders(sampleOrders);
 
             // assert
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsInstanceOf<ResultModel>(result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<ResultModel>());
             if (!isResponseOrderSuccess)
             {
                 KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
-                ClassicAssert.AreEqual("Error-No se encontró la factura.", resultDict.Value);
+                Assert.That(resultDict.Value, Is.EqualTo("Error-No se encontró la factura."));
             }
             else if (!isResponseInventoryGenExitSuccess)
             {
                 KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
-                ClassicAssert.AreEqual("Error-Error al crear el Inventory Gen Exit", resultDict.Value);
+                Assert.That(resultDict.Value, Is.EqualTo("Error-Error al crear el Inventory Gen Exit"));
             }
             else if (!isCloseOrderSuccess)
             {
                 KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
-                ClassicAssert.AreEqual("Error-Error al cerrar la orden", resultDict.Value);
+                Assert.That(resultDict.Value, Is.EqualTo("Error-Error al cerrar la orden"));
             }
             else
             {
                 KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
-                ClassicAssert.AreEqual("Ok", resultDict.Value);
+                Assert.That(resultDict.Value, Is.EqualTo("Ok"));
             }
 
-            ClassicAssert.IsNull(result.UserError);
-            ClassicAssert.IsTrue(result.Success);
-            ClassicAssert.IsNotNull(result.Response);
-            ClassicAssert.IsNull(result.Comments);
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.Comments, Is.Null);
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             request.PrescriptionUrl = "https://localhost:9090/myfile.pdf";
             var result = await orderServiceMock.CreateSaleOrder(request);
 
-            ClassicAssert.AreEqual(400, result.Code);
+            Assert.That(result.Code, Is.EqualTo(400));
         }
 
         /*
@@ -298,8 +298,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             request.PrescriptionUrl = "http://localhost:9090/server/docs/public/documento.pdf";
             var result = await orderServiceMock.CreateSaleOrder(request);
 
-            ClassicAssert.AreEqual(400, result.Code);
-            ClassicAssert.AreEqual(result.UserError, "The attachment could not be created");
+            Assert.That(result.Code, Is.EqualTo(400));
+            Assert.That("The attachment could not be created", Is.EqualsTo(result.UserError));
         }
         */
 
@@ -456,14 +456,14 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
 
             if (success)
             {
-                ClassicAssert.AreEqual(200, result.Code);
-                ClassicAssert.IsTrue(result.Success);
+                Assert.That(result.Code, Is.EqualTo(200));
+                Assert.That(result.Success, Is.True);
             }
             else
             {
-                ClassicAssert.AreEqual(400, result.Code);
-                ClassicAssert.IsFalse(result.Success);
-                ClassicAssert.AreEqual(userError, result.UserError);
+                Assert.That(result.Code, Is.EqualTo(400));
+                Assert.That(result.Success, Is.False);
+                Assert.That(result.UserError, Is.EqualTo(userError));
             }
         }
     }

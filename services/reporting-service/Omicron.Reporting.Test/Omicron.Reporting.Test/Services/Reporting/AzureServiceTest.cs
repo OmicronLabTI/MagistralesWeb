@@ -24,7 +24,7 @@ namespace Omicron.Reporting.Test.Services.Reporting
             var service = new AzureServices();
             var result = await service.GetlementFromAzure(string.Empty, string.Empty, "https://omicronblobpruebas.blob.core.windows.net/resources/ClasificacionEnvases.xlsx");
 
-            ClassicAssert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
     }
 }

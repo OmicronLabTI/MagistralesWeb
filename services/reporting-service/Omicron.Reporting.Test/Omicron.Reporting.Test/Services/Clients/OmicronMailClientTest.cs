@@ -40,8 +40,8 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = this.omicronMailClient.GetSmtpClient(smtpConfig);
 
             // Assert
-            ClassicAssert.AreEqual(smtpConfig.SmtpServer, result.Host);
-            ClassicAssert.AreEqual(smtpConfig.SmtpPort, result.Port);
+            Assert.That(result.Host, Is.EqualTo(smtpConfig.SmtpServer));
+            Assert.That(result.Port, Is.EqualTo(smtpConfig.SmtpPort));
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = await this.omicronMailClient.SendMail(smtpConfig, "to@mail.com", "subject", "body", "cc1@mail.com;cc2@mail.com", files);
 
             // Assert
-            ClassicAssert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = await this.omicronMailClient.SendMail(smtpConfig, "to@mail.com", "subject", "body", "cc1@mail.com;cc2@mail.com", files);
 
             // Assert
-            ClassicAssert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         private SmtpConfigModel GetMockSmtpConfigModel()

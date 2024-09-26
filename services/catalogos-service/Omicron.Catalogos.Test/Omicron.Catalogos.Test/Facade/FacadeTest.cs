@@ -81,8 +81,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.userFacade.GetListUsersActive();
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Any());
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Any(), Is.True);
         }
 
         /// <summary>
@@ -99,8 +99,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.userFacade.GetListUserActive(id);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.AreEqual(id, response.Id);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Id, Is.EqualTo(id));
         }
 
         /// <summary>
@@ -117,8 +117,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.userFacade.InsertUser(user);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response, Is.True);
         }
 
         /// <summary>
@@ -133,8 +133,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.catalogFacade.GetRoles();
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -151,8 +151,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.catalogFacade.GetParamsContains(containsValue);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -166,8 +166,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.catalogFacade.GetActiveClassificationQfb();
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
     }
 }

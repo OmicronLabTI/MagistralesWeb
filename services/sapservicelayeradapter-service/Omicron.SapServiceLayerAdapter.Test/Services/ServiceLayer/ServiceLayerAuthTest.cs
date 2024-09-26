@@ -90,7 +90,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ServiceLayer
             this.logger = new Mock<ILogger>();
             var serviceLayerAuth = new ServiceLayerAuth(httpClient, this.config.Object, this.logger.Object);
             var sessionId = await serviceLayerAuth.GetSessionIdAsync();
-            ClassicAssert.AreEqual("sessionId", sessionId);
+            Assert.That(sessionId, Is.EqualTo("sessionId"));
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ServiceLayer
             this.logger = new Mock<ILogger>();
             var serviceLayerAuth = new ServiceLayerAuth(httpClient, this.config.Object, this.logger.Object);
             var sessionRefresed = await serviceLayerAuth.RefreshSession();
-            ClassicAssert.AreEqual("sessionId", sessionRefresed);
+            Assert.That(sessionRefresed, Is.EqualTo("sessionId"));
         }
     }
 }

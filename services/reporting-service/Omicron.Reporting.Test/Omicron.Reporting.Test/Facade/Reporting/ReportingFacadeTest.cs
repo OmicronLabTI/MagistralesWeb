@@ -79,10 +79,10 @@ namespace Omicron.Reporting.Test.Facade.Request
             // act
             var response = this.reportingFacade.CreateRawMaterialRequestPdf(requests, false);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
             response.ForEach(report =>
             {
-                ClassicAssert.IsNotNull(report);
+                Assert.That(report, Is.Not.Null);
             });
         }
 
@@ -101,8 +101,8 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SubmitRawMaterialRequestPdf(requests);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -119,8 +119,8 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SendEmailForeignPackage(requests);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -137,8 +137,8 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SendEmailLocalPackage(requests);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SendEmailRejectedOrder(requests);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -172,8 +172,8 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SendEmailCancelDeliveryOrders(requests);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -190,8 +190,8 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SubmitIncidentsExel(requests);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -211,11 +211,11 @@ namespace Omicron.Reporting.Test.Facade.Request
             var response = await this.reportingFacade.SendEmails(requests);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsNotNull(response.ExceptionMessage);
-            ClassicAssert.IsNotNull(response.UserError);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Code == 200, Is.True);
+            Assert.That(response.ExceptionMessage, Is.Not.Null);
+            Assert.That(response.UserError, Is.Not.Null);
         }
     }
 }

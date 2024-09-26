@@ -177,8 +177,8 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.CreateRawMaterialRequest(this.userId, request);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.AreEqual(ErrorReasonConstants.ErrorToSubmitFile, response.UserError);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.UserError, Is.EqualTo(ErrorReasonConstants.ErrorToSubmitFile));
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.CreateRawMaterialRequest("otherUser", request);
 
             // assert
-            ClassicAssert.AreEqual(false, response.Success);
+            Assert.That(response.Success, Is.EqualTo(false));
         }
 
         /// <summary>
@@ -229,10 +229,10 @@ namespace Omicron.Warehouses.Test.Services.Request
 
             // assert
             var request = (RawMaterialRequestModel)response.Response;
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response.Success, Is.True);
 
-            ClassicAssert.AreEqual(4, request.ProductionOrderIds[0]);
-            ClassicAssert.AreEqual(1, request.OrderedProducts.Count);
+            Assert.That(request.ProductionOrderIds[0], Is.EqualTo(4));
+            Assert.That(request.OrderedProducts.Count, Is.EqualTo(1));
         }
 
         /// <summary>
@@ -246,8 +246,8 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.GetRawMaterialRequestByProductionOrderId(2000);
 
             // assert
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNull(response.Response);
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Response, Is.Null);
         }
 
         /// <summary>
@@ -265,14 +265,14 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.GetRawMaterialPreRequest(salesOrders, productionOrderIds);
 
             // assert
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.NotNull(response.Response);
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Response, Is.Not.Null);
 
             var preRequest = (RawMaterialRequestModel)response.Response;
-            ClassicAssert.AreEqual(2, preRequest.ProductionOrderIds.Count);
-            ClassicAssert.IsTrue(!preRequest.ProductionOrderIds.Contains(3));
-            ClassicAssert.AreEqual(3, preRequest.OrderedProducts.Count);
-            ClassicAssert.IsTrue(!preRequest.OrderedProducts.Any(x => x.ProductId.Equals("2")));
+            Assert.That(preRequest.ProductionOrderIds.Count, Is.EqualTo(2));
+            Assert.That(!preRequest.ProductionOrderIds.Contains(3), Is.True);
+            Assert.That(preRequest.OrderedProducts.Count, Is.EqualTo(3));
+            Assert.That(!preRequest.OrderedProducts.Any(x => x.ProductId.Equals("2")), Is.True);
         }
 
         /// <summary>
@@ -285,9 +285,9 @@ namespace Omicron.Warehouses.Test.Services.Request
         private void CheckAction(ResultModel result, bool success, int numberOfSucceess, int numberOfFails)
         {
             var content = (SuccessFailResults<object>)result.Response;
-            ClassicAssert.AreEqual(success, result.Success);
-            ClassicAssert.AreEqual(numberOfFails, content.Failed.Count);
-            ClassicAssert.AreEqual(numberOfSucceess, content.Success.Count);
+            Assert.That(result.Success, Is.EqualTo(success));
+            Assert.That(content.Failed.Count, Is.EqualTo(numberOfFails));
+            Assert.That(content.Success.Count, Is.EqualTo(numberOfSucceess));
         }
     }
 }
