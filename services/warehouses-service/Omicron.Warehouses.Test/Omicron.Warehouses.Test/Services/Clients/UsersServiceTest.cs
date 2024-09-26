@@ -26,7 +26,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.GetAsync("endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.PostAsync(new { }, "endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.GetUsersById("user-id").Result;
 
             // Assert
-            ClassicAssert.AreEqual(1, result.Count);
+            Assert.That(result.Count, Is.EqualTo(1));
         }
 
         private ResultModel GetMockUsers()

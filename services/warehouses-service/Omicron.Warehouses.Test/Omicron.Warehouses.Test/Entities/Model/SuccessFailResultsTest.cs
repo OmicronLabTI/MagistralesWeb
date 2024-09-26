@@ -42,8 +42,8 @@ namespace Omicron.Warehouses.Test.Entities.Model
             this.results = this.results.DistinctResults();
 
             // assert
-            ClassicAssert.AreEqual(1, this.results.Success.Count);
-            ClassicAssert.AreEqual(1, this.results.Failed.Count);
+            Assert.That(this.results.Success.Count, Is.EqualTo(1));
+            Assert.That(this.results.Failed.Count, Is.EqualTo(1));
         }
     }
 }

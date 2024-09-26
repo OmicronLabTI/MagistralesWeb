@@ -26,7 +26,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.GetAsync("endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.PostAsync(new { }, "endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.GetProductionOrdersByCriterial(new List<int>() { 1, 2 }, new List<int>() { 1, 2 }).Result;
 
             // Assert
-            ClassicAssert.AreEqual(3, result.Count);
+            Assert.That(result.Count, Is.EqualTo(3));
         }
 
         private ResultModel GetProductionOrderModels()

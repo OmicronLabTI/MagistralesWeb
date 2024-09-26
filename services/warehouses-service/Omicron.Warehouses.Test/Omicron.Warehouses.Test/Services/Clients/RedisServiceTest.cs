@@ -32,7 +32,7 @@ namespace Omicron.Warehouses.Test.Services.Clients
             var result = await localService.GetRedisKey("C001");
 
             // Assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Omicron.Warehouses.Test.Services.Clients
             var result = await localService.WriteToRedis("C001", "C001");
 
             // Assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

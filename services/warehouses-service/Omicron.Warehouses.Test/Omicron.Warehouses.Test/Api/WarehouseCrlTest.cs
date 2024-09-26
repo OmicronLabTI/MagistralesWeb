@@ -43,7 +43,7 @@ namespace Omicron.Warehouses.Test.Api
             var result = this.controller.CreateRawMaterialRequest(request).Result as OkObjectResult;
 
             // Assert
-            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
+            Assert.That((result.Value as ResultDto).Success, Is.True);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Omicron.Warehouses.Test.Api
             var result = this.controller.UpdateRawMaterialRequest(request).Result as OkObjectResult;
 
             // Assert
-            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
+            Assert.That((result.Value as ResultDto).Success, Is.True);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Omicron.Warehouses.Test.Api
             var result = this.controller.GetRawMaterialRequest(1).Result as OkObjectResult;
 
             // Assert
-            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
+            Assert.That((result.Value as ResultDto).Success, Is.True);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Omicron.Warehouses.Test.Api
             var result = this.controller.GetRawMaterialPreRequest(string.Empty, "1").Result as OkObjectResult;
 
             // Assert
-            ClassicAssert.IsTrue((result.Value as ResultDto).Success);
+            Assert.That((result.Value as ResultDto).Success, Is.True);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Omicron.Warehouses.Test.Api
             var result = this.controller.Ping() as OkObjectResult;
 
             // Assert
-            ClassicAssert.AreEqual("Pong", result.Value as string);
+            Assert.That(result.Value as string, Is.EqualTo("Pong"));
         }
     }
 }

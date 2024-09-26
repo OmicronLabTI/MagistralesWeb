@@ -47,8 +47,8 @@ namespace Omicron.Warehouses.Test.Facade.Request
 
             var response = await this.requestFacade.CreateRawMaterialRequest("userId", requests);
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -67,8 +67,8 @@ namespace Omicron.Warehouses.Test.Facade.Request
             var response = await this.requestFacade.UpdateRawMaterialRequest("userId", requests);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -82,8 +82,8 @@ namespace Omicron.Warehouses.Test.Facade.Request
             var response = await this.requestFacade.GetRawMaterialRequest(1);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace Omicron.Warehouses.Test.Facade.Request
             var response = await this.requestFacade.GetRawMaterialPreRequest(new List<int>(), new List<int>());
 
             // arrange
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
     }
 }

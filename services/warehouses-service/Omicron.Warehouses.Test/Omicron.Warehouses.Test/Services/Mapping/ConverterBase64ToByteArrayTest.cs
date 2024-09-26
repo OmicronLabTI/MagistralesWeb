@@ -35,7 +35,7 @@ namespace Omicron.Warehouses.Test.Services.Mapping
             var result = this.converter.Convert(File.ReadAllText("SignatureBase64.txt"), null);
 
             // assert
-            ClassicAssert.IsFalse(result.SequenceEqual(new byte[0]));
+            Assert.That(result.SequenceEqual(new byte[0]), Is.False);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Omicron.Warehouses.Test.Services.Mapping
             var result = this.converter.Convert(string.Empty, null);
 
             // assert
-            ClassicAssert.IsTrue(result.SequenceEqual(new byte[0]));
+            Assert.That(result.SequenceEqual(new byte[0]), Is.True);
         }
     }
 }
