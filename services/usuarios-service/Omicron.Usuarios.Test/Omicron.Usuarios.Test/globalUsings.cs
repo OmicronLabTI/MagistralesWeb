@@ -5,7 +5,6 @@ global using Microsoft.EntityFrameworkCore;
 global using Moq;
 global using Newtonsoft.Json;
 global using NUnit.Framework;
-global using NUnit.Framework.Legacy;
 global using Omicron.Usuarios.DataAccess.DAO.User;
 global using Omicron.Usuarios.Dtos.Models;
 global using Omicron.Usuarios.Dtos.User;

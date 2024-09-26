@@ -41,7 +41,7 @@ namespace Omicron.Usuarios.Test.Services
             var result = await pedidoService.PostPedidos(new List<int>(), ServiceConstants.QfbOrders);
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Omicron.Usuarios.Test.Services
             var pedidoService = new PedidosService(clientMock);
 
             // act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.PostPedidos(new List<int>(), ServiceConstants.QfbOrders));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.PostPedidos(new List<int>(), ServiceConstants.QfbOrders));
         }
     }
 }
