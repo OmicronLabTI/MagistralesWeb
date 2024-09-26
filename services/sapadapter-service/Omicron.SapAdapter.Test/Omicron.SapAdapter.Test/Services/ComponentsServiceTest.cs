@@ -78,7 +78,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await service.GetMostCommonComponents(new Dictionary<string, string>());
 
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await service.GetMostCommonComponents(new Dictionary<string, string>());
 
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

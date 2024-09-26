@@ -44,7 +44,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.PostProccessPayments(new List<int>(), "endpoint");
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

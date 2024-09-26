@@ -21,7 +21,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
         [TestCase(typeof(double))]
         public void IsNumericType(Type type)
         {
-            ClassicAssert.IsTrue(type.IsNumericType());
+            Assert.That(type.IsNumericType());
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
         [TestCase(typeof(List<string>))]
         public void IsNumericType_NotNumeric(Type type)
         {
-            ClassicAssert.IsFalse(type.IsNumericType());
+            Assert.That(type.IsNumericType(), Is.False);
         }
     }
 }

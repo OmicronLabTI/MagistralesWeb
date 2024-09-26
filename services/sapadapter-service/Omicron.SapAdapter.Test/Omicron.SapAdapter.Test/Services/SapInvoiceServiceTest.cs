@@ -134,11 +134,11 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetInvoice(dictionary);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsInstanceOf<InvoiceOrderModel>(response.Response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Response, Is.InstanceOf<InvoiceOrderModel>());
         }
 
         /// <summary>
@@ -185,11 +185,11 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetInvoice(dictionary);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsInstanceOf<InvoiceOrderModel>(response.Response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Response, Is.InstanceOf<InvoiceOrderModel>());
         }
 
         /// <summary>
@@ -233,11 +233,11 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetInvoiceDetail(invoice);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsInstanceOf<InvoicesModel>(response.Response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Response, Is.InstanceOf<InvoicesModel>());
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetInvoiceProducts(1, "Distribucion", Enumerable.Empty<int>().ToList());
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -303,7 +303,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetDeliveryScannedData("46037");
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetMagistralProductInvoice("75000-1000");
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -354,7 +354,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetLineProductInvoice(code);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -398,11 +398,11 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapInvoiceService.GetInvoiceHeader(dataTollok);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsInstanceOf<List<InvoiceHeaderModel>>(response.Response);
-            ClassicAssert.IsNotNull(response.Comments);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.InstanceOf<List<InvoiceHeaderModel>>());
+            Assert.That(response.Comments, Is.Not.Null);
         }
 
         /// <summary>
@@ -458,7 +458,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetInvoiceData(code);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -475,7 +475,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapInvoiceService.GetSapIds(listIds);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -491,7 +491,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapInvoiceService.GetCancelledInvoices(days);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -508,12 +508,12 @@ namespace Omicron.SapAdapter.Test.Services
             var invoices = response.Response as List<InvoiceHeaderModel>;
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsNull(response.Comments);
-            ClassicAssert.IsNull(response.UserError);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(invoices.Count > 0);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Comments, Is.Null);
+            Assert.That(response.UserError, Is.Null);
+            Assert.That(response.Success);
+            Assert.That(invoices.Count > 0);
         }
     }
 }

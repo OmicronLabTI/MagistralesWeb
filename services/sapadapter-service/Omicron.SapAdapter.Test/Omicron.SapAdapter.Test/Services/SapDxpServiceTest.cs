@@ -74,7 +74,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.sapDxpService.GetOrdersActive(ordersId);
 
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

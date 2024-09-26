@@ -41,7 +41,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.GetAlmacenOrders("salesOrder");
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Omicron.SapAdapter.Test.Services
             var pedidoService = new AlmacenService(clientMock);
 
             // act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetAlmacenOrders("salesOrder"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetAlmacenOrders("salesOrder"));
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.PostAlmacenOrders("salesOrder", new { });
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

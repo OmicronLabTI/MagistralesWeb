@@ -40,7 +40,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await localService.GetRedisKey("C001");
 
             // Assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await localService.WriteToRedis("C001", "C001", new TimeSpan(0, 0, 5));
 
             // Assert
-            ClassicAssert.IsTrue(result);
+            Assert.That(result);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = localService.IsConnectedRedis();
 
             // Assert
-            ClassicAssert.IsTrue(result);
+            Assert.That(result);
         }
     }
 }

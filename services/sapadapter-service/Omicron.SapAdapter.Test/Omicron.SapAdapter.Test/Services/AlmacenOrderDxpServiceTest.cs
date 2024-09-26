@@ -119,13 +119,13 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.almacenOrderDxpService.SearchAlmacenOrdersByDxpId(dictionary);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsNotNull(response.Comments);
-            ClassicAssert.AreEqual(200, response.Code);
-            ClassicAssert.IsInstanceOf<AlmacenOrdersByDoctorModel>(response.Response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Comments, Is.Not.Null);
+            Assert.That(response.Code.Equals(200));
+            Assert.That(response.Response, Is.InstanceOf<AlmacenOrdersByDoctorModel>());
 
             var data = (AlmacenOrdersByDoctorModel)response.Response;
-            ClassicAssert.IsTrue(data.SalesOrders.Any());
+            Assert.That(data.SalesOrders.Any());
         }
 
         /// <summary>
@@ -157,13 +157,13 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.almacenOrderDxpService.SearchAlmacenOrdersByDxpId(dictionary);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsNotNull(response.Comments);
-            ClassicAssert.AreEqual(200, response.Code);
-            ClassicAssert.IsInstanceOf<AlmacenOrdersByDoctorModel>(response.Response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Comments, Is.Not.Null);
+            Assert.That(response.Code.Equals(200));
+            Assert.That(response.Response, Is.InstanceOf<AlmacenOrdersByDoctorModel>());
 
             var data = (AlmacenOrdersByDoctorModel)response.Response;
-            ClassicAssert.IsTrue(data.SalesOrders.Any());
+            Assert.That(data.SalesOrders.Any());
         }
 
         /// <summary>
@@ -199,14 +199,14 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.almacenOrderDxpService.SearchAlmacenOrdersDetailsByDxpId(request);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.AreEqual(200, response.Code);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsInstanceOf<SalesByDoctorModel>(response.Response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Code.Equals(200));
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Response, Is.InstanceOf<SalesByDoctorModel>());
 
             var data = (SalesByDoctorModel)response.Response;
-            ClassicAssert.IsNotNull(data.AlmacenHeaderByDoctor);
-            ClassicAssert.IsTrue(data.Items.Any());
+            Assert.That(data.AlmacenHeaderByDoctor, Is.Not.Null);
+            Assert.That(data.Items.Any());
         }
     }
 }

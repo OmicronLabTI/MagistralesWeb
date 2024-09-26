@@ -127,7 +127,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetDelivery(dictionary);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetDelivery(dictionary);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetDelivery(dictionary);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -266,7 +266,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetDelivery(dictionary);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -306,10 +306,10 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetOrdersDeliveryDetail(chip);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsInstanceOf<SalesModel>(response.Response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Response, Is.InstanceOf<SalesModel>());
         }
 
         /// <summary>
@@ -349,7 +349,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await service.GetProductsDelivery(chip);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
     }
 }

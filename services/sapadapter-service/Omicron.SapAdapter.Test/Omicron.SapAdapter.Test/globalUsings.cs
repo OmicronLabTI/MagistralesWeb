@@ -8,7 +8,6 @@ global using Microsoft.Extensions.Configuration;
 global using Moq;
 global using Newtonsoft.Json;
 global using NUnit.Framework;
-global using NUnit.Framework.Legacy;
 global using Omicron.SapAdapter.DataAccess.DAO.Sap;
 global using Omicron.SapAdapter.Dtos.DxpModels;
 global using Omicron.SapAdapter.Dtos.Models;

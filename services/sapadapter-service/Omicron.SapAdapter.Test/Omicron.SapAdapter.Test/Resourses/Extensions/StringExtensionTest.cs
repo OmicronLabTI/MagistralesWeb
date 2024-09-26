@@ -21,7 +21,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
         [TestCase("1,2,,3", 3)]
         public void ToIntList(string baseString, int expectedItems)
         {
-            ClassicAssert.AreEqual(expectedItems, baseString.ToIntList().Count);
+            Assert.That(baseString.ToIntList().Count.Equals(expectedItems));
         }
     }
 }

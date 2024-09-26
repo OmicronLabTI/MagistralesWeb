@@ -44,7 +44,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.PostPedidos(new List<int>(), "salesOrder");
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.GetUserPedidos("qfbOrders/");
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await pedidoService.GetUserPedidos("qfbOrders/");
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Omicron.SapAdapter.Test.Services
             var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // assert
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetUserPedidos("qfbOrders/"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetUserPedidos("qfbOrders/"));
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Omicron.SapAdapter.Test.Services
             var pedidoService = new PedidoService(clientMock, mockLogger.Object);
 
             // assert
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetUserPedidos("qfbOrders/"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await pedidoService.GetUserPedidos("qfbOrders/"));
         }
 
         private Dictionary<string, MockResponse> GetMockResponse(HttpStatusCode statusCode)

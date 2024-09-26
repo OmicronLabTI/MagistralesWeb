@@ -61,7 +61,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var dictionary = new Dictionary<string, string>();
             var response = await this.almacenFacade.GetOrders(dictionary);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var orderId = 1;
             var response = await this.almacenFacade.GetOrdersDetails(orderId);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var code = "75000-1000";
             var response = await this.almacenFacade.GetScannedData(type, code);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var code = "750001000";
             var response = await this.almacenFacade.GetScannedData(type, code);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.GetProductsWithCodeBars();
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var order = 1000;
             var response = await this.almacenFacade.GetCompleteDetail(order);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -138,10 +138,10 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetOrdersById()
         {
             var response = await this.almacenFacade.GetOrdersByIds(new List<int>());
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.UserError);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.UserError, Is.Empty);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var order = new List<int>();
             var response = await this.almacenFacade.GetDeliveryBySaleOrderId(order);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var dictionary = new Dictionary<string, string>();
             var response = await this.almacenFacade.GetDelivery(dictionary);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var dictionary = 1;
             var response = await this.almacenFacade.GetOrdersDeliveryDetail(dictionary);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var dictionary = new Dictionary<string, string>();
             var response = await this.almacenFacade.GetInvoice(dictionary);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.GetInvoiceDetail(123);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.GetInvoiceProducts(10, "Distribucion", null);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var code = "750001000";
             var response = await this.almacenFacade.GetScannedData(type, code);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var code = "750001000";
             var response = await this.almacenFacade.GetScannedData(type, code);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var code = "750001000";
             var response = await this.almacenFacade.GetScannedData(type, code);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -275,7 +275,7 @@ namespace Omicron.SapAdapter.Test.Facade
             // act
             var response = await this.almacenFacade.GetInvoiceHeader(data);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var code = "750001000";
             var response = await this.almacenFacade.GetScannedData(type, code);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -302,7 +302,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var listids = new List<int>();
             var response = await this.almacenFacade.GetSapIds(listids);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -315,7 +315,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var listids = new Dictionary<string, string>();
             var response = await this.almacenFacade.AlmacenGraphCount(listids);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -327,7 +327,7 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.GetDeliveryParties();
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -339,7 +339,7 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.GetDeliveries(new List<int>());
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -352,7 +352,7 @@ namespace Omicron.SapAdapter.Test.Facade
             var days = 10;
             var response = await this.almacenFacade.GetCancelledInvoices(days);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -364,7 +364,7 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.AdvanceLookUp(new Dictionary<string, string>());
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -376,7 +376,7 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.GetProductsDelivery(string.Empty);
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -388,7 +388,7 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.SearchAlmacenOrdersByDoctor(new Dictionary<string, string>());
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -400,7 +400,7 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.SearchAlmacenOrdersDetailsByDoctor(new DoctorOrdersSearchDeatilDto());
 
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -412,9 +412,9 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.GetOrderdetail(123);
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(response.Code == 200);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
         }
 
         /// <summary>
@@ -426,9 +426,9 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.SearchAlmacenOrdersByDxpId(new Dictionary<string, string>());
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(response.Code == 200);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
         }
 
         /// <summary>
@@ -440,9 +440,9 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.SearchAlmacenOrdersDetailsByDxpId(new DoctorOrdersSearchDeatilDto());
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(response.Code == 200);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
         }
 
         /// <summary>
@@ -454,9 +454,9 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             var response = await this.almacenFacade.GetInvoicesByIds(new List<int> { 123 });
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(response.Code == 200);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
         }
     }
 }

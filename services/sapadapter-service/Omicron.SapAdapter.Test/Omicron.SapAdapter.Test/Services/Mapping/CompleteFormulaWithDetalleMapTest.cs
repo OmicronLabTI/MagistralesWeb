@@ -27,11 +27,11 @@ namespace Omicron.SapAdapter.Test.Services.Mapping
             baseObject.Map(objectToMap);
 
             // Assert
-            ClassicAssert.AreEqual(objectToMap.OrdenId, baseObject.ProductionOrderId);
-            ClassicAssert.AreEqual(objectToMap.ProductoId, baseObject.Code);
-            ClassicAssert.AreEqual(objectToMap.Wharehouse, baseObject.Warehouse);
-            ClassicAssert.AreEqual(objectToMap.Unit, baseObject.Unit);
-            ClassicAssert.AreEqual(objectToMap.Status, baseObject.Status);
+            Assert.That(baseObject.ProductionOrderId.Equals(objectToMap.OrdenId));
+            Assert.That(baseObject.Code.Equals(objectToMap.ProductoId));
+            Assert.That(baseObject.Warehouse.Equals(objectToMap.Wharehouse));
+            Assert.That(baseObject.Unit.Equals(objectToMap.Unit));
+            Assert.That(baseObject.Status.Equals(objectToMap.Status));
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Omicron.SapAdapter.Test.Services.Mapping
             baseObject.Map(objectToMap);
 
             // Assert
-            ClassicAssert.AreEqual(objectToMap.Count, baseObject.Details.Count);
+            Assert.That(baseObject.Details.Count.Equals(objectToMap.Count));
         }
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace Omicron.SapAdapter.Test.Services.Mapping
             baseObject.Map(objectToMap);
 
             // Assert
-            ClassicAssert.AreEqual(objectToMap.Status, baseObject.Status);
-            ClassicAssert.AreEqual(objectToMap.Comments, baseObject.Comments);
+            Assert.That(baseObject.Status.Equals(objectToMap.Status));
+            Assert.That(baseObject.Comments.Equals(objectToMap.Comments));
         }
     }
 }

@@ -37,8 +37,8 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
             var parseOperationResult = parameters.TryGet<string, string, int>(key, defaultValue, out int result);
 
             // Assert
-            ClassicAssert.IsTrue(parseOperationResult);
-            ClassicAssert.AreEqual(expectedResult, result);
+            Assert.That(parseOperationResult);
+            Assert.That(result.Equals(expectedResult));
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
             var result = parameters.Get<string, string, int>(key);
 
             // Assert
-            ClassicAssert.AreEqual(expectedResult, result);
+            Assert.That(result.Equals(expectedResult));
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
             var result = parameters.Get<string, string, int>(key);
 
             // Assert
-            ClassicAssert.AreEqual(expectedResult, result);
+            Assert.That(result.Equals(expectedResult));
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
             };
 
             // Act
-            ClassicAssert.Throws<KeyNotFoundException>(() => parameters.Get<string, string, int>(key));
+            Assert.Throws<KeyNotFoundException>(() => parameters.Get<string, string, int>(key));
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
             var result = parameters.DecodeQueryString();
 
             // Assert
-            ClassicAssert.AreEqual(expectedResult, result[key]);
+            Assert.That(result[key].Equals(expectedResult));
         }
     }
 }

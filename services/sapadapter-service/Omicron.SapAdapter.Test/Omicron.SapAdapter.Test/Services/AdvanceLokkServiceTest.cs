@@ -125,11 +125,11 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsEmpty(cards.CardInvoice);
-            ClassicAssert.IsEmpty(cards.CardDelivery);
-            ClassicAssert.IsEmpty(cards.CardDistribution);
-            ClassicAssert.IsEmpty(cards.CardOrder);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardInvoice, Is.Empty);
+            Assert.That(cards.CardDelivery, Is.Empty);
+            Assert.That(cards.CardDistribution, Is.Empty);
+            Assert.That(cards.CardOrder, Is.Empty);
         }
 
         /// <summary>
@@ -157,10 +157,10 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.AreEqual(cards.CardInvoice.Count, invoices);
-            ClassicAssert.AreEqual(cards.CardDelivery.Count, deliverys);
-            ClassicAssert.AreEqual(cards.CardDistribution.Count, distribution);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(invoices.Equals(cards.CardInvoice.Count));
+            Assert.That(deliverys.Equals(cards.CardDelivery.Count));
+            Assert.That(distribution.Equals(cards.CardDistribution.Count));
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
 
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -204,8 +204,8 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsNotEmpty(cards.CardDelivery);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardDelivery, Is.Not.Empty);
         }
 
         /// <summary>
@@ -227,8 +227,8 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsNotEmpty(cards.CardInvoice);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardInvoice, Is.Not.Empty);
         }
 
         /// <summary>
@@ -249,8 +249,8 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsNotEmpty(cards.CardDistribution);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardDistribution, Is.Not.Empty);
         }
 
         /// <summary>
@@ -271,8 +271,8 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsNotEmpty(cards.CardInvoice);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardInvoice, Is.Not.Empty);
         }
 
         /// <summary>
@@ -300,7 +300,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
 
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -328,11 +328,11 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsEmpty(cards.CardInvoice);
-            ClassicAssert.IsEmpty(cards.CardDelivery);
-            ClassicAssert.IsEmpty(cards.CardDistribution);
-            ClassicAssert.IsEmpty(cards.CardOrder);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardInvoice, Is.Empty);
+            Assert.That(cards.CardDelivery, Is.Empty);
+            Assert.That(cards.CardDistribution, Is.Empty);
+            Assert.That(cards.CardOrder, Is.Empty);
         }
 
         /// <summary>
@@ -353,8 +353,8 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsNotEmpty(cards.CardOrder);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardOrder, Is.Not.Empty);
         }
     }
 }
