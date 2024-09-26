@@ -72,7 +72,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.ProcessOrders(order);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -89,12 +89,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetUserOrderBySalesOrder(listIds);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -111,12 +111,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetUserOrderByFabOrder(listIds);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -133,12 +133,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetFabOrderByUserID(ids);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -156,12 +156,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetQfbOrdersByStatus(status, iduser);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -178,12 +178,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetUserOrdersByUserId(ids);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -206,12 +206,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.AssignHeader(asignar);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -240,12 +240,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.UpdateComponents(asignar);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -265,12 +265,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.UpdateStatusOrder(components);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -284,12 +284,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.ConnectDiApi();
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -311,12 +311,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.ProcessByOrder(processOrder);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -336,12 +336,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.CancelOrder(orders);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -362,12 +362,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.AutomaticAssign(processOrder);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -387,12 +387,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.CancelFabOrder(orders);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -414,12 +414,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.UpdateOrderSignature(SignatureType.LOGISTICS, orderSignature);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -436,12 +436,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetOrderSignatures(fabricationOrder);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -461,12 +461,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.UpdateBatches(updateBatches);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -486,12 +486,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.UpdateFabOrderComments(orders);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -514,12 +514,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.FinishOrder(updateBatches);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -539,12 +539,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.CloseSalesOrders(salesOrders);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -568,12 +568,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.RejectSalesOrders(salesOrders);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -593,12 +593,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.CloseFabOrders(salesOrders);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -619,12 +619,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.CreateIsolatedProductionOrder(order);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -641,8 +641,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetFabOrders(parameters);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -665,8 +665,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.ReassignOrder(parameters);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -683,8 +683,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetProductivityData(parameters);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -701,8 +701,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.CreateCustomComponentList(string.Empty, formula);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -716,8 +716,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetCustomComponentListByProductId(string.Empty);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -734,8 +734,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.DeleteCustomComponentList(parameters);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -752,8 +752,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetWorkLoad(parameters);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -770,8 +770,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.CompletedBatches(orderId);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -788,8 +788,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.PrintOrders(orderId);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -810,8 +810,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.UpdateSaleOrders(orderId);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -833,8 +833,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.UpdateDesignerLabel(orderId);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -851,8 +851,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.CreateSaleOrderPdf(orders);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -866,8 +866,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.DeleteFiles();
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -881,12 +881,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.SignOrdersByTecnic(new FinishOrderDto());
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -900,12 +900,12 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidoFacade.GetInvalidOrdersByMissingTecnicSign(new List<string>());
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
     }
 }

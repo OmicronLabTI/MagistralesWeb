@@ -31,7 +31,7 @@ namespace Omicron.Pedidos.Test.Services
             await service.UpdateMostUsedComponents(listIds, "redisComponents");
 
             // assert
-            ClassicAssert.IsNotNull(listIds);
+            Assert.That(listIds, Is.Not.Null);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Omicron.Pedidos.Test.Services
             await service.UpdateMostUsedComponents(listIds, "redisComponents");
 
             // assert
-            ClassicAssert.IsNotNull(listIds);
+            Assert.That(listIds, Is.Not.Null);
         }
     }
 }

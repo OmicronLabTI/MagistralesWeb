@@ -55,7 +55,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.qrsFacade.CreateMagistralQr(order);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.qrsFacade.CreateRemisionQr(order);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.qrsFacade.CreateSampleLabel(order);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.qrsFacade.CreateInvoiceQr(order);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
     }
 }

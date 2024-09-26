@@ -58,8 +58,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.GetOrdersForAlmacen();
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -74,8 +74,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.GetOrdersForAlmacen(new List<int>());
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -92,8 +92,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.UpdateUserOrders(listUsers);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -108,8 +108,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.GetOrdersForDelivery();
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -124,8 +124,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.GetOrdersForDelivery(new List<int>());
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -140,8 +140,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.GetOrdersForInvoice();
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -158,8 +158,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.GetOrdersForPackages(type);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -176,8 +176,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.UpdateSentOrders(type);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -194,8 +194,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.GetAlmacenGraphData(type);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -212,8 +212,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.GetUserOrderByDeliveryOrder(type);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -230,8 +230,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.GetUserOrderByInvoiceId(invoicesIds);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -248,8 +248,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.CreatePdf(string.Empty, type);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -266,8 +266,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.CancelDelivery(string.Empty, type);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -284,8 +284,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.CleanInvoices(type);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -302,8 +302,8 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.almacenFacade.AdvanceLook(type);
 
             // Assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
     }
 }

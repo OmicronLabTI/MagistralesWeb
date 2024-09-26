@@ -54,7 +54,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.busqedaService.GetOrders(listIds);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
     }
 }

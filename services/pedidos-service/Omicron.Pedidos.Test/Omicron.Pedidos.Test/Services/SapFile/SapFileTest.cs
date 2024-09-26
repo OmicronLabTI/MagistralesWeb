@@ -29,7 +29,7 @@ namespace Omicron.Pedidos.Test.Services.SapFile
             var result = client.PostSimple(new { }, "endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Omicron.Pedidos.Test.Services.SapFile
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostSimple(new { }, "endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostSimple(new { }, "endpoint"));
         }
     }
 }

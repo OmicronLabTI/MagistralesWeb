@@ -29,7 +29,7 @@ namespace Omicron.Pedidos.Test.Services.SapServiceLayer
             var result = client.PostAsync(new { }, "endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Omicron.Pedidos.Test.Services.SapServiceLayer
             var result = client.PatchAsync("endpoint", "{\"key\": \"value\"}").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Omicron.Pedidos.Test.Services.SapServiceLayer
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PatchAsync("endpoint", "{\"key\": \"value\"}"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PatchAsync("endpoint", "{\"key\": \"value\"}"));
         }
     }
 }

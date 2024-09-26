@@ -70,7 +70,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosServiceLocal.GetProductivityData(assign);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosServiceLocal.GetWorkLoad(assign);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosServiceLocal.GetWorkLoad(assign);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
     }
 }

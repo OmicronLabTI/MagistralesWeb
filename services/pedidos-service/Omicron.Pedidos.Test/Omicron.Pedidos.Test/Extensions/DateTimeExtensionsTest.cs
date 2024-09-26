@@ -25,9 +25,9 @@ namespace Omicron.Pedidos.Test.Extensions
             var dateString = date.FormatedDate();
 
             // assert
-            ClassicAssert.IsTrue(dateString == date.ToString("dd/MM/yyyy"));
-            ClassicAssert.IsNotNull(dateString);
-            ClassicAssert.IsInstanceOf<string>(dateString);
+            Assert.That(dateString == date.ToString("dd/MM/yyyy"));
+            Assert.That(dateString, Is.Not.Null);
+            Assert.That(dateString, Is.InstanceOf<string>());
         }
 
         /// <summary>
@@ -41,8 +41,8 @@ namespace Omicron.Pedidos.Test.Extensions
             var dateString = date.FormatedLargeDate();
 
             // assert
-            ClassicAssert.IsNotNull(dateString);
-            ClassicAssert.IsInstanceOf<string>(dateString);
+            Assert.That(dateString, Is.Not.Null);
+            Assert.That(dateString, Is.InstanceOf<string>());
         }
     }
 }

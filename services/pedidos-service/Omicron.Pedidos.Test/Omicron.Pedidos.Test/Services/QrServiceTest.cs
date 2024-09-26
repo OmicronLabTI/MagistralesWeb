@@ -63,8 +63,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await this.qrsService.CreateMagistralQr(listOrdersId);
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -82,8 +82,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateSampleLabel(listOrdersId);
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -122,8 +122,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateSampleLabel(listOrdersId);
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -142,8 +142,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateRemisionQr(listOrdersId);
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -182,8 +182,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateRemisionQr(listOrdersId);
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -202,8 +202,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateInvoiceQr(listOrdersId);
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -240,8 +240,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateInvoiceQr(listOrdersId);
 
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
     }
 }

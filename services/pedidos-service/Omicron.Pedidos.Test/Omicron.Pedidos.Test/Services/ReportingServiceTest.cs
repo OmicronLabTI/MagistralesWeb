@@ -27,7 +27,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = client.GetReportingService("endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Omicron.Pedidos.Test.Services
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.GetReportingService("endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.GetReportingService("endpoint"));
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = client.PostReportingService(new { }, "endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Omicron.Pedidos.Test.Services
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostReportingService(new { }, "endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostReportingService(new { }, "endpoint"));
         }
     }
 }

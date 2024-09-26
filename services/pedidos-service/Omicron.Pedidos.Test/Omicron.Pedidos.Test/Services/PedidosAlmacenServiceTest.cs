@@ -57,7 +57,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForAlmacen();
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForAlmacen(listIds);
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.UpdateUserOrders(listorders);
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForDelivery();
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForDelivery(new List<int> { 100 });
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForInvoice();
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForPackages(dict);
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.UpdateSentOrders(listUserOrders);
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetAlmacenGraphData(dict);
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetUserOrderByDeliveryOrder(listIds);
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -234,11 +234,11 @@ namespace Omicron.Pedidos.Test.Services
             var userorders = result.Response as List<UserOrderModel>;
 
             // assert
-            ClassicAssert.IsNotNull(result);
-            ClassicAssert.IsNotNull(result.Response);
-            ClassicAssert.True(result.Success);
-            ClassicAssert.True(result.Code == 200);
-            ClassicAssert.True(userorders.Count > 0);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.Success);
+            Assert.That(result.Code == 200);
+            Assert.That(userorders.Count > 0);
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidoServiceLocal.CreatePdf(type, details);
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidoServiceLocal.AdvanceLook(details);
 
             // assert
-            ClassicAssert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

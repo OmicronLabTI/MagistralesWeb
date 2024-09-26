@@ -80,12 +80,12 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.CreateCustomComponentList(this.userId, customList);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 4, 6));
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsInstanceOf<int>(response.Response);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsNull(response.ExceptionMessage);
-            ClassicAssert.IsNull(response.Comments);
+            Assert.That(this.CheckAction(response, true, 4, 6));
+            Assert.That(response.Code == 200);
+            Assert.That(response.Response, Is.InstanceOf<int>());
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
         }
 
         /// <summary>
@@ -103,8 +103,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.CreateCustomComponentList(this.userId, customList);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 3, 4));
-            ClassicAssert.Zero(int.Parse(response.Response.ToString()));
+            Assert.That(this.CheckAction(response, true, 3, 4));
+            Assert.That(int.Parse(response.Response.ToString()), Is.Zero);
         }
 
         /// <summary>
@@ -122,14 +122,14 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             var listsInResponse = (List<CustomComponentListModel>)response.Response;
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.AreEqual(listsInResponse.Count, 2);
-            ClassicAssert.AreEqual(listsInResponse[0].Components.Count, 2);
-            ClassicAssert.AreEqual(listsInResponse[1].Components.Count, 1);
-            ClassicAssert.IsInstanceOf<List<CustomComponentListModel>>(response.Response);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsNull(response.ExceptionMessage);
-            ClassicAssert.IsNull(response.Comments);
+            Assert.That(response.Success);
+            Assert.That(2.Equals(listsInResponse.Count));
+            Assert.That(2.Equals(listsInResponse[0].Components.Count));
+            Assert.That(1.Equals(listsInResponse[1].Components.Count));
+            Assert.That(response.Response, Is.InstanceOf<List<CustomComponentListModel>>());
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.DeleteCustomComponentList(dic);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 2, 2));
+            Assert.That(this.CheckAction(response, true, 2, 2));
         }
 
         /// <summary>
@@ -171,8 +171,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.DeleteCustomComponentList(dic);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, false, 3, 4));
-            ClassicAssert.Zero(int.Parse(response.Response.ToString()));
+            Assert.That(this.CheckAction(response, false, 3, 4));
+            Assert.That(int.Parse(response.Response.ToString()), Is.Zero);
         }
 
         /// <summary>

@@ -29,7 +29,7 @@ namespace Omicron.Pedidos.Test.Services.SapDiApi
             var result = client.GetSapDiApi("endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Omicron.Pedidos.Test.Services.SapDiApi
             var result = client.PostToSapDiApi(new { }, "endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
     }
 }

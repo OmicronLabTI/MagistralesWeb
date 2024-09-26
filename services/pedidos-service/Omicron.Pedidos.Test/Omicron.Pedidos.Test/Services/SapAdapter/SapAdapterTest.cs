@@ -29,7 +29,7 @@ namespace Omicron.Pedidos.Test.Services.SapAdapter
             var result = client.GetSapAdapter("endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Omicron.Pedidos.Test.Services.SapAdapter
             var result = client.PostSapAdapter(new { }, "endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Omicron.Pedidos.Test.Services.SapAdapter
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.GetSapAdapter("endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.GetSapAdapter("endpoint"));
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Omicron.Pedidos.Test.Services.SapAdapter
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostSapAdapter(new { }, "endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostSapAdapter(new { }, "endpoint"));
         }
     }
 }

@@ -186,7 +186,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelFabricationOrders(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 1, 0, 1));
+            Assert.That(this.CheckAction(response, true, 1, 0, 1));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
 
@@ -211,7 +211,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelFabricationOrders(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 1, 0, 0));
+            Assert.That(this.CheckAction(response, true, 1, 0, 0));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -235,7 +235,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelFabricationOrders(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
+            Assert.That(this.CheckAction(response, true, 0, 1, 0));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -259,7 +259,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelFabricationOrders(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
+            Assert.That(this.CheckAction(response, true, 0, 1, 0));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -283,7 +283,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelFabricationOrders(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 1, 0, 1));
+            Assert.That(this.CheckAction(response, true, 1, 0, 1));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetFabOrdersByFilter), Times.Once);
@@ -309,7 +309,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelFabricationOrders(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 1, 0, 1));
+            Assert.That(this.CheckAction(response, true, 1, 0, 1));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetFabOrdersByFilter), Times.Once);
@@ -335,8 +335,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelFabricationOrders(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 1, 0, 1));
+            Assert.That(response.Success);
+            Assert.That(this.CheckAction(response, true, 1, 0, 1));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
 
@@ -360,7 +360,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelFabricationOrders(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
+            Assert.That(this.CheckAction(response, true, 0, 1, 0));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Once);
         }
 
@@ -385,7 +385,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelSalesOrder(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 1, 0, affectedRecords));
+            Assert.That(this.CheckAction(response, true, 1, 0, affectedRecords));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Exactly(affectedRecords - 1));
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
@@ -410,7 +410,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelSalesOrder(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
+            Assert.That(this.CheckAction(response, true, 0, 1, 0));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
@@ -435,7 +435,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelSalesOrder(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
+            Assert.That(this.CheckAction(response, true, 0, 1, 0));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
         }
@@ -461,7 +461,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelSalesOrder(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 1, 0, affectedRecords));
+            Assert.That(this.CheckAction(response, true, 1, 0, affectedRecords));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Exactly(affectedRecords - 1));
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
         }
@@ -486,7 +486,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelSalesOrder(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
+            Assert.That(this.CheckAction(response, true, 0, 1, 0));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
         }
@@ -511,7 +511,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelSalesOrder(orderToUpdate);
 
             // assert
-            ClassicAssert.IsTrue(this.CheckAction(response, true, 0, 1, 0));
+            Assert.That(this.CheckAction(response, true, 0, 1, 0));
             this.serviceLayerAdapterService.Verify(v => v.PostAsync(It.IsAny<object>(), It.IsAny<string>()), Times.Never);
             this.mockSapAdapter.Verify(v => v.PostSapAdapter(It.IsAny<object>(), ServiceConstants.GetOrderWithDetail), Times.Once);
         }
@@ -550,7 +550,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelDelivery(type, model);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -587,7 +587,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CancelDelivery(type, model);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -605,7 +605,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.cancelPedidosService.CleanInvoices(orderToUpdate);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         private static DbContextOptions<DatabaseContext> CreateNewContextOptions()

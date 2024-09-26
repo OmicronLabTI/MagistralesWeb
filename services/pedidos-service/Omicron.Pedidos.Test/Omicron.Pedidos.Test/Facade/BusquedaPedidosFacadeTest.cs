@@ -60,7 +60,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.busquedaFacade.GetOrders(order);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.busquedaFacade.GetOrdersActive(new List<int>());
 
             // arrange
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
     }
 }

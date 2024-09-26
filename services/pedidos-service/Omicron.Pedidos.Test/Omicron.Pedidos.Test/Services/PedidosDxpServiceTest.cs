@@ -52,10 +52,10 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosDxpService.GetOrdersActive(listIds);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNull(response.UserError);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.UserError, Is.Null);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosDxpService.GetDeliveredPayments(listIds);
 
             // assert
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -89,13 +89,13 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosDxpService.GetOrdersHeaderStatus(listIds);
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsNotNull(response.Comments);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNull(response.UserError);
-            ClassicAssert.IsNull(response.ExceptionMessage);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Comments, Is.Not.Null);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.UserError, Is.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
         }
     }
 }

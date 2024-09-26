@@ -158,13 +158,13 @@ namespace Omicron.Pedidos.Test.Services
             var errorsList = response.Response as List<string>;
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsTrue(errorsList.Any());
-            ClassicAssert.IsInstanceOf<List<string>>(errorsList);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsNull(response.ExceptionMessage);
-            ClassicAssert.IsNull(response.Comments);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Code == 200);
+            Assert.That(errorsList.Any());
+            Assert.That(errorsList, Is.InstanceOf<List<string>>());
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
         }
 
         /// <summary>
@@ -205,13 +205,13 @@ namespace Omicron.Pedidos.Test.Services
             var errorsList = response.Response as List<string>;
 
             // assert
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Code == 200);
-            ClassicAssert.IsTrue(errorsList.Any());
-            ClassicAssert.IsInstanceOf<List<string>>(errorsList);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsNull(response.ExceptionMessage);
-            ClassicAssert.IsNull(response.Comments);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Code == 200);
+            Assert.That(errorsList.Any());
+            Assert.That(errorsList, Is.InstanceOf<List<string>>());
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
         }
     }
 }

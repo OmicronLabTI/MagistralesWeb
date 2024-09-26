@@ -55,7 +55,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidosFacade.GetDeliveredPayments(order);
 
             // arrange
-            ClassicAssert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -81,12 +81,12 @@ namespace Omicron.Pedidos.Test.Facade
         /// <param name="response">Response to validate.</param>
         public void AssertResponse(ResultDto response)
         {
-            ClassicAssert.IsNotNull(response);
-            ClassicAssert.IsTrue(response.Success);
-            ClassicAssert.IsNotNull(response.Response);
-            ClassicAssert.IsEmpty(response.ExceptionMessage);
-            ClassicAssert.IsEmpty(response.UserError);
-            ClassicAssert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
     }
 }

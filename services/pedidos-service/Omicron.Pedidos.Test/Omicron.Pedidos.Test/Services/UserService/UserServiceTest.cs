@@ -28,7 +28,7 @@ namespace Omicron.Pedidos.Test.Services.UserService
             var result = client.SimpleGetUsers("endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Omicron.Pedidos.Test.Services.UserService
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.SimpleGetUsers("endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.SimpleGetUsers("endpoint"));
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Omicron.Pedidos.Test.Services.UserService
             var result = client.PostSimpleUsers(new { }, "endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
     }
 }

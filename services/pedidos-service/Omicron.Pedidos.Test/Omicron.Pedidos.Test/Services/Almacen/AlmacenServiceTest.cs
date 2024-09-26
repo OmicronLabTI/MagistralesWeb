@@ -27,7 +27,7 @@ namespace Omicron.Pedidos.Test.Services.Almacen
             var result = client.GetAlmacenData("endpoint").Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Omicron.Pedidos.Test.Services.Almacen
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.GetAlmacenData("endpoint"));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.GetAlmacenData("endpoint"));
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Omicron.Pedidos.Test.Services.Almacen
             var result = client.PostAlmacenData("endpoint", new { }).Result;
 
             // Assert
-            ClassicAssert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Omicron.Pedidos.Test.Services.Almacen
             var client = this.CreateClientFailure();
 
             // Act
-            ClassicAssert.ThrowsAsync<CustomServiceException>(async () => await client.PostAlmacenData("endpoint", new { }));
+            Assert.ThrowsAsync<CustomServiceException>(async () => await client.PostAlmacenData("endpoint", new { }));
         }
     }
 }
