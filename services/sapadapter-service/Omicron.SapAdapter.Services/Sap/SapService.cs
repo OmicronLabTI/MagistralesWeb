@@ -139,15 +139,17 @@ namespace Omicron.SapAdapter.Services.Sap
             var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
-            var listDoctors = await this.GetDoctors(orderToReturn.Select(x => x.Codigo).Distinct().ToList(), ServiceConstants.GetResponsibleDoctors);
+            var cardcodes = orderToReturn.Select(x => x.Codigo).Distinct().ToList();
+            var listDoctors = await this.GetDoctors(cardcodes, ServiceConstants.GetResponsibleDoctors);
 
-            orderToReturn.ForEach(o =>
+            var alias = await this.sapDao.GetClientCatalogCardCode(cardcodes);
+
+            orderToReturn.ForEach(async o =>
             {
                 var doctor = listDoctors.FirstOrDefault(x => x.CardCode == o.Codigo);
                 doctor ??= new DoctorPrescriptionInfoModel { DoctorName = o.Medico };
-                o.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == o.Codigo), o.ShippingAddressName, doctor.DoctorName);
 
-                var (medico, clientType, client) = this.RefillOrders(o, doctor.DoctorName, specialCardCodes);
+                var (medico, clientType, client) = this.RefillOrders(o, doctor.DoctorName, specialCardCodes, alias);
 
                 o.Medico = medico;
                 o.ClientType = clientType;
@@ -839,13 +841,12 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
         }
 
-        private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes)
+        private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)
         {
-            order.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == order.Codigo), order.ShippingAddressName, doctorName);
-
             if (order.ClientType == ServiceConstants.ClientTypeInstitutional)
             {
-                order.Cliente = order.Medico;
+                var data = alias.FirstOrDefault(x => x.ClientId == order.Codigo);
+                order.Cliente = data != null ? data.AliasName : string.Empty;
 
                 Regex regex = new Regex(ServiceConstants.RegexNameDoctor);
                 Match match = regex.Match(order.ShippingAddressName);
@@ -854,6 +855,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
             else
             {
+                order.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == order.Codigo), order.ShippingAddressName, doctorName);
                 order.ClientType = ServiceConstants.ClientTypeGeneral;
             }
 
