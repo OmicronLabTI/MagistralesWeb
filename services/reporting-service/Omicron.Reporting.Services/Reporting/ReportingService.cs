@@ -374,7 +374,7 @@ namespace Omicron.Reporting.Services
             string greeting;
             if (request.IsPatient)
             {
-                greeting = string.Format(ServiceConstants.SendingPatientBody, request.ClientName, request.SalesOrders, request.Address.ToUpper(), request.PackageId, sendEmailOrTel, sendEmailLink);
+                greeting = string.Format(ServiceConstants.SendingPatientBody, request.ClientName, request.SalesOrders, request.Address.ToUpper(), request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             }
             else
             {
