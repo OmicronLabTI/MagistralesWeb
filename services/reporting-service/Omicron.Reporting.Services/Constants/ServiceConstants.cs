@@ -170,7 +170,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// refund policy.
         /// </summary>
-        public const string RefundPolicy = "<p>*Política de Cambios y Devoluciones*</p><ul><li>Una vez recibido el pedido se otorgan 15 días calendario para notificar cualquier inconsistencia o inconformidad con su solicitud.</li><li>Para notificar cualquier incidencia favor enviar un correo a: <u>incidencias@o-lab.mx</u>; por WhatsApp al número:  8118106776 o a través de <b>OmicronShop</b>.</li></ul><center>Agradecemos su preferencia.</center><center>OmicronLab SA de CV</center>";
+        public const string RefundPolicy = "<p>*Política de Cambios y Devoluciones*</p><ul><li>Una vez recibido el pedido se otorgan 15 días calendario para notificar cualquier inconsistencia o inconformidad con su solicitud.</li><li>Para notificar cualquier incidencia favor de reportarla a través de OmicronShop.</li></ul><center>Agradecemos su preferencia.</center><center>OmicronLab SA de CV</center>";
 
         /// <summary>
         /// Sent local package.
