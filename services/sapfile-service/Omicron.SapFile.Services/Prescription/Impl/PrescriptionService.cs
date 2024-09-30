@@ -63,11 +63,12 @@ namespace Omicron.SapFile.Services.Prescription.Impl
                         {
                             AzurePrescriptionUrl = presurl.AzurePrescriptionUrl,
                             ServerSourcePath = ConfigurationManager.AppSettings[ServiceConstants.PrescriptionFiles],
-                            PrescriptionFileName = fileName,
+                            PrescriptionFileName = fileName.Replace(".pdf", ""),
                             PrescriptionFileExtension = Path.GetExtension(fileName).Substring(1),
                 });
                 }
 
+                this._loggerProxy.Info($"Omicron.SapFile.Prescription Service - Prescriptions to return {JsonConvert.SerializeObject(downloadResult)}");
                 return new ResultModel
                 {
                     Response = downloadResult,

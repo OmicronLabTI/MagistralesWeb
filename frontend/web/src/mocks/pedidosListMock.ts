@@ -74,6 +74,7 @@ export const PedidosListMock = {
             labelType: 'G',
             finishedLabel: 0,
             orderType: 'MN',
+            clientType: 'general'
         },
         {
             docNum: 60022,
@@ -90,6 +91,7 @@ export const PedidosListMock = {
             labelType: 'P',
             finishedLabel: 0,
             orderType: 'MN',
+            clientType: 'general'
         },
         {
             docNum: 60023,
@@ -106,6 +108,7 @@ export const PedidosListMock = {
             labelType: 'M',
             finishedLabel: 0,
             orderType: 'MG',
+            clientType: 'general'
         },
         {
             docNum: 60024,
@@ -122,6 +125,7 @@ export const PedidosListMock = {
             labelType: 'G',
             finishedLabel: 1,
             orderType: 'BE',
+            clientType: 'general'
         },
         {
             docNum: 60025,
@@ -138,6 +142,7 @@ export const PedidosListMock = {
             labelType: 'P',
             finishedLabel: 1,
             orderType: 'MX',
+            clientType: 'general'
         }
     ]
 };

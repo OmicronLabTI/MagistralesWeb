@@ -52,7 +52,7 @@ namespace Omicron.SapFile.Api.Controllers
         /// <returns>the data.</returns>
         [HttpPost]
         [Route("create/sale/pdf")]
-        public async Task<IHttpActionResult> CreateSaleOrderPdf(List<int> ordersId)
+        public async Task<IHttpActionResult> CreateSaleOrderPdf(List<CreateOrderPdfDto> ordersId)
         {
             var response = await this.sapFacade.CreateSaleOrderPdf(ordersId);
             return this.Ok(response);

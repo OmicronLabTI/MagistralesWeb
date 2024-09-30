@@ -78,25 +78,29 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             {
                 var attachmentId = await this.GetPrescriptionId(saleOrderModel);
 
-                var order = new CreateOrderDto();
-                order.CardCode = saleOrderModel.CardCode;
-                order.DocumentDate = DateTime.Now;
-                order.DueDate = DateTime.Now.AddDays(10);
-                order.ShippingCode = saleOrderModel.ShippinAddress;
-                order.PayToCode = saleOrderModel.BillingAddress;
-                order.ReferenceNumber = saleOrderModel.ProfecionalLicense;
-                order.OrderLines = new List<CreateOrderLineDto>();
-                order.TaxId = saleOrderModel.UserRfc;
+                var order = new CreateOrderDto
+                {
+                    CardCode = saleOrderModel.CardCode,
+                    DocumentDate = DateTime.Now,
+                    DueDate = DateTime.Now.AddDays(10),
+                    ShippingCode = saleOrderModel.ShippinAddress,
+                    PayToCode = saleOrderModel.BillingAddress,
+                    ReferenceNumber = saleOrderModel.ProfecionalLicense,
+                    OrderLines = new List<CreateOrderLineDto>(),
+                    TaxId = saleOrderModel.UserRfc,
+                    DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial),
+                    DxpOrder = saleOrderModel.TransactionId,
+                    EcommerceComments = ServiceUtils.CalculateTernary(saleOrderModel.IsNamePrinted == 1, $"Nombre del paciente: {saleOrderModel.PatientName}", string.Empty),
+                    BXPPaymentMethod = saleOrderModel.PaymentMethodSapCode,
+                    BXPWayToPay = saleOrderModel.WayToPaySapCode,
+                    OrderPackage = ServiceUtils.CalculateTernary(saleOrderModel.IsPackage, ServiceConstants.IsPackage, ServiceConstants.IsNotPackage),
+                    DXPNeedsShipCost = saleOrderModel.ShippingCost,
+                    SampleOrder = ServiceUtils.CalculateTernary(saleOrderModel.IsSample, "Si", "No"),
+                    CFDIProvisional = saleOrderModel.CfdiValue,
+                    ContactPersonCode = saleOrderModel.TypeClientOrder == ServiceConstants.ClientTypeInstitucional ? 0 : null,
+                    ClientTypeOrder = saleOrderModel.TypeClientOrder,
+                };
 
-                order.DiscountPercent = Convert.ToDouble(saleOrderModel.DiscountSpecial);
-                order.DxpOrder = saleOrderModel.TransactionId;
-                order.EcommerceComments = ServiceUtils.CalculateTernary(saleOrderModel.IsNamePrinted == 1, $"Nombre del paciente: {saleOrderModel.PatientName}", string.Empty);
-                order.BXPPaymentMethod = saleOrderModel.PaymentMethodSapCode;
-                order.BXPWayToPay = saleOrderModel.WayToPaySapCode;
-                order.OrderPackage = ServiceUtils.CalculateTernary(saleOrderModel.IsPackage, ServiceConstants.IsPackage, ServiceConstants.IsNotPackage);
-                order.DXPNeedsShipCost = saleOrderModel.ShippingCost;
-                order.SampleOrder = ServiceUtils.CalculateTernary(saleOrderModel.IsSample, "Si", "No");
-                order.CFDIProvisional = saleOrderModel.CfdiValue;
                 AssingValues(order, saleOrderModel, attachmentId);
 
                 order.OrderLines = saleOrderModel.Items.Select(x => new CreateOrderLineDto()

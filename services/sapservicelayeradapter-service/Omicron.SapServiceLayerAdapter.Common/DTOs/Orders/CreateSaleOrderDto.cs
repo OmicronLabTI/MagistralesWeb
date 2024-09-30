@@ -148,5 +148,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>IdDoctor.</value>
         public int? EmployeeId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the TypeClientOrder.
+        /// </summary>
+        /// <value>
+        /// TypeClientOrder.
+        /// </value>
+        public string TypeClientOrder { get; set; }
     }
 }
