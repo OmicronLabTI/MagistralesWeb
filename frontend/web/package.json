@@ -38,6 +38,7 @@
     "hammerjs": "^2.0.8",
     "ngx-infinite-scroll": "^9.0.0",
     "ngx-mask": "^8.0.5",
+    "omicron": "file:",
     "rxjs": "~6.4.0",
     "saturn-datepicker": "^8.0.5",
     "sweetalert2": "^9.7.0",
