@@ -13,7 +13,7 @@ import { ConstStatus, FromToFilter } from '../../constants/const';
 import { PageEvent } from '@angular/material/paginator';
 import { DataService } from '../../services/data.service';
 import Swal from 'sweetalert2';
-import { Catalogs, ICreatePdfOrdersRes, IProcessOrdersRes, IRecipesRes, ParamsPedidos } from '../../model/http/pedidos';
+import { Catalogs, ICreatePdfOrdersRes, IPedidoReq, IProcessOrdersRes, IRecipesRes, ParamsPedidos } from '../../model/http/pedidos';
 import { PipesModule } from '../../pipes/pipes.module';
 import { RangeDateMOck } from '../../../mocks/rangeDateMock';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
@@ -277,7 +277,8 @@ describe('PedidosComponent', () => {
       pedidoStatus: 'Planificado',
       labelType: 'string',
       finishedLabel: 2,
-      orderType: 'string'
+      orderType: 'string',
+      clientType: 'general'
     }];
     component.cancelOrders();
     component.dataSource.data = PedidosListMock.response;
@@ -299,7 +300,8 @@ describe('PedidosComponent', () => {
       pedidoStatus: 'Terminado',
       labelType: 'string',
       finishedLabel: 2,
-      orderType: 'string'
+      orderType: 'string',
+      clientType: 'general'
     }];
     component.finalizeOrders();
     component.dataSource.data = PedidosListMock.response;
@@ -376,7 +378,8 @@ describe('PedidosComponent', () => {
       pedidoStatus: 'Terminado',
       labelType: 'string',
       finishedLabel: 2,
-      orderType: 'string'
+      orderType: 'string',
+      clientType: 'general'
     }];
     filtersServiceSpy.getItemOnDateWithFilter(component.dataSource.data, FromToFilter.fromOrdersReassign, ConstStatus.liberado);
     component.reassignOrders();
@@ -437,7 +440,8 @@ describe('PedidosComponent', () => {
       pedidoStatus: 'Terminado',
       labelType: 'string',
       finishedLabel: 2,
-      orderType: 'string'
+      orderType: 'string',
+      clientType: 'general'
     }];
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return Promise.resolve({
@@ -458,7 +462,7 @@ describe('PedidosComponent', () => {
   });
 
   it('should openNewTabByOrder', () => {
-    component.openNewTabByOrder(0);
+    component.openNewTabByOrder(new IPedidoReq());
     // expect (routerSpy.navigate).toHaveBeenCalledWith(['/pdetalle']);
     expect(component.openNewTabByOrder).toBeTruthy();
   });

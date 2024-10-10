@@ -287,9 +287,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> CreateSaleOrderPdf(List<int> orderIds)
+        public async Task<ResultDto> CreateSaleOrderPdf(List<CreateOrderPdfDto> orders)
         {
-            return this.mapper.Map<ResultDto>(await this.pedidoService.CreateSaleOrderPdf(orderIds));
+            return this.mapper.Map<ResultDto>(await this.pedidoService.CreateSaleOrderPdf(orders));
         }
 
         /// <inheritdoc/>

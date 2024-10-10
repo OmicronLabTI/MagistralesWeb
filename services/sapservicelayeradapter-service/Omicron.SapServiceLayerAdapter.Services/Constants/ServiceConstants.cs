@@ -384,6 +384,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string FailReasonUnexpectedErrorToCreateIsolatedProductionOrder = "Ocurrió un problema inesperado al crear la orden de fabricación para el producto {0} - {1}.";
 
         /// <summary>
+        /// ClientTypeInstitucional.
+        /// </summary>
+        public const string ClientTypeInstitucional = "institucional";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

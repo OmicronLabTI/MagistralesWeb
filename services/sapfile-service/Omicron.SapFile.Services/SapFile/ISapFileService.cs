@@ -8,6 +8,7 @@
 
 namespace Omicron.SapFile.Services.SapFile
 {
+    using Omicron.SapFile.Dtos.Models;
     using Omicron.SapFile.Entities.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -27,9 +28,9 @@ namespace Omicron.SapFile.Services.SapFile
         /// <summary>
         /// Creates the sale order pdf.
         /// </summary>
-        /// <param name="ordersId">the orders id.</param>
+        /// <param name="orders">the orders id.</param>
         /// <returns>the data to return.</returns>
-        Task<ResultModel> CreateSaleOrderPdf(List<int> ordersId);
+        Task<ResultModel> CreateSaleOrderPdf(List<CreateOrderPdfDto> orders);
 
         /// <summary>
         /// The invoice ids.

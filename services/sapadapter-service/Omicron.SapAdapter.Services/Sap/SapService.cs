@@ -12,18 +12,22 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+    using System.Xml.Linq;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
-    using Omicron.SapAdapter.Resources.Exceptions;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Resources.Exceptions;
     using Omicron.SapAdapter.Resources.Extensions;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
@@ -34,7 +38,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.User;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
-    using Omicron.SapAdapter.Dtos.Models;
+    using StackExchange.Redis;
 
     /// <summary>
     /// The sap class.
@@ -134,13 +138,21 @@ namespace Omicron.SapAdapter.Services.Sap
             var ordersOrdered = orders.OrderBy(o => o.DocNum).ToList();
             var orderToReturn = ordersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
 
-            var listDoctors = await this.GetDoctors(orderToReturn.Select(x => x.Codigo).Distinct().ToList(), ServiceConstants.GetResponsibleDoctors);
+            var cardcodes = orderToReturn.Select(x => x.Codigo).Distinct().ToList();
+            var listDoctors = await this.GetDoctors(cardcodes, ServiceConstants.GetResponsibleDoctors);
 
-            orderToReturn.ForEach(o =>
+            var alias = await this.sapDao.GetClientCatalogCardCode(cardcodes);
+
+            orderToReturn.ForEach(async o =>
             {
                 var doctor = listDoctors.FirstOrDefault(x => x.CardCode == o.Codigo);
                 doctor ??= new DoctorPrescriptionInfoModel { DoctorName = o.Medico };
-                o.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == o.Codigo), o.ShippingAddressName, doctor.DoctorName);
+
+                var (medico, clientType, client) = this.RefillOrders(o, doctor.DoctorName, specialCardCodes, alias);
+
+                o.Medico = medico;
+                o.ClientType = clientType;
+                o.Cliente = client;
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);
@@ -827,6 +839,27 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
+        }
+
+        private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)
+        {
+            if (order.ClientType == ServiceConstants.ClientTypeInstitutional)
+            {
+                var data = alias.FirstOrDefault(x => x.ClientId == order.Codigo);
+                order.Cliente = data != null ? data.AliasName : string.Empty;
+
+                Regex regex = new Regex(ServiceConstants.RegexNameDoctor);
+                Match match = regex.Match(order.ShippingAddressName);
+
+                order.Medico = match.Success ? match.Groups[1].Value.Trim() : order.Medico;
+            }
+            else
+            {
+                order.Medico = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == order.Codigo), order.ShippingAddressName, doctorName);
+                order.ClientType = ServiceConstants.ClientTypeGeneral;
+            }
+
+            return (order.Medico, order.ClientType, order.Cliente);
         }
 
         /// <summary>

@@ -137,7 +137,7 @@ describe('PedidosService', () => {
     });
   it('should getOrdersPdfsView', () => {
         const service: PedidosService = TestBed.get(PedidosService);
-        expect(service.getOrdersPdfViews([123, 123, 1234]) instanceof Observable).toBeTruthy();
+        expect(service.getOrdersPdfViews([]) instanceof Observable).toBeTruthy();
     });
   it('should putOrdersToDelivered', () => {
         const service: PedidosService = TestBed.get(PedidosService);
