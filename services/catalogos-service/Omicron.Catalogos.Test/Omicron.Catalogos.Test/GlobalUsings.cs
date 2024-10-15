@@ -5,7 +5,6 @@ global using AutoMapper;
 global using Microsoft.EntityFrameworkCore;
 global using Moq;
 global using NUnit.Framework;
-global using NUnit.Framework.Legacy;
 global using Omicron.Catalogos.DataAccess.DAO.Catalog;
 global using Omicron.Catalogos.DataAccess.DAO.User;
 global using Omicron.Catalogos.Dtos.User;

@@ -8,7 +8,6 @@ global using Moq;
 global using Moq.Protected;
 global using Newtonsoft.Json;
 global using NUnit.Framework;
-global using NUnit.Framework.Legacy;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Attachments;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.Batches;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.BatchNumberDetails;

@@ -9,7 +9,6 @@ global using Moq;
 global using Moq.Protected;
 global using Newtonsoft.Json;
 global using NUnit.Framework;
-global using NUnit.Framework.Legacy;
 global using Omicron.Reporting.Dtos.Model;
 global using Omicron.Reporting.Entities.Model;
 global using Omicron.Reporting.Facade.Request;
