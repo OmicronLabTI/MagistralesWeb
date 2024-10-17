@@ -25,7 +25,7 @@ enum ApiService {
     case getComponents(data: ComponentRequest)
     case getWorkload(data: WorkloadRequest)
     case validateOrders(orderId: [Int])
-    case postOrdersPDF(orders: [Int])
+    case postOrdersPDF(orders: [OrderPDFRequestModel])
     case getConnect
     case getMostCommonComponents(data: CommonComponentRequest)
     case getContainer(userId: String)

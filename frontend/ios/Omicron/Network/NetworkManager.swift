@@ -174,7 +174,10 @@ class NetworkManager: SessionProtocol {
 
     // Obtiene el pdf de el pedido
     func postOrdersPDF(_ orders: [Int]) -> Observable<OrderPDF> {
-        let req: ApiService = ApiService.postOrdersPDF(orders: orders)
+        let request = orders.map({
+            order in OrderPDFRequestModel(orderId: order, clientType: "general")
+        })
+        let req: ApiService = ApiService.postOrdersPDF(orders: request)
         let res: Observable<OrderPDF> = makeRequest(request: req)
         return res
     }
