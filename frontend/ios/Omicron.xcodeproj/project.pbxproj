@@ -20,6 +20,10 @@
 		1122026A29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
 		1122026B29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
 		1122026C29AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */; };
+		1132D5312CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */; };
+		1132D5322CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */; };
+		1132D5332CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */; };
+		1132D5342CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */; };
 		1135809429C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */; };
 		1135809529C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */; };
 		1135809629C0F87800A58C74 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */; };
@@ -619,6 +623,7 @@
 		1113E43629C27FBA0043083E /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		1113E43B29C288070043083E /* getHistory.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = getHistory.json; sourceTree = "<group>"; };
 		1122026829AFE56900AFCDA4 /* SupplieTableViewCellExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplieTableViewCellExtension.swift; sourceTree = "<group>"; };
+		1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderPDFRequestModel.swift; sourceTree = "<group>"; };
 		1135809329C0F87800A58C74 /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
 		1135809829C1020400A58C74 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
 		113580A229C1220700A58C74 /* DateMultipleRangeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateMultipleRangeViewController.swift; sourceTree = "<group>"; };
@@ -995,6 +1000,7 @@
 		4989CC8F25ED900200257CA2 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				1132D5302CB86557007345A6 /* OrderPDFRequestModel.swift */,
 				1EF0321F251932DA0040DC65 /* Workload.swift */,
 				98C8C04124AFD2A600018A88 /* NetworkModel.swift */,
 				381B3BE625E032B40077F764 /* ContainerModel.swift */,
@@ -2344,6 +2350,7 @@
 				7FE43E2A29B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				490B6982268E98ED00DBE9F1 /* Utils.swift in Sources */,
 				490B6983268E98ED00DBE9F1 /* FileManager.swift in Sources */,
+				1132D5342CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */,
 				11A7CA4329DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
 				1142E19329AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF3298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
@@ -2449,6 +2456,7 @@
 				7FE43E2829B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				49CF65C325F2D4AB002CD598 /* Utils.swift in Sources */,
 				49CF65C425F2D4AB002CD598 /* FileManager.swift in Sources */,
+				1132D5322CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */,
 				11A7CA4129DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
 				1142E19129AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF1298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
@@ -2554,6 +2562,7 @@
 				7FE43E2929B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				49CF664625F2D821002CD598 /* Utils.swift in Sources */,
 				49CF664725F2D821002CD598 /* FileManager.swift in Sources */,
+				1132D5332CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */,
 				11A7CA4229DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
 				1142E19229AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF2298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
@@ -2659,6 +2668,7 @@
 				7FE43E2729B6647A001049A6 /* BulkOrderModel.swift in Sources */,
 				7CB6332824DDEE3F0055425C /* Utils.swift in Sources */,
 				7CCC6A4824F880E200ACBBE8 /* FileManager.swift in Sources */,
+				1132D5312CB86569007345A6 /* OrderPDFRequestModel.swift in Sources */,
 				11A7CA4029DB456200AE4336 /* RootViewControllerExtension.swift in Sources */,
 				1142E19029AE623E008651D1 /* SupplieViewController.swift in Sources */,
 				F3D21DF0298A53490099B94A /* OrderDetailViewModelExtension.swift in Sources */,
@@ -2878,7 +2888,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.1.21;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -2886,7 +2896,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.23;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3006,7 +3016,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -3014,7 +3024,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.24;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-UAT";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
@@ -3031,7 +3041,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NFYY63TQQ2;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
@@ -3039,7 +3049,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.24;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-UAT";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
@@ -3054,20 +3064,20 @@
 			baseConfigurationReference = DE6DD60D3275257CB09B5C61 /* Pods-Omicron-OmicronUAT.uat.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 19;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = NFYY63TQQ2;
+				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-UAT";
+				MARKETING_VERSION = 1.1.24;
+				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = UAT;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -3079,20 +3089,20 @@
 			baseConfigurationReference = 33660CB284D11CB0290DE75E /* Pods-Omicron-OmicronUAT.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 19;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = NFYY63TQQ2;
+				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = "Omicron/Omicron-UAT.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.axity.Omicron-UAT";
+				MARKETING_VERSION = 1.1.24;
+				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Axity Wildcard Dev";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -3272,7 +3282,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.1.21;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -3280,7 +3290,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.23;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3514,7 +3524,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.1.21;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = Omicron/Info.plist;
@@ -3522,7 +3532,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.23;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3539,14 +3549,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.1.21;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4574497W4X;
 				INFOPLIST_FILE = Omicron/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.23;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omicronlab.Formulas;
 				PRODUCT_NAME = Magistrales;
 				PROVISIONING_PROFILE_SPECIFIER = "";
