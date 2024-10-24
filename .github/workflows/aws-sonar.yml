@@ -17,6 +17,13 @@ on:
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
+  
+env:
+  AWS_REGION: "us-east-2" # us-east-2 US East (Ohio) us-east-1" # US East (N. Viginia)
+  AMI_ID: ami-0a68049ee64ac0782
+  SUBNET_ID: subnet-073b7bac3af8d3c53
+  SECURITY_GROUP_ID: sg-09c9844682ec712ca
+  VOLUME_SIZE_GiB: "20"
 jobs:
   start-runner:
     timeout-minutes: 5
