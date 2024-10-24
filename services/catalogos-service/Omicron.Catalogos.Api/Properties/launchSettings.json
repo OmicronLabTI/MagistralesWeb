@@ -14,7 +14,7 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local",
-        "POSTGRESS_NET_CONNECTION_STRING": "Server=192.168.0.83;Port=5432;Uid=omicronuser;Pwd=Axity2020;Database=omicrondev"
+        "POSTGRESS_NET_CONNECTION_STRING": "Server=localhost;Port=5432;Uid=omicronuser;Pwd=Axity2020;Database=omicrondev"
       },
       "applicationUrl": "http://localhost:9010"
     },
