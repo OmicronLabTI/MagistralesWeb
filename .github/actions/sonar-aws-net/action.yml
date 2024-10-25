@@ -34,6 +34,13 @@ runs:
           fi
         shell: bash
 
+      - name: Install dependencies
+        env:
+          DOTNET_CLI_HOME: /root
+        working-directory: ${{ inputs.path }}
+        run: dotnet restore
+        shell: bash
+
       - name: Install SonarScanner for .NET
         env:
           DOTNET_CLI_HOME: /root
