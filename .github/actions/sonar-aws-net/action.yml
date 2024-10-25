@@ -46,7 +46,7 @@ runs:
         shell: bash
 
       - name: Add .NET global tools to PATH
-        run: echo "/home/runner/.dotnet/tools" >> $GITHUB_ENV
+        run: echo "PATH=/home/runner/.dotnet/tools:$PATH" >> $GITHUB_ENV
         shell: bash  
 
       - name: Install dependencies
