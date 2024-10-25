@@ -51,6 +51,10 @@ runs:
             echo "dotnet-sonarscanner already installed"
           fi
         shell: bash
+        
+      - name: Add .NET global tools to PATH
+        run: echo "::add-path::$(dotnet --list-tools | grep dotnet-sonarscanner | awk '{print $3}')"
+        shell: bash
       
       - name: Run SonarScanner
         env:
