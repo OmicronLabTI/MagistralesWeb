@@ -45,6 +45,10 @@ runs:
           fi
         shell: bash
 
+      - name: Add .NET global tools to PATH
+        run: echo "/home/runner/.dotnet/tools" >> $GITHUB_ENV
+        shell: bash  
+
       - name: Install dependencies
         env:
           DOTNET_CLI_HOME: /root
@@ -56,7 +60,6 @@ runs:
         env:
           DOTNET_CLI_HOME: /root
         run: |          
-          export PATH="$PATH:/home/runner/.dotnet/tools" &&
           dotnet sonarscanner begin /k:'20_Omicron_AppiOSFormulas_${{ inputs.project_name }}' /d:sonar.host.url='${{ inputs.sonar_server }}' /d:sonar.token='${{ inputs.sonar_token }}' /d:sonar.cs.opencover.reportsPaths='Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.${{ inputs.project_name }}.Api/**' &&
           dotnet build Omicron.${{ inputs.project_name }}.Microservice.sln &&
           dotnet test Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=\"TestResults/\" &&
