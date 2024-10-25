@@ -23,6 +23,17 @@ inputs:
 runs:
   using: "composite"
   steps:      
+      - name: Install SonarScanner for .NET
+        env:
+          DOTNET_CLI_HOME: /root
+        run: |
+          if ! dotnet tool list -g | grep -q dotnet-sonarscanner; then
+            dotnet tool install --global dotnet-sonarscanner
+          else
+            echo "dotnet-sonarscanner already installed"
+          fi
+        shell: bash 
+
       - name: Copy and configure nuget.config
         working-directory: ${{ inputs.path }}
         run: |
@@ -40,26 +51,12 @@ runs:
         working-directory: ${{ inputs.path }}
         run: dotnet restore
         shell: bash
-
-      - name: Install SonarScanner for .NET
-        env:
-          DOTNET_CLI_HOME: /root
-        run: |
-          if ! dotnet tool list -g | grep -q dotnet-sonarscanner; then
-            dotnet tool install --global dotnet-sonarscanner
-          else
-            echo "dotnet-sonarscanner already installed"
-          fi
-        shell: bash
-        
-      - name: Add .NET global tools to PATH
-        run: echo "::add-path::$(dotnet --list-tools | grep dotnet-sonarscanner | awk '{print $3}')"
-        shell: bash
       
       - name: Run SonarScanner
         env:
           DOTNET_CLI_HOME: /root
         run: |          
+          export PATH="$PATH:/home/runner/.dotnet/tools" &&
           dotnet sonarscanner begin /k:'20_Omicron_AppiOSFormulas_${{ inputs.project_name }}' /d:sonar.host.url='${{ inputs.sonar_server }}' /d:sonar.token='${{ inputs.sonar_token }}' /d:sonar.cs.opencover.reportsPaths='Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.${{ inputs.project_name }}.Api/**' &&
           dotnet build Omicron.${{ inputs.project_name }}.Microservice.sln &&
           dotnet test Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=\"TestResults/\" &&
