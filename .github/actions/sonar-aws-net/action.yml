@@ -19,33 +19,11 @@ inputs:
   nexus_pass:
     required: false
     description: nexus pass
-  net_version:
-    required: false
-    default: 3.1.x
-    description: Version of net
 
 runs:
   using: "composite"
   steps:
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: ${{ inputs.net_version }}
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Install SonarScanner for .NET
-        run: |
-          if ! dotnet tool list -g | grep -q dotnet-sonarscanner; then
-            dotnet tool install --global dotnet-sonarscanner
-          else
-            echo "dotnet-sonarscanner already installed"
-          fi
-        shell: bash
-        
+      
       - name: Copy and configure nuget.config
         working-directory: ${{ inputs.path }}
         run: |
