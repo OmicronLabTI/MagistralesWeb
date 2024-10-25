@@ -23,6 +23,15 @@ inputs:
 runs:
   using: "composite"
   steps:
+
+      - name: Install SonarScanner for .NET
+        run: |
+          if ! dotnet tool list -g | grep -q dotnet-sonarscanner; then
+            dotnet tool install --global dotnet-sonarscanner
+          else
+            echo "dotnet-sonarscanner already installed"
+          fi
+        shell: bash 
       
       - name: Copy and configure nuget.config
         working-directory: ${{ inputs.path }}
