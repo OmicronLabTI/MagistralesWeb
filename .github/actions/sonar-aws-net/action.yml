@@ -22,17 +22,7 @@ inputs:
 
 runs:
   using: "composite"
-  steps:
-
-      - name: Install SonarScanner for .NET
-        run: |
-          if ! dotnet tool list -g | grep -q dotnet-sonarscanner; then
-            dotnet tool install --global dotnet-sonarscanner
-          else
-            echo "dotnet-sonarscanner already installed"
-          fi
-        shell: bash 
-      
+  steps:      
       - name: Copy and configure nuget.config
         working-directory: ${{ inputs.path }}
         run: |
@@ -43,17 +33,11 @@ runs:
             echo "nuget.config.template does not exist. Skipping."
           fi
         shell: bash
-
-      - name: Install dependencies
+      
+      - name: Run SonarScanner
         env:
           DOTNET_CLI_HOME: /root
-        working-directory: ${{ inputs.path }}
-        run: dotnet restore
-        shell: bash
-
-      - name: Run SonarScanner
-        run: |
-          export PATH="$PATH:/home/runner/.dotnet/tools" &&
+        run: |          
           dotnet sonarscanner begin /k:'20_Omicron_AppiOSFormulas_${{ inputs.project_name }}' /d:sonar.host.url='${{ inputs.sonar_server }}' /d:sonar.token='${{ inputs.sonar_token }}' /d:sonar.cs.opencover.reportsPaths='Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/TestResults/coverage.opencover.xml' /d:sonar.coverage.exclusions='**Test*.cs, **/Controllers/**/*, **DependencyInjector.cs, **Startup.cs, **Program.cs, Omicron.${{ inputs.project_name }}.Api/**' &&
           dotnet build Omicron.${{ inputs.project_name }}.Microservice.sln &&
           dotnet test Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test/Omicron.${{ inputs.project_name }}.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=\"TestResults/\" &&
