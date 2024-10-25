@@ -35,6 +35,8 @@ runs:
         shell: bash
 
       - name: Install SonarScanner for .NET
+        env:
+          DOTNET_CLI_HOME: /root
         run: |
           if ! dotnet tool list -g | grep -q dotnet-sonarscanner; then
             dotnet tool install --global dotnet-sonarscanner
