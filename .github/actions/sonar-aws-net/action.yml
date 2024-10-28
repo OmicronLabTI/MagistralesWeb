@@ -36,7 +36,7 @@ runs:
 
       - name: Add .NET global tools to PATH
         run: echo "PATH=/home/runner/.dotnet/tools:$PATH" >> $GITHUB_ENV
-        shell: bash  
+        shell: bash    
 
       - name: Copy and configure nuget.config
         working-directory: ${{ inputs.path }}
