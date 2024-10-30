@@ -48,6 +48,13 @@ runs:
 
     - name: Add dotnet tools to PATH
       run: echo "/root/.dotnet/tools" >> $GITHUB_PATH
+      shell: bash
+
+    - name: Verify SonarScanner Installation
+      run: |
+        echo "Verifying SonarScanner installation..."
+        dotnet sonarscanner --version || { echo "SonarScanner installation failed"; exit 1; }
+      shell: bash
       
 
     - name: Run SonarScanner
