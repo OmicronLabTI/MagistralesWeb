@@ -28,9 +28,9 @@ runs:
   using: "composite"
   steps:
     - name: Set up .NET
+      uses: actions/setup-dotnet@v2
       env:
         DOTNET_CLI_HOME: /root
-      uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ inputs.net_version }}
     
