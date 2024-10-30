@@ -20,11 +20,10 @@ inputs:
     required: false
     description: nexus pass
  
-
 runs:
   using: "composite"
   steps:
-      - name: Copy and configure nuget.config
+    - name: Copy and configure nuget.config
       working-directory: ${{ inputs.path }}
       run: |
         if [ -f nuget.config.template ]; then
