@@ -69,6 +69,11 @@ runs:
       run: dotnet restore
       shell: bash
 
+    - name: Add dotnet tools to PATH
+      run: echo "/home/runner/.dotnet/tools" >> $GITHUB_PATH
+      shell: bash
+
+
     - name: Run SonarScanner
       env:
         DOTNET_CLI_HOME: /root
