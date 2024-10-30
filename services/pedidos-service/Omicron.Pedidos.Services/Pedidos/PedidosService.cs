@@ -9,6 +9,7 @@
 namespace Omicron.Pedidos.Services.Pedidos
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -115,14 +116,16 @@ namespace Omicron.Pedidos.Services.Pedidos
                                 x.StatusForTecnic == ServiceConstants.Pendiente ||
                                 x.StatusForTecnic == ServiceConstants.Reasignado)
                     .ToList();
+
+                var usersqfb = await this.userService.PostSimpleUsers(userOrders.Select(x => x.Userid).ToList(), ServiceConstants.GetUsersById);
+                var allUsersQfb = JsonConvert.DeserializeObject<List<UserModel>>(usersqfb.Response.ToString());
+                UserModel user;
                 foreach (var order in userOrders)
                 {
-                    var usersqfb = await this.userService.PostSimpleUsers(new List<string> { order.Userid }, ServiceConstants.GetUsersById);
-                    var user = JsonConvert.DeserializeObject<List<UserModel>>(usersqfb.Response.ToString());
-                    order.QfbName = string.Concat(user.FirstOrDefault().FirstName, " ", user.FirstOrDefault().LastName);
+                    user = allUsersQfb.Any(x => x.Id == order.Userid) ? allUsersQfb.First(x => x.Id == order.Userid) : new UserModel();
+                    order.QfbName = string.Concat(user.FirstName, " ", user.LastName);
+                    order.Status = order.StatusForTecnic;
                 }
-
-                userOrders.ForEach(x => x.Status = x.StatusForTecnic);
             }
             else
             {
@@ -995,23 +998,22 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>tje data.</returns>
         private async Task<List<CompleteFormulaWithDetalle>> GetSapOrders(List<UserOrderModel> userOrders)
         {
-            var resultFormula = new List<CompleteFormulaWithDetalle>();
+            var resultFormula = new ConcurrentBag<CompleteFormulaWithDetalle>();
             var listsOfData = ServiceUtils.GetGroupsOfList(userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).ToList(), 20);
 
             await Task.WhenAll(listsOfData.Select(async x =>
             {
-                var route = $"{ServiceConstants.GetFormula}";
                 var listIds = x.Select(y => int.Parse(y.Productionorderid)).ToList();
-                var result = await this.sapAdapter.PostSapAdapter(listIds, route);
+                var result = await this.sapAdapter.PostSapAdapter(listIds, ServiceConstants.GetFormula);
 
-                lock (resultFormula)
+                var formula = JsonConvert.DeserializeObject<List<CompleteFormulaWithDetalle>>(JsonConvert.SerializeObject(result.Response));
+                foreach (var item in formula)
                 {
-                    var formula = JsonConvert.DeserializeObject<List<CompleteFormulaWithDetalle>>(JsonConvert.SerializeObject(result.Response));
-                    resultFormula.AddRange(formula);
+                    resultFormula.Add(item);
                 }
             }));
 
-            return resultFormula;
+            return resultFormula.ToList();
         }
 
         /// <summary>
