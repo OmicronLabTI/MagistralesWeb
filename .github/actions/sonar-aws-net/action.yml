@@ -44,6 +44,12 @@ runs:
           echo "dotnet-sonarscanner already installed"
         fi
       shell: bash
+      
+    - name: Verify SonarScanner Installation
+    run: |
+      echo "Verifying SonarScanner installation..."
+      dotnet sonarscanner --version || { echo "SonarScanner installation failed"; exit 1; }
+    shell: bash
 
     - name: Run SonarScanner
       env:
