@@ -1,0 +1,10 @@
+name: "Environments"
+description: "Environments"
+runs:
+  using: "composite"
+  steps:
+    - name: Set Environments
+      run: |
+        echo "/home/admin/.dotnet/tools:/home/admin/bin" >> $GITHUB_PATH
+        echo "HOME=/usr/share/dotnet" >> $GITHUB_ENV
+      shell: bash

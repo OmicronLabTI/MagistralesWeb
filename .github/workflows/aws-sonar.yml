@@ -74,6 +74,9 @@ jobs:
         id: changeset
         run: echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
 
+      - name: Set Environments
+        uses: ./.github/actions/environments-aws
+        
       - name: Test frontend/web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-aws-web
