@@ -81,7 +81,7 @@
                     </div>
                     <div class="form-field-right">
                         <div class="dates-container" [ngClass]=" findOrdersForm.invalid && findOrdersForm.get('docNum').value !== null ? 'error-on-range-date' : ''"
-                             matTooltip="El rango de fechas debe ser menor a 3 meses" [matTooltipDisabled]="!findOrdersForm.invalid">
+                             matTooltip="El rango de fechas debe ser menor a 15 días" [matTooltipDisabled]="!findOrdersForm.invalid">
                             <div class="date-init">
                                 <mat-form-field class="date-picker-custom" appearance="outline" >
                                     <mat-label>fecha de</mat-label>
