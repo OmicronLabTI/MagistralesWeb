@@ -127,7 +127,7 @@ metadata:
   labels:
     app: usuarios
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: usuarios
@@ -163,8 +163,8 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 223m
-              memory: 440Mi
+              cpu: 279m
+              memory: 550Mi
             requests:
               cpu: 3m
               memory: 206Mi
@@ -193,7 +193,7 @@ metadata:
   labels:
     app: sapadapter
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: sapadapter
@@ -240,7 +240,7 @@ spec:
           resources:
             limits:
               cpu: 1245m
-              memory: 798Mi
+              memory: 1063Mi
             requests:
               cpu: 8m
               memory: 272Mi
@@ -269,7 +269,7 @@ metadata:
   labels:
     app: pedidos
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: pedidos
@@ -340,11 +340,11 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 476m
-              memory: 1083Mi
+              cpu: 670m
+              memory: 1500Mi
             requests:
-              cpu: 184m
-              memory: 463Mi
+              cpu: 62m
+              memory: 155Mi
       imagePullSecrets:
         - name: pullsecret
 ---
