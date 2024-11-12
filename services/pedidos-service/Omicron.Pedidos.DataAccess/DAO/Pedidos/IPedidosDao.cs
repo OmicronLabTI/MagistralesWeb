@@ -297,8 +297,10 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// Returns the user order by user id.
         /// </summary>
         /// <param name="types">the list of users.</param>
+        /// <param name="statusDelivered">Status delivered.</param>
+        /// <param name="dateToLook">Date To Look</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types);
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types, List<string> statusDelivered, DateTime dateToLook);
 
         /// <summary>
         /// Get the data by finalized date.

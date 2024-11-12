@@ -193,7 +193,7 @@ metadata:
   labels:
     app: sapadapter
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: sapadapter
@@ -240,7 +240,7 @@ spec:
           resources:
             limits:
               cpu: 1245m
-              memory: 798Mi
+              memory: 1063Mi
             requests:
               cpu: 8m
               memory: 272Mi
@@ -269,7 +269,7 @@ metadata:
   labels:
     app: pedidos
 spec:
-  replicas: 4
+  replicas: 3
   selector:
     matchLabels:
       app: pedidos
@@ -340,8 +340,8 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 250m
-              memory: 700Mi
+              cpu: 670m
+              memory: 1500Mi
             requests:
               cpu: 62m
               memory: 155Mi

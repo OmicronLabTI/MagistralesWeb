@@ -198,13 +198,9 @@ namespace Omicron.Pedidos.Services.Pedidos
             var dataToLook = await this.GetParametersDateToLook(ServiceConstants.SentMaxDaysToLook);
             var arrayStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status].Split(",").ToList() : ServiceConstants.StatusLocal;
             var type = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.Local.ToLower());
+            var userOrderByType = await this.pedidosDao.GetUserOrderByInvoiceType(new List<string> { type }, ServiceConstants.StatusDelivered, dataToLook.Item1);
 
-            var userOrderByType = (await this.pedidosDao.GetUserOrderByInvoiceType(new List<string> { type })).ToList();
-
-            var ordersToLoop = userOrderByType.Where(x => !ServiceConstants.StatusDelivered.Contains(x.StatusInvoice)).ToList();
-            ordersToLoop.AddRange(userOrderByType.Where(x => ServiceConstants.StatusDelivered.Contains(x.StatusInvoice) && x.InvoiceStoreDate >= dataToLook.Item1));
-
-            var orderToReturn = ordersToLoop
+            var orderToReturn = userOrderByType
                 .Where(x => arrayStatus.Contains(x.StatusInvoice))
                 .DistinctBy(y => y.InvoiceId)
                 .Select(x => new
@@ -214,8 +210,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.InvoiceStoreDate,
                     x.StatusInvoice,
                     x.UserInvoiceStored,
-                })
-                .ToList();
+                });
 
             return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, dataToLook.Item2);
         }
