@@ -203,12 +203,14 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
     getMaxDate() {
         this.dateFin.setTime(new Date(this.findOrdersForm.get('ffin').value).getTime());
-        this.maxDate.setTime(new Date(this.findOrdersForm.get('fini').value).getTime() + MODAL_FIND_ORDERS.ninetyDays);
+        this.maxDate.setTime(new Date(this.findOrdersForm.get('fini').value).getTime() + MODAL_FIND_ORDERS.fifteenDays);
     }
     resetSearchParams() {
         this.getDisableForDocNum();
         this.getDisableOnlyForDocNum();
         this.enableAllParamsSearch();
+        this.getMaxDate();
+        this.findOrdersForm.updateValueAndValidity();
     }
     getDisableForDocNum() {
         this.isToResetData = true;
