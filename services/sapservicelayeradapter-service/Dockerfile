@@ -1,18 +1,17 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
-
+ARG NUGET_REPO_URL="https://axity-992382646884.d.codeartifact.us-east-1.amazonaws.com/nuget/axity-nuget-repo/v3/index.json"
+ARG NUGET_REPO_NAME="axity/axity-nuget-repo"
+ARG NUGET_REPO_USER="aws"
 ARG NUGET_AUTH_TOKEN
-ARG NUGET_USER_NAME
-
 WORKDIR /source
 COPY --link . .
-
-COPY ./nuget.config.template ./nuget.config
-RUN sed -i -e "s/USER/$NUGET_USER_NAME/g" -e "s/PW/$NUGET_AUTH_TOKEN/g" nuget.config 
+RUN --mount=type=secret,id=nuget_auth_token,required \
+    # export NUGET_AUTH_TOKEN="$(cat /run/secrets/nuget_auth_token)" && \
+    dotnet nuget add source "${NUGET_REPO_URL}" -n "${NUGET_REPO_NAME}" -u "${NUGET_REPO_USER}" -p "${NUGET_AUTH_TOKEN}" --store-password-in-clear-text
 
 RUN dotnet restore Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj
 COPY --link . .
 RUN dotnet publish Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj --no-restore -o /app
-
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
