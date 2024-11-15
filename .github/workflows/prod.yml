@@ -102,11 +102,11 @@ jobs:
           nexus_user: ${{ secrets.NEXUS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}      
 
-      - name: Azure WebApp
-        uses: Azure/webapps-deploy@v2.2.4
-        with:
-          app-name: omicronlab
-          images: omicron.azurecr.io/omicronprod/omicron-appiosformulas-web-repository:latest
+      #- name: Azure WebApp
+      #  uses: Azure/webapps-deploy@v2.2.4
+      #  with:
+      #    app-name: omicronlab
+      #    images: omicron.azurecr.io/omicronprod/omicron-appiosformulas-web-repository:latest
 
       - name: Kubernetes deploy
         working-directory: deploy/prod
