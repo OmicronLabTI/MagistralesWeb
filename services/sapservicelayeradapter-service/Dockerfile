@@ -1,8 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build-env
-WORKDIR /app
+WORKDIR /source
 COPY --link . ./
-RUN dotnet restore "/app/Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj"
-RUN dotnet publish "/app/Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj" -c Release -o out
+RUN dotnet restore Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj
+RUN dotnet publish Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj --no-restore -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
@@ -10,7 +10,7 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LANG=es_MX.UTF-8
 RUN apk add --no-cache icu-data-full icu-libs tzdata
 WORKDIR /app
-COPY --link --from=build-env /app/out .
+COPY --link --from=build /app .
 USER $APP_UID
 EXPOSE 8080
 
