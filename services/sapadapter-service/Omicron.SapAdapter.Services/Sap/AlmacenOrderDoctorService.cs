@@ -214,8 +214,8 @@ namespace Omicron.SapAdapter.Services.Sap
             foreach (var doctor in doctors)
             {
                 var orders = sapOrders.Where(x => x.Medico == doctor).ToList();
-                var totalOrders = orders.DistinctBy(x => x.DocNum).Count();
-                var totalItems = orders.DistinctBy(y => new { y.DocNum, y.Detalles.ProductoId }).Count();
+                var totalOrders = orders.UtilsDistinctBy(x => x.DocNum).Count();
+                var totalItems = orders.UtilsDistinctBy(y => new { y.DocNum, y.Detalles.ProductoId }).Count();
                 var doctorAddress = sapOrders.FirstOrDefault(x => x.Medico == doctor);
                 var address = doctorAddress?.Address?.Replace("\r", " ").Replace("  ", " ").ToUpper() ?? string.Empty;
 

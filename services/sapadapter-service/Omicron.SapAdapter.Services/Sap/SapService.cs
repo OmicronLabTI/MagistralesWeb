@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using System.Text.Json;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Xml.Linq;
@@ -173,7 +174,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var listUsers = await this.GetUsers(userOrders);
 
             var listToProcess = details.Where(y => y.OrdenFabricacionId == 0).ToList();
-            listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).DistinctBy(y => y.OrdenFabricacionId));
+            listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).UtilsDistinctBy(y => y.OrdenFabricacionId));
             listToProcess = listToProcess.OrderBy(x => x.OrdenFabricacionId).ThenBy(x => x.DescripcionProducto).ToList();
 
             foreach (var x in listToProcess)
@@ -782,7 +783,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = JsonConvert.DeserializeObject<List<int>>(JsonConvert.SerializeObject(resultOrders.Response));
             var detailsFormula = (await this.sapDao.GetDetalleFormulaByProdOrdId(userOrders)).Where(x => ServiceShared.CalculateOr(x.ItemCode.Contains("EN"), x.ItemCode.Contains("EM"))).ToList();
             var products = (await this.sapDao.GetProductByIds(detailsFormula.Select(x => x.ItemCode).Distinct().ToList())).ToList();
-
             var packaginList = products.Select(product =>
             new PackingRequiredModel
             {

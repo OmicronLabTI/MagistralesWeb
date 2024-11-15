@@ -8,8 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services.SapServiceLayer
 {
-    using NUnit.Framework;
-    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.Services.SapServiceLayerAdapter;
 
     /// <summary>
@@ -31,7 +29,7 @@ namespace Omicron.Pedidos.Test.Services.SapServiceLayer
             var result = client.PostAsync(new { }, "endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -47,7 +45,7 @@ namespace Omicron.Pedidos.Test.Services.SapServiceLayer
             var result = client.PatchAsync("endpoint", "{\"key\": \"value\"}").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>

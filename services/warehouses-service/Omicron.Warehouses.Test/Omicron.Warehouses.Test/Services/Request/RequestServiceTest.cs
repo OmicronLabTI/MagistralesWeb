@@ -8,19 +8,6 @@
 
 namespace Omicron.Warehouses.Test.Services.Request
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Warehouses.DataAccess.DAO.Request;
-    using Omicron.Warehouses.Entities.Context;
-    using Omicron.Warehouses.Entities.Model;
-    using Omicron.Warehouses.Services.Clients;
-    using Omicron.Warehouses.Services.Constants;
-    using Omicron.Warehouses.Services.Redis;
-    using Omicron.Warehouses.Services.Request;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -190,8 +177,8 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.CreateRawMaterialRequest(this.userId, request);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.AreEqual(ErrorReasonConstants.ErrorToSubmitFile, response.UserError);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.UserError, Is.EqualTo(ErrorReasonConstants.ErrorToSubmitFile));
         }
 
         /// <summary>
@@ -227,7 +214,7 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.CreateRawMaterialRequest("otherUser", request);
 
             // assert
-            Assert.AreEqual(false, response.Success);
+            Assert.That(response.Success, Is.EqualTo(false));
         }
 
         /// <summary>
@@ -242,10 +229,10 @@ namespace Omicron.Warehouses.Test.Services.Request
 
             // assert
             var request = (RawMaterialRequestModel)response.Response;
-            Assert.IsTrue(response.Success);
+            Assert.That(response.Success, Is.True);
 
-            Assert.AreEqual(4, request.ProductionOrderIds[0]);
-            Assert.AreEqual(1, request.OrderedProducts.Count);
+            Assert.That(request.ProductionOrderIds[0], Is.EqualTo(4));
+            Assert.That(request.OrderedProducts.Count, Is.EqualTo(1));
         }
 
         /// <summary>
@@ -259,8 +246,8 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.GetRawMaterialRequestByProductionOrderId(2000);
 
             // assert
-            Assert.IsTrue(response.Success);
-            Assert.IsNull(response.Response);
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Response, Is.Null);
         }
 
         /// <summary>
@@ -278,14 +265,14 @@ namespace Omicron.Warehouses.Test.Services.Request
             var response = await this.requestService.GetRawMaterialPreRequest(salesOrders, productionOrderIds);
 
             // assert
-            Assert.IsTrue(response.Success);
-            Assert.NotNull(response.Response);
+            Assert.That(response.Success, Is.True);
+            Assert.That(response.Response, Is.Not.Null);
 
             var preRequest = (RawMaterialRequestModel)response.Response;
-            Assert.AreEqual(2, preRequest.ProductionOrderIds.Count);
-            Assert.IsTrue(!preRequest.ProductionOrderIds.Contains(3));
-            Assert.AreEqual(3, preRequest.OrderedProducts.Count);
-            Assert.IsTrue(!preRequest.OrderedProducts.Any(x => x.ProductId.Equals("2")));
+            Assert.That(preRequest.ProductionOrderIds.Count, Is.EqualTo(2));
+            Assert.That(!preRequest.ProductionOrderIds.Contains(3), Is.True);
+            Assert.That(preRequest.OrderedProducts.Count, Is.EqualTo(3));
+            Assert.That(!preRequest.OrderedProducts.Any(x => x.ProductId.Equals("2")), Is.True);
         }
 
         /// <summary>
@@ -298,9 +285,9 @@ namespace Omicron.Warehouses.Test.Services.Request
         private void CheckAction(ResultModel result, bool success, int numberOfSucceess, int numberOfFails)
         {
             var content = (SuccessFailResults<object>)result.Response;
-            Assert.AreEqual(success, result.Success);
-            Assert.AreEqual(numberOfFails, content.Failed.Count);
-            Assert.AreEqual(numberOfSucceess, content.Success.Count);
+            Assert.That(result.Success, Is.EqualTo(success));
+            Assert.That(content.Failed.Count, Is.EqualTo(numberOfFails));
+            Assert.That(content.Success.Count, Is.EqualTo(numberOfSucceess));
         }
     }
 }

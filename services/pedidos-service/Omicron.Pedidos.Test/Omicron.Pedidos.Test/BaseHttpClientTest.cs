@@ -7,17 +7,6 @@
 // </summary>
 namespace Omicron.Pedidos.Test
 {
-    using System;
-    using System.Net;
-    using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using AutoFixture;
-    using Moq;
-    using Moq.Protected;
-    using Omicron.Pedidos.Entities.Model;
-    using Serilog;
-
     /// <summary>
     /// Base class for http clients.
     /// </summary>

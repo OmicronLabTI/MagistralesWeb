@@ -8,11 +8,6 @@
 
 namespace Omicron.Catalogos.Test
 {
-    using System;
-    using System.Collections.Generic;
-    using Omicron.Catalogos.Dtos.User;
-    using Omicron.Catalogos.Entities.Model;
-
     /// <summary>
     /// Class Base Test.
     /// </summary>

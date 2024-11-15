@@ -8,17 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Services.Redis;
-    using Omicron.SapAdapter.Services.Sap;
-    using Serilog;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -85,7 +74,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.sapDxpService.GetOrdersActive(ordersId);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

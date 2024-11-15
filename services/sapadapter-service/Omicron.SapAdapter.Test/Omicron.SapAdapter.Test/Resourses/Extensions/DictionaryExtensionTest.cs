@@ -7,11 +7,6 @@
 // </summary>
 namespace Omicron.SapAdapter.Test.Resourses.Extensions
 {
-    using System;
-    using System.Collections.Generic;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Resources.Extensions;
-
     /// <summary>
     /// Dictionary extensions tests.
     /// </summary>
@@ -42,8 +37,8 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
             var parseOperationResult = parameters.TryGet<string, string, int>(key, defaultValue, out int result);
 
             // Assert
-            Assert.IsTrue(parseOperationResult);
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(parseOperationResult);
+            Assert.That(result.Equals(expectedResult));
         }
 
         /// <summary>
@@ -66,7 +61,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
             var result = parameters.Get<string, string, int>(key);
 
             // Assert
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(result.Equals(expectedResult));
         }
 
         /// <summary>
@@ -87,7 +82,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
             var result = parameters.Get<string, string, int>(key);
 
             // Assert
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(result.Equals(expectedResult));
         }
 
         /// <summary>
@@ -129,7 +124,7 @@ namespace Omicron.SapAdapter.Test.Resourses.Extensions
             var result = parameters.DecodeQueryString();
 
             // Assert
-            Assert.AreEqual(expectedResult, result[key]);
+            Assert.That(result[key].Equals(expectedResult));
         }
     }
 }

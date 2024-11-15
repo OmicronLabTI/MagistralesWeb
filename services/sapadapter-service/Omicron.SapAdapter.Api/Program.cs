@@ -10,7 +10,7 @@ namespace Omicron.SapAdapter.Api
 {
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
-    using Steeltoe.Extensions.Configuration.PlaceholderCore;
+    using Steeltoe.Extensions.Configuration.Placeholder;
 
     /// <summary>
     /// Class Program.

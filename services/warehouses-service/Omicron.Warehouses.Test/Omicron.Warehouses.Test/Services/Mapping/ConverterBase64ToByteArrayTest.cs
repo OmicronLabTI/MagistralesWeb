@@ -8,12 +8,6 @@
 
 namespace Omicron.Warehouses.Test.Services.Mapping
 {
-    using System.IO;
-    using System.Linq;
-    using NUnit.Framework;
-    using Omicron.Warehouses.Services.Mapping;
-    using Omicron.Warehouses.Test;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -41,7 +35,7 @@ namespace Omicron.Warehouses.Test.Services.Mapping
             var result = this.converter.Convert(File.ReadAllText("SignatureBase64.txt"), null);
 
             // assert
-            Assert.IsFalse(result.SequenceEqual(new byte[0]));
+            Assert.That(result.SequenceEqual(new byte[0]), Is.False);
         }
 
         /// <summary>
@@ -54,7 +48,7 @@ namespace Omicron.Warehouses.Test.Services.Mapping
             var result = this.converter.Convert(string.Empty, null);
 
             // assert
-            Assert.IsTrue(result.SequenceEqual(new byte[0]));
+            Assert.That(result.SequenceEqual(new byte[0]), Is.True);
         }
     }
 }
