@@ -1,8 +1,11 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /source
-COPY --link . ./
+COPY --link . .
+
 RUN dotnet restore Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj
+COPY --link . .
 RUN dotnet publish Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj --no-restore -o /app
+
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
@@ -13,5 +16,4 @@ WORKDIR /app
 COPY --link --from=build /app .
 USER $APP_UID
 EXPOSE 8080
-
 ENTRYPOINT ["dotnet", "Omicron.SapServiceLayerAdapter.Api.dll"]
