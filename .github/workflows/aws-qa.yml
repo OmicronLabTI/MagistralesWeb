@@ -120,7 +120,7 @@ jobs:
       - name: Get AWS Nuget Token    
         if: ${{ (contains(steps.changeset.outputs.changes, 'services/')) || (inputs.force_build) }}
         run: |
-          echo "NUGET_AUTH_TOKEN=aws codeartifact get-authorization-token --domain axity --domain-owner 992382646884 --region us-east-1 --query authorizationToken --output text" >> $GITHUB_ENV
+          echo "NUGET_AUTH_TOKEN="aws codeartifact get-authorization-token --domain axity --domain-owner 992382646884 --region us-east-1 --query authorizationToken --output text"" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

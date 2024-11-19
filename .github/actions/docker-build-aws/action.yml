@@ -35,4 +35,5 @@ runs:
         docker build -f ${{ inputs.dockerfile }} --build-arg NUGET_AUTH_TOKEN=${{ inputs.aws_nuget_auth_token }} --build-arg NUGET_USER_NAME=${{ inputs.nexus_user }} -t ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }} -t ${{ inputs.registry }}/${{ inputs.repository }}:latest . --progress=plain
         docker push ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
         docker push ${{ inputs.registry }}/${{ inputs.repository }}:latest
+        docker image prune -af
       shell: bash
