@@ -6,7 +6,7 @@ ARG NUGET_AUTH_TOKEN
 WORKDIR /source
 COPY --link . .
 RUN --mount=type=secret,id=nuget_auth_token,required \
-    # export NUGET_AUTH_TOKEN="$(cat /run/secrets/nuget_auth_token)" && \
+    export NUGET_AUTH_TOKEN="$(cat /run/secrets/nuget_auth_token)" && \
     dotnet nuget add source "${NUGET_REPO_URL}" -n "${NUGET_REPO_NAME}" -u "${NUGET_REPO_USER}" -p "${NUGET_AUTH_TOKEN}" --store-password-in-clear-text
 
 RUN dotnet restore Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj
