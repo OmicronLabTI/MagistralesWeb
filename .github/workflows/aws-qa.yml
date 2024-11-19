@@ -232,7 +232,7 @@ jobs:
           tag: ${{ github.sha }}
           nexus_user: ${{ secrets.NEXUS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
-          aws_nuget_auth_token:  ${{ env.NUGET_AUTH_TOKEN }}
+          nuget_auth_token:  ${{ env.NUGET_AUTH_TOKEN }}
 
       - name: Update kube config
         run: aws eks update-kubeconfig --name ${{ secrets.AWS_EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_EKS_REGION }}
