@@ -23,7 +23,7 @@ inputs:
     description: "Dockerfile name"
     required: false
     default: Dockerfile
-  aws_nuget_auth_token:
+  nuget_auth_token:
     description: "Nuget Token Authorization"
     required: false
 runs:
@@ -32,7 +32,7 @@ runs:
     - name: Build and push docker image to Amazon ECR
       working-directory: ${{ inputs.working_directory }}
       run: |
-        docker build -f ${{ inputs.dockerfile }} --build-arg NUGET_AUTH_TOKEN=${{ inputs.aws_nuget_auth_token }} --build-arg NUGET_USER_NAME=${{ inputs.nexus_user }} -t ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }} -t ${{ inputs.registry }}/${{ inputs.repository }}:latest . --progress=plain
+        docker build -f ${{ inputs.dockerfile }} --build-arg NUGET_AUTH_TOKEN=${{ inputs.nuget_auth_token }} --build-arg NUGET_USER_NAME=${{ inputs.nexus_user }} -t ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }} -t ${{ inputs.registry }}/${{ inputs.repository }}:latest . --progress=plain
         docker push ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
         docker push ${{ inputs.registry }}/${{ inputs.repository }}:latest
         docker image prune -af
