@@ -25,6 +25,7 @@ env:
   SUBNET_ID: subnet-073b7bac3af8d3c53
   SECURITY_GROUP_ID: sg-09c9844682ec712ca
   VOLUME_SIZE_GiB: "20"
+  NUGET_AUTH_TOKEN: ""
 
 jobs:
   start-runner:
