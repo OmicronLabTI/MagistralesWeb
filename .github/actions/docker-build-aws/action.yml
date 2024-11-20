@@ -44,15 +44,26 @@ runs:
 
     - name: Get AWS Nuget Token Action
       run: |
-        CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain axity --domain-owner 992382646884 --region ${{ inputs.axity_aws_region }} --query authorizationToken --output text)
+        CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
+          --domain axity \
+          --domain-owner 992382646884 \
+          --region ${{ inputs.axity_aws_region }} \
+          --query authorizationToken \
+          --output text)
+
         echo "NUGET_AUTH_TOKEN=$CODEARTIFACT_AUTH_TOKEN" >> $GITHUB_ENV
+        echo "::set-output name=nuget_auth_token::$CODEARTIFACT_AUTH_TOKEN"
       shell: bash
 
     - name: Build and push docker image to Amazon ECR
       working-directory: ${{ inputs.working_directory }}
       run: |
-        docker build -f ${{ inputs.dockerfile }} --build-arg NUGET_AUTH_TOKEN=${{ inputs.aws_nuget_auth_token }} --build-arg NUGET_USER_NAME=${{ inputs.axity_aws_user }} -t ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }} -t ${{ inputs.registry }}/${{ inputs.repository }}:latest . --progress=plain
-        docker push ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
-        docker push ${{ inputs.registry }}/${{ inputs.repository }}:latest
-        docker image prune -af
+         docker build -f ${{ inputs.dockerfile }} \
+          --build-arg NUGET_AUTH_TOKEN=${{ steps.get-nuget-token.outputs.nuget_auth_token }} \
+          --build-arg NUGET_USER_NAME=${{ inputs.axity_aws_user }} \
+          -t ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }} \
+          -t ${{ inputs.registry }}/${{ inputs.repository }}:latest . --progress=plain
+         docker push ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
+         docker push ${{ inputs.registry }}/${{ inputs.repository }}:latest
+         docker image prune -af
       shell: bash
