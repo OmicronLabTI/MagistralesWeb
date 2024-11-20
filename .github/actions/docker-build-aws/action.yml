@@ -51,8 +51,15 @@ runs:
           --query authorizationToken \
           --output text)
 
+        echo "NUGET_AUTH_TOKEN=$CODEARTIFACT_AUTH_TOKEN"
         echo "NUGET_AUTH_TOKEN=$CODEARTIFACT_AUTH_TOKEN" >> $GITHUB_ENV
         echo "::set-output name=nuget_auth_token::$CODEARTIFACT_AUTH_TOKEN"
+      shell: bash
+
+    - name: Print NuGet Token
+      run: |
+        echo "NUGET_AUTH_TOKEN from GITHUB_ENV: $NUGET_AUTH_TOKEN"
+        echo "nuget_auth_token from step output: ${{ steps.get-nuget-token.outputs.nuget_auth_token }}"
       shell: bash
 
     - name: Build and push docker image to Amazon ECR
