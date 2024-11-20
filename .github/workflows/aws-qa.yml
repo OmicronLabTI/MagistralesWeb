@@ -143,19 +143,6 @@ jobs:
         run: |
           echo "AWS_ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
 
-      - name: Configure AWS credentials Axity
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AXITY_AWS_REGION }}
-
-
-      - name: Get AWS Nuget Token    
-        if: ${{ (contains(steps.changeset.outputs.changes, 'services/')) || (inputs.force_build) }}
-        run: |
-          echo "NUGET_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain axity --domain-owner 992382646884 --region us-east-1 --query authorizationToken --output text)" >> $GITHUB_ENV
-
       - name: Docker Build an Push Catalogos
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
         uses: ./.github/actions/docker-build-aws
@@ -164,7 +151,7 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: catalogosmagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_user: ${{ vars.AXITY_AWS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
 
       - name: Docker Build an Push OauthServer
@@ -175,7 +162,7 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: oauthservermagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_user: ${{ vars.AXITY_AWS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
 
       - name: Docker Build an Push Pedidos
@@ -186,7 +173,7 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: pedidosmagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_user: ${{ vars.AXITY_AWS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
 
       - name: Docker Build an Push Reporting
@@ -197,7 +184,7 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: reportingmagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_user: ${{ vars.AXITY_AWS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
 
       - name: Docker Build an Push SapAdapter
@@ -208,7 +195,7 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: sapadaptermagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_user: ${{ vars.AXITY_AWS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
 
       - name: Docker Build an Push Usuarios
@@ -219,7 +206,7 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: usuariosmagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_user: ${{ vars.AXITY_AWS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
 
       - name: Docker Build an Push Warehouses
@@ -230,7 +217,7 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: warehousesmagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ secrets.NEXUS_USER }}
+          nexus_user: ${{ vars.AXITY_AWS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
 
       - name: Docker Build an Push SapServiceLayerAdapter
@@ -241,9 +228,10 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: sapservicelayeradaptermagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ secrets.NEXUS_USER }}
-          nexus_pass: ${{ secrets.NEXUS_PASS }}
-          aws_nuget_auth_token:  ${{ env.NUGET_AUTH_TOKEN }}
+          nexus_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
       - name: Update kube config
         run: aws eks update-kubeconfig --name ${{ secrets.AWS_EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_EKS_REGION }}
