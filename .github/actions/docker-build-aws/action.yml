@@ -20,15 +20,27 @@ inputs:
     description: 'Nexus password'
     required: false
   dockerfile:
-    description: "Dockerfile name"
+    description: 'Dockerfile name'
     required: false
     default: Dockerfile
   aws_nuget_auth_token:
-    description: "Nuget Token Authorization"
+    description: 'Nuget Token Authorization'
     required: false
 runs:
   using: "composite"
   steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+        
+    - name: Get AWS Nuget Token Action
+      run: |
+        CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain axity --domain-owner 992382646884 --region us-east-1 --query authorizationToken --output text)
+        echo "NUGET_AUTH_TOKEN=$CODEARTIFACT_AUTH_TOKEN" >> $GITHUB_ENV
+
     - name: Build and push docker image to Amazon ECR
       working-directory: ${{ inputs.working_directory }}
       run: |
