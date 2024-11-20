@@ -25,4 +25,3 @@ USER $APP_UID
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "Omicron.SapServiceLayerAdapter.Api.dll"]
 
-
