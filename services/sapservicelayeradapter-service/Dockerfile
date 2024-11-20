@@ -26,3 +26,4 @@ EXPOSE 8080
 ENTRYPOINT ["dotnet", "Omicron.SapServiceLayerAdapter.Api.dll"]
 
 
+
