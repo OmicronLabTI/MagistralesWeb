@@ -148,6 +148,8 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AXITY_AWS_REGION }}
+
 
       - name: Get AWS Nuget Token    
         if: ${{ (contains(steps.changeset.outputs.changes, 'services/')) || (inputs.force_build) }}
