@@ -2,7 +2,6 @@
 global using AutoFixture;
 global using AutoMapper;
 global using Axity.Commons.Exceptions;
-global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Configuration;
 global using Moq;
 global using Moq.Protected;

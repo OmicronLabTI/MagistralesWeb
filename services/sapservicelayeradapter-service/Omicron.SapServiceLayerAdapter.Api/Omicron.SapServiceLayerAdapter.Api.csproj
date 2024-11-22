@@ -32,7 +32,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Omicron.SapServiceLayerAdapter.Common\Omicron.SapServiceLayerAdapter.Common.csproj" />
     <ProjectReference Include="..\Omicron.SapServiceLayerAdapter.Facade\Omicron.SapServiceLayerAdapter.Facade.csproj" />
-    <ProjectReference Include="..\Omicron.SapServiceLayerAdapter.Persistence\Omicron.SapServiceLayerAdapter.Persistence.csproj" />
     <ProjectReference Include="..\Omicron.SapServiceLayerAdapter.Services\Omicron.SapServiceLayerAdapter.Services.csproj" />
   </ItemGroup>
 
