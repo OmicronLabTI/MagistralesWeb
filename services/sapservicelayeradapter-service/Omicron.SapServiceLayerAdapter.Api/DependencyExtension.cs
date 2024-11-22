@@ -45,7 +45,6 @@ namespace Omicron.SapServiceLayerAdapter.Api
             });
 
             webApplication.Services.AddFacade();
-            webApplication.Services.AddPersistence(webApplication.Configuration);
             webApplication.Services.AddServices();
             webApplication.Services.AddAutoMapper();
 

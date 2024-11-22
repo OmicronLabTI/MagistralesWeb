@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Omicron.SapServiceLayerAdapter.Common\Omicron.SapServiceLayerAdapter.Common.csproj" />
-    <ProjectReference Include="..\Omicron.SapServiceLayerAdapter.Persistence\Omicron.SapServiceLayerAdapter.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>
