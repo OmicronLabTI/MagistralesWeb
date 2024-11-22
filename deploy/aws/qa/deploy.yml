@@ -78,6 +78,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -143,6 +145,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -208,6 +212,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: SAP_CONNECTION_STRING_SQL_SERVER
               valueFrom:
                 secretKeyRef:
@@ -280,6 +286,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -355,6 +363,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -420,6 +430,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -480,6 +492,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: SAP_SERVICE_LAYER_URL
               valueFrom:
                 secretKeyRef:
