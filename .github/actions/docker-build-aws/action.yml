@@ -53,11 +53,6 @@ runs:
         echo "NUGET_AUTH_TOKEN=$CODEARTIFACT_AUTH_TOKEN" >> $GITHUB_ENV
       shell: bash
 
-    - name: Print NuGet Token
-      run: |
-        echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA NUGET_AUTH_TOKEN from GITHUB_ENV: $NUGET_AUTH_TOKEN"
-      shell: bash
-
     - name: Build and push docker image to Amazon ECR
       working-directory: ${{ inputs.working_directory }}
       run: |
