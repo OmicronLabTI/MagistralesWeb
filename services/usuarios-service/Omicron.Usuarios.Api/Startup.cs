@@ -61,8 +61,6 @@ namespace Omicron.Usuarios.Api
         /// <param name="services">Service Collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
-
             DependencyInjector.RegisterServices(services);
             DependencyInjector.AddAutoMapper();
             DependencyInjector.AddDbContext(this.Configuration);
@@ -74,7 +72,7 @@ namespace Omicron.Usuarios.Api
             services.AddSingleton(Log.Logger);
             this.AddCorsSvc(services);
 
-            var mvcBuilder = services.AddMvc();
+            var mvcBuilder = services.AddControllers();
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomActionFilterAttribute(Log.Logger)));
             mvcBuilder.AddMvcOptions(p => p.Filters.Add(new CustomExceptionFilterAttribute(Log.Logger)));
 
@@ -91,8 +89,6 @@ namespace Omicron.Usuarios.Api
                         Url = new System.Uri(this.Configuration["AxityUrl"]),
                     },
                 });
-
-                c.OperationFilter<AddAuthorizationHeaderParameterOperationFilter>();
             });
 
             services.AddHttpClient("pedidoservice", c =>
