@@ -151,8 +151,10 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: catalogosmagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ vars.AXITY_AWS_USER }}
-          nexus_pass: ${{ secrets.NEXUS_PASS }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
       - name: Docker Build an Push OauthServer
         if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
@@ -162,8 +164,10 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: oauthservermagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ vars.AXITY_AWS_USER }}
-          nexus_pass: ${{ secrets.NEXUS_PASS }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
       - name: Docker Build an Push Pedidos
         if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
@@ -173,8 +177,10 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: pedidosmagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ vars.AXITY_AWS_USER }}
-          nexus_pass: ${{ secrets.NEXUS_PASS }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
       - name: Docker Build an Push Reporting
         if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
@@ -184,8 +190,10 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: reportingmagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ vars.AXITY_AWS_USER }}
-          nexus_pass: ${{ secrets.NEXUS_PASS }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
       - name: Docker Build an Push SapAdapter
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
@@ -195,8 +203,10 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: sapadaptermagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ vars.AXITY_AWS_USER }}
-          nexus_pass: ${{ secrets.NEXUS_PASS }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
       - name: Docker Build an Push Usuarios
         if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
@@ -206,8 +216,10 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: usuariosmagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ vars.AXITY_AWS_USER }}
-          nexus_pass: ${{ secrets.NEXUS_PASS }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
       - name: Docker Build an Push Warehouses
         if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
@@ -217,8 +229,10 @@ jobs:
           registry: ${{ env.AWS_ECR_REGISTRY }}
           repository: warehousesmagistrales
           tag: ${{ github.sha }}
-          nexus_user: ${{ vars.AXITY_AWS_USER }}
-          nexus_pass: ${{ secrets.NEXUS_PASS }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
       - name: Docker Build an Push SapServiceLayerAdapter
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
