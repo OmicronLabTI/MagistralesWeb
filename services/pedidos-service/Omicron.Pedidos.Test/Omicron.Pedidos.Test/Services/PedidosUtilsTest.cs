@@ -8,15 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Services.Redis;
-    using Omicron.Pedidos.Services.Utils;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -40,7 +31,7 @@ namespace Omicron.Pedidos.Test.Services
             await service.UpdateMostUsedComponents(listIds, "redisComponents");
 
             // assert
-            Assert.IsNotNull(listIds);
+            Assert.That(listIds, Is.Not.Null);
         }
 
         /// <summary>
@@ -68,7 +59,7 @@ namespace Omicron.Pedidos.Test.Services
             await service.UpdateMostUsedComponents(listIds, "redisComponents");
 
             // assert
-            Assert.IsNotNull(listIds);
+            Assert.That(listIds, Is.Not.Null);
         }
     }
 }

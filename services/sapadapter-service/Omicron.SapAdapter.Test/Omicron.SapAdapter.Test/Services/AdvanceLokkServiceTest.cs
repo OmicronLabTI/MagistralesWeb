@@ -8,31 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using MediatR;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Dtos.DxpModels;
-    using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Services.Almacen;
-    using Omicron.SapAdapter.Services.Catalog;
-    using Omicron.SapAdapter.Services.Constants;
-    using Omicron.SapAdapter.Services.Doctors;
-    using Omicron.SapAdapter.Services.Mediator.Commands;
-    using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.ProccessPayments;
-    using Omicron.SapAdapter.Services.Redis;
-    using Omicron.SapAdapter.Services.Sap;
-    using Omicron.SapAdapter.Services.User;
-    using Serilog;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -150,11 +125,11 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            Assert.IsNotNull(result);
-            Assert.IsEmpty(cards.CardInvoice);
-            Assert.IsEmpty(cards.CardDelivery);
-            Assert.IsEmpty(cards.CardDistribution);
-            Assert.IsEmpty(cards.CardOrder);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardInvoice, Is.Empty);
+            Assert.That(cards.CardDelivery, Is.Empty);
+            Assert.That(cards.CardDistribution, Is.Empty);
+            Assert.That(cards.CardOrder, Is.Empty);
         }
 
         /// <summary>
@@ -182,10 +157,10 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(cards.CardInvoice.Count, invoices);
-            Assert.AreEqual(cards.CardDelivery.Count, deliverys);
-            Assert.AreEqual(cards.CardDistribution.Count, distribution);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(invoices.Equals(cards.CardInvoice.Count));
+            Assert.That(deliverys.Equals(cards.CardDelivery.Count));
+            Assert.That(distribution.Equals(cards.CardDistribution.Count));
         }
 
         /// <summary>
@@ -208,7 +183,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -229,8 +204,8 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(cards.CardDelivery);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardDelivery, Is.Not.Empty);
         }
 
         /// <summary>
@@ -252,8 +227,8 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(cards.CardInvoice);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardInvoice, Is.Not.Empty);
         }
 
         /// <summary>
@@ -274,8 +249,8 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(cards.CardDistribution);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardDistribution, Is.Not.Empty);
         }
 
         /// <summary>
@@ -296,8 +271,8 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(cards.CardInvoice);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardInvoice, Is.Not.Empty);
         }
 
         /// <summary>
@@ -325,7 +300,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -353,11 +328,11 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            Assert.IsNotNull(result);
-            Assert.IsEmpty(cards.CardInvoice);
-            Assert.IsEmpty(cards.CardDelivery);
-            Assert.IsEmpty(cards.CardDistribution);
-            Assert.IsEmpty(cards.CardOrder);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardInvoice, Is.Empty);
+            Assert.That(cards.CardDelivery, Is.Empty);
+            Assert.That(cards.CardDistribution, Is.Empty);
+            Assert.That(cards.CardOrder, Is.Empty);
         }
 
         /// <summary>
@@ -378,8 +353,8 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.advanceLookService.AdvanceLookUp(dicParams);
             var cards = (CardsAdvancedLook)result.Response;
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(cards.CardOrder);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(cards.CardOrder, Is.Not.Empty);
         }
     }
 }

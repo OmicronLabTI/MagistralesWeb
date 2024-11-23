@@ -8,8 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services.SapFile
 {
-    using NUnit.Framework;
-    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.Services.SapFile;
 
     /// <summary>
@@ -31,7 +29,7 @@ namespace Omicron.Pedidos.Test.Services.SapFile
             var result = client.PostSimple(new { }, "endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>

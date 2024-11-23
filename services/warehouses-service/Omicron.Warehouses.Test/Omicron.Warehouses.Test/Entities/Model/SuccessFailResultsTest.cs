@@ -8,9 +8,6 @@
 
 namespace Omicron.Warehouses.Test.Entities.Model
 {
-    using NUnit.Framework;
-    using Omicron.Warehouses.Entities.Model;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -45,8 +42,8 @@ namespace Omicron.Warehouses.Test.Entities.Model
             this.results = this.results.DistinctResults();
 
             // assert
-            Assert.AreEqual(1, this.results.Success.Count);
-            Assert.AreEqual(1, this.results.Failed.Count);
+            Assert.That(this.results.Success.Count, Is.EqualTo(1));
+            Assert.That(this.results.Failed.Count, Is.EqualTo(1));
         }
     }
 }

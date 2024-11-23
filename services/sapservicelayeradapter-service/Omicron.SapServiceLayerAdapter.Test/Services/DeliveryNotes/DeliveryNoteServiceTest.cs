@@ -63,8 +63,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(firstDelivery);
 
             var result = await service.CreateDelivery(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         /// <summary>
@@ -191,8 +191,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(shippingItem);
 
             var result = await service.CreateDelivery(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         /// <summary>
@@ -231,8 +231,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(firstDelivery);
 
             var result = await service.CreateDeliveryPartial(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         /// <summary>
@@ -359,8 +359,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(shippingItem);
 
             var result = await service.CreateDeliveryPartial(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         /// <summary>
@@ -438,36 +438,36 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             var result = await mockDeliveryNoteService.CancelDelivery(type, deliveryNotesToCancel);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<ResultModel>(result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<ResultModel>());
             if (!isResponseDeliveryNoteSuccess)
             {
                 KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
-                Assert.AreEqual("Error-No se encontró el documento delivery notes", resultDict.Value);
+                Assert.That(resultDict.Value, Is.EqualTo("Error-No se encontró el documento delivery notes"));
             }
             else if (!isResponseCancellationDocumentSuccess)
             {
                 KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
-                Assert.AreEqual("Error-Error al cancelar el documento", resultDict.Value);
+                Assert.That(resultDict.Value, Is.EqualTo("Error-Error al cancelar el documento"));
             }
             else if (!isStockTransferSuccess)
             {
-                Assert.AreEqual(3, ((Dictionary<string, string>)result.Response).Count);
+                Assert.That(((Dictionary<string, string>)result.Response).Count, Is.EqualTo(3));
             }
             else if (!isResponseCancellationDocumentSuccess)
             {
-                Assert.AreEqual(4, ((Dictionary<string, string>)result.Response).Count);
+                Assert.That(((Dictionary<string, string>)result.Response).Count, Is.EqualTo(4));
             }
             else
             {
                 KeyValuePair<string, string> resultDict = ((Dictionary<string, string>)result.Response).First();
-                Assert.AreEqual("Ok", resultDict.Value);
+                Assert.That(resultDict.Value, Is.EqualTo("Ok"));
             }
 
-            Assert.IsNull(result.UserError);
-            Assert.IsTrue(result.Success);
-            Assert.IsNotNull(result.Response);
-            Assert.IsNull(result.Comments);
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.Comments, Is.Null);
         }
 
         /// <summary>
@@ -506,8 +506,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(firstDelivery);
 
             var result = await service.CreateDeliveryBatch(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
 
         /// <summary>
@@ -634,8 +634,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.DeliveryNotes
             createDelivery.Add(shippingItem);
 
             var result = await service.CreateDeliveryBatch(createDelivery);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
         }
     }
 }

@@ -8,12 +8,6 @@
 
 namespace Omicron.Usuarios.Test
 {
-    using System;
-    using System.Collections.Generic;
-    using Newtonsoft.Json;
-    using Omicron.Usuarios.Dtos.User;
-    using Omicron.Usuarios.Entities.Model;
-
     /// <summary>
     /// Class Base Test.
     /// </summary>

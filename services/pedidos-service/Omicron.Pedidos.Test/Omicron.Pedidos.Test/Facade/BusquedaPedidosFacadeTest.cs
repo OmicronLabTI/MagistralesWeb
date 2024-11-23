@@ -8,16 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Facade
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Facade.Pedidos;
-    using Omicron.Pedidos.Services.Mapping;
-    using Omicron.Pedidos.Services.Pedidos;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -70,7 +60,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.busquedaFacade.GetOrders(order);
 
             // arrange
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -87,7 +77,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.busquedaFacade.GetOrdersActive(new List<int>());
 
             // arrange
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
     }
 }

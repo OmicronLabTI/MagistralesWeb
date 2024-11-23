@@ -8,14 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Extensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.Pedidos.Resources.Extensions;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -33,9 +25,9 @@ namespace Omicron.Pedidos.Test.Extensions
             var dateString = date.FormatedDate();
 
             // assert
-            Assert.IsTrue(dateString == date.ToString("dd/MM/yyyy"));
-            Assert.IsNotNull(dateString);
-            Assert.IsInstanceOf<string>(dateString);
+            Assert.That(dateString == date.ToString("dd/MM/yyyy"));
+            Assert.That(dateString, Is.Not.Null);
+            Assert.That(dateString, Is.InstanceOf<string>());
         }
 
         /// <summary>
@@ -49,8 +41,8 @@ namespace Omicron.Pedidos.Test.Extensions
             var dateString = date.FormatedLargeDate();
 
             // assert
-            Assert.IsNotNull(dateString);
-            Assert.IsInstanceOf<string>(dateString);
+            Assert.That(dateString, Is.Not.Null);
+            Assert.That(dateString, Is.InstanceOf<string>());
         }
     }
 }

@@ -17,10 +17,53 @@ on:
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
+  
+env:
+  AWS_REGION: "us-east-2" # us-east-2 US East (Ohio) us-east-1" # US East (N. Viginia)
+  AMI_ID: ami-0a68049ee64ac0782
+  SUBNET_ID: subnet-073b7bac3af8d3c53
+  SECURITY_GROUP_ID: sg-09c9844682ec712ca
+  VOLUME_SIZE_GiB: "20"
 jobs:
+  start-runner:
+    timeout-minutes: 5
+    name: Start self-hosted EC2 runner
+    runs-on: omicron-bastion
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+    steps:
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
+          output-credentials: true
+
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: Axitymx/ec2-action-builder@main
+        with:
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          aws_access_key_id: ${{ steps.creds.outputs.aws-access-key-id }}
+          aws_secret_access_key: ${{ steps.creds.outputs.aws-secret-access-key }}
+          aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
+          aws_region: ${{ env.AWS_REGION }}
+          ec2_instance_type: "t3.medium"
+          ec2_ami_id: ${{ env.AMI_ID }}
+          ec2_subnet_id: ${{ env.SUBNET_ID }}
+          ec2_security_group_id: ${{ env.SECURITY_GROUP_ID }}
+          ec2_root_disk_size_gb: ${{ env.VOLUME_SIZE_GiB }}
+          ec2_spot_instance_strategy: "BestEffort" # Other options are: SpotOnly, BestEffort, MaxPerformance
+          manual_stop: true
+
   test:
-    name: run tests
-    runs-on: ubuntu-latest
+    name: Tests
+    needs:
+      - start-runner
+    runs-on: ${{ github.run_id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -31,6 +74,9 @@ jobs:
         id: changeset
         run: echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
 
+      - name: Set Environments
+        uses: ./.github/actions/environments-aws
+        
       - name: Test frontend/web
         if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_test) }}
         uses: ./.github/actions/sonar-aws-web
@@ -105,4 +151,33 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
           nexus_user: ${{ secrets.NEXUS_USER }}
           nexus_pass: ${{ secrets.NEXUS_PASS }}
-          net_version: 6.0.x
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    needs:
+      - start-runner
+      - test
+    runs-on: omicron-bastion
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
+    steps:
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
+          output-credentials: true
+
+      - name: Stop EC2 runner
+        id: stop-ec2-runner
+        uses: Axitymx/ec2-action-builder@main
+        with:
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          aws_access_key_id: ${{ steps.creds.outputs.aws-access-key-id }}
+          aws_secret_access_key: ${{ steps.creds.outputs.aws-secret-access-key }}
+          aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
+          aws_region: ${{ env.AWS_REGION }}
+          action: "stop"

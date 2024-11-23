@@ -8,8 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Mock
 {
-    using System.Net;
-
     /// <summary>
     /// the mock class.
     /// </summary>

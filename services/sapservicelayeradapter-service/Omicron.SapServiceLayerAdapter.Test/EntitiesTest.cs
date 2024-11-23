@@ -128,15 +128,15 @@ namespace Omicron.SapServiceLayerAdapter.Test
             instance = this.fixture.Create<T>();
 
             // Assert
-            Assert.IsTrue(IsValid(instance));
+            Assert.That(IsValid(instance), Is.True);
         }
 
         private static bool IsValid<T>(T instance)
         {
-            Assert.IsNotNull(instance);
+            Assert.That(instance, Is.Not.Null);
             foreach (var prop in instance.GetType().GetProperties())
             {
-                Assert.IsNotNull(GetPropValue(instance, prop.Name));
+                Assert.That(GetPropValue(instance, prop.Name), Is.Not.Null);
             }
 
             return true;

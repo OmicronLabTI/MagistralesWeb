@@ -102,24 +102,24 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.InventoryTransferRequest
             var result = await mockTransferRequestService.CreateTransferRequest(transferRequestHeader);
 
             // Assert
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
-            Assert.IsNull(result.Comments);
-            Assert.IsNull(result.ExceptionMessage);
-            Assert.IsNull(result.UserError);
-            Assert.IsNotNull(result.Response);
-            Assert.IsInstanceOf<List<InventoryTransferRequestResult>>(result.Response);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
+            Assert.That(result.Comments, Is.Null);
+            Assert.That(result.ExceptionMessage, Is.Null);
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.Response, Is.InstanceOf<List<InventoryTransferRequestResult>>());
             var responseObject = (List<InventoryTransferRequestResult>)result.Response;
 
             if (isSuccesfully)
             {
-                Assert.IsTrue(responseObject.All(ts => string.IsNullOrEmpty(ts.Error)));
-                Assert.IsTrue(responseObject.All(ts => ts.TransferRequestId > 0));
+                Assert.That(responseObject.All(ts => string.IsNullOrEmpty(ts.Error)), Is.True);
+                Assert.That(responseObject.All(ts => ts.TransferRequestId > 0), Is.True);
             }
             else
             {
-                Assert.IsTrue(responseObject.All(ts => !string.IsNullOrEmpty(ts.Error)));
-                Assert.IsTrue(responseObject.All(ts => ts.Error.Contains("ErrorTransferRequest-" + userError)));
+                Assert.That(responseObject.All(ts => !string.IsNullOrEmpty(ts.Error)), Is.True);
+                Assert.That(responseObject.All(ts => ts.Error.Contains("ErrorTransferRequest-" + userError)), Is.True);
             }
         }
     }

@@ -8,17 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Facade
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Pedidos.Dtos.Models;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Facade.Pedidos;
-    using Omicron.Pedidos.Services.Mapping;
-    using Omicron.Pedidos.Services.Pedidos;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -66,7 +55,7 @@ namespace Omicron.Pedidos.Test.Facade
             var response = await this.pedidosFacade.GetDeliveredPayments(order);
 
             // arrange
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -92,12 +81,12 @@ namespace Omicron.Pedidos.Test.Facade
         /// <param name="response">Response to validate.</param>
         public void AssertResponse(ResultDto response)
         {
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
     }
 }

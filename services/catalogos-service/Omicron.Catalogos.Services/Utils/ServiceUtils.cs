@@ -46,7 +46,7 @@ namespace Omicron.Catalogos.Services.Utils
         /// <param name="source">the sourec.</param>
         /// <param name="keyselector">the key.</param>
         /// <returns>the list distinc.</returns>
-        public static IEnumerable<Tsource> DistinctBy<Tsource, TKey>(this IEnumerable<Tsource> source, Func<Tsource, TKey> keyselector)
+        public static IEnumerable<Tsource> ServiceDistinctBy<Tsource, TKey>(this IEnumerable<Tsource> source, Func<Tsource, TKey> keyselector)
         {
             HashSet<TKey> seenKeys = new HashSet<TKey>();
             foreach (Tsource element in source)
