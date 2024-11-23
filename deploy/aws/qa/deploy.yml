@@ -115,7 +115,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: catalogos
   type: ClusterIP
@@ -182,7 +182,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: usuarios
   type: ClusterIP
@@ -256,7 +256,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: sapadapter
   type: ClusterIP
@@ -333,7 +333,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: pedidos
   type: ClusterIP
@@ -400,7 +400,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: warehouses
   type: ClusterIP
@@ -462,7 +462,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: reporting
   type: ClusterIP
@@ -549,7 +549,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: sapservicelayeradapter
   type: ClusterIP
