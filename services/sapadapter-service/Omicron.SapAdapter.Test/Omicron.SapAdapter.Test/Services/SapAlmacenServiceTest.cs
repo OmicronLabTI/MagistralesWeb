@@ -8,31 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Dtos.DxpModels;
-    using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Services.Almacen;
-    using Omicron.SapAdapter.Services.Catalog;
-    using Omicron.SapAdapter.Services.Constants;
-    using Omicron.SapAdapter.Services.Doctors;
-    using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.ProccessPayments;
-    using Omicron.SapAdapter.Services.Redis;
-    using Omicron.SapAdapter.Services.Sap;
-    using Serilog;
-
     /// <summary>
     /// Class for the QR test.
     /// </summary>
@@ -145,7 +120,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await localService.GetOrders(dictionary);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -214,7 +189,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await localService.GetOrders(dictionary);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -280,10 +255,10 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await localService.GetOrders(dictionary);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsNotNull(response.Response);
-            Assert.IsTrue(response.Success);
-            Assert.IsTrue(response.Code == 200);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
         }
 
         /// <summary>
@@ -335,7 +310,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await localService.GetOrders(dictionary);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -396,7 +371,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await localService.GetOrders(dictionary);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -451,7 +426,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await localService.GetOrdersDetails(ids);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -468,7 +443,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetMagistralScannedData(order);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -485,7 +460,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetLineScannedData(order);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -502,7 +477,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetLineScannedData(order);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -519,7 +494,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetCompleteDetail(order);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -533,7 +508,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetProductsWithCodeBars();
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -551,12 +526,12 @@ namespace Omicron.SapAdapter.Test.Services
             var countDxpOrders = response.Comments as IEnumerable<CountDxpOrders>;
 
             // asserts
-            Assert.IsTrue(response.Success);
-            Assert.IsTrue(response.Code == 200);
-            Assert.IsInstanceOf<List<OrderModel>>(response.Response);
-            Assert.IsInstanceOf<IEnumerable<CountDxpOrders>>(response.Comments);
-            Assert.IsTrue(orders.Any());
-            Assert.IsTrue(countDxpOrders.Any());
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Response, Is.InstanceOf<List<OrderModel>>());
+            Assert.That(response.Comments, Is.InstanceOf<IEnumerable<CountDxpOrders>>());
+            Assert.That(orders.Any());
+            Assert.That(countDxpOrders.Any());
         }
 
         /// <summary>
@@ -573,7 +548,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetDeliveryBySaleOrderId(order);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -595,7 +570,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.AlmacenGraphCount(dict);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -609,7 +584,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetDeliveryParties();
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -626,7 +601,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetDeliveries(ids);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
     }
 }

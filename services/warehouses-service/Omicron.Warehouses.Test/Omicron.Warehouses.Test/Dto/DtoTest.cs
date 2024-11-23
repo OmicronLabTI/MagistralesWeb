@@ -7,9 +7,6 @@
 // </summary>
 namespace Omicron.Warehouses.Test.Dto
 {
-    using NUnit.Framework;
-    using Omicron.Warehouses.Dtos.Model;
-
     /// <summary>
     /// Class for tests entities.
     /// </summary>

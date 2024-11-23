@@ -8,13 +8,6 @@
 
 namespace Omicron.Reporting.Test
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using AutoFixture;
-    using Omicron.Reporting.Dtos.Model;
-    using Omicron.Reporting.Entities.Model;
-
     /// <summary>
     /// Provider of autofixture.
     /// </summary>

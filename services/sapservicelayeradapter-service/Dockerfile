@@ -1,25 +1,26 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+ARG NUGET_REPO_URL="https://axity-992382646884.d.codeartifact.us-east-1.amazonaws.com/nuget/axity-nuget-repo/v3/index.json"
+ARG NUGET_REPO_NAME="axity/axity-nuget-repo"
+ARG NUGET_REPO_USER="aws"
 ARG NUGET_AUTH_TOKEN
-ARG NUGET_USER_NAME
+WORKDIR /source
+COPY --link . .
+# RUN # --mount=type=secret,id=nuget_auth_token,required \
+#    # export NUGET_AUTH_TOKEN="$(cat /run/secrets/nuget_auth_token)" && \
+RUN echo "Token: ${NUGET_AUTH_TOKEN}, URL: ${NUGET_REPO_URL}"
+RUN dotnet nuget add source "${NUGET_REPO_URL}" -n "${NUGET_REPO_NAME}" -u "${NUGET_REPO_USER}" -p "${NUGET_AUTH_TOKEN}" --store-password-in-clear-text
 
+RUN dotnet restore Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj
+COPY --link . .
+RUN dotnet publish Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj --no-restore -o /app
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
+    LC_ALL=es_MX.UTF-8 \
+    LANG=es_MX.UTF-8
+RUN apk add --no-cache icu-data-full icu-libs tzdata
 WORKDIR /app
-COPY . ./
-
-COPY ./nuget.config.template ./nuget.config
-RUN sed -i -e "s/USER/$NUGET_USER_NAME/g" -e "s/PW/$NUGET_AUTH_TOKEN/g" nuget.config 
-
-RUN dotnet restore "/app/Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj"
-RUN dotnet publish "/app/Omicron.SapServiceLayerAdapter.Api/Omicron.SapServiceLayerAdapter.Api.csproj" -c Release -o out
-
-FROM mcr.microsoft.com/dotnet/aspnet:6.0.15-alpine3.17
-WORKDIR /app
-COPY --from=build-env /app/out .
-
-RUN apk add icu-libs --no-cache tzdata
-RUN apk add libgdiplus --repository https://dl-3.alpinelinux.org/alpine/edge/testing/
-RUN apk update
-
-ENV TZ America/Mexico_City
-EXPOSE 80
-
+COPY --link --from=build /app .
+USER $APP_UID
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "Omicron.SapServiceLayerAdapter.Api.dll"]

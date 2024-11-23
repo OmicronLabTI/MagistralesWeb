@@ -8,23 +8,6 @@
 
 namespace Omicron.Usuarios.Test.Services.Catalogs
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Usuarios.DataAccess.DAO.User;
-    using Omicron.Usuarios.Entities.Context;
-    using Omicron.Usuarios.Entities.Model;
-    using Omicron.Usuarios.Resources.Exceptions;
-    using Omicron.Usuarios.Services.Constants;
-    using Omicron.Usuarios.Services.Mapping;
-    using Omicron.Usuarios.Services.Pedidos;
-    using Omicron.Usuarios.Services.SapAdapter;
-    using Omicron.Usuarios.Services.User;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -80,8 +63,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             var result = await this.userServices.GetAllUsersAsync();
 
-            Assert.True(result != null);
-            Assert.True(result.Any());
+            Assert.That(result != null);
+            Assert.That(result.Any());
         }
 
         /// <summary>
@@ -93,7 +76,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         {
             var result = await this.userServices.GetUserAsync(2);
 
-            Assert.True(result == null);
+            Assert.That(result == null);
         }
 
         /// <summary>
@@ -111,8 +94,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var result = await this.userServices.InsertUser(user);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result);
         }
 
         /// <summary>
@@ -130,8 +113,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.CreateUser(user);
 
             // arrange
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -163,7 +146,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.GetUsers(dic);
 
             // Assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -188,7 +171,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.GetUsers(dic);
 
             // Assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -205,7 +188,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.DeleteUser(listIds);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -225,7 +208,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.UpdateUser(user);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -242,7 +225,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.UpdateUser(user);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -259,7 +242,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.UpdateUser(user);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -289,7 +272,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.GetUser(user);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -305,7 +288,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.GetUsersByRole(roleId);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -319,7 +302,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.GetActiveQfbWithOrcerCount();
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -336,7 +319,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.GetUsersById(listIds);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -356,11 +339,11 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             };
 
             // assert
-            Assert.IsNotNull(data.CountTotalFabOrders);
-            Assert.IsNotNull(data.CountTotalOrders);
-            Assert.IsNotNull(data.CountTotalPieces);
-            Assert.IsNotNull(data.UserId);
-            Assert.IsNotNull(data.UserName);
+            Assert.That(data.CountTotalFabOrders, Is.Not.Null);
+            Assert.That(data.CountTotalOrders, Is.Not.Null);
+            Assert.That(data.CountTotalPieces, Is.Not.Null);
+            Assert.That(data.UserId, Is.Not.Null);
+            Assert.That(data.UserName, Is.Not.Null);
         }
 
         /// <summary>
@@ -374,7 +357,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.GetUsersTecnic();
 
             // Assert
-            Assert.IsNotNull(response.Response);
+            Assert.That(response.Response, Is.Not.Null);
         }
 
         /// <summary>
@@ -395,11 +378,11 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // Assert
             if (id.Equals("Noexiste") || id.Equals("10"))
             {
-                Assert.Null(response.Comments);
+                Assert.That(response.Comments, Is.Null);
             }
             else
             {
-                Assert.NotNull(response.Comments);
+                Assert.That(response.Comments, Is.Not.Null);
             }
         }
 
@@ -424,12 +407,12 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.GetQfbInfoByIds(qfbIds);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.AreEqual(response.Code, 200);
-            Assert.IsNull(response.Comments);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.UserError);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(200.Equals(response.Code));
+            Assert.That(response.Comments, Is.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.UserError, Is.Null);
         }
     }
 }

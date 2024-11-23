@@ -13,23 +13,55 @@ inputs:
   tag:
     description: 'Tag Docker Image'
     required: true
-  nexus_user:
-    description: 'Nexus user'
+  axity_aws_user:
+    description: 'Aws Axity User'
     required: false
   nexus_pass:
     description: 'Nexus password'
     required: false
   dockerfile:
-    description: "Dockerfile name"
+    description: 'Dockerfile name'
     required: false
     default: Dockerfile
+  axity_aws_access_key_id:
+    description: 'Axity Axw Access Key Id'
+    required: false
+  axity_aws_secret_access_key:
+    description: 'Axity Aws Secret Access Key'
+    required: false
+  axity_aws_region:
+    description: 'Axity Aws Region'
+    required: false
 runs:
   using: "composite"
   steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ inputs.axity_aws_access_key_id }}
+        aws-secret-access-key: ${{ inputs.axity_aws_secret_access_key }}
+        aws-region: ${{ inputs.axity_aws_region }}
+
+    - name: Get AWS Nuget Token Action
+      run: |
+        CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
+          --domain axity \
+          --domain-owner 992382646884 \
+          --region ${{ inputs.axity_aws_region }} \
+          --query authorizationToken \
+          --output text)
+        echo "NUGET_AUTH_TOKEN=$CODEARTIFACT_AUTH_TOKEN" >> $GITHUB_ENV
+      shell: bash
+
     - name: Build and push docker image to Amazon ECR
       working-directory: ${{ inputs.working_directory }}
       run: |
-        docker build -f ${{ inputs.dockerfile }} --build-arg NUGET_AUTH_TOKEN=${{ inputs.nexus_pass }} --build-arg NUGET_USER_NAME=${{ inputs.nexus_user }} -t ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }} -t ${{ inputs.registry }}/${{ inputs.repository }}:latest . --progress=plain
-        docker push ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
-        docker push ${{ inputs.registry }}/${{ inputs.repository }}:latest
+         docker build -f ${{ inputs.dockerfile }} \
+          --build-arg NUGET_AUTH_TOKEN=$NUGET_AUTH_TOKEN \
+          --build-arg NUGET_USER_NAME=${{ inputs.axity_aws_user }} \
+          -t ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }} \
+          -t ${{ inputs.registry }}/${{ inputs.repository }}:latest . --progress=plain
+         docker push ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
+         docker push ${{ inputs.registry }}/${{ inputs.repository }}:latest
+         docker image prune -af
       shell: bash

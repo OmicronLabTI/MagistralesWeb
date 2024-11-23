@@ -102,7 +102,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
 
             var order = sapOrders.FirstOrDefault();
-            var adressesToFind = sapOrders.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.DeliveryAddressId }).DistinctBy(y => y.CardCode).ToList();
+            var adressesToFind = sapOrders.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.DeliveryAddressId }).UtilsDistinctBy(y => y.CardCode).ToList();
             var doctorPrescriptionData = await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, adressesToFind);
             var doctor = doctorPrescriptionData.FirstOrDefault(x => x.AddressId == order.DeliveryAddressId);
             doctor ??= new DoctorDeliveryAddressModel { Contact = order.Cliente };

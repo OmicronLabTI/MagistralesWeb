@@ -7,14 +7,6 @@
 // </summary>
 namespace Omicron.Warehouses.Test.Services.SapAdapter
 {
-    using System.Net.Http;
-    using System.Threading;
-    using Moq;
-    using Moq.Protected;
-    using NUnit.Framework;
-    using Omicron.Warehouses.Entities.Model;
-    using Omicron.Warehouses.Services.Clients;
-
     /// <summary>
     /// Test class for catalogs service.
     /// </summary>
@@ -34,7 +26,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.GetAsync("endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -50,7 +42,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.PostAsync(new { }, "endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -66,7 +58,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.SubmitRequest(new RawMaterialRequestModel()).Result;
 
             // Assert
-            Assert.IsTrue(result.Item1);
+            Assert.That(result.Item1, Is.True);
             this.GetHttpMock().Protected().Verify("SendAsync", Times.Once(), ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>());
         }
 
@@ -83,7 +75,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.SubmitRequest(new RawMaterialRequestModel()).Result;
 
             // Assert
-            Assert.IsFalse(result.Item1);
+            Assert.That(result.Item1, Is.False);
             this.GetHttpMock().Protected().Verify("SendAsync", Times.Exactly(3), ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>());
         }
 
@@ -100,7 +92,7 @@ namespace Omicron.Warehouses.Test.Services.SapAdapter
             var result = client.SubmitRequest(new RawMaterialRequestModel()).Result;
 
             // Assert
-            Assert.IsFalse(result.Item1);
+            Assert.That(result.Item1, Is.False);
             this.GetHttpMock().Protected().Verify("SendAsync", Times.Exactly(3), ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>());
         }
 
