@@ -8,12 +8,6 @@
 
 namespace Omicron.Reporting.Test
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using Newtonsoft.Json;
-    using Omicron.Reporting.Entities.Model;
-    using Omicron.Reporting.Services.Constants;
-
     /// <summary>
     /// Class Base Test.
     /// </summary>

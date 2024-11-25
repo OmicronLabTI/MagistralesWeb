@@ -8,23 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Resources.Exceptions;
-    using Omicron.Pedidos.Services.Broker;
-    using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.Pedidos;
-    using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
-    using Omicron.Pedidos.Services.User;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -128,23 +111,23 @@ namespace Omicron.Pedidos.Test.Services
             var response = await pedidosServiceLocal.AssignOrder(assign);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.Comments);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
 
             if (isValidtecnic)
             {
-                Assert.IsNotNull(response.UserError);
-                Assert.IsTrue(response.Success);
-                Assert.AreEqual(200, response.Code);
-                Assert.IsNotNull(response.Response);
+                Assert.That(response.UserError, Is.Not.Null);
+                Assert.That(response.Success);
+                Assert.That(response.Code.Equals(200));
+                Assert.That(response.Response, Is.Not.Null);
             }
             else
             {
-                Assert.IsNotNull(response.UserError);
-                Assert.IsFalse(response.Success);
-                Assert.AreEqual(400, response.Code);
-                Assert.IsNull(response.Response);
+                Assert.That(response.UserError, Is.Not.Null);
+                Assert.That(response.Success, Is.False);
+                Assert.That(response.Code.Equals(400));
+                Assert.That(response.Response, Is.Null);
             }
         }
 
@@ -187,13 +170,13 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             // ssert.IsNotNull(response);
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.Comments);
-            Assert.IsNotNull(response.UserError);
-            Assert.IsTrue(response.Success);
-            Assert.AreEqual(200, response.Code);
-            Assert.IsNotNull(response.Response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
+            Assert.That(response.UserError, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code.Equals(200));
+            Assert.That(response.Response, Is.Not.Null);
         }
 
         /// <summary>
@@ -291,10 +274,10 @@ namespace Omicron.Pedidos.Test.Services
             var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
             var result = await pedidoServiceLocal.AutomaticAssign(assign);
 
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
-            Assert.IsNull(result.ExceptionMessage);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success);
+            Assert.That(result.Code.Equals(200));
+            Assert.That(result.ExceptionMessage, Is.Null);
         }
 
         /// <summary>
@@ -418,10 +401,10 @@ namespace Omicron.Pedidos.Test.Services
             var pedidoServiceLocal = new AssignPedidosService(sapAdapterLocal.Object, this.pedidosDao, mockUsers.Object, this.kafkaConnector.Object, serviceLayer.Object);
             var result = await pedidoServiceLocal.AutomaticAssign(assign);
 
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
-            Assert.IsNull(result.ExceptionMessage);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success);
+            Assert.That(result.Code.Equals(200));
+            Assert.That(result.ExceptionMessage, Is.Null);
         }
 
         /// <summary>
@@ -526,10 +509,10 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidoServiceLocal.AutomaticAssign(assign);
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
-            Assert.IsNull(result.ExceptionMessage);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success);
+            Assert.That(result.Code.Equals(200));
+            Assert.That(result.ExceptionMessage, Is.Null);
         }
 
         /// <summary>
@@ -563,22 +546,22 @@ namespace Omicron.Pedidos.Test.Services
             var result = await assignPedidosService.ReassignOrder(reassign);
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsNull(result.ExceptionMessage);
-            Assert.IsNull(result.Response);
-            Assert.IsNull(result.Comments);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.ExceptionMessage, Is.Null);
+            Assert.That(result.Response, Is.Null);
+            Assert.That(result.Comments, Is.Null);
 
             if (isValidtecnic)
             {
-                Assert.IsNull(result.UserError);
-                Assert.IsTrue(result.Success);
-                Assert.AreEqual(200, result.Code);
+                Assert.That(result.UserError, Is.Null);
+                Assert.That(result.Success);
+                Assert.That(result.Code.Equals(200));
             }
             else
             {
-                Assert.IsNotNull(result.UserError);
-                Assert.IsFalse(result.Success);
-                Assert.AreEqual(400, result.Code);
+                Assert.That(result.UserError, Is.Not.Null);
+                Assert.That(result.Success, Is.False);
+                Assert.That(result.Code.Equals(400));
             }
         }
 
@@ -618,7 +601,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidosServiceLocal.ReassignOrder(reassign);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

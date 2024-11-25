@@ -8,10 +8,6 @@
 
 namespace Omicron.Reporting.Test.Services.ServiceLayerAdapter
 {
-    using NUnit.Framework;
-    using Omicron.Reporting.Resources.Exceptions;
-    using Omicron.Reporting.Services.ServiceLayerAdapter;
-
     /// <summary>
     /// The test.
     /// </summary>
@@ -31,7 +27,7 @@ namespace Omicron.Reporting.Test.Services.ServiceLayerAdapter
             var result = client.PostAsync("endpoint", "{\"key\": \"value\"}").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>

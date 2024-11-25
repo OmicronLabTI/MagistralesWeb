@@ -8,16 +8,6 @@
 
 namespace Omicron.SapAdapter.Test
 {
-    using System;
-    using System.Collections.Generic;
-    using Newtonsoft.Json;
-    using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-
     /// <summary>
     /// Class Base Test.
     /// </summary>
@@ -778,7 +768,7 @@ namespace Omicron.SapAdapter.Test
                 Success = true,
                 Code = 200,
                 ExceptionMessage = string.Empty,
-                Response = string.Empty,
+                Response = users,
                 UserError = string.Empty,
             };
         }

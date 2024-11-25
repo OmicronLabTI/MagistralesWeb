@@ -54,27 +54,27 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.EmployeeInfo
 
             if (adviserId == "INVALIDADVISERID")
             {
-                Assert.IsFalse(response.Success);
-                Assert.AreEqual(400, response.Code);
-                Assert.AreEqual("El identificador del asesor no es valido", response.UserError);
-                Assert.AreEqual("El identificador del asesor no es valido", response.Response);
+                Assert.That(response.Success, Is.False);
+                Assert.That(response.Code, Is.EqualTo(400));
+                Assert.That(response.UserError, Is.EqualTo("El identificador del asesor no es valido"));
+                Assert.That(response.Response, Is.EqualTo("El identificador del asesor no es valido"));
             }
             else if (isSuccesfully)
             {
-                Assert.IsTrue(response.Success);
-                Assert.AreEqual(200, response.Code);
-                Assert.IsNull(response.UserError);
-                Assert.IsNull(response.Response);
+                Assert.That(response.Success, Is.True);
+                Assert.That(response.Code, Is.EqualTo(200));
+                Assert.That(response.UserError, Is.Null);
+                Assert.That(response.Response, Is.Null);
             }
             else
             {
-                Assert.IsFalse(response.Success);
-                Assert.AreEqual(400, response.Code);
-                Assert.AreEqual(userError, response.UserError);
-                Assert.IsNull(response.Response);
+                Assert.That(response.Success, Is.False);
+                Assert.That(response.Code, Is.EqualTo(400));
+                Assert.That(response.UserError, Is.EqualTo(userError));
+                Assert.That(response.Response, Is.Null);
             }
 
-            Assert.IsNull(response.Comments);
+            Assert.That(response.Comments, Is.Null);
         }
     }
 }

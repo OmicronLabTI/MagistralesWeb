@@ -7,18 +7,6 @@
 // </summary>
 namespace Omicron.Reporting.Test
 {
-    using System;
-    using System.Net;
-    using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using AutoFixture;
-    using Moq;
-    using Moq.Protected;
-    using Omicron.Reporting.Dtos.Model;
-    using Omicron.Reporting.Entities.Model;
-    using Serilog;
-
     /// <summary>
     /// Base class for http clients.
     /// </summary>

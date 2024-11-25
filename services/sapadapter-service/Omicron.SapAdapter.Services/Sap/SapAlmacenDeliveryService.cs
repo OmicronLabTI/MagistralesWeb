@@ -101,7 +101,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).FirstOrDefault(p => ServiceShared.ValidateShopTransaction(p.TransactionId, deliveryDetails.First().DocNumDxp));
             payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
 
-            var addressesToFind = deliveryDetails.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.DeliveryAddressId }).DistinctBy(x => x.CardCode).ToList();
+            var addressesToFind = deliveryDetails.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.DeliveryAddressId }).UtilsDistinctBy(x => x.CardCode).ToList();
             var doctorsData = (await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == deliveryDetails.FirstOrDefault().DeliveryAddressId);
             doctorsData ??= new DoctorDeliveryAddressModel { Contact = deliveryDetails.FirstOrDefault().Medico };
 

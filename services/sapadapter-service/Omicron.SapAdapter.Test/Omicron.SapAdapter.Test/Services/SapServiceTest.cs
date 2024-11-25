@@ -8,32 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.Resources.Exceptions;
-    using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-    using Omicron.SapAdapter.Services.Catalog;
-    using Omicron.SapAdapter.Services.Constants;
-    using Omicron.SapAdapter.Services.Doctors;
-    using Omicron.SapAdapter.Services.Pedidos;
-    using Omicron.SapAdapter.Services.Redis;
-    using Omicron.SapAdapter.Services.Sap;
-    using Omicron.SapAdapter.Services.User;
-    using Omicron.SapAdapter.Services.Utils;
-    using Serilog;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -148,7 +122,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.sapService.GetOrders(dicParams);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -217,7 +191,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await localSap.GetOrders(dicParams);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -240,7 +214,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.sapService.GetOrders(dicParams);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -264,7 +238,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.sapService.GetOrders(dicParams);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -284,7 +258,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.sapService.GetAsesorsByOrderId(salesOrders);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -303,7 +277,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.sapService.GetOrders(dicParams);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -320,7 +294,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetOrderDetails(docId);
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -337,7 +311,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetPedidoWithDetail(listIds);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -354,7 +328,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetPedidoWithDetailAndDxp(listIds);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -366,10 +340,10 @@ namespace Omicron.SapAdapter.Test.Services
         {
             var listIds = new List<string> { "100-Buscapina", "100-Omigenomics" };
             var result = await this.sapService.GetProdOrderByOrderItem(listIds);
-            Assert.IsNotNull(result);
-            Assert.IsNotNull(result.Response);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Response, Is.Not.Null);
             var response = JsonConvert.DeserializeObject<List<OrdenFabricacionModel>>(result.Response.ToString());
-            Assert.AreEqual(2, response.Count);
+            Assert.That(response.Count.Equals(2));
         }
 
         /// <summary>
@@ -390,13 +364,13 @@ namespace Omicron.SapAdapter.Test.Services
             var formulaDeatil = result.Response as CompleteFormulaWithDetalle;
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Code == 200);
-            Assert.IsTrue(formulaDeatil.Details.Any());
-            Assert.IsInstanceOf<CompleteFormulaWithDetalle>(result.Response);
-            Assert.IsNotNull(result.Response);
-            Assert.IsNull(result.ExceptionMessage);
-            Assert.IsNull(result.Comments);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Code == 200);
+            Assert.That(formulaDeatil.Details.Any());
+            Assert.That(result.Response, Is.InstanceOf<CompleteFormulaWithDetalle>());
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.ExceptionMessage, Is.Null);
+            Assert.That(result.Comments, Is.Null);
         }
 
         /// <summary>
@@ -413,7 +387,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetOrderFormula(listIds, false, true);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -431,13 +405,13 @@ namespace Omicron.SapAdapter.Test.Services
             var formulaDeatil = result.Response as List<CompleteDetalleFormulaModel>;
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Code == 200);
-            Assert.IsTrue(formulaDeatil.Any());
-            Assert.IsInstanceOf<List<CompleteDetalleFormulaModel>>(result.Response);
-            Assert.IsNotNull(result.Response);
-            Assert.IsNull(result.ExceptionMessage);
-            Assert.IsNull(result.Comments);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Code == 200);
+            Assert.That(formulaDeatil.Any());
+            Assert.That(result.Response, Is.InstanceOf<List<CompleteDetalleFormulaModel>>());
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.ExceptionMessage, Is.Null);
+            Assert.That(result.Comments, Is.Null);
         }
 
         /// <summary>
@@ -468,7 +442,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetComponents(paramsDict);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -490,7 +464,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetComponents(paramsDict);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -512,7 +486,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetComponents(paramsDict);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -546,7 +520,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetBatchesComponents(ordenId);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -564,7 +538,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetlLastIsolatedProductionOrderId(productId, uniqueId);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -581,7 +555,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetNextBatchCode(productId);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -599,7 +573,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.ValidateIfExistsBatchCodeByItemCode(productId, batchCode);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -636,7 +610,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -665,7 +639,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -691,7 +665,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -721,7 +695,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -746,7 +720,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -773,7 +747,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -797,7 +771,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -827,7 +801,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -855,7 +829,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -879,7 +853,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrders(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -896,7 +870,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabOrdersById(parameters);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -928,8 +902,8 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             var responseAsJson = JsonConvert.SerializeObject(result.Response);
             var returnItems = JsonConvert.DeserializeObject<List<ProductoModel>>(responseAsJson);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedResults, returnItems.Count);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(returnItems.Count.Equals(expectedResults));
         }
 
         /// <summary>
@@ -947,7 +921,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetFabricationOrdersByCriterial(salesOrders, productionOrders, false);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -965,7 +939,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetRecipe(orderId);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -982,7 +956,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetOriginalRouteRecipes(listOrders);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -1018,23 +992,23 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.ValidateOrder(order);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.Comments);
-            Assert.IsNull(response.UserError);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
+            Assert.That(response.UserError, Is.Null);
 
             if (pedidosReturnsError)
             {
-                Assert.IsFalse(response.Success);
-                Assert.AreEqual(400, response.Code);
-                Assert.IsNotNull(response.Response);
-                Assert.IsInstanceOf<List<OrderValidationResponse>>(response.Response);
+                Assert.That(response.Success, Is.False);
+                Assert.That(response.Code.Equals(400));
+                Assert.That(response.Response, Is.Not.Null);
+                Assert.That(response.Response, Is.InstanceOf<List<OrderValidationResponse>>());
             }
             else
             {
-                Assert.IsTrue(response.Success);
-                Assert.AreEqual(200, response.Code);
-                Assert.IsNull(response.Response);
+                Assert.That(response.Success);
+                Assert.That(response.Code.Equals(200));
+                Assert.That(response.Response, Is.Null);
             }
         }
 
@@ -1052,7 +1026,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetDetails(dict, "ped");
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -1114,7 +1088,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await sapService.GetDetails(dict, "ped");
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -1131,7 +1105,7 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetPackingRequiredForOrderInAssignedStatus(userId);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -1150,7 +1124,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await this.sapService.GetOrders(dicParams);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -1194,46 +1168,47 @@ namespace Omicron.SapAdapter.Test.Services
             var result = await this.sapService.GetRawMaterialRequest(dicParams);
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(200, result.Code);
-            Assert.IsInstanceOf<List<CompleteRawMaterialRequestModel>>(result.Response);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success);
+            Assert.That(result.Code.Equals(200));
+            Assert.That(result.Response, Is.InstanceOf<List<CompleteRawMaterialRequestModel>>());
+
             var rawMaterial = (List<CompleteRawMaterialRequestModel>)result.Response;
 
             if (userId == "4c2e983e-87db-5864-ae16-108b666bc19d")
             {
-                Assert.AreEqual(0, result.Comments);
-                Assert.AreEqual(0, rawMaterial.Count);
+                Assert.That(result.Comments.Equals(0));
+                Assert.That(rawMaterial.Count.Equals(0));
             }
             else if (string.IsNullOrEmpty(userId) && status == "Abierto,Cerrado,Cancelado")
             {
-                Assert.AreEqual(6, result.Comments);
-                Assert.AreEqual(5, rawMaterial.Count);
+                Assert.That(result.Comments.Equals(6));
+                Assert.That(rawMaterial.Count.Equals(5));
             }
             else if (string.IsNullOrEmpty(userId) && status == "Abierto,Cancelado")
             {
-                Assert.AreEqual(4, result.Comments);
-                Assert.AreEqual(4, rawMaterial.Count);
+                Assert.That(result.Comments.Equals(4));
+                Assert.That(rawMaterial.Count.Equals(4));
             }
             else if (string.IsNullOrEmpty(userId) && status == "Abierto")
             {
-                Assert.AreEqual(2, result.Comments);
-                Assert.AreEqual(2, rawMaterial.Count);
+                Assert.That(result.Comments.Equals(2));
+                Assert.That(rawMaterial.Count.Equals(2));
             }
             else if (status == "Abierto,Cerrado,Cancelado")
             {
-                Assert.AreEqual(3, result.Comments);
-                Assert.AreEqual(3, rawMaterial.Count);
+                Assert.That(result.Comments.Equals(3));
+                Assert.That(rawMaterial.Count.Equals(3));
             }
             else if (status == "Abierto,Cancelado")
             {
-                Assert.AreEqual(2, result.Comments);
-                Assert.AreEqual(2, rawMaterial.Count);
+                Assert.That(result.Comments.Equals(2));
+                Assert.That(rawMaterial.Count.Equals(2));
             }
             else
             {
-                Assert.AreEqual(1, result.Comments);
-                Assert.AreEqual(1, rawMaterial.Count);
+                Assert.That(result.Comments.Equals(1));
+                Assert.That(rawMaterial.Count.Equals(1));
             }
         }
 
@@ -1252,7 +1227,7 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await this.sapService.GetOrderInformationByTransaction(dict);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
     }
 }

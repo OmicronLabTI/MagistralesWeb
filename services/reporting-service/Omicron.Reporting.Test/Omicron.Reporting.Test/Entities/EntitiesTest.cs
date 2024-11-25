@@ -7,9 +7,6 @@
 // </summary>
 namespace Omicron.Reporting.Test.Entities
 {
-    using NUnit.Framework;
-    using Omicron.Reporting.Entities.Model;
-
     /// <summary>
     /// Class for tests entities.
     /// </summary>
