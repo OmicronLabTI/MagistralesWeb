@@ -159,6 +159,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             {
                 order.AttachmentEntry = (int)attachmentId;
             }
+
+            if (!string.IsNullOrEmpty(saleOrderModel.OrderComments))
+            {
+                order.OrderComments = saleOrderModel.OrderComments;
+            }
         }
 
         private static List<BatchNumbersDto> CreateBatchLine(OrderLineDto orderLine, List<CreateDeliveryDto> itemsList)

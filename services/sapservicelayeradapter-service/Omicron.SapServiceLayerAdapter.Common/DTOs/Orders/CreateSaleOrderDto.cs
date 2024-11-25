@@ -156,5 +156,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// TypeClientOrder.
         /// </value>
         public string TypeClientOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the OrderComments.
+        /// </summary>
+        /// <value>
+        /// OrderComments.
+        /// </value>
+        public string OrderComments { get; set; }
     }
 }
