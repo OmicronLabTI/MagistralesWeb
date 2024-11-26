@@ -89,5 +89,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// <value>Client Type Order.</value>
         [JsonProperty("U_Paciente")]
         public string ClientTypeOrder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the OrderComments.
+        /// </summary>
+        /// <value>Order Comments.</value>
+        [JsonProperty("Comments")]
+        public string OrderComments { get; set; }
     }
 }
