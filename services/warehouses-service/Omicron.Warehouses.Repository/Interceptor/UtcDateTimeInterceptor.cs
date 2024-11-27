@@ -61,19 +61,9 @@ namespace Omicron.Warehouses.Entities.Interceptor
             {
                 if (property.CurrentValue is DateTime dateTime)
                 {
-                    property.CurrentValue = ConvertToUtc(dateTime);
+                    property.CurrentValue = InterceptorCommon.ConvertToUtc(dateTime);
                 }
             }
-        }
-
-        private static DateTime ConvertToUtc(DateTime dateTime)
-        {
-            return dateTime.Kind switch
-            {
-                DateTimeKind.Unspecified => DateTime.SpecifyKind(TimeZoneInfo.ConvertTimeToUtc(dateTime, MexicoTimeZone), DateTimeKind.Utc),
-                DateTimeKind.Local => dateTime.ToUniversalTime(),
-                _ => dateTime // Ya es UTC
-            };
         }
     }
 }
