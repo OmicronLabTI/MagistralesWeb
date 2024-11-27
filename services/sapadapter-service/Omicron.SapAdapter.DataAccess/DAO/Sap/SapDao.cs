@@ -155,17 +155,17 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          where p.IsMagistral == "Y"
                          select new CompleteDetailOrderModel
                          {
-                             OrdenFabricacionId = dp.OrdenId,
+                             OrdenFabricacionId = dp == default ? 0 : dp.OrdenId,
                              CodigoProducto = d.ProductoId,
                              DescripcionProducto = p.LargeDescription,
                              DescripcionCorta = p.ProductoName,
-                             QtyPlanned = dp.Quantity,
+                             QtyPlanned = dp == default ? 0: dp.Quantity,
                              QtyPlannedDetalle = (int)d.Quantity,
                              FechaOf = dp.PostDate.HasValue ? dp.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                              FechaOfFin = dp.DueDate.HasValue ? dp.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
-                             Status = dp.Status,
+                             Status = dp == default ? string.Empty : dp.Status,
                              IsChecked = false,
-                             CreatedDate = dp.CreatedDate,
+                             CreatedDate = dp.CreatedDate.HasValue ? dp.CreatedDate.Value : null,
                              Label = d.Label,
                              NeedsCooling = p.NeedsCooling,
                              Container = d.Container,
@@ -173,7 +173,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              PedidoId = d.PedidoId ?? 0,
                              CatalogGroup = g.CatalogName,
                              IsOmigenomics = g.CatalogName.ToLower() == "omigenomics",
-                             ProductFirmName = fm.ProductFirmName ?? string.Empty,
+                             ProductFirmName = fm == default ? string.Empty: fm.ProductFirmName,
                          }).AsNoTracking();
 
             return await this.RetryQuery(query);
