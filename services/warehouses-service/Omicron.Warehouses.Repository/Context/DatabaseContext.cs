@@ -9,8 +9,8 @@
 namespace Omicron.Warehouses.Entities.Context
 {
     using Microsoft.EntityFrameworkCore;
-    using Omicron.Warehouses.Entities.Model;
     using Omicron.Warehouses.Entities.Interceptor;
+    using Omicron.Warehouses.Entities.Model;
 
     /// <summary>
     /// Class DBcontext.
@@ -62,7 +62,7 @@ namespace Omicron.Warehouses.Entities.Context
         /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.AddInterceptors(new UtcDateTimeInterceptor());
+            optionsBuilder.AddInterceptors(new UtcDateTimeInterceptor(), new UtcDateTimeQueryInterceptor());
         }
     }
 }

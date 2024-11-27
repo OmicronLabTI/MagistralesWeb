@@ -9,9 +9,9 @@
 namespace Omicron.Pedidos.Entities.Context
 {
     using Microsoft.EntityFrameworkCore;
+    using Omicron.Pedidos.Entities.Interceptor;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
-    using Omicron.Pedidos.Entities.Interceptor;
 
     /// <summary>
     /// Class DBcontext.
@@ -97,7 +97,7 @@ namespace Omicron.Pedidos.Entities.Context
         /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.AddInterceptors(new UtcDateTimeInterceptor());
+            optionsBuilder.AddInterceptors(new UtcDateTimeInterceptor(), new UtcDateTimeQueryInterceptor());
         }
     }
 }
