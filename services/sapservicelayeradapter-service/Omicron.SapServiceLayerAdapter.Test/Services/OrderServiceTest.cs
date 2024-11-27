@@ -367,7 +367,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 CardCode = "C03865",
                 DocumentType = "dDocument_Items",
                 DocumentCurrency = "MXP",
-                Comments = string.Empty,
+                Comments = "Comentarios sobre la orden",
                 ShippingAddress = "CALLE NUMERO\rXALAPA ENRÍQUEZ CENTRO, XALAPA ,\rVeracruz, Mexico , C.P. 91000",
                 Series = 9,
                 TaxDate = "2024-04-04",
@@ -447,6 +447,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 IsSample = false,
                 IsOmigenomicsOrder = false,
                 SlpCode = 1,
+                OrderComments = "Comentarios sobre la orden",
                 EmployeeId = 1,
                 Items = new List<ShoppingCartItemDto>(),
             };
