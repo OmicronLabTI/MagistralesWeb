@@ -9,6 +9,7 @@
 namespace Omicron.Pedidos.Entities.Context
 {
     using Microsoft.EntityFrameworkCore;
+    using Omicron.Pedidos.Entities.Interceptor;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
 
@@ -92,5 +93,11 @@ namespace Omicron.Pedidos.Entities.Context
         /// Object componets of custom lists.
         /// </value>
         public virtual DbSet<ProductionFacturaQrModel> ProductionFacturaQrModel { get; set; }
+
+        /// <inheritdoc/>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.AddInterceptors(new UtcDateTimeInterceptor(), new UtcDateTimeQueryInterceptor());
+        }
     }
 }

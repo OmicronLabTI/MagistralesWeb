@@ -10,6 +10,7 @@ namespace Omicron.Catalogos.Entities.Context
 {
     using Microsoft.EntityFrameworkCore;
     using Omicron.Catalogos.Entities.Model;
+    using Omicron.Catalogos.Entities.Interceptor;
 
     /// <summary>
     /// Class DBcontext.
@@ -51,5 +52,11 @@ namespace Omicron.Catalogos.Entities.Context
         /// Object parameters model.
         /// </value>
         public virtual DbSet<ClassificationQfbModel> ClassificationQfbModel { get; set; }
+
+        /// <inheritdoc/>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.AddInterceptors(new UtcDateTimeInterceptor(), new UtcDateTimeQueryInterceptor());
+        }
     }
 }
