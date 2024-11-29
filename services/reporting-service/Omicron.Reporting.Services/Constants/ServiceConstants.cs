@@ -145,7 +145,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SentForeignPackage = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> ha sido enviado por medio de paquetería a la dirección registrada bajo su nombre con el número de factura <b>{2}</b>, el número de guía correspondiente es <b>{3}</b>.</p><p>{4}<br/>{5}</p>";
+        public const string SentForeignPackage = "<p>Estimado Dr. (a) {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> ha sido enviado por medio de la paquetería <b>{2}</b> a la dirección registrada bajo su nombre con el número de factura <b>{3}</b>, el número de guía correspondiente es <b>{4}</b>.</p><p>{5}<br/>{6}</p>";
 
         /// <summary>
         /// Sent local package.
@@ -387,7 +387,7 @@ namespace Omicron.Reporting.Services.Constants
         /// <summary>
         /// Sent local package.
         /// </summary>
-        public const string SendingPatientBody = "<p>Estimado {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> ha sido enviado por medio de paquetería a la dirección {2}, el número de guía correspondiente es <b>{3}</b>.</p> </br> <p>{4}<br/>{5}</p>";
+        public const string SendingPatientBody = "<p>Estimado {0}.<br/><br/>Le informamos que el pedido <b>{1}</b> ha sido enviado por medio de la paquetería <b>{2}</b> a la dirección {3}, el número de guía correspondiente es <b>{4}</b>.</p> </br> <p>{5}<br/>{6}</p>";
 
         /// <summary>
         /// Sent local package.
