@@ -63,5 +63,6 @@ runs:
           -t ${{ inputs.registry }}/${{ inputs.repository }}:latest . --progress=plain
          docker push ${{ inputs.registry }}/${{ inputs.repository }}:${{ inputs.tag }}
          docker push ${{ inputs.registry }}/${{ inputs.repository }}:latest
+         docker builder prune -af
          docker image prune -af
       shell: bash
