@@ -15,7 +15,8 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
 
 RUN apk add --no-cache icu-data-full icu-libs tzdata
 RUN apk add libgdiplus --repository https://dl-3.alpinelinux.org/alpine/edge/testing/
-RUN apk update && apk add libgdiplus
+RUN apk update
+
 WORKDIR /app
 COPY --link --from=build-env /app/out .
 USER $APP_UID
