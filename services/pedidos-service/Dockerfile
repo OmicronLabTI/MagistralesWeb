@@ -13,11 +13,11 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LC_ALL=es_MX.UTF-8 \
     LANG=es_MX.UTF-8
 
-RUN apk add --no-cache \
+RUN apk add --no-cache noto-fonts \
     icu-data-full icu-libs tzdata \
     libgdiplus \
     fontconfig \
-    ttf-dejavu \
+    ttf-liberation \
     freetype \
     libpng \
     libjpeg-turbo \
