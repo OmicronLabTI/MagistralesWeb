@@ -13,17 +13,16 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LC_ALL=es_MX.UTF-8 \
     LANG=es_MX.UTF-8
 
-RUN apk add --no-cache noto-fonts \
+RUN apk add --no-cache \
     icu-data-full icu-libs tzdata \
     libgdiplus \
     fontconfig \
-    ttf-liberation \
     freetype \
-    libpng \
-    libjpeg-turbo \
-    cairo \
-    harfbuzz \
-    pango
+    msttcorefonts-installer
+
+# Instalar las fuentes Core Fonts, incluyendo Tahoma
+RUN update-ms-fonts \
+    && fc-cache -f -v
 
 WORKDIR /app
 COPY --link --from=build-env /app/out .
