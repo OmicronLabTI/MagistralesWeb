@@ -13,7 +13,6 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LC_ALL=es_MX.UTF-8 \
     LANG=es_MX.UTF-8
 
-# Instalar dependencias necesarias
 RUN apk add --no-cache \
     fontconfig \
     freetype \
@@ -22,9 +21,10 @@ RUN apk add --no-cache \
     cairo harfbuzz pango \
     ttf-liberation
 
-# Copiar las fuentes Tahoma (normal y bold) al contenedor
-COPY path/to/tahoma.ttf /usr/share/fonts/tahoma.ttf
-COPY path/to/tahomabd.ttf /usr/share/fonts/tahomabd.ttf
+COPY fonts/tahoma.ttf /usr/share/fonts/tahoma.ttf
+COPY fonts/tahomabd.ttf /usr/share/fonts/tahomabd.ttf
+
+RUN fc-cache -f -v
 
 WORKDIR /app
 COPY --link --from=build-env /app/out .
