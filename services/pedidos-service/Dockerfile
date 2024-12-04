@@ -13,16 +13,18 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LC_ALL=es_MX.UTF-8 \
     LANG=es_MX.UTF-8
 
+# Instalar dependencias necesarias
 RUN apk add --no-cache \
-    icu-data-full icu-libs tzdata \
-    libgdiplus \
     fontconfig \
     freetype \
-    msttcorefonts-installer
+    libgdiplus \
+    icu-data-full icu-libs tzdata \
+    cairo harfbuzz pango \
+    ttf-liberation
 
-# Instalar las fuentes Core Fonts, incluyendo Tahoma
-RUN update-ms-fonts \
-    && fc-cache -f -v
+# Copiar las fuentes Tahoma (normal y bold) al contenedor
+COPY path/to/tahoma.ttf /usr/share/fonts/tahoma.ttf
+COPY path/to/tahomabd.ttf /usr/share/fonts/tahomabd.ttf
 
 WORKDIR /app
 COPY --link --from=build-env /app/out .
