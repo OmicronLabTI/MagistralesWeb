@@ -21,10 +21,9 @@ RUN apk add --no-cache \
     cairo harfbuzz pango \
     ttf-liberation
 
-COPY fonts/tahoma.ttf /usr/share/fonts/tahoma.ttf
-COPY fonts/tahomabd.ttf /usr/share/fonts/tahomabd.ttf
-
-RUN fc-cache -f -v
+RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing msttcorefonts-installer \
+    && update-ms-fonts \
+    && fc-cache -f -v
 
 WORKDIR /app
 COPY --link --from=build-env /app/out .
