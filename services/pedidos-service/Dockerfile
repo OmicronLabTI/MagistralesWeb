@@ -10,11 +10,15 @@ RUN dotnet publish "/app/Omicron.Pedidos.Api/Omicron.Pedidos.Api.csproj" -c Rele
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
+    ASPNETCORE_ENVIRONMENT=Local \
     LC_ALL=es_MX.UTF-8 \
     LANG=es_MX.UTF-8
-RUN apk add --no-cache icu-data-full icu-libs tzdata
 
+RUN apk add --no-cache icu-data-full icu-libs tzdata
+RUN apk add libgdiplus --repository https://dl-3.alpinelinux.org/alpine/edge/testing/
 RUN apk update && apk add libgdiplus
+
+
 WORKDIR /app
 COPY --link --from=build-env /app/out .
 USER $APP_UID

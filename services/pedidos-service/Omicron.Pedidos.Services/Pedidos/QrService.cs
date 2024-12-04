@@ -440,7 +440,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var info = new SKImageInfo(parameters.QrWidth, parameters.QrHeight, SKColorType.Rgba8888, SKAlphaType.Premul);
             var surface = SKSurface.Create(info);
             var canvas = surface.Canvas;
-            canvas.Clear(SKColors.White); // Clear the canvas to ensure a clean background.
+            canvas.Clear();
             var rect = SKRect.Create(parameters.QrCodePositionX, parameters.QrCodePositionY, parameters.QrCodeSize, parameters.QrCodeSize);
             canvas.Render(qr, rect, SKColor.Parse(ServiceConstants.HexWhiteColor), SKColor.Parse(ServiceConstants.HexBlackColor));
             return surface;
@@ -469,106 +469,86 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Add custom text to QR.
         /// </summary>
-        /// <param name="surface">The SK Surface.</param>
-        /// <param name="needsCoolingFlag">Flag if it needs cooling.</param>
-        /// <param name="bottomTextTemplate">Template for the bottom text.</param>
-        /// <param name="identifierToPlace">Identifier to place in the QR.</param>
-        /// <param name="parameters">QR dimension parameters.</param>
-        /// <param name="needTopTextRotated">Flag for rotating top text.</param>
-        /// <param name="topText">Top text to draw.</param>
+        /// <param name="surface">the SK Surface.</param>
+        /// <param name="needsCoolingFlag">the flag if it needs cooling.</param>
+        /// <param name="botomText">the botom text.</param>
+        /// <param name="identifierToPlace">the id to place.</param>
+        /// <param name="parameters">the parameters.</param>
+        /// <param name="needTopTextRotated">Bool need top text rotated.</param>
+        /// <param name="topText">Top text.</param>
         private byte[] AddTextToSKQr(
             SKSurface surface,
             bool needsCoolingFlag,
-            string bottomTextTemplate,
+            string botomText,
             string identifierToPlace,
             QrDimensionsModel parameters,
             bool needTopTextRotated,
             string topText = null)
         {
             var canvas = surface.Canvas;
-
-            // Build the bottom text with cooling info if applicable.
             var needsCooling = needsCoolingFlag ? ServiceConstants.NeedsCooling : string.Empty;
-            var bottomText = string.Format(bottomTextTemplate, identifierToPlace, needsCooling);
+            var bottomText = string.Format(botomText, identifierToPlace, needsCooling);
 
-            // Configure SKPaint for drawing text.
-            using var paint = new SKPaint
-            {
-                Color = SKColors.Black,
-                IsAntialias = true,
-                TextSize = parameters.QrBottomTextSize + 5,
-                Typeface = this.GetFontTypeface(parameters.QrTextIsBold),
-            };
+            using var paint = new SKPaint();
+            paint.Color = SKColors.Black;
+            paint.IsAntialias = true;
+            paint.TextSize = parameters.QrBottomTextSize + 5;
+            paint.Typeface = SKTypeface.FromFamilyName(ServiceConstants.QrTextFontType, parameters.QrTextIsBold ? SKFontStyleWeight.Bold : SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright);
 
-            // Draw the bottom text.
             this.DrawRectangleSKText(paint, ref canvas, parameters.QrRectx, parameters.QrRecty, parameters.QrRectWidth, parameters.QrRectHeight, bottomText, false, 0);
-
-            // Draw the top text if provided.
             if (!string.IsNullOrEmpty(topText))
             {
                 this.CreateQrTopSkText(paint, ref canvas, parameters, topText, needTopTextRotated);
             }
 
-            // Snapshot the canvas and encode it as a PNG.
             using SKImage image = surface.Snapshot();
             using SKData data = image.Encode(SKEncodedImageFormat.Png, 90);
             return data.ToArray();
         }
 
         /// <summary>
-        /// Get the appropriate typeface for text rendering.
+        /// Draw an rectangule with text in a graphic.
         /// </summary>
-        /// <param name="isBold">Indicates if the font should be bold.</param>
-        /// <returns>The SKTypeface to use.</returns>
-        private SKTypeface GetFontTypeface(bool isBold)
-        {
-            try
-            {
-                return SKTypeface.FromFamilyName(
-                    ServiceConstants.QrTextFontType,
-                    isBold ? SKFontStyleWeight.Bold : SKFontStyleWeight.Normal,
-                    SKFontStyleWidth.Normal,
-                    SKFontStyleSlant.Upright) ?? SKTypeface.Default;
-            }
-            catch
-            {
-                // Fallback to default font in case of errors.
-                return SKTypeface.Default;
-            }
-        }
-
-        /// <summary>
-        /// Draw text inside a rectangle on the canvas.
-        /// </summary>
-        private void DrawRectangleSKText(SKPaint paint, ref SKCanvas canvas, int rectx, int recty, int width, int height, string text, bool needRotate, int angleRotate)
+        /// <param name="paint">Sk Paint.</param>
+        /// <param name="canvas">SK Canvas.</param>
+        /// <param name="rectx">Position X.</param>
+        /// <param name="recty">Position Y.</param>
+        /// <param name="width">Regtangle Width.</param>
+        /// <param name="heigth">Rectangle heigth.</param>
+        /// <param name="text">Text to draw.</param>
+        /// <param name="needRotate">need rottion.</param>
+        private void DrawRectangleSKText(SKPaint paint, ref SKCanvas canvas, int rectx, int recty, int width, int heigth, string text, bool needRotate, int angleRotate)
         {
             if (needRotate)
             {
-                canvas.Save(); // Save the current state of the canvas.
                 canvas.RotateDegrees(angleRotate);
             }
 
-            this.DrawTextArea(ref canvas, paint, rectx, recty, width, height, text);
-
-            if (needRotate)
-            {
-                canvas.Restore(); // Restore the canvas to its original state.
-            }
+            this.DrawTextArea(ref canvas, paint, rectx, recty, width, heigth, text);
+            canvas.RotateDegrees(0);
         }
 
         /// <summary>
-        /// Draws multiline text in a defined area.
+        /// Draw an text area into text.
         /// </summary>
+        /// <param name="canvas">Sk Canvas.</param>
+        /// <param name="paint">SK Paint.</param>
+        /// <param name="x">Position X.</param>
+        /// <param name="y">Position Y.</param>
+        /// <param name="maxWidth">Regtangle Width.</param>
+        /// <param name="lineHeight">Line heigth.</param>
+        /// <param name="text">Text to draw.</param>
         private void DrawTextArea(ref SKCanvas canvas, SKPaint paint, float x, float y, float maxWidth, float lineHeight, string text)
         {
-            var spaceWidth = paint.MeasureText(" ");
+            var spaceWidth = paint.MeasureText("\n");
             var lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             lines = lines.SelectMany(l => this.SplitLine(paint, maxWidth, l, spaceWidth)).ToArray();
 
-            foreach (var line in lines)
+            for (int i = 0; i < lines.Length; i++)
             {
+                var line = lines[i];
                 canvas.DrawText(line, x, y, paint);
-                y += lineHeight; // Move to the next line.
+                y += lineHeight;
             }
         }
 
