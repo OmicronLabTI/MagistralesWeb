@@ -164,7 +164,7 @@ spec:
           resources:
             limits:
               cpu: 279m
-              memory: 550Mi
+              memory: 688Mi
             requests:
               cpu: 3m
               memory: 206Mi
@@ -240,7 +240,7 @@ spec:
           resources:
             limits:
               cpu: 1245m
-              memory: 1063Mi
+              memory: 1503Mi
             requests:
               cpu: 8m
               memory: 272Mi
@@ -412,7 +412,7 @@ spec:
           resources:
             limits:
               cpu: 128m
-              memory: 187Mi
+              memory: 209Mi
             requests:
               cpu: 2m
               memory: 143Mi
@@ -487,7 +487,7 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 48m
+              cpu: 128m
               memory: 208Mi
             requests:
               cpu: 2m
