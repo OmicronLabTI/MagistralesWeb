@@ -843,7 +843,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)
         {
-            if (order.ClientType == ServiceConstants.ClientTypeInstitutional)
+            if (order.ClientType == ServiceConstants.ClientTypeInstitutional || order.ClientType == ServiceConstants.ClientTypeClinic)
             {
                 var data = alias.FirstOrDefault(x => x.ClientId == order.Codigo);
                 order.Cliente = data != null ? data.AliasName : string.Empty;
@@ -852,6 +852,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Match match = regex.Match(order.ShippingAddressName);
 
                 order.Medico = match.Success ? match.Groups[1].Value.Trim() : order.Medico;
+                order.ClientType = order.ClientType.Equals(ServiceConstants.ClientTypeClinic) ? ServiceConstants.ClientTypeClinic : order.ClientType;
             }
             else
             {
