@@ -12,9 +12,19 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
     LC_ALL=es_MX.UTF-8 \
     LANG=es_MX.UTF-8
-RUN apk add --no-cache icu-data-full icu-libs tzdata
 
-RUN apk update && apk add libgdiplus
+RUN apk add --no-cache \
+    fontconfig \
+    freetype \
+    libgdiplus \
+    icu-data-full icu-libs tzdata \
+    cairo harfbuzz pango \
+    ttf-liberation
+
+RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing msttcorefonts-installer \
+    && update-ms-fonts \
+    && fc-cache -f -v
+
 WORKDIR /app
 COPY --link --from=build-env /app/out .
 USER $APP_UID
