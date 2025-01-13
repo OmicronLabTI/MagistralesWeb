@@ -1,6 +1,6 @@
 # OAuth2 Server
 
-_Proyecto OAuthServer Axity desarrollado en Java8 con Springboot 2.0_     
+_Proyecto OAuthServer Axity desarrollado en Java8 con Springboot 2.0_
 
 ## Comenzando 🚀
 
