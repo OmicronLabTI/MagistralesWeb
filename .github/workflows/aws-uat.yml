@@ -9,7 +9,7 @@ on:
         required: false
   push:
     branches:
-      - release/deploy-aws-to-azure
+      - release/Uat
     paths:
       - frontend/**
       - services/**
