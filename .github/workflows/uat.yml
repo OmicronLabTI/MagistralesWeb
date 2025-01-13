@@ -1,4 +1,4 @@
-name: omicron-magistrales-uat
+name: omicron-uat-aws
 on:
   workflow_dispatch:
     inputs:
