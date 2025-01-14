@@ -8,8 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services.SapAdapter
 {
-    using NUnit.Framework;
-    using Omicron.Pedidos.Resources.Exceptions;
     using Omicron.Pedidos.Services.SapAdapter;
 
     /// <summary>
@@ -31,7 +29,7 @@ namespace Omicron.Pedidos.Test.Services.SapAdapter
             var result = client.GetSapAdapter("endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>
@@ -47,7 +45,7 @@ namespace Omicron.Pedidos.Test.Services.SapAdapter
             var result = client.PostSapAdapter(new { }, "endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success);
         }
 
         /// <summary>

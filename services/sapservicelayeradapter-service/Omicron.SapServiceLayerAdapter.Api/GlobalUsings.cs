@@ -24,7 +24,6 @@ global using Omicron.SapServiceLayerAdapter.Facade.InventoryTransferRequest;
 global using Omicron.SapServiceLayerAdapter.Facade.Invoice;
 global using Omicron.SapServiceLayerAdapter.Facade.Orders;
 global using Omicron.SapServiceLayerAdapter.Facade.ProductionOrder;
-global using Omicron.SapServiceLayerAdapter.Persistence;
 global using Omicron.SapServiceLayerAdapter.Services;
 global using Omicron.SapServiceLayerAdapter.Services.DeliveryNotes;
 global using Omicron.SapServiceLayerAdapter.Services.SapFile;

@@ -310,6 +310,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
         private static List<ProductionOrderLineDto> DeleteComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> componentsToDelete)
         {
+            var deletedItems = completeList.Where(component => !componentsToDelete.Any(x => x.ProductId.Equals(component.ItemNo))).ToList();
+            if (!deletedItems.Any())
+            {
+                componentsToDelete.RemoveAt(0);
+            }
+
             return completeList.Where(component => !componentsToDelete.Any(x => x.ProductId.Equals(component.ItemNo))).ToList();
         }
 

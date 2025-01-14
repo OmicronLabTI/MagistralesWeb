@@ -7,8 +7,6 @@
 // </summary>
 namespace Omicron.Reporting.Test
 {
-    using NUnit.Framework;
-
     /// <summary>
     /// Class for tests entities.
     /// </summary>
@@ -26,7 +24,7 @@ namespace Omicron.Reporting.Test
             instance = AutoFixtureProvider.Create<T>();
 
             // Assert
-            Assert.IsTrue(IsValid(instance));
+            Assert.That(IsValid(instance), Is.True);
         }
 
         /// <summary>
@@ -37,10 +35,10 @@ namespace Omicron.Reporting.Test
         /// <returns>Assertion result.</returns>
         internal static bool IsValid<T>(T instance)
         {
-            Assert.IsNotNull(instance);
+            Assert.That(instance, Is.Not.Null);
             foreach (var prop in instance.GetType().GetProperties())
             {
-                Assert.IsNotNull(GetPropValue(instance, prop.Name));
+                Assert.That(GetPropValue(instance, prop.Name), Is.Not.Null);
             }
 
             return true;

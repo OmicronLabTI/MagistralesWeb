@@ -9,6 +9,7 @@
 namespace Omicron.Usuarios.Entities.Context
 {
     using Microsoft.EntityFrameworkCore;
+    using Omicron.Usuarios.Entities.Interceptor;
     using Omicron.Usuarios.Entities.Model;
 
     /// <summary>
@@ -30,5 +31,11 @@ namespace Omicron.Usuarios.Entities.Context
 
         /// <inheritdoc/>
         public virtual DbSet<RoleModel> RoleModel { get; set; }
+
+        /// <inheritdoc/>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.AddInterceptors(new UtcDateTimeInterceptor(), new UtcDateTimeQueryInterceptor());
+        }
     }
 }

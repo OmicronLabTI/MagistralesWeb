@@ -8,16 +8,6 @@
 
 namespace Omicron.SapAdapter.Test
 {
-    using System;
-    using System.Collections.Generic;
-    using Newtonsoft.Json;
-    using Omicron.SapAdapter.Dtos.Models;
-    using Omicron.SapAdapter.Entities.Model;
-    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Entities.Model.DbModels;
-    using Omicron.SapAdapter.Entities.Model.JoinsModels;
-
     /// <summary>
     /// Class Base Test.
     /// </summary>
@@ -48,6 +38,7 @@ namespace Omicron.SapAdapter.Test
                 new OrderModel { PedidoId = 101, AsesorId = 1, Codigo = "Codigo", DocNum = 101, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "institucional" },
                 new OrderModel { PedidoId = 102, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2, OrderType = "MN", Patient = "paciente" },
                 new OrderModel { PedidoId = 103, AsesorId = 1, Codigo = "Codigo1234", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente" },
+                new OrderModel { PedidoId = 104, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "clinica" },
 
                 // For Almacen
                 new OrderModel { PedidoId = 75000, DocNum = 75000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N", Patient = "paciente" },
@@ -84,6 +75,7 @@ namespace Omicron.SapAdapter.Test
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 1, PedidoId = 100, ProductoId = "Abc Aspirina", Container = "NA", Label = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 2, PedidoId = 100, ProductoId = "Buscapina", Container = "NA", Label = "NA", Quantity = 10 },
                 new DetallePedidoModel { Description = "DetallePedido", DetalleId = 2, PedidoId = 101, ProductoId = "Abc Aspirina", Container = "NA", Label = "NA", Quantity = 10 },
+                new DetallePedidoModel { Description = "DetallePedido", DetalleId = 2, PedidoId = 104, ProductoId = "Abc Aspirina", Container = "NA", Label = "NA", Quantity = 10 },
 
                 // For Almacen
                 new DetallePedidoModel { Description = "Magistral1", DetalleId = 0, PedidoId = 75000, ProductoId = "Magistral1", Container = "NA", Quantity = 10 },
@@ -778,7 +770,7 @@ namespace Omicron.SapAdapter.Test
                 Success = true,
                 Code = 200,
                 ExceptionMessage = string.Empty,
-                Response = string.Empty,
+                Response = users,
                 UserError = string.Empty,
             };
         }

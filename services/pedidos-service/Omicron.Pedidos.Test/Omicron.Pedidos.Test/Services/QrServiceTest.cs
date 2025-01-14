@@ -8,22 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Moq;
-    using NUnit.Framework;
-    using Newtonsoft.Json;
-    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Services.AlmacenService;
-    using Omicron.Pedidos.Services.Pedidos;
-    using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.Azure;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -79,8 +63,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await this.qrsService.CreateMagistralQr(listOrdersId);
 
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -98,8 +82,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateSampleLabel(listOrdersId);
 
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -138,8 +122,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateSampleLabel(listOrdersId);
 
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -158,8 +142,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateRemisionQr(listOrdersId);
 
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -198,8 +182,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateRemisionQr(listOrdersId);
 
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -218,8 +202,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateInvoiceQr(listOrdersId);
 
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -256,8 +240,8 @@ namespace Omicron.Pedidos.Test.Services
 
             var response = await service.CreateInvoiceQr(listOrdersId);
 
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
     }
 }

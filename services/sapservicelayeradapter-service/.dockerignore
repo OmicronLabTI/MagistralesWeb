@@ -1,0 +1,52 @@
+# Excluir carpetas de compilación de .NET (bin y obj)
+**/bin/
+**/obj/
+
+# Excluir archivo de configuración de Visual Studio
+.vscode/
+.vs/
+.vscode/settings.json
+
+# Excluir archivos de usuario de Visual Studio (.suo, .user, etc.)
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Excluir carpetas y archivos de Git
+.git/
+.gitignore
+
+# Excluir configuraciones de NuGet
+.nuget/
+
+# Excluir directorios de paquetes y dependencias
+**/packages/
+**/node_modules/
+
+# Excluir la carpeta Test en cualquier nivel
+Test/
+
+# Excluir todas las carpetas que terminen en .Test en cualquier nivel
+**/*.Test/
+
+# Excluir archivos temporales generados por compiladores y el sistema
+**/*.log
+**/*.tmp
+*.pdb
+*.obj
+*.dll
+*.exe
+*.db
+*.pid
+*.tar.gz
+
+# Excluir archivos de publicación o distribuciones previas
+*.zip
+*.tar
+*.tar.gz
+
+# Excluir configuraciones específicas de entorno local
+.env
+docker-compose.yml
+docker-compose.override.yml

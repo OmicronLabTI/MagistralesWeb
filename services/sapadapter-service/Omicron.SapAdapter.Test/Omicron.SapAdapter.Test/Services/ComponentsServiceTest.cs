@@ -8,21 +8,6 @@
 
 namespace Omicron.SapAdapter.Test.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Entities.Context;
-    using Omicron.SapAdapter.Entities.Model.BusinessModels;
-    using Omicron.SapAdapter.Services.Redis;
-    using Omicron.SapAdapter.Services.Sap;
-    using Omicron.SapAdapter.Services.User;
-    using Serilog;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -93,7 +78,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await service.GetMostCommonComponents(new Dictionary<string, string>());
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -137,7 +122,7 @@ namespace Omicron.SapAdapter.Test.Services
             // act
             var result = await service.GetMostCommonComponents(new Dictionary<string, string>());
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

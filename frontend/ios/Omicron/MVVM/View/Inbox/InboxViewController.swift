@@ -65,7 +65,7 @@ class InboxViewController: UIViewController {
         lpgr.delaysTouchesBegan = true
         self.collectionView.addGestureRecognizer(lpgr)
         removeOrdersSelectedView.layer.cornerRadius = removeOrdersSelectedView.frame.width / 2
-        removeOrdersSelectedView.layer.zPosition = 1
+        removeOrdersSelectedView.layer.zPosition = 100
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -173,6 +173,7 @@ class InboxViewController: UIViewController {
             guard let self = self else { return }
             self.title = title
             self.hideButtons(title: title)
+            self.removeOrdersSelectedVerticalSpace.constant = -80
             self.removeOrdersSelectedView.backgroundColor = self.updateRemoveViewColor(title: title)
         }).disposed(by: disposeBag)
         inboxViewModel.refreshDataWhenChangeProcessIsSucces
@@ -288,7 +289,7 @@ class InboxViewController: UIViewController {
             if self.removeOrdersSelectedVerticalSpace.constant > 0 {
                 UIView.animate(withDuration: 0.2, animations: { [weak self] in
                     guard let self = self else { return }
-                    self.removeOrdersSelectedVerticalSpace.constant = -60
+                    self.removeOrdersSelectedVerticalSpace.constant = -80
                     self.view.layoutIfNeeded()
                 })
             }
@@ -381,10 +382,10 @@ class InboxViewController: UIViewController {
             self.finishedButton.isEnabled = false
             self.packageButton.isEnabled = false
         }
-        if self.removeOrdersSelectedVerticalSpace.constant > 0 {
+        if self.removeOrdersSelectedVerticalSpace.constant == -15 {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
                 guard let self = self else { return }
-                self.removeOrdersSelectedVerticalSpace.constant = -60
+                self.removeOrdersSelectedVerticalSpace.constant = -80
                 self.view.layoutIfNeeded()
             })
         }

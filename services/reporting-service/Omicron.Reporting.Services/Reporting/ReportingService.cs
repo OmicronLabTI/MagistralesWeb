@@ -374,11 +374,11 @@ namespace Omicron.Reporting.Services
             string greeting;
             if (request.IsPatient)
             {
-                greeting = string.Format(ServiceConstants.SendingPatientBody, request.ClientName, request.SalesOrders, request.Address.ToUpper(), request.TrackingNumber, sendEmailOrTel, sendEmailLink);
+                greeting = string.Format(ServiceConstants.SendingPatientBody, request.ClientName, request.SalesOrders, request.TransportMode, request.Address.ToUpper(), request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             }
             else
             {
-                greeting = string.Format(ServiceConstants.SentForeignPackage, request.ClientName, request.SalesOrders, request.PackageId, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
+                greeting = string.Format(ServiceConstants.SentForeignPackage, request.ClientName, request.SalesOrders, request.TransportMode, request.PackageId, request.TrackingNumber, sendEmailOrTel, sendEmailLink);
             }
 
             var body = string.Format(ServiceConstants.SendEmailHtmlBaseAlmacen, logoUrl, greeting, string.Empty, request.IsPatient ? ServiceConstants.RefundPolicyPatient : ServiceConstants.RefundPolicy);

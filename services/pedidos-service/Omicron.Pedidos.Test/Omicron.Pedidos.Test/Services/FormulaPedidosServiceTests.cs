@@ -8,17 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using NUnit.Framework;
-    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Entities.Model.Db;
-    using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.Pedidos;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -91,12 +80,12 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.CreateCustomComponentList(this.userId, customList);
 
             // assert
-            Assert.IsTrue(this.CheckAction(response, true, 4, 6));
-            Assert.IsTrue(response.Code == 200);
-            Assert.IsInstanceOf<int>(response.Response);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.Comments);
+            Assert.That(this.CheckAction(response, true, 4, 6));
+            Assert.That(response.Code == 200);
+            Assert.That(response.Response, Is.InstanceOf<int>());
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
         }
 
         /// <summary>
@@ -114,8 +103,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.CreateCustomComponentList(this.userId, customList);
 
             // assert
-            Assert.IsTrue(this.CheckAction(response, true, 3, 4));
-            Assert.Zero(int.Parse(response.Response.ToString()));
+            Assert.That(this.CheckAction(response, true, 3, 4));
+            Assert.That(int.Parse(response.Response.ToString()), Is.Zero);
         }
 
         /// <summary>
@@ -133,14 +122,14 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             var listsInResponse = (List<CustomComponentListModel>)response.Response;
-            Assert.IsTrue(response.Success);
-            Assert.AreEqual(listsInResponse.Count, 2);
-            Assert.AreEqual(listsInResponse[0].Components.Count, 2);
-            Assert.AreEqual(listsInResponse[1].Components.Count, 1);
-            Assert.IsInstanceOf<List<CustomComponentListModel>>(response.Response);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.Comments);
+            Assert.That(response.Success);
+            Assert.That(2.Equals(listsInResponse.Count));
+            Assert.That(2.Equals(listsInResponse[0].Components.Count));
+            Assert.That(1.Equals(listsInResponse[1].Components.Count));
+            Assert.That(response.Response, Is.InstanceOf<List<CustomComponentListModel>>());
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
         }
 
         /// <summary>
@@ -161,7 +150,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.DeleteCustomComponentList(dic);
 
             // assert
-            Assert.IsTrue(this.CheckAction(response, true, 2, 2));
+            Assert.That(this.CheckAction(response, true, 2, 2));
         }
 
         /// <summary>
@@ -182,8 +171,8 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.formulaPedidosService.DeleteCustomComponentList(dic);
 
             // assert
-            Assert.IsTrue(this.CheckAction(response, false, 3, 4));
-            Assert.Zero(int.Parse(response.Response.ToString()));
+            Assert.That(this.CheckAction(response, false, 3, 4));
+            Assert.That(int.Parse(response.Response.ToString()), Is.Zero);
         }
 
         /// <summary>

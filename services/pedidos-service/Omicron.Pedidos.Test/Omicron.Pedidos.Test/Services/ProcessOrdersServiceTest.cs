@@ -8,27 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Services.Broker;
-    using Omicron.Pedidos.Services.Pedidos;
-    using Omicron.Pedidos.Services.Redis;
-    using Omicron.Pedidos.Services.Reporting;
-    using Omicron.Pedidos.Services.SapAdapter;
-    using Omicron.Pedidos.Services.SapDiApi;
-    using Omicron.Pedidos.Services.SapFile;
-    using Omicron.Pedidos.Services.SapServiceLayerAdapter;
-    using Omicron.Pedidos.Services.User;
-
     /// <summary>
     /// class for test.
     /// </summary>
@@ -179,13 +158,13 @@ namespace Omicron.Pedidos.Test.Services
             var errorsList = response.Response as List<string>;
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Code == 200);
-            Assert.IsTrue(errorsList.Any());
-            Assert.IsInstanceOf<List<string>>(errorsList);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.Comments);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Code == 200);
+            Assert.That(errorsList.Any());
+            Assert.That(errorsList, Is.InstanceOf<List<string>>());
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
         }
 
         /// <summary>
@@ -226,13 +205,13 @@ namespace Omicron.Pedidos.Test.Services
             var errorsList = response.Response as List<string>;
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Code == 200);
-            Assert.IsTrue(errorsList.Any());
-            Assert.IsInstanceOf<List<string>>(errorsList);
-            Assert.IsNotNull(response.Response);
-            Assert.IsNull(response.ExceptionMessage);
-            Assert.IsNull(response.Comments);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Code == 200);
+            Assert.That(errorsList.Any());
+            Assert.That(errorsList, Is.InstanceOf<List<string>>());
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
         }
     }
 }

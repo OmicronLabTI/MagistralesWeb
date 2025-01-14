@@ -180,7 +180,7 @@ extension InboxViewController {
         if indexPathsSelected.count > 0 {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
                 guard let self = self else { return }
-                self.removeOrdersSelectedVerticalSpace.constant = 48
+                self.removeOrdersSelectedVerticalSpace.constant = -15
                 self.view.layoutIfNeeded()
             })
             processButton.isEnabled = true
@@ -191,7 +191,7 @@ extension InboxViewController {
         } else {
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
                 guard let self = self else { return }
-                self.removeOrdersSelectedVerticalSpace.constant = -60
+                self.removeOrdersSelectedVerticalSpace.constant = -80
                 self.view.layoutIfNeeded()
             })
             processButton.isEnabled = false

@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using System.Text.Json;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Xml.Linq;
@@ -173,7 +174,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var listUsers = await this.GetUsers(userOrders);
 
             var listToProcess = details.Where(y => y.OrdenFabricacionId == 0).ToList();
-            listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).DistinctBy(y => y.OrdenFabricacionId));
+            listToProcess.AddRange(details.Where(y => y.OrdenFabricacionId != 0).UtilsDistinctBy(y => y.OrdenFabricacionId));
             listToProcess = listToProcess.OrderBy(x => x.OrdenFabricacionId).ThenBy(x => x.DescripcionProducto).ToList();
 
             foreach (var x in listToProcess)
@@ -782,7 +783,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = JsonConvert.DeserializeObject<List<int>>(JsonConvert.SerializeObject(resultOrders.Response));
             var detailsFormula = (await this.sapDao.GetDetalleFormulaByProdOrdId(userOrders)).Where(x => ServiceShared.CalculateOr(x.ItemCode.Contains("EN"), x.ItemCode.Contains("EM"))).ToList();
             var products = (await this.sapDao.GetProductByIds(detailsFormula.Select(x => x.ItemCode).Distinct().ToList())).ToList();
-
             var packaginList = products.Select(product =>
             new PackingRequiredModel
             {
@@ -843,7 +843,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)
         {
-            if (order.ClientType == ServiceConstants.ClientTypeInstitutional)
+            if (order.ClientType == ServiceConstants.ClientTypeInstitutional || order.ClientType == ServiceConstants.ClientTypeClinic)
             {
                 var data = alias.FirstOrDefault(x => x.ClientId == order.Codigo);
                 order.Cliente = data != null ? data.AliasName : string.Empty;
@@ -852,6 +852,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Match match = regex.Match(order.ShippingAddressName);
 
                 order.Medico = match.Success ? match.Groups[1].Value.Trim() : order.Medico;
+                order.ClientType = order.ClientType.Equals(ServiceConstants.ClientTypeClinic) ? ServiceConstants.ClientTypeClinic : order.ClientType;
             }
             else
             {
