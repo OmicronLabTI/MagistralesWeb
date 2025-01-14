@@ -9,7 +9,7 @@ on:
         required: false
   push:
     branches:
-      - release/deploy-aws-to-azure
+      - release/Uat
     paths:
       - frontend/**
       - services/**
@@ -244,6 +244,7 @@ jobs:
           kubectl apply -f deploy_uat.yaml --context omicron_aks_uat
           kubectl apply -f ingress-oauth.yml --context omicron_aks_uat
           kubectl apply -f ingress-services.yml --context omicron_aks_uat
+          kubectl apply -f secretsuat.yml --context omicron_aks_uat
 
       - name: Rollout catalogos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
@@ -276,12 +277,7 @@ jobs:
       - name: Rollout sapservicelayeradapter-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
         run: kubectl rollout restart deploy sapservicelayeradapter-deployment --context omicron_aks_uat
-      
-      - name: Docker prune
-        run: |
-          docker builder prune -f -a
-          docker image prune -f -a
-      
+              
   stop-runner:
     name: Stop self-hosted EC2 runner
     needs:

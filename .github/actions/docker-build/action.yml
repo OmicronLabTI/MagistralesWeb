@@ -75,3 +75,9 @@ runs:
       working-directory: ${{ inputs.path }}
       run: docker push ${{ inputs.registry }}/omicron${{ inputs.environment }}/omicron-appiosformulas-${{ steps.split_name.outputs.item_name }}-repository:latest
       shell: bash
+    - name: Docker cleanup ${{ inputs.path }}
+      run: |
+        docker image rm ${{ inputs.registry }}/omicron${{ inputs.environment }}/omicron-dxp-${{ steps.split_name.outputs.item_name }}-repository:latest || true
+        docker builder prune -af
+        docker image prune -af
+      shell: bash
