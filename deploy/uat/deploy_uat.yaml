@@ -80,6 +80,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Uat
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -107,7 +109,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: catalogos
   type: ClusterIP
@@ -137,6 +139,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Uat
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -164,7 +168,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: usuarios
   type: ClusterIP
@@ -194,6 +198,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Uat
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -226,7 +232,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: sapadapter
   type: ClusterIP
@@ -256,6 +262,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Uat
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -293,7 +301,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: pedidos
   type: ClusterIP
@@ -323,6 +331,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Uat
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -355,7 +365,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: warehouses
   type: ClusterIP
@@ -385,6 +395,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Uat
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -412,7 +424,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: reporting
   type: ClusterIP
@@ -442,6 +454,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Uat
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -494,7 +508,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: sapservicelayeradapter
   type: ClusterIP
