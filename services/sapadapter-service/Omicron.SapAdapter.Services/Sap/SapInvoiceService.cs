@@ -468,12 +468,20 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoices = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(invoicesIds)).ToList();
             var salesPerson = (await this.sapDao.GetAsesorWithEmailByIdsFromTheAsesor(invoices.Select(x => x.SalesPrsonId).ToList())).ToList();
 
+            var adressesToFind = invoices.Select(x => new GetDoctorAddressModel { CardCode = x.CardCode, AddressId = x.ShippingAddressName }).ToList();
+            var doctorData = await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, adressesToFind);
+
             invoices.ForEach(x =>
             {
                 var adviosr = salesPerson.FirstOrDefault(s => s.AsesorId == x.SalesPrsonId);
                 adviosr ??= new SalesPersonModel { Email = string.Empty, FirstName = string.Empty, LastName = string.Empty };
                 x.SalesPrsonEmail = adviosr.Email;
                 x.SalesPrsonName = $"{adviosr.FirstName} {adviosr.LastName}";
+
+                var doctor = doctorData.FirstOrDefault(y => y.DoctorId == x.CardCode && y.AddressId == x.ShippingAddressName);
+                doctor ??= new DoctorDeliveryAddressModel { Contact = x.Medico, BetweenStreets = string.Empty, EtablishmentName = string.Empty, References = string.Empty, AddressType = string.Empty };
+
+                x.IsDoctorDirection = doctor.AddressType.Equals(ServiceConstants.DoctorAddressType);
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invoices, null, null);
