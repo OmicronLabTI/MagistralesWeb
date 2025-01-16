@@ -1,0 +1,48 @@
+name: "Update Database"
+description: "Apply Liquibase update"
+inputs:
+  db_host:
+    description: "Database host. E.g. host_name:port"
+    required: true
+  db_name:
+    description: "Database name"
+    required: true
+  db_username:
+    description: "Database user"
+    required: true
+  db_password:
+    description: "Database password"
+    required: true
+  db_classpath_driver:
+    description: "Liquibase database driver name"
+    required: false
+    default: ./drivers/postgresql-42.2.14.jar
+runs:
+  using: "composite"
+  steps:
+
+    - name: Install Liquibase
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y default-jdk
+        curl -L https://github.com/liquibase/liquibase/releases/download/v4.5.0/liquibase-4.5.0.tar.gz -o liquibase.tar.gz
+        sudo mkdir -p /opt/liquibase
+        sudo tar -xvzf liquibase.tar.gz -C /opt/liquibase
+        sudo ln -s /opt/liquibase/liquibase /usr/local/bin/liquibase
+      shell: bash
+
+    - name: Run Liquibase Update
+      working-directory: ./database
+      env:
+        DB_URL: jdbc:postgresql://${{ inputs.db_host }}/${{ inputs.db_name }}
+        DB_USERNAME: ${{ inputs.db_username }}
+        DB_PASSWORD: ${{ inputs.db_password }}
+        CLASSPATH: ${{ inputs.db_classpath_driver }}
+      run: |
+        liquibase --changeLogFile=./changesets/db.changelog-master.xml \
+                  --url=${DB_URL} \
+                  --username=${DB_USERNAME} \
+                  --password=${DB_PASSWORD} \
+                  --classpath=${CLASSPATH} \
+                  update
+      shell: bash

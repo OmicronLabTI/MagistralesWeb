@@ -1,7 +1,7 @@
 # Liquibase
 ## Source Control for your database
 
-Es una libreria opensource para el manejo y ejecución de cambios en base de datos.
+Es una libreria opensource para el manejo y ejecución de cambios en base de datos.  
 
 ## Descripción
 Con liquibase podrás llevar el control de versiones de cualquier tipo de base de datos relaciónal, podras llevar una correcta administración de base de datos con tus clientes, sabrás en que version se encuentra cada ambiente y podrás fácilmente hacer refactoring a tus modelos.
