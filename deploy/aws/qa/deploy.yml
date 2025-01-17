@@ -78,6 +78,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -113,7 +115,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: catalogos
   type: ClusterIP
@@ -143,6 +145,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -178,7 +182,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: usuarios
   type: ClusterIP
@@ -208,6 +212,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: SAP_CONNECTION_STRING_SQL_SERVER
               valueFrom:
                 secretKeyRef:
@@ -232,13 +238,6 @@ spec:
             requests:
               cpu: 9m
               memory: 371Mi
-          livenessProbe:
-            httpGet:
-              path: /hc
-              port: 5102
-            initialDelaySeconds: 30
-            periodSeconds: 600
-            timeoutSeconds: 40
 ---
 apiVersion: v1
 kind: Service
@@ -250,7 +249,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: sapadapter
   type: ClusterIP
@@ -280,6 +279,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -325,7 +326,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: pedidos
   type: ClusterIP
@@ -355,6 +356,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -390,7 +393,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: warehouses
   type: ClusterIP
@@ -420,6 +423,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -450,7 +455,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: reporting
   type: ClusterIP
@@ -480,6 +485,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Staging
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: SAP_SERVICE_LAYER_URL
               valueFrom:
                 secretKeyRef:
@@ -535,7 +542,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: sapservicelayeradapter
   type: ClusterIP

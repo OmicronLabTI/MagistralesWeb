@@ -78,6 +78,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Prod
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -115,7 +117,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: catalogos
   type: ClusterIP
@@ -144,6 +146,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Prod
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -181,7 +185,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: usuarios
   type: ClusterIP
@@ -210,6 +214,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Prod
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -240,7 +246,7 @@ spec:
           resources:
             limits:
               cpu: 1245m
-              memory: 1503Mi
+              memory: 1879Mi
             requests:
               cpu: 8m
               memory: 272Mi
@@ -257,7 +263,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: sapadapter
   type: ClusterIP
@@ -286,6 +292,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Prod
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -341,7 +349,7 @@ spec:
           resources:
             limits:
               cpu: 670m
-              memory: 1500Mi
+              memory: 1875Mi
             requests:
               cpu: 62m
               memory: 155Mi
@@ -358,7 +366,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: pedidos
   type: ClusterIP
@@ -387,6 +395,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Prod
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: POSTGRESS_NET_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -429,7 +439,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: warehouses
   type: ClusterIP
@@ -458,6 +468,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Prod
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: STORAGE_ACCOUNT
               valueFrom:
                 secretKeyRef:
@@ -505,7 +517,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: reporting
   type: ClusterIP
@@ -534,6 +546,8 @@ spec:
               value: America/Mexico_City
             - name: ASPNETCORE_ENVIRONMENT
               value: Prod
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
             - name: REDIS_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
@@ -586,7 +600,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: sapservicelayeradapter
   type: ClusterIP

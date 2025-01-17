@@ -8,14 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using NUnit.Framework;
-    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Services.Pedidos;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -60,10 +52,10 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosDxpService.GetOrdersActive(listIds);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsNotNull(response.Response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNull(response.UserError);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.UserError, Is.Null);
         }
 
         /// <summary>
@@ -80,7 +72,7 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosDxpService.GetDeliveredPayments(listIds);
 
             // assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -97,13 +89,13 @@ namespace Omicron.Pedidos.Test.Services
             var response = await this.pedidosDxpService.GetOrdersHeaderStatus(listIds);
 
             // assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Code == 200);
-            Assert.IsNotNull(response.Comments);
-            Assert.IsNotNull(response.Response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNull(response.UserError);
-            Assert.IsNull(response.ExceptionMessage);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Comments, Is.Not.Null);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.UserError, Is.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
         }
     }
 }

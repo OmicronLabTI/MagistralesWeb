@@ -8,22 +8,6 @@
 
 namespace Omicron.Catalogos.Test.Facade
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Catalogos.Dtos.User;
-    using Omicron.Catalogos.Entities.Model;
-    using Omicron.Catalogos.Facade.Catalogs;
-    using Omicron.Catalogos.Facade.Catalogs.Users;
-    using Omicron.Catalogos.Services.Catalogs;
-    using Omicron.Catalogos.Services.Mapping;
-    using Omicron.Catalogos.Services.User;
-
     /// <summary>
     /// class for test.
     /// </summary>
@@ -97,8 +81,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.userFacade.GetListUsersActive();
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Any());
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Any(), Is.True);
         }
 
         /// <summary>
@@ -115,8 +99,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.userFacade.GetListUserActive(id);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.AreEqual(id, response.Id);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Id, Is.EqualTo(id));
         }
 
         /// <summary>
@@ -133,8 +117,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.userFacade.InsertUser(user);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response, Is.True);
         }
 
         /// <summary>
@@ -149,8 +133,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.catalogFacade.GetRoles();
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -167,8 +151,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.catalogFacade.GetParamsContains(containsValue);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -182,8 +166,8 @@ namespace Omicron.Catalogos.Test.Facade
             var response = await this.catalogFacade.GetActiveClassificationQfb();
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
     }
 }

@@ -8,18 +8,6 @@
 
 namespace Omicron.Pedidos.Test
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.DependencyInjection;
-    using Newtonsoft.Json;
-    using Omicron.Pedidos.Dtos.Models;
-    using Omicron.Pedidos.Dtos.User;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Services.Constants;
-
     /// <summary>
     /// Class Base Test.
     /// </summary>

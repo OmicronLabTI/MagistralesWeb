@@ -85,7 +85,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceHeaders = (await this.sapDao.GetInvoiceHeaderByInvoiceIdJoinDoctor(invoicesId)).ToList();
             invoiceHeaders = invoiceHeaders.Where(x => ServiceShared.CalculateAnd(ServiceShared.CalculateOr(string.IsNullOrEmpty(x.Refactura), x.Refactura != ServiceConstants.IsRefactura), x.Canceled == "N")).ToList();
             invoiceHeaders = await this.GetInvoiceHeaderByParameters(invoiceHeaders, deliveryDetails, parameters);
-            var totalByFilters = invoiceHeaders.DistinctBy(x => x.InvoiceId).ToList().Count;
+            var totalByFilters = invoiceHeaders.UtilsDistinctBy(x => x.InvoiceId).ToList().Count;
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(invoiceHeaders.Select(x => x.InvoiceId).ToList())).ToList();
 
             var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && y.BaseEntry.Value != 0).Select(x => x.BaseEntry.Value).Distinct().Count();

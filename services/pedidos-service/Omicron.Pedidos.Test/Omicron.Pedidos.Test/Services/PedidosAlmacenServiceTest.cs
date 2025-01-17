@@ -8,21 +8,6 @@
 
 namespace Omicron.Pedidos.Test.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Moq;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
-    using Omicron.Pedidos.Entities.Context;
-    using Omicron.Pedidos.Entities.Model;
-    using Omicron.Pedidos.Services.Constants;
-    using Omicron.Pedidos.Services.Pedidos;
-    using Omicron.Pedidos.Services.SapFile;
-
     /// <summary>
     /// class for the test.
     /// </summary>
@@ -72,7 +57,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForAlmacen();
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -88,7 +73,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForAlmacen(listIds);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -108,7 +93,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.UpdateUserOrders(listorders);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -122,7 +107,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForDelivery();
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -136,7 +121,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForDelivery(new List<int> { 100 });
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -150,7 +135,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForInvoice();
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -171,7 +156,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetOrdersForPackages(dict);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -192,7 +177,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.UpdateSentOrders(listUserOrders);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -214,7 +199,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetAlmacenGraphData(dict);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -231,7 +216,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await this.pedidosAlmacen.GetUserOrderByDeliveryOrder(listIds);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -249,11 +234,11 @@ namespace Omicron.Pedidos.Test.Services
             var userorders = result.Response as List<UserOrderModel>;
 
             // assert
-            Assert.IsNotNull(result);
-            Assert.IsNotNull(result.Response);
-            Assert.True(result.Success);
-            Assert.True(result.Code == 200);
-            Assert.True(userorders.Count > 0);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.Success);
+            Assert.That(result.Code == 200);
+            Assert.That(userorders.Count > 0);
         }
 
         /// <summary>
@@ -289,7 +274,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidoServiceLocal.CreatePdf(type, details);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -308,7 +293,7 @@ namespace Omicron.Pedidos.Test.Services
             var result = await pedidoServiceLocal.AdvanceLook(details);
 
             // assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

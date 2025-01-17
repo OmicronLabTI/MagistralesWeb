@@ -38,7 +38,7 @@
 
         <div class="table-toolbar-buttons with-table-toolbar-custom">
             <button mat-raised-button class="button-blue" [routerLink]="['/lotes', oldDataFormulaDetail.baseDocument,
-                                                            ordenFabricacionId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,
+                                                            oldDataFormulaDetail.productionOrderId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,
                                                             oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()]">
             Lotes
             </button>
@@ -81,7 +81,7 @@
                                [ngClass]="isPlannedQuantityError ? 'input-with-error': ''"
                                 [formControl]="plannedQuantityControl"
                                step="any"
-                               mask="comma_separator.6"   
+                               mask="separator.6"   
                                thousandSeparator=","
                                entiresPlaces="10"
                                appLimitEntires>

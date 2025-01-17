@@ -1,14 +1,32 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build-env
 
 WORKDIR /app
-COPY . ./
+COPY --link . ./
 
 RUN dotnet restore "/app/Omicron.Pedidos.Api/Omicron.Pedidos.Api.csproj"
+RUN dotnet add "Omicron.Pedidos.DependencyInjection/Omicron.Pedidos.DependencyInjection.csproj" package Microsoft.Identity.Client --version 4.64.1
+RUN dotnet add "Omicron.Pedidos.Repository/Omicron.Pedidos.Entities.csproj" package Microsoft.Identity.Client --version 4.64.1
 RUN dotnet publish "/app/Omicron.Pedidos.Api/Omicron.Pedidos.Api.csproj" -c Release -o out
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
-RUN apt-get update && apt-get install -y libgdiplus
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
+    LC_ALL=es_MX.UTF-8 \
+    LANG=es_MX.UTF-8
+
+RUN apk add --no-cache \
+    fontconfig \
+    freetype \
+    libgdiplus \
+    icu-data-full icu-libs tzdata \
+    cairo harfbuzz pango \
+    ttf-liberation
+
+RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing msttcorefonts-installer \
+    && update-ms-fonts \
+    && fc-cache -f -v
+
 WORKDIR /app
-COPY --from=build-env /app/out .
-ENV TZ America/Mexico_City
+COPY --link --from=build-env /app/out .
+USER $APP_UID
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "Omicron.Pedidos.Api.dll"]

@@ -7,15 +7,6 @@
 // </summary>
 namespace Omicron.Warehouses.Test.Api
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Warehouses.Api.Controllers;
-    using Omicron.Warehouses.Dtos.Model;
-    using Omicron.Warehouses.Facade.Request;
-
     /// <summary>
     /// Class for tests pedidos controller.
     /// </summary>
@@ -52,7 +43,7 @@ namespace Omicron.Warehouses.Test.Api
             var result = this.controller.CreateRawMaterialRequest(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            Assert.That((result.Value as ResultDto).Success, Is.True);
         }
 
         /// <summary>
@@ -68,7 +59,7 @@ namespace Omicron.Warehouses.Test.Api
             var result = this.controller.UpdateRawMaterialRequest(request).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            Assert.That((result.Value as ResultDto).Success, Is.True);
         }
 
         /// <summary>
@@ -81,7 +72,7 @@ namespace Omicron.Warehouses.Test.Api
             var result = this.controller.GetRawMaterialRequest(1).Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            Assert.That((result.Value as ResultDto).Success, Is.True);
         }
 
         /// <summary>
@@ -94,7 +85,7 @@ namespace Omicron.Warehouses.Test.Api
             var result = this.controller.GetRawMaterialPreRequest(string.Empty, "1").Result as OkObjectResult;
 
             // Assert
-            Assert.IsTrue((result.Value as ResultDto).Success);
+            Assert.That((result.Value as ResultDto).Success, Is.True);
         }
 
         /// <summary>
@@ -107,7 +98,7 @@ namespace Omicron.Warehouses.Test.Api
             var result = this.controller.Ping() as OkObjectResult;
 
             // Assert
-            Assert.AreEqual("Pong", result.Value as string);
+            Assert.That(result.Value as string, Is.EqualTo("Pong"));
         }
     }
 }

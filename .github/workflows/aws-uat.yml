@@ -1,0 +1,311 @@
+name: omicron-uat-aws
+on:
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: Force Build
+        type: boolean
+        default: false
+        required: false
+  push:
+    branches:
+      - release/Uat
+    paths:
+      - frontend/**
+      - services/**
+      - database/**
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  AWS_REGION: "us-east-2" # us-east-2 US East (Ohio) us-east-1" # US East (N. Viginia)
+  AMI_ID: ami-0a68049ee64ac0782
+  SUBNET_ID: subnet-073b7bac3af8d3c53
+  SECURITY_GROUP_ID: sg-09c9844682ec712ca
+  VOLUME_SIZE_GiB: "20"
+  AZURE_REGISTRY: omicron.azurecr.io
+
+jobs:
+  start-runner:
+    timeout-minutes: 5
+    name: Start self-hosted EC2 runner
+    runs-on: omicron-bastion
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+    steps:
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
+          output-credentials: true
+
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: Axitymx/ec2-action-builder@main
+        with:
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          aws_access_key_id: ${{ steps.creds.outputs.aws-access-key-id }}
+          aws_secret_access_key: ${{ steps.creds.outputs.aws-secret-access-key }}
+          aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
+          aws_region: ${{ env.AWS_REGION }}
+          ec2_instance_type: "t3.medium"
+          ec2_ami_id: ${{ env.AMI_ID }}
+          ec2_subnet_id: ${{ env.SUBNET_ID }}
+          ec2_security_group_id: ${{ env.SECURITY_GROUP_ID }}
+          ec2_root_disk_size_gb: ${{ env.VOLUME_SIZE_GiB }}
+          ec2_spot_instance_strategy: "BestEffort" # Other options are: SpotOnly, BestEffort, MaxPerformance
+          manual_stop: true
+     
+  db:
+    name: Deploy DB
+    needs:
+      - start-runner
+    runs-on: ${{ github.run_id }}
+    environment: UAT
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changeset
+        id: changeset
+        run: |
+          echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
+  
+      - name: Update database
+        if: ${{ (contains(steps.changeset.outputs.changes, 'database/changesets')) || (inputs.force_build) }}
+        uses: ./.github/actions/liquibase-v2
+        with:
+          db_host: "${{ secrets.AZURE_DATABASE_HOST }}:${{ secrets.AZURE_DATABASE_PORT }}"
+          db_name: ${{ secrets.AZURE_DATABASE_NAME }}
+          db_username: ${{ secrets.AZURE_DATABASE_USER }}
+          db_password: ${{ secrets.AZURE_DATABASE_PASSWORD }}
+          
+  build:
+    name: Deploy AZURE
+    needs:
+      - start-runner
+      - db
+    runs-on: ${{ github.run_id }}
+    environment: UAT
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changeset
+        id: changeset
+        run: |
+          echo "changes=\"$(git diff HEAD HEAD~ --name-only | awk '{print}' ORS=' ')\"" >> $GITHUB_OUTPUT
+
+      - name: Set Environments
+        uses: ./.github/actions/environments-aws
+
+      - name: ACR authentication
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.AZURE_REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build frontend/web
+        if: ${{ (contains(steps.changeset.outputs.changes, 'frontend/web')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: frontend/web
+          environment: uat
+          registry: ${{ env.AZURE_REGISTRY }}
+          configuration: uat
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+      
+      - uses: azure/webapps-deploy@v2
+        with:
+          app-name: omicronlabmagistaluat
+          publish-profile: ${{ secrets.MAGISTRALES_PUBLISH_PROFILE }}
+          images: ${{ env.AZURE_REGISTRY }}/omicronuat/omicron-appiosformulas-web-repository:latest
+
+      - name: Build catalogos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/catalogos-service
+          environment: uat
+          registry: ${{ env.AZURE_REGISTRY }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+
+      - name: Build oauthserver
+        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/oauthserver
+          environment: uat
+          registry: ${{ env.AZURE_REGISTRY }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+
+      - name: Build pedidos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/pedidos-service
+          environment: uat
+          registry: ${{ env.AZURE_REGISTRY }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+
+      - name: Build reporting-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/reporting-service
+          environment: uat
+          registry: ${{ env.AZURE_REGISTRY }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+
+      - name: Build sapadapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/sapadapter-service
+          environment: uat
+          registry: ${{ env.AZURE_REGISTRY }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+
+      - name: Build usuarios-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/usuarios-service
+          environment: uat
+          registry: ${{ env.AZURE_REGISTRY }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+
+      - name: Build warehouses-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/warehouses-service
+          environment: uat
+          registry: ${{ env.AZURE_REGISTRY }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+
+      - name: Build sapservicelayeradapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
+        uses: ./.github/actions/docker-build
+        with:
+          path: services/sapservicelayeradapter-service
+          environment: uat
+          registry: ${{ env.AZURE_REGISTRY }}
+          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+          
+      - name: Set Context
+        uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+        #  context: 
+
+      - name: Kubernetes deploy
+        working-directory: deploy/uat
+        run: |
+          kubectl apply -f deploy_uat.yaml --context omicron_aks_uat
+          kubectl apply -f ingress-oauth.yml --context omicron_aks_uat
+          kubectl apply -f ingress-services.yml --context omicron_aks_uat
+          kubectl apply -f secretsuat.yml --context omicron_aks_uat
+
+      - name: Rollout catalogos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'catalogos-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy catalogos-deployment --context omicron_aks_uat
+
+      - name: Rollout oauthserver
+        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy oauthserver-deployment --context omicron_aks_uat
+
+      - name: Rollout pedidos-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy pedidos-deployment --context omicron_aks_uat
+
+      - name: Rollout reporting-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'reporting-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy reporting-deployment --context omicron_aks_uat
+
+      - name: Rollout sapadapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapadapter-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy sapadapter-deployment --context omicron_aks_uat
+
+      - name: Rollout usuarios-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'usuarios-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy usuarios-deployment --context omicron_aks_uat
+
+      - name: Rollout warehouses-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'warehouses-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy warehouses-deployment --context omicron_aks_uat
+
+      - name: Rollout sapservicelayeradapter-service
+        if: ${{ (contains(steps.changeset.outputs.changes, 'sapservicelayeradapter-service')) || (inputs.force_build) }}
+        run: kubectl rollout restart deploy sapservicelayeradapter-deployment --context omicron_aks_uat
+              
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    needs:
+      - start-runner
+      - db
+      - build
+    runs-on: omicron-bastion
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+    if: ${{ always() }}
+    steps:
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: "arn:aws:iam::891376991292:role/GithubActionsRole"
+          output-credentials: true
+
+      - name: Stop EC2 runner
+        id: stop-ec2-runner
+        uses: Axitymx/ec2-action-builder@main
+        with:
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          aws_access_key_id: ${{ steps.creds.outputs.aws-access-key-id }}
+          aws_secret_access_key: ${{ steps.creds.outputs.aws-secret-access-key }}
+          aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
+          aws_region: ${{ env.AWS_REGION }}
+          action: "stop"

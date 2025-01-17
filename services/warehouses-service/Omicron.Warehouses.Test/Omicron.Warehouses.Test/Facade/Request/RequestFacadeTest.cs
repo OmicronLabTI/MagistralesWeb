@@ -8,18 +8,6 @@
 
 namespace Omicron.Warehouses.Test.Facade.Request
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Warehouses.Dtos.Model;
-    using Omicron.Warehouses.Entities.Model;
-    using Omicron.Warehouses.Facade.Request;
-    using Omicron.Warehouses.Services.Mapping;
-    using Omicron.Warehouses.Services.Request;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -59,8 +47,8 @@ namespace Omicron.Warehouses.Test.Facade.Request
 
             var response = await this.requestFacade.CreateRawMaterialRequest("userId", requests);
 
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -79,8 +67,8 @@ namespace Omicron.Warehouses.Test.Facade.Request
             var response = await this.requestFacade.UpdateRawMaterialRequest("userId", requests);
 
             // arrange
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -94,8 +82,8 @@ namespace Omicron.Warehouses.Test.Facade.Request
             var response = await this.requestFacade.GetRawMaterialRequest(1);
 
             // arrange
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
 
         /// <summary>
@@ -109,8 +97,8 @@ namespace Omicron.Warehouses.Test.Facade.Request
             var response = await this.requestFacade.GetRawMaterialPreRequest(new List<int>(), new List<int>());
 
             // arrange
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
         }
     }
 }

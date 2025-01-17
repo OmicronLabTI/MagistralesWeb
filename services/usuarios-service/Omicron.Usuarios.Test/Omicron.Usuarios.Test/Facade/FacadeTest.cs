@@ -8,19 +8,6 @@
 
 namespace Omicron.Usuarios.Test.Facade
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Usuarios.Dtos.Models;
-    using Omicron.Usuarios.Dtos.User;
-    using Omicron.Usuarios.Entities.Model;
-    using Omicron.Usuarios.Facade.Catalogs.Users;
-    using Omicron.Usuarios.Services.Mapping;
-    using Omicron.Usuarios.Services.User;
-
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -117,8 +104,8 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.GetListUsersActive();
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Any());
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Any());
         }
 
         /// <summary>
@@ -135,8 +122,8 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.GetListUserActive(id);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.AreEqual(id.ToString(), response.Id);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Id.Equals(id.ToString()));
         }
 
         /// <summary>
@@ -153,8 +140,8 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.InsertUser(user);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response);
         }
 
         /// <summary>
@@ -171,8 +158,8 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.CreateUser(user);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
         }
 
         /// <summary>
@@ -191,7 +178,7 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.GetUsers(dic);
 
             // Assert
-            Assert.IsNotNull(response);
+            Assert.That(response, Is.Not.Null);
         }
 
         /// <summary>
@@ -208,13 +195,13 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.DeleteUser(listData);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
-            Assert.IsNull(response.Comments);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
+            Assert.That(response.Comments, Is.Null);
         }
 
         /// <summary>
@@ -231,12 +218,12 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.UpdateUser(user);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -253,12 +240,12 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.GetUser(userName);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -275,12 +262,12 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.GetUsersByRole(roleid);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -297,12 +284,12 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.GetUsersById(listIds);
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -316,12 +303,12 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.GetQfbWithOrderCount();
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
 
         /// <summary>
@@ -338,12 +325,12 @@ namespace Omicron.Usuarios.Test.Facade
             var response = await this.userFacade.GetQfbInfoByIds(new List<string> { qfbId });
 
             // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response.Success);
-            Assert.IsNotNull(response.Response);
-            Assert.IsEmpty(response.ExceptionMessage);
-            Assert.IsEmpty(response.UserError);
-            Assert.AreEqual(200, response.Code);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
         }
     }
 }

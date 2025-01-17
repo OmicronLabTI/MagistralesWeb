@@ -8,13 +8,6 @@
 
 namespace Omicron.Warehouses.Test.Services.Clients
 {
-    using System;
-    using System.Threading.Tasks;
-    using Moq;
-    using NUnit.Framework;
-    using Omicron.Warehouses.Services.Redis;
-    using StackExchange.Redis;
-
     /// <summary>
     /// Class FavoritiesServiceTest.
     /// </summary>
@@ -39,7 +32,7 @@ namespace Omicron.Warehouses.Test.Services.Clients
             var result = await localService.GetRedisKey("C001");
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -60,7 +53,7 @@ namespace Omicron.Warehouses.Test.Services.Clients
             var result = await localService.WriteToRedis("C001", "C001");
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

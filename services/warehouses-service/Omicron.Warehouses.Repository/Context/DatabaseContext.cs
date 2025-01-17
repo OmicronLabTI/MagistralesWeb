@@ -9,6 +9,7 @@
 namespace Omicron.Warehouses.Entities.Context
 {
     using Microsoft.EntityFrameworkCore;
+    using Omicron.Warehouses.Entities.Interceptor;
     using Omicron.Warehouses.Entities.Model;
 
     /// <summary>
@@ -56,6 +57,12 @@ namespace Omicron.Warehouses.Entities.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("warehouse");
+        }
+
+        /// <inheritdoc/>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.AddInterceptors(new UtcDateTimeInterceptor(), new UtcDateTimeQueryInterceptor());
         }
     }
 }

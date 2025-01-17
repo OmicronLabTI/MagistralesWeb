@@ -7,11 +7,6 @@
 // </summary>
 namespace Omicron.Reporting.Test.Services.SapAdapter
 {
-    using System.Collections.Generic;
-    using NUnit.Framework;
-    using Omicron.Reporting.Entities.Model;
-    using Omicron.Reporting.Services.Clients;
-
     /// <summary>
     /// Test class for catalogs service.
     /// </summary>
@@ -31,7 +26,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = client.GetAsync("endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -47,7 +42,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = client.PostAsync(new { }, "endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
@@ -63,7 +58,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = client.GetParams(new List<string> { "p1", "p2" }).Result;
 
             // Assert
-            Assert.AreEqual(9, result.Count);
+            Assert.That(result.Count, Is.EqualTo(9));
         }
 
         /// <summary>
@@ -79,7 +74,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = client.GetRawMaterialEmailConfig().Result;
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         /// <summary>
@@ -95,7 +90,7 @@ namespace Omicron.Reporting.Test.Services.SapAdapter
             var result = client.GetSmtpConfig().Result;
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
 
         private ResultModel GetMockParamsResult()

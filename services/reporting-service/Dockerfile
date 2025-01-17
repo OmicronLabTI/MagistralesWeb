@@ -1,12 +1,22 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
-WORKDIR /app
-COPY . ./
-RUN dotnet restore "/app/Omicron.Reporting.Api/Omicron.Reporting.Api.csproj"
-COPY . ./
-RUN dotnet publish "/app/Omicron.Reporting.Api/Omicron.Reporting.Api.csproj" -c Release -o out
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+WORKDIR /source
+COPY --link . .
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
-RUN apt-get update && apt-get install -y libgdiplus
+RUN dotnet restore Omicron.Reporting.Api/Omicron.Reporting.Api.csproj
+
+RUN dotnet add Omicron.Reporting.Api/Omicron.Reporting.Api.csproj package Azure.Identity --version 1.12.1
+
+COPY --link . .
+RUN dotnet publish Omicron.Reporting.Api/Omicron.Reporting.Api.csproj --no-restore -o /app
+
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
+    LC_ALL=es_MX.UTF-8 \
+    LANG=es_MX.UTF-8
+RUN apk add --no-cache icu-data-full icu-libs tzdata
 WORKDIR /app
-COPY --from=build-env /app/out .
+COPY --link --from=build /app .
+USER $APP_UID
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "Omicron.Reporting.Api.dll"]

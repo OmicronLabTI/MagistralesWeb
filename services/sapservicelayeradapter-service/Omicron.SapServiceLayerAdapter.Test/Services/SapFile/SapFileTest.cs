@@ -27,7 +27,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.SapFile
             var result = client.PostAsync(new { }, "endpoint").Result;
 
             // Assert
-            Assert.IsTrue(result.Success);
+            Assert.That(result.Success, Is.True);
         }
 
         /// <summary>
