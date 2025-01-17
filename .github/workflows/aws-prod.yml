@@ -147,17 +147,17 @@ jobs:
           axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
           axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
-      - name: Build oauthserver
-        if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
-        uses: ./.github/actions/docker-build
-        with:
-          path: services/oauthserver
-          environment: prod
-          registry: ${{ env.AZURE_REGISTRY }}
-          axity_aws_user: ${{ vars.AXITY_AWS_USER }}
-          axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
-          axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
-          axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
+      # - name: Build oauthserver
+      #  if: ${{ (contains(steps.changeset.outputs.changes, 'oauthserver')) || (inputs.force_build) }}
+      #  uses: ./.github/actions/docker-build
+      #  with:
+      #    path: services/oauthserver
+      #    environment: prod
+      #    registry: ${{ env.AZURE_REGISTRY }}
+      #    axity_aws_user: ${{ vars.AXITY_AWS_USER }}
+      #    axity_aws_access_key_id: ${{ secrets.AXITY_AWS_ACCESS_KEY_ID }}
+      #    axity_aws_secret_access_key: ${{ secrets.AXITY_AWS_SECRET_ACCESS_KEY }}
+      #    axity_aws_region: ${{ secrets.AXITY_AWS_REGION }}
 
       - name: Build pedidos-service
         if: ${{ (contains(steps.changeset.outputs.changes, 'pedidos-service')) || (inputs.force_build) }}
