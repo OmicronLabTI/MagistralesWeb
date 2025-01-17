@@ -239,7 +239,7 @@ jobs:
         #  context: 
 
       - name: Kubernetes deploy
-        working-directory: deploy/uat
+        working-directory: deploy/prod
         run: |
           kubectl apply -f deploy_prod.yaml --context omicron-aks
           kubectl apply -f ingress-oauth.yml --context omicron-aks
