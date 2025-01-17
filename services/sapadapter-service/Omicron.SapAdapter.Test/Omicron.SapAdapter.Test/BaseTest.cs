@@ -450,7 +450,7 @@ namespace Omicron.SapAdapter.Test
         {
             var doctors = new List<DoctorDeliveryAddressModel>
             {
-                new DoctorDeliveryAddressModel { AddressId = "A1", DoctorId = "A1" },
+                new DoctorDeliveryAddressModel { AddressId = "Address1", DoctorId = "C1", AddressType = "doctor" },
             };
 
             return new ResultDto
