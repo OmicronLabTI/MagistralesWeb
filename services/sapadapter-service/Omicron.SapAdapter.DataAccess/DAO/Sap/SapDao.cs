@@ -159,7 +159,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              CodigoProducto = d.ProductoId,
                              DescripcionProducto = p.LargeDescription,
                              DescripcionCorta = p.ProductoName,
-                             QtyPlanned = dp == default ? 0: dp.Quantity,
+                             QtyPlanned = dp == default ? 0 : dp.Quantity,
                              QtyPlannedDetalle = (int)d.Quantity,
                              FechaOf = dp.PostDate.HasValue ? dp.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                              FechaOfFin = dp.DueDate.HasValue ? dp.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
@@ -173,7 +173,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              PedidoId = d.PedidoId ?? 0,
                              CatalogGroup = g.CatalogName,
                              IsOmigenomics = g.CatalogName.ToLower() == "omigenomics",
-                             ProductFirmName = fm == default ? string.Empty: fm.ProductFirmName,
+                             ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
                          }).AsNoTracking();
 
             return await this.RetryQuery(query);
@@ -437,23 +437,15 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<CompleteDetalleFormulaModel> components)
         {
             var listToReturn = new List<CompleteBatchesJoinModel>();
-            var productIds = components.Select(c => c.ProductId).Distinct();
-            var warehouseIds = components.Select(c => c.Warehouse).Distinct();
+            var listItems = components.Select(x => x.ProductId).ToList();
 
-            var querybatches = await this.databaseContext.BatchesQuantity
-                .Where(b => productIds.Contains(b.ItemCode) && warehouseIds.Contains(b.WhsCode) && b.Quantity > 0)
-                .AsNoTracking()
-                .ToListAsync();
-
+            var querybatches = (await this.databaseContext.BatchesQuantity.Where(x => listItems.Contains(x.ItemCode)).AsNoTracking().ToListAsync());
+            querybatches = querybatches.Where(x => components.Any(y => y.ProductId == x.ItemCode && y.Warehouse == x.WhsCode)).ToList();
 
             var validBatches = querybatches.Select(x => x.SysNumber);
 
-            var batches = await this.databaseContext.Batches
-                .Where(x => productIds.Contains(x.ItemCode)
-                        && validBatches.Contains(x.SysNumber) 
-                        && (x.ExpDate > DateTime.Now.AddYears(-3) || !x.ExpDate.HasValue))
-                .AsNoTracking()
-                .ToListAsync();
+            var batches = (await this.databaseContext.Batches.Where(x => listItems.Contains(x.ItemCode)).AsNoTracking().ToListAsync());
+            batches = batches.Where(x => validBatches.Contains(x.SysNumber)).ToList();
 
             querybatches.ForEach(x =>
             {
@@ -486,13 +478,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum)).AsNoTracking());
         }
 
-        /// <inheritdoc/>
-        public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItemAndItemCodes(IEnumerable<string> itemCodes, int orderId)
-        {
-            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => x.DocNum == orderId && itemCodes.Contains(x.ItemCode)).AsNoTracking());
-        }
-
-
         /// <summary>
         /// Gets the record from ITL1 by log entry.
         /// </summary>
@@ -502,20 +487,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             return await this.RetryQuery(this.databaseContext.BatchesTransactionQtyModel.Where(x => logEntry.Contains(x.LogEntry)).AsNoTracking());
         }
-
-        /// <summary>
-        /// Gets the record from ITL1 by log entry.
-        /// </summary>
-        /// <param name="logEntry">the log entry.</param>
-        /// <returns>the data.</returns>
-        public async Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntryAndAllocQty(IEnumerable<int> logEntry)
-        {
-            return await this.RetryQuery(this.databaseContext.BatchesTransactionQtyModel
-                .Where(x => logEntry.Contains(x.LogEntry) && x.AllocQty > 0)
-                .AsNoTracking());
-        }
-
-
 
         /// <inheritdoc/>
         public async Task<string> GetMaxBatchCode(string batchCodePattern, string productCode)
