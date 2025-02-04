@@ -219,14 +219,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// Gest the batch transaction by order and item code.
         /// </summary>
-        /// <param name="itemCodes">the item codes.</param>
-        /// <param name="orderId">the order id.</param>
-        /// <returns>the data.</returns>
-        Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItemAndItemCodes(IEnumerable<string> itemCodes, int orderId);
-
-        /// <summary>
-        /// Gest the batch transaction by order and item code.
-        /// </summary>
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId);
@@ -237,13 +229,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="logEntry">the log entry.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(List<int> logEntry);
-
-        /// <summary>
-        /// Gets the record from ITL1 by log entry.
-        /// </summary>
-        /// <param name="logEntry">the log entry.</param>
-        /// <returns>the data.</returns>
-        Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntryAndAllocQty(IEnumerable<int> logEntry);
 
         /// <summary>
         /// Get last id of isolated production order created.
