@@ -437,15 +437,22 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<CompleteDetalleFormulaModel> components)
         {
             var listToReturn = new List<CompleteBatchesJoinModel>();
-            var listItems = components.Select(x => x.ProductId).ToList();
+            var productIds = components.Select(c => c.ProductId).Distinct();
+            var warehouseIds = components.Select(c => c.Warehouse).Distinct();
 
-            var querybatches = (await this.databaseContext.BatchesQuantity.Where(x => listItems.Contains(x.ItemCode)).AsNoTracking().ToListAsync());
-            querybatches = querybatches.Where(x => components.Any(y => y.ProductId == x.ItemCode && y.Warehouse == x.WhsCode)).ToList();
+            var querybatches = await this.databaseContext.BatchesQuantity
+                .Where(b => productIds.Contains(b.ItemCode) && warehouseIds.Contains(b.WhsCode) && b.Quantity > 0)
+                .AsNoTracking()
+                .ToListAsync();
+
 
             var validBatches = querybatches.Select(x => x.SysNumber);
 
-            var batches = (await this.databaseContext.Batches.Where(x => listItems.Contains(x.ItemCode)).AsNoTracking().ToListAsync());
-            batches = batches.Where(x => validBatches.Contains(x.SysNumber)).ToList();
+            var batches = await this.databaseContext.Batches
+                .Where(x => productIds.Contains(x.ItemCode)
+                        && validBatches.Contains(x.SysNumber))
+                .AsNoTracking()
+                .ToListAsync();
 
             querybatches.ForEach(x =>
             {
