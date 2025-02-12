@@ -11,7 +11,6 @@ namespace Omicron.Pedidos.Entities.Interceptor
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
 
     /// <summary>
@@ -19,8 +18,6 @@ namespace Omicron.Pedidos.Entities.Interceptor
     /// </summary>
     public class UtcDateTimeInterceptor : SaveChangesInterceptor
     {
-        private static readonly TimeZoneInfo MexicoTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Mexico_City");
-
         /// <inheritdoc/>
         public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
@@ -55,6 +52,10 @@ namespace Omicron.Pedidos.Entities.Interceptor
             return base.SavingChanges(eventData, result);
         }
 
+        /// <summary>
+        /// NormalizeDateTimeProperties.
+        /// </summary>
+        /// <param name="entry">Entry.</param>
         private static void NormalizeDateTimeProperties(Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry)
         {
             foreach (var property in entry.Properties)
@@ -62,6 +63,10 @@ namespace Omicron.Pedidos.Entities.Interceptor
                 if (property.CurrentValue is DateTime dateTime)
                 {
                     property.CurrentValue = InterceptorCommon.ConvertToUtc(dateTime);
+                }
+                else if (property.CurrentValue is DateTimeOffset dateTimeOffset)
+                {
+                    property.CurrentValue = dateTimeOffset.UtcDateTime;
                 }
             }
         }
