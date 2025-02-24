@@ -1171,6 +1171,22 @@ namespace Omicron.Pedidos.Services.Constants
             => "No hay químico asignado para atender los productos Dermazone, favor de configurar un usuario o asignarlos manualmente";
 
         /// <summary>
+        /// Gets StartDateParam.
+        /// </summary>
+        /// <value>
+        /// String StartDateParam.
+        /// </value>
+        public static string StartDateParam => "startdate";
+
+        /// <summary>
+        /// Gets EndDateParam.
+        /// </summary>
+        /// <value>
+        /// String EndDateParam.
+        /// </value>
+        public static string EndDateParam => "enddate";
+
+        /// <summary>
         /// Gets list of signatures to assign products DZ in lowercase.
         /// </summary>
         /// <value>

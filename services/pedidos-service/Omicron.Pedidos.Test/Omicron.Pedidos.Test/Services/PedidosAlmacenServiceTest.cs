@@ -295,5 +295,25 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.That(result, Is.Not.Null);
         }
+
+        /// <summary>
+        /// GetOrdersForAlmacenByRangeDates.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersForAlmacenByRangeDates()
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                { "startdate", DateTime.Now.ToString("dd/MM/yyyy") },
+                { "enddate", DateTime.Now.ToString("dd/MM/yyyy") },
+            };
+
+            // act
+            var result = await this.pedidosAlmacen.GetOrdersForAlmacenByRangeDates(parameters);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+        }
     }
 }

@@ -295,5 +295,18 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidosAlmacenFacade.AdvanceLook(docNums);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// GetOrdersForAlmacenByRangeDates.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders/almacen/byrangedates")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersForAlmacenByRangeDates([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidosAlmacenFacade.GetOrdersForAlmacenByRangeDates(parameters);
+            return this.Ok(response);
+        }
     }
 }

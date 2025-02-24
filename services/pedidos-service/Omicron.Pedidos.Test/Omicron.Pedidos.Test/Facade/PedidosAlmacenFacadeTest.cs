@@ -305,5 +305,21 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Success);
         }
+
+        /// <summary>
+        /// GetOrdersForAlmacenByRangeDates.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetOrdersForAlmacenByRangeDates()
+        {
+            // arrange
+            // act
+            var response = await this.almacenFacade.GetOrdersForAlmacenByRangeDates(new Dictionary<string, string>());
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
     }
 }

@@ -352,5 +352,16 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="listIds">the list of users.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByTecnicId(List<string> listIds);
+
+        /// <summary>
+        /// GetSaleOrderForAlmacenByRangeDates.
+        /// </summary>
+        /// <param name="startDate">Start Date.</param>
+        /// <param name="endDate">End Date.</param>
+        /// <param name="statusPending">The status for pending.</param>
+        /// <param name="status">The status.</param>
+        /// <param name="secondStatus">The second status.</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>> GetSaleOrderForAlmacenByRangeDates(DateTime startDate, DateTime endDate, List<string> statusPending, string status, string secondStatus);
     }
 }
