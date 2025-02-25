@@ -76,10 +76,21 @@ namespace Omicron.SapAdapter.Services.Sap
             var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypesByDxp);
             var types = typesString.Split(",").ToList();
 
-            var userOrdersTuple = await ServiceUtilsAlmacen.GetUserOrdersAlmacenLeftList(this.pedidosService);
-            var ids = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
-            var lineProductsTuple = await ServiceUtilsAlmacen.GetLineProductsAlmacenLeftList(this.almacenService, ids, userOrdersTuple.Item3);
-            var sapOrders = await this.GetSapOrders(userOrdersTuple, lineProductsTuple, types);
+            var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString("dd/MM/yyyy"))
+                            .ToUniversalDateTime().Date;
+
+            var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString("dd/MM/yyyy"))
+                                      .ToUniversalDateTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+            var userOrders = await ServiceUtilsAlmacen.GetUserOrdersAlmacenLeftList(this.pedidosService, startDate, endDate);
+
+            var lineProductsTuple = await ServiceUtilsAlmacen.GetLineProductsAlmacenLeftList(
+                this.almacenService,
+                userOrders.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(),
+                startDate,
+                endDate);
+
+            var sapOrders = await this.GetSapOrders(userOrders, startDate, endDate, lineProductsTuple, types);
             var ordersByFilter = await this.GetSapOrdersToLookByDoctor(sapOrders.Item1, parameters);
             var totalFilter = ordersByFilter.Select(x => x.DocNumDxp).Distinct().ToList().Count;
 
@@ -133,21 +144,27 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the sap orders.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>> GetSapOrders(Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple, Tuple<List<LineProductsModel>, List<int>> lineProductTuple, List<string> types)
+        private async Task<Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>> GetSapOrders(
+            List<UserOrderModel> userOrders,
+            DateTime startDate,
+            DateTime endDate,
+            Tuple<List<LineProductsModel>,
+            List<int>> lineProductTuple,
+            List<string> types)
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
 
-            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrdersTuple, lineProductTuple, true);
+            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrders, startDate, endDate, lineProductTuple, true);
             var orderWithPackages = sapOrders.Where(x => x.IsPackage == ServiceConstants.IsPackage).Select(p => p.DocNumDxp).Distinct().ToList();
             var orderWithOmigenomics = sapOrders.Where(x => x.IsOmigenomics == ServiceConstants.IsOmigenomics).Select(p => p.DocNumDxp).Distinct().ToList();
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
 
-            var possibleIdsToIgnore = sapOrders.Where(x => !userOrdersTuple.Item1.Any(y => y.Salesorderid == x.DocNum.ToString())).ToList();
+            var possibleIdsToIgnore = sapOrders.Where(x => !userOrders.Any(y => y.Salesorderid == x.DocNum.ToString())).ToList();
             var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
 
-            sapOrders = ServiceUtilsAlmacen.GetOrdersValidsToReceiveByProducts(userOrdersTuple.Item1, lineProductTuple.Item1, sapOrders);
+            sapOrders = ServiceUtilsAlmacen.GetOrdersValidsToReceiveByProducts(userOrders, lineProductTuple.Item1, sapOrders);
             sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.IsSampleOrder).ToList();
             sapOrders.AddRange(sapCancelled);
             return new Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>(ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1, orderWithPackages, orderWithOmigenomics);

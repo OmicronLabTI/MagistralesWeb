@@ -95,6 +95,7 @@ namespace Omicron.SapAdapter.Test
             new RawMaterialRequestDetailModel(),
             new RawMaterialRequestModel(),
             new CompleteRawMaterialRequestModel(),
+            new OrdersFilterDto(),
         };
 
         /// <summary>

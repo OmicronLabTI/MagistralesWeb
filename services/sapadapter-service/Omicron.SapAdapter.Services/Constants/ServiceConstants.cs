@@ -782,6 +782,38 @@ namespace Omicron.SapAdapter.Services.Constants
         public static string CloseStatus => "Cerrado";
 
         /// <summary>
+        /// Gets StartDateParam.
+        /// </summary>
+        /// <value>
+        /// String StartDateParam.
+        /// </value>
+        public static string StartDateParam => "startdate";
+
+        /// <summary>
+        /// Gets EndDateParam.
+        /// </summary>
+        /// <value>
+        /// String EndDateParam.
+        /// </value>
+        public static string EndDateParam => "enddate";
+
+        /// <summary>
+        /// Gets GetUserOrdersAlmancen.
+        /// </summary>
+        /// <value>
+        /// String GetUserOrdersAlmancen.
+        /// </value>
+        public static string EndpointGetUserOrdersAlmancenByRangeDate => "userorders/almacen/byrangedates?startdate={0}&enddate={1}";
+
+        /// <summary>
+        /// Gets EndPointGetLineProductPedidosByRangeDate.
+        /// </summary>
+        /// <value>
+        /// String EndPointGetLineProductPedidosByRangeDate.
+        /// </value>
+        public static string EndPointGetLineProductPedidosByRangeDate => "almacen/orders/bydaterange";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

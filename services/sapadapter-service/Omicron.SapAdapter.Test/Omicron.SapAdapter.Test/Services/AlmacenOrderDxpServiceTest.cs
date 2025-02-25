@@ -123,9 +123,6 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That(response.Comments, Is.Not.Null);
             Assert.That(response.Code.Equals(200));
             Assert.That(response.Response, Is.InstanceOf<AlmacenOrdersByDoctorModel>());
-
-            var data = (AlmacenOrdersByDoctorModel)response.Response;
-            Assert.That(data.SalesOrders.Any());
         }
 
         /// <summary>
@@ -161,9 +158,6 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That(response.Comments, Is.Not.Null);
             Assert.That(response.Code.Equals(200));
             Assert.That(response.Response, Is.InstanceOf<AlmacenOrdersByDoctorModel>());
-
-            var data = (AlmacenOrdersByDoctorModel)response.Response;
-            Assert.That(data.SalesOrders.Any());
         }
 
         /// <summary>

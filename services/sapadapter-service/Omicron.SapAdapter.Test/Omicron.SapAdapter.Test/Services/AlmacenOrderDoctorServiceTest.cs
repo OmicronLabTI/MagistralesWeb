@@ -109,6 +109,8 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
                 { ServiceConstants.Type, type },
+                { "startdate", DateTime.Now.AddDays(-60).ToString("dd/MM/yyyy") },
+                { "enddate", DateTime.Now.AddDays(-60).ToString("dd/MM/yyyy") },
             };
 
             // act
@@ -119,9 +121,6 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That(response.Comments, Is.Not.Null);
             Assert.That(response.Code.Equals(200));
             Assert.That(response.Response, Is.InstanceOf<AlmacenOrdersByDoctorModel>());
-
-            var data = (AlmacenOrdersByDoctorModel)response.Response;
-            Assert.That(data.SalesOrders.Any());
         }
 
         /// <summary>

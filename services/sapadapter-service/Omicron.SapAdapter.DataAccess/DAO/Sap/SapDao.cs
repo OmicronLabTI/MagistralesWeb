@@ -538,16 +538,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate)
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime startDate, DateTime endDate)
         {
-            var query = this.GetAllOrdersForAlmacenQuery(initDate);
+            var query = this.GetAllOrdersForAlmacenQuery(startDate, endDate);
             return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenDxp(DateTime initDate)
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenDxp(DateTime startDate, DateTime endDate)
         {
-            var query = this.GetAllOrdersForAlmacenQuery(initDate).Where(x => !string.IsNullOrEmpty(x.DocNumDxp));
+            var query = this.GetAllOrdersForAlmacenQuery(startDate, endDate).Where(x => !string.IsNullOrEmpty(x.DocNumDxp));
             return await this.RetryQuery(query);
         }
 
@@ -655,7 +655,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder, List<int> orderToLook)
+        public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder, List<int> orderToLook, bool needOnlyDxp)
         {
             var query = (from order in this.databaseContext.OrderModel.Where(x => orderToLook.Contains(x.DocNum))
                          join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
@@ -694,6 +694,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = order.DocNumDxp,
                              IsOmigenomics = order.IsOmigenomics,
                          });
+
+            if (needOnlyDxp)
+            {
+                query.Where(x => !string.IsNullOrEmpty(x.DocNumDxp));
+            }
 
             return await this.RetryQuery(query);
         }
@@ -1386,7 +1391,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return listToReturn;
         }
 
-        private IQueryable<CompleteAlmacenOrderModel> GetAllOrdersForAlmacenQuery(DateTime initDate)
+        private IQueryable<CompleteAlmacenOrderModel> GetAllOrdersForAlmacenQuery(DateTime startDate, DateTime endDate)
         {
             return (from order in this.databaseContext.OrderModel
                     join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
@@ -1408,7 +1413,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     }
                     into detalleDireccion
                     from dop in detalleDireccion.DefaultIfEmpty()
-                    where order.FechaInicio >= initDate && (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y"
+                    where
+                    order.FechaInicio >= startDate &&
+                    order.FechaInicio <= endDate &&
+                    (order.PedidoStatus == "O" || order.Canceled == "Y") &&
+                    product.IsWorkableProduct == "Y"
                     select new CompleteAlmacenOrderModel
                     {
                         DocNum = order.DocNum,

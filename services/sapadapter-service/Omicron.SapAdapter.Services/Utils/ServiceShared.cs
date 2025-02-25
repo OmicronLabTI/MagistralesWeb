@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Services.Utils
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
@@ -274,6 +275,17 @@ namespace Omicron.SapAdapter.Services.Utils
             int.TryParse(minDays, out var minNumberDays);
             var minDate = DateTime.Today.AddDays(-minNumberDays).ToString("dd/MM/yyyy").Split("/");
             return new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
+        }
+
+        /// <summary>
+        /// Cast parameters to universal datetime.
+        /// </summary>
+        /// <param name="date">Date.</param>
+        /// <returns>Cast Date.</returns>
+        public static DateTime ToUniversalDateTime(this string date)
+        {
+            DateTime fechaLocal = DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            return DateTime.SpecifyKind(fechaLocal, DateTimeKind.Local).ToUniversalTime();
         }
     }
 }
