@@ -221,9 +221,9 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLineProductPedidos = "almacen/orders";
 
         /// <summary>
-        /// route for the delivery values.
+        /// route to get GetLinesForDeliveryByDatesRange.
         /// </summary>
-        public const string GetLinesForDelivery = "delivery/orders";
+        public const string GetLinesForDeliveryByDatesRange = "delivery/orders?startdate={0}&enddate={1}";
 
         /// <summary>
         /// route for the delivery values.
@@ -231,9 +231,9 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLinesForDeliveryId = "delivery/orders/id";
 
         /// <summary>
-        /// Get the delivery orders.
+        /// Get GetUserOrderDeliveryByDatesRange.
         /// </summary>
-        public const string GetUserOrderDelivery = "userorders/delivery";
+        public const string GetUserOrderDeliveryByDatesRange = "userorders/delivery?startdate={0}&enddate={1}";
 
         /// <summary>
         /// Get the delivery orders.
@@ -812,6 +812,14 @@ namespace Omicron.SapAdapter.Services.Constants
         /// String EndPointGetLineProductPedidosByRangeDate.
         /// </value>
         public static string EndPointGetLineProductPedidosByRangeDate => "almacen/orders/bydaterange";
+
+        /// <summary>
+        /// Gets DateTimeFormatddMMyyyy.
+        /// </summary>
+        /// <value>
+        /// String DateTimeFormatddMMyyyy.
+        /// </value>
+        public static string DateTimeFormatddMMyyyy => "dd/MM/yyyy";
 
         /// <summary>
         /// Gets the status of the order.

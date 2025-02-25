@@ -81,10 +81,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var listStatus = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.AllStatus);
             var status = listStatus.Split(",").ToList();
 
-            var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString("dd/MM/yyyy"))
+            var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
                             .ToUniversalDateTime().Date;
 
-            var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString("dd/MM/yyyy"))
+            var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
                                       .ToUniversalDateTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
             var userOrders = await this.GetUserOrdersToLook(parameters, startDate, endDate);

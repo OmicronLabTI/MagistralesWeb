@@ -212,7 +212,8 @@ namespace Omicron.SapAdapter.Services.Utils
         public static async Task<List<PaymentsDto>> GetPaymentsByTransactionsIds(IProccessPayments proccessPayments, List<string> transactionsIds)
         {
             var paymentsResponse = await proccessPayments.PostProccessPayments(transactionsIds, ServiceConstants.EndPointToGetPayments);
-            return JsonConvert.DeserializeObject<List<PaymentsDto>>(paymentsResponse.Response.ToString());
+            var aux = JsonConvert.DeserializeObject<List<PaymentsDto>>(paymentsResponse.Response.ToString());
+            return aux;
         }
 
         /// <summary>
@@ -266,25 +267,13 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
-        /// Creates a datetime substractigng the min days.
-        /// </summary>
-        /// <param name="minDays">the min days.</param>
-        /// <returns>the data.</returns>
-        public static DateTime GetDateTimeFromNumberSubstracDays(string minDays)
-        {
-            int.TryParse(minDays, out var minNumberDays);
-            var minDate = DateTime.Today.AddDays(-minNumberDays).ToString("dd/MM/yyyy").Split("/");
-            return new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
-        }
-
-        /// <summary>
         /// Cast parameters to universal datetime.
         /// </summary>
         /// <param name="date">Date.</param>
         /// <returns>Cast Date.</returns>
         public static DateTime ToUniversalDateTime(this string date)
         {
-            DateTime fechaLocal = DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            DateTime fechaLocal = DateTime.ParseExact(date, ServiceConstants.DateTimeFormatddMMyyyy, CultureInfo.InvariantCulture);
             return DateTime.SpecifyKind(fechaLocal, DateTimeKind.Local).ToUniversalTime();
         }
     }

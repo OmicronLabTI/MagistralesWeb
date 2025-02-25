@@ -68,10 +68,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypesByDoctor);
             var types = typesString.Split(",").ToList();
 
-            var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString("dd/MM/yyyy"))
+            var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
                             .ToUniversalDateTime().Date;
 
-            var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString("dd/MM/yyyy"))
+            var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
                                       .ToUniversalDateTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
             var userOrders = await ServiceUtilsAlmacen.GetUserOrdersAlmacenLeftList(this.pedidosService, startDate, endDate);
