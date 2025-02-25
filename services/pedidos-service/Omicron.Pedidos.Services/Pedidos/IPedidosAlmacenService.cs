@@ -40,8 +40,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Gets the orders for deliveru.
         /// </summary>
+        /// <param name="parameters">Parameters.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetOrdersForDelivery();
+        Task<ResultModel> GetOrdersForDelivery(Dictionary<string, string> parameters);
 
         /// <summary>
         /// Gets the orders for deliveru.

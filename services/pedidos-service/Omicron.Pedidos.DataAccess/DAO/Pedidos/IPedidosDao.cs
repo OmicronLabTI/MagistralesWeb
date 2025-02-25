@@ -84,10 +84,11 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// Returns the user order by user id.
         /// </summary>
         /// <param name="listStatus">the list of users.</param>
-        /// <param name="statusToIgnore">status to ingnore.</param>
-        /// <param name="maxDateToLook">the max date to look.</param>
+        /// <param name="almacenStatusToIgnore">almacenStatusToIgnore.</param>
+        /// <param name="startDate">StartDate.</param>
+        /// <param name="endDate">EndDate.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus, string statusToIgnore, DateTime maxDateToLook);
+        Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus, string almacenStatusToIgnore, DateTime startDate, DateTime endDate);
 
         /// <summary>
         /// Returns the user order by user id.

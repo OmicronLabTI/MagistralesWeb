@@ -641,11 +641,6 @@ namespace Omicron.Pedidos.Services.Constants
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
 
         /// <summary>
-        /// remision max day to look.
-        /// </summary>
-        public const string RemisionMaxDayToLook = "RemisionMaxDayToLook";
-
-        /// <summary>
         /// The max days to look.
         /// </summary>
         public const string SentMaxDaysToLook = "SentMaxDays";
@@ -1185,6 +1180,14 @@ namespace Omicron.Pedidos.Services.Constants
         /// String EndDateParam.
         /// </value>
         public static string EndDateParam => "enddate";
+
+        /// <summary>
+        /// Gets DateTimeFormatddMMyyyy.
+        /// </summary>
+        /// <value>
+        /// String DateTimeFormatddMMyyyy.
+        /// </value>
+        public static string DateTimeFormatddMMyyyy => "dd/MM/yyyy";
 
         /// <summary>
         /// Gets list of signatures to assign products DZ in lowercase.

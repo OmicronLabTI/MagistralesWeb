@@ -41,8 +41,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// Get the orders for delivery.
         /// </summary>
+        /// <param name="parameters">Parameters.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetOrdersForDelivery();
+        Task<ResultDto> GetOrdersForDelivery(Dictionary<string, string> parameters);
 
         /// <summary>
         /// Get the orders for delivery.

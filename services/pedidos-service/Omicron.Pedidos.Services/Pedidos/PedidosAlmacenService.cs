@@ -126,13 +126,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetOrdersForDelivery()
+        public async Task<ResultModel> GetOrdersForDelivery(Dictionary<string, string> parameters)
         {
-            var response = await this.GetParametersDateToLook(ServiceConstants.RemisionMaxDayToLook);
-            var userOrders = (await this.pedidosDao.GetUserOrderForDelivery(new List<string> { ServiceConstants.Almacenado }, ServiceConstants.Empaquetado, response.Item1)).ToList();
+            var (startDate, endDate) = this.GetyStartDateAndEndDateParameterWithFormat(parameters);
+            var userOrders = (await this.pedidosDao.GetUserOrderForDelivery(
+                    [ServiceConstants.Almacenado],
+                    ServiceConstants.Empaquetado,
+                    startDate,
+                    endDate)).ToList();
 
-            var saleOrder = (await this.pedidosDao.GetOnlySaleOrderBySaleId(userOrders.Select(x => x.Salesorderid).Distinct().ToList())).ToList();
-            userOrders.AddRange(saleOrder);
+            userOrders.AddRange((await this.pedidosDao.GetOnlySaleOrderBySaleId(userOrders.Select(x => x.Salesorderid).Distinct().ToList())).ToList());
 
             var orderToReturn = userOrders
                 .Select(x => new
@@ -143,9 +146,9 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.StatusAlmacen,
                     x.Comments,
                     x.DeliveryId,
-                }).ToList();
+                });
 
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, response.Item2);
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, orderToReturn.Count().ToString());
         }
 
         /// <inheritdoc/>
@@ -343,12 +346,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersForAlmacenByRangeDates(Dictionary<string, string> parameters)
         {
-            var startDateParam = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, string.Empty);
-            var endDateParam = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, string.Empty);
-
-            var startDate = startDateParam.ToUniversalDateTime();
-            var endDate = endDateParam.ToUniversalDateTime();
-
+            var (startDate, endDate) = this.GetyStartDateAndEndDateParameterWithFormat(parameters);
             var orders = await this.pedidosDao.GetSaleOrderForAlmacenByRangeDates(
                 startDate,
                 endDate,
@@ -385,6 +383,17 @@ namespace Omicron.Pedidos.Services.Pedidos
             var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
             var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
             return new Tuple<DateTime, string>(dateToLook, days);
+        }
+
+        private Tuple<DateTime, DateTime> GetyStartDateAndEndDateParameterWithFormat(Dictionary<string, string> parameters)
+        {
+            var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
+                             .ToUniversalDateTime().Date;
+
+            var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
+                                      .ToUniversalDateTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+            return new Tuple<DateTime, DateTime>(startDate, endDate);
         }
     }
 }

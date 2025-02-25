@@ -128,14 +128,15 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
-        /// Gets the orders for almacen.
+        /// Gets GetOrdersForDelivery.
         /// </summary>
+        /// <param name="parameters">Parameters.</param>
         /// <returns>the data.</returns>
         [Route("/userorders/delivery")]
         [HttpGet]
-        public async Task<IActionResult> GetOrdersForDelivery()
+        public async Task<IActionResult> GetOrdersForDelivery([FromQuery] Dictionary<string, string> parameters)
         {
-            var response = await this.pedidosAlmacenFacade.GetOrdersForDelivery();
+            var response = await this.pedidosAlmacenFacade.GetOrdersForDelivery(parameters);
             return this.Ok(response);
         }
 

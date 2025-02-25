@@ -103,8 +103,14 @@ namespace Omicron.Pedidos.Test.Services
         [Test]
         public async Task GetOrdersForDelivery()
         {
+            // arrange
+            var parameters = new Dictionary<string, string>
+            {
+                { "startdate", DateTime.Now.ToString("dd/MM/yyyy") },
+                { "enddate", DateTime.Now.ToString("dd/MM/yyyy") },
+            };
             // act
-            var result = await this.pedidosAlmacen.GetOrdersForDelivery();
+            var result = await this.pedidosAlmacen.GetOrdersForDelivery(parameters);
 
             // assert
             Assert.That(result, Is.Not.Null);

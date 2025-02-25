@@ -105,7 +105,7 @@ namespace Omicron.Pedidos.Test.Facade
         {
             // arrange
             // act
-            var response = await this.almacenFacade.GetOrdersForDelivery();
+            var response = await this.almacenFacade.GetOrdersForDelivery(new Dictionary<string, string>());
 
             // Assert
             Assert.That(response, Is.Not.Null);
