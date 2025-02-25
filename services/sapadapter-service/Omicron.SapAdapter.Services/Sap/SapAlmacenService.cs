@@ -341,7 +341,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var userOrderModel = await this.pedidosService.GetUserPedidos(
-                string.Format(ServiceConstants.EndpointGetUserOrdersAlmancenByRangeDate, startDate.ToString("dd/MM/yyyy"), endDate.ToString("dd/MM/yyyy")));
+                string.Format(ServiceConstants.EndpointGetUserOrdersAlmancenByRangeDate, startDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy), endDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy)));
             return JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
         }
 

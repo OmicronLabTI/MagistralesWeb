@@ -72,8 +72,14 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetInvoice(Dictionary<string, string> parameters)
         {
-            var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
-            var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
+            var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
+                            .ToUniversalDateTime().Date;
+
+            var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
+                                      .ToUniversalDateTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+            var userOrders = await this.GetUserOrdersByRangeDate(startDate, endDate);
+            var lineProducts = await this.GetLineProductsByRangeDate(startDate, endDate);
 
             var listIds = userOrders.Select(y => y.DeliveryId).ToList();
             listIds.AddRange(lineProducts.Select(y => y.DeliveryId));
@@ -88,12 +94,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var totalByFilters = invoiceHeaders.UtilsDistinctBy(x => x.InvoiceId).ToList().Count;
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(invoiceHeaders.Select(x => x.InvoiceId).ToList())).ToList();
 
-            var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && y.BaseEntry.Value != 0).Select(x => x.BaseEntry.Value).Distinct().Count();
-
             var idsToLook = this.GetInvoicesToLook(parameters, invoiceHeaders);
             invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).OrderByDescending(x => x.InvoiceId).ToList();
             invoiceDetails = invoiceDetails.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
-
+            var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && y.BaseEntry.Value != 0).Select(x => x.BaseEntry.Value).Distinct().Count();
             var retrieveMode = new RetrieveInvoiceModel
             {
                 DeliveryDetailModel = deliveryDetails,
@@ -848,6 +852,36 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceDetails ??= new InvoiceDetailModel { BaseEntry = 0 };
 
             return new Tuple<InvoiceDetailModel, InvoiceHeaderModel>(invoiceDetails, header);
+        }
+
+        /// <summary>
+        /// Gets the orders from user Orders.
+        /// </summary>
+        /// <returns>the user orders.</returns>
+        private async Task<List<UserOrderModel>> GetUserOrdersByRangeDate(DateTime startDate, DateTime endDate)
+        {
+            var pedidosResponse = await this.pedidosService.GetUserPedidos(
+                string.Format(
+                    ServiceConstants.GetUserOrderInvoiceByRangeDate,
+                    startDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy),
+                    endDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy)));
+
+            return JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
+        }
+
+        /// <summary>
+        /// Gets the line products.
+        /// </summary>
+        /// <returns>the data.</returns>
+        private async Task<List<LineProductsModel>> GetLineProductsByRangeDate(DateTime startDate, DateTime endDate)
+        {
+            var lineProductsResponse = await this.almacenService.GetAlmacenOrders(
+                string.Format(
+                    ServiceConstants.GetLinesForInvoiceByRangeDate,
+                    startDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy),
+                    endDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy)));
+
+            return JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
         }
     }
 }

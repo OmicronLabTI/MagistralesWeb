@@ -258,12 +258,12 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// Get the user orders for invoices.
         /// </summary>
-        public const string GetUserOrderInvoice = "userorders/invoice";
+        public const string GetUserOrderInvoiceByRangeDate = "userorders/invoice/byrangedates?startdate={0}&enddate={1}";
 
         /// <summary>
         /// Value  for the lines for invoice.
         /// </summary>
-        public const string GetLinesForInvoice = "invoice/orders";
+        public const string GetLinesForInvoiceByRangeDate = "invoice/orders/byrangedates?startdate={0}&enddate={1}";
 
         /// <summary>
         /// Value  for the lines for invoice.
