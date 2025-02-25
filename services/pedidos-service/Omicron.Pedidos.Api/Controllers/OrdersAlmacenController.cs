@@ -132,7 +132,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// </summary>
         /// <param name="parameters">Parameters.</param>
         /// <returns>the data.</returns>
-        [Route("/userorders/delivery")]
+        [Route("/c")]
         [HttpGet]
         public async Task<IActionResult> GetOrdersForDelivery([FromQuery] Dictionary<string, string> parameters)
         {
@@ -307,6 +307,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetOrdersForAlmacenByRangeDates([FromQuery] Dictionary<string, string> parameters)
         {
             var response = await this.pedidosAlmacenFacade.GetOrdersForAlmacenByRangeDates(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// GetOrdersForInvoiceByRangeDates.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders/invoice/byrangedates")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersForInvoiceByRangeDates([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidosAlmacenFacade.GetOrdersForInvoiceByRangeDates(parameters);
             return this.Ok(response);
         }
     }

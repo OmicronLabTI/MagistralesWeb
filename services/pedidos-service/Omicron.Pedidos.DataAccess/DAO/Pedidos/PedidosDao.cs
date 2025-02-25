@@ -557,6 +557,28 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
 
             return orderstoReturn;
         }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrdersForInvoicesModel>> GetUserOrdersForInvoiceByRangeDates(DateTime startDate, DateTime endDate, string statusForSale, string statusForOrder)
+        {
+            return await this.databaseContext.UserOrderModel
+                .Where(x =>
+                    !string.IsNullOrEmpty(x.Productionorderid) &&
+                    string.IsNullOrEmpty(x.StatusInvoice) &&
+                    x.InvoiceStoreDate.HasValue &&
+                    x.InvoiceStoreDate.Value >= startDate &&
+                    x.InvoiceStoreDate.Value <= endDate)
+                .Select(x => new UserOrdersForInvoicesModel
+                {
+                    Salesorderid = x.Salesorderid,
+                    Productionorderid = x.Productionorderid,
+                    Status = x.Status,
+                    StatusAlmacen = x.StatusAlmacen,
+                    DeliveryId = x.DeliveryId,
+                    StatusInvoice = x.StatusInvoice,
+                })
+                .ToListAsync();
+        }
     }
 }
 

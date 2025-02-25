@@ -136,5 +136,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetOrdersForAlmacenByRangeDates(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// GetOrdersForInvoiceByRangeDates.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersForInvoiceByRangeDates(Dictionary<string, string> parameters);
     }
 }

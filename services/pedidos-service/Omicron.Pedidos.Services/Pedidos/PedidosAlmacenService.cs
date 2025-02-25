@@ -369,6 +369,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersForInvoiceByRangeDates(Dictionary<string, string> parameters)
+        {
+            var (startDate, endDate) = this.GetyStartDateAndEndDateParameterWithFormat(parameters);
+            var userOrders = await this.pedidosDao.GetUserOrdersForInvoiceByRangeDates(startDate, endDate, ServiceConstants.Almacenado, ServiceConstants.Empaquetado);
+            return ServiceUtils.CreateResult(true, 200, null, userOrders, null, null);
+        }
+
         /// <summary>
         /// Gets the data by the field, used for datetimes.
         /// </summary>

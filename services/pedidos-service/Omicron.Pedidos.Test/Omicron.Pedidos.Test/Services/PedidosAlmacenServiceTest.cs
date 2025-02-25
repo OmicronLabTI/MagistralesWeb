@@ -109,6 +109,7 @@ namespace Omicron.Pedidos.Test.Services
                 { "startdate", DateTime.Now.ToString("dd/MM/yyyy") },
                 { "enddate", DateTime.Now.ToString("dd/MM/yyyy") },
             };
+
             // act
             var result = await this.pedidosAlmacen.GetOrdersForDelivery(parameters);
 
@@ -317,6 +318,26 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var result = await this.pedidosAlmacen.GetOrdersForAlmacenByRangeDates(parameters);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersForInvoiceByRangeDates()
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                { "startdate", DateTime.Now.ToString("dd/MM/yyyy") },
+                { "enddate", DateTime.Now.ToString("dd/MM/yyyy") },
+            };
+
+            // act
+            var result = await this.pedidosAlmacen.GetOrdersForInvoiceByRangeDates(parameters);
 
             // assert
             Assert.That(result, Is.Not.Null);
