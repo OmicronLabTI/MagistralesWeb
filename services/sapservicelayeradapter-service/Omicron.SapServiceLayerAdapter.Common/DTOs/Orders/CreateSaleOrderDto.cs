@@ -135,7 +135,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// Gets or sets a value indicating whether the order is omigenomics.
         /// </summary>
         /// <value>Omigenomics value.</value>
-        public bool? IsOmigenomicsOrder { get; set; }
+        public bool? IsSecondary { get; set; }
 
         /// <summary>
         /// Gets or sets the adviser id.
@@ -164,5 +164,11 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// OrderComments.
         /// </value>
         public string OrderComments { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets if is omigenomics.
+        /// </summary>
+        /// <value> Is Omigenomics. </value>
+        public bool IsOmigenomics { get; set; }
     }
 }
