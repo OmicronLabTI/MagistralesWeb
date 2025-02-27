@@ -105,7 +105,7 @@ namespace Omicron.Pedidos.Test.Facade
         {
             // arrange
             // act
-            var response = await this.almacenFacade.GetOrdersForDelivery();
+            var response = await this.almacenFacade.GetOrdersForDelivery(new Dictionary<string, string>());
 
             // Assert
             Assert.That(response, Is.Not.Null);
@@ -300,6 +300,38 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.almacenFacade.AdvanceLook(type);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
+        /// GetOrdersForAlmacenByRangeDates.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetOrdersForAlmacenByRangeDates()
+        {
+            // arrange
+            // act
+            var response = await this.almacenFacade.GetOrdersForAlmacenByRangeDates([]);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetOrdersForInvoiceByRangeDates()
+        {
+            // arrange
+            // act
+            var response = await this.almacenFacade.GetOrdersForInvoiceByRangeDates([]);
 
             // Assert
             Assert.That(response, Is.Not.Null);

@@ -221,9 +221,9 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLineProductPedidos = "almacen/orders";
 
         /// <summary>
-        /// route for the delivery values.
+        /// route to get GetLinesForDeliveryByDatesRange.
         /// </summary>
-        public const string GetLinesForDelivery = "delivery/orders";
+        public const string GetLinesForDeliveryByDatesRange = "delivery/orders?startdate={0}&enddate={1}";
 
         /// <summary>
         /// route for the delivery values.
@@ -231,9 +231,9 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLinesForDeliveryId = "delivery/orders/id";
 
         /// <summary>
-        /// Get the delivery orders.
+        /// Get GetUserOrderDeliveryByDatesRange.
         /// </summary>
-        public const string GetUserOrderDelivery = "userorders/delivery";
+        public const string GetUserOrderDeliveryByDatesRange = "userorders/delivery?startdate={0}&enddate={1}";
 
         /// <summary>
         /// Get the delivery orders.
@@ -258,12 +258,12 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// Get the user orders for invoices.
         /// </summary>
-        public const string GetUserOrderInvoice = "userorders/invoice";
+        public const string GetUserOrderInvoiceByRangeDate = "userorders/invoice/byrangedates?startdate={0}&enddate={1}";
 
         /// <summary>
         /// Value  for the lines for invoice.
         /// </summary>
-        public const string GetLinesForInvoice = "invoice/orders";
+        public const string GetLinesForInvoiceByRangeDate = "invoice/orders/byrangedates?startdate={0}&enddate={1}";
 
         /// <summary>
         /// Value  for the lines for invoice.
@@ -780,6 +780,46 @@ namespace Omicron.SapAdapter.Services.Constants
         /// The close status.
         /// </value>
         public static string CloseStatus => "Cerrado";
+
+        /// <summary>
+        /// Gets StartDateParam.
+        /// </summary>
+        /// <value>
+        /// String StartDateParam.
+        /// </value>
+        public static string StartDateParam => "startdate";
+
+        /// <summary>
+        /// Gets EndDateParam.
+        /// </summary>
+        /// <value>
+        /// String EndDateParam.
+        /// </value>
+        public static string EndDateParam => "enddate";
+
+        /// <summary>
+        /// Gets GetUserOrdersAlmancen.
+        /// </summary>
+        /// <value>
+        /// String GetUserOrdersAlmancen.
+        /// </value>
+        public static string EndpointGetUserOrdersAlmancenByRangeDate => "userorders/almacen/byrangedates?startdate={0}&enddate={1}";
+
+        /// <summary>
+        /// Gets EndPointGetLineProductPedidosByRangeDate.
+        /// </summary>
+        /// <value>
+        /// String EndPointGetLineProductPedidosByRangeDate.
+        /// </value>
+        public static string EndPointGetLineProductPedidosByRangeDate => "almacen/orders/bydaterange";
+
+        /// <summary>
+        /// Gets DateTimeFormatddMMyyyy.
+        /// </summary>
+        /// <value>
+        /// String DateTimeFormatddMMyyyy.
+        /// </value>
+        public static string DateTimeFormatddMMyyyy => "dd/MM/yyyy";
 
         /// <summary>
         /// Gets the status of the order.

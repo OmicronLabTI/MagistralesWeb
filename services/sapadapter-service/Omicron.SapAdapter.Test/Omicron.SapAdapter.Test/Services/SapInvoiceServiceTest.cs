@@ -401,7 +401,7 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Code == 200);
             Assert.That(response.Success);
-            Assert.That(response.Response, Is.InstanceOf<List<InvoiceHeaderModel>>());
+            Assert.That(response.Response, Is.InstanceOf<IEnumerable<InvoiceHeaderModel>>());
             Assert.That(response.Comments, Is.Not.Null);
         }
 
