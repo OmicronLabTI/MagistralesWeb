@@ -157,6 +157,8 @@ namespace Omicron.Pedidos.Test.Services
             var dict = new Dictionary<string, string>
             {
                 { "status", "Empaquetado,Enviado" },
+                { "startdate", DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy") },
+                { "enddate", DateTime.Now.ToString("dd/MM/yyyy") },
             };
 
             // act

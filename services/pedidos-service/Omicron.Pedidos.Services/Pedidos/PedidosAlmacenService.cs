@@ -198,13 +198,16 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersForPackages(Dictionary<string, string> parameters)
         {
-            var dataToLook = await this.GetParametersDateToLook(ServiceConstants.SentMaxDaysToLook);
+            var (startDate, endDate) = this.GetyStartDateAndEndDateParameterWithFormat(parameters);
             var arrayStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status].Split(",").ToList() : ServiceConstants.StatusLocal;
             var type = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.Local.ToLower());
-            var userOrderByType = await this.pedidosDao.GetUserOrderByInvoiceType(new List<string> { type }, ServiceConstants.StatusDelivered, dataToLook.Item1);
+            var userOrderByType = await this.pedidosDao.GetUserOrderByInvoiceType(
+                [type.ToLower()],
+                startDate,
+                endDate,
+                arrayStatus);
 
             var orderToReturn = userOrderByType
-                .Where(x => arrayStatus.Contains(x.StatusInvoice))
                 .DistinctBy(y => y.InvoiceId)
                 .Select(x => new
                 {
@@ -215,7 +218,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     x.UserInvoiceStored,
                 });
 
-            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, dataToLook.Item2);
+            return ServiceUtils.CreateResult(true, 200, null, orderToReturn, null, null);
         }
 
         /// <inheritdoc/>

@@ -212,8 +212,7 @@ namespace Omicron.SapAdapter.Services.Utils
         public static async Task<List<PaymentsDto>> GetPaymentsByTransactionsIds(IProccessPayments proccessPayments, List<string> transactionsIds)
         {
             var paymentsResponse = await proccessPayments.PostProccessPayments(transactionsIds, ServiceConstants.EndPointToGetPayments);
-            var aux = JsonConvert.DeserializeObject<List<PaymentsDto>>(paymentsResponse.Response.ToString());
-            return aux;
+            return JsonConvert.DeserializeObject<List<PaymentsDto>>(paymentsResponse.Response.ToString());
         }
 
         /// <summary>

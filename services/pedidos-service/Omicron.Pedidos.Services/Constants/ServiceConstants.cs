@@ -641,11 +641,6 @@ namespace Omicron.Pedidos.Services.Constants
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
 
         /// <summary>
-        /// The max days to look.
-        /// </summary>
-        public const string SentMaxDaysToLook = "SentMaxDays";
-
-        /// <summary>
         /// const for the bottom temxt.
         /// </summary>
         public const string QrBottomTextOrden = "OR: {0} {1}";
