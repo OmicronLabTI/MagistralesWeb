@@ -9,7 +9,6 @@ namespace Omicron.SapAdapter.Services.Sap
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
@@ -73,8 +72,6 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
-            var stopwatch = Stopwatch.StartNew();
-
             var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypes);
             var types = typesString.Split(",").ToList();
 
@@ -109,8 +106,7 @@ namespace Omicron.SapAdapter.Services.Sap
             orders = await this.GetSapLinesToLookByChips(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
             var listToReturn = this.GetOrdersToReturn(userOrders, orders, lineProducts.Item1, parameters, sapOrders.Item2);
-            stopwatch.Stop();
-            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}- {stopwatch.Elapsed.TotalSeconds} segundos");
+            return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
 
         /// <inheritdoc/>
