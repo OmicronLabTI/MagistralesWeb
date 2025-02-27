@@ -132,7 +132,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// </summary>
         /// <param name="parameters">Parameters.</param>
         /// <returns>the data.</returns>
-        [Route("/c")]
+        [Route("/userorders/delivery")]
         [HttpGet]
         public async Task<IActionResult> GetOrdersForDelivery([FromQuery] Dictionary<string, string> parameters)
         {
