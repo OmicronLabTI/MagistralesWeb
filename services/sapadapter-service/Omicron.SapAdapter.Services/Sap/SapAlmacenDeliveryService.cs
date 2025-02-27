@@ -75,12 +75,18 @@ namespace Omicron.SapAdapter.Services.Sap
             var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypes);
             var types = typesString.Split(",").ToList();
 
-            var userResponse = await this.GetUserOrdersRemision(parameters);
-            var lineProducts = await this.GetLineProductsRemision(parameters, userResponse.Item2);
+            var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
+                            .ToUniversalDateTime().Date;
 
-            var sapResponse = await this.GetOrdersByType(types, userResponse.Item1, lineProducts, parameters);
-            var dataToReturn = this.GetOrdersToReturn(sapResponse.Item1, sapResponse.Item2, sapResponse.Item4);
-            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{sapResponse.Item3}-{sapResponse.Item3}");
+            var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
+                                      .ToUniversalDateTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+            var userOrders = await this.GetUserOrdersRemision(parameters, startDate, endDate);
+            var lineProducts = await this.GetLineProductsRemision(parameters, startDate, endDate);
+
+            var (deliveryToReturn, deliveryHeaders, filterCount, invoices) = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
+            var dataToReturn = this.GetOrdersToReturn(deliveryToReturn, deliveryHeaders, invoices);
+            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{filterCount}-{filterCount}");
         }
 
         /// <inheritdoc/>
@@ -136,8 +142,8 @@ namespace Omicron.SapAdapter.Services.Sap
             int.TryParse(saleArray[1], out var deliveryId);
 
             var dictionaryChip = new Dictionary<string, string> { { ServiceConstants.Chips, deliveryId.ToString() } };
-            var userOrders = (await this.GetUserOrdersRemision(dictionaryChip)).Item1;
-            var lineProducts = await this.GetLineProductsRemision(dictionaryChip, DateTime.Now);
+            var userOrders = await this.GetUserOrdersRemision(dictionaryChip, DateTime.Now, DateTime.Now);
+            var lineProducts = await this.GetLineProductsRemision(dictionaryChip, DateTime.Now, DateTime.Now);
             userOrders = userOrders.Where(x => x.Salesorderid == orderSaleId.ToString()).ToList();
             lineProducts = lineProducts.Where(x => x.SaleOrderId == orderSaleId).ToList();
 
@@ -154,25 +160,27 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, items, null, null);
         }
 
-        private async Task<Tuple<List<UserOrderModel>, DateTime>> GetUserOrdersRemision(Dictionary<string, string> parameters)
+        private async Task<List<UserOrderModel>> GetUserOrdersRemision(Dictionary<string, string> parameters, DateTime startDate, DateTime endDate)
         {
             if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int remisionId))
             {
                 var userOrdersResponse = await this.pedidosService.PostPedidos(new List<int> { remisionId }, ServiceConstants.GetUserOrderDeliveryId);
-                return new Tuple<List<UserOrderModel>, DateTime>(JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString()), DateTime.Now);
+                return JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
             }
 
-            var pedidosResponse = await this.pedidosService.GetUserPedidos(ServiceConstants.GetUserOrderDelivery);
+            var pedidosResponse = await this.pedidosService.GetUserPedidos(string.Format(
+                ServiceConstants.GetUserOrderDeliveryByDatesRange,
+                startDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy),
+                endDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy)));
 
-            var dateToLook = ServiceShared.GetDateTimeFromNumberSubstracDays(pedidosResponse.Comments.ToString());
-            return new Tuple<List<UserOrderModel>, DateTime>(JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString()), dateToLook);
+            return JsonConvert.DeserializeObject<List<UserOrderModel>>(pedidosResponse.Response.ToString());
         }
 
         /// <summary>
         /// Gets the line products.
         /// </summary>
         /// <returns>the data.</returns>
-        private async Task<List<LineProductsModel>> GetLineProductsRemision(Dictionary<string, string> parameters, DateTime dateToLook)
+        private async Task<List<LineProductsModel>> GetLineProductsRemision(Dictionary<string, string> parameters, DateTime startDate, DateTime endDate)
         {
             if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int remisionId))
             {
@@ -180,7 +188,12 @@ namespace Omicron.SapAdapter.Services.Sap
                 return JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
             }
 
-            var almacenResponseDate = await this.almacenService.GetAlmacenOrders($"{ServiceConstants.GetLinesForDelivery}?{ServiceConstants.FechaInicio}={dateToLook.ToString("dd/MM/yyyy")}");
+            var almacenResponseDate = await this.almacenService.GetAlmacenOrders(
+                            string.Format(
+                                ServiceConstants.GetLinesForDeliveryByDatesRange,
+                                startDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy),
+                                endDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy)));
+
             return JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponseDate.Response.ToString());
         }
 
@@ -198,12 +211,12 @@ namespace Omicron.SapAdapter.Services.Sap
             listDeliveryIds.AddRange(userOrders.Select(x => x.DeliveryId).ToList());
             listDeliveryIds = listDeliveryIds.OrderBy(x => x).Distinct().ToList();
 
-            var deliveryDetailDb = (await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(listDeliveryIds)).ToList();
+            var deliveryDetailDb = await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(listDeliveryIds);
 
-            var invoices = (await this.sapDao.GetInvoiceHeaderByInvoiceId(deliveryDetailDb.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList())).ToList();
-            var invoiceRefactura = invoices.Where(x => x.Refactura == ServiceConstants.IsRefactura).Select(y => y.InvoiceId).ToList();
-            invoices = invoices.Where(x => x.Refactura != ServiceConstants.IsRefactura).ToList();
-            deliveryDetailDb = deliveryDetailDb.Where(x => !x.InvoiceId.HasValue || !invoiceRefactura.Contains(x.InvoiceId.Value)).ToList();
+            var invoices = await this.sapDao.GetInvoiceHeaderByInvoiceId(deliveryDetailDb.Where(x => x.InvoiceId.HasValue).Select(y => y.InvoiceId.Value).ToList());
+            var invoiceRefactura = invoices.Where(x => x.Refactura == ServiceConstants.IsRefactura).Select(y => y.InvoiceId);
+            invoices = invoices.Where(x => x.Refactura != ServiceConstants.IsRefactura);
+            deliveryDetailDb = deliveryDetailDb.Where(x => !x.InvoiceId.HasValue || !invoiceRefactura.Contains(x.InvoiceId.Value));
             var sapOrdersGroup = deliveryDetailDb.GroupBy(x => x.DeliveryId).ToList();
 
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
@@ -212,8 +225,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (types.Contains(ServiceConstants.Magistral.ToLower()))
             {
-                var listMagistral = sapOrdersGroup.Where(x => !x.Any(y => lineProducts.Contains(y.ProductoId))).ToList();
-                var keys = listMagistral.Select(x => x.Key).ToList();
+                var listMagistral = sapOrdersGroup.Where(x => !x.Any(y => lineProducts.Contains(y.ProductoId)));
+                var keys = listMagistral.Select(x => x.Key);
 
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keys.Contains(x.DeliveryId)));
                 sapOrdersGroup.RemoveAll(x => keys.Contains(x.Key));
@@ -221,8 +234,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (types.Contains(ServiceConstants.Mixto.ToLower()))
             {
-                var listMixta = sapOrdersGroup.Where(x => !x.All(y => lineProducts.Contains(y.ProductoId)) && x.Any(y => lineProducts.Contains(y.ProductoId))).ToList();
-                var keysMixta = listMixta.Select(x => x.Key).ToList();
+                var listMixta = sapOrdersGroup.Where(x => !x.All(y => lineProducts.Contains(y.ProductoId)) && x.Any(y => lineProducts.Contains(y.ProductoId)));
+                var keysMixta = listMixta.Select(x => x.Key);
 
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysMixta.Contains(x.DeliveryId)));
                 sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
@@ -231,21 +244,21 @@ namespace Omicron.SapAdapter.Services.Sap
             if (types.Contains(ServiceConstants.Line))
             {
                 var listMixta = sapOrdersGroup.Where(x => x.All(y => lineProducts.Contains(y.ProductoId)));
-                var keysLine = listMixta.Select(x => x.Key).ToList();
+                var keysLine = listMixta.Select(x => x.Key);
 
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysLine.Contains(x.DeliveryId)));
                 sapOrdersGroup.RemoveAll(x => keysLine.Contains(x.Key));
             }
 
-            var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(listDeliveryIds)).ToList();
+            var deliveryHeaders = await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(listDeliveryIds);
 
-            var maquilaDeliverys = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ).ToList();
-            var packageDeliveries = deliveryHeaders.Where(x => x.IsPackage == ServiceConstants.IsPackage).ToList();
-            var omigenomicsDeliveries = deliveryHeaders.Where(del => del.IsOmigenomics.ValidateNull().ToLower() == ServiceConstants.IsOmigenomics.ToLower()).ToList();
+            var maquilaDeliverys = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ);
+            var packageDeliveries = deliveryHeaders.Where(x => x.IsPackage == ServiceConstants.IsPackage);
+            var omigenomicsDeliveries = deliveryHeaders.Where(del => del.IsOmigenomics.ValidateNull().ToLower() == ServiceConstants.IsOmigenomics.ToLower());
 
-            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, maquilaDeliverys, ServiceConstants.Maquila);
-            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, packageDeliveries, ServiceConstants.Paquetes);
-            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb, deliveryToReturn, deliveryHeaders, omigenomicsDeliveries, ServiceConstants.OmigenomicsGroup);
+            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, maquilaDeliverys.ToList(), ServiceConstants.Maquila);
+            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, packageDeliveries.ToList(), ServiceConstants.Paquetes);
+            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, omigenomicsDeliveries.ToList(), ServiceConstants.OmigenomicsGroup);
 
             deliveryHeaders = await this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
             deliveryHeaders = deliveryHeaders.OrderByDescending(x => x.DocNum).ToList();
@@ -255,7 +268,7 @@ namespace Omicron.SapAdapter.Services.Sap
             deliveryToReturn = deliveryToReturn.Where(x => deliveryHeaders.Any(y => y.DocNum == x.DeliveryId)).ToList();
             deliveryToReturn = deliveryToReturn.OrderByDescending(x => x.DeliveryId).ToList();
 
-            return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, invoices);
+            return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, invoices.ToList());
         }
 
         private List<DeliverModel> AddSpecialTypes(List<string> types, List<DeliveryDetailModel> deliveryDetailDb, List<DeliveryDetailModel> deliveryToReturn, List<DeliverModel> deliveryHeaders, List<DeliverModel> specialDeliveries, string typeToLook)

@@ -641,16 +641,6 @@ namespace Omicron.Pedidos.Services.Constants
         public const string AlmacenMaxDayToLook = "AlmacenMaxDayToLook";
 
         /// <summary>
-        /// remision max day to look.
-        /// </summary>
-        public const string RemisionMaxDayToLook = "RemisionMaxDayToLook";
-
-        /// <summary>
-        /// The max days to look.
-        /// </summary>
-        public const string SentMaxDaysToLook = "SentMaxDays";
-
-        /// <summary>
         /// const for the bottom temxt.
         /// </summary>
         public const string QrBottomTextOrden = "OR: {0} {1}";
@@ -1169,6 +1159,30 @@ namespace Omicron.Pedidos.Services.Constants
         /// </value>
         public static string ErrorUsersDZAutomatico
             => "No hay químico asignado para atender los productos Dermazone, favor de configurar un usuario o asignarlos manualmente";
+
+        /// <summary>
+        /// Gets StartDateParam.
+        /// </summary>
+        /// <value>
+        /// String StartDateParam.
+        /// </value>
+        public static string StartDateParam => "startdate";
+
+        /// <summary>
+        /// Gets EndDateParam.
+        /// </summary>
+        /// <value>
+        /// String EndDateParam.
+        /// </value>
+        public static string EndDateParam => "enddate";
+
+        /// <summary>
+        /// Gets DateTimeFormatddMMyyyy.
+        /// </summary>
+        /// <value>
+        /// String DateTimeFormatddMMyyyy.
+        /// </value>
+        public static string DateTimeFormatddMMyyyy => "dd/MM/yyyy";
 
         /// <summary>
         /// Gets list of signatures to assign products DZ in lowercase.

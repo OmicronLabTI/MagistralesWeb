@@ -40,8 +40,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Gets the orders for deliveru.
         /// </summary>
+        /// <param name="parameters">Parameters.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetOrdersForDelivery();
+        Task<ResultModel> GetOrdersForDelivery(Dictionary<string, string> parameters);
 
         /// <summary>
         /// Gets the orders for deliveru.
@@ -112,5 +113,19 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="invoicesIds">the ids.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetUserOrdersByInvoicesIds(List<int> invoicesIds);
+
+        /// <summary>
+        /// Get Orders For Almacen By Range Dates.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOrdersForAlmacenByRangeDates(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// GetOrdersForInvoiceByRangeDates.
+        /// </summary>
+        /// <param name="parameters">Parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOrdersForInvoiceByRangeDates(Dictionary<string, string> parameters);
     }
 }

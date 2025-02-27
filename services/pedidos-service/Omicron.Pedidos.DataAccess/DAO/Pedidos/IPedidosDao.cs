@@ -84,10 +84,11 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// Returns the user order by user id.
         /// </summary>
         /// <param name="listStatus">the list of users.</param>
-        /// <param name="statusToIgnore">status to ingnore.</param>
-        /// <param name="maxDateToLook">the max date to look.</param>
+        /// <param name="almacenStatusToIgnore">almacenStatusToIgnore.</param>
+        /// <param name="startDate">StartDate.</param>
+        /// <param name="endDate">EndDate.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus, string statusToIgnore, DateTime maxDateToLook);
+        Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus, string almacenStatusToIgnore, DateTime startDate, DateTime endDate);
 
         /// <summary>
         /// Returns the user order by user id.
@@ -297,10 +298,11 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// Returns the user order by user id.
         /// </summary>
         /// <param name="types">the list of users.</param>
-        /// <param name="statusDelivered">Status delivered.</param>
-        /// <param name="dateToLook">Date To Look</param>
+        /// <param name="startDate">startDate.</param>
+        /// <param name="endDate">startDate.</param>
+        /// <param name="statusToSearch">statusToSearch.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types, List<string> statusDelivered, DateTime dateToLook);
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types, DateTime startDate, DateTime endDate, List<string> statusToSearch);
 
         /// <summary>
         /// Get the data by finalized date.
@@ -352,5 +354,26 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="listIds">the list of users.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByTecnicId(List<string> listIds);
+
+        /// <summary>
+        /// GetSaleOrderForAlmacenByRangeDates.
+        /// </summary>
+        /// <param name="startDate">Start Date.</param>
+        /// <param name="endDate">End Date.</param>
+        /// <param name="statusPending">The status for pending.</param>
+        /// <param name="status">The status.</param>
+        /// <param name="secondStatus">The second status.</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>> GetSaleOrderForAlmacenByRangeDates(DateTime startDate, DateTime endDate, List<string> statusPending, string status, string secondStatus);
+
+        /// <summary>
+        /// GetUserOrdersForInvoiceByRangeDates.
+        /// <returns>the orders.</returns>
+        /// <param name="startDate">Start Date.</param>
+        /// <param name="endDate">End Date.</param>
+        /// <param name="statusForSale">the status for the sale.</param>
+        /// <param name="statusForOrder">the status for the order.</param>
+        /// </summary>
+        Task<IEnumerable<UserOrdersForInvoicesModel>> GetUserOrdersForInvoiceByRangeDates(DateTime startDate, DateTime endDate, string statusForSale, string statusForOrder);
     }
 }

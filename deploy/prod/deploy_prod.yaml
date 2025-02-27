@@ -31,8 +31,8 @@ spec:
             - containerPort: 8090
           resources:
             limits:
-              cpu: 1413m
-              memory: 800Mi
+              cpu: 2124m
+              memory: 1563Mi
             requests:
               cpu: 707m
               memory: 323Mi
@@ -499,7 +499,7 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 128m
+              cpu: 140m
               memory: 208Mi
             requests:
               cpu: 2m
@@ -583,7 +583,7 @@ spec:
           resources:
             limits:
               cpu: 60m
-              memory: 120Mi
+              memory: 235Mi
             requests:
               cpu: 1m
               memory: 40Mi

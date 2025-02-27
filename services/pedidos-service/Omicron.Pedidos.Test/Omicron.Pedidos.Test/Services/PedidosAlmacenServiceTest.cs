@@ -103,8 +103,15 @@ namespace Omicron.Pedidos.Test.Services
         [Test]
         public async Task GetOrdersForDelivery()
         {
+            // arrange
+            var parameters = new Dictionary<string, string>
+            {
+                { "startdate", DateTime.Now.ToString("dd/MM/yyyy") },
+                { "enddate", DateTime.Now.ToString("dd/MM/yyyy") },
+            };
+
             // act
-            var result = await this.pedidosAlmacen.GetOrdersForDelivery();
+            var result = await this.pedidosAlmacen.GetOrdersForDelivery(parameters);
 
             // assert
             Assert.That(result, Is.Not.Null);
@@ -150,6 +157,8 @@ namespace Omicron.Pedidos.Test.Services
             var dict = new Dictionary<string, string>
             {
                 { "status", "Empaquetado,Enviado" },
+                { "startdate", DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy") },
+                { "enddate", DateTime.Now.ToString("dd/MM/yyyy") },
             };
 
             // act
@@ -291,6 +300,46 @@ namespace Omicron.Pedidos.Test.Services
 
             // act
             var result = await pedidoServiceLocal.AdvanceLook(details);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// GetOrdersForAlmacenByRangeDates.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersForAlmacenByRangeDates()
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                { "startdate", DateTime.Now.ToString("dd/MM/yyyy") },
+                { "enddate", DateTime.Now.ToString("dd/MM/yyyy") },
+            };
+
+            // act
+            var result = await this.pedidosAlmacen.GetOrdersForAlmacenByRangeDates(parameters);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersForInvoiceByRangeDates()
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                { "startdate", DateTime.Now.ToString("dd/MM/yyyy") },
+                { "enddate", DateTime.Now.ToString("dd/MM/yyyy") },
+            };
+
+            // act
+            var result = await this.pedidosAlmacen.GetOrdersForInvoiceByRangeDates(parameters);
 
             // assert
             Assert.That(result, Is.Not.Null);

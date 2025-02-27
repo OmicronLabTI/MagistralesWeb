@@ -103,9 +103,17 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return await this.databaseContext.UserOrderModel.Where(x => listStatus.Contains(x.Status)).ToListAsync();
         }
 
-        public async Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus, string statusToIgnore, DateTime maxDateToLook)
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderForDelivery(List<string> listStatus, string almacenStatusToIgnore, DateTime startDate, DateTime endDate)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => !string.IsNullOrEmpty(x.Productionorderid) && x.DateTimeCheckIn.HasValue && x.DateTimeCheckIn >= maxDateToLook && x.DeliveryId != 0 && listStatus.Contains(x.Status) && x.StatusAlmacen != statusToIgnore).ToListAsync();
+            return await this.databaseContext.UserOrderModel
+                .Where(x => !string.IsNullOrEmpty(x.Productionorderid) &&
+                    x.DateTimeCheckIn.HasValue &&
+                    x.DateTimeCheckIn.Value >= startDate &&
+                    x.DateTimeCheckIn.Value <= endDate &&
+                    x.DeliveryId != 0 &&
+                    listStatus.Contains(x.Status) &&
+                    x.StatusAlmacen != almacenStatusToIgnore)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -116,7 +124,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaFin(DateTime fechaInicio, DateTime fechaFin)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => x.FinishDate != null && x.FinishDate >= fechaInicio && x.FinishDate <= fechaFin).ToListAsync();
+            return await this.databaseContext.UserOrderModel
+                .Where(x =>
+                            x.FinishDate.HasValue &&
+                            x.FinishDate.Value >= fechaInicio.ToUniversalTime().Date &&
+                            x.FinishDate.Value <= fechaFin.ToUniversalTime().Date)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -127,7 +140,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFechaClose(DateTime fechaInicio, DateTime fechaFin)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => x.CloseDate != null && x.CloseDate >= fechaInicio && x.CloseDate <= fechaFin).ToListAsync();
+            return await this.databaseContext.UserOrderModel
+                .Where(x =>
+                            x.CloseDate.HasValue &&
+                            x.CloseDate.Value >= fechaInicio.ToUniversalTime().Date &&
+                            x.CloseDate.Value <= fechaFin.ToUniversalTime().Date)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -302,7 +320,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending, string secondStatus)
         {
             var listStatustoLook = new List<string> { status, secondStatus };
-            var orders = await this.databaseContext.UserOrderModel.Where(x => x.CloseDate != null && x.CloseDate >= dateToLook && x.FinishedLabel == 1 && listStatustoLook.Contains(x.Status)).ToListAsync();
+            var orders = await this.databaseContext.UserOrderModel
+                .Where(x => x.CloseDate.HasValue &&
+                            x.CloseDate.Value >= dateToLook.ToUniversalTime().Date
+                            && x.FinishedLabel == 1 &&
+                            listStatustoLook.Contains(x.Status))
+                .ToListAsync();
 
             var idsSaleFinalized = orders.Where(x => x.IsSalesOrder && x.Status.Equals(status)).Select(y => y.Salesorderid).ToList();
             var orderstoReturn = await this.databaseContext.UserOrderModel.Where(x => idsSaleFinalized.Contains(x.Salesorderid)).ToListAsync();
@@ -333,9 +356,11 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <inheritdoc/>
         public async Task<List<UserOrderModel>> GetOrderForAlmacenToIgnore(string status, DateTime dateToLook)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => string.IsNullOrEmpty(x.Productionorderid) &&
-            (x.FinalizedDate == null || x.FinalizedDate >= dateToLook) &&
-            (x.Status != status || x.FinishedLabel != 1)).ToListAsync();
+            return await this.databaseContext.UserOrderModel
+                .Where(x => string.IsNullOrEmpty(x.Productionorderid) &&
+                           (x.FinalizedDate.HasValue || x.FinalizedDate.Value >= dateToLook.ToUniversalTime().Date) &&
+                           (x.Status != status || x.FinishedLabel != 1))
+                .ToListAsync();
         }
 
         /// <summary>
@@ -401,22 +426,26 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types, List<string> statusDelivered, DateTime dateToLook)
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types, DateTime startDate, DateTime endDate, List<string> statusToSearch)
         {
-            return await (from userOrder in this.databaseContext.UserOrderModel
-                          where
-                               !string.IsNullOrEmpty(userOrder.Productionorderid)
-                               && !string.IsNullOrEmpty(userOrder.StatusInvoice)
-                               && types.Contains(userOrder.InvoiceType)
-                               && (!statusDelivered.Contains(userOrder.StatusInvoice)
-                               || (statusDelivered.Contains(userOrder.StatusInvoice) && userOrder.InvoiceStoreDate >= dateToLook))
-                          select userOrder).ToListAsync();
+            return await this.databaseContext.UserOrderModel
+               .Where(userOrder =>
+                   !string.IsNullOrEmpty(userOrder.Productionorderid) &&
+                   types.Contains(userOrder.InvoiceType) &&
+                   statusToSearch.Contains(userOrder.StatusInvoice) &&
+                   userOrder.InvoiceStoreDate.HasValue &&
+                   userOrder.InvoiceStoreDate.Value >= startDate.ToUniversalTime() &&
+                   userOrder.InvoiceStoreDate.Value <= endDate.ToUniversalTime()).ToListAsync();
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate)
         {
-            return await this.databaseContext.UserOrderModel.Where(x => x.FinalizedDate >= init && x.FinalizedDate <= endDate).ToListAsync();
+            return await this.databaseContext.UserOrderModel
+                .Where(x => x.FinalizedDate.HasValue &&
+                            x.FinalizedDate.Value >= init.ToUniversalTime().Date &&
+                            x.FinalizedDate.Value <= endDate.ToUniversalTime().Date)
+                .ToListAsync();
         }
 
         /// <inheritdoc/>
@@ -470,6 +499,85 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByTecnicId(List<string> listIds)
         {
             return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.TecnicId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetSaleOrderForAlmacenByRangeDates(DateTime startDate, DateTime endDate, List<string> statusPending, string status, string secondStatus)
+        {
+            var listStatustoLook = new List<string> { status, secondStatus };
+            var startDateUtc = startDate.ToUniversalTime().Date;
+            var endDateUtc = endDate.ToUniversalTime().Date;
+
+            // Filtrar una sola vez desde la base de datos
+            var ordersQuery = this.databaseContext.UserOrderModel
+                .Where(x => x.CloseDate.HasValue &&
+                            x.CloseDate.Value >= startDateUtc &&
+                            x.CloseDate.Value <= endDateUtc &&
+                            x.FinishedLabel == 1 &&
+                            listStatustoLook.Contains(x.Status));
+
+            // Obtener IDs de órdenes finalizadas sin hacer una consulta extra
+            var idsSaleFinalized = await ordersQuery
+                .Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status == status)
+                .Select(y => y.Salesorderid)
+                .ToListAsync();
+
+            // Obtener órdenes finalizadas y de maquila en una sola consulta
+            var orderstoReturn = await this.databaseContext.UserOrderModel
+                .Where(x => idsSaleFinalized.Contains(x.Salesorderid) ||
+                            (x.TypeOrder == "MQ" && x.FinishedLabel == 1 && x.Status == status))
+                .ToListAsync();
+
+            // Obtener posibles pendientes
+            var possiblePending = await ordersQuery
+                .Where(x => !string.IsNullOrEmpty(x.Productionorderid))
+                .Select(y => y.Salesorderid)
+                .Distinct()
+                .ToListAsync();
+
+            // Obtener las órdenes pendientes directamente
+            var pendingOrders = await this.databaseContext.UserOrderModel
+                .Where(x => possiblePending.Contains(x.Salesorderid) &&
+                            x.Status != "Cancelado")
+                .ToListAsync();
+
+            // Optimizar la lógica de filtrado de órdenes pendientes
+            foreach (var group in pendingOrders.GroupBy(x => x.Salesorderid))
+            {
+                var orders = group.Where(z => z.IsProductionOrder).ToList();
+                var productionStatus = orders.Where(z => z.Status == status || z.Status == secondStatus).ToList();
+
+                if (productionStatus.Count > 0 &&
+                    productionStatus.All(z => z.FinishedLabel == 1) &&
+                    orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
+                {
+                    orderstoReturn.AddRange(group);
+                }
+            }
+
+            return orderstoReturn;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrdersForInvoicesModel>> GetUserOrdersForInvoiceByRangeDates(DateTime startDate, DateTime endDate, string statusForSale, string statusForOrder)
+        {
+            return await this.databaseContext.UserOrderModel
+                .Where(x =>
+                    !string.IsNullOrEmpty(x.Productionorderid) &&
+                    string.IsNullOrEmpty(x.StatusInvoice) &&
+                    x.InvoiceStoreDate.HasValue &&
+                    x.InvoiceStoreDate.Value >= startDate &&
+                    x.InvoiceStoreDate.Value <= endDate)
+                .Select(x => new UserOrdersForInvoicesModel
+                {
+                    Salesorderid = x.Salesorderid,
+                    Productionorderid = x.Productionorderid,
+                    Status = x.Status,
+                    StatusAlmacen = x.StatusAlmacen,
+                    DeliveryId = x.DeliveryId,
+                    StatusInvoice = x.StatusInvoice,
+                })
+                .ToListAsync();
         }
     }
 }

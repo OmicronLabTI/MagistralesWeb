@@ -278,16 +278,20 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids);
 
         /// <summary>
-        /// Get the orders.
+        /// GetAllOrdersForAlmacen.
         /// </summary>
-        /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate);
+        /// <param name="startDate">startDate.</param>
+        /// <param name="endDate">endDate.</param>
+        /// <returns>the attachaments.</returns>
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime startDate, DateTime endDate);
 
         /// <summary>
-        /// Get the orders.
+        /// GetAllOrdersForAlmacenDxp.
         /// </summary>
-        /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenDxp(DateTime initDate);
+        /// <param name="startDate">startDate.</param>
+        /// <param name="endDate">endDate.</param>
+        /// <returns>the attachaments.</returns>
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenDxp(DateTime startDate, DateTime endDate);
 
         /// <summary>
         /// Get the orders.
@@ -307,8 +311,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="typeOrder">The type order.</param>
         /// <param name="orderToLook">The orders to look.</param>
+        /// <param name="needOnlyDxp">needOnlyDxp.</param>
         /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder, List<int> orderToLook);
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder, List<int> orderToLook, bool needOnlyDxp);
 
         /// <summary>
         /// Gets the deliveries by the sale order.

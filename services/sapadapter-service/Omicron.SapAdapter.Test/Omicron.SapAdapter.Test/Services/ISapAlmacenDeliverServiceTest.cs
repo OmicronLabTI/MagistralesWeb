@@ -117,6 +117,8 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
+                { ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy) },
+                { ServiceConstants.EndDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy) },
             };
 
             var mockDoctor = new Mock<IDoctorService>();

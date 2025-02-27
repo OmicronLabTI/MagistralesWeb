@@ -59,9 +59,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> GetOrdersForDelivery()
+        public async Task<ResultDto> GetOrdersForDelivery(Dictionary<string, string> parameters)
         {
-            return this.mapper.Map<ResultDto>(await this.almacenService.GetOrdersForDelivery());
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetOrdersForDelivery(parameters));
         }
 
         /// <inheritdoc/>
@@ -134,6 +134,18 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> GetUserOrdersByInvoicesIds(List<int> invoicesIds)
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.GetUserOrdersByInvoicesIds(invoicesIds));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersForAlmacenByRangeDates(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetOrdersForAlmacenByRangeDates(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetOrdersForInvoiceByRangeDates(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetOrdersForInvoiceByRangeDates(parameters));
         }
     }
 }
