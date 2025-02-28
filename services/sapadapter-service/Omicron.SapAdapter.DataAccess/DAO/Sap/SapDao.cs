@@ -1476,7 +1476,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     from dop in detalleDireccion.DefaultIfEmpty()
                     where product.IsWorkableProduct == "Y" && (
                 order.IsOmigenomics == "SI"
-                || order.IsOmigenomics == "Y")
+                || (string.IsNullOrEmpty(order.IsOmigenomics) && order.IsSecondary == "Y"))
                     select new CompleteOrderModel
                     {
                         DocNum = order.DocNum,
