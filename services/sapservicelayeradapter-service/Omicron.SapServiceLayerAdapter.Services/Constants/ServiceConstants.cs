@@ -391,12 +391,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// <summary>
         /// yes.
         /// </summary>
-        public const string Yes = "SI";
+        public const string Yes = "Si";
 
         /// <summary>
         /// no.
         /// </summary>
-        public const string No = "NO";
+        public const string No = "No";
 
         /// <summary>
         /// Gets the status of the order.
