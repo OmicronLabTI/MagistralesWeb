@@ -389,6 +389,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string ClientTypeInstitucional = "institucional";
 
         /// <summary>
+        /// yes.
+        /// </summary>
+        public const string Yes = "SI";
+
+        /// <summary>
+        /// no.
+        /// </summary>
+        public const string No = "NO";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -648,7 +648,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// if a order is package.
         /// </summary>
-        public const string IsOmigenomics = "Y";
+        public const string IsOmigenomics = "SI";
 
         /// <summary>
         /// the abierto status.

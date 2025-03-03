@@ -140,9 +140,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
 
         private static void AssingValues(CreateOrderDto order, CreateSaleOrderDto saleOrderModel, int? attachmentId)
         {
-            if (saleOrderModel.IsOmigenomicsOrder != null)
+            if (saleOrderModel.IsSecondary != null)
             {
-                order.IsOmigenomics = (bool)saleOrderModel.IsOmigenomicsOrder ? "Y" : "N";
+                order.IsSecondary = (bool)saleOrderModel.IsSecondary ? "Y" : "N";
             }
 
             if (saleOrderModel.SlpCode != null)
@@ -164,6 +164,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
             {
                 order.OrderComments = saleOrderModel.OrderComments;
             }
+
+            order.IsOmigenomics = saleOrderModel.IsOmigenomics ? ServiceConstants.Yes : ServiceConstants.No;
         }
 
         private static List<BatchNumbersDto> CreateBatchLine(OrderLineDto orderLine, List<CreateDeliveryDto> itemsList)
