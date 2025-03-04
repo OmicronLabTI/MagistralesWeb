@@ -339,7 +339,7 @@ namespace Omicron.Pedidos.Services.Utils
             var dateFinArray = GetDatesAsArray(dates[1]);
 
             var dateInicio = new DateTime(dateInicioArray[2], dateInicioArray[1], dateInicioArray[0]);
-            var dateFin = new DateTime(dateFinArray[2], dateFinArray[1], dateFinArray[0]);
+            var dateFin = new DateTime(dateFinArray[2], dateFinArray[1], dateFinArray[0], 23, 59, 59);
             dictToReturn.Add(ServiceConstants.FechaInicio, dateInicio);
             dictToReturn.Add(ServiceConstants.FechaFin, dateFin);
             return dictToReturn;
