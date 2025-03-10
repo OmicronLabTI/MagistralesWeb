@@ -386,7 +386,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TypeOrder = header.TypeOrder,
                     DeliveryTypeModel = deliveryType,
                     IsPackage = header.IsPackage == ServiceConstants.IsPackage,
-                    IsOmigenomics = header.IsOmigenomics == ServiceConstants.IsOmigenomics,
+                    IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(header.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(header.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(header.IsSecondary)),
                 };
 
                 var saleModel = new SalesModel

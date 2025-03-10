@@ -807,6 +807,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                         into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
+                         where (invoice.IsOmigenomics == "1" || invoice.IsOmigenomics == "SI" || invoice.IsOmigenomics == "Y") || (string.IsNullOrEmpty(invoice.IsOmigenomics) && (invoice.IsSecondary == "1" || invoice.IsSecondary == "SI" || invoice.IsSecondary == "Y"))
                          select new InvoiceHeaderModel
                          {
                              Address = invoice.Address,
@@ -906,6 +907,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
+                         where (invoice.IsOmigenomics == "1" || invoice.IsOmigenomics == "SI" || invoice.IsOmigenomics == "Y") || (string.IsNullOrEmpty(invoice.IsOmigenomics) && (invoice.IsSecondary == "1" || invoice.IsSecondary == "SI" || invoice.IsSecondary == "Y"))
                          select new InvoiceHeaderModel
                          {
                              Address = invoice.Address,
