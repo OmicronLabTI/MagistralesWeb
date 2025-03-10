@@ -1046,5 +1046,18 @@ namespace Omicron.SapAdapter.Services.Constants
             DataSourceDiApi,
             DataSourceServiceLayer,
         };
+
+        /// <summary>
+        /// Gets the status of the order liberado.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> IsOmigenomicsValue { get; } = new List<string>
+        {
+            "SI",
+            "Y",
+            "1",
+        };
     }
 }
