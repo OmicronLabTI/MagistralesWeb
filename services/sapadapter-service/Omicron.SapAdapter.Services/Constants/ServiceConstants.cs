@@ -658,7 +658,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// if a order is package.
         /// </summary>
-        public const string IsOmigenomics = "Y";
+        public const string IsOmigenomics = "SI";
 
         /// <summary>
         /// the abierto status.
@@ -1055,6 +1055,19 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             DataSourceDiApi,
             DataSourceServiceLayer,
+        };
+
+        /// <summary>
+        /// Gets the status of the order liberado.
+        /// </summary>
+        /// <value>
+        /// the status.
+        /// </value>
+        public static List<string> IsOmigenomicsValue { get; } = new List<string>
+        {
+            "SI",
+            "Y",
+            "1",
         };
     }
 }

@@ -572,7 +572,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
-                         where (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y"
+                         where (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y" && (
+                order.IsOmigenomics == "1"
+                || (string.IsNullOrEmpty(order.IsOmigenomics) && order.IsSecondary == "Y"))
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
@@ -616,7 +618,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                         from dop in detalleDireccion.DefaultIfEmpty()
-                        where product.IsWorkableProduct == "Y"
+                        where product.IsWorkableProduct == "Y" && (
+                order.IsOmigenomics == "1"
+                || (string.IsNullOrEmpty(order.IsOmigenomics) && order.IsSecondary == "Y"))
                         select new CompleteAlmacenOrderModel
                         {
                             Cliente = dop.Address2 ?? string.Empty,
@@ -802,6 +806,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                         into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
+                         where (invoice.IsOmigenomics == "1" || invoice.IsOmigenomics == "SI" || invoice.IsOmigenomics == "Y") || (string.IsNullOrEmpty(invoice.IsOmigenomics) && (invoice.IsSecondary == "1" || invoice.IsSecondary == "SI" || invoice.IsSecondary == "Y"))
                          select new InvoiceHeaderModel
                          {
                              Address = invoice.Address,
@@ -901,6 +906,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
+                         where (invoice.IsOmigenomics == "1" || invoice.IsOmigenomics == "SI" || invoice.IsOmigenomics == "Y") || (string.IsNullOrEmpty(invoice.IsOmigenomics) && (invoice.IsSecondary == "1" || invoice.IsSecondary == "SI" || invoice.IsSecondary == "Y"))
                          select new InvoiceHeaderModel
                          {
                              Address = invoice.Address,
@@ -1500,7 +1506,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     order.FechaInicio >= startDate &&
                     order.FechaInicio <= endDate &&
                     (order.PedidoStatus == "O" || order.Canceled == "Y") &&
-                    product.IsWorkableProduct == "Y"
+                    product.IsWorkableProduct == "Y" && (
+                order.IsOmigenomics == "1"
+                || (string.IsNullOrEmpty(order.IsOmigenomics) && order.IsSecondary == "Y"))
                     select new CompleteAlmacenOrderModel
                     {
                         DocNum = order.DocNum,
@@ -1544,7 +1552,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     }
                     into detalleDireccion
                     from dop in detalleDireccion.DefaultIfEmpty()
-                    where product.IsWorkableProduct == "Y"
+                    where product.IsWorkableProduct == "Y" && (
+                order.IsOmigenomics == "1"
+                || (string.IsNullOrEmpty(order.IsOmigenomics) && order.IsSecondary == "Y"))
                     select new CompleteOrderModel
                     {
                         DocNum = order.DocNum,

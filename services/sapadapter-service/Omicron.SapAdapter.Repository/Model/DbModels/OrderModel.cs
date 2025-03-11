@@ -156,7 +156,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        [Column("U_Omigenomicstp")]
+        [Column("U_catagomigenomics")]
         public string IsOmigenomics { get; set; }
 
         /// <summary>
@@ -179,5 +179,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [NotMapped]
         public string ProffesionalLicense { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [Column("U_Omigenomicstp")]
+        public string IsSecondary { get; set; }
     }
 }
