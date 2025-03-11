@@ -11,7 +11,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text.Json.Serialization;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Omicron.SapAdapter.DataAccess.Extensions;
@@ -1346,6 +1345,90 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             return await this.databaseContext.ClientCatalogModel.Where(x => cardCode.Contains(x.ClientId)).ToListAsync();
         }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailJoinProductByInvoicesIds(List<int> invoicesIds)
+        {
+
+            var query = from deliveryDet in this.databaseContext.DeliveryDetailModel
+                        join product in this.databaseContext.ProductoModel on deliveryDet.ProductoId equals product.ProductoId
+                        where 
+                            product.IsWorkableProduct == "Y" &&
+                            deliveryDet.InvoiceId.HasValue &&
+                            invoicesIds.Contains((int)deliveryDet.InvoiceId)
+                        select new DeliveryDetailModel
+                        {
+                            BaseEntry = deliveryDet.BaseEntry,
+                            Container = deliveryDet.Container,
+                            DeliveryId = deliveryDet.DeliveryId,
+                            Description = deliveryDet.Description,
+                            DocDate = deliveryDet.DocDate,
+                            InvoiceId = deliveryDet.InvoiceId,
+                            LineNum = deliveryDet.LineNum,
+                            LineStatus = deliveryDet.LineStatus,
+                            ProductoId = deliveryDet.ProductoId,
+                            Quantity = deliveryDet.Quantity,
+                            Producto = product
+                        };
+            return await this.RetryQuery(query);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderJoinDoctorByDocNumsForSearchs(List<int> docNums)
+        {
+            var baseQuery = this.GetInvoiceHeaderJoinDoctorBaseQuery();
+            return await baseQuery.Where(fac => docNums.Contains(fac.DocNum)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderJoinDoctorByDatesRangesForSearchs(DateTime startDate, DateTime endDate)
+        {
+            var baseQuery = this.GetInvoiceHeaderJoinDoctorBaseQuery();
+            return await baseQuery
+                .Where(fac =>
+                    fac.FechaInicio >= startDate.Date && fac.FechaInicio <= endDate.Date)
+                .ToListAsync();
+        }
+
+        private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
+        {
+            return from invoice in this.databaseContext.InvoiceHeaderModel
+                   join doctor in this.databaseContext.ClientCatalogModel on invoice.CardCode equals doctor.ClientId
+                   join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                       new { DoctorId = invoice.CardCode, Address = invoice.ShippingAddressName }
+                       equals
+                       new { DoctorId = doctordet.CardCode, Address = doctordet.NickName }
+                   into detalleDireccion
+                   from dop in detalleDireccion.DefaultIfEmpty()
+                   where invoice.Canceled == "N" && (string.IsNullOrEmpty(invoice.Refactura) || invoice.Refactura != "Si")
+                   select new InvoiceHeaderModel
+                   {
+                       Address = invoice.Address,
+                       Canceled = invoice.Canceled,
+                       CardCode = invoice.CardCode,
+                       Cliente = dop.Address2 ?? string.Empty,
+                       Comments = invoice.Comments,
+                       CommentsInvoice = invoice.CommentsInvoice,
+                       DocNum = invoice.DocNum,
+                       FechaInicio = invoice.FechaInicio,
+                       InvoiceId = invoice.InvoiceId,
+                       InvoiceStatus = invoice.InvoiceStatus,
+                       Medico = doctor.AliasName,
+                       Refactura = invoice.Refactura,
+                       TrackingNumber = invoice.TrackingNumber,
+                       TransportCode = invoice.TransportCode,
+                       SalesPrsonId = invoice.SalesPrsonId,
+                       TypeOrder = invoice.TypeOrder,
+                       UpdateDate = invoice.UpdateDate,
+                       IsPackage = invoice.IsPackage,
+                       DocNumDxp = invoice.DocNumDxp,
+                       ShippingAddressName = invoice.ShippingAddressName,
+                       IsOmigenomics = invoice.IsOmigenomics,
+                       IsDeliveredInOffice = invoice.IsDeliveredInOffice,
+                   };
+        }
+
+
 
         /// <summary>
         /// Gets the retry.
