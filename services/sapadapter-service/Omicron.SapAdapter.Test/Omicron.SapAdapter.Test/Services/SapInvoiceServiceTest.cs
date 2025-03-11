@@ -515,5 +515,64 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That(response.Success);
             Assert.That(invoices.Count > 0);
         }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <param name="chip">the chips.</param>
+        /// <param name="hasChipFilter">hasChipFilter.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase("1", true)]
+        [TestCase("alias", true)]
+        [TestCase(null, false)]
+        public async Task GetInvoiceByFilters(string chip, bool hasChipFilter)
+        {
+            // arrange
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderInvoice()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetLineProductsRemision()));
+
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Shipping, "Foraneo" },
+                { ServiceConstants.StartDateParam, DateTime.Now.AddDays(-30).ToString("dd/MM/yyyy") },
+                { ServiceConstants.EndDateParam, DateTime.Now.ToString("dd/MM/yyyy") },
+            };
+
+            if (hasChipFilter)
+            {
+                dictionary.Add("chips", chip);
+            }
+
+            var payments = new List<PaymentsDto>()
+            {
+                new PaymentsDto { CardCode = "C00007", ShippingCostAccepted = 1, TransactionId = "ac901443-c548-4860-9fdc-fa5674847822" },
+            };
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var mockDoctors = new Mock<IDoctorService>();
+            mockProccessPayments
+                .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(payments)));
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
+
+            // act
+            var response = await service.GetInvoiceByFilters(dictionary);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Response, Is.InstanceOf<InvoiceOrderModel>());
+        }
     }
 }

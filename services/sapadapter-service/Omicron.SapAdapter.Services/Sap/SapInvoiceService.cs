@@ -11,6 +11,8 @@ namespace Omicron.SapAdapter.Services.Sap
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
+    using System.Numerics;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -28,6 +30,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
+    using StackExchange.Redis;
 
     /// <summary>
     /// Class for the invoces.
@@ -72,14 +75,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetInvoice(Dictionary<string, string> parameters)
         {
-            var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
-                            .ToUniversalDateTime().Date;
-
-            var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
-                                      .ToUniversalDateTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59);
-
-            var userOrders = await this.GetUserOrdersByRangeDate(startDate, endDate);
-            var lineProducts = await this.GetLineProductsByRangeDate(startDate, endDate);
+            var userOrders = await this.GetUserOrders(ServiceConstants.GetUserOrderInvoice);
+            var lineProducts = await this.GetLineProducts(ServiceConstants.GetLinesForInvoice);
 
             var listIds = userOrders.Select(y => y.DeliveryId).ToList();
             listIds.AddRange(lineProducts.Select(y => y.DeliveryId));
@@ -94,10 +91,12 @@ namespace Omicron.SapAdapter.Services.Sap
             var totalByFilters = invoiceHeaders.UtilsDistinctBy(x => x.InvoiceId).ToList().Count;
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(invoiceHeaders.Select(x => x.InvoiceId).ToList())).ToList();
 
+            var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && y.BaseEntry.Value != 0).Select(x => x.BaseEntry.Value).Distinct().Count();
+
             var idsToLook = this.GetInvoicesToLook(parameters, invoiceHeaders);
             invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).OrderByDescending(x => x.InvoiceId).ToList();
             invoiceDetails = invoiceDetails.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
-            var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && y.BaseEntry.Value != 0).Select(x => x.BaseEntry.Value).Distinct().Count();
+
             var retrieveMode = new RetrieveInvoiceModel
             {
                 DeliveryDetailModel = deliveryDetails,
@@ -109,6 +108,23 @@ namespace Omicron.SapAdapter.Services.Sap
             };
 
             var dataToReturn = this.GetInvoiceToReturn(retrieveMode);
+            dataToReturn.TotalInvioces = totalByFilters;
+            return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{remisionTotal}-{totalByFilters}");
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetInvoiceByFilters(Dictionary<string, string> parameters)
+        {
+            var invoiceHeaders = await this.GetInvoicesByInitialFilters(parameters);
+
+            var totalByFilters = invoiceHeaders.UtilsDistinctBy(x => x.InvoiceId).ToList().Count;
+            var invoiceDetails = await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(invoiceHeaders.Select(x => x.InvoiceId).ToList());
+
+            var idsToLook = this.GetInvoicesToLook(parameters, invoiceHeaders.ToList());
+            invoiceHeaders = invoiceHeaders.Where(x => idsToLook.Contains(x.InvoiceId)).OrderByDescending(x => x.InvoiceId);
+            invoiceDetails = invoiceDetails.Where(x => idsToLook.Contains(x.InvoiceId)).ToList();
+            var remisionTotal = invoiceDetails.Where(y => y.BaseEntry.HasValue && y.BaseEntry.Value != 0).Select(x => x.BaseEntry.Value).Distinct().Count();
+            var dataToReturn = this.GetInvoiceToReturnForSearch(invoiceHeaders.ToList(), invoiceDetails.ToList());
             dataToReturn.TotalInvioces = totalByFilters;
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{remisionTotal}-{totalByFilters}");
         }
@@ -310,9 +326,9 @@ namespace Omicron.SapAdapter.Services.Sap
             invoiceHeader = await this.GetInvoiceHeaderByParameters(invoiceHeader, new List<DeliveryDetailModel>(), dictParams, localNeighbors);
             var total = invoiceHeader.Count;
             var invoiceHeaderOrdered = from y in dataToLook.InvoiceDocNums
-                                        let invoiceDb = invoiceHeader.FirstOrDefault(a => a.DocNum == y)
-                                        where invoiceDb != null
-                                        select invoiceDb;
+                                       let invoiceDb = invoiceHeader.FirstOrDefault(a => a.DocNum == y)
+                                       where invoiceDb != null
+                                       select invoiceDb;
 
             invoiceHeaderOrdered = invoiceHeaderOrdered.Skip(dataToLook.Offset).Take(dataToLook.Limit);
 
@@ -493,7 +509,7 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
-        /// Gets the batches for the invoice.
+        /// Gets the batches for the invoiceDocNum.
         /// </summary>
         /// <param name="itemCode">the product.</param>
         /// <param name="batchModel">the batch model.</param>
@@ -553,7 +569,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the ids to look.
         /// </summary>
         /// <param name="parameters">the parameters.</param>
-        /// <param name="invoiceHeaders">the invoice headers.</param>
+        /// <param name="invoiceHeaders">the invoiceDocNum headers.</param>
         /// <returns>the ids to look.</returns>
         private List<int> GetInvoicesToLook(Dictionary<string, string> parameters, List<InvoiceHeaderModel> invoiceHeaders)
         {
@@ -616,22 +632,66 @@ namespace Omicron.SapAdapter.Services.Sap
                 TotalDeliveries = 0,
             };
 
+            var invoiceModel = new InvoiceSaleModel();
+            var invoiceModelToAdd = new InvoicesModel();
+
             foreach (var invoice in retrieveModel.InvoiceHeader)
             {
-                var invoiceDetails = retrieveModel.InvoiceDetails.Where(x => x.InvoiceId == invoice.InvoiceId).ToList();
+                var invoiceDetails = retrieveModel.InvoiceDetails.Where(x => x.InvoiceId == invoice.InvoiceId);
 
-                var invoiceModel = new InvoiceSaleModel
+                invoiceModel = new InvoiceSaleModel
                 {
                     Doctor = invoice.Medico ?? string.Empty,
                     Invoice = invoice.DocNum,
                     Deliveries = invoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),
-                    Products = invoiceDetails.Count,
+                    Products = invoiceDetails.ToList().Count,
                     InvoiceDocDate = invoice.FechaInicio,
                     TypeOrder = invoice.TypeOrder,
                     IsPackage = invoice.IsPackage == ServiceConstants.IsPackage,
                 };
 
-                var invoiceModelToAdd = new InvoicesModel
+                invoiceModelToAdd = new InvoicesModel
+                {
+                    Deliveries = null,
+                    InvoiceHeader = null,
+                    InvoiceSale = invoiceModel,
+                };
+
+                listToReturn.TotalDeliveries += invoiceModelToAdd.InvoiceSale.Deliveries;
+                listToReturn.Invoices.Add(invoiceModelToAdd);
+            }
+
+            return listToReturn;
+        }
+
+        private InvoiceOrderModel GetInvoiceToReturnForSearch(List<InvoiceHeaderModel> invoiceHeader, List<InvoiceDetailModel> invoicesDetails)
+        {
+            var listToReturn = new InvoiceOrderModel
+            {
+                Invoices = new List<InvoicesModel>(),
+                TotalInvioces = invoiceHeader.Count,
+                TotalDeliveries = 0,
+            };
+
+            var invoiceModel = new InvoiceSaleModel();
+            var invoiceModelToAdd = new InvoicesModel();
+
+            foreach (var invoice in invoiceHeader)
+            {
+                var invoiceDetails = invoicesDetails.Where(x => x.InvoiceId == invoice.InvoiceId);
+
+                invoiceModel = new InvoiceSaleModel
+                {
+                    Doctor = invoice.Medico ?? string.Empty,
+                    Invoice = invoice.DocNum,
+                    Deliveries = invoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),
+                    Products = invoiceDetails.ToList().Count,
+                    InvoiceDocDate = invoice.FechaInicio,
+                    TypeOrder = invoice.TypeOrder,
+                    IsPackage = invoice.IsPackage == ServiceConstants.IsPackage,
+                };
+
+                invoiceModelToAdd = new InvoicesModel
                 {
                     Deliveries = null,
                     InvoiceHeader = null,
@@ -649,7 +709,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// gets the deliveries.
         /// </summary>
         /// <param name="delivery">the delivery.</param>
-        /// <param name="invoiceDetails">the invoice details.</param>
+        /// <param name="invoiceDetails">the invoiceDocNum details.</param>
         /// <param name="userOrderModels">the user order modesl.</param>
         /// <param name="lineProducts">the lines prodcuts.</param>
         /// <returns>the data.</returns>
@@ -839,7 +899,7 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
-        /// Gets the firs value for the deliveryDetailModel, the invoie detail by item code and the invoice header.
+        /// Gets the firs value for the deliveryDetailModel, the invoie detail by item code and the invoiceDocNum header.
         /// </summary>
         /// <param name="saleOrder">the sale order.</param>
         /// <param name="itemCode">the item code.</param>
@@ -888,6 +948,85 @@ namespace Omicron.SapAdapter.Services.Sap
                     endDate.ToString(ServiceConstants.DateTimeFormatddMMyyyy)));
 
             return JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
+        }
+
+        private async Task<IEnumerable<InvoiceHeaderModel>> GetInvoicesByInitialFilters(Dictionary<string, string> parameters)
+        {
+            var (invoicesHeader, validateChipByName) = await this.GetInvoicesToSearch(parameters);
+
+            if (ServiceShared.IsValidFilterByTypeShipping(parameters))
+            {
+                var transactionsIds = invoicesHeader.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
+                var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
+                var localNeighborhoods = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
+                invoicesHeader = invoicesHeader.Where(x => ServiceUtils.IsTypeLocal(ServiceConstants.NuevoLeon, localNeighborhoods, x.Address.ValidateNull(), payments.GetPaymentBydocNumDxp(x.DocNumDxp)) == ServiceUtils.IsLocalString(parameters[ServiceConstants.Shipping])).ToList();
+            }
+
+            if (validateChipByName)
+            {
+                var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
+                return invoicesHeader
+                    .Where(x =>
+                        listNames.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower())));
+            }
+
+            return invoicesHeader;
+        }
+
+        private async Task<Tuple<IEnumerable<InvoiceHeaderModel>, bool>> GetInvoicesToSearch(Dictionary<string, string> parameters)
+        {
+            var validateChipByName = false;
+            var isChipByRemisionId = false;
+            var isChipByInvoiceDocNum = false;
+            int remisionId = 0;
+            var invoiceDocNum = 0;
+
+            if (parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                isChipByRemisionId = parameters[ServiceConstants.Chips].Contains(ServiceConstants.RemisionChip) ?
+                                     int.TryParse(parameters[ServiceConstants.Chips].Replace(ServiceConstants.RemisionChip, string.Empty), out remisionId) :
+                                     false;
+                isChipByInvoiceDocNum = int.TryParse(parameters[ServiceConstants.Chips], out invoiceDocNum);
+            }
+
+            if (isChipByRemisionId || isChipByInvoiceDocNum)
+            {
+                return new Tuple<IEnumerable<InvoiceHeaderModel>, bool>(
+                        await this.GetInvoicesByRemsionsIdOrInvoiceDocNum(isChipByInvoiceDocNum, invoiceDocNum, isChipByRemisionId, remisionId),
+                        validateChipByName);
+            }
+
+            var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
+                        .ToUniversalDateTime().Date;
+
+            var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
+                                      .ToUniversalDateTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+            validateChipByName = parameters.ContainsKey(ServiceConstants.Chips);
+            return new Tuple<IEnumerable<InvoiceHeaderModel>, bool>(await this.sapDao.GetInvoiceHeaderJoinDoctorByDatesRangesForSearchs(startDate, endDate), validateChipByName);
+        }
+
+        private async Task<IEnumerable<InvoiceHeaderModel>> GetInvoicesByRemsionsIdOrInvoiceDocNum(bool isChipByInvoiceDocNum, int invoiceDocNum, bool isChipByRemisionId, int remisionId)
+        {
+            var docNums = new List<int>();
+
+            if (isChipByInvoiceDocNum)
+            {
+                docNums.Add(invoiceDocNum);
+            }
+
+            if (isChipByRemisionId)
+            {
+                docNums.AddRange(await this.GetInvoicesByRemisionsIds([remisionId]));
+            }
+
+            return await this.sapDao.GetInvoiceHeaderJoinDoctorByDocNumsForSearchs(docNums);
+        }
+
+        private async Task<List<int>> GetInvoicesByRemisionsIds(List<int> docEntrys)
+        {
+            var deliveryDetails = await this.sapDao.GetDeliveryDetailByDocEntryJoinProduct(docEntrys);
+            return deliveryDetails.Where(y => y.InvoiceId.HasValue).Select(x => x.InvoiceId.Value).Distinct().ToList();
         }
     }
 }
