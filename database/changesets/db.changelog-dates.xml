@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet id="changelog-1.1" author="d.vargas">
+        <sql endDelimiter=";">
+            ALTER TABLE boxes ALTER COLUMN registerdate TYPE timestamptz;
+            ALTER TABLE "SalesLogs" ALTER COLUMN "DataCheckin" TYPE timestamptz;
+            ALTER TABLE cancelledresource ALTER COLUMN datecancel TYPE timestamptz;
+            ALTER TABLE orderslogs ALTER COLUMN logdatetime TYPE timestamptz;
+            ALTER TABLE lineproducts ALTER COLUMN datecheckin TYPE timestamptz;
+            ALTER TABLE lineproducts ALTER COLUMN invoicestored TYPE timestamptz;
+            ALTER TABLE foreignpackagedata ALTER COLUMN sentdate TYPE timestamptz;
+            ALTER TABLE incidents ALTER COLUMN "createDate" TYPE timestamptz;
+            ALTER TABLE packages ALTER COLUMN assigneddate TYPE timestamptz;
+            ALTER TABLE packages ALTER COLUMN inwaydate TYPE timestamptz;
+            ALTER TABLE packages ALTER COLUMN delivereddate TYPE timestamptz;
+            ALTER TABLE usersorders ALTER COLUMN datecheckin TYPE timestamptz;
+            ALTER TABLE usersorders ALTER COLUMN invoicestored TYPE timestamptz;
+            ALTER TABLE usersorders ALTER COLUMN planningdate TYPE timestamptz;
+            ALTER TABLE usersorders ALTER COLUMN assignmentdate TYPE timestamptz;
+            ALTER TABLE usersorders ALTER COLUMN packingdate TYPE timestamptz;
+            ALTER TABLE usersorders ALTER COLUMN reassignmentdate TYPE timestamptz;
+        </sql>
+        <rollback>
+            ALTER TABLE boxes ALTER COLUMN registerdate TYPE timestamp;
+            ALTER TABLE "SalesLogs" ALTER COLUMN "DataCheckin" TYPE timestamptz;
+            ALTER TABLE cancelledresource ALTER COLUMN datecancel TYPE timestamp;
+            ALTER TABLE orderslogs ALTER COLUMN logdatetime TYPE timestamp;
+            ALTER TABLE lineproducts ALTER COLUMN datecheckin TYPE timestamp;
+            ALTER TABLE lineproducts ALTER COLUMN invoicestored TYPE timestamp;
+            ALTER TABLE foreignpackagedata ALTER COLUMN sentdate TYPE timestamp;
+            ALTER TABLE incidents ALTER COLUMN "createDate" TYPE timestamp;
+            ALTER TABLE packages ALTER COLUMN assigneddate TYPE timestamp;
+            ALTER TABLE packages ALTER COLUMN inwaydate TYPE timestamp;
+            ALTER TABLE packages ALTER COLUMN delivereddate TYPE timestamp;
+            ALTER TABLE usersorders ALTER COLUMN datecheckin TYPE timestamp;
+            ALTER TABLE usersorders ALTER COLUMN invoicestored TYPE timestamp;
+            ALTER TABLE usersorders ALTER COLUMN planningdate TYPE timestamp;
+            ALTER TABLE usersorders ALTER COLUMN assignmentdate TYPE timestamp;
+            ALTER TABLE usersorders ALTER COLUMN packingdate TYPE timestamp;
+            ALTER TABLE usersorders ALTER COLUMN reassignmentdate TYPE timestamp;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
