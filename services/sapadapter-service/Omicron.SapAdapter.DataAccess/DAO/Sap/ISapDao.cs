@@ -562,5 +562,27 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="cardCode"> parameter cardcode. </param>
         /// <returns> information.</returns>
         Task<List<ClientCatalogModel>> GetClientCatalogCardCode(List<string> cardCode);
+
+        /// <summary>
+        /// GetInvoiceHeaderJoinDoctorByDocNumsForSearchs
+        /// </summary>
+        /// <param name="docNums">docNums.</param>
+        /// <returns></returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderJoinDoctorByDocNumsForSearchs(List<int> docNums);
+
+        /// <summary>
+        /// GetInvoiceHeaderJoinDoctorByInvoiceIdOrDatesRange
+        /// </summary>
+        /// <param name="startDate">startDate.</param>
+        /// <param name="endDate">endDate</param>
+        /// <returns></returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderJoinDoctorByDatesRangesForSearchs(DateTime startDate, DateTime endDate);
+
+        /// <summary>
+        /// GetDeliveryDetailJoinProductByInvoicesIds.
+        /// </summary>
+        /// <param name="invoicesIds">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailJoinProductByInvoicesIds(List<int> invoicesIds);
     }
 }

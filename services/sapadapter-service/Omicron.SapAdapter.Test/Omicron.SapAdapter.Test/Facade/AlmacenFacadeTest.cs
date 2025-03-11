@@ -201,6 +201,19 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetInvoiceByFilters()
+        {
+            var dictionary = new Dictionary<string, string>();
+            var response = await this.almacenFacade.GetInvoiceByFilters(dictionary);
+
+            Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Test the get orders.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetInvoiceDetail()
         {
             var response = await this.almacenFacade.GetInvoiceDetail(123);
