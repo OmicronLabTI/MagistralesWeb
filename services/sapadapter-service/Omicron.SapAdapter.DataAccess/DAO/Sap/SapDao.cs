@@ -1506,9 +1506,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     order.FechaInicio >= startDate &&
                     order.FechaInicio <= endDate &&
                     (order.PedidoStatus == "O" || order.Canceled == "Y") &&
-                    product.IsWorkableProduct == "Y" && (
-                order.IsOmigenomics == "1"
-                || (string.IsNullOrEmpty(order.IsOmigenomics) && order.IsSecondary == "Y"))
+                    product.IsWorkableProduct == "Y"
                     select new CompleteAlmacenOrderModel
                     {
                         DocNum = order.DocNum,
