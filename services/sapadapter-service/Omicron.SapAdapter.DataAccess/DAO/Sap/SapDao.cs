@@ -806,7 +806,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                         into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
-                         where (invoice.IsOmigenomics == "1" || invoice.IsOmigenomics == "SI" || invoice.IsOmigenomics == "Y") || (string.IsNullOrEmpty(invoice.IsOmigenomics) && (invoice.IsSecondary == "1" || invoice.IsSecondary == "SI" || invoice.IsSecondary == "Y"))
                          select new InvoiceHeaderModel
                          {
                              Address = invoice.Address,
@@ -830,6 +829,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = invoice.DocNumDxp,
                              ShippingAddressName = invoice.ShippingAddressName,
                              IsOmigenomics = invoice.IsOmigenomics,
+                             IsSecondary = invoice.IsSecondary,
                              IsDeliveredInOffice = invoice.IsDeliveredInOffice,
                          });
 
@@ -906,7 +906,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
-                         where (invoice.IsOmigenomics == "1" || invoice.IsOmigenomics == "SI" || invoice.IsOmigenomics == "Y") || (string.IsNullOrEmpty(invoice.IsOmigenomics) && (invoice.IsSecondary == "1" || invoice.IsSecondary == "SI" || invoice.IsSecondary == "Y"))
                          select new InvoiceHeaderModel
                          {
                              Address = invoice.Address,
@@ -933,6 +932,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DoctorPhoneNumber = dop.GlblLocNum,
                              ShippingAddressName = invoice.ShippingAddressName,
                              IsOmigenomics = invoice.IsOmigenomics,
+                             IsSecondary = invoice.IsSecondary,
                              IsDeliveredInOffice = invoice.IsDeliveredInOffice,
                          });
 
@@ -1524,6 +1524,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         IsPackage = order.IsPackage,
                         DocNumDxp = order.DocNumDxp,
                         IsOmigenomics = order.IsOmigenomics,
+                        IsSecondary = order.IsSecondary,
                     });
         }
 

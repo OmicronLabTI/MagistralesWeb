@@ -91,7 +91,7 @@ namespace Omicron.SapAdapter.Services.Utils
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Paquetes.ToLower()), orderPackages, listToReturn);
             salesTypes = AddSalesTypeByOrders(orderPackages, salesTypes);
 
-            var ordersOmigenomics = sapOrders.Where(ord => ord.IsOmigenomics.ValidateNull().ToLower() == ServiceConstants.IsOmigenomics.ToLower()).ToList();
+            var ordersOmigenomics = sapOrders.Where(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))).ToList();
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.OmigenomicsGroup.ToLower()), ordersOmigenomics, listToReturn);
             salesTypes = AddSalesTypeByOrders(ordersOmigenomics, salesTypes);
             return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listToReturn.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList(), salesTypes);
