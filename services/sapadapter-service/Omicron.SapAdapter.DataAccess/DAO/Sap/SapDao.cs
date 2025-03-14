@@ -217,6 +217,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             Medico = doctor.AliasName,
                             IsPackage = order.IsPackage,
                             IsOmigenomics = order.IsOmigenomics,
+                            IsSecondary = order.IsSecondary,
                             ProffesionalLicense = doctor.ProffesionalLicense,
                         };
 
@@ -634,6 +635,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ClientId = doctor.ClientId,
                             IsPackage = order.IsPackage,
                             IsOmigenomics = order.IsOmigenomics,
+                            IsSecondary = order.IsSecondary,
                         };
             return await this.RetryQuery(query);
         }
@@ -1312,6 +1314,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              CardCode = order.CardCode,
                              DeliveryAddressId = order.ShippingAddressName,
                              IsOmigenomics = order.IsOmigenomics,
+                             IsSecondary = order.IsSecondary,
                          });
 
             return (await this.RetryQuery(query)).ToList();
@@ -1613,6 +1616,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         IsPackage = delivery.IsPackage,
                         DocNumDxp = delivery.DocNumDxp,
                         IsOmigenomics = delivery.IsOmigenomics,
+                        IsSecondary = delivery.IsSecondary,
                     });
         }
 
