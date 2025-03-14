@@ -619,9 +619,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                         from dop in detalleDireccion.DefaultIfEmpty()
-                        where product.IsWorkableProduct == "Y" && (
-                order.IsOmigenomics == "1"
-                || (string.IsNullOrEmpty(order.IsOmigenomics) && order.IsSecondary == "Y"))
+                        where product.IsWorkableProduct == "Y"
                         select new CompleteAlmacenOrderModel
                         {
                             Cliente = dop.Address2 ?? string.Empty,
