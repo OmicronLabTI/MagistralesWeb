@@ -127,7 +127,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 TypeOrder = deliveryDetails.FirstOrDefault().TypeOrder,
                 HasInvoice = invoices.Any() && invoices.FirstOrDefault().Canceled == "N",
                 IsPackage = deliveryDetails.FirstOrDefault().IsPackage == ServiceConstants.IsPackage,
-                IsOmigenomics = deliveryDetails.FirstOrDefault().IsOmigenomics == ServiceConstants.IsOmigenomics,
+                IsOmigenomics = deliveryDetails.Exists(del => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsSecondary))),
                 DxpId = ServiceShared.ValidateNull(deliveryDetails.FirstOrDefault().DocNumDxp.GetShortShopTransaction()).ToUpper(),
             };
 
@@ -254,7 +254,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var maquilaDeliverys = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ);
             var packageDeliveries = deliveryHeaders.Where(x => x.IsPackage == ServiceConstants.IsPackage);
-            var omigenomicsDeliveries = deliveryHeaders.Where(del => del.IsOmigenomics.ValidateNull().ToLower() == ServiceConstants.IsOmigenomics.ToLower());
+            var omigenomicsDeliveries = deliveryHeaders.Where(del => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsSecondary)));
 
             deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, maquilaDeliverys.ToList(), ServiceConstants.Maquila);
             deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, packageDeliveries.ToList(), ServiceConstants.Paquetes);
@@ -424,7 +424,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = ServiceConstants.Almacenado,
                     SaleOrderType = $"Pedido {productType}",
                     IsPackage = s.IsPackage == ServiceConstants.IsPackage,
-                    IsOmigenomics = s.IsOmigenomics == ServiceConstants.IsOmigenomics,
+                    IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(s.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(s.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(s.IsSecondary)),
                 });
             });
 
