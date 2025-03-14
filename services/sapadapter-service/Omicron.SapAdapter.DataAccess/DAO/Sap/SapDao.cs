@@ -573,9 +573,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                          into detalleDireccion
                          from dop in detalleDireccion.DefaultIfEmpty()
-                         where (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y" && (
-                order.IsOmigenomics == "1"
-                || (string.IsNullOrEmpty(order.IsOmigenomics) && order.IsSecondary == "Y"))
+                         where (order.PedidoStatus == "O" || order.Canceled == "Y") && product.IsWorkableProduct == "Y"
                          select new CompleteAlmacenOrderModel
                          {
                              DocNum = order.DocNum,
@@ -617,11 +615,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DoctorId = doctordet.CardCode,
                              Address = doctordet.NickName
                          }
-                         into detalleDireccion
+                        into detalleDireccion
                         from dop in detalleDireccion.DefaultIfEmpty()
-                        where product.IsWorkableProduct == "Y" && (
-                order.IsOmigenomics == "1"
-                || (string.IsNullOrEmpty(order.IsOmigenomics) && order.IsSecondary == "Y"))
+                        where product.IsWorkableProduct == "Y"
                         select new CompleteAlmacenOrderModel
                         {
                             Cliente = dop.Address2 ?? string.Empty,
@@ -1554,9 +1550,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     }
                     into detalleDireccion
                     from dop in detalleDireccion.DefaultIfEmpty()
-                    where product.IsWorkableProduct == "Y" && (
-                order.IsOmigenomics == "1"
-                || (string.IsNullOrEmpty(order.IsOmigenomics) && order.IsSecondary == "Y"))
+                    where product.IsWorkableProduct == "Y"
                     select new CompleteOrderModel
                     {
                         DocNum = order.DocNum,
