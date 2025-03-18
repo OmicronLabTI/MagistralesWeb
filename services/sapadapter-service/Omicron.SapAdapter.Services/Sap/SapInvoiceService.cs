@@ -970,7 +970,6 @@ namespace Omicron.SapAdapter.Services.Sap
                         listNames.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower())));
             }
 
-
             var deliveries = await this.sapDao.GetDeliveryDetailJoinProductByInvoicesIds(invoicesHeader.Select(x => x.InvoiceId).ToList());
             invoicesHeader = await this.FilteredByLineProductsUserOrdersStatus(invoicesHeader, deliveries);
 

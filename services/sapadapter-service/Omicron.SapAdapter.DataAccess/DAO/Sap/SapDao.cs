@@ -216,7 +216,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ShippingCost = order.ShippingCost,
                             Medico = doctor.AliasName,
                             IsPackage = order.IsPackage,
-                            IsOmigenomics = GetIsOmigenomicsValue(order.IsOmigenomics, order.IsSecondary),
+                            IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
                             IsSecondary = order.IsSecondary,
                             ProffesionalLicense = doctor.ProffesionalLicense,
                         };
@@ -631,7 +631,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ShippingCost = order.ShippingCost,
                             ClientId = doctor.ClientId,
                             IsPackage = order.IsPackage,
-                            IsOmigenomics = GetIsOmigenomicsValue(order.IsOmigenomics, order.IsSecondary),
+                            IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
                             IsSecondary = order.IsSecondary,
                         };
             return await this.RetryQuery(query);
@@ -1281,27 +1281,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = order.DocNumDxp,
                              CardCode = order.Codigo,
                              DeliveryAddressId = order.ShippingAddressName,
-                             IsOmigenomics = GetIsOmigenomicsValue(order.IsOmigenomics, order.IsSecondary),
+                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
                              IsSecondary = order.IsSecondary
                          });
 
             return (await this.RetryQuery(query)).ToList();
-        }
-
-        private string GetIsOmigenomicsValue(string isOmigenomics, string isSecondary)
-        {
-            if (isOmigenomics == "1")
-            {
-                return "Y";
-            }
-            else if (string.IsNullOrEmpty(isOmigenomics))
-            {
-                return isSecondary;
-            }
-            else
-            {
-                return "N";
-            }
         }
 
         /// <inheritdoc/>
