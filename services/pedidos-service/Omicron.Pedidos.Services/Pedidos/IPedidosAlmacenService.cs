@@ -127,5 +127,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="parameters">Parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetOrdersForInvoiceByRangeDates(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// GetUserOrdersForInvoiceByDeliveryIds.
+        /// </summary>
+        /// <param name="deliveryIds">deliveryIds.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds);
     }
 }

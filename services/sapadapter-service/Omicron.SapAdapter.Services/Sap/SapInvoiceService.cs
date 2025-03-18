@@ -965,12 +965,34 @@ namespace Omicron.SapAdapter.Services.Sap
             if (validateChipByName)
             {
                 var listNames = parameters[ServiceConstants.Chips].Split(",").ToList();
-                return invoicesHeader
+                invoicesHeader = invoicesHeader
                     .Where(x =>
                         listNames.All(y => x.Medico.ValidateNull().ToLower().Contains(y.ToLower())));
             }
 
+
+            var deliveries = await this.sapDao.GetDeliveryDetailJoinProductByInvoicesIds(invoicesHeader.Select(x => x.InvoiceId).ToList());
+            invoicesHeader = await this.FilteredByLineProductsUserOrdersStatus(invoicesHeader, deliveries);
+
             return invoicesHeader;
+        }
+
+        private async Task<IEnumerable<InvoiceHeaderModel>> FilteredByLineProductsUserOrdersStatus(
+            IEnumerable<InvoiceHeaderModel> invoicesHeader,
+            IEnumerable<DeliveryDetailModel> deliveryDetails)
+        {
+            var deliveryIds = deliveryDetails.Select(x => x.DeliveryId);
+            var responsePedidos = await this.pedidosService.PostPedidos(deliveryIds, ServiceConstants.GetUserOrderInvoiceByDeliveryIds);
+            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(responsePedidos.Response.ToString());
+
+            var response = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesForInvoiceByDeliveryIds, deliveryIds);
+            var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(response.Response.ToString());
+
+            var listIds = userOrders.Select(y => y.DeliveryId).ToList();
+            listIds.AddRange(lineProducts.Select(y => y.DeliveryId));
+            listIds = listIds.Distinct().ToList();
+            var filteredInvoicesIds = deliveryDetails.Where(x => listIds.Contains(x.DeliveryId)).Select(x => x.InvoiceId);
+            return invoicesHeader.Where(x => filteredInvoicesIds.Contains(x.InvoiceId));
         }
 
         private async Task<Tuple<IEnumerable<InvoiceHeaderModel>, bool>> GetInvoicesToSearch(Dictionary<string, string> parameters)
