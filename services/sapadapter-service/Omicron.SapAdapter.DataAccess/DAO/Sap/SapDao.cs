@@ -216,7 +216,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ShippingCost = order.ShippingCost,
                             Medico = doctor.AliasName,
                             IsPackage = order.IsPackage,
-                            IsOmigenomics = string.IsNullOrEmpty(order.IsSecondary) ? order.IsOmigenomics: order.IsSecondary == "1" ? "Y":"N",
+                            IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
                             IsSecondary = order.IsSecondary,
                             ProffesionalLicense = doctor.ProffesionalLicense,
                         };
@@ -631,7 +631,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ShippingCost = order.ShippingCost,
                             ClientId = doctor.ClientId,
                             IsPackage = order.IsPackage,
-                            IsOmigenomics = string.IsNullOrEmpty(order.IsSecondary) ? order.IsOmigenomics: order.IsSecondary == "1" ? "Y":"N",
+                            IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
                             IsSecondary = order.IsSecondary,
                         };
             return await this.RetryQuery(query);
@@ -1281,7 +1281,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = order.DocNumDxp,
                              CardCode = order.Codigo,
                              DeliveryAddressId = order.ShippingAddressName,
-                             IsOmigenomics = string.IsNullOrEmpty(order.IsSecondary) ? order.IsOmigenomics: order.IsSecondary == "1" ? "Y":"N",
+                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
                              IsSecondary = order.IsSecondary
                          });
 
