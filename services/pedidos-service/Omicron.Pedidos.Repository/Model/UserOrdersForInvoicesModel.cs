@@ -56,5 +56,12 @@ namespace Omicron.Pedidos.Entities.Model
         /// StatusInvoice.
         /// </value>
         public string StatusInvoice { get; set; }
+
+        /// <summary>
+        /// Gets or sets InvoiceId.
+        /// </summary>
+        /// <value>
+        /// InvoiceId.
+        public int InvoiceId { get; set; }
     }
 }

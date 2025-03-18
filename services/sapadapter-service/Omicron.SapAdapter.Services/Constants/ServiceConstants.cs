@@ -276,6 +276,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetLinesForInvoice = "invoice/orders";
 
         /// <summary>
+        /// GetUserOrderInvoiceByDeliveryIds.
+        /// </summary>
+        public const string GetUserOrderInvoiceByDeliveryIds = "userorders/invoice/bydeliveryids";
+
+        /// <summary>
+        /// GetLinesForInvoiceByDeliveryIds.
+        /// </summary>
+        public const string GetLinesForInvoiceByDeliveryIds = "invoice/orders/bydeliveryids";
+
+        /// <summary>
         /// Value  for the lines for invoice.
         /// </summary>
         public const string GetLinesBySaleOrder = "getline/saleorder";

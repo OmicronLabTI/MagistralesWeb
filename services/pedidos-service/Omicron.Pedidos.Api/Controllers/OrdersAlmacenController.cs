@@ -322,5 +322,18 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidosAlmacenFacade.GetOrdersForInvoiceByRangeDates(parameters);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// GetUserOrdersForInvoiceByDeliveryIds.
+        /// </summary>
+        /// <param name="deliveryIds">deliveryIds.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders/invoice/bydeliveryids")]
+        [HttpPost]
+        public async Task<IActionResult> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds)
+        {
+            var response = await this.pedidosAlmacenFacade.GetUserOrdersForInvoiceByDeliveryIds(deliveryIds);
+            return this.Ok(response);
+        }
     }
 }
