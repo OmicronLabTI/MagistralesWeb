@@ -579,6 +579,28 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                 })
                 .ToListAsync();
         }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrdersForInvoicesModel>> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds, string statusForSale, string statusForOrder)
+        {
+            return await this.databaseContext.UserOrderModel
+                .Where(x => !string.IsNullOrEmpty(x.Productionorderid) &&
+                            string.IsNullOrEmpty(x.StatusInvoice) &&
+                            (x.StatusAlmacen == statusForSale || x.StatusAlmacen == statusForOrder) &&
+                            deliveryIds.Contains(x.DeliveryId))
+                 .Select(x => new UserOrdersForInvoicesModel
+                 {
+                     Salesorderid = x.Salesorderid,
+                     Productionorderid = x.Productionorderid,
+                     Status = x.Status,
+                     StatusAlmacen = x.StatusAlmacen,
+                     DeliveryId = x.DeliveryId,
+                     StatusInvoice = x.StatusInvoice,
+                     InvoiceId = x.InvoiceId,
+                 })
+                 .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }
 

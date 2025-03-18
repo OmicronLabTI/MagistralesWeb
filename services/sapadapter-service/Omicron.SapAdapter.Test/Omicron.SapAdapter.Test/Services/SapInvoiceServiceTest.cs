@@ -531,12 +531,12 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var mockPedidos = new Mock<IPedidosService>();
             mockPedidos
-                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetUserOrderInvoice()));
 
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.GetAlmacenOrders(It.IsAny<string>()))
+                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
                 .Returns(Task.FromResult(this.GetLineProductsRemision()));
 
             var dictionary = new Dictionary<string, string>

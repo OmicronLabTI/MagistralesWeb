@@ -375,5 +375,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="statusForOrder">the status for the order.</param>
         /// </summary>
         Task<IEnumerable<UserOrdersForInvoicesModel>> GetUserOrdersForInvoiceByRangeDates(DateTime startDate, DateTime endDate, string statusForSale, string statusForOrder);
+
+        /// <summary>
+        /// GetUserOrdersForInvoiceByDeliveryIds.
+        /// </summary>
+        /// <param name="deliveryIds">deliveryIds.</param>
+        /// <param name="statusForSale">the status for the sale.</param>
+        /// <param name="statusForOrder">the status for the order.</param>
+        /// </summary>
+        Task<IEnumerable<UserOrdersForInvoicesModel>> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds, string statusForSale, string statusForOrder);
     }
 }

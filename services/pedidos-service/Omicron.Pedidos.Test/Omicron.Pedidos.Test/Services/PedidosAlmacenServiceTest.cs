@@ -344,5 +344,22 @@ namespace Omicron.Pedidos.Test.Services
             // assert
             Assert.That(result, Is.Not.Null);
         }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetUserOrdersForInvoiceByDeliveryIds()
+        {
+            // arrange
+            var deliveryIds = new List<int> { 1, 2, 3, 4, 5, 6 };
+
+            // act
+            var result = await this.pedidosAlmacen.GetUserOrdersForInvoiceByDeliveryIds(deliveryIds);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+        }
     }
 }
