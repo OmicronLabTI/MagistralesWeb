@@ -116,5 +116,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The code.</value>
         public string IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string IsSecondary { get; set; }
     }
 }
