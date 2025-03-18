@@ -384,7 +384,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 OrderMuestra = ServiceShared.CalculateTernary(string.IsNullOrEmpty(order.PedidoMuestra), ServiceConstants.IsNotSampleOrder, order.PedidoMuestra),
                 SapComments = order.Comments,
                 IsPackage = order.IsPackage == ServiceConstants.IsPackage,
-                IsOmigenomics = order.IsOmigenomics == ServiceConstants.IsOmigenomics,
+                IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(order.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(order.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(order.IsSecondary)),
             };
 
             var listToReturn = new ReceipcionPedidosDetailModel
@@ -591,7 +591,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     OrderMuestra = ServiceShared.CalculateTernary(string.IsNullOrEmpty(order.PedidoMuestra), ServiceConstants.IsNotSampleOrder, order.PedidoMuestra),
                     SaleOrderType = saleOrderType,
                     IsPackage = orders.Any(x => x.IsPackage == ServiceConstants.IsPackage),
-                    IsOmigenomics = orders.Any(x => x.IsOmigenomics == ServiceConstants.IsOmigenomics),
+                    IsOmigenomics = orders.Exists(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))),
                 };
 
                 var saleModel = new SalesModel
