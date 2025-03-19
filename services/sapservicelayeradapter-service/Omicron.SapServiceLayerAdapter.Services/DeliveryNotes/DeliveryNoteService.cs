@@ -419,8 +419,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             deliveryNote.Comments = saleOrder.Comments;
             deliveryNote.RemissionComment = $"Basado en pedido: {saleOrderId}";
             deliveryNote.OrderPackage = ServiceUtils.CalculateTernary(createDelivery.Any(x => x.IsPackage == ServiceConstants.IsPackage), ServiceConstants.IsPackage, ServiceConstants.IsNotPackage);
-            deliveryNote.IsOmigenomics = saleOrder.IsOmigenomics;
+            deliveryNote.IsOmigenomics = string.IsNullOrEmpty(saleOrder.IsOmigenomics) ? saleOrder.IsSecundary == "Y" ? "1" : "2" : saleOrder.IsOmigenomics;
             deliveryNote.DeliveryNoteLines = new List<DeliveryNoteLineDto>();
+            deliveryNote.IsSecundary = saleOrder.IsSecundary;
 
             for (var i = 0; i < saleOrder.OrderLines.Count; i++)
             {
