@@ -468,7 +468,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
             deliveryNote.Comments = saleOrder.Comments;
             deliveryNote.RemissionComment = $"Basado en pedido: {saleOrderId}";
-            deliveryNote.IsOmigenomics = saleOrder.IsOmigenomics;
+            deliveryNote.IsOmigenomics = string.IsNullOrEmpty(saleOrder.IsOmigenomics) ? saleOrder.IsSecundary == "Y" ? "1" : "2" : saleOrder.IsOmigenomics;
+            deliveryNote.IsSecundary = saleOrder.IsSecundary;
             deliveryNote.DeliveryNoteLines = new List<DeliveryNoteLineDto>();
 
             for (var i = 0; i < saleOrder.OrderLines.Count; i++)
@@ -532,7 +533,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             deliveryNote.ShippingCode = saleOrder.ShippingCode;
             deliveryNote.JournalMemo = $"Delivery {saleOrder.CardCode}";
             deliveryNote.RemissionComment = $"Basado en pedido: {saleOrderId}";
-            deliveryNote.IsOmigenomics = isOmigenomicsStr;
+            deliveryNote.IsOmigenomics = string.IsNullOrEmpty(saleOrder.IsOmigenomics) ? saleOrder.IsSecundary == "Y" ? "1" : "2" : saleOrder.IsOmigenomics;
+            deliveryNote.IsSecundary = saleOrder.IsSecundary;
             deliveryNote.DeliveryNoteLines = new List<DeliveryNoteLineDto>();
 
             var commentMultiple = await this.ManageDeliveryNotes(createDelivery, saleOrderId, listOrderType, dictionaryResult, isOmigenomicsStr, saleOrder, deliveryNote);
