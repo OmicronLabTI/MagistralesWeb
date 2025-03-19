@@ -131,9 +131,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     DxpId = details.DxpId.GetShortShopTransaction(),
                     TotalShopOrders = ordersByDxp.GroupBy(x => x.DocNum).Count(),
                     TotalOrdersWithDelivery = totalOrdersWithDeliverys,
-                    IsOmigenomics = sapOrders.Any(x => x.IsOmigenomics == ServiceConstants.IsOmigenomics),
+                    IsOmigenomics = sapOrders.Exists(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))),
                 },
-
                 Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders, localNeigbors, userOrders, payments),
             };
 
