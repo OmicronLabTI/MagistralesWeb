@@ -11,6 +11,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection.PortableExecutable;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -280,7 +281,7 @@ namespace Omicron.SapAdapter.Services.Utils
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
                     DxpId = order.DocNumDxp.GetShortShopTransaction(),
                     IsPackage = order.IsPackage == ServiceConstants.IsPackage,
-                    IsOmigenomics = order.IsOmigenomics == ServiceConstants.IsOmigenomics,
+                    IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(order.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(order.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(order.IsSecondary)),
                 });
             }
 
