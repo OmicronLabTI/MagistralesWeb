@@ -1574,7 +1574,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         IsPackage = order.IsPackage,
                         DocNumDxp = order.DocNumDxp,
                         ShippingAddressName = order.ShippingAddressName,
-                        IsOmigenomics = order.IsOmigenomics,
+                        IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
+                        IsSecondary = order.IsSecondary,
                     });
         }
 
