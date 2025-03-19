@@ -155,7 +155,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrders, startDate, endDate, lineProductTuple, true);
             var orderWithPackages = sapOrders.Where(x => x.IsPackage == ServiceConstants.IsPackage).Select(p => p.DocNumDxp).Distinct().ToList();
-            var orderWithOmigenomics = sapOrders.Where(x => x.IsOmigenomics == ServiceConstants.IsOmigenomics).Select(p => p.DocNumDxp).Distinct().ToList();
+            var orderWithOmigenomics = sapOrders.Where(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))).Select(p => p.DocNumDxp).Distinct().ToList();
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
 
