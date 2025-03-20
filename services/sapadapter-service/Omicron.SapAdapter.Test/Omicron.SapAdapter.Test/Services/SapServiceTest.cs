@@ -393,6 +393,124 @@ namespace Omicron.SapAdapter.Test.Services
         /// <summary>
         /// Get the order with details.
         /// </summary>
+        /// <param name="typeClient">Type client.</param>
+        [Test]
+        [TestCase("institucional")]
+        [TestCase("clinica")]
+        [TestCase("general")]
+        public void GetClientDxpTest(string typeClient)
+        {
+            // arrange
+            var pedidoLocal = new OrderModel
+            {
+                PedidoId = 1,
+                ClientType = typeClient,
+                Codigo = "DOC123",
+                ProffesionalLicense = "LIC456",
+                Medico = "Dr. House",
+                ShippingAddressName = "4. ELDY VILLAGOMEZ LLANOS C.7731057",
+            };
+
+            var listDoctors = new List<DoctorPrescriptionInfoModel>
+             {
+                new DoctorPrescriptionInfoModel { CardCode = "DOC123", License = "LIC456", DoctorName = "Dr. Wilson" },
+                new DoctorPrescriptionInfoModel { CardCode = "DOC789", License = "LIC999", DoctorName = "Dr. Cameron" },
+             };
+
+            var specialCardCodes = new List<string> { "SPECIAL001", "SPECIAL002" };
+
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockLog = new Mock<ILogger>();
+            var mockDoctor = new Mock<IDoctorService>();
+
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            var localSap = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
+
+            // act
+            var result = localSap.GetClientDxp(pedidoLocal, listDoctors, specialCardCodes);
+
+            // assert
+            if (typeClient == "institucional" || typeClient == "clinica")
+            {
+                Assert.That(result, Is.EqualTo("ELDY VILLAGOMEZ LLANOS"));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo("Dr. Wilson"));
+            }
+        }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <param name="typeClient">Type client.</param>
+        /// <param name="shippingAddressName">shipping Address Name.</param>
+        [Test]
+        [TestCase(null, "4. ELDY VILLAGOMEZ LLANOS C.7731057")]
+        [TestCase(null, "1. ABEL ESCOBEDO GONZALEZ C.3393579")]
+        [TestCase(null, "6. ALAN GILBERTO RAMIREZ VALVERDE C.11535444")]
+        [TestCase(null, "ALAN GILBERTO RAMIREZ VALVERDE")]
+        public void GetClientDxpTestTypeClientNull(string typeClient, string shippingAddressName)
+        {
+            // arrange
+            var pedidoLocal = new OrderModel
+            {
+                PedidoId = 1,
+                ClientType = typeClient,
+                Codigo = "DOC123",
+                ProffesionalLicense = "LIC456",
+                Medico = "Dr. House",
+                ShippingAddressName = shippingAddressName,
+            };
+
+            var listDoctors = new List<DoctorPrescriptionInfoModel>
+             {
+                new DoctorPrescriptionInfoModel { CardCode = "DOC123", License = "LIC456", DoctorName = "Dr. Wilson" },
+                new DoctorPrescriptionInfoModel { CardCode = "DOC789", License = "LIC999", DoctorName = "Dr. Cameron" },
+             };
+
+            var specialCardCodes = new List<string> { "SPECIAL001", "SPECIAL002" };
+
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockLog = new Mock<ILogger>();
+            var mockDoctor = new Mock<IDoctorService>();
+
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            var localSap = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
+
+            // act
+            var result = localSap.GetClientDxp(pedidoLocal, listDoctors, specialCardCodes);
+
+            // assert
+            if (shippingAddressName == "4. ELDY VILLAGOMEZ LLANOS C.7731057")
+            {
+                Assert.That(result, Is.EqualTo("ELDY VILLAGOMEZ LLANOS"));
+            }
+            else if (shippingAddressName == "1. ABEL ESCOBEDO GONZALEZ C.3393579")
+            {
+                Assert.That(result, Is.EqualTo("ABEL ESCOBEDO GONZALEZ"));
+            }
+            else if (shippingAddressName == "6. ALAN GILBERTO RAMIREZ VALVERDE C.11535444")
+            {
+                Assert.That(result, Is.EqualTo("ALAN GILBERTO RAMIREZ VALVERDE"));
+            }
+            else
+            {
+                Assert.That(result, Is.EqualTo("Dr. Wilson"));
+            }
+        }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
         /// <returns>the data.</returns>
         [Test]
         public async Task GetValidationQuatitiesOrdersFormula()

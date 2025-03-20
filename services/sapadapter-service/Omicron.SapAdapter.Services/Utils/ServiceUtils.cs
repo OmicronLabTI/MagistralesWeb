@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Linq;
     using System.Net.Http;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -507,6 +508,34 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             return additionalCommentsList.First();
+        }
+
+        /// <summary>
+        /// Extract Client institucional type Name.
+        /// </summary>
+        /// <param name="shippingAddressName">Client name.</param>
+        /// <returns>Client name normalized.</returns>
+        public static string ExtractClientName(string shippingAddressName)
+        {
+            var match = Regex.Match(shippingAddressName, @"^\d+\.\s(.*?)\sC\.\d+$");
+            return match.Success ? match.Groups[1].Value : shippingAddressName;
+        }
+
+        /// <summary>
+        /// verifies institutional structure.
+        /// </summary>
+        /// <param name="address">addres.</param>
+        /// <returns>bool.</returns>
+        public static bool IsInstitutionalAddress(string address)
+        {
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                return false;
+            }
+
+            // Expresión regular que busca una estructura como '1. NOMBRE APELLIDO APELLIDO C.7731057'
+            var regex = new Regex(@"^\d+\.\s[A-ZÁÉÍÓÚÑ]+(\s[A-ZÁÉÍÓÚÑ]+)*\sC\.\d+$", RegexOptions.IgnoreCase);
+            return regex.IsMatch(address);
         }
 
         /// <summary>

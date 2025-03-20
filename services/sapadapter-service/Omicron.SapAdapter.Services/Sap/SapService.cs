@@ -335,7 +335,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var comments = userOrder.Comments;
                 var realEndDate = ServiceShared.GetDateValueOrDefault(userOrder.CloseDate, string.Empty);
 
-                var clientDxp = this.GetClientDxp(pedidoLocal, listDoctors);
+                var clientDxp = this.GetClientDxp(pedidoLocal, listDoctors, specialCardCodes);
 
                 var formulaComponents = detailsFormula.Where(f => f.OrderFabId == o.OrdenId).Select(p => p.ItemCode).Distinct().ToList();
                 var itemsByFormula = listProducts.Where(i => formulaComponents.Contains(i.ProductoId)).ToList();
@@ -367,7 +367,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Container = detallePedidoLocal?.Container ?? string.Empty,
                     DestinyAddress = detallePedidoLocal?.DestinyAddress ?? string.Empty,
                     Comments = comments,
-                    ClientDxp = ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == pedidoLocal.Codigo), pedidoLocal.ShippingAddressName, clientDxp),
+                    ClientDxp = clientDxp,
                     HasBatches = details.Any(x => x.HasBatches),
                     HasMissingStock = ServiceShared.CalculateTernary(returnDetails, details.Any(y => y.Stock == 0), itemsByFormula.Any(y => y.OnHand == 0)),
                     CatalogGroupName = ServiceShared.GetDictionaryValueString(ServiceConstants.DictCatalogGroup, item.Groupname, "MG"),
@@ -846,6 +846,36 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
         }
 
+        /// <summary>
+        /// Get client dxp.
+        /// </summary>
+        /// <param name="pedidoLocal">Order model.</param>
+        /// <param name="listDoctors">List of dxp doctors.</param>
+        /// <param name="specialCardCodes">Special card codes.</param>
+        /// <returns>Client DXP.</returns>
+        public string GetClientDxp(OrderModel pedidoLocal, List<DoctorPrescriptionInfoModel> listDoctors, List<string> specialCardCodes)
+        {
+            var clientDxp = string.Empty;
+
+            if (ServiceConstants.ClientTypesInstitucionalList.Contains(pedidoLocal.ClientType) || (pedidoLocal.ClientType == null && ServiceUtils.IsInstitutionalAddress(pedidoLocal.ShippingAddressName)))
+            {
+                return ServiceUtils.ExtractClientName(pedidoLocal.ShippingAddressName);
+            }
+
+            var licenseName = string.Empty;
+
+            if (listDoctors.Any(x => x.CardCode == pedidoLocal.Codigo))
+            {
+                var info = listDoctors.FirstOrDefault(x => x.License.Equals(pedidoLocal.ProffesionalLicense.CleanLicense()));
+                info ??= new DoctorPrescriptionInfoModel { DoctorName = string.Empty };
+                licenseName = info.DoctorName;
+            }
+
+            clientDxp = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(licenseName), licenseName, pedidoLocal.Medico);
+
+            return ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == pedidoLocal.Codigo), pedidoLocal.ShippingAddressName, clientDxp);
+        }
+
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)
         {
             if (order.ClientType == ServiceConstants.ClientTypeInstitutional || order.ClientType == ServiceConstants.ClientTypeClinic)
@@ -1042,26 +1072,6 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return details;
-        }
-
-        /// <summary>
-        /// Get client dxp.
-        /// </summary>
-        /// <param name="pedidoLocal">Order model.</param>
-        /// <param name="listDoctors">List of dxp doctors.</param>
-        /// <returns>Client DXP.</returns>
-        private string GetClientDxp(OrderModel pedidoLocal, List<DoctorPrescriptionInfoModel> listDoctors)
-        {
-            var licenseName = string.Empty;
-
-            if (listDoctors.Any(x => x.CardCode == pedidoLocal.Codigo))
-            {
-                var info = listDoctors.FirstOrDefault(x => x.License.Equals(pedidoLocal.ProffesionalLicense.CleanLicense()));
-                info ??= new DoctorPrescriptionInfoModel { DoctorName = string.Empty };
-                licenseName = info.DoctorName;
-            }
-
-            return ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(licenseName), licenseName, pedidoLocal.Medico);
         }
 
         /// <summary>
