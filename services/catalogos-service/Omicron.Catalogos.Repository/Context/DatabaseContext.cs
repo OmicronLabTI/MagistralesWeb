@@ -56,7 +56,7 @@ namespace Omicron.Catalogos.Entities.Context
         /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.AddInterceptors(new UtcDateTimeInterceptor(), new UtcDateTimeQueryInterceptor());
+            // optionsBuilder.AddInterceptors(new UtcDateTimeInterceptor(), new UtcDateTimeQueryInterceptor());
         }
     }
 }
