@@ -281,7 +281,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> GetUserOrderByDeliveryOrder(List<int> deliveryIds)
         {
-            var deliveries = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
+            var deliveries = await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds);
             return ServiceUtils.CreateResult(true, 200, null, deliveries, null, null);
         }
 
