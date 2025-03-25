@@ -43,11 +43,10 @@
         </rollback>
     </changeSet>
 
-
     <changeSet id="changelog-1.2" author="d.vargas">
         <sql endDelimiter=";">
             ALTER TABLE boxes ALTER COLUMN registerdate TYPE timestamp;
-            ALTER TABLE "SalesLogs" ALTER COLUMN "DataCheckin" TYPE timestamptz;
+            ALTER TABLE "SalesLogs" ALTER COLUMN "DataCheckin" TYPE timestamp;
             ALTER TABLE cancelledresource ALTER COLUMN datecancel TYPE timestamp;
             ALTER TABLE orderslogs ALTER COLUMN logdatetime TYPE timestamp;
             ALTER TABLE lineproducts ALTER COLUMN datecheckin TYPE timestamp;
