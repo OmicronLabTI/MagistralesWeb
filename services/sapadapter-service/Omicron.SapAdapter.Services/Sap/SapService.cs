@@ -22,7 +22,6 @@ namespace Omicron.SapAdapter.Services.Sap
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
@@ -844,6 +843,13 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetWarehouses(List<string> warehouses)
+        {
+            var response = await this.sapDao.GetWarehouses(warehouses);
+            return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)

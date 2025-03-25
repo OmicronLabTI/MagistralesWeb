@@ -584,5 +584,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="invoicesIds">the orders id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailJoinProductByInvoicesIds(List<int> invoicesIds);
+
+        /// <summary>
+        /// Gets the matching warehouse.
+        /// </summary>
+        /// <param name="warehouses"> warehouse collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<List<WarehouseModel>> GetWarehouses(List<string> warehouses);
     }
 }

@@ -12,6 +12,7 @@ namespace Omicron.SapAdapter.Facade.Sap
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Services.Sap;
     using Omicron.SapAdapter.Services.Utils;
@@ -285,6 +286,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetOrderInformationByTransaction(Dictionary<string, string> parameters)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetOrderInformationByTransaction(parameters));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetWarehouses(List<string> warehouses)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetWarehouses(warehouses));
         }
     }
 }

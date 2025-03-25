@@ -10,7 +10,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Omicron.SapAdapter.DataAccess.Extensions;
@@ -1396,6 +1398,28 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                 .Where(fac =>
                     fac.FechaInicio >= startDate.Date && fac.FechaInicio <= endDate.Date)
                 .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<WarehouseModel>> GetWarehouses(List<string> warehouses)
+        {
+            var products = await this.databaseContext.WarehouseModel
+                .ToListAsync();
+
+            var items = products.Select(x => new WarehouseModel
+            {
+                WarehouseCode = NormalizeAndToUpper(x.WarehouseCode),
+                WarehouseName = x.WarehouseName,
+            });
+
+            return items.Where(x => warehouses.Contains(x.WarehouseCode)).ToList();
+        }
+        private static string NormalizeAndToUpper(string input)
+        {
+            return new string(input.Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray())
+                .ToUpper();
         }
 
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()

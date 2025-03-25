@@ -53,6 +53,14 @@ namespace Omicron.Catalogos.Entities.Context
         /// </value>
         public virtual DbSet<ClassificationQfbModel> ClassificationQfbModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets warehouses model.
+        /// </summary>
+        /// <value>
+        /// Object warehouses model.
+        /// </value>
+        public virtual DbSet<WarehouseModel> WarehousesModel { get; set; }
+
         /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

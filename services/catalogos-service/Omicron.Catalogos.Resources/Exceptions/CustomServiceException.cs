@@ -9,6 +9,7 @@
 namespace Omicron.Catalogos.Resources.Exceptions
 {
     using System;
+    using System.Net;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -41,5 +42,22 @@ namespace Omicron.Catalogos.Resources.Exceptions
             : base(message, innerException)
         {
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomServiceException"/> class.
+        /// </summary>
+        /// <param name="message"> the message. </param>
+        /// <param name="status"> the status code. </param>
+        public CustomServiceException(string message, HttpStatusCode status)
+            : base(message)
+        {
+            this.Status = status;
+        }
+
+        /// <summary>
+        /// Gets the Status.
+        /// </summary>
+        /// <value> Http status code. </value>
+        public virtual HttpStatusCode Status { get; }
     }
 }
