@@ -128,14 +128,15 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
-        /// Gets the orders for almacen.
+        /// Gets GetOrdersForDelivery.
         /// </summary>
+        /// <param name="parameters">Parameters.</param>
         /// <returns>the data.</returns>
         [Route("/userorders/delivery")]
         [HttpGet]
-        public async Task<IActionResult> GetOrdersForDelivery()
+        public async Task<IActionResult> GetOrdersForDelivery([FromQuery] Dictionary<string, string> parameters)
         {
-            var response = await this.pedidosAlmacenFacade.GetOrdersForDelivery();
+            var response = await this.pedidosAlmacenFacade.GetOrdersForDelivery(parameters);
             return this.Ok(response);
         }
 
@@ -293,6 +294,45 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> AdvanceLook(List<int> docNums)
         {
             var response = await this.pedidosAlmacenFacade.AdvanceLook(docNums);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// GetOrdersForAlmacenByRangeDates.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders/almacen/byrangedates")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersForAlmacenByRangeDates([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidosAlmacenFacade.GetOrdersForAlmacenByRangeDates(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// GetOrdersForInvoiceByRangeDates.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders/invoice/byrangedates")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersForInvoiceByRangeDates([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.pedidosAlmacenFacade.GetOrdersForInvoiceByRangeDates(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// GetUserOrdersForInvoiceByDeliveryIds.
+        /// </summary>
+        /// <param name="deliveryIds">deliveryIds.</param>
+        /// <returns>the data.</returns>
+        [Route("/userorders/invoice/bydeliveryids")]
+        [HttpPost]
+        public async Task<IActionResult> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds)
+        {
+            var response = await this.pedidosAlmacenFacade.GetUserOrdersForInvoiceByDeliveryIds(deliveryIds);
             return this.Ok(response);
         }
     }

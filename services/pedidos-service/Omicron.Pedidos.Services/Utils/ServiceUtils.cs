@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.Utils
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -343,6 +344,17 @@ namespace Omicron.Pedidos.Services.Utils
             dictToReturn.Add(ServiceConstants.FechaInicio, dateInicio);
             dictToReturn.Add(ServiceConstants.FechaFin, dateFin);
             return dictToReturn;
+        }
+
+        /// <summary>
+        /// Cast parameters to universal datetime.
+        /// </summary>
+        /// <param name="date">Date.</param>
+        /// <returns>Cast Date.</returns>
+        public static DateTime ToUniversalDateTime(this string date)
+        {
+            DateTime fechaLocal = DateTime.ParseExact(date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            return DateTime.SpecifyKind(fechaLocal, DateTimeKind.Local).ToUniversalTime();
         }
 
         /// <summary>

@@ -406,7 +406,7 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the data.</returns>
         public static List<CompleteAlmacenOrderModel> GetOrdersWithValidWareHouse(List<CompleteAlmacenOrderModel> orders, List<string> whsToIgnore)
         {
-            var orderWIthPt = orders.Where(x => whsToIgnore.Contains(x.Detalles.WhsCode)).Select(y => y.DocNum).ToList();
+            var orderWIthPt = orders.Where(x => whsToIgnore.Contains(x.Detalles.WhsCode)).Select(y => y.DocNum);
             return orders.Where(x => !orderWIthPt.Contains(x.DocNum)).ToList();
         }
 

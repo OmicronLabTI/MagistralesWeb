@@ -341,12 +341,12 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<InvoiceHeaderModel>
             {
-                new InvoiceHeaderModel { Address = "address", Cliente = "cliente", CardCode = "C1", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico", DocNumDxp = "123456", ShippingAddressName = "Address1" },
+                new InvoiceHeaderModel { Address = "address", Cliente = "cliente", CardCode = "C1", DocNum = 1, FechaInicio = DateTime.Now, InvoiceId = 1, InvoiceStatus = "O", Medico = "Medico", DocNumDxp = "123456", ShippingAddressName = "Address1", IsOmigenomics = "SI" },
 
                 // for packages
-                new InvoiceHeaderModel { Address = "address, Nuevo Le?n", Cliente = "cliente", CardCode = "C1", DocNum = 2, FechaInicio = DateTime.Now, InvoiceId = 2, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 1 },
-                new InvoiceHeaderModel { Address = "address, Aguascalientes", Cliente = "cliente", CardCode = "C8", DocNum = 3, FechaInicio = DateTime.Now, InvoiceId = 3, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 2 },
-                new InvoiceHeaderModel { Address = "address, Nuevo Le?n", Cliente = "cliente", CardCode = "C1", DocNum = 4, FechaInicio = DateTime.Now, InvoiceId = 4, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 3 },
+                new InvoiceHeaderModel { Address = "address, Nuevo Le?n", Cliente = "cliente", CardCode = "C1", DocNum = 2, FechaInicio = DateTime.Now, InvoiceId = 2, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 1, IsOmigenomics = "Y" },
+                new InvoiceHeaderModel { Address = "address, Aguascalientes", Cliente = "cliente", CardCode = "C8", DocNum = 3, FechaInicio = DateTime.Now, InvoiceId = 3, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 2, IsOmigenomics = "1" },
+                new InvoiceHeaderModel { Address = "address, Nuevo Le?n", Cliente = "cliente", CardCode = "C1", DocNum = 4, FechaInicio = DateTime.Now, InvoiceId = 4, InvoiceStatus = "O", Medico = "Medico", SalesPrsonId = 3, IsOmigenomics = "SI" },
             };
         }
 

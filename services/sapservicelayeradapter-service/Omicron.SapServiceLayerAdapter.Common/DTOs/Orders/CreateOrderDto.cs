@@ -46,7 +46,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>Is Omigenomics.</value>
         [JsonProperty("U_Omigenomicstp")]
-        public string IsOmigenomics { get; set; }
+        public string IsSecondary { get; set; }
 
         /// <summary>
         /// Gets or sets the Order Lines.
@@ -96,5 +96,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// <value>Order Comments.</value>
         [JsonProperty("Comments")]
         public string OrderComments { get; set; }
+
+        /// <summary>
+        /// Gets or sets if is omigenomics.
+        /// </summary>
+        /// <value> Is Omigenomics. </value>
+        [JsonProperty("U_catagomigenomics")]
+        public string IsOmigenomics { get; set; }
     }
 }

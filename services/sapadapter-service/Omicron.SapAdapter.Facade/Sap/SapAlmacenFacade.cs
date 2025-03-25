@@ -140,6 +140,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetInvoiceByFilters(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceByFilters(parameters));
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> GetInvoiceDetail(int invoice)
         {
             return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceDetail(invoice));
