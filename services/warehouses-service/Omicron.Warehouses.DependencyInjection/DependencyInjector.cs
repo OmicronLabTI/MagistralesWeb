@@ -8,6 +8,7 @@
 
 namespace Omicron.Warehouses.DependencyInjection
 {
+    using System;
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -48,6 +49,7 @@ namespace Omicron.Warehouses.DependencyInjection
         /// <param name="configuration">Configuration Options.</param>
         public static void AddDbContext(IConfiguration configuration)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             Services.AddDbContextPool<DatabaseContext>(options => options.UseNpgsql(configuration.GetConnectionString(nameof(DatabaseContext))));
         }
 
