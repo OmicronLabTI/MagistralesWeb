@@ -9,6 +9,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
+    <PackageReference Include="ClosedXML" Version="0.104.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -19,6 +25,7 @@
     <ProjectReference Include="..\Omicron.Catalogos.DataAccess\Omicron.Catalogos.DataAccess.csproj" />
     <ProjectReference Include="..\Omicron.Catalogos.Dtos\Omicron.Catalogos.Dtos.csproj" />
     <ProjectReference Include="..\Omicron.Catalogos.Repository\Omicron.Catalogos.Entities.csproj" />
+    <ProjectReference Include="..\Omicron.Catalogos.Resources\Omicron.Catalogos.Resources.csproj" />
   </ItemGroup>
 
 </Project>

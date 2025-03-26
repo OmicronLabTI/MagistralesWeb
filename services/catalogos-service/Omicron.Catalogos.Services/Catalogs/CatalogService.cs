@@ -8,29 +8,32 @@
 
 namespace Omicron.Catalogos.Services.Catalogs
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net;
-    using System.Threading.Tasks;
-    using Omicron.Catalogos.DataAccess.DAO.Catalog;
-    using Omicron.Catalogos.Entities.Model;
-    using Omicron.Catalogos.Services.Utils;
-
     /// <summary>
     /// The class for the catalog service.
     /// </summary>
     public class CatalogService : ICatalogService
     {
         private readonly ICatalogDao catalogDao;
+        private readonly IAzureService azureService;
+        private readonly IConfiguration configuration;
+        private readonly ISapAdapterService sapAdapter;
+        private readonly ICatalogsDxpService catalogsdxp;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CatalogService"/> class.
         /// </summary>
         /// <param name="catalogDao">the catalog dao.</param>
-        public CatalogService(ICatalogDao catalogDao)
+        /// <param name="configuration"> the configuration service. </param>
+        /// <param name="azureService"> the azure service. </param>
+        /// <param name="sapAdapter"> the sap service. </param>
+        /// <param name="catalogsdxp"> the catalogs dxp. </param>
+        public CatalogService(ICatalogDao catalogDao, IConfiguration configuration, IAzureService azureService, ISapAdapterService sapAdapter, ICatalogsDxpService catalogsdxp)
         {
             this.catalogDao = catalogDao ?? throw new ArgumentNullException(nameof(catalogDao));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            this.azureService = azureService ?? throw new ArgumentNullException(nameof(azureService));
+            this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
+            this.catalogsdxp = catalogsdxp ?? throw new ArgumentNullException(nameof(catalogsdxp));
         }
 
         /// <summary>
@@ -61,6 +64,152 @@ namespace Omicron.Catalogos.Services.Catalogs
         {
             var classifications = (await this.catalogDao.GetActiveClassificationQfb()).Select(x => new { x.Value, x.Description }).ToList();
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, classifications, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> UploadWarehouseFromExcel()
+        {
+            var warehousesfile = await this.GetWarehousesFromExcel();
+
+            warehousesfile.ForEach(x => x.Name = NormalizeAndToUpper(x.Name));
+
+            warehousesfile = warehousesfile
+                .GroupBy(w => new { w.Name })
+                .Select(g => g.First())
+                .ToList();
+
+            var warehouses = await this.WarehouseAdjustment(warehousesfile);
+            var manufacturers = await this.ManufacturersAdjustment(warehouses);
+            var products = await this.ProductsAdjustment(manufacturers);
+
+            await this.catalogDao.InsertWarehouses(products);
+
+            var nomatching = warehousesfile.Except(products).ToList();
+            var comments = nomatching.Count > 0 ? string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(nomatching)) : null;
+
+            return ServiceUtils.CreateResult(true, 200, null, null, comments);
+        }
+
+        private static string NormalizeAndToUpper(string input)
+        {
+            return new string(input.Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray())
+                .ToUpper();
+        }
+
+        private async Task<List<WarehouseModel>> ProductsAdjustment(List<WarehouseModel> warehouses)
+        {
+            var valids = new List<WarehouseModel>();
+
+            warehouses.ForEach(x => x.AppliesToProducts = NormalizeAndToUpper(x.AppliesToProducts));
+
+            var products = warehouses
+                .Select(x => x.AppliesToProducts.Split(',').Select(s => s.Trim()).ToList())
+                .ToList();
+
+            var names = products.SelectMany(x => x)
+                .Where(name => !string.IsNullOrEmpty(name)).Distinct().ToList();
+
+            if (names.Any())
+            {
+                var response = await this.catalogsdxp.Post(names, ServiceConstants.Products);
+                var data = JsonConvert.DeserializeObject<List<string>>(response.Response.ToString());
+
+                var dataNames = new HashSet<string>(data.Select(NormalizeAndToUpper));
+
+                valids = warehouses
+                    .Where(warehouse => warehouse.AppliesToProducts.Split(',').Select(m => m.Trim())
+                    .All(m => dataNames.Contains(NormalizeAndToUpper(m))))
+                    .ToList();
+            }
+
+            return valids;
+        }
+
+        private async Task<List<WarehouseModel>> WarehouseAdjustment(List<WarehouseModel> warehousesfile)
+        {
+            var names = warehousesfile.Select(x => x.Name).ToList();
+
+            var response = await this.sapAdapter.Post(names, ServiceConstants.Warehouses);
+            var data = JsonConvert.DeserializeObject<List<WarehousesDto>>(response.Response.ToString());
+
+            var dataNames = new HashSet<string>(data.Select(y => NormalizeAndToUpper(y.WarehouseCode)));
+            var warehouses = warehousesfile.Where(x => dataNames.Contains(x.Name)).ToList();
+
+            var updates = await this.catalogDao.GetWarehouses(warehouses.Select(x => x.Name).ToList());
+            var dict = updates.ToDictionary(u => u.Name, u => u.Id);
+
+            warehouses.ForEach(m => m.Id = dict.GetValueOrDefault(m.Name));
+
+            return warehouses;
+        }
+
+        private async Task<List<WarehouseModel>> ManufacturersAdjustment(List<WarehouseModel> warehouses)
+        {
+            var valids = new List<WarehouseModel>();
+
+            warehouses.ForEach(x => x.AppliesToManufacturers = NormalizeAndToUpper(x.AppliesToManufacturers));
+
+            var manufacturers = warehouses
+                .Select(x => x.AppliesToManufacturers.Split(',').Select(s => s.Trim()).ToList())
+                .ToList();
+
+            var names = manufacturers.SelectMany(x => x)
+                .Where(name => !string.IsNullOrEmpty(name)).Distinct().ToList();
+
+            if (names.Any())
+            {
+                var response = await this.catalogsdxp.Post(names, ServiceConstants.Manufacturers);
+                var data = JsonConvert.DeserializeObject<List<string>>(response.Response.ToString());
+
+                var dataNames = new HashSet<string>(data.Select(NormalizeAndToUpper));
+
+                valids = warehouses
+                    .Where(warehouse => warehouse.AppliesToManufacturers.Split(',')
+                    .Select(m => m.Trim()).All(m => dataNames.Contains(NormalizeAndToUpper(m)))).ToList();
+            }
+
+            return valids;
+        }
+
+        private async Task<List<WarehouseModel>> GetWarehousesFromExcel()
+        {
+            var table = await this.ObtainDataFromExcel(ServiceConstants.WarehousesFileUrl);
+
+            var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
+
+            var name = columns[0];
+            var manufacturers = columns[1];
+            var products = columns[2];
+            var isactive = columns[3];
+
+            var warehouses = table.AsEnumerable()
+            .Select(row => new WarehouseModel
+            {
+                Name = row[name].ToString().Trim(),
+                IsActive = row[isactive].ToString().Trim().Equals(ServiceConstants.IsActive, StringComparison.OrdinalIgnoreCase),
+                AppliesToProducts = row[products].ToString(),
+                AppliesToManufacturers = row[manufacturers].ToString(),
+            }).ToList();
+
+            return warehouses;
+        }
+
+        private async Task<DataTable> ObtainDataFromExcel(string url)
+        {
+            var key = this.configuration[ServiceConstants.AzureAccountKey];
+            var account = this.configuration[ServiceConstants.AzureAccountName];
+            var file = this.configuration[url];
+
+            using var streamWoorkbook = new MemoryStream();
+
+            await this.azureService.GetElementsFromAzure(account, key, file, streamWoorkbook);
+            using var workbook = new XLWorkbook(streamWoorkbook);
+
+            DataTable table = ServiceUtils.ReadSheet(workbook, 1);
+
+            return table;
         }
     }
 }

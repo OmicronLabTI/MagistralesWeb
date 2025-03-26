@@ -64,6 +64,10 @@ namespace Omicron.Catalogos.Test.Facade
                .Setup(m => m.GetActiveClassificationQfb())
                .Returns(Task.FromResult(response));
 
+            mockServicesCat
+               .Setup(m => m.UploadWarehouseFromExcel())
+               .Returns(Task.FromResult(response));
+
             this.catalogFacade = new CatalogFacade(mockServicesCat.Object, this.mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }
@@ -164,6 +168,21 @@ namespace Omicron.Catalogos.Test.Facade
         {
             // Act
             var response = await this.catalogFacade.GetActiveClassificationQfb();
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
+        }
+
+        /// <summary>
+        /// Test getting the roles.
+        /// </summary>
+        /// <returns>the roles.</returns>
+        [Test]
+        public async Task UploadWarehouseFromExcel()
+        {
+            // Act
+            var response = await this.catalogFacade.UploadWarehouseFromExcel();
 
             // Assert
             Assert.That(response, Is.Not.Null);

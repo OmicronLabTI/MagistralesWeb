@@ -10,7 +10,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Omicron.SapAdapter.DataAccess.Extensions;
@@ -219,6 +221,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
                             IsSecondary = order.IsSecondary,
                             ProffesionalLicense = doctor.ProffesionalLicense,
+                            ClientType = order.ClientType,
                         };
 
             return (await this.RetryQuery(query)).ToList();
@@ -1396,6 +1399,15 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                 .Where(fac =>
                     fac.FechaInicio >= startDate.Date && fac.FechaInicio <= endDate.Date)
                 .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<WarehouseModel>> GetWarehouses(List<string> warehouses)
+        {
+            var products = await this.databaseContext.WarehouseModel
+                .ToListAsync();
+
+            return products;
         }
 
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()

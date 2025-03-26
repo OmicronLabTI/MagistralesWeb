@@ -47,5 +47,13 @@ namespace Omicron.Catalogos.Entities.Context
         /// Object Classification Qfb Model.
         /// </value>
         DbSet<ClassificationQfbModel> ClassificationQfbModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets warehouses model.
+        /// </summary>
+        /// <value>
+        /// Object warehouses model.
+        /// </value>
+        DbSet<WarehouseModel> WarehousesModel { get; set; }
     }
 }

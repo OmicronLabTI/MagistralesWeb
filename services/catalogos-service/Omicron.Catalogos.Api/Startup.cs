@@ -16,9 +16,14 @@ namespace Omicron.Catalogos.Api
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Identity.Client;
     using Microsoft.OpenApi.Models;
     using Omicron.Catalogos.Api.Filters;
     using Omicron.Catalogos.DependencyInjection;
+    using Omicron.Catalogos.Dtos.Models;
+    using Omicron.Catalogos.Services.CatalogsDxp;
+    using Omicron.Catalogos.Services.Constants;
+    using Omicron.Catalogos.Services.SapAdapter;
     using Prometheus;
     using Serilog;
     using StackExchange.Redis;
@@ -93,6 +98,18 @@ namespace Omicron.Catalogos.Api
 
                 c.OperationFilter<AddAuthorizationHeaderParameterOperationFilter>();
             });
+
+            services.AddHttpClient("sapAdapter", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["SapAdapterURL"]);
+            })
+            .AddTypedClient<ISapAdapterService, SapAdapterService>();
+
+            services.AddHttpClient("catalogsdxp", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["CatalogsUrl"]);
+            })
+            .AddTypedClient<ICatalogsDxpService, CatalogsDxpService>();
 
             this.AddRedis(services, Log.Logger);
             this.AddCorsSvc(services);

@@ -95,6 +95,16 @@ spec:
                 secretKeyRef:
                   name: omicron-prod
                   key: elastic_apm_url
+            - name: STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: storage_account
+            - name: STORAGE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: omicron-prod
+                  key: storage_account_key
           ports:
             - containerPort: 80
           resources:

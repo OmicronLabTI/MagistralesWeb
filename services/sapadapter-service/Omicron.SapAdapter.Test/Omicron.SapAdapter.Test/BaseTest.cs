@@ -34,10 +34,10 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ShippingAddressName = "Nombre de la dirección" },
+                new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ShippingAddressName = "Nombre de la dirección", ClientType = "institucional" },
                 new OrderModel { PedidoId = 101, AsesorId = 1, Codigo = "Codigo", DocNum = 101, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "institucional" },
                 new OrderModel { PedidoId = 102, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2, OrderType = "MN", Patient = "paciente" },
-                new OrderModel { PedidoId = 103, AsesorId = 1, Codigo = "Codigo1234", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente" },
+                new OrderModel { PedidoId = 103, AsesorId = 1, Codigo = "Codigo1234", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ClientType = "general" },
                 new OrderModel { PedidoId = 104, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "clinica" },
 
                 // For Almacen
@@ -952,6 +952,19 @@ namespace Omicron.SapAdapter.Test
                new RawMaterialRequestDetailModel { DocEntry = 4, ItemCode = "ITM 4", Description = "Descripción", Quantity = 4.234M, TargetWarehosue = "MG", Unit = "Paquete" },
                new RawMaterialRequestDetailModel { DocEntry = 5, ItemCode = "ITM 5", Description = "Descripción", Quantity = 5.234M, TargetWarehosue = "MG", Unit = "Paquete" },
                new RawMaterialRequestDetailModel { DocEntry = 6, ItemCode = "ITM 6", Description = "Descripción", Quantity = 6.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the attachments models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<WarehouseModel> GetWarehouse()
+        {
+            return new List<WarehouseModel>
+            {
+               new WarehouseModel { WarehouseCode = "AMP", WarehouseName = "Materias Primas Alfareros", },
+               new WarehouseModel { WarehouseCode = "be", WarehouseName = "BIOEQUAL", },
             };
         }
     }

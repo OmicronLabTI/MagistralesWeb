@@ -205,5 +205,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="parameters"> parameters. </param>
         /// <returns> information.</returns>
         Task<ResultDto> GetOrderInformationByTransaction(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// Gets the matching warehouse.
+        /// </summary>
+        /// <param name="warehouses"> warehouse collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetWarehouses(List<string> warehouses);
     }
 }

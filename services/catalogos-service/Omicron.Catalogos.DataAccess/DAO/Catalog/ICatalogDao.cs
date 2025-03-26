@@ -35,5 +35,19 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// </summary>
         /// <returns>Classification qfb.</returns>
         Task<IEnumerable<ClassificationQfbModel>> GetActiveClassificationQfb();
+
+        /// <summary>
+        /// Method to obtain warehouses.
+        /// </summary>
+        /// <param name="warehouses"> warehouses to search. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<List<WarehouseModel>> GetWarehouses(List<string> warehouses);
+
+        /// <summary>
+        /// Method to insert new warehouses.
+        /// </summary>
+        /// <param name="warehouses"> new warehouses to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<bool> InsertWarehouses(List<WarehouseModel> warehouses);
     }
 }

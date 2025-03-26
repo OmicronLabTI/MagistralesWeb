@@ -14,7 +14,9 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local",
-        "POSTGRESS_NET_CONNECTION_STRING": "Server=localhost;Port=5432;Uid=omicronuser;Pwd=Axity2020;Database=omicrondev"
+        "POSTGRESS_NET_CONNECTION_STRING": "Server=localhost;Port=5432;Uid=omicronuser;Pwd=Axity2020;Database=omicrondev",
+        "STORAGE_ACCOUNT_KEY": "2eb1qSZYYWE/2GjDirS5izsAz1Oz8z+CJsnPfMOTsaxqQIdotg3jqacWIAS/03DLzD4s0dXwArGdcrJVE2Gvdg==",
+        "STORAGE_ACCOUNT": "omicronblobpruebas"
       },
       "applicationUrl": "http://localhost:9010"
     },
@@ -23,7 +25,9 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Docker",
-        "POSTGRESS_NET_CONNECTION_STRING": "Server=localhost;Port=5432;Uid=omicronuser;Pwd=Axity2020;Database=omicrondev"
+        "POSTGRESS_NET_CONNECTION_STRING": "Server=localhost;Port=5432;Uid=omicronuser;Pwd=Axity2020;Database=omicrondev",
+        "STORAGE_ACCOUNT_KEY": "2eb1qSZYYWE/2GjDirS5izsAz1Oz8z+CJsnPfMOTsaxqQIdotg3jqacWIAS/03DLzD4s0dXwArGdcrJVE2Gvdg==",
+        "STORAGE_ACCOUNT": "omicronblobpruebas"
       },
       "applicationUrl": "http://localhost:9010"
     }
