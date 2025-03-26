@@ -20,6 +20,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
+    using Omicron.SapAdapter.Resources.Exceptions;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
     using Omicron.SapAdapter.Services.Constants;
@@ -163,19 +164,21 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetLineScannedData(string code)
         {
-            var itemCode = (await this.sapDao.GetProductByCodeBar(code)).FirstOrDefault();
-            if (itemCode == null)
+            var product = (await this.sapDao.GetProductByCodeBar(code)).FirstOrDefault();
+            if (product == null)
             {
-                return ServiceUtils.CreateResult(true, 404, null, new LineScannerModel(), null, null);
+                return ServiceUtils.CreateResult(false, 404, null, new LineScannerModel(), null, null);
             }
 
-            var listComponents = new List<CompleteDetalleFormulaModel>
+            var warehouses = await this.GetActivesWareHouseConfig(product.ProductoId, product.Groupname, product.ProductFirmName);
+            if (warehouses.Count == 0)
             {
-                new CompleteDetalleFormulaModel { ProductId = itemCode.ProductoId, Warehouse = ServiceConstants.PT },
-            };
+                return ServiceUtils.CreateResult(false, 404, ServiceConstants.NoActiveWarehouseError, null, ServiceConstants.NoActiveWarehouseError, null);
+            }
 
+            var listComponents = warehouses.Select(x => new CompleteDetalleFormulaModel { ProductId = product.ProductoId, Warehouse = x }).ToList();
             var validBatches = (await this.sapDao.GetValidBatches(listComponents)).ToList();
-            var productType = ServiceShared.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+            var productType = ServiceShared.CalculateTernary(product.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
             var listBatchesModel = validBatches
                 .Where(vb => this.GetDateFromString(vb.FechaExp) >= DateTime.Today)
@@ -185,16 +188,22 @@ namespace Omicron.SapAdapter.Services.Sap
                         Batch = b.DistNumber,
                         ExpDate = b.FechaExp,
                         AvailableQuantity = Math.Round(b.Quantity - b.CommitQty, 6),
+                        WarehouseCode = b.WarehouseCode,
                     })
                 .ToList();
+
+            if (listBatchesModel.Count == 0)
+            {
+                return ServiceUtils.CreateResult(false, 404, ServiceConstants.NoAvaiableBoxesError, null, ServiceConstants.NoAvaiableBoxesError, null);
+            }
 
             var lineData = new LineScannerModel
             {
                 Batches = listBatchesModel,
-                Description = itemCode.LargeDescription,
-                ItemCode = itemCode.ProductoId,
+                Description = product.LargeDescription,
+                ItemCode = product.ProductoId,
                 ProductType = $"Producto {productType}",
-                NeedsCooling = itemCode.NeedsCooling,
+                NeedsCooling = product.NeedsCooling,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
@@ -285,6 +294,14 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var objectToReturn = new { DeliveryDetail = allDeliveries, DetallePedido = detailsSale.Where(d => d.IsPackage != ServiceConstants.IsPackage) };
             return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
+        }
+
+        private async Task<List<string>> GetActivesWareHouseConfig(string itemCode, string catalog, string firmName)
+        {
+            var request = new List<ActiveWarehouseDto> { new ActiveWarehouseDto { ItemCode = itemCode, CatalogName = catalog, FirmName = firmName }, };
+            var response = await this.catalogsService.PostCatalogs(request, ServiceConstants.GetWareHouseConfigUrl);
+            var warehouseProduct = JsonConvert.DeserializeObject<List<WarehouseDto>>(response.Response.ToString());
+            return warehouseProduct.Where(x => x.ItemCode == itemCode).First().WarehouseCodes;
         }
 
         private bool CalculateTypeProduct(ProductoModel product, string isMagistral, string isLine)
@@ -732,7 +749,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             {
                                 DocNumDxp = ord.Key,
                                 NumOrders = ord.Where(o => o.IsWorkableProduct == "Y").Select(o => o.DocNum).Distinct().ToList(),
-                                ProductsDetails = ord.Select(o => new CountDxpOrdersDetail { ItemCode = o.Detalles.ProductoId, DocNum = o.DocNum }).ToList(),
+                                ProductsDetails = ord.Select(o => new CountDxpOrdersDetail { ItemCode = o.Detalles.ProductoId, DocNum = o.DocNum, CatalogGroup = o.Detalles.CatalogGroup, ProductFirmName = o.Detalles.ProductFirmName, }).ToList(),
                             });
         }
     }

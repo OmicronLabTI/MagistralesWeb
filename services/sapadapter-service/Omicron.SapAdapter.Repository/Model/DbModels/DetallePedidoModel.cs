@@ -117,5 +117,21 @@ namespace Omicron.SapAdapter.Entities.Model
         /// <value>The code.</value>
         [NotMapped]
         public string IsPackage { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        [NotMapped]
+        public string CatalogGroup { get; set; }
+
+        /// <summary>
+        /// Gets or sets ProductFirmName.
+        /// </summary>
+        /// <value>
+        /// string ProductFirmName.
+        /// </value>
+        [NotMapped]
+        public string ProductFirmName { get; set; }
     }
 }
