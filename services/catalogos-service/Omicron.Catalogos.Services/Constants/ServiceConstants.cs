@@ -16,7 +16,7 @@ namespace Omicron.Catalogos.Services.Constants
         /// <summary>
         /// Constant for Offset.
         /// </summary>
-        public const string ErrorDownload = "Error to download azure blob {0} Error: {1} --- {2}";
+        public const string ErrorDownload = "Formulas - Microservice Catalogos - Error to download azure blob {0} Error: {1} --- {2}";
 
         /// <summary>
         /// azure account.
