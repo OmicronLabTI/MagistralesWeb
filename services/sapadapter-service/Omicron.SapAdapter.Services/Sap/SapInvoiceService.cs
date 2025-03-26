@@ -508,6 +508,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, invoices, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetClosedInvoicesByDocNum(List<int> docNums)
+        {
+            var invoicesHeader = await this.sapDao.GetClosedInvoicesByDocNum(docNums);
+            return ServiceUtils.CreateResult(true, 200, null, invoicesHeader, null, null);
+        }
+
         /// <summary>
         /// Gets the batches for the invoiceDocNum.
         /// </summary>
