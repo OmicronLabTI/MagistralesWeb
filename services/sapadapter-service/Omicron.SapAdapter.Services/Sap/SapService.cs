@@ -862,14 +862,6 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
-        private static string NormalizeAndToUpper(string input)
-        {
-            return new string(input.Normalize(NormalizationForm.FormD)
-                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-                .ToArray())
-                .ToUpper();
-		}
-		
         /// <summary>
         /// Get client dxp.
         /// </summary>
@@ -898,6 +890,14 @@ namespace Omicron.SapAdapter.Services.Sap
             clientDxp = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(licenseName), licenseName, pedidoLocal.Medico);
 
             return ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == pedidoLocal.Codigo), pedidoLocal.ShippingAddressName, clientDxp);
+        }
+
+        private static string NormalizeAndToUpper(string input)
+        {
+            return new string(input.Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray())
+                .ToUpper();
         }
 
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)
