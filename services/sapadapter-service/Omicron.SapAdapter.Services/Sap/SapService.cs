@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Services.Sap
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Net;
     using System.Numerics;
@@ -22,7 +23,6 @@ namespace Omicron.SapAdapter.Services.Sap
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
-    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
@@ -846,6 +846,22 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(false, 404, ServiceConstants.SearchMesssage400, null, null, $"{0}-{0}");
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetWarehouses(List<string> warehouses)
+        {
+            var products = await this.sapDao.GetWarehouses(warehouses);
+
+            var items = products.Select(x => new WarehouseModel
+            {
+                WarehouseCode = NormalizeAndToUpper(x.WarehouseCode),
+                WarehouseName = x.WarehouseName,
+            });
+
+            var response = items.Where(x => warehouses.Contains(x.WarehouseCode)).ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
         /// <summary>
         /// Get client dxp.
         /// </summary>
@@ -874,6 +890,14 @@ namespace Omicron.SapAdapter.Services.Sap
             clientDxp = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(licenseName), licenseName, pedidoLocal.Medico);
 
             return ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == pedidoLocal.Codigo), pedidoLocal.ShippingAddressName, clientDxp);
+        }
+
+        private static string NormalizeAndToUpper(string input)
+        {
+            return new string(input.Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray())
+                .ToUpper();
         }
 
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)

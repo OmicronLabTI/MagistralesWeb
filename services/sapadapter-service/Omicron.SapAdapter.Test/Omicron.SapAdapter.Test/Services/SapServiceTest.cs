@@ -48,6 +48,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.AttachmentModel.AddRange(this.GetAttachmentModel());
             this.context.RawMaterialRequestModel.AddRange(this.GetRawMaterialRequestModel());
             this.context.RawMaterialRequestDetailModel.AddRange(this.GetRawMaterialRequestDetailModel());
+            this.context.WarehouseModel.AddRange(this.GetWarehouse());
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
@@ -1343,6 +1344,27 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var response = await this.sapService.GetOrderInformationByTransaction(dict);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Test to get warehouses.
+        /// </summary>
+        /// <returns> The data. </returns>
+        [Test]
+        public async Task GetWarehouses()
+        {
+            // arrange
+            var dict = new List<string>()
+            {
+                "BE",
+                "AMP",
+            };
+
+            // act
+            var response = await this.sapService.GetWarehouses(dict);
 
             // assert
             Assert.That(response, Is.Not.Null);

@@ -19,7 +19,9 @@ namespace Omicron.Catalogos.DependencyInjection
     using Omicron.Catalogos.Facade.Catalogs;
     using Omicron.Catalogos.Facade.Catalogs.Users;
     using Omicron.Catalogos.Services.Catalogs;
+    using Omicron.Catalogos.Services.CatalogsDxp;
     using Omicron.Catalogos.Services.Mapping;
+    using Omicron.Catalogos.Services.SapAdapter;
     using Omicron.Catalogos.Services.User;
 
     /// <summary>
@@ -44,6 +46,10 @@ namespace Omicron.Catalogos.DependencyInjection
             Services.AddTransient<ICatalogFacade, CatalogFacade>();
             Services.AddTransient<ICatalogService, CatalogService>();
             Services.AddTransient<ICatalogDao, CatalogDao>();
+
+            Services.AddTransient<ISapAdapterService,  SapAdapterService>();
+            Services.AddTransient<ICatalogsDxpService, CatalogsDxpService>();
+            Services.AddTransient<IAzureService, AzureService>();
 
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
             return Services;

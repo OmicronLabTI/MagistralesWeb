@@ -954,5 +954,18 @@ namespace Omicron.SapAdapter.Test
                new RawMaterialRequestDetailModel { DocEntry = 6, ItemCode = "ITM 6", Description = "Descripción", Quantity = 6.234M, TargetWarehosue = "MG", Unit = "Paquete" },
             };
         }
+
+        /// <summary>
+        /// Gets the attachments models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<WarehouseModel> GetWarehouse()
+        {
+            return new List<WarehouseModel>
+            {
+               new WarehouseModel { WarehouseCode = "AMP", WarehouseName = "Materias Primas Alfareros", },
+               new WarehouseModel { WarehouseCode = "be", WarehouseName = "BIOEQUAL", },
+            };
+        }
     }
 }

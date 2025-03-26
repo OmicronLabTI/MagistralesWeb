@@ -35,5 +35,11 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// </summary>
         /// <returns>Classification qfb.</returns>
         Task<ResultModel> GetActiveClassificationQfb();
+
+        /// <summary>
+        /// Import of valid warehouses through the Excel file.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultModel> UploadWarehouseFromExcel();
     }
 }
