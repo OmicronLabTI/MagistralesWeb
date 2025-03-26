@@ -219,6 +219,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
                             IsSecondary = order.IsSecondary,
                             ProffesionalLicense = doctor.ProffesionalLicense,
+                            ClientType = order.ClientType,
                         };
 
             return (await this.RetryQuery(query)).ToList();
