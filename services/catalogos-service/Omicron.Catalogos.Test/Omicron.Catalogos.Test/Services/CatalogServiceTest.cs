@@ -152,9 +152,10 @@ namespace Omicron.Catalogos.Test.Services
             dataTable.Columns.Add("AppliesToProducts");
             dataTable.Columns.Add("AppliesToManufacturers");
             dataTable.Columns.Add("IsActive");
+            dataTable.Columns.Add("Exceptions");
 
-            dataTable.Rows.Add(new List<string> { "be", "bioelite", "1037   60 ml", ServiceConstants.IsActive, }.ToArray());
-            dataTable.Rows.Add(new List<string> { "aa", "aa", string.Empty, ServiceConstants.IsActive, }.ToArray());
+            dataTable.Rows.Add(new List<string> { "be", "bioelite", "1037   60 ml", ServiceConstants.IsActive, string.Empty }.ToArray());
+            dataTable.Rows.Add(new List<string> { "aa", "aa", string.Empty, ServiceConstants.IsActive, string.Empty }.ToArray());
 
             var mss = new MemoryStream();
             var wb = new XLWorkbook();

@@ -20,4 +20,11 @@
 	  </column>
 	</createTable>
   </changeSet>
+  <changeSet author="itzelmd" id="changelog-1.2">
+	  <addColumn tableName="warehouses">
+		<column name="exceptions" type="TEXT">
+			<constraints nullable="true"/>
+		</column>
+	  </addColumn>
+  </changeSet>
 </databaseChangeLog>
