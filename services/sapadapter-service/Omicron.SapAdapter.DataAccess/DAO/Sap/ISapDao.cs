@@ -590,6 +590,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="warehouses"> warehouse collection to search. </param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        Task<List<WarehouseModel>> GetWarehouses(List<string> warehouses);
+        Task<IEnumerable<WarehouseModel>> GetWarehouses(List<string> warehouses);
     }
 }

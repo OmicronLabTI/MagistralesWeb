@@ -111,17 +111,6 @@ namespace Omicron.Catalogos.Api
             })
             .AddTypedClient<ICatalogsDxpService, CatalogsDxpService>();
 
-            services.AddSingleton<IConfidentialClientApplication>(sp =>
-            {
-                var azureAdData = sp.GetRequiredService<IConfiguration>().GetSection(ServiceConstants.AzureAdEnvDataKey).Get<AzureAdModel>();
-                var tenantSpecificUrl = azureAdData.AuthorityUrl.Replace("organizations", azureAdData.TenantId);
-                return ConfidentialClientApplicationBuilder
-                        .Create(azureAdData.ClientId)
-                        .WithClientSecret(azureAdData.ClientSecret)
-                        .WithAuthority(tenantSpecificUrl)
-                        .Build();
-            });
-
             this.AddRedis(services, Log.Logger);
             this.AddCorsSvc(services);
 

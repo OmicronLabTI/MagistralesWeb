@@ -10,6 +10,7 @@ namespace Omicron.SapAdapter.Services.Sap
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Net;
     using System.Numerics;
@@ -848,8 +849,25 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetWarehouses(List<string> warehouses)
         {
-            var response = await this.sapDao.GetWarehouses(warehouses);
+            var products = await this.sapDao.GetWarehouses(warehouses);
+
+            var items = products.Select(x => new WarehouseModel
+            {
+                WarehouseCode = NormalizeAndToUpper(x.WarehouseCode),
+                WarehouseName = x.WarehouseName,
+            });
+
+            var response = items.Where(x => warehouses.Contains(x.WarehouseCode)).ToList();
+
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
+        private static string NormalizeAndToUpper(string input)
+        {
+            return new string(input.Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray())
+                .ToUpper();
         }
 
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)

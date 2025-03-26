@@ -1401,25 +1401,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<List<WarehouseModel>> GetWarehouses(List<string> warehouses)
+        public async Task<IEnumerable<WarehouseModel>> GetWarehouses(List<string> warehouses)
         {
             var products = await this.databaseContext.WarehouseModel
                 .ToListAsync();
 
-            var items = products.Select(x => new WarehouseModel
-            {
-                WarehouseCode = NormalizeAndToUpper(x.WarehouseCode),
-                WarehouseName = x.WarehouseName,
-            });
-
-            return items.Where(x => warehouses.Contains(x.WarehouseCode)).ToList();
-        }
-        private static string NormalizeAndToUpper(string input)
-        {
-            return new string(input.Normalize(NormalizationForm.FormD)
-                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-                .ToArray())
-                .ToUpper();
+            return products;
         }
 
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
