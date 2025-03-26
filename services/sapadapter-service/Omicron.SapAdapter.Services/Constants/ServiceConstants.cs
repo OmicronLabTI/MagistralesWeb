@@ -1068,6 +1068,16 @@ namespace Omicron.SapAdapter.Services.Constants
         };
 
         /// <summary>
+        /// Gets list of client types excluding general.
+        /// </summary>
+        /// <value>List of client types.</value>
+        public static List<string> ClientTypesInstitucionalList { get; } = new List<string>
+        {
+            ClientTypeInstitutional,
+            ClientTypeClinic,
+        };
+
+        /// <summary>
         /// Gets the status of the order liberado.
         /// </summary>
         /// <value>
