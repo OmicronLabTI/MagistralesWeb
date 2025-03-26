@@ -216,7 +216,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ShippingCost = order.ShippingCost,
                             Medico = doctor.AliasName,
                             IsPackage = order.IsPackage,
-                            IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
+                            IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                             IsSecondary = order.IsSecondary,
                             ProffesionalLicense = doctor.ProffesionalLicense,
                         };
@@ -631,7 +631,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ShippingCost = order.ShippingCost,
                             ClientId = doctor.ClientId,
                             IsPackage = order.IsPackage,
-                            IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
+                            IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                             IsSecondary = order.IsSecondary,
                         };
             return await this.RetryQuery(query);
@@ -1281,7 +1281,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = order.DocNumDxp,
                              CardCode = order.Codigo,
                              DeliveryAddressId = order.ShippingAddressName,
-                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary: order.IsOmigenomics == "1" ? "Y":"N",
+                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                              IsSecondary = order.IsSecondary
                          });
 
@@ -1355,12 +1355,23 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetClosedInvoicesByDocNum(List<int> docNums)
+        {
+            return await this.databaseContext.InvoiceHeaderModel
+                .Where(x =>
+                    docNums.Contains(x.DocNum) &&
+                    x.InvoiceStatus == "C" &&
+                    x.Canceled == "N")
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailJoinProductByInvoicesIds(List<int> invoicesIds)
         {
 
             var query = from deliveryDet in this.databaseContext.DeliveryDetailModel
                         join product in this.databaseContext.ProductoModel on deliveryDet.ProductoId equals product.ProductoId
-                        where 
+                        where
                             product.IsWorkableProduct == "Y" &&
                             deliveryDet.InvoiceId.HasValue &&
                             invoicesIds.Contains((int)deliveryDet.InvoiceId)

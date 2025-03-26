@@ -574,5 +574,26 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That(response.Response, Is.Not.Null);
             Assert.That(response.Response, Is.InstanceOf<InvoiceOrderModel>());
         }
+
+        /// <summary>
+        /// Test the method to get the invoices by ids.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetClosedInvoicesByDocNum()
+        {
+            var ids = new List<int> { 2, 3 };
+
+            // act
+            var response = await this.sapInvoiceService.GetClosedInvoicesByDocNum(ids);
+            var invoices = response.Response as List<InvoiceHeaderModel>;
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.Comments, Is.Null);
+            Assert.That(response.UserError, Is.Null);
+            Assert.That(response.Success);
+        }
     }
 }
