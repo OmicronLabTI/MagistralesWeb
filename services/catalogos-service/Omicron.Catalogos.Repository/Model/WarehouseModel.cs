@@ -52,5 +52,12 @@ namespace Omicron.Catalogos.Entities.Model
         /// <value> Is active. </value>
         [Column("isactive")]
         public bool IsActive { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value Pieces.
+        /// </summary>
+        /// <value> Pieces. </value>
+        [Column("exceptions")]
+        public string Exceptions { get; set; }
     }
 }

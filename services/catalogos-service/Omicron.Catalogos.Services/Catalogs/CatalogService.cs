@@ -91,10 +91,13 @@ namespace Omicron.Catalogos.Services.Catalogs
             var warehouses = await this.WarehouseAdjustment(warehousesfile);
             var manufacturers = await this.ManufacturersAdjustment(warehouses);
             var products = await this.ProductsAdjustment(manufacturers);
+            var exceptions = await this.ProductsAdjustment(products);
 
-            await this.catalogDao.InsertWarehouses(products);
+            var correctwarehouses = this.CompareProductsExceptions(exceptions);
 
-            var nomatching = warehousesfile.Except(products).ToList();
+            await this.catalogDao.InsertWarehouses(correctwarehouses);
+
+            var nomatching = warehousesfile.Except(correctwarehouses).ToList();
             var comments = nomatching.Count > 0 ? string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(nomatching)) : null;
 
             return ServiceUtils.CreateResult(true, 200, null, null, comments);
@@ -121,6 +124,23 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
                 .ToArray())
                 .ToUpper();
+        }
+
+        private List<WarehouseModel> CompareProductsExceptions(List<WarehouseModel> exceptions)
+        {
+            var matchingWarehouses = exceptions
+                .Where(warehouse =>
+                {
+                    var products = NormalizeAndToUpper(warehouse.AppliesToProducts).Split(',').Select(item => item.Trim()).ToList();
+                    var exceptionProducts = NormalizeAndToUpper(warehouse.Exceptions).Split(',').Select(item => item.Trim()).ToList();
+
+                    return products.Exists(product => exceptionProducts.Contains(product));
+                })
+                .ToList();
+
+            var result = exceptions.Except(matchingWarehouses).ToList();
+
+            return result;
         }
 
         private async Task<List<WarehouseModel>> ProductsAdjustment(List<WarehouseModel> warehouses)
@@ -208,6 +228,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             var manufacturers = columns[1];
             var products = columns[2];
             var isactive = columns[3];
+            var excepetions = columns[4];
 
             var warehouses = table.AsEnumerable()
             .Select(row => new WarehouseModel
@@ -216,6 +237,7 @@ namespace Omicron.Catalogos.Services.Catalogs
                 IsActive = row[isactive].ToString().Trim().Equals(ServiceConstants.IsActive, StringComparison.OrdinalIgnoreCase),
                 AppliesToProducts = row[products].ToString(),
                 AppliesToManufacturers = row[manufacturers].ToString(),
+                Exceptions = row[excepetions].ToString(),
             }).ToList();
 
             return warehouses;
