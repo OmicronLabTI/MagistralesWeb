@@ -13,6 +13,7 @@ namespace Omicron.Catalogos.Services.Catalogs
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
+    using Microsoft.IdentityModel.Tokens;
     using Omicron.Catalogos.DataAccess.DAO.Catalog;
     using Omicron.Catalogos.Dtos.User;
     using Omicron.Catalogos.Entities.Model;
@@ -111,11 +112,16 @@ namespace Omicron.Catalogos.Services.Catalogs
             var result = new List<WarehouseDto>();
             products.ForEach(product =>
             {
-                var validWareHouses = warehouseConfigs.Where(x => x.AppliesToProducts.ToUpper().Split(",").Contains(product.ItemCode.ToUpper()) || x.AppliesToManufacturers.ToUpper().Split(",").Contains(product.FirmName.ToUpper())).ToList();
+                var validWareHouses = warehouseConfigs.Where(x => (GetValidStringList(x.AppliesToProducts).Contains(product.ItemCode.ToUpper()) || GetValidStringList(x.AppliesToManufacturers).Contains(product.FirmName.ToUpper())) && !GetValidStringList(x.Exceptions).Contains(product.ItemCode.ToUpper())).ToList();
                 result.Add(new WarehouseDto { WarehouseCodes = validWareHouses.Select(x => x.Name).ToList(), ItemCode = product.ItemCode });
             });
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
+        }
+
+        private static List<string> GetValidStringList(string value)
+        {
+            return value.IsNullOrEmpty() ? new List<string>() : value.ToUpper().Split(",").ToList();
         }
 
         private static string NormalizeAndToUpper(string input)
