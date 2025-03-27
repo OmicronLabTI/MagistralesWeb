@@ -20,6 +20,8 @@ namespace Omicron.Catalogos.Test
         {
             new WarehouseModel(),
             new WarehousesDto(),
+            new ActiveWarehouseDto(),
+            new WarehouseDto(),
         };
 
         /// <summary>

@@ -95,6 +95,8 @@ namespace Omicron.Catalogos.Test
             {
                 new WarehouseModel { Id = 1, Name = "MN", AppliesToProducts = "MN", AppliesToManufacturers = string.Empty, IsActive = true },
                 new WarehouseModel { Id = 2, Name = "BE", AppliesToProducts = "BE", AppliesToManufacturers = string.Empty, IsActive = true },
+                new WarehouseModel { Id = 3, Name = "PT", AppliesToProducts = "REVE", AppliesToManufacturers = "Bioequal", IsActive = true },
+                new WarehouseModel { Id = 4, Name = "MC", AppliesToProducts = string.Empty, AppliesToManufacturers = "REVE", IsActive = true },
             };
         }
 

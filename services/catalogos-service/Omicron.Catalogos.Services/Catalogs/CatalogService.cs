@@ -8,6 +8,16 @@
 
 namespace Omicron.Catalogos.Services.Catalogs
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Threading.Tasks;
+    using Omicron.Catalogos.DataAccess.DAO.Catalog;
+    using Omicron.Catalogos.Dtos.User;
+    using Omicron.Catalogos.Entities.Model;
+    using Omicron.Catalogos.Services.Utils;
+
     /// <summary>
     /// The class for the catalog service.
     /// </summary>
@@ -88,6 +98,21 @@ namespace Omicron.Catalogos.Services.Catalogs
             var comments = nomatching.Count > 0 ? string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(nomatching)) : null;
 
             return ServiceUtils.CreateResult(true, 200, null, null, comments);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetActivesWarehouses(List<ActiveWarehouseDto> products)
+        {
+            var warehouseConfigs = await this.catalogDao.GetActiveWarehouses();
+
+            var result = new List<WarehouseDto>();
+            products.ForEach(product =>
+            {
+                var validWareHouses = warehouseConfigs.Where(x => x.AppliesToProducts.ToUpper().Split(",").Contains(product.ItemCode.ToUpper()) || x.AppliesToManufacturers.ToUpper().Split(",").Contains(product.FirmName.ToUpper())).ToList();
+                result.Add(new WarehouseDto { WarehouseCodes = validWareHouses.Select(x => x.Name).ToList(), ItemCode = product.ItemCode });
+            });
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
         }
 
         private static string NormalizeAndToUpper(string input)

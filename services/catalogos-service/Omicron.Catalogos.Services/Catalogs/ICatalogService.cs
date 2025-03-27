@@ -10,6 +10,7 @@ namespace Omicron.Catalogos.Services.Catalogs
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.Catalogos.Dtos.User;
     using Omicron.Catalogos.Entities.Model;
 
     /// <summary>
@@ -41,5 +42,12 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// </summary>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
         Task<ResultModel> UploadWarehouseFromExcel();
+
+        /// <summary>
+        /// Gets the values from parameters based in the dict.
+        /// </summary>
+        /// <param name="products">the dictionary.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetActivesWarehouses(List<ActiveWarehouseDto> products);
     }
 }

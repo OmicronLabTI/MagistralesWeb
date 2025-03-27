@@ -78,5 +78,10 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
 
             return true;
         }
+
+        public async Task<List<WarehouseModel>> GetActiveWarehouses()
+        {
+            return await this.databaseContext.WarehousesModel.Where(x => x.IsActive).AsNoTracking().ToListAsync();
+        }
     }
 }
