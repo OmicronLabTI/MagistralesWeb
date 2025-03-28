@@ -73,6 +73,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
         private static DeliveryNoteDto UpdateDelivery(DeliveryNoteDto deliveryNote, OrderDto saleOrder, int saleOrderId, int i, List<CreateDeliveryNoteDto> createDelivery, string itemCode)
         {
             var orderLine = saleOrder.OrderLines[i];
+            var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId);
+            product = product ?? new CreateDeliveryNoteDto { OrderType = ServiceConstants.Magistral };
+
             var newDeliveryNote = new DeliveryNoteLineDto()
             {
                 ItemCode = orderLine.ItemCode,
@@ -91,11 +94,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 SalesPersonCode = orderLine.SalesPersonCode,
             };
 
-            var product = createDelivery.FirstOrDefault(x => x.ItemCode.Equals(itemCode) && x.SaleOrderId == saleOrderId);
-            product = product ?? new CreateDeliveryNoteDto { OrderType = ServiceConstants.Magistral };
-
             if (product.OrderType != ServiceConstants.Magistral)
             {
+                var firstBatch = product.Batches.FirstOrDefault();
+                newDeliveryNote.WarehouseCode = firstBatch != null ? firstBatch.WarehouseCode : orderLine.WarehouseCode;
                 foreach (var b in product.Batches)
                 {
                     var doubleQuantity = CastStringToDouble(b.BatchQty.ToString());

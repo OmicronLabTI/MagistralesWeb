@@ -13,6 +13,7 @@ namespace Omicron.Catalogos.Facade.Catalogs
     using System.Threading.Tasks;
     using AutoMapper;
     using Omicron.Catalogos.Dtos.Models;
+    using Omicron.Catalogos.Dtos.User;
     using Omicron.Catalogos.Services.Catalogs;
 
     /// <summary>
@@ -67,6 +68,12 @@ namespace Omicron.Catalogos.Facade.Catalogs
         public async Task<ResultDto> UploadWarehouseFromExcel()
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.UploadWarehouseFromExcel());
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetActivesWarehouses(List<ActiveWarehouseDto> products)
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.GetActivesWarehouses(products));
         }
     }
 }
