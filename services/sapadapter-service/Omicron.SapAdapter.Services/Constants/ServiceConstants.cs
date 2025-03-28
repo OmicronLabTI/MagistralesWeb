@@ -842,6 +842,30 @@ namespace Omicron.SapAdapter.Services.Constants
         public static string DateTimeFormatddMMyyyy => "dd/MM/yyyy";
 
         /// <summary>
+        /// Gets GetWareHouseConfigUrl.
+        /// </summary>
+        /// <value>
+        /// String GetWareHouseConfigUrl.
+        /// </value>
+        public static string GetWareHouseConfigUrl => "warehouse/actives";
+
+        /// <summary>
+        /// Gets GetWareHouseConfigUrl.
+        /// </summary>
+        /// <value>
+        /// String GetWareHouseConfigUrl.
+        /// </value>
+        public static string NoActiveWarehouseError => "El producto no tiene almacenes activos configurados";
+
+        /// <summary>
+        /// Gets GetWareHouseConfigUrl.
+        /// </summary>
+        /// <value>
+        /// String GetWareHouseConfigUrl.
+        /// </value>
+        public static string NoAvaiableBoxesError => "El almacén no cuenta con lotes disponibles";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -49,5 +49,12 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// <param name="warehouses"> new warehouses to be inserted. </param>
         /// <returns> boolean indicating whether the insert was successful. </returns>
         Task<bool> InsertWarehouses(List<WarehouseModel> warehouses);
+
+        /// <summary>
+        /// Method to obtain warehouses.
+        /// </summary>
+        /// <param name="warehouses"> warehouses to search. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+         Task<List<WarehouseModel>> GetActiveWarehouses();
     }
 }
