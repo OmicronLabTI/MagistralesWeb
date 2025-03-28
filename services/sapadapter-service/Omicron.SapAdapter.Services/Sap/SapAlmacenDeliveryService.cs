@@ -443,8 +443,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var baseDelivery = deliveryDetails.FirstOrDefault().DeliveryId;
             var prodOrders = (await this.sapDao.GetFabOrderBySalesOrderId(new List<int> { saleId })).ToList();
             var batchesQty = await this.GetBatchesBySale(baseDelivery, saleId, deliveryDetails.Select(x => x.ProductoId).ToList());
-            var batches = await this.GetValidBatches(deliveryDetails.Select(x => x.ProductoId).ToList(), ServiceConstants.PT);
 
+            var warehouseSearch = new List<CompleteDetalleFormulaModel>();
+            warehouseSearch = deliveryDetails.Select(x => new CompleteDetalleFormulaModel { ProductId = x.ProductoId, Warehouse = x.WarehouseCode }).ToList();
+            var batches = (await this.sapDao.GetValidBatches(warehouseSearch)).ToList();
             foreach (var order in deliveryDetails)
             {
                 order.BaseEntry ??= 0;
@@ -554,7 +556,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var batchesToLoop = validBatches.Where(x => ServiceShared.CalculateAnd(batchTransLocal.Any(y => y.SysNumber == x.SysNumber), x.ItemCode == itemCode)).ToList();
 
             var listToReturn = batchesToLoop
-                .Select(z => $"{z.DistNumber} | {(int)batchName.GetBatch(z.DistNumber).BatchQty} pz | Cad: {z.FechaExp}")
+                .Select(z => $"{batchName.GetBatch(z.DistNumber).WarehouseCode ?? "PT"} | {z.DistNumber} | {(int)batchName.GetBatch(z.DistNumber).BatchQty} pz | Cad: {z.FechaExp}")
                 .ToList();
             return listToReturn;
         }
