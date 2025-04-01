@@ -99,6 +99,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                     CFDIProvisional = saleOrderModel.CfdiValue,
                     ContactPersonCode = saleOrderModel.TypeClientOrder == ServiceConstants.ClientTypeInstitucional ? 0 : null,
                     ClientTypeOrder = saleOrderModel.TypeClientOrder,
+                    TipoPedido = saleOrderModel.ManufacturerClassificationCode,
                 };
 
                 AssingValues(order, saleOrderModel, attachmentId);
