@@ -119,6 +119,17 @@ namespace Omicron.Catalogos.Services.Catalogs
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetClassifications()
+        {
+            var response = await this.catalogsdxp.Get(ServiceConstants.Manufacturers);
+
+            var data = JsonConvert.DeserializeObject<List<ManufacturersDto>>(response.Response.ToString());
+
+            var result = data.Select(x => new ClassificationDto { Classification = x.Classification, ClassificationCode = x.ClassificationCode }).Distinct().ToList();
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
+        }
+
         private static List<string> GetValidStringList(string value)
         {
             return value.IsNullOrEmpty() ? new List<string>() : value.ToUpper().Split(",").ToList();

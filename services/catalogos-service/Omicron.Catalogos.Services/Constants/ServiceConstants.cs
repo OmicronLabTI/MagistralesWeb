@@ -62,5 +62,10 @@ namespace Omicron.Catalogos.Services.Constants
         /// AzureAdEnvDataKey.
         /// </summary>
         public const string Products = "products";
+
+        /// <summary>
+        /// Error request.
+        /// </summary>
+        public const string ErrorRequest = "Catalogos - Error peticion catalogs dxp service";
     }
 }

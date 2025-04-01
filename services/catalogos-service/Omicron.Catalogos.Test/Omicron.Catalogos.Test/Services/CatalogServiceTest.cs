@@ -168,6 +168,34 @@ namespace Omicron.Catalogos.Test.Services
             Assert.That(result.Code == 200, Is.True);
         }
 
+        /// <summary>
+        /// Test to verify method get classifications.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task GetClassifications()
+        {
+            var config = new Mock<IConfiguration>();
+            var azure = new Mock<IAzureService>();
+            var sapadapter = new Mock<ISapAdapterService>();
+            var catalogsdxp = new Mock<ICatalogsDxpService>();
+
+            var manufacturers = new List<ManufacturersDto>() { new ManufacturersDto { Id = 1, Classification = "Classification unique administration", ClassificationCode = "CUA" }, };
+
+            catalogsdxp.SetupSequence(x => x.Get(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(manufacturers)));
+
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object);
+
+            var result = await service.GetClassifications();
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Code == 200, Is.True);
+        }
+
         private static MemoryStream CreateExcel()
         {
             var dataTable = new DataTable();
