@@ -1457,6 +1457,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return products;
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<LblContainerModel>> GetClassifications(List<string> classifications)
+        {
+            var query = this.databaseContext.LblContainerModel
+                .Where(classification => classification.FieldId == 24
+                && (classification.TableId == "ADOC" || classification.TableId == "OCIN")
+                && classifications.Contains(classification.Value))
+                .GroupBy(classification => classification.Value)
+                .Select(group => group.FirstOrDefault());
+
+            return await query.ToListAsync();
+        }
+
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
         {
             return from invoice in this.databaseContext.InvoiceHeaderModel

@@ -224,5 +224,13 @@ namespace Omicron.SapAdapter.Entities.Context
         /// WarehouseModel.
         /// </value>
         DbSet<WarehouseModel> WarehouseModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the label container model.
+        /// </summary>
+        /// <value>
+        /// Label container model.
+        /// </value>
+        DbSet<LblContainerModel> LblContainerModel { get; set; }
     }
 }

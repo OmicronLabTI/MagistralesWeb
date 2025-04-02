@@ -115,6 +115,9 @@ namespace Omicron.SapAdapter.Entities.Context
         /// <inheritdoc/>
         public virtual DbSet<RawMaterialRequestModel> RawMaterialRequestModel { get; set; }
 
+        /// <inheritdoc/>
+        public virtual DbSet<LblContainerModel> LblContainerModel { get; set; }
+
         /// <summary>
         /// model creating.
         /// </summary>
