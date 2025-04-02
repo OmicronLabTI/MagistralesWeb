@@ -386,6 +386,21 @@ namespace Omicron.SapAdapter.Test
         /// Gets the invoice details.
         /// </summary>
         /// <returns>the dta.</returns>
+        public List<LblContainerModel> GetLblContainer()
+        {
+            return new List<LblContainerModel>
+            {
+                new LblContainerModel { Value = "MQ", Description = "Maquilas", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "MN", Description = "Bioelite", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "BE", Description = "Bioequal", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "MG", Description = "Magistrales", FieldId = 24, TableId = "ADOC" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the invoice details.
+        /// </summary>
+        /// <returns>the dta.</returns>
         public List<SalesPersonModel> GetSalesPerson()
         {
             return new List<SalesPersonModel>

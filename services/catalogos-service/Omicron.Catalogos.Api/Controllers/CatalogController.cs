@@ -102,7 +102,7 @@ namespace Omicron.Catalogos.Api.Controllers
         /// <returns>A <see cref="Task{ResultDto}"/> containing the classification data.</returns>
         [Route("/classifications")]
         [HttpGet]
-        public async Task<IActionResult> GetActivesWarehouses()
+        public async Task<IActionResult> GetClassifications()
         {
             var response = await this.catalogFacade.GetClassifications();
             return this.Ok(response);

@@ -126,7 +126,15 @@ namespace Omicron.Catalogos.Services.Catalogs
 
             var data = JsonConvert.DeserializeObject<List<ManufacturersDto>>(response.Response.ToString());
 
-            var result = data.Select(x => new ClassificationDto { Classification = x.Classification, ClassificationCode = x.ClassificationCode }).Distinct().ToList();
+            var result = data
+                .GroupBy(x => new { x.Classification, x.ClassificationCode })
+                .Select(g => new ClassificationDto
+                {
+                    Classification = g.Key.Classification,
+                    ClassificationCode = g.Key.ClassificationCode,
+                })
+                .ToList();
+
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
         }
 

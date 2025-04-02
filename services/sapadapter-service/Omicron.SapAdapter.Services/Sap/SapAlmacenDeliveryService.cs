@@ -112,7 +112,7 @@ namespace Omicron.SapAdapter.Services.Sap
             doctorsData ??= new DoctorDeliveryAddressModel { Contact = deliveryDetails.FirstOrDefault().Medico };
 
             var dataToReturn = new SalesModel();
-            dataToReturn.SalesOrders = this.CreateSaleCard(deliveryDetails, pedidos, sapSaleOrders);
+            dataToReturn.SalesOrders = await this.CreateSaleCard(deliveryDetails, pedidos, sapSaleOrders);
             dataToReturn.AlmacenHeader = new AlmacenSalesHeaderModel
             {
                 Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctorsData.Contact), deliveryDetails.FirstOrDefault().Medico, doctorsData.Contact),
@@ -402,17 +402,18 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
-        private List<SaleOrderByDeliveryModel> CreateSaleCard(List<CompleteDeliveryDetailModel> details, List<UserOrderModel> userOrders, List<OrderModel> saleOrders)
+        private async Task<List<SaleOrderByDeliveryModel>> CreateSaleCard(List<CompleteDeliveryDetailModel> details, List<UserOrderModel> userOrders, List<OrderModel> saleOrders)
         {
             var listToReturn = new List<SaleOrderByDeliveryModel>();
+
+            var classification = await this.sapDao.GetClassifications(details.Select(x => x.TypeOrder).Distinct().ToList());
 
             saleOrders.ForEach(s =>
             {
                 var userOrder = userOrders.GetSaleOrderHeader(s.DocNum.ToString());
                 var localDetails = details.Where(y => y.Detalles.BaseEntry == s.DocNum).ToList();
 
-                var productType = ServiceShared.CalculateTernary(localDetails.All(y => y.Producto.IsMagistral == "Y"), ServiceConstants.Magistral, ServiceConstants.Mixto);
-                productType = ServiceShared.CalculateTernary(localDetails.All(y => y.Producto.IsLine == "Y"), ServiceConstants.Linea, productType);
+                string mixt = classification.Count() > 1 ? "Mixto" : string.Empty;
 
                 listToReturn.Add(new SaleOrderByDeliveryModel
                 {
@@ -422,7 +423,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Pieces = localDetails.Sum(y => (int)y.Detalles.Quantity),
                     Products = localDetails.Count,
                     Status = ServiceConstants.Almacenado,
-                    SaleOrderType = $"Pedido {productType}",
+                    SaleOrderType = !string.IsNullOrEmpty(mixt) ? mixt : classification.Where(x => x.Value == s.OrderType).Select(x => x.Description).FirstOrDefault(),
                     IsPackage = s.IsPackage == ServiceConstants.IsPackage,
                     IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(s.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(s.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(s.IsSecondary)),
                 });

@@ -208,13 +208,13 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<DeliverModel>
             {
-                new DeliverModel { Cliente = "Cliente A", DeliveryStatus = "C", DocNum = 74709, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico A", CardCode = "MA", PedidoId = 74709, Address = "MONTERREY,Nuevo León" },
-                new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74710, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico A", CardCode = "MA", PedidoId = 74710, Address = "MONTERREY ,Nuevo León" },
-                new DeliverModel { Cliente = "Cliente C", DeliveryStatus = "O", DocNum = 74728, FechaInicio = new DateTime(2021, 04, 05), Medico = "Medico B", CardCode = "MB", PedidoId = 74728, Address = "Guadalajara" },
+                new DeliverModel { Cliente = "Cliente A", DeliveryStatus = "C", DocNum = 74709, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico A", CardCode = "MA", PedidoId = 74709, Address = "MONTERREY,Nuevo León", TypeOrder = "MQ" },
+                new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74710, FechaInicio = new DateTime(2021, 03, 24), Medico = "Medico A", CardCode = "MA", PedidoId = 74710, Address = "MONTERREY ,Nuevo León", TypeOrder = "MG" },
+                new DeliverModel { Cliente = "Cliente C", DeliveryStatus = "O", DocNum = 74728, FechaInicio = new DateTime(2021, 04, 05), Medico = "Medico B", CardCode = "MB", PedidoId = 74728, Address = "Guadalajara", TypeOrder = "MQ" },
 
-                new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74751, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", CardCode = "MB", PedidoId = 74751, Address = "Puebla" },
+                new DeliverModel { Cliente = "Cliente B", DeliveryStatus = "C", DocNum = 74751, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", CardCode = "MB", PedidoId = 74751, Address = "Puebla", TypeOrder = "BE" },
 
-                new DeliverModel { Cliente = "Cliente F", DeliveryStatus = "O", DocNum = 74746, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", CardCode = "MB", PedidoId = 74746, Address = "Guadalajara" },
+                new DeliverModel { Cliente = "Cliente F", DeliveryStatus = "O", DocNum = 74746, FechaInicio = new DateTime(2021, 04, 06), Medico = "Medico B", CardCode = "MB", PedidoId = 74746, Address = "Guadalajara", TypeOrder = "MN" },
             };
         }
 
@@ -328,6 +328,21 @@ namespace Omicron.SapAdapter.Test
                 new ClientCatalogModel { ClientId = "C03911", AliasName = "médico C03911 alias", Email = "email@email" },
                 new ClientCatalogModel { ClientId = "C00005", AliasName = "médico C00005 alias", Email = "email@email" },
                 new ClientCatalogModel { ClientId = "C00214", AliasName = "médico C00214 alias", Email = "email@email" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the invoice details.
+        /// </summary>
+        /// <returns>the dta.</returns>
+        public List<LblContainerModel> GetLblContainer()
+        {
+            return new List<LblContainerModel>
+            {
+                new LblContainerModel { Value = "MQ", Description = "Maquilas", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "MN", Description = "Bioelite", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "BE", Description = "Bioequal", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "MG", Description = "Magistrales", FieldId = 24, TableId = "ADOC" },
             };
         }
 
