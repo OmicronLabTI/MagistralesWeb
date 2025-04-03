@@ -564,7 +564,12 @@ namespace Omicron.SapAdapter.Services.Utils
                 return ServiceConstants.Mixto;
             }
 
-            return classifications.First(x => types.First() == x.Value).Description;
+            if (!classifications.Any(x => types.First() == x.Value))
+            {
+                return string.Empty;
+            }
+
+            return classifications.First(x => types.First() == x.Value)?.Description;
         }
 
         /// <summary>

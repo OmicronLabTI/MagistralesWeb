@@ -343,6 +343,7 @@ namespace Omicron.SapAdapter.Test
                 new LblContainerModel { Value = "MN", Description = "Bioelite", FieldId = 24, TableId = "ADOC" },
                 new LblContainerModel { Value = "BE", Description = "Bioequal", FieldId = 24, TableId = "ADOC" },
                 new LblContainerModel { Value = "MG", Description = "Magistrales", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "LN", Description = "De Linea", FieldId = 24, TableId = "ADOC" },
             };
         }
 
