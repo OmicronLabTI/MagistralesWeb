@@ -598,5 +598,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="classifications"> classifications collection to search. </param>
         /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
         Task<IEnumerable<LblContainerModel>> GetClassifications(List<string> classifications);
+
+        /// <summary>
+        /// Gets the deliveries by invoice.
+        /// </summary>
+        /// <param name="invoices">the invoices.</param>
+        /// <returns>the data.</returns>
+        Task<List<DeliverModel>> GetDeliveriesByDocNums(List<int> docNums);
     }
 }

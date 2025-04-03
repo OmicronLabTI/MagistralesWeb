@@ -85,9 +85,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = await this.GetLineProductsRemision(parameters, startDate, endDate);
             var (deliveryToReturn, deliveryHeaders, filterCount, invoices) = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
 
-            var classification = await this.sapDao.GetClassifications(deliveryHeaders.Select(x => x.TypeOrder).Distinct().ToList());
-
-            var dataToReturn = this.GetOrdersToReturn(deliveryToReturn, deliveryHeaders, invoices, classification);
+            var dataToReturn = this.GetOrdersToReturn(deliveryToReturn, deliveryHeaders, invoices);
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{filterCount}-{filterCount}");
         }
 
@@ -253,7 +251,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 sapOrdersGroup.RemoveAll(x => keysLine.Contains(x.Key));
             }*/
 
-            var deliveryHeaders = await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(listDeliveryIds);
+            var deliveryHeaders = await this.sapDao.GetDeliveriesByDocNums(listDeliveryIds);
 
             var maquilaDeliverys = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ);
             var packageDeliveries = deliveryHeaders.Where(x => x.IsPackage == ServiceConstants.IsPackage);
@@ -277,7 +275,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var pedidos = deliveryHeaders.Select(x => x.PedidoId);
 
-            deliveryToReturn = deliveryDetailDb.Where(x => pedidos.Contains(x.DeliveryId)).ToList();
+            deliveryToReturn = deliveryDetailDb.Where(x => pedidos.Contains(x.DeliveryId)).OrderByDescending(x => x.DeliveryId).ToList();
 
             return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, invoices.ToList());
         }
@@ -357,7 +355,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="headers">the delivery header.</param>
         /// <param name="invoices">The invoices.</param>
         /// <returns>the data.</returns>
-        private AlmacenOrdersModel GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<InvoiceHeaderModel> invoices, IEnumerable<LblContainerModel> lbls)
+        private AlmacenOrdersModel GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<InvoiceHeaderModel> invoices)
         {
             var listIds = details.Select(x => x.DeliveryId).Distinct().ToList();
 
@@ -394,7 +392,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
                     HasInvoice = hasInvoice,
-                    TypeOrder = lbls.Where(x => x.Value == header.TypeOrder).Select(x => x.Description).FirstOrDefault(),
+                    TypeOrder = header.TypeOrder,
                     DeliveryTypeModel = deliveryType,
                     IsPackage = header.IsPackage == ServiceConstants.IsPackage,
                     IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(header.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(header.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(header.IsSecondary)),
