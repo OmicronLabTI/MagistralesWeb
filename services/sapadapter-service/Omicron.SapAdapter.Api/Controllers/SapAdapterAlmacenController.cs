@@ -312,32 +312,6 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>the data.</returns>
-        [Route("/almacen/orders/doctor")]
-        [HttpGet]
-        public async Task<IActionResult> SearchAlmacenOrdersByDoctor([FromQuery] Dictionary<string, string> parameters)
-        {
-            var response = await this.sapAlmacenFacade.SearchAlmacenOrdersByDoctor(parameters);
-            return this.Ok(response);
-        }
-
-        /// <summary>
-        /// Gets the delivery and invoice id by sale order..
-        /// </summary>
-        /// <param name="details">The sales id separated by commas.</param>
-        /// <returns>the data.</returns>
-        [Route("/almacen/orders/doctor/detail")]
-        [HttpPost]
-        public async Task<IActionResult> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details)
-        {
-            var response = await this.sapAlmacenFacade.SearchAlmacenOrdersDetailsByDoctor(details);
-            return this.Ok(response);
-        }
-
-        /// <summary>
-        /// Gets the orders.
-        /// </summary>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>the data.</returns>
         [Route("/almacen/orders/dxp")]
         [HttpGet]
         public async Task<IActionResult> SearchAlmacenOrdersByDxpId([FromQuery] Dictionary<string, string> parameters)

@@ -824,6 +824,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var query = this.GetDeliveryJoinDoctorQuery().Where(x => docuNums.Contains(x.DocNum));
             return (await this.RetryQuery(query)).ToList();
         }
+        
+        /// <inheritdoc/>
+        public async Task<List<DeliverModel>> GetDeliveriesByDocNums(List<int> docuNums)
+        {
+            var query = this.GetDeliveries().Where(x => docuNums.Contains(x.DocNum));
+            return (await this.RetryQuery(query)).ToList();
+        }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums)
@@ -1457,6 +1464,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return products;
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<LblContainerModel>> GetClassifications(List<string> classifications)
+        {
+            var query = this.databaseContext.LblContainerModel
+                .Where(classification => classification.FieldId == 24
+                && (classification.TableId == "ADOC" || classification.TableId == "OCIN")
+                && classifications.Contains(classification.Value))
+                .GroupBy(classification => classification.Value)
+                .Select(group => group.FirstOrDefault());
+
+            return await query.ToListAsync();
+        }
+
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
         {
             return from invoice in this.databaseContext.InvoiceHeaderModel
@@ -1675,6 +1695,46 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         IsOmigenomics = delivery.IsOmigenomics,
                         IsSecondary = delivery.IsSecondary,
                     });
+        }
+
+        private IQueryable<DeliverModel> GetDeliveries()
+        {
+            return (from delivery in this.databaseContext.DeliverModel
+                        join detail in this.databaseContext.DeliveryDetailModel on delivery.PedidoId equals detail.DeliveryId
+                        join order in this.databaseContext.OrderModel on detail.BaseEntry equals order.PedidoId
+                        join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
+                        join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                        new
+                        {
+                            DoctorId = delivery.CardCode,
+                            Address = delivery.ShippingAddressName
+                        }
+                        equals
+                        new
+                        {
+                            DoctorId = doctordet.CardCode,
+                            Address = doctordet.NickName
+                        }
+                        into detalleDireccion
+                        from dop in detalleDireccion.DefaultIfEmpty()
+                        select new DeliverModel
+                        {
+                            Address = delivery.Address,
+                            ShippingAddressName = delivery.ShippingAddressName,
+                            Canceled = delivery.Canceled,
+                            CardCode = delivery.CardCode,
+                            Cliente = dop.Address2 ?? string.Empty,
+                            DeliveryStatus = delivery.DeliveryStatus,
+                            DocNum = delivery.DocNum,
+                            FechaInicio = delivery.FechaInicio,
+                            Medico = doctor.AliasName,
+                            PedidoId = delivery.PedidoId,
+                            TypeOrder = order.OrderType,
+                            IsPackage = delivery.IsPackage,
+                            DocNumDxp = delivery.DocNumDxp,
+                            IsOmigenomics = delivery.IsOmigenomics,
+                            IsSecondary = delivery.IsSecondary,
+                        });
         }
 
         private IQueryable<CompleteOrderModelWrap> GetCompleteOrderyJoinDoctorQueryWrap()

@@ -22,6 +22,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Resources.Exceptions;
     using Omicron.SapAdapter.Services.Catalog;
@@ -548,6 +549,27 @@ namespace Omicron.SapAdapter.Services.Utils
         public static string GetDictionaryValueString(Dictionary<string, string> dic, string key, string defaultValue)
         {
             return dic.ContainsKey(key) ? dic[key] : defaultValue;
+        }
+
+        /// <summary>
+        /// Get Order Type.
+        /// </summary>
+        /// <param name="types">Types.</param>
+        /// <param name="classifications">Clñassifications.</param>
+        /// <returns>Classification Description.</returns>
+        public static string GetOrderTypeDescription(List<string> types, IEnumerable<LblContainerModel> classifications)
+        {
+            if (types.Count > 1)
+            {
+                return ServiceConstants.Mixto;
+            }
+
+            if (!classifications.Any(x => types.First() == x.Value))
+            {
+                return string.Empty;
+            }
+
+            return classifications.First(x => types.First() == x.Value)?.Description;
         }
 
         /// <summary>

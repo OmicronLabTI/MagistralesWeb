@@ -591,5 +591,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="warehouses"> warehouse collection to search. </param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<IEnumerable<WarehouseModel>> GetWarehouses(List<string> warehouses);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="classifications"> classifications collection to search. </param>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<IEnumerable<LblContainerModel>> GetClassifications(List<string> classifications);
+
+        /// <summary>
+        /// Gets the deliveries by invoice.
+        /// </summary>
+        /// <param name="invoices">the invoices.</param>
+        /// <returns>the data.</returns>
+        Task<List<DeliverModel>> GetDeliveriesByDocNums(List<int> docNums);
     }
 }
