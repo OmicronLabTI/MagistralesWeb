@@ -21,20 +21,6 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Gets the advance look up.
         /// </summary>
-        /// <param name="parameters">the parameters.</param>
-        /// <returns>the data.</returns>
-        Task<ResultModel> SearchAlmacenOrdersByDoctor(Dictionary<string, string> parameters);
-
-        /// <summary>
-        /// Gets the details.
-        /// </summary>
-        /// <param name="details">the details.</param>
-        /// <returns>the data.</returns>
-        Task<ResultModel> SearchAlmacenOrdersDetailsByDoctor(DoctorOrdersSearchDeatilDto details);
-
-        /// <summary>
-        /// Gets the advance look up.
-        /// </summary>
         /// <param name="saleorderid">the parameters.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetOrderdetail(int saleorderid);

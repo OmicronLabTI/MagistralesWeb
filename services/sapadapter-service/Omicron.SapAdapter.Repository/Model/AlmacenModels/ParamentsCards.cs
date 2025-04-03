@@ -150,5 +150,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public List<string> SpecialCardCodes { get; set; }
+
+        /// <summary>
+        /// Gets or sets classifications order types.
+        /// </summary>
+        /// <value>Classifications.</value>
+        public List<LblContainerModel> Classifications { get; set; }
     }
 }

@@ -41,6 +41,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.Batches.AddRange(this.GetBatches());
             this.context.BatchesQuantity.AddRange(this.GetBatchesQuantity());
             this.context.ClientCatalogModel.AddRange(this.GetClients());
+            this.context.LblContainerModel.AddRange(this.GetClassificationsCatalog());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();
@@ -107,6 +108,7 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Type, "LN,BQ,MQ,MG,MN,BE,mixto" },
             };
 
             var mockDoctor = new Mock<IDoctorService>();
@@ -296,7 +298,7 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()}" },
+                { ServiceConstants.Type, $"LN,{ServiceConstants.Mixto.ToLower()}" },
             };
 
             var mockDoctor = new Mock<IDoctorService>();
@@ -460,7 +462,7 @@ namespace Omicron.SapAdapter.Test.Services
             var mockAlmacenService = new Mock<IAlmacenService>();
             var mockCatalogs = new Mock<ICatalogsService>();
             var mockProccessPayments = new Mock<IProccessPayments>();
-            var ptresult = new List<WarehouseDto> { new WarehouseDto { WarehouseCodes = new List<string> { "PT" } }, };
+            var ptresult = new List<WarehouseDto> { new WarehouseDto { WarehouseCodes = new List<string> { "PT" } }, };
             mockCatalogs
                 .Setup(x => x.PostCatalogs(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(ptresult)));
@@ -504,7 +506,7 @@ namespace Omicron.SapAdapter.Test.Services
             var mockAlmacenService = new Mock<IAlmacenService>();
             var mockCatalogs = new Mock<ICatalogsService>();
             var mockProccessPayments = new Mock<IProccessPayments>();
-            var ptresult = new List<WarehouseDto> { new WarehouseDto { ItemCode = "Linea1", WarehouseCodes = new List<string> { "PT" } }, };
+            var ptresult = new List<WarehouseDto> { new WarehouseDto { ItemCode = "Linea1", WarehouseCodes = new List<string> { "PT" } }, };
             mockCatalogs
                 .Setup(x => x.PostCatalogs(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(ptresult)));
@@ -593,7 +595,7 @@ namespace Omicron.SapAdapter.Test.Services
             var mockAlmacenService = new Mock<IAlmacenService>();
             var mockCatalogs = new Mock<ICatalogsService>();
             var mockProccessPayments = new Mock<IProccessPayments>();
-            var ptresult = new List<WarehouseDto> { new WarehouseDto { ItemCode = "Linea1", WarehouseCodes = new List<string> { "XXXXXXXX" } }, };
+            var ptresult = new List<WarehouseDto> { new WarehouseDto { ItemCode = "Linea1", WarehouseCodes = new List<string> { "XXXXXXXX" } }, };
 
             mockCatalogs
                 .Setup(x => x.PostCatalogs(It.IsAny<object>(), It.IsAny<string>()))

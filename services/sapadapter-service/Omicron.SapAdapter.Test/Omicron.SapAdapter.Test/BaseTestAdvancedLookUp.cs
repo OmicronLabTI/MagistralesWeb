@@ -343,6 +343,7 @@ namespace Omicron.SapAdapter.Test
                 new LblContainerModel { Value = "MN", Description = "Bioelite", FieldId = 24, TableId = "ADOC" },
                 new LblContainerModel { Value = "BE", Description = "Bioequal", FieldId = 24, TableId = "ADOC" },
                 new LblContainerModel { Value = "MG", Description = "Magistrales", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "LN", Description = "De Linea", FieldId = 24, TableId = "ADOC" },
             };
         }
 
@@ -358,6 +359,22 @@ namespace Omicron.SapAdapter.Test
                 Code = 200,
                 Comments = null,
                 Response = JsonConvert.SerializeObject(dataToSend),
+            };
+        }
+
+        /// <summary>
+        /// Gets the invoice details.
+        /// </summary>
+        /// <returns>the dta.</returns>
+        public List<LblContainerModel> GetClassificationsCatalog()
+        {
+            return new List<LblContainerModel>
+            {
+                new LblContainerModel { FieldId = 24, Value = "MG", Description = "Magistrales", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "LN", Description = "De Linea", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "MQ", Description = "Maquila", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "BE", Description = "Bioelite", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "MX", Description = "Mixto", TableId = "ADOC",  },
             };
         }
     }

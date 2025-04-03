@@ -29,6 +29,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
     using Omicron.SapAdapter.Services.Utils;
+    using StackExchange.Redis;
 
     /// <summary>
     /// Class for sap almacen service.
@@ -97,16 +98,17 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (parameters.ContainsKey(ServiceConstants.Chips) &&
                 int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId) &&
-                !this.ValidateOrdersById(userOrders, sapOrders.Item1, lineProducts.Item1))
+                !this.ValidateOrdersById(userOrders, sapOrders, lineProducts.Item1))
             {
                 var emptyData = new AlmacenOrdersModel { SalesOrders = new List<SalesModel>() };
                 return ServiceUtils.CreateResult(true, 200, null, emptyData, null, "0-0");
             }
 
-            var orders = this.GetSapLinesToLookByStatus(sapOrders.Item1, userOrders, lineProducts.Item1, status);
+            var orders = this.GetSapLinesToLookByStatus(sapOrders, userOrders, lineProducts.Item1, status);
             orders = await this.GetSapLinesToLookByChips(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
-            var listToReturn = this.GetOrdersToReturn(userOrders, orders, lineProducts.Item1, parameters, sapOrders.Item2);
+            var sapClasification = await this.sapDao.GetClassifications(types.Where(x => !ServiceConstants.DefaultFilters.Contains(x)).ToList());
+            var listToReturn = this.GetOrdersToReturn(userOrders, orders, lineProducts.Item1, parameters, sapClasification);
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
 
@@ -358,32 +360,35 @@ namespace Omicron.SapAdapter.Services.Sap
             return JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
         }
 
-        private ReceipcionPedidosDetailModel GetDetailRecpcionToReturn(int orderId, List<UserOrderModel> pedidos, List<LineProductsModel> lineOrders, List<IncidentsModel> incidences, List<string> localNeigbors, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<Batches> batches, List<PaymentsDto> payments, List<DoctorDeliveryAddressModel> doctorData)
+        private async Task<ReceipcionPedidosDetailModel> GetDetailRecpcionToReturn(
+            int orderId,
+            List<UserOrderModel> pedidos,
+            List<LineProductsModel> lineOrders,
+            List<IncidentsModel> incidences,
+            List<string> localNeigbors,
+            List<CompleteRecepcionPedidoDetailModel> sapOrders,
+            List<Batches> batches,
+            List<PaymentsDto> payments,
+            List<DoctorDeliveryAddressModel> doctorData)
         {
             var userOrder = pedidos.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
             var order = sapOrders.FirstOrDefault();
             var payment = payments.FirstOrDefault(p => ServiceShared.ValidateShopTransaction(p.TransactionId, order.DocNumDxp));
             payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
             var invoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, order.Address, payment);
-
             var productList = this.GetProductListModel(pedidos, sapOrders, lineOrders, incidences, batches);
-
             var salesStatusMagistral = this.GetStatusSaleOrder(userOrder);
             salesStatusMagistral = ServiceShared.CalculateTernary(salesStatusMagistral == ServiceConstants.PorRecibir && productList.Any(y => y.Status == ServiceConstants.Pendiente), ServiceConstants.Pendiente, salesStatusMagistral);
-
             var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
-
             var salesStatus = ServiceShared.CalculateTernary(userOrder != null, salesStatusMagistral, salesStatusLinea);
-
-            var productType = ServiceShared.CalculateTernary(productList.All(x => x.IsMagistral), ServiceConstants.Magistral, ServiceConstants.Mixto);
-            productType = ServiceShared.CalculateTernary(productList.All(x => !x.IsMagistral), ServiceConstants.Linea, productType);
-
             var userProdOrders = pedidos.Count(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.Productionorderid), x.Status.Equals(ServiceConstants.Almacenado)));
             var lineProductsCount = lineOrders.Count(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.ItemCode), x.StatusAlmacen == ServiceConstants.Almacenado));
             var totalAlmacenados = userProdOrders + lineProductsCount;
             var doctor = doctorData.FirstOrDefault(x => x.AddressId == order.DeliveryAddressId);
             doctor ??= new DoctorDeliveryAddressModel { Contact = order.Cliente };
 
+            var sapClasification = await this.sapDao.GetClassifications([order.TypeOrder]);
+            var productType = ServiceUtils.GetOrderTypeDescription([order.TypeOrder], sapClasification);
             var saleHeader = new AlmacenSalesHeaderModel
             {
                 Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctor.Contact), order.Medico, doctor.Contact),
@@ -439,7 +444,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return new Tuple<List<LineProductsModel>, List<int>>(lineProducts, listIdToIgnore);
         }
 
-        private async Task<Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>> GetSapLinesToLook(
+        private async Task<List<CompleteAlmacenOrderModel>> GetSapLinesToLook(
             List<string> types,
             List<UserOrderModel> userOrders,
             DateTime startDate,
@@ -448,16 +453,12 @@ namespace Omicron.SapAdapter.Services.Sap
             List<int>> lineProductTuple,
             Dictionary<string, string> parameters)
         {
-            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
-            var parametersWhs = (await ServiceUtils.GetParams(new List<string> { ServiceConstants.WareHouseToExclude }, this.catalogsService)).Select(x => x.Value).ToList();
-
+            var parametersWhs = (await ServiceUtils.GetParams([ServiceConstants.WareHouseToExclude], this.catalogsService)).Select(x => x.Value).ToList();
             if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId))
             {
                 var sapOrdersById = (await this.sapDao.GetAllOrdersForAlmacenByListIds(new List<int> { pedidoId })).ToList();
                 sapOrdersById = ServiceUtils.GetOrdersWithValidWareHouse(sapOrdersById, parametersWhs);
-
-                var listHeaders = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrdersById, lineProducts);
-                return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listHeaders.Item1, listHeaders.Item2);
+                return ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrdersById);
             }
 
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(
@@ -471,14 +472,12 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y");
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
             sapOrders = ServiceUtils.GetOrdersWithValidWareHouse(sapOrders, parametersWhs);
-
             var possibleIdsToIgnore = sapOrders.Where(x => !userOrders.Any(y => y.Salesorderid == x.DocNum.ToString()));
+            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
             var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key);
             sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
             sapOrders.AddRange(sapCancelled);
-            var listHeaderToReturn = ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts);
-
-            return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listHeaderToReturn.Item1, listHeaderToReturn.Item2);
+            return ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders);
         }
 
         /// <summary>
@@ -562,7 +561,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="sapOrders">the Sap orders.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>the data.</returns>
-        private AlmacenOrdersModel GetOrdersToReturn(List<UserOrderModel> userOrders, List<CompleteAlmacenOrderModel> sapOrders, List<LineProductsModel> lineProducts, Dictionary<string, string> parameters, SaleOrderTypeModel saleOrderTypes)
+        private AlmacenOrdersModel GetOrdersToReturn(
+            List<UserOrderModel> userOrders,
+            List<CompleteAlmacenOrderModel> sapOrders,
+            List<LineProductsModel> lineProducts,
+            Dictionary<string, string> parameters,
+            IEnumerable<LblContainerModel> sapClassifications)
         {
             var sapOrdersToProcess = this.GetOrdersToProcess(sapOrders, parameters);
             var salesIds = sapOrdersToProcess.Select(x => x.DocNum).Distinct().ToList();
@@ -593,9 +597,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
                 var salesStatus = ServiceShared.CalculateTernary(userOrder != null, salesStatusMagistral, salesStatusLinea);
 
-                var saleOrderType = ServiceShared.CalculateTernary(saleOrderTypes.MagistralSaleOrders.Contains(so), ServiceConstants.Magistral, ServiceConstants.LineaAlone);
-                saleOrderType = ServiceShared.CalculateTernary(saleOrderTypes.MixedSaleOrders.Contains(so), ServiceConstants.Mixto, saleOrderType);
-
                 var salesOrderModel = new AlmacenSalesModel
                 {
                     DocNum = so,
@@ -606,7 +607,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalPieces = totalpieces,
                     TypeOrder = order.TypeOrder,
                     OrderMuestra = ServiceShared.CalculateTernary(string.IsNullOrEmpty(order.PedidoMuestra), ServiceConstants.IsNotSampleOrder, order.PedidoMuestra),
-                    SaleOrderType = saleOrderType,
+                    SaleOrderType = ServiceUtils.GetOrderTypeDescription([order.TypeOrder], sapClassifications),
                     IsPackage = orders.Any(x => x.IsPackage == ServiceConstants.IsPackage),
                     IsOmigenomics = orders.Exists(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))),
                 };
