@@ -98,7 +98,7 @@ namespace Omicron.Catalogos.Services.Catalogs
 
             await this.catalogDao.InsertWarehouses(correctwarehouses);
 
-            var nomatching = warehousesfile.Except(correctwarehouses).ToList();
+            var nomatching = warehousesfile.Except(correctwarehouses).Select(x => x.Name).ToList();
             var comments = nomatching.Count > 0 ? string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(nomatching)) : null;
 
             return ServiceUtils.CreateResult(true, 200, null, null, comments);
@@ -151,8 +151,6 @@ namespace Omicron.Catalogos.Services.Catalogs
 
         private async Task<List<WarehouseModel>> ProductsAdjustment(List<WarehouseModel> warehouses)
         {
-            var valids = new List<WarehouseModel>();
-
             warehouses.ForEach(x => x.AppliesToProducts = NormalizeAndToUpper(x.AppliesToProducts));
 
             var products = warehouses
@@ -162,6 +160,10 @@ namespace Omicron.Catalogos.Services.Catalogs
             var names = products.SelectMany(x => x)
                 .Where(name => !string.IsNullOrEmpty(name)).Distinct().ToList();
 
+            var valids = warehouses
+                .Where(warehouse => string.IsNullOrEmpty(warehouse.AppliesToProducts))
+                .ToList();
+
             if (names.Any())
             {
                 var response = await this.catalogsdxp.Post(names, ServiceConstants.Products);
@@ -169,10 +171,11 @@ namespace Omicron.Catalogos.Services.Catalogs
 
                 var dataNames = new HashSet<string>(data.Select(NormalizeAndToUpper));
 
-                valids = warehouses
-                    .Where(warehouse => warehouse.AppliesToProducts.Split(',').Select(m => m.Trim())
-                    .All(m => dataNames.Contains(NormalizeAndToUpper(m))))
-                    .ToList();
+                valids.AddRange(warehouses
+                    .Where(warehouse => !string.IsNullOrEmpty(warehouse.AppliesToProducts) &&
+                        warehouse.AppliesToProducts.Split(',')
+                            .Select(m => m.Trim())
+                            .All(m => dataNames.Contains(NormalizeAndToUpper(m)))));
             }
 
             return valids;
@@ -198,8 +201,6 @@ namespace Omicron.Catalogos.Services.Catalogs
 
         private async Task<List<WarehouseModel>> ManufacturersAdjustment(List<WarehouseModel> warehouses)
         {
-            var valids = new List<WarehouseModel>();
-
             warehouses.ForEach(x => x.AppliesToManufacturers = NormalizeAndToUpper(x.AppliesToManufacturers));
 
             var manufacturers = warehouses
@@ -209,6 +210,10 @@ namespace Omicron.Catalogos.Services.Catalogs
             var names = manufacturers.SelectMany(x => x)
                 .Where(name => !string.IsNullOrEmpty(name)).Distinct().ToList();
 
+            var valids = warehouses
+                .Where(warehouse => string.IsNullOrEmpty(warehouse.AppliesToManufacturers))
+                .ToList();
+
             if (names.Any())
             {
                 var response = await this.catalogsdxp.Post(names, ServiceConstants.Manufacturers);
@@ -216,9 +221,11 @@ namespace Omicron.Catalogos.Services.Catalogs
 
                 var dataNames = new HashSet<string>(data.Select(NormalizeAndToUpper));
 
-                valids = warehouses
-                    .Where(warehouse => warehouse.AppliesToManufacturers.Split(',')
-                    .Select(m => m.Trim()).All(m => dataNames.Contains(NormalizeAndToUpper(m)))).ToList();
+                valids.AddRange(warehouses
+                    .Where(warehouse => !string.IsNullOrEmpty(warehouse.AppliesToManufacturers) &&
+                        warehouse.AppliesToManufacturers.Split(',')
+                            .Select(m => m.Trim())
+                            .All(m => dataNames.Contains(NormalizeAndToUpper(m)))));
             }
 
             return valids;
