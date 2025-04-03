@@ -20,5 +20,12 @@ namespace Omicron.Catalogos.Services.CatalogsDxp
         /// <param name="route"> Catalogs dxp service endpoint URL. </param>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation, containing a <see cref="ResultDto"/> with the response data from the catalogs dxp.</returns>
         Task<ResultDto> Post(object data, string route);
+
+        /// <summary>
+        /// Asynchronously sends a GET request to the catalogs dxp service.
+        /// </summary>
+        /// <param name="route"> Catalogs dxp service endpoint URL. </param>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation, containing a <see cref="ResultDto"/> with the response data from the catalogs dxp.</returns>
+        Task<ResultDto> Get(string route);
     }
 }
