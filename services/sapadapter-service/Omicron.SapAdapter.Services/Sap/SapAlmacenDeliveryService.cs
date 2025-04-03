@@ -218,39 +218,7 @@ namespace Omicron.SapAdapter.Services.Sap
             invoices = invoices.Where(x => x.Refactura != ServiceConstants.IsRefactura);
             deliveryDetailDb = deliveryDetailDb.Where(x => !x.InvoiceId.HasValue || !invoiceRefactura.Contains(x.InvoiceId.Value));
 
-            /*
-            var sapOrdersGroup = deliveryDetailDb.GroupBy(x => x.DeliveryId).ToList();
-
-            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService); */
-
             var deliveryToReturn = deliveryDetailDb.ToList();
-            /*if (types.Contains(ServiceConstants.Magistral.ToLower()))
-            {
-                var listMagistral = sapOrdersGroup.Where(x => !x.Any(y => lineProducts.Contains(y.ProductoId)));
-                var keys = listMagistral.Select(x => x.Key);
-
-                deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keys.Contains(x.DeliveryId)));
-                sapOrdersGroup.RemoveAll(x => keys.Contains(x.Key));
-            }
-
-            if (types.Contains(ServiceConstants.Mixto.ToLower()))
-            {
-                var listMixta = sapOrdersGroup.Where(x => !x.All(y => lineProducts.Contains(y.ProductoId)) && x.Any(y => lineProducts.Contains(y.ProductoId)));
-                var keysMixta = listMixta.Select(x => x.Key);
-
-                deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysMixta.Contains(x.DeliveryId)));
-                sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
-            }
-
-            if (types.Contains(ServiceConstants.Line))
-            {
-                var listMixta = sapOrdersGroup.Where(x => x.All(y => lineProducts.Contains(y.ProductoId)));
-                var keysLine = listMixta.Select(x => x.Key);
-
-                deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysLine.Contains(x.DeliveryId)));
-                sapOrdersGroup.RemoveAll(x => keysLine.Contains(x.Key));
-            }*/
-
             var deliveryHeaders = await this.sapDao.GetDeliveriesByDocNums(listDeliveryIds);
 
             var maquilaDeliverys = deliveryHeaders.Where(x => x.TypeOrder == ServiceConstants.OrderTypeMQ);
@@ -266,10 +234,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
 
             deliveryHeaders = this.GetOrdersToLook(deliveryHeaders, parameters);
-
-            /*
-            deliveryToReturn = deliveryToReturn.Where(x => deliveryHeaders.Any(y => y.DocNum == x.DeliveryId)).ToList();
-            deliveryToReturn = deliveryToReturn.OrderByDescending(x => x.DeliveryId).ToList();*/
 
             deliveryHeaders = deliveryHeaders.Where(x => types.Contains(x.TypeOrder)).ToList();
 
