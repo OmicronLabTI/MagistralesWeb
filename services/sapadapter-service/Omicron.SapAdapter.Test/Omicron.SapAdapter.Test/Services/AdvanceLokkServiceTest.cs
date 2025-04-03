@@ -43,6 +43,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.Repartidores.AddRange(this.GetRepartidores());
             this.context.AsesorModel.AddRange(this.GetAsesorModel());
             this.context.ClientCatalogModel.AddRange(this.GetDoctorsModels());
+            this.context.LblContainerModel.AddRange(this.GetClassificationsCatalog());
             this.context.SaveChanges();
 
             var mockPedidoService = new Mock<IPedidosService>();

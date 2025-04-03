@@ -267,6 +267,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var doctorAddresses = await this.GetDeliveryAddressInfo(sapSaleOrder, sapDelivery, sapInvoicesHeaders);
             var catalogResponse = await this.catalogsService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.CardCodeResponsibleMedic}={ServiceConstants.CardCodeResponsibleMedic}");
             var specialCardCodes = JsonConvert.DeserializeObject<List<ParametersModel>>(catalogResponse.Response.ToString()).Select(x => x.Value).ToList();
+            var sapClasification = await this.sapDao.GetClassifications(sapSaleOrder.Select(x => x.OrderType).ToList());
 
             var objectCardOrder = new ParamentsCards
             {
@@ -290,6 +291,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 DocNum = initialDocNum,
                 DeliveryAddress = doctorAddresses,
                 SpecialCardCodes = specialCardCodes,
+                Classifications = sapClasification.ToList(),
             };
 
             tupleIds.DistinctBy(order => new { order.Item1, order.Item2 }).ToList().ForEach(order =>
@@ -382,7 +384,6 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var order = new CompleteOrderModel();
             var status = string.Empty;
-            var productType = string.Empty;
             var saporders = new List<CompleteOrderModel>();
             var porRecibirDate = DateTime.Now;
             var hasCandidate = false;
@@ -398,7 +399,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = ServiceShared.CalculateTernary(ServiceConstants.StatusForBackOrder.Contains(userOrder.Status) && userOrder.StatusAlmacen == ServiceConstants.BackOrder, ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
                 status = ServiceShared.CalculateTernary(userOrder.Status != ServiceConstants.Finalizado && userOrder.Status != ServiceConstants.Almacenado && status != ServiceConstants.BackOrder, ServiceConstants.Pendiente, status);
                 status = ServiceShared.CalculateTernary(userOrder.Status == ServiceConstants.Almacenado && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(), ServiceConstants.Almacenado, status);
-                productType = ServiceShared.CalculateTernary(saporders.Any(x => x.Detalles != null && paramentsCards.ProductModel.Any(p => p == x.Detalles.ProductoId)), ServiceConstants.Mixto, ServiceConstants.Magistral);
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
                 comments.Append($"{userOrder.Comments}&");
                 hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status, order, userOrder);
@@ -414,7 +414,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = ServiceShared.CalculateTernary(lineProductOrder == null, ServiceConstants.PorRecibir, lineProductOrder?.StatusAlmacen);
                 status = ServiceShared.CalculateTernary(lineProductOrder?.StatusAlmacen == ServiceConstants.Recibir, ServiceConstants.PorRecibir, status);
                 status = ServiceShared.CalculateTernary(lineProductOrder?.StatusAlmacen == ServiceConstants.Almacenado && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(), ServiceConstants.Almacenado, status);
-                productType = ServiceConstants.Linea;
                 porRecibirDate = ServiceShared.ParseExactDateOrDefault(order.FechaInicio, porRecibirDate);
                 hasCandidate = this.CalculateIfLineOrderIsCandidate(lineProductOrder, status, order);
             }
@@ -431,7 +430,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
             var initDate = ServiceShared.ParseExactDateOrDefault(order.FechaInicio, DateTime.Now);
             var lettersToRemoveDxpId = ServiceShared.CalculateTernary(paramentsCards.DocNum.Length > 1, 1, 0);
-
+            var productType = ServiceUtils.GetOrderTypeDescription([order.OrderType], paramentsCards.Classifications);
             var saleHeader = new AlmacenSalesHeaderModel
             {
                 DocNum = order.DocNum,

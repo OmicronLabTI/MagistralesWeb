@@ -38,6 +38,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.DetallePedido.AddRange(this.GetDetallePedidoForDoctorOrders());
             this.context.ClientCatalogModel.AddRange(this.GetClients());
             this.context.OrdenFabricacionModel.AddRange(this.GetOrdenFabricacionModelForDoctorOrders());
+            this.context.LblContainerModel.AddRange(this.GetClassificationsCatalog());
             this.context.SaveChanges();
 
             var mockPedidoService = new Mock<IPedidosService>();
@@ -103,8 +104,8 @@ namespace Omicron.SapAdapter.Test.Services
         /// <param name="type">the type of orders.</param>
         /// <returns>the data.</returns>
         [Test]
-        [TestCase("magistral, mixto, maquila, linea, omigenomics")]
-        [TestCase("magistral, mixto, linea")]
+        [TestCase("BE,MG,MX,BQ,LN, mixto, maquila, omigenomics")]
+        [TestCase("BE,MG,MX,BQ,LN,linea")]
         public async Task SearchAlmacenOrdersByAllsDoctors(string type)
         {
             // arrange

@@ -345,5 +345,21 @@ namespace Omicron.SapAdapter.Test
                 Response = JsonConvert.SerializeObject(dataToSend),
             };
         }
+
+        /// <summary>
+        /// Gets the invoice details.
+        /// </summary>
+        /// <returns>the dta.</returns>
+        public List<LblContainerModel> GetClassificationsCatalog()
+        {
+            return new List<LblContainerModel>
+            {
+                new LblContainerModel { FieldId = 24, Value = "MG", Description = "Magistrales", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "LN", Description = "De Linea", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "MQ", Description = "Maquila", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "BE", Description = "Bioelite", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "MX", Description = "Mixto", TableId = "ADOC",  },
+            };
+        }
     }
 }
