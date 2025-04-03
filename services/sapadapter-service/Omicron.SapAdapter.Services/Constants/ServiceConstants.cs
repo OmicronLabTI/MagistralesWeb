@@ -1113,5 +1113,20 @@ namespace Omicron.SapAdapter.Services.Constants
             "Y",
             "1",
         };
+
+        /// <summary>
+        /// Gets the Default Filters.
+        /// </summary>
+        /// <value>
+        /// default filters.
+        /// </value>
+        public static List<string> DefaultFilters { get; } =
+        [
+            "mixto",
+            "maquila",
+            "muestra",
+            "paquetes",
+            "omigenomics",
+        ];
     }
 }

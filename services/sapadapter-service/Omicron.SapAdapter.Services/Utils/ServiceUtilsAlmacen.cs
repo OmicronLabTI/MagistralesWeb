@@ -25,6 +25,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using Omicron.SapAdapter.Services.Pedidos;
     using Omicron.SapAdapter.Services.ProccessPayments;
     using Omicron.SapAdapter.Services.Redis;
+    using StackExchange.Redis;
 
     /// <summary>
     /// The class for the services.
@@ -36,66 +37,29 @@ namespace Omicron.SapAdapter.Services.Utils
         /// </summary>
         /// <param name="types">the type to filter.</param>
         /// <param name="sapOrders">the sap orders.</param>
-        /// <param name="lineProducts">the lines products.</param>
+        /// <param name="groupByDxpOrder">Group by DXP order.</param>
         /// <returns>the datetime.</returns>
-        public static Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel> GetSapOrderByType(List<string> types, List<CompleteAlmacenOrderModel> sapOrders, List<string> lineProducts)
+        public static List<CompleteAlmacenOrderModel> GetSapOrderByType(List<string> types, List<CompleteAlmacenOrderModel> sapOrders, bool groupByDxpOrder = false)
         {
-            var listToReturn = new List<CompleteAlmacenOrderModel>();
-            var salesTypes = new SaleOrderTypeModel
-            {
-                LineSaleOrders = new List<int>(),
-                MagistralSaleOrders = new List<int>(),
-                MixedSaleOrders = new List<int>(),
-            };
+            var clasificationFilters = types.Where(x => !ServiceConstants.DefaultFilters.Contains(x)).ToList();
 
-            var sapOrdersGroup = sapOrders.GroupBy(x => x.DocNum).ToList();
-
-            if (types.Contains(ServiceConstants.Magistral.ToLower()))
-            {
-                var listMagistral = sapOrdersGroup.Where(x => ServiceShared.CalculateAnd(!x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)), !x.All(y => lineProducts.Contains(y.Detalles.ProductoId))));
-                var keys = listMagistral.Select(x => x.Key).ToList();
-
-                listToReturn.AddRange(sapOrders.Where(x => keys.Contains(x.DocNum)));
-                salesTypes.MagistralSaleOrders = keys;
-                sapOrdersGroup.RemoveAll(x => keys.Contains(x.Key));
-            }
-
-            if (types.Contains(ServiceConstants.Mixto.ToLower()))
-            {
-                var listMixta = sapOrdersGroup.Where(x => ServiceShared.CalculateAnd(x.Any(y => lineProducts.Contains(y.Detalles.ProductoId)), !x.All(y => lineProducts.Contains(y.Detalles.ProductoId))));
-                var keysMixta = listMixta.Select(x => x.Key).ToList();
-
-                listToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
-                salesTypes.MixedSaleOrders = keysMixta;
-                sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
-            }
-
-            if (types.Contains(ServiceConstants.Line))
-            {
-                var listMixta = sapOrdersGroup.Where(x => x.All(y => lineProducts.Contains(y.Detalles.ProductoId)));
-                var keysMixta = listMixta.Select(x => x.Key).ToList();
-
-                listToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNum)));
-                salesTypes.LineSaleOrders = keysMixta;
-                sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
-            }
+            var listToReturn = groupByDxpOrder ?
+                    FilterOrdersByClassificationGroupedByDxpOrder(sapOrders, clasificationFilters, types) :
+                    FilterOrdersByClassification(sapOrders, clasificationFilters, types);
 
             var ordersMaquila = sapOrders.Where(x => x.TypeOrder.ValidateNull().ToLower() == ServiceConstants.OrderTypeMQ.ToLower()).ToList();
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Maquila.ToLower()), ordersMaquila, listToReturn);
-            salesTypes = AddSalesTypeByOrders(ordersMaquila, salesTypes);
 
             var ordersSample = sapOrders.Where(x => x.PedidoMuestra.ValidateNull() == ServiceConstants.IsSampleOrder).ToList();
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Muestra.ToLower()), ordersSample, listToReturn);
-            salesTypes = AddSalesTypeByOrders(ordersSample, salesTypes);
 
             var orderPackages = sapOrders.Where(x => x.IsPackage.ValidateNull().ToLower() == ServiceConstants.IsPackage.ToLower()).ToList();
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Paquetes.ToLower()), orderPackages, listToReturn);
-            salesTypes = AddSalesTypeByOrders(orderPackages, salesTypes);
 
             var ordersOmigenomics = sapOrders.Where(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))).ToList();
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.OmigenomicsGroup.ToLower()), ordersOmigenomics, listToReturn);
-            salesTypes = AddSalesTypeByOrders(ordersOmigenomics, salesTypes);
-            return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listToReturn.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList(), salesTypes);
+
+            return listToReturn.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
         }
 
         /// <summary>
@@ -342,13 +306,40 @@ namespace Omicron.SapAdapter.Services.Utils
             return listToReturn;
         }
 
-        private static SaleOrderTypeModel AddSalesTypeByOrders(List<CompleteAlmacenOrderModel> sapOrdersToGetType, SaleOrderTypeModel salesTypes)
+        private static List<CompleteAlmacenOrderModel> FilterOrdersByClassificationGroupedByDxpOrder(List<CompleteAlmacenOrderModel> sapOrders, List<string> clasificationFilters, List<string> types)
         {
-            var sapOrdersGroup = sapOrdersToGetType.GroupBy(x => x.DocNum).ToList();
-            salesTypes.MagistralSaleOrders.AddRange(sapOrdersGroup.Where(sapOrd => sapOrd.All(prod => prod.IsMagistral == "Y")).Select(sapOrd => sapOrd.Key));
-            salesTypes.LineSaleOrders.AddRange(sapOrdersGroup.Where(sapOrd => sapOrd.All(prod => prod.IsLine == "Y")).Select(sapOrd => sapOrd.Key));
-            salesTypes.MixedSaleOrders.AddRange(sapOrdersGroup.Where(sapOrd => ServiceShared.CalculateAnd(sapOrd.Any(prod => prod.IsLine == "Y"), sapOrd.Any(prod => prod.IsMagistral == "Y"))).Select(sapOrd => sapOrd.Key));
-            return salesTypes;
+            var listToReturn = new List<CompleteAlmacenOrderModel>();
+            var sapOrdersGroup = sapOrders.GroupBy(x => x.DocNumDxp).ToList();
+            clasificationFilters.ForEach(c =>
+            {
+                var keysOrderPerClassification = sapOrdersGroup.Where(so => so.All(det => det.TypeOrder.Equals(c, StringComparison.CurrentCultureIgnoreCase))).Select(x => x.Key).ToList();
+                listToReturn.AddRange(sapOrders.Where(x => keysOrderPerClassification.Contains(x.DocNumDxp)));
+                sapOrdersGroup.RemoveAll(x => keysOrderPerClassification.Contains(x.Key));
+            });
+
+            if (types.Contains(ServiceConstants.Mixto.ToLower()))
+            {
+                var listMixta = sapOrdersGroup.Where(so => so.Select(x => x.TypeOrder).Distinct().Count() > 1);
+                var keysMixta = listMixta.Select(x => x.Key).ToList();
+                listToReturn.AddRange(sapOrders.Where(x => keysMixta.Contains(x.DocNumDxp)));
+                sapOrdersGroup.RemoveAll(x => keysMixta.Contains(x.Key));
+            }
+
+            return listToReturn;
+        }
+
+        private static List<CompleteAlmacenOrderModel> FilterOrdersByClassification(List<CompleteAlmacenOrderModel> sapOrders, List<string> clasificationFilters, List<string> types)
+        {
+            var listToReturn = new List<CompleteAlmacenOrderModel>();
+            var clasificationOrders = new List<CompleteAlmacenOrderModel>();
+
+            clasificationFilters.ForEach(c =>
+            {
+                clasificationOrders = sapOrders.Where(so => so.TypeOrder.ValidateNull().Equals(c, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                listToReturn = FilterByContainsType(types.Contains(c), clasificationOrders, listToReturn);
+            });
+
+            return listToReturn;
         }
     }
 }

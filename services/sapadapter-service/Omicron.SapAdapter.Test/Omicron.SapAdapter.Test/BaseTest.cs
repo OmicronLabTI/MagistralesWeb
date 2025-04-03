@@ -35,15 +35,15 @@ namespace Omicron.SapAdapter.Test
             return new List<OrderModel>
             {
                 new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ShippingAddressName = "Nombre de la dirección", ClientType = "institucional" },
-                new OrderModel { PedidoId = 101, AsesorId = 1, Codigo = "Codigo", DocNum = 101, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "institucional" },
+                new OrderModel { PedidoId = 101, AsesorId = 1, Codigo = "Codigo", DocNum = 101, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "institucional", OrderType = "LN" },
                 new OrderModel { PedidoId = 102, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2, OrderType = "MN", Patient = "paciente" },
                 new OrderModel { PedidoId = 103, AsesorId = 1, Codigo = "Codigo1234", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ClientType = "general" },
-                new OrderModel { PedidoId = 104, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "clinica" },
+                new OrderModel { PedidoId = 104, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "clinica", OrderType = "LN" },
 
                 // For Almacen
                 new OrderModel { PedidoId = 75000, DocNum = 75000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N", Patient = "paciente" },
-                new OrderModel { PedidoId = 75001, DocNum = 75001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo Le?n", Canceled = "N", Patient = "paciente" },
-                new OrderModel { PedidoId = 75002, DocNum = 75002, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null, Canceled = "N", Patient = "paciente" },
+                new OrderModel { PedidoId = 75001, DocNum = 75001, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = "Nuevo Le?n", Canceled = "N", Patient = "paciente", OrderType = "LN" },
+                new OrderModel { PedidoId = 75002, DocNum = 75002, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-4), Medico = "Medico", PedidoStatus = "O", Address = null, Canceled = "N", Patient = "paciente", OrderType = "LN" },
                 new OrderModel { PedidoId = 85000, DocNum = 85000, Codigo = "Codigo", FechaInicio = DateTime.Today.AddDays(-30), Medico = "Medico", PedidoStatus = "O", Address = "CDMX", OrderType = "MQ", Canceled = "N", Patient = "paciente" },
 
                 // for packages
@@ -650,6 +650,22 @@ namespace Omicron.SapAdapter.Test
                 Response = JsonConvert.SerializeObject(listProducts),
                 Success = true,
                 Comments = "15",
+            };
+        }
+
+        /// <summary>
+        /// Gets the invoice details.
+        /// </summary>
+        /// <returns>the dta.</returns>
+        public List<LblContainerModel> GetClassificationsCatalog()
+        {
+            return new List<LblContainerModel>
+            {
+                new LblContainerModel { FieldId = 24, Value = "MG", Description = "Magistrales", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "LN", Description = "De Linea", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "MQ", Description = "Maquila", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "BE", Description = "Bioelite", TableId = "ADOC",  },
+                new LblContainerModel { FieldId = 24, Value = "MX", Description = "Mixto", TableId = "ADOC",  },
             };
         }
 
