@@ -604,6 +604,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProducts = paramsCardDelivery.LineProducts;
             var lineSapProducts = paramsCardDelivery.LineSapProducts;
 
+            string mixt = lbls.Count() > 1 ? ServiceConstants.Mixto : string.Empty;
+
             foreach (var delivery in possibleDeliveries.Distinct())
             {
                 var deliveriesWithInvoice = deliveryDetailModels.Where(x => ServiceShared.CalculateAnd(x.DeliveryId == delivery, x.InvoiceId.HasValue && x.InvoiceId.Value != 0)).Select(y => y.InvoiceId.Value).ToList();
@@ -624,7 +626,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var payment = paramsCardDelivery.Payments.GetPaymentBydocNumDxp(header.DocNumDxp);
                 var deliveryAddress = paramsCardDelivery.DeliveryAddress.GetSpecificDeliveryAddress(header.CardCode, header.ShippingAddressName);
                 var invoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, paramsCardDelivery.LocalNeighbors, header.Address, payment);
-                var productType = lbls.Where(x => x.Value == header.TypeOrder).Select(x => x.Description).FirstOrDefault();
+                var productType = !string.IsNullOrEmpty(mixt) ? mixt : lbls.Where(x => x.Value == header.TypeOrder).Select(x => x.Description).FirstOrDefault();
 
                 var userOrderByDelivery = userOrders.FirstOrDefault(x => x.DeliveryId == delivery);
                 var lineProductByDelivery = lineProducts.FirstOrDefault(x => x.DeliveryId == delivery);

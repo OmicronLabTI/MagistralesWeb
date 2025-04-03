@@ -133,6 +133,7 @@ namespace Omicron.Catalogos.Services.Catalogs
                     Classification = g.Key.Classification,
                     ClassificationCode = g.Key.ClassificationCode,
                 })
+                .Where(x => x.ClassificationCode != "MX" && x.ClassificationCode != "MQ")
                 .ToList();
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);

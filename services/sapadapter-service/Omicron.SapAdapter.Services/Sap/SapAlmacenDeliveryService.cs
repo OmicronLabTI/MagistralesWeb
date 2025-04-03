@@ -83,9 +83,11 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var userOrders = await this.GetUserOrdersRemision(parameters, startDate, endDate);
             var lineProducts = await this.GetLineProductsRemision(parameters, startDate, endDate);
-
             var (deliveryToReturn, deliveryHeaders, filterCount, invoices) = await this.GetOrdersByType(types, userOrders, lineProducts, parameters);
-            var dataToReturn = this.GetOrdersToReturn(deliveryToReturn, deliveryHeaders, invoices);
+
+            var classification = await this.sapDao.GetClassifications(deliveryHeaders.Select(x => x.TypeOrder).Distinct().ToList());
+
+            var dataToReturn = this.GetOrdersToReturn(deliveryToReturn, deliveryHeaders, invoices, classification);
             return ServiceUtils.CreateResult(true, 200, null, dataToReturn, null, $"{filterCount}-{filterCount}");
         }
 
@@ -217,13 +219,14 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceRefactura = invoices.Where(x => x.Refactura == ServiceConstants.IsRefactura).Select(y => y.InvoiceId);
             invoices = invoices.Where(x => x.Refactura != ServiceConstants.IsRefactura);
             deliveryDetailDb = deliveryDetailDb.Where(x => !x.InvoiceId.HasValue || !invoiceRefactura.Contains(x.InvoiceId.Value));
+
+            /*
             var sapOrdersGroup = deliveryDetailDb.GroupBy(x => x.DeliveryId).ToList();
 
-            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
+            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService); */
 
-            var deliveryToReturn = new List<DeliveryDetailModel>();
-
-            if (types.Contains(ServiceConstants.Magistral.ToLower()))
+            var deliveryToReturn = deliveryDetailDb.ToList();
+            /*if (types.Contains(ServiceConstants.Magistral.ToLower()))
             {
                 var listMagistral = sapOrdersGroup.Where(x => !x.Any(y => lineProducts.Contains(y.ProductoId)));
                 var keys = listMagistral.Select(x => x.Key);
@@ -248,7 +251,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(x => keysLine.Contains(x.DeliveryId)));
                 sapOrdersGroup.RemoveAll(x => keysLine.Contains(x.Key));
-            }
+            }*/
 
             var deliveryHeaders = await this.sapDao.GetDeliveryModelByDocNumJoinDoctor(listDeliveryIds);
 
@@ -256,7 +259,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var packageDeliveries = deliveryHeaders.Where(x => x.IsPackage == ServiceConstants.IsPackage);
             var omigenomicsDeliveries = deliveryHeaders.Where(del => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsSecondary)));
 
-            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, maquilaDeliverys.ToList(), ServiceConstants.Maquila);
+            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, maquilaDeliverys.ToList(), ServiceConstants.OrderTypeMQ);
             deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, packageDeliveries.ToList(), ServiceConstants.Paquetes);
             deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, omigenomicsDeliveries.ToList(), ServiceConstants.OmigenomicsGroup);
 
@@ -265,8 +268,16 @@ namespace Omicron.SapAdapter.Services.Sap
             var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
 
             deliveryHeaders = this.GetOrdersToLook(deliveryHeaders, parameters);
+
+            /*
             deliveryToReturn = deliveryToReturn.Where(x => deliveryHeaders.Any(y => y.DocNum == x.DeliveryId)).ToList();
-            deliveryToReturn = deliveryToReturn.OrderByDescending(x => x.DeliveryId).ToList();
+            deliveryToReturn = deliveryToReturn.OrderByDescending(x => x.DeliveryId).ToList();*/
+
+            deliveryHeaders = deliveryHeaders.Where(x => types.Contains(x.TypeOrder)).ToList();
+
+            var pedidos = deliveryHeaders.Select(x => x.PedidoId);
+
+            deliveryToReturn = deliveryDetailDb.Where(x => pedidos.Contains(x.DeliveryId)).ToList();
 
             return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, invoices.ToList());
         }
@@ -276,7 +287,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var specialId = specialDeliveries.Select(md => md.DocNum).ToList();
             deliveryHeaders = deliveryHeaders.Where(d => deliveryToReturn.Select(x => x.DeliveryId).Distinct().Contains(d.DocNum)).ToList();
 
-            if (types.Contains(typeToLook.ToLower()))
+            if (types.Select(t => t.ToLower()).Contains(typeToLook.ToLower()))
             {
                 deliveryHeaders.AddRange(specialDeliveries);
                 deliveryToReturn.AddRange(deliveryDetailDb.Where(d => specialId.Contains(d.DeliveryId)));
@@ -346,7 +357,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="headers">the delivery header.</param>
         /// <param name="invoices">The invoices.</param>
         /// <returns>the data.</returns>
-        private AlmacenOrdersModel GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<InvoiceHeaderModel> invoices)
+        private AlmacenOrdersModel GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<InvoiceHeaderModel> invoices, IEnumerable<LblContainerModel> lbls)
         {
             var listIds = details.Select(x => x.DeliveryId).Distinct().ToList();
 
@@ -383,7 +394,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
                     HasInvoice = hasInvoice,
-                    TypeOrder = header.TypeOrder,
+                    TypeOrder = lbls.Where(x => x.Value == header.TypeOrder).Select(x => x.Description).FirstOrDefault(),
                     DeliveryTypeModel = deliveryType,
                     IsPackage = header.IsPackage == ServiceConstants.IsPackage,
                     IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(header.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(header.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(header.IsSecondary)),
@@ -413,7 +424,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var userOrder = userOrders.GetSaleOrderHeader(s.DocNum.ToString());
                 var localDetails = details.Where(y => y.Detalles.BaseEntry == s.DocNum).ToList();
 
-                string mixt = classification.Count() > 1 ? "Mixto" : string.Empty;
+                string mixt = classification.Count() > 1 ? ServiceConstants.Mixto : string.Empty;
 
                 listToReturn.Add(new SaleOrderByDeliveryModel
                 {
