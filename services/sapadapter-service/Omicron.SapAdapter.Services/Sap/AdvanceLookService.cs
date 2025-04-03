@@ -293,12 +293,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 SpecialCardCodes = specialCardCodes,
                 Classifications = sapClasification.ToList(),
             };
+            var classification = await this.sapDao.GetClassifications(sapDelivery.Select(x => x.TypeOrder).Distinct().ToList());
 
             tupleIds.DistinctBy(order => new { order.Item1, order.Item2 }).ToList().ForEach(order =>
             {
                 cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrders(order, objectCardOrder));
                 cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrdersSample(order, objectCardOrder));
-                cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, objectCardOrder));
+                cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, objectCardOrder, classification));
                 cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, objectCardOrder));
                 cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, objectCardOrder));
             });
@@ -512,7 +513,7 @@ namespace Omicron.SapAdapter.Services.Sap
             };
         }
 
-        private List<AlmacenSalesHeaderModel> GetIsReceptionDelivery(Tuple<int, string> tuple, ParamentsCards paramsCard)
+        private List<AlmacenSalesHeaderModel> GetIsReceptionDelivery(Tuple<int, string> tuple, ParamentsCards paramsCard, IEnumerable<LblContainerModel> lbls)
         {
             if (tuple.Item2 == ServiceConstants.Invoice)
             {
@@ -539,7 +540,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Payments = paramsCard.Payments,
                     DeliveryAddress = paramsCard.DeliveryAddress,
                 };
-                return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
+                return this.GenerateCardForReceptionDelivery(paramsCardDelivery, lbls);
             }
 
             var isCancelled = paramsCard.Cancellations != null && paramsCard.Cancellations.Any(x => x.CancelledId == tuple.Item1);
@@ -562,7 +563,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Payments = paramsCard.Payments,
                     DeliveryAddress = paramsCard.DeliveryAddress,
                 };
-                return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
+                return this.GenerateCardForReceptionDelivery(paramsCardDelivery, lbls);
             }
 
             if (ServiceShared.CalculateAnd(tuple.Item2 == ServiceConstants.Delivery, isCancelled))
@@ -585,13 +586,13 @@ namespace Omicron.SapAdapter.Services.Sap
                     Payments = paramsCard.Payments,
                     DeliveryAddress = paramsCard.DeliveryAddress,
                 };
-                return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
+                return this.GenerateCardForReceptionDelivery(paramsCardDelivery, lbls);
             }
 
             return new List<AlmacenSalesHeaderModel>();
         }
 
-        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionDelivery(ParametersCardDelivery paramsCardDelivery)
+        private List<AlmacenSalesHeaderModel> GenerateCardForReceptionDelivery(ParametersCardDelivery paramsCardDelivery, IEnumerable<LblContainerModel> lbls)
         {
             var saleHeader = new List<AlmacenSalesHeaderModel>();
             var possibleDeliveries = paramsCardDelivery.PossibleDeliveries;
@@ -601,6 +602,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = paramsCardDelivery.UserOrders;
             var lineProducts = paramsCardDelivery.LineProducts;
             var lineSapProducts = paramsCardDelivery.LineSapProducts;
+
+            string mixt = lbls.Count() > 1 ? ServiceConstants.Mixto : string.Empty;
 
             foreach (var delivery in possibleDeliveries.Distinct())
             {
@@ -622,7 +625,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var payment = paramsCardDelivery.Payments.GetPaymentBydocNumDxp(header.DocNumDxp);
                 var deliveryAddress = paramsCardDelivery.DeliveryAddress.GetSpecificDeliveryAddress(header.CardCode, header.ShippingAddressName);
                 var invoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, paramsCardDelivery.LocalNeighbors, header.Address, payment);
-                var productType = this.GenerateListProductTypeDelivery(deliveryDetail, lineSapProducts);
+                var productType = !string.IsNullOrEmpty(mixt) ? mixt : lbls.Where(x => x.Value == header.TypeOrder).Select(x => x.Description).FirstOrDefault();
 
                 var userOrderByDelivery = userOrders.FirstOrDefault(x => x.DeliveryId == delivery);
                 var lineProductByDelivery = lineProducts.FirstOrDefault(x => x.DeliveryId == delivery);
@@ -639,7 +642,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Remision = delivery,
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
-                    TypeSaleOrder = $"Pedido {productType}",
+                    TypeSaleOrder = productType,
                     InvoiceType = invoiceType,
                     DataCheckin = initDate.Value,
                     ListSaleOrder = string.Join(", ", salesOrders),

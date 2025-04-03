@@ -183,19 +183,19 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<DeliverModel>
             {
-                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000, Address = "direccion CD MX" },
-                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001, Address = "direccion Nuevo Le?n" },
-                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46038, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75002, Address = "direccion CD MX" },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46036, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75000, Address = "direccion CD MX", TypeOrder = "MQ" },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46037, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75001, Address = "direccion Nuevo Le?n", TypeOrder = "MQ" },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46038, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75002, Address = "direccion CD MX", TypeOrder = "MQ" },
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "C", DocNum = 46039, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 75003, Address = "direccion Oax", TypeOrder = "MQ" },
 
                 // for almacen detail
                 new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 46040, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 46040, Address = "direccion Oax", TypeOrder = "MQ" },
 
                 // for almacen packages
-                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 85001, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 85001, Address = "direccion CD MX", IsPackage = "Y" },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 85001, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 85001, Address = "direccion CD MX", IsPackage = "Y", TypeOrder = "MQ" },
 
                 // for detail invoice
-                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 1, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 1, Address = "direccion CD MX", IsPackage = "Y" },
+                new DeliverModel { Cliente = "cliente", CardCode = "Codigo", DeliveryStatus = "O", DocNum = 1, FechaInicio = DateTime.Now, Medico = "Medico", PedidoId = 1, Address = "direccion CD MX", IsPackage = "Y", TypeOrder = "MQ" },
             };
         }
 
@@ -379,6 +379,21 @@ namespace Omicron.SapAdapter.Test
                 new ClientCatalogModel { ClientId = "Codigo", Email = "email", AliasName = "alias" },
                 new ClientCatalogModel { ClientId = "Medico A", Email = "email", AliasName = "alias" },
                 new ClientCatalogModel { ClientId = "Medico B", Email = "email", AliasName = "alias" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the invoice details.
+        /// </summary>
+        /// <returns>the dta.</returns>
+        public List<LblContainerModel> GetLblContainer()
+        {
+            return new List<LblContainerModel>
+            {
+                new LblContainerModel { Value = "MQ", Description = "Maquilas", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "MN", Description = "Bioelite", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "BE", Description = "Bioequal", FieldId = 24, TableId = "ADOC" },
+                new LblContainerModel { Value = "MG", Description = "Magistrales", FieldId = 24, TableId = "ADOC" },
             };
         }
 

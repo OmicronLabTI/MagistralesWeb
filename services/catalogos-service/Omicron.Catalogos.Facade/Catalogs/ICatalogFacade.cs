@@ -49,5 +49,11 @@ namespace Omicron.Catalogos.Facade.Catalogs
         /// <param name="products">the dictionary.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetActivesWarehouses(List<ActiveWarehouseDto> products);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<ResultDto> GetClassifications();
     }
 }

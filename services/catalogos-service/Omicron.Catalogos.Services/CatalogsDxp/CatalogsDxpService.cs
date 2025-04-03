@@ -42,7 +42,20 @@ namespace Omicron.Catalogos.Services.CatalogsDxp
             var url = this.httpClient.BaseAddress + route;
             using (var response = await this.httpClient.PostAsync(url, stringContent))
             {
-                result = await ServiceUtils.GetResponse(response, this.logger, "Error peticion catalogs dxp service");
+                result = await ServiceUtils.GetResponse(response, this.logger, ServiceConstants.ErrorRequest);
+            }
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> Get(string route)
+        {
+            ResultDto result;
+            var url = this.httpClient.BaseAddress + route;
+            using (var response = await this.httpClient.GetAsync(url))
+            {
+                result = await ServiceUtils.GetResponse(response, this.logger, ServiceConstants.ErrorRequest);
             }
 
             return result;
