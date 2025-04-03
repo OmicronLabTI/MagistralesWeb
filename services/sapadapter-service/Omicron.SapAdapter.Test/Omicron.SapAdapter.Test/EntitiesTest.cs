@@ -77,7 +77,6 @@ namespace Omicron.SapAdapter.Test
             new InvoicesModel(),
             new RetrieveInvoiceModel(),
             new CompleteAlmacenOrderModel(),
-            new SaleOrderTypeModel(),
             new DeliveyJoinOrderModel(),
             new SalesPersonModel(),
             new AssignedBatches(),

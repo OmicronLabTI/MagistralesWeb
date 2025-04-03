@@ -63,5 +63,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public bool IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets SaleOrderType.
+        /// </summary>
+        /// <value>The SaleOrderType.</value>
+        public string SaleOrderType { get; set; }
     }
 }

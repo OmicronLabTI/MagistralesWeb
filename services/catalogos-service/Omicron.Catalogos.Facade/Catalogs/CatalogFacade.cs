@@ -75,5 +75,11 @@ namespace Omicron.Catalogos.Facade.Catalogs
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.GetActivesWarehouses(products));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetClassifications()
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.GetClassifications());
+        }
     }
 }

@@ -518,7 +518,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypes = "magistral,mixto,linea,maquila,muestra,paquetes,omigenomics";
+        public const string AllTypes = "MG,LN,MQ,paquetes,omigenomics";
 
         /// <summary>
         /// all types.
@@ -1113,5 +1113,20 @@ namespace Omicron.SapAdapter.Services.Constants
             "Y",
             "1",
         };
+
+        /// <summary>
+        /// Gets the Default Filters.
+        /// </summary>
+        /// <value>
+        /// default filters.
+        /// </value>
+        public static List<string> DefaultFilters { get; } =
+        [
+            "mixto",
+            "maquila",
+            "muestra",
+            "paquetes",
+            "omigenomics",
+        ];
     }
 }
