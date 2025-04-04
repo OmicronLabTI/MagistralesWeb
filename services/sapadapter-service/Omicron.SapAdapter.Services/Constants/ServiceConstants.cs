@@ -866,6 +866,14 @@ namespace Omicron.SapAdapter.Services.Constants
         public static string NoAvaiableBoxesError => "El almacén no cuenta con lotes disponibles";
 
         /// <summary>
+        /// Gets Pedido.
+        /// </summary>
+        /// <value>
+        /// String Pedido.
+        /// </value>
+        public static string Description => "Pedido {0}";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -1128,5 +1136,16 @@ namespace Omicron.SapAdapter.Services.Constants
             "paquetes",
             "omigenomics",
         ];
+
+        /// <summary>
+        /// Gets the descriptions.
+        /// </summary>
+        /// <value>
+        /// descriptions.
+        /// </value>
+        public static Dictionary<string, string> Descriptions { get; } = new Dictionary<string, string>
+        {
+            { "De Linea", "De Línea" },
+        };
     }
 }

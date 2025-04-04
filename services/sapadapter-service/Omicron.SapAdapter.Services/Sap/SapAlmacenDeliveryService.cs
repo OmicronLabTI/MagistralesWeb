@@ -381,6 +381,14 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var classification = await this.sapDao.GetClassifications(details.Select(x => x.TypeOrder).Distinct().ToList());
 
+            classification.ToList().ForEach(x =>
+            {
+                if (ServiceConstants.Descriptions.ContainsKey(x.Description))
+                {
+                    x.Description = ServiceConstants.Descriptions[x.Description];
+                }
+            });
+
             saleOrders.ForEach(s =>
             {
                 var userOrder = userOrders.GetSaleOrderHeader(s.DocNum.ToString());
@@ -396,7 +404,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Pieces = localDetails.Sum(y => (int)y.Detalles.Quantity),
                     Products = localDetails.Count,
                     Status = ServiceConstants.Almacenado,
-                    SaleOrderType = !string.IsNullOrEmpty(mixt) ? mixt : classification.Where(x => x.Value == s.OrderType).Select(x => x.Description).FirstOrDefault(),
+                    SaleOrderType = !string.IsNullOrEmpty(mixt) ? string.Format(ServiceConstants.Description, mixt) : string.Format(ServiceConstants.Description, classification.Where(x => x.Value == s.OrderType).Select(x => x.Description).FirstOrDefault()),
                     IsPackage = s.IsPackage == ServiceConstants.IsPackage,
                     IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(s.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(s.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(s.IsSecondary)),
                 });
