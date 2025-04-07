@@ -157,8 +157,17 @@ namespace Omicron.Catalogos.Services.Catalogs
             var matchingWarehouses = exceptions
                 .Where(warehouse =>
                 {
-                    var products = NormalizeAndToUpper(warehouse.AppliesToProducts).Split(',').Select(item => item.Trim()).ToList();
-                    var exceptionProducts = NormalizeAndToUpper(warehouse.Exceptions).Split(',').Select(item => item.Trim()).ToList();
+                    var products = NormalizeAndToUpper(warehouse.AppliesToProducts)
+                        .Split(',')
+                        .Select(item => item.Trim())
+                        .Where(item => !string.IsNullOrWhiteSpace(item))
+                        .ToList();
+
+                    var exceptionProducts = NormalizeAndToUpper(warehouse.Exceptions)
+                        .Split(',')
+                        .Select(item => item.Trim())
+                        .Where(item => !string.IsNullOrWhiteSpace(item))
+                        .ToList();
 
                     return products.Exists(product => exceptionProducts.Contains(product));
                 })
