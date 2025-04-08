@@ -57,7 +57,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="listIds">the list of users.</param>
         /// <param name="status">the list of status.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<UserOrderModel>> GetUserOrderByUserIdAndStatusAndTecnic(List<string> listIds, List<string>  status);
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByUserIdAndStatusAndTecnic(List<string> listIds, List<string> status);
 
         /// <summary>
         /// Returns the user order by user id.
@@ -254,7 +254,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="statusPending">The status for pending.</param>
         /// <param name="secondStatus">The second status.</param>
         /// <returns>the data.</returns>
-        Task<List<UserOrderModel>>GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending, string secondStatus);
+        Task<List<UserOrderModel>> GetSaleOrderForAlmacen(string status, DateTime dateToLook, List<string> statusPending, string secondStatus);
 
         /// <summary>
         /// Gets the orders for almance.
@@ -305,6 +305,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceType(List<string> types, DateTime startDate, DateTime endDate, List<string> statusToSearch);
 
         /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
+        /// <param name="types">the list of users.</param>
+        /// <param name="invoiceId">invoiceId.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, int invoiceId);
+
+        /// <summary>
         /// Get the data by finalized date.
         /// </summary>
         /// <param name="init">the date.</param>
@@ -318,7 +326,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="deliveryIds">the deliveryies.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByDeliveryId(List<int> deliveryIds);
-        
+
         /// Get all custom component lists for product id and name.
         /// </summary>
         /// <param name="productId">Te product id.</param>
@@ -332,7 +340,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="customComponentList">Custom list to insert.</param>
         /// <returns>Operation result</returns>
         Task<bool> DeleteCustomComponentList(CustomComponentListModel customComponentList);
-        
+
         /// <summary>
         /// Delete components of custom list.
         /// </summary>

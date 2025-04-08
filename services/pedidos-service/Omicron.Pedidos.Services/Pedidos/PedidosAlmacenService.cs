@@ -201,11 +201,23 @@ namespace Omicron.Pedidos.Services.Pedidos
             var (startDate, endDate) = this.GetyStartDateAndEndDateParameterWithFormat(parameters);
             var arrayStatus = parameters.ContainsKey(ServiceConstants.Status) ? parameters[ServiceConstants.Status].Split(",").ToList() : ServiceConstants.StatusLocal;
             var type = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.Local.ToLower());
-            var userOrderByType = await this.pedidosDao.GetUserOrderByInvoiceType(
-                [type.ToLower()],
-                startDate,
-                endDate,
-                arrayStatus);
+            var stringInvoiceId = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Chips, string.Empty);
+            var isValidId = int.TryParse(stringInvoiceId, out int invoiceId);
+
+            IEnumerable<UserOrderModel> userOrderByType;
+
+            if (isValidId)
+            {
+                userOrderByType = await this.pedidosDao.GetUserOrderByInvoiceTypeAndId([type.ToLower()], invoiceId);
+            }
+            else
+            {
+                userOrderByType = await this.pedidosDao.GetUserOrderByInvoiceType(
+                    [type.ToLower()],
+                    startDate,
+                    endDate,
+                    arrayStatus);
+            }
 
             var orderToReturn = userOrderByType
                 .DistinctBy(y => y.InvoiceId)
