@@ -72,9 +72,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetDelivery(Dictionary<string, string> parameters)
         {
-            var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypes);
-            var types = typesString.Split(",").ToList();
-
+            var (sapClasification, types) = await ServiceUtils.GetTypesForFilters(parameters, this.sapDao);
             var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
                             .ToUniversalDateTime().Date;
 

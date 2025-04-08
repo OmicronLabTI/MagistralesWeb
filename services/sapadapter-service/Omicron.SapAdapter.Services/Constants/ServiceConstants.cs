@@ -518,21 +518,6 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypes = "MG,LN,MQ,paquetes,omigenomics";
-
-        /// <summary>
-        /// all types.
-        /// </summary>
-        public const string AllTypesByDoctor = "magistral,mixto,linea,maquila,paquetes,omigenomics";
-
-        /// <summary>
-        /// all types.
-        /// </summary>
-        public const string AllTypesByDxp = "magistral,mixto,linea,maquila,paquetes,omigenomics";
-
-        /// <summary>
-        /// all types.
-        /// </summary>
         public const string AllStatus = "Recibir,Pendiente,Back Order,Cancelado";
 
         /// <summary>
@@ -1135,6 +1120,18 @@ namespace Omicron.SapAdapter.Services.Constants
             "muestra",
             "paquetes",
             "omigenomics",
+        ];
+
+        /// <summary>
+        /// Gets the Default Filters.
+        /// </summary>
+        /// <value>
+        /// default filters.
+        /// </value>
+        public static List<string> InvalidClassifications { get; } =
+        [
+            "MQ",
+            "MX",
         ];
 
         /// <summary>
