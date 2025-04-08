@@ -74,9 +74,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> GetOrders(Dictionary<string, string> parameters)
         {
-            var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypes);
-            var types = typesString.Split(",").ToList();
-
+            var (sapClasification, types) = await ServiceUtils.GetTypesForFilters(parameters, this.sapDao);
             var listStatus = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Status, ServiceConstants.AllStatus);
             var status = listStatus.Split(",").ToList();
 
@@ -107,7 +105,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var orders = this.GetSapLinesToLookByStatus(sapOrders, userOrders, lineProducts.Item1, status);
             orders = await this.GetSapLinesToLookByChips(orders, parameters);
             var totalFilter = orders.Select(x => x.DocNum).Distinct().ToList().Count;
-            var sapClasification = await this.sapDao.GetClassifications(types.Where(x => !ServiceConstants.DefaultFilters.Contains(x)).ToList());
             var listToReturn = this.GetOrdersToReturn(userOrders, orders, lineProducts.Item1, parameters, sapClasification);
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
@@ -387,7 +384,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var doctor = doctorData.FirstOrDefault(x => x.AddressId == order.DeliveryAddressId);
             doctor ??= new DoctorDeliveryAddressModel { Contact = order.Cliente };
 
-            var sapClasification = await this.sapDao.GetClassifications([order.TypeOrder]);
+            var sapClasification = await this.sapDao.GetClassificationsByValue([order.TypeOrder]);
             var productType = ServiceUtils.GetOrderTypeDescription([order.TypeOrder], sapClasification);
             var saleHeader = new AlmacenSalesHeaderModel
             {
@@ -566,7 +563,7 @@ namespace Omicron.SapAdapter.Services.Sap
             List<CompleteAlmacenOrderModel> sapOrders,
             List<LineProductsModel> lineProducts,
             Dictionary<string, string> parameters,
-            IEnumerable<LblContainerModel> sapClassifications)
+            IEnumerable<ClassificationsModel> sapClassifications)
         {
             var sapOrdersToProcess = this.GetOrdersToProcess(sapOrders, parameters);
             var salesIds = sapOrdersToProcess.Select(x => x.DocNum).Distinct().ToList();

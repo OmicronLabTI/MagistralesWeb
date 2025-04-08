@@ -270,7 +270,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var typeOrders = sapDelivery.Select(x => x.TypeOrder).Distinct().ToList();
             typeOrders.AddRange(sapSaleOrder.Select(x => x.OrderType));
-            var sapClasification = await this.sapDao.GetClassifications(typeOrders);
+            var sapClasification = await this.sapDao.GetClassificationsByValue(typeOrders);
 
             var objectCardOrder = new ParamentsCards
             {

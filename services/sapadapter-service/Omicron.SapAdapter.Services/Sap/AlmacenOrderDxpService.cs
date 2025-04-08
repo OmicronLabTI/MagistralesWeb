@@ -74,8 +74,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> SearchAlmacenOrdersByDxpId(Dictionary<string, string> parameters)
         {
-            var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypesByDxp);
-            var types = typesString.Split(",").ToList();
+            var (sapClasification, types) = await ServiceUtils.GetTypesForFilters(parameters, this.sapDao);
 
             var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
                             .ToUniversalDateTime().Date;
@@ -94,8 +93,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapOrders = await this.GetSapOrders(userOrders, startDate, endDate, lineProductsTuple, types);
             var ordersByFilter = await this.GetSapOrdersToLookByDoctor(sapOrders.Item1, parameters);
             var totalFilter = ordersByFilter.Select(x => x.DocNumDxp).Distinct().ToList().Count;
-
-            var sapClasification = await this.sapDao.GetClassifications(types.Where(x => !ServiceConstants.DefaultFilters.Contains(x)).ToList());
             var listToReturn = this.GetCardOrdersToReturn(ordersByFilter, parameters, sapOrders.Item2, sapOrders.Item3, sapClasification);
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
@@ -191,7 +188,7 @@ namespace Omicron.SapAdapter.Services.Sap
             Dictionary<string, string> parameters,
             List<string> orderWithPackages,
             List<string> orderWithOmigenomics,
-            IEnumerable<LblContainerModel> classifications)
+            IEnumerable<ClassificationsModel> classifications)
         {
             var dxpIds = sapOrders.Select(x => x.DocNumDxp).Distinct().OrderBy(x => x).ToList();
             dxpIds = ServiceShared.GetOffsetLimit(dxpIds, parameters);

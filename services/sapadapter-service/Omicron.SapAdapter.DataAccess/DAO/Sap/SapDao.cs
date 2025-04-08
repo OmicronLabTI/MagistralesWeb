@@ -18,6 +18,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using Omicron.SapAdapter.DataAccess.Extensions;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
@@ -824,7 +825,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var query = this.GetDeliveryJoinDoctorQuery().Where(x => docuNums.Contains(x.DocNum));
             return (await this.RetryQuery(query)).ToList();
         }
-        
+
         /// <inheritdoc/>
         public async Task<List<DeliverModel>> GetDeliveriesByDocNums(List<int> docuNums)
         {
@@ -1477,6 +1478,43 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await query.ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ClassificationsModel>> GetAllClassifications(List<string> invalidClassifications)
+        {
+            var query = this.databaseContext.LblContainerModel
+                .Where(classification =>
+                    classification.FieldId == 24 &&
+                    (classification.TableId == "ADOC" || classification.TableId == "OCIN") &&
+                    !invalidClassifications.Contains(classification.Value))
+                .Select(classification => new ClassificationsModel
+                {
+                    Value = classification.Value,
+                    Description = classification.Description,
+                })
+                .Distinct();
+
+            return await query.ToListAsync();
+        }
+
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ClassificationsModel>> GetClassificationsByValue(List<string> classificationsValues)
+        {
+            var query = this.databaseContext.LblContainerModel
+                .Where(classification =>
+                    classification.FieldId == 24 &&
+                    (classification.TableId == "ADOC" || classification.TableId == "OCIN") &&
+                    classificationsValues.Contains(classification.Value))
+                .Select(classification => new ClassificationsModel
+                {
+                    Value = classification.Value,
+                    Description = classification.Description,
+                })
+                .Distinct();
+
+            return await query.ToListAsync();
+        }
+
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
         {
             return from invoice in this.databaseContext.InvoiceHeaderModel
@@ -1700,41 +1738,41 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         private IQueryable<DeliverModel> GetDeliveries()
         {
             return (from delivery in this.databaseContext.DeliverModel
-                        join detail in this.databaseContext.DeliveryDetailModel on delivery.PedidoId equals detail.DeliveryId
-                        join order in this.databaseContext.OrderModel on detail.BaseEntry equals order.PedidoId
-                        join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
-                        join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
-                        new
-                        {
-                            DoctorId = delivery.CardCode,
-                            Address = delivery.ShippingAddressName
-                        }
-                        equals
-                        new
-                        {
-                            DoctorId = doctordet.CardCode,
-                            Address = doctordet.NickName
-                        }
-                        into detalleDireccion
-                        from dop in detalleDireccion.DefaultIfEmpty()
-                        select new DeliverModel
-                        {
-                            Address = delivery.Address,
-                            ShippingAddressName = delivery.ShippingAddressName,
-                            Canceled = delivery.Canceled,
-                            CardCode = delivery.CardCode,
-                            Cliente = dop.Address2 ?? string.Empty,
-                            DeliveryStatus = delivery.DeliveryStatus,
-                            DocNum = delivery.DocNum,
-                            FechaInicio = delivery.FechaInicio,
-                            Medico = doctor.AliasName,
-                            PedidoId = delivery.PedidoId,
-                            TypeOrder = order.OrderType,
-                            IsPackage = delivery.IsPackage,
-                            DocNumDxp = delivery.DocNumDxp,
-                            IsOmigenomics = delivery.IsOmigenomics,
-                            IsSecondary = delivery.IsSecondary,
-                        });
+                    join detail in this.databaseContext.DeliveryDetailModel on delivery.PedidoId equals detail.DeliveryId
+                    join order in this.databaseContext.OrderModel on detail.BaseEntry equals order.PedidoId
+                    join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
+                    join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                    new
+                    {
+                        DoctorId = delivery.CardCode,
+                        Address = delivery.ShippingAddressName
+                    }
+                    equals
+                    new
+                    {
+                        DoctorId = doctordet.CardCode,
+                        Address = doctordet.NickName
+                    }
+                    into detalleDireccion
+                    from dop in detalleDireccion.DefaultIfEmpty()
+                    select new DeliverModel
+                    {
+                        Address = delivery.Address,
+                        ShippingAddressName = delivery.ShippingAddressName,
+                        Canceled = delivery.Canceled,
+                        CardCode = delivery.CardCode,
+                        Cliente = dop.Address2 ?? string.Empty,
+                        DeliveryStatus = delivery.DeliveryStatus,
+                        DocNum = delivery.DocNum,
+                        FechaInicio = delivery.FechaInicio,
+                        Medico = doctor.AliasName,
+                        PedidoId = delivery.PedidoId,
+                        TypeOrder = order.OrderType,
+                        IsPackage = delivery.IsPackage,
+                        DocNumDxp = delivery.DocNumDxp,
+                        IsOmigenomics = delivery.IsOmigenomics,
+                        IsSecondary = delivery.IsSecondary,
+                    });
         }
 
         private IQueryable<CompleteOrderModelWrap> GetCompleteOrderyJoinDoctorQueryWrap()

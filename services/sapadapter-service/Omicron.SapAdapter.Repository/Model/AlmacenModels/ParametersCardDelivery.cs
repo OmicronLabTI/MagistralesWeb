@@ -84,6 +84,6 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets classifications order types.
         /// </summary>
         /// <value>Classifications.</value>
-        public List<LblContainerModel> Classifications { get; set; }
+        public List<ClassificationsModel> Classifications { get; set; }
     }
 }

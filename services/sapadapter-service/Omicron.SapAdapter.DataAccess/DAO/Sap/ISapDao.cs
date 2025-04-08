@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 
     /// <summary>
     /// the IsapDao.
@@ -598,6 +599,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="classifications"> classifications collection to search. </param>
         /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
         Task<IEnumerable<LblContainerModel>> GetClassifications(List<string> classifications);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<IEnumerable<ClassificationsModel>> GetAllClassifications(List<string> invalidClassifications);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="classifications"> classifications collection to search. </param>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<IEnumerable<ClassificationsModel>> GetClassificationsByValue(List<string> classificationsValues);
 
         /// <summary>
         /// Gets the deliveries by invoice.
