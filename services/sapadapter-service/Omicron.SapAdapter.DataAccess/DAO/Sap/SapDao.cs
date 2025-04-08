@@ -623,6 +623,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         from dop in detalleDireccion.DefaultIfEmpty()
                         join detail in this.databaseContext.DetallePedido on order.DocNum equals detail.PedidoId
                         join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
+                        join firm in this.databaseContext.ProductFirmModel on product.ProductFirmCode equals firm.ProductFirmCode
+                          into productFirm
+                        from fm in productFirm.DefaultIfEmpty()
                         where product.IsWorkableProduct == "Y"
                         select new CompleteAlmacenOrderModel
                         {
@@ -637,7 +640,23 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsPackage = order.IsPackage,
                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                             IsSecondary = order.IsSecondary,
-                            Detalles = detail,
+                            Detalles = new DetallePedidoModel
+                             {
+                                 PedidoId = detail.PedidoId,
+                                 DetalleId = detail.DetalleId,
+                                 ProductoId = detail.ProductoId,
+                                 Description = detail.Description,
+                                 Quantity = detail.Quantity,
+                                 Label = detail.Label,
+                                 Container = detail.Container,
+                                 DestinyAddress = detail.DestinyAddress,
+                                 HasRecipe = detail.HasRecipe,
+                                 LineStatus = detail.LineStatus,
+                                 DocDate = detail.DocDate,
+                                 WhsCode = detail.WhsCode,
+                                 CatalogGroup = string.Empty,
+                                 ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                             },
                         };
             return await this.RetryQuery(query);
         }
