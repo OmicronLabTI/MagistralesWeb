@@ -557,7 +557,7 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="types">Types.</param>
         /// <param name="classifications">Clñassifications.</param>
         /// <returns>Classification Description.</returns>
-        public static string GetOrderTypeDescription(List<string> types, IEnumerable<LblContainerModel> classifications)
+        public static string GetOrderTypeDescription(List<string> types, IEnumerable<ClassificationsModel> classifications)
         {
             if (types.Count > 1)
             {
@@ -570,6 +570,33 @@ namespace Omicron.SapAdapter.Services.Utils
             }
 
             return classifications.First(x => types.First() == x.Value)?.Description;
+        }
+
+        /// <summary>
+        /// GetTypesForFilters.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <param name="sapDao">sapDao.</param>
+        /// <returns>Tuple with classifications and types.</returns>
+        public static async Task<Tuple<IEnumerable<ClassificationsModel>, List<string>>> GetTypesForFilters(
+            Dictionary<string, string> parameters,
+            ISapDao sapDao)
+        {
+            var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, string.Empty);
+            var isAllClassifications = string.IsNullOrEmpty(typesString);
+            var types = new List<string>();
+
+            if (!isAllClassifications)
+            {
+                types = typesString.Split(",").ToList();
+                var classifications = await sapDao.GetClassificationsByValue(types);
+                return new Tuple<IEnumerable<ClassificationsModel>, List<string>>(classifications, types);
+            }
+
+            var allClassifications = await sapDao.GetAllClassifications(ServiceConstants.InvalidClassifications);
+            types = allClassifications.Select(clas => clas.Value).Distinct().ToList();
+            types.AddRange(ServiceConstants.DefaultFilters);
+            return new Tuple<IEnumerable<ClassificationsModel>, List<string>>(allClassifications, types);
         }
 
         /// <summary>
