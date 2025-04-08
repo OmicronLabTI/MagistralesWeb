@@ -523,6 +523,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// the filter for orders.
         /// </summary>
+        public const string Chips = "chips";
+
+        /// <summary>
+        /// the filter for orders.
+        /// </summary>
         public const string Qfb = "qfb";
 
         /// <summary>
