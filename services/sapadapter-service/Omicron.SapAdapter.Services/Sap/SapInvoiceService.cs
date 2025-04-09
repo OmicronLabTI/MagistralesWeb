@@ -851,18 +851,16 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<List<string>> GetBatchesByDelivery(int delivery, string itemCode, List<AlmacenBatchModel> batchName)
         {
             var batchTransacion = await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, delivery);
-            var lastBatch = batchTransacion == null || !batchTransacion.Any() ? 0 : batchTransacion.Last().LogEntry;
-            var warehouseCode = batchName.Any() ? batchName.FirstOrDefault().WarehouseCode : ServiceConstants.PT;
-            var listComponents = new List<CompleteDetalleFormulaModel>
-            {
-                new CompleteDetalleFormulaModel { ProductId = itemCode, Warehouse = warehouseCode },
-            };
-
-            var validBatches = (await this.sapDao.GetValidBatches(listComponents)).ToList();
-
+            var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(batchTransacion.Select(x => x.LogEntry).ToList())).ToList();
+            var tuple = batchesQty.Select(x => (x.SysNumber, x.ItemCode)).ToList();
+            var validBatches = (await this.sapDao.GetSelectedBatches(tuple)).ToList();
             var listToReturn = validBatches
-                .Where(x => batchName.Any(y => y.BatchNumber == x.DistNumber && y.WarehouseCode == x.WarehouseCode))
-                .Select(z => $"{z.WarehouseCode} | {z.DistNumber} | {(int)batchName.GetBatch(z.DistNumber).BatchQty} pz | Cad: {z.FechaExp}")
+                .Where(x => batchName.Any(y => y.BatchNumber == x.DistNumber))
+                .Select(z =>
+                {
+                    var selectedBatch = batchName.Where(x => x.BatchNumber == z.DistNumber).First();
+                    return $"{selectedBatch.WarehouseCode ?? ServiceConstants.PT} | {z.DistNumber} | {(int)batchName.GetBatch(z.DistNumber).BatchQty} pz | Cad: {z.FechaExp}";
+                })
                 .ToList();
 
             return listToReturn;

@@ -423,10 +423,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var baseDelivery = deliveryDetails.FirstOrDefault().DeliveryId;
             var prodOrders = (await this.sapDao.GetFabOrderBySalesOrderId(new List<int> { saleId })).ToList();
             var batchesQty = await this.GetBatchesBySale(baseDelivery, saleId, deliveryDetails.Select(x => x.ProductoId).ToList());
-
-            var warehouseSearch = new List<CompleteDetalleFormulaModel>();
-            warehouseSearch = deliveryDetails.Select(x => new CompleteDetalleFormulaModel { ProductId = x.ProductoId, Warehouse = x.WarehouseCode }).ToList();
-            var batches = (await this.sapDao.GetValidBatches(warehouseSearch)).ToList();
+            var tuple = batchesQty.Select(x => (x.SysNumber, x.ItemCode)).ToList();
+            var batches = (await this.sapDao.GetSelectedBatches(tuple)).ToList();
             foreach (var order in deliveryDetails)
             {
                 order.BaseEntry ??= 0;
@@ -492,16 +490,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<List<BatchesTransactionQtyModel>> GetBatchesBySale(int deliveryId, int saleId, List<string> itemCode)
         {
-            var batchesBySale = (await this.sapDao.GetBatchesTransactionByOrderItem(new List<int> { deliveryId })).ToList();
+            var batchesBySale = (await this.sapDao.GetBatchesTransactionByOrderAndItemCodes(new List<int> { deliveryId }, itemCode, saleId)).ToList();
             batchesBySale = batchesBySale.Where(x => ServiceShared.CalculateAnd(itemCode.Contains(x.ItemCode), x.BaseEntry == saleId)).ToList();
-
-            var listLastTransactions = batchesBySale
-                .GroupBy(x => x.ItemCode)
-                .Where(a => a.Any())
-                .Select(y => y.OrderBy(z => z.LogEntry).LastOrDefault()).ToList();
-
-            listLastTransactions = listLastTransactions.Where(x => x != null).ToList();
-            var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(listLastTransactions.Select(x => x.LogEntry).ToList())).ToList();
+            var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(batchesBySale.Select(x => x.LogEntry).ToList())).ToList();
             return batchesQty;
         }
 
@@ -533,7 +524,8 @@ namespace Omicron.SapAdapter.Services.Sap
         private List<string> GetBatchesByDelivery(string itemCode, List<BatchesTransactionQtyModel> batchTrans, List<CompleteBatchesJoinModel> validBatches, List<AlmacenBatchModel> batchName)
         {
             var batchTransLocal = batchTrans.Where(x => x.ItemCode == itemCode).ToList();
-            var batchesToLoop = validBatches.Where(x => ServiceShared.CalculateAnd(batchTransLocal.Any(y => y.SysNumber == x.SysNumber), x.ItemCode == itemCode)).ToList();
+            var validBatchesByItemcode = validBatches.Where(x => x.ItemCode == itemCode).ToList();
+            var batchesToLoop = validBatchesByItemcode.Where(x => ServiceShared.CalculateAnd(batchTransLocal.Any(y => y.SysNumber == x.SysNumber))).ToList();
 
             var listToReturn = batchesToLoop
                 .Select(z => $"{batchName.GetBatch(z.DistNumber).WarehouseCode ?? "PT"} | {z.DistNumber} | {(int)batchName.GetBatch(z.DistNumber).BatchQty} pz | Cad: {z.FechaExp}")

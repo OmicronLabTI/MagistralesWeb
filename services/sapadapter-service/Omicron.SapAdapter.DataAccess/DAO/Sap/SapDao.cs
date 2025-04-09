@@ -478,6 +478,33 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return listToReturn;
         }
 
+        /// <summary>
+        /// gets the valid batches by item.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="warehouse">the warehouse.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetSelectedBatches(List<(int sysNumber, string itemCode)> selectedBatches)
+        {
+            var predicate = PredicateBuilder.False<Batches>();
+            foreach (var (sysNumber, itemCode) in selectedBatches)
+            {
+                predicate = predicate.Or(b => b.SysNumber == sysNumber && b.ItemCode == itemCode);
+            }
+            var batches = await this.databaseContext.Batches
+                .Where(predicate)
+                .ToListAsync();
+
+            return batches.Select(batch => new CompleteBatchesJoinModel
+            {
+                DistNumber = batch.DistNumber ?? string.Empty,
+                SysNumber = batch.SysNumber,
+                FechaExp = !batch.ExpDate.HasValue ? null : batch.ExpDate.Value.ToString("dd/MM/yyyy"),
+                FechaExpDateTime = batch.ExpDate,
+                ItemCode = batch.ItemCode,
+            });
+        }
+
         /// <inheritdoc/>
         public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(string itemCode, int orderId)
         {
@@ -488,6 +515,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId)
         {
             return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum)).AsNoTracking());
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderAndItemCodes(List<int> orderId, List<string> itemCodes, int saleId)
+        {
+            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum) && itemCodes.Contains(x.ItemCode) && x.BaseEntry == saleId).AsNoTracking());
         }
 
         /// <summary>
@@ -641,22 +674,22 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                             IsSecondary = order.IsSecondary,
                             Detalles = new DetallePedidoModel
-                             {
-                                 PedidoId = detail.PedidoId,
-                                 DetalleId = detail.DetalleId,
-                                 ProductoId = detail.ProductoId,
-                                 Description = detail.Description,
-                                 Quantity = detail.Quantity,
-                                 Label = detail.Label,
-                                 Container = detail.Container,
-                                 DestinyAddress = detail.DestinyAddress,
-                                 HasRecipe = detail.HasRecipe,
-                                 LineStatus = detail.LineStatus,
-                                 DocDate = detail.DocDate,
-                                 WhsCode = detail.WhsCode,
-                                 CatalogGroup = string.Empty,
-                                 ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
-                             },
+                            {
+                                PedidoId = detail.PedidoId,
+                                DetalleId = detail.DetalleId,
+                                ProductoId = detail.ProductoId,
+                                Description = detail.Description,
+                                Quantity = detail.Quantity,
+                                Label = detail.Label,
+                                Container = detail.Container,
+                                DestinyAddress = detail.DestinyAddress,
+                                HasRecipe = detail.HasRecipe,
+                                LineStatus = detail.LineStatus,
+                                DocDate = detail.DocDate,
+                                WhsCode = detail.WhsCode,
+                                CatalogGroup = string.Empty,
+                                ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                            },
                         };
             return await this.RetryQuery(query);
         }
