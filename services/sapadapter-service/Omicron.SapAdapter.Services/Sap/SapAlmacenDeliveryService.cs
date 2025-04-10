@@ -231,13 +231,20 @@ namespace Omicron.SapAdapter.Services.Sap
             deliveryHeaders = deliveryHeaders.OrderByDescending(x => x.DocNum).ToList();
             var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
 
-            deliveryHeaders = this.GetOrdersToLook(deliveryHeaders, parameters);
+            var filter = ServiceConstants.Filter
+                .Where(x => types.Exists(type => x.Key.Contains(type.ToUpper())))
+                .Select(x => x.Value);
 
-            deliveryHeaders = deliveryHeaders.Where(x => types.Contains(x.TypeOrder)).ToList();
+            deliveryHeaders = deliveryHeaders
+                .Where(x => types.Contains(x.TypeOrder) ||
+                filter.Contains(x.TypeOrder))
+                .ToList();
 
             var pedidos = deliveryHeaders.Select(x => x.PedidoId);
 
             deliveryToReturn = deliveryDetailDb.Where(x => pedidos.Contains(x.DeliveryId)).OrderByDescending(x => x.DeliveryId).ToList();
+
+            deliveryHeaders = this.GetOrdersToLook(deliveryHeaders, parameters);
 
             return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, invoices.ToList());
         }
