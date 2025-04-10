@@ -223,7 +223,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var packageDeliveries = deliveryHeaders.Where(x => x.IsPackage == ServiceConstants.IsPackage);
             var omigenomicsDeliveries = deliveryHeaders.Where(del => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(del.IsSecondary)));
 
-            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, maquilaDeliverys.ToList(), ServiceConstants.OrderTypeMQ);
+            deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, maquilaDeliverys.ToList(), ServiceConstants.Maquila);
             deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, packageDeliveries.ToList(), ServiceConstants.Paquetes);
             deliveryHeaders = this.AddSpecialTypes(types, deliveryDetailDb.ToList(), deliveryToReturn, deliveryHeaders, omigenomicsDeliveries.ToList(), ServiceConstants.OmigenomicsGroup);
 
