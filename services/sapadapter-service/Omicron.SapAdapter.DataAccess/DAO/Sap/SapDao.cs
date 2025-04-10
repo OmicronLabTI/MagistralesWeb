@@ -1465,6 +1465,17 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<InvoiceHeaderModel>> GetClosedInvoicesByDocNum(List<int> docNums)
+        {
+            return await this.databaseContext.InvoiceHeaderModel
+                .Where(x =>
+                    docNums.Contains(x.DocNum) &&
+                    x.InvoiceStatus == "C" &&
+                    x.Canceled == "N")
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailJoinProductByInvoicesIds(List<int> invoicesIds)
         {
 

@@ -222,5 +222,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoicesByIds(invoicesIds));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetClosedInvoicesByDocNum(List<int> docNums)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetClosedInvoicesByDocNum(docNums));
+        }
     }
 }
