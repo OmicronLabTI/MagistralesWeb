@@ -446,8 +446,7 @@ namespace Omicron.SapAdapter.Services.Sap
             List<UserOrderModel> userOrders,
             DateTime startDate,
             DateTime endDate,
-            Tuple<List<LineProductsModel>,
-            List<int>> lineProductTuple,
+            Tuple<List<LineProductsModel>, List<int>> lineProductTuple,
             Dictionary<string, string> parameters)
         {
             var parametersWhs = (await ServiceUtils.GetParams([ServiceConstants.WareHouseToExclude], this.catalogsService)).Select(x => x.Value).ToList();
@@ -565,8 +564,7 @@ namespace Omicron.SapAdapter.Services.Sap
             Dictionary<string, string> parameters,
             IEnumerable<ClassificationsModel> sapClassifications)
         {
-            var sapOrdersToProcess = this.GetOrdersToProcess(sapOrders, parameters);
-            var salesIds = sapOrdersToProcess.Select(x => x.DocNum).Distinct().ToList();
+            var salesIds = this.GetOrdersToProcess(sapOrders.Select(x => x.DocNum).Distinct().ToList(), parameters);
             var listToReturn = new AlmacenOrdersModel
             {
                 SalesOrders = new List<SalesModel>(),
@@ -576,7 +574,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             foreach (var so in salesIds)
             {
-                var orders = sapOrdersToProcess.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
+                var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 
                 var userOrder = userOrders.GetSaleOrderHeader(so.ToString());
@@ -625,15 +623,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <summary>
         /// Gets the orders to process.
         /// </summary>
-        /// <param name="sapOrders">the ordes.</param>
+        /// <param name="docEntries">the docEntries.</param>
         /// <param name="parameters">the parameters.</param>
         /// <returns>the data.</returns>
-        private List<CompleteAlmacenOrderModel> GetOrdersToProcess(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
+        private List<int> GetOrdersToProcess(List<int> docEntries, Dictionary<string, string> parameters)
         {
             var offset = int.TryParse(ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0"), out int offsetNumber) ? offsetNumber : 0;
             var limit = int.TryParse(ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1"), out int limitNumber) ? limitNumber : 1;
 
-            return sapOrders.OrderBy(x => x.DocNum)
+            return docEntries.OrderBy(x => x)
                             .Skip(offset)
                             .Take(limit)
                             .ToList();
