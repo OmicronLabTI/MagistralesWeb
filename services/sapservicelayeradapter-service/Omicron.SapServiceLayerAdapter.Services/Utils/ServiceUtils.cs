@@ -186,5 +186,18 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
         {
             return validation ? value : defaultValue;
         }
+
+        /// <summary>
+        /// AddElementToDictionary.
+        /// </summary>
+        /// <param name="dictionary">Dictionary.</param>
+        /// <param name="key">Key.</param>
+        /// <param name="value">value.</param>
+        public static void AddElementToDictionary(Dictionary<int, string> dictionary, int key, string value)
+        {
+            dictionary[key] = dictionary.TryGetValue(key, out string existingMessage)
+                ? string.Format(ServiceConstants.DictionaryValueFormat, existingMessage, value)
+                : value;
+        }
     }
 }
