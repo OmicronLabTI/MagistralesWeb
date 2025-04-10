@@ -42,7 +42,6 @@
             ALTER TABLE usersorders ALTER COLUMN reassignmentdate TYPE timestamp;
         </rollback>
     </changeSet>
-
     <changeSet id="changelog-1.2" author="d.vargas">
         <sql endDelimiter=";">
             ALTER TABLE boxes ALTER COLUMN registerdate TYPE timestamp;
@@ -81,6 +80,18 @@
             ALTER TABLE usersorders ALTER COLUMN assignmentdate TYPE timestamptz;
             ALTER TABLE usersorders ALTER COLUMN packingdate TYPE timestamptz;
             ALTER TABLE usersorders ALTER COLUMN reassignmentdate TYPE timestamptz;
+        </rollback>
+    </changeSet>
+    <changeSet id="changelog-1.3" author="jarturoep">
+        <sql endDelimiter=";">
+            ALTER TABLE controlshipmenttrackingnumber ALTER COLUMN sentdate TYPE timestamp;
+            ALTER TABLE controlshipmenttrackingnumber ALTER COLUMN creationdate TYPE timestamp;
+            ALTER TABLE controlshipmenttrackingnumber ALTER COLUMN updatedate TYPE timestamp;
+        </sql>
+        <rollback>
+            ALTER TABLE controlshipmenttrackingnumber ALTER COLUMN sentdate TYPE timestamptz;
+            ALTER TABLE controlshipmenttrackingnumber ALTER COLUMN creationdate TYPE timestamptz;
+            ALTER TABLE controlshipmenttrackingnumber ALTER COLUMN updatedate TYPE timestamptz;
         </rollback>
     </changeSet>
 </databaseChangeLog>

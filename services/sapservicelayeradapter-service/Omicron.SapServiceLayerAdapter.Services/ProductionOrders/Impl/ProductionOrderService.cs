@@ -30,48 +30,60 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         /// <inheritdoc/>
         public async Task<ResultModel> FinishOrder(List<CloseProductionOrderDto> productionOrders)
         {
+            var logBase = $"SapServiceLayerAdapter - Finish Order - {Guid.NewGuid():D}";
             var results = new Dictionary<int, string>();
             foreach (var productionOrderConfig in productionOrders)
             {
                 var productionOrderId = productionOrderConfig.OrderId;
                 try
                 {
-                    this.logger.Information($"Trying to finish production order {productionOrderId}");
+                    this.logger.Information($"{logBase} - Trying to finish production order {productionOrderId}");
                     var productionOrder = await this.GetFromServiceLayer<ProductionOrderDto>(string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderId), $"La orden de produción {productionOrderId} no existe.");
                     if (productionOrder.ProductionOrderStatus.Equals(ServiceConstants.ProductionOrderClosed))
                     {
+                        this.logger.Information($"{logBase} - Production order is closed - {productionOrderId}");
                         continue;
                     }
 
                     if (!productionOrder.ProductionOrderStatus.Equals(ServiceConstants.ProductionOrderReleased))
                     {
-                        results.Add(productionOrderId, string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderId));
+                        this.logger.Information($"{logBase} - Production order not released - {productionOrderId}");
+                        ServiceUtils.AddElementToDictionary(results, productionOrderId, string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderId));
+                        continue;
                     }
 
-                    this.logger.Information($"Validating production order {productionOrderId}");
+                    this.logger.Information($"{logBase} - Validate required quantity for retroactive issues - {productionOrderId}");
                     await this.ValidateRequiredQuantityForRetroactiveIssues(productionOrder);
+
+                    this.logger.Information($"{logBase} - Validating new batches - {productionOrderId}");
                     await this.ValidateNewBatches(productionOrder.ItemNo, productionOrderConfig.Batches);
-                    await this.CreateInventoryGenExit(productionOrder, productionOrderId);
+
+                    this.logger.Information($"{logBase} - Create inventory gen exit - {productionOrderId}");
+                    await this.CreateInventoryGenExit(productionOrder, productionOrderId, logBase);
 
                     var productionOrderUpdated = await this.GetFromServiceLayer<ProductionOrderDto>(string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderId), $"La orden de produción {productionOrderId} no existe.");
-                    await this.CreateReceiptFromProductionOrderId(productionOrderId, productionOrderConfig, productionOrderUpdated);
-                    await this.CloseProductionOrder(productionOrderId, productionOrderUpdated);
+
+                    this.logger.Information($"{logBase} - Create receipt from production order id - {productionOrderId}");
+                    await this.CreateReceiptFromProductionOrderId(productionOrderId, productionOrderConfig, productionOrderUpdated, logBase);
+
+                    this.logger.Information($"{logBase} - Close Production Order - {productionOrderId}");
+                    await this.CloseProductionOrder(productionOrderId, productionOrderUpdated, logBase);
                 }
                 catch (CustomServiceException ex)
                 {
-                    this.logger.Error(ex.Message, ex);
-                    results.Add(productionOrderId, ex.Message);
+                    this.logger.Error($"{logBase} - {ex.Message}", ex);
+                    ServiceUtils.AddElementToDictionary(results, productionOrderId, ex.Message);
                 }
                 catch (Exception ex)
                 {
-                    this.logger.Error(ex.StackTrace, ex);
-                    results.Add(productionOrderId, ServiceConstants.FailReasonUnexpectedError);
+                    this.logger.Error($"{logBase} - {ex.StackTrace}", ex);
+                    ServiceUtils.AddElementToDictionary(results, productionOrderId, ServiceConstants.FailReasonUnexpectedError);
                 }
             }
 
             if (!results.Any())
             {
-                results.Add(0, "Ok");
+                ServiceUtils.AddElementToDictionary(results, 0, "Ok");
             }
 
             return ServiceUtils.CreateResult(true, 200, null, results, null);
@@ -395,9 +407,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             return dictResult;
         }
 
-        private async Task CreateReceiptFromProductionOrderId(int productionOrderId, CloseProductionOrderDto closeConfiguration, ProductionOrderDto productionOrder)
+        private async Task CreateReceiptFromProductionOrderId(int productionOrderId, CloseProductionOrderDto closeConfiguration, ProductionOrderDto productionOrder, string logBase)
         {
-            this.logger.Information($"Create oInventoryGenEntry for {productionOrderId}");
+            this.logger.Information($"{logBase} - Create oInventoryGenEntry for {productionOrderId}");
             var receiptProduction = new InventoryGenEntryDto();
             var separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
             closeConfiguration.Batches = closeConfiguration.Batches ?? new List<BatchesConfigurationDto>();
@@ -410,8 +422,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             var product = await this.GetFromServiceLayer<ItemDto>(string.Format(ServiceQuerysConstants.QryProductById, productionOrder.ItemNo), $"{string.Format(ServiceConstants.FailGetProduct, productionOrder.ItemNo)}");
             if (product.ManageBatchNumbers.Equals("tYES"))
             {
-                this.logger.Information($"Log batches quantity with decimal separator {separator}.");
-                this.logger.Information($"Sum {closeConfiguration.Batches.Sum(x => double.Parse(System.Text.RegularExpressions.Regex.Replace(x.Quantity, "[.,]", separator)))}.");
+                this.logger.Information($"{logBase} - Log batches quantity with decimal separator {separator}.");
+                this.logger.Information($"{logBase} - Sum {closeConfiguration.Batches.Sum(x => double.Parse(System.Text.RegularExpressions.Regex.Replace(x.Quantity, "[.,]", separator)))}.");
 
                 quantityToReceipt = closeConfiguration.Batches.Sum(x => double.Parse(System.Text.RegularExpressions.Regex.Replace(x.Quantity, "[.,]", separator)));
                 foreach (var batchConfig in closeConfiguration.Batches)
@@ -432,35 +444,35 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             line.WarehouseCode = productionOrder.Warehouse;
             receiptProduction.DocumentLines.Add(line);
 
-            await this.SaveInventoryGenEntry(receiptProduction, productionOrderId);
+            await this.SaveInventoryGenEntry(receiptProduction, productionOrderId, logBase);
         }
 
-        private async Task SaveInventoryGenEntry(InventoryGenEntryDto data, int productionOrderId)
+        private async Task SaveInventoryGenEntry(InventoryGenEntryDto data, int productionOrderId, string logBase)
         {
             var response = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryPostInventoryGenEntries, JsonConvert.SerializeObject(data));
             if (!response.Success)
             {
-                this.logger.Error($"An error has ocurred on save receipt production {response.Code} - {response.UserError}.");
+                this.logger.Error($"{logBase} - An error has ocurred on save receipt production {response.Code} - {response.UserError}.");
                 throw new CustomServiceException($"{string.Format(ServiceConstants.FailReasonNotReceipProductionCreated, productionOrderId)} - {response.UserError}");
             }
         }
 
-        private async Task CloseProductionOrder(int productionOrderId, ProductionOrderDto productionOrder)
+        private async Task CloseProductionOrder(int productionOrderId, ProductionOrderDto productionOrder, string logBase)
         {
-            this.logger.Information($"Close production order {productionOrderId}.");
+            this.logger.Information($"{logBase} - Close production order {productionOrderId}.");
             productionOrder.ProductionOrderStatus = "boposClosed";
 
             var response = await this.serviceLayerClient.PatchAsync(string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderId), JsonConvert.SerializeObject(productionOrder));
             if (!response.Success)
             {
-                this.logger.Error($"An error has ocurred on update production order status {response.Code} - {response.UserError}.");
+                this.logger.Error($"{logBase} - An error has ocurred on update production order status {response.Code} - {response.UserError}.");
                 throw new CustomServiceException($"{string.Format(ServiceConstants.FailReasonNotProductionStatusClosed, productionOrder.DocumentNumber)} - {response.UserError}");
             }
         }
 
-        private async Task CreateInventoryGenExit(ProductionOrderDto productionOrder, int productionOrderId)
+        private async Task CreateInventoryGenExit(ProductionOrderDto productionOrder, int productionOrderId, string logBase)
         {
-            this.logger.Information($"Create oInventoryGenExit for {productionOrderId}");
+            this.logger.Information($"{logBase} - Create oInventoryGenExit for {productionOrderId}");
             var filteredProductionOrderLines = productionOrder.ProductionOrderLines.Where(x => x.ProductionOrderIssueType.Equals(ServiceConstants.ProductionOrderTypeM)).ToList();
 
             var inventoryGenExit = new InventoryGenExitDto();
@@ -469,7 +481,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             {
                 if (productOrderLine.IssuedQuantity != 0)
                 {
-                    this.logger.Information($"[VALIDATE CONSUMED QUANTITY] the component already has consumed quantity: {productOrderLine.ItemNo}, required  {productOrderLine.PlannedQuantity} , consumed: {productOrderLine.IssuedQuantity}.");
+                    this.logger.Information($"{logBase} - [VALIDATE CONSUMED QUANTITY] the component already has consumed quantity: {productOrderLine.ItemNo}, required  {productOrderLine.PlannedQuantity} , consumed: {productOrderLine.IssuedQuantity}.");
                     throw new CustomServiceException($"{string.Format(ServiceConstants.FailConsumedQuantity, productionOrderId)}");
                 }
 
@@ -485,16 +497,16 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
             if (filteredProductionOrderLines.Count > 0)
             {
-                await this.SaveInventoryGenExit(inventoryGenExit, productionOrderId);
+                await this.SaveInventoryGenExit(inventoryGenExit, productionOrderId, logBase);
             }
         }
 
-        private async Task SaveInventoryGenExit(InventoryGenExitDto inventoryGen, int productionOrderId)
+        private async Task SaveInventoryGenExit(InventoryGenExitDto inventoryGen, int productionOrderId, string logBase)
         {
             var response = await this.serviceLayerClient.PostAsync(ServiceQuerysConstants.QryPostInventoryGenExists, JsonConvert.SerializeObject(inventoryGen));
             if (!response.Success)
             {
-                this.logger.Error($"An error has ocurred on create oInventoryGenExit {response.Code} - {response.UserError}.");
+                this.logger.Error($"{logBase} - An error has ocurred on create oInventoryGenExit {response.Code} - {response.UserError}.");
                 throw new CustomServiceException($"{string.Format(ServiceConstants.FailReasonNotGetExitCreated, productionOrderId)} - {response.UserError}");
             }
         }

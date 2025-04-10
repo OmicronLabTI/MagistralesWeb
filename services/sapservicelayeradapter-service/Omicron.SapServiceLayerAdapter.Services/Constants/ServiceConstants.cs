@@ -399,6 +399,14 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string No = "2";
 
         /// <summary>
+        /// Gets DictionaryValueFormat.
+        /// </summary>
+        /// <value>
+        /// String DictionaryValueFormat.
+        /// </value>
+        public static string DictionaryValueFormat => "{0}, {1}";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

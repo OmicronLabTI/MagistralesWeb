@@ -104,5 +104,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="invoicesIds">the invoices id.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetInvoicesByIds(List<int> invoicesIds);
+
+        /// <summary>
+        /// GetClosedInvoicesByDocNum.
+        /// </summary>
+        /// <param name="docNums">Doc Nums.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetClosedInvoicesByDocNum(List<int> docNums);
     }
 }
