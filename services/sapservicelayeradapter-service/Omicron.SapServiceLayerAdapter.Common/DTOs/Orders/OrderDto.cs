@@ -137,6 +137,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>Is Omigenomics.</value>
         [JsonProperty("U_Omigenomicstp")]
+        public string IsSecundary { get; set; }
+
+        /// <summary>
+        /// Gets or sets if is omigenomics.
+        /// </summary>
+        /// <value>Is Omigenomics.</value>
+        [JsonProperty("U_catagomigenomics")]
         public string IsOmigenomics { get; set; }
 
         /// <summary>

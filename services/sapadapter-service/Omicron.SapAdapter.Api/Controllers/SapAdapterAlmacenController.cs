@@ -179,6 +179,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Gets the orders.
         /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/invoice/orders/byfilters")]
+        [HttpGet]
+        public async Task<IActionResult> GetInvoiceByFilters([FromQuery] Dictionary<string, string> parameters)
+        {
+            var response = await this.sapAlmacenFacade.GetInvoiceByFilters(parameters);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
         /// <param name="invoice">The invoice to look for.</param>
         /// <returns>the data.</returns>
         [Route("/invoice/orders/{invoice}/detail")]
@@ -198,7 +211,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <returns>the data.</returns>
         [Route("/invoice/{invoiceId}/{type}/products")]
         [HttpPost]
-        public async Task<IActionResult> GetInvoiceProducts([FromRoute]int invoiceId, [FromRoute] string type, [FromBody] List<int> deliveriesIds)
+        public async Task<IActionResult> GetInvoiceProducts([FromRoute] int invoiceId, [FromRoute] string type, [FromBody] List<int> deliveriesIds)
         {
             var response = await this.sapAlmacenFacade.GetInvoiceProducts(invoiceId, type, deliveriesIds);
             return this.Ok(response);
@@ -369,6 +382,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetInvoicesByIds(List<int> invoicesIds)
         {
             var response = await this.sapAlmacenFacade.GetInvoicesByIds(invoicesIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// GetClosedInvoicesByDocNum.
+        /// </summary>
+        /// <param name="docNums">docNums.</param>
+        /// <returns>the data.</returns>
+        [Route("/closed/invoices/bydocnum")]
+        [HttpPost]
+        public async Task<IActionResult> GetClosedInvoicesByDocNum(List<int> docNums)
+        {
+            var response = await this.sapAlmacenFacade.GetClosedInvoicesByDocNum(docNums);
             return this.Ok(response);
         }
     }

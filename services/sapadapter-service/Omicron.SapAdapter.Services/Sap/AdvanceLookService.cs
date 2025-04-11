@@ -452,7 +452,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsPackage = order.IsPackage == ServiceConstants.IsPackage,
                 IsFromDxpId = paramentsCards.IsFromDxpId,
                 DxpId = ServiceShared.CalculateTernary(paramentsCards.IsFromDxpId, paramentsCards.DocNum.ToLower().Remove(0, lettersToRemoveDxpId), string.Empty),
-                IsOmigenomics = order.IsOmigenomics == ServiceConstants.IsOmigenomics,
+                IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(order.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(order.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(order.IsSecondary)),
             };
 
             return new List<AlmacenSalesHeaderModel> { saleHeader };
@@ -646,7 +646,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ListSaleOrder = string.Join(", ", salesOrders),
                     TypeOrder = header.TypeOrder,
                     IsPackage = header.IsPackage == ServiceConstants.IsPackage,
-                    IsOmigenomics = header.IsOmigenomics == ServiceConstants.IsOmigenomics,
+                    IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(header.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(header.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(header.IsSecondary)),
                     DxpId = header.DocNumDxp.GetShortShopTransaction(),
                 });
             }

@@ -278,16 +278,20 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<List<AttachmentModel>> GetAttachmentsById(List<int> ids);
 
         /// <summary>
-        /// Get the orders.
+        /// GetAllOrdersForAlmacen.
         /// </summary>
-        /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime initDate);
+        /// <param name="startDate">startDate.</param>
+        /// <param name="endDate">endDate.</param>
+        /// <returns>the attachaments.</returns>
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacen(DateTime startDate, DateTime endDate);
 
         /// <summary>
-        /// Get the orders.
+        /// GetAllOrdersForAlmacenDxp.
         /// </summary>
-        /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenDxp(DateTime initDate);
+        /// <param name="startDate">startDate.</param>
+        /// <param name="endDate">endDate.</param>
+        /// <returns>the attachaments.</returns>
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenDxp(DateTime startDate, DateTime endDate);
 
         /// <summary>
         /// Get the orders.
@@ -307,8 +311,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <param name="typeOrder">The type order.</param>
         /// <param name="orderToLook">The orders to look.</param>
+        /// <param name="needOnlyDxp">needOnlyDxp.</param>
         /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder, List<int> orderToLook);
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenByTypeOrder(string typeOrder, List<int> orderToLook, bool needOnlyDxp);
 
         /// <summary>
         /// Gets the deliveries by the sale order.
@@ -557,5 +562,34 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="cardCode"> parameter cardcode. </param>
         /// <returns> information.</returns>
         Task<List<ClientCatalogModel>> GetClientCatalogCardCode(List<string> cardCode);
+
+        /// <summary>
+        /// GetInvoiceHeaderJoinDoctorByDocNumsForSearchs
+        /// </summary>
+        /// <param name="docNums">docNums.</param>
+        /// <returns></returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderJoinDoctorByDocNumsForSearchs(List<int> docNums);
+
+        /// <summary>
+        /// GetInvoiceHeaderJoinDoctorByInvoiceIdOrDatesRange
+        /// </summary>
+        /// <param name="startDate">startDate.</param>
+        /// <param name="endDate">endDate</param>
+        /// <returns></returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderJoinDoctorByDatesRangesForSearchs(DateTime startDate, DateTime endDate);
+
+        /// <summary>
+        /// GetDeliveryDetailJoinProductByInvoicesIds.
+        /// </summary>
+        /// <param name="invoicesIds">the orders id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailJoinProductByInvoicesIds(List<int> invoicesIds);
+
+        /// <summary>
+        /// GetClosedInvoicesByDocNum.
+        /// </summary>
+        /// <param name="docNums">docNums.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetClosedInvoicesByDocNum(List<int> docNums);
     }
 }

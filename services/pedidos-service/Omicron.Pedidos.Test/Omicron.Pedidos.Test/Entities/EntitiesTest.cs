@@ -72,6 +72,7 @@ namespace Omicron.Pedidos.Test.Entities
             new RelationOrderAndTypeModel(),
             new QfbTecnicInfoDto(),
             new CreateOrderPdfDto(),
+            new UserOrdersForInvoicesModel(),
         };
 
         /// <summary>

@@ -11,10 +11,12 @@ namespace Omicron.SapAdapter.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection.PortableExecutable;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Dtos.DxpModels;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
@@ -90,7 +92,7 @@ namespace Omicron.SapAdapter.Services.Utils
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.Paquetes.ToLower()), orderPackages, listToReturn);
             salesTypes = AddSalesTypeByOrders(orderPackages, salesTypes);
 
-            var ordersOmigenomics = sapOrders.Where(ord => ord.IsOmigenomics.ValidateNull().ToLower() == ServiceConstants.IsOmigenomics.ToLower()).ToList();
+            var ordersOmigenomics = sapOrders.Where(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))).ToList();
             listToReturn = FilterByContainsType(types.Contains(ServiceConstants.OmigenomicsGroup.ToLower()), ordersOmigenomics, listToReturn);
             salesTypes = AddSalesTypeByOrders(ordersOmigenomics, salesTypes);
             return new Tuple<List<CompleteAlmacenOrderModel>, SaleOrderTypeModel>(listToReturn.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList(), salesTypes);
@@ -100,23 +102,27 @@ namespace Omicron.SapAdapter.Services.Utils
         /// Get the orders for recepcion pedidos.
         /// </summary>
         /// <param name="sapDao">dao.</param>
-        /// <param name="userOrdersTuple">user order tuuple.</param>
+        /// <param name="userOrders">userOrders.</param>
+        /// <param name="startDate">startDate.</param>
+        /// <param name="endDate">endDate.</param>
         /// <param name="lineProductTuple">line produc tuple.</param>
         /// <param name="needOnlyDxp">if the query only needs the dxp order.</param>
         /// <returns>the orders.</returns>
         public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(
             ISapDao sapDao,
-            Tuple<List<UserOrderModel>, List<int>, DateTime> userOrdersTuple,
+            List<UserOrderModel> userOrders,
+            DateTime startDate,
+            DateTime endDate,
             Tuple<List<LineProductsModel>, List<int>> lineProductTuple,
             bool needOnlyDxp)
         {
-            var idsMagistrales = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList();
+            var idsMagistrales = userOrders.Select(x => int.Parse(x.Salesorderid)).Distinct();
 
             var sapOrders = needOnlyDxp ?
-                (await sapDao.GetAllOrdersForAlmacenDxp(userOrdersTuple.Item3)).ToList() :
-                (await sapDao.GetAllOrdersForAlmacen(userOrdersTuple.Item3)).ToList();
+                await sapDao.GetAllOrdersForAlmacenDxp(startDate, endDate) :
+                await sapDao.GetAllOrdersForAlmacen(startDate, endDate);
 
-            sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
+            sapOrders = sapOrders.Where(x => x.Detalles != null);
             var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
             sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList().ForEach(x =>
@@ -136,31 +142,28 @@ namespace Omicron.SapAdapter.Services.Utils
             });
 
             arrayOfSaleToProcess.AddRange(sapOrders.Where(o => o.Canceled == "Y"));
-            var orderToAppear = userOrdersTuple.Item1.Select(x => int.Parse(x.Salesorderid)).ToList();
+            var orderToAppear = userOrders.Select(x => int.Parse(x.Salesorderid));
 
-            var ordersSapMaquila = (await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ, orderToAppear)).ToList();
-            ordersSapMaquila = ServiceShared.CalculateTernary(needOnlyDxp, ordersSapMaquila.Where(x => !string.IsNullOrEmpty(x.DocNumDxp)).ToList(), ordersSapMaquila);
+            var ordersSapMaquila = await sapDao.GetAllOrdersForAlmacenByTypeOrder(ServiceConstants.OrderTypeMQ, orderToAppear.ToList(), needOnlyDxp);
             arrayOfSaleToProcess.AddRange(ordersSapMaquila.Where(x => x.Detalles != null));
-
-            arrayOfSaleToProcess = arrayOfSaleToProcess.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
-            return arrayOfSaleToProcess;
+            return arrayOfSaleToProcess.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
         }
 
         /// <summary>
         /// Gets the user orders for almacen.
         /// </summary>
         /// <param name="pedidosService">the pedidos service.</param>
+        /// <param name="startDate">StartDate.</param>
+        /// <param name="endDate">EndDate.</param>
         /// <returns>the data.</returns>
-        public static async Task<Tuple<List<UserOrderModel>, List<int>, DateTime>> GetUserOrdersAlmacenLeftList(IPedidosService pedidosService)
+        public static async Task<List<UserOrderModel>> GetUserOrdersAlmacenLeftList(
+            IPedidosService pedidosService,
+            DateTime startDate,
+            DateTime endDate)
         {
-            var userOrderModel = await pedidosService.GetUserPedidos(ServiceConstants.GetUserOrdersAlmancen);
-            var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
-
-            int.TryParse(userOrderModel.Comments.ToString(), out var maxDays);
-            var minDate = DateTime.Today.AddDays(-maxDays).ToString("dd/MM/yyyy").Split("/");
-            var dateToLook = new DateTime(int.Parse(minDate[2]), int.Parse(minDate[1]), int.Parse(minDate[0]));
-
-            return new Tuple<List<UserOrderModel>, List<int>, DateTime>(userOrders, new List<int>(), dateToLook);
+            var userOrderModel = await pedidosService.GetUserPedidos(
+                string.Format(ServiceConstants.EndpointGetUserOrdersAlmancenByRangeDate, startDate.ToString("dd/MM/yyyy"), endDate.ToString("dd/MM/yyyy")));
+            return JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
         }
 
         /// <summary>
@@ -168,11 +171,24 @@ namespace Omicron.SapAdapter.Services.Utils
         /// </summary>
         /// <param name="almacenService">the service.</param>
         /// <param name="magistralIds">the magistralIds.</param>
-        /// <param name="maxDate">the max date.</param>
+        /// <param name="startDate">startDate.</param>
+        /// <param name="endDate">endDate.</param>
         /// <returns>the data.</returns>
-        public static async Task<Tuple<List<LineProductsModel>, List<int>>> GetLineProductsAlmacenLeftList(IAlmacenService almacenService, List<int> magistralIds, DateTime maxDate)
+        public static async Task<Tuple<List<LineProductsModel>, List<int>>> GetLineProductsAlmacenLeftList(
+            IAlmacenService almacenService,
+            List<int> magistralIds,
+            DateTime startDate,
+            DateTime endDate)
         {
-            var lineProductsResponse = await almacenService.PostAlmacenOrders(ServiceConstants.GetLineProductPedidos, new AlmacenGetRecepcionModel { MagistralIds = magistralIds, MaxDateToLook = maxDate });
+            var lineProductsResponse = await almacenService.PostAlmacenOrders(
+                ServiceConstants.EndPointGetLineProductPedidosByRangeDate,
+                new OrdersFilterDto
+                {
+                    MagistralIds = magistralIds,
+                    StartDate = startDate,
+                    EndDate = endDate,
+                });
+
             var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
 
             var listProductToReturn = lineProducts.Where(x => ServiceShared.CalculateAnd(string.IsNullOrEmpty(x.ItemCode), x.StatusAlmacen != ServiceConstants.Almacenado)).ToList();
@@ -265,7 +281,7 @@ namespace Omicron.SapAdapter.Services.Utils
                     Address = order.Address.ValidateNull().Replace("\r", " ").Replace("  ", " ").ToUpper(),
                     DxpId = order.DocNumDxp.GetShortShopTransaction(),
                     IsPackage = order.IsPackage == ServiceConstants.IsPackage,
-                    IsOmigenomics = order.IsOmigenomics == ServiceConstants.IsOmigenomics,
+                    IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(order.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(order.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(order.IsSecondary)),
                 });
             }
 

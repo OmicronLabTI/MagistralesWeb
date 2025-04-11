@@ -389,6 +389,24 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string ClientTypeInstitucional = "institucional";
 
         /// <summary>
+        /// yes.
+        /// </summary>
+        public const string Yes = "1";
+
+        /// <summary>
+        /// no.
+        /// </summary>
+        public const string No = "2";
+
+        /// <summary>
+        /// Gets DictionaryValueFormat.
+        /// </summary>
+        /// <value>
+        /// String DictionaryValueFormat.
+        /// </value>
+        public static string DictionaryValueFormat => "{0}, {1}";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

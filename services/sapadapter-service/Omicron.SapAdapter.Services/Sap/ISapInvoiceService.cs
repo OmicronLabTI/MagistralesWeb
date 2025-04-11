@@ -27,6 +27,13 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetInvoice(Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Gets the deliveries to return.
+        /// </summary>
+        /// <param name="parameters">the parameters to look.</param>
+        /// <returns>The data.</returns>
+        Task<ResultModel> GetInvoiceByFilters(Dictionary<string, string> parameters);
+
+        /// <summary>
         /// Gets the invoice detail.
         /// </summary>
         /// <param name="invoice">the invoice to look for.</param>
@@ -97,5 +104,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="invoicesIds">the invoices id.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetInvoicesByIds(List<int> invoicesIds);
+
+        /// <summary>
+        /// GetClosedInvoicesByDocNum.
+        /// </summary>
+        /// <param name="docNums">Doc Nums.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetClosedInvoicesByDocNum(List<int> docNums);
     }
 }

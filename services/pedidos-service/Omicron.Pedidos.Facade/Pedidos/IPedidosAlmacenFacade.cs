@@ -11,6 +11,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Pedidos.Dtos.Models;
+    using Omicron.Pedidos.Entities.Model;
 
     /// <summary>
     /// interfaces for the pedidos.
@@ -40,8 +41,9 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// Get the orders for delivery.
         /// </summary>
+        /// <param name="parameters">Parameters.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetOrdersForDelivery();
+        Task<ResultDto> GetOrdersForDelivery(Dictionary<string, string> parameters);
 
         /// <summary>
         /// Get the orders for delivery.
@@ -127,5 +129,26 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="invoicesIds">the ids.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetUserOrdersByInvoicesIds(List<int> invoicesIds);
+
+        /// <summary>
+        /// Get Orders For Almacen By Range Dates.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersForAlmacenByRangeDates(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// GetOrdersForInvoiceByRangeDates.
+        /// </summary>
+        /// <param name="parameters">the parameters.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetOrdersForInvoiceByRangeDates(Dictionary<string, string> parameters);
+
+        /// <summary>
+        /// GetUserOrdersForInvoiceByDeliveryIds.
+        /// </summary>
+        /// <param name="deliveryIds">deliveryIds.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds);
     }
 }

@@ -445,7 +445,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 UserRfc = "VAL2108166I0",
                 ProfecionalLicense = "11535444",
                 IsSample = false,
-                IsOmigenomicsOrder = false,
+                IsSecondary = false,
                 SlpCode = 1,
                 OrderComments = "Comentarios sobre la orden",
                 EmployeeId = 1,
