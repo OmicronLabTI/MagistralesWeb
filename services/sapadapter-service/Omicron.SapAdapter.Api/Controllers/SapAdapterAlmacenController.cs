@@ -436,5 +436,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapAlmacenFacade.GetInvoicesByIds(invoicesIds);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// GetClosedInvoicesByDocNum.
+        /// </summary>
+        /// <param name="docNums">docNums.</param>
+        /// <returns>the data.</returns>
+        [Route("/closed/invoices/bydocnum")]
+        [HttpPost]
+        public async Task<IActionResult> GetClosedInvoicesByDocNum(List<int> docNums)
+        {
+            var response = await this.sapAlmacenFacade.GetClosedInvoicesByDocNum(docNums);
+            return this.Ok(response);
+        }
     }
 }

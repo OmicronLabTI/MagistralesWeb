@@ -210,6 +210,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<CompleteDetalleFormulaModel> components);
 
         /// <summary>
+        /// gets the valid batches by item.
+        /// </summary>
+        /// <param name="selectedBatches">the components.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<CompleteBatchesJoinModel>> GetSelectedBatches(List<(int sysNumber, string itemCode)> selectedBatches);
+
+        /// <summary>
         /// Gest the batch transaction by order and item code.
         /// </summary>
         /// <param name="itemCode">the item code.</param>
@@ -223,6 +230,15 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId);
+
+        /// <summary>
+        /// Gest the batch transaction by order and item code.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <param name="itemCodes">the item code.</param>d
+        /// <param name="saleId">the saleId.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderAndItemCodes(List<int> orderId, List<string> itemCodes, int saleId);
 
         /// <summary>
         /// Gets the record from ITL1 by log entry.
@@ -627,5 +643,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="invoices">the invoices.</param>
         /// <returns>the data.</returns>
         Task<List<DeliverModel>> GetDeliveriesByDocNums(List<int> docNums);
+
+        /// <summary>
+        /// GetClosedInvoicesByDocNum.
+        /// </summary>
+        /// <param name="docNums">docNums.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<InvoiceHeaderModel>> GetClosedInvoicesByDocNum(List<int> docNums);
     }
 }

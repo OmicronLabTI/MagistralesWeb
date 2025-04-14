@@ -1149,5 +1149,16 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             { "De Linea", "De Línea" },
         };
+
+        /// <summary>
+        /// Gets the descriptions.
+        /// </summary>
+        /// <value>
+        /// descriptions.
+        /// </value>
+        public static Dictionary<string, string> Filter { get; } = new Dictionary<string, string>
+        {
+            { ServiceConstants.Maquila.ToUpper(), "MQ" },
+        };
     }
 }
