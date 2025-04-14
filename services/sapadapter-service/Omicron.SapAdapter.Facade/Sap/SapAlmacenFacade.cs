@@ -64,31 +64,45 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> GetScannedData(string type, string code)
+        public async Task<ResultDto> GetScannedDataMagistral(string code)
         {
-            switch (type)
-            {
-                case FacadeConstants.Magistral:
-                    return this.mapper.Map<ResultDto>(await this.almacenService.GetMagistralScannedData(code));
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetMagistralScannedData(code));
+        }
 
-                case FacadeConstants.Linea:
-                    return this.mapper.Map<ResultDto>(await this.almacenService.GetLineScannedData(code));
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetScannedDataLinea(string code, int orderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetLineScannedData(code, orderId));
+        }
 
-                case FacadeConstants.Remision:
-                    return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetDeliveryScannedData(code));
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetScannedDataRemision(string code)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetDeliveryScannedData(code));
+        }
 
-                case FacadeConstants.RemisionMg:
-                    return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetMagistralProductInvoice(code));
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetScannedDataRemisionMg(string code)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetMagistralProductInvoice(code));
+        }
 
-                case FacadeConstants.RemisionLn:
-                    return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetLineProductInvoice(code));
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetScannedDataRemisionLn(string code)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetLineProductInvoice(code));
+        }
 
-                case FacadeConstants.Factura:
-                    return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceData(code));
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetScannedDataFactura(string code)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceData(code));
+        }
 
-                default:
-                    return new ResultDto { Code = 400, Success = false, ExceptionMessage = "Not found" };
-            }
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetDetailOrder(int orderId)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetOrderDetail(orderId));
         }
 
         /// <inheritdoc/>

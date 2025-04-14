@@ -858,6 +858,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery(this.databaseContext.DetallePedido.Where(x => docuNums.Contains(x.PedidoId.Value)).AsNoTracking());
         }
 
+        public async Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNumAndItemCode(int docuNum, string itemCode)
+        {
+            return await this.RetryQuery(this.databaseContext.DetallePedido.Where(x => x.PedidoId == docuNum && x.ProductoId == itemCode).AsNoTracking());
+        }
+
         /// <inheritdoc/>
         public async Task<IEnumerable<InvoiceHeaderModel>> GetInvoiceHeaderByInvoiceId(List<int> docNums)
         {
