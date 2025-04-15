@@ -13,6 +13,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Linq;
     using System.Net.Http;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -21,6 +22,7 @@ namespace Omicron.SapAdapter.Services.Utils
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Resources.Exceptions;
     using Omicron.SapAdapter.Services.Catalog;
@@ -510,6 +512,34 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// Extract Client institucional type Name.
+        /// </summary>
+        /// <param name="shippingAddressName">Client name.</param>
+        /// <returns>Client name normalized.</returns>
+        public static string ExtractClientName(string shippingAddressName)
+        {
+            var match = Regex.Match(shippingAddressName, @"^\d+\.\s(.*?)\sC\.\d+$");
+            return match.Success ? match.Groups[1].Value : shippingAddressName;
+        }
+
+        /// <summary>
+        /// verifies institutional structure.
+        /// </summary>
+        /// <param name="address">addres.</param>
+        /// <returns>bool.</returns>
+        public static bool IsInstitutionalAddress(string address)
+        {
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                return false;
+            }
+
+            // Expresión regular que busca una estructura como '1. NOMBRE APELLIDO APELLIDO C.7731057'
+            var regex = new Regex(@"^\d+\.\s[A-ZÁÉÍÓÚÑ]+(\s[A-ZÁÉÍÓÚÑ]+)*\sC\.\d+$", RegexOptions.IgnoreCase);
+            return regex.IsMatch(address);
+        }
+
+        /// <summary>
         /// creates the result.
         /// </summary>
         /// <param name="dic">the dictioanry.</param><
@@ -519,6 +549,54 @@ namespace Omicron.SapAdapter.Services.Utils
         public static string GetDictionaryValueString(Dictionary<string, string> dic, string key, string defaultValue)
         {
             return dic.ContainsKey(key) ? dic[key] : defaultValue;
+        }
+
+        /// <summary>
+        /// Get Order Type.
+        /// </summary>
+        /// <param name="types">Types.</param>
+        /// <param name="classifications">Clñassifications.</param>
+        /// <returns>Classification Description.</returns>
+        public static string GetOrderTypeDescription(List<string> types, IEnumerable<ClassificationsModel> classifications)
+        {
+            if (types.Count > 1)
+            {
+                return ServiceConstants.Mixto;
+            }
+
+            if (!classifications.Any(x => types.First() == x.Value))
+            {
+                return string.Empty;
+            }
+
+            return classifications.First(x => types.First() == x.Value)?.Description;
+        }
+
+        /// <summary>
+        /// GetTypesForFilters.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <param name="sapDao">sapDao.</param>
+        /// <returns>Tuple with classifications and types.</returns>
+        public static async Task<Tuple<IEnumerable<ClassificationsModel>, List<string>>> GetTypesForFilters(
+            Dictionary<string, string> parameters,
+            ISapDao sapDao)
+        {
+            var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, string.Empty);
+            var isAllClassifications = string.IsNullOrEmpty(typesString);
+            var types = new List<string>();
+
+            if (!isAllClassifications)
+            {
+                types = typesString.Split(",").ToList();
+                var classifications = await sapDao.GetClassificationsByValue(types);
+                return new Tuple<IEnumerable<ClassificationsModel>, List<string>>(classifications, types);
+            }
+
+            var allClassifications = await sapDao.GetAllClassifications(ServiceConstants.InvalidClassifications);
+            types = allClassifications.Select(clas => clas.Value).Distinct().ToList();
+            types.AddRange(ServiceConstants.DefaultFilters);
+            return new Tuple<IEnumerable<ClassificationsModel>, List<string>>(allClassifications, types);
         }
 
         /// <summary>

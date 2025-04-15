@@ -397,30 +397,6 @@ namespace Omicron.SapAdapter.Test.Facade
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
-        public async Task SearchAlmacenOrdersByDoctor()
-        {
-            var response = await this.almacenFacade.SearchAlmacenOrdersByDoctor(new Dictionary<string, string>());
-
-            Assert.That(response, Is.Not.Null);
-        }
-
-        /// <summary>
-        /// Test the get Almacen Orders By Doctor.
-        /// </summary>
-        /// <returns>the data.</returns>
-        [Test]
-        public async Task SearchAlmacenOrdersDetailsByDoctor()
-        {
-            var response = await this.almacenFacade.SearchAlmacenOrdersDetailsByDoctor(new DoctorOrdersSearchDeatilDto());
-
-            Assert.That(response, Is.Not.Null);
-        }
-
-        /// <summary>
-        /// Test the get Almacen Orders By Doctor.
-        /// </summary>
-        /// <returns>the data.</returns>
-        [Test]
         public async Task GetOrderdetail()
         {
             var response = await this.almacenFacade.GetOrderdetail(123);

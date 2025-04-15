@@ -170,5 +170,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value> Is Omigenomics. </value>
         public bool IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Manufacturer Classification Code.
+        /// </summary>
+        /// <value>
+        /// Classification Code.
+        /// </value>
+        public string ManufacturerClassificationCode { get; set; }
     }
 }

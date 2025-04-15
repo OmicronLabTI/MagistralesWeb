@@ -103,5 +103,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// <value> Is Omigenomics. </value>
         [JsonProperty("U_catagomigenomics")]
         public string IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets the OrderComments.
+        /// </summary>
+        /// <value>Order Comments.</value>
+        [JsonProperty("U_TipoPedido")]
+        public string TipoPedido { get; set; }
     }
 }

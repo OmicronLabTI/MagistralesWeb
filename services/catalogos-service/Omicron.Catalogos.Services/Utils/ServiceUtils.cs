@@ -8,10 +8,6 @@
 
 namespace Omicron.Catalogos.Services.Utils
 {
-    using System;
-    using System.Collections.Generic;
-    using Omicron.Catalogos.Entities.Model;
-
     /// <summary>
     /// The static class for service utils.
     /// </summary>
@@ -56,6 +52,66 @@ namespace Omicron.Catalogos.Services.Utils
                     yield return element;
                 }
             }
+        }
+
+        /// <summary>
+        /// Retrieves the content of a specific sheet from an Excel workbook as a DataTable.
+        /// </summary>
+        /// <param name="workbook"> The Excel workbook from which the sheet will be read. </param>
+        /// <param name="sheetNumber"> The index (1-based) of the sheet to be retrieved. </param>
+        /// <returns> A DataTable containing the content of the specified sheet. </returns>
+        public static DataTable ReadSheet(XLWorkbook workbook, int sheetNumber)
+        {
+            var datatable = new DataTable();
+            var firstrow = true;
+            string readRange = "1:1";
+            var worksheet = workbook.Worksheet(sheetNumber);
+
+            foreach (var row in worksheet.RowsUsed())
+            {
+                if (firstrow)
+                {
+                    readRange = string.Format("{0}:{1}", 1, row.LastCellUsed().Address.ColumnNumber);
+                    foreach (var cell in row.Cells(readRange))
+                    {
+                        datatable.Columns.Add(cell.Value.ToString());
+                    }
+
+                    firstrow = false;
+                    continue;
+                }
+
+                datatable.Rows.Add();
+                int cellIndex = 0;
+
+                foreach (var cell in row.Cells(readRange))
+                {
+                    datatable.Rows[datatable.Rows.Count - 1][cellIndex] = cell.Value.ToString();
+                    cellIndex++;
+                }
+            }
+
+            return datatable;
+        }
+
+        /// <summary>
+        /// Retrieves data from an HTTP response, logging any issues and handling errors during the process.
+        /// </summary>
+        /// <param name="response"> The HTTP response containing status, headers, and body data. </param>
+        /// <param name="logger"> The logger used for capturing execution details. </param>
+        /// <param name="error"> An output parameter for any errors encountered. </param>
+        /// <returns> the data extracted from the response body. </returns>
+        public static async Task<ResultDto> GetResponse(HttpResponseMessage response, ILogger logger, string error)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            if ((int)response.StatusCode >= 300)
+            {
+                logger.Information($"{error} {jsonString}");
+                throw new CustomServiceException(jsonString, System.Net.HttpStatusCode.NotFound);
+            }
+
+            return JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
         }
     }
 }

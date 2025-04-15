@@ -19,6 +19,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Services.Almacen;
     using Omicron.SapAdapter.Services.Catalog;
@@ -73,8 +74,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <inheritdoc/>
         public async Task<ResultModel> SearchAlmacenOrdersByDxpId(Dictionary<string, string> parameters)
         {
-            var typesString = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Type, ServiceConstants.AllTypesByDxp);
-            var types = typesString.Split(",").ToList();
+            var (sapClasification, types) = await ServiceUtils.GetTypesForFilters(parameters, this.sapDao);
 
             var startDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.StartDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
                             .ToUniversalDateTime().Date;
@@ -93,8 +93,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapOrders = await this.GetSapOrders(userOrders, startDate, endDate, lineProductsTuple, types);
             var ordersByFilter = await this.GetSapOrdersToLookByDoctor(sapOrders.Item1, parameters);
             var totalFilter = ordersByFilter.Select(x => x.DocNumDxp).Distinct().ToList().Count;
-
-            var listToReturn = this.GetCardOrdersToReturn(ordersByFilter, parameters, sapOrders.Item2, sapOrders.Item3);
+            var listToReturn = this.GetCardOrdersToReturn(ordersByFilter, parameters, sapOrders.Item2, sapOrders.Item3, sapClasification);
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, $"{totalFilter}-{totalFilter}");
         }
 
@@ -166,7 +165,7 @@ namespace Omicron.SapAdapter.Services.Sap
             sapOrders = ServiceUtilsAlmacen.GetOrdersValidsToReceiveByProducts(userOrders, lineProductTuple.Item1, sapOrders);
             sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.IsSampleOrder).ToList();
             sapOrders.AddRange(sapCancelled);
-            return new Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>(ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, lineProducts).Item1, orderWithPackages, orderWithOmigenomics);
+            return new Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>(ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders, true), orderWithPackages, orderWithOmigenomics);
         }
 
         private async Task<List<CompleteAlmacenOrderModel>> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
@@ -184,7 +183,12 @@ namespace Omicron.SapAdapter.Services.Sap
                                         x.DocNumDxp.Contains(chip)).ToList();
         }
 
-        private AlmacenOrdersByDoctorModel GetCardOrdersToReturn(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters, List<string> orderWithPackages, List<string> orderWithOmigenomics)
+        private AlmacenOrdersByDoctorModel GetCardOrdersToReturn(
+            List<CompleteAlmacenOrderModel> sapOrders,
+            Dictionary<string, string> parameters,
+            List<string> orderWithPackages,
+            List<string> orderWithOmigenomics,
+            IEnumerable<ClassificationsModel> classifications)
         {
             var dxpIds = sapOrders.Select(x => x.DocNumDxp).Distinct().OrderBy(x => x).ToList();
             dxpIds = ServiceShared.GetOffsetLimit(dxpIds, parameters);
@@ -213,6 +217,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     SaleOrderId = orders.Select(x => x.DocNum).Distinct().ToList(),
                     IsPackage = orderWithPackages.Any(dwp => dwp == dxpId),
                     IsOmigenomics = orderWithOmigenomics.Any(dwo => dwo == dxpId),
+                    SaleOrderType = ServiceUtils.GetOrderTypeDescription(orders.Select(x => x.TypeOrder).Distinct().ToList(), classifications),
                 };
 
                 var saleModel = new SalesByDoctorModel

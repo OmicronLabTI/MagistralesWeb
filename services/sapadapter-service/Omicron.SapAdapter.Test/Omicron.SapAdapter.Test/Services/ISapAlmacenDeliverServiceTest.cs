@@ -47,6 +47,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.BatchTransacitions.AddRange(this.GetBatchTransacitions());
             this.context.BatchesTransactionQtyModel.AddRange(this.GetBatchesTransactionQtyModel());
             this.context.ClientCatalogModel.AddRange(this.GetClients());
+            this.context.LblContainerModel.AddRange(this.GetLblContainer());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();

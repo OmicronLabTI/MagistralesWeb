@@ -22,5 +22,13 @@ namespace Omicron.SapAdapter.Services.Catalog
         /// <param name="route">Parameter names.</param>
         /// <returns>Parameters.</returns>
         Task<ResultDto> GetParams(string route);
+
+        /// <summary>
+        /// Method for get parameters by name.
+        /// </summary>
+        /// <param name="dataToSend">Parameter names.</param>
+        /// <param name="route">route.</param>
+        /// <returns>Parameters.</returns>
+        Task<ResultDto> PostCatalogs(object dataToSend, string route);
     }
 }

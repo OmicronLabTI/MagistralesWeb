@@ -84,5 +84,33 @@ namespace Omicron.Catalogos.Test
                 new ClassificationQfbModel { Id = 5, Value = "O", Description = "OTRO (O)", Active = false },
             };
         }
+
+        /// <summary>
+        /// Test to import of valid warehouses through the Excel file.
+        /// </summary>
+        /// <returns> the parameters. </returns>
+        public IEnumerable<WarehouseModel> GetWarehouses()
+        {
+            return new List<WarehouseModel>
+            {
+                new WarehouseModel { Id = 1, Name = "MN", AppliesToProducts = "MN", AppliesToManufacturers = string.Empty, IsActive = true },
+                new WarehouseModel { Id = 2, Name = "BE", AppliesToProducts = "BE", AppliesToManufacturers = string.Empty, IsActive = true },
+                new WarehouseModel { Id = 3, Name = "PT", AppliesToProducts = "REVE", AppliesToManufacturers = "Bioequal", IsActive = true },
+                new WarehouseModel { Id = 4, Name = "MC", AppliesToProducts = string.Empty, AppliesToManufacturers = "REVE", IsActive = true },
+            };
+        }
+
+        /// <summary>
+        /// Createas a result dto.
+        /// </summary>
+        /// <param name="data">the dta.</param>
+        /// <returns>the object.</returns>
+        public ResultDto GetResultDto(object data)
+        {
+            return new ResultDto
+            {
+                Response = JsonConvert.SerializeObject(data),
+            };
+        }
     }
 }

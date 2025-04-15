@@ -41,6 +41,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.Batches.AddRange(this.GetBatches());
             this.context.BatchesQuantity.AddRange(this.GetBatchesQuantity());
             this.context.ClientCatalogModel.AddRange(this.GetClients());
+            this.context.LblContainerModel.AddRange(this.GetClassificationsCatalog());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();
@@ -107,6 +108,7 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Type, "LN,BQ,MQ,MG,MN,BE,mixto" },
             };
 
             var mockDoctor = new Mock<IDoctorService>();
@@ -296,7 +298,7 @@ namespace Omicron.SapAdapter.Test.Services
             {
                 { ServiceConstants.Offset, "0" },
                 { ServiceConstants.Limit, "10" },
-                { ServiceConstants.Type, $"{ServiceConstants.Line},{ServiceConstants.Mixto.ToLower()}" },
+                { ServiceConstants.Type, $"LN,{ServiceConstants.Mixto.ToLower()}" },
             };
 
             var mockDoctor = new Mock<IDoctorService>();
@@ -453,11 +455,38 @@ namespace Omicron.SapAdapter.Test.Services
         [Test]
         public async Task GetLineScannedData()
         {
+            var mockLog = new Mock<ILogger>();
+            mockLog.Setup(m => m.Information(It.IsAny<string>()));
+
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockAlmacenService = new Mock<IAlmacenService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var ptresult = new List<WarehouseDto> { new WarehouseDto { WarehouseCodes = new List<string> { "PT" } }, };
+            mockCatalogs
+                .Setup(x => x.PostCatalogs(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(ptresult)));
+
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
+
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var sapDao = new SapDao(this.context, mockLog.Object);
+            var sapService = new SapAlmacenService(sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object, mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
+
             // arrange
             var order = "aa";
 
             // act
-            var response = await this.sapService.GetLineScannedData(order);
+            var response = await sapService.GetLineScannedData(order);
 
             // assert
             Assert.That(response, Is.Not.Null);
@@ -470,14 +499,132 @@ namespace Omicron.SapAdapter.Test.Services
         [Test]
         public async Task GetLineScannedDataBatches()
         {
+            var mockLog = new Mock<ILogger>();
+            mockLog.Setup(m => m.Information(It.IsAny<string>()));
+
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockAlmacenService = new Mock<IAlmacenService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var ptresult = new List<WarehouseDto> { new WarehouseDto { ItemCode = "Linea1", WarehouseCodes = new List<string> { "PT" } }, };
+            mockCatalogs
+                .Setup(x => x.PostCatalogs(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(ptresult)));
+
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
+
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var sapDao = new SapDao(this.context, mockLog.Object);
+            var sapService = new SapAlmacenService(sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object, mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
+
             // arrange
             var order = "Linea1";
 
             // act
-            var response = await this.sapService.GetLineScannedData(order);
+            var response = await sapService.GetLineScannedData(order);
 
             // assert
             Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetLineScannedDataWithoutWarehouse()
+        {
+            var mockLog = new Mock<ILogger>();
+            mockLog.Setup(m => m.Information(It.IsAny<string>()));
+
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockAlmacenService = new Mock<IAlmacenService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var ptresult = new List<WarehouseDto> { new WarehouseDto() { ItemCode = "Linea1", WarehouseCodes = new List<string>(), }, };
+            mockCatalogs
+                .Setup(x => x.PostCatalogs(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(ptresult)));
+
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
+
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var sapDao = new SapDao(this.context, mockLog.Object);
+            var sapService = new SapAlmacenService(sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object, mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
+
+            // arrange
+            var order = "Linea1";
+
+            // act
+            var response = await sapService.GetLineScannedData(order);
+
+            // assert
+            Assert.That(response.Code == 404);
+            Assert.That(response.UserError == ServiceConstants.NoActiveWarehouseError);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetLineScannedDataWithoutBoxes()
+        {
+            var mockLog = new Mock<ILogger>();
+            mockLog.Setup(m => m.Information(It.IsAny<string>()));
+
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockAlmacenService = new Mock<IAlmacenService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var ptresult = new List<WarehouseDto> { new WarehouseDto { ItemCode = "Linea1", WarehouseCodes = new List<string> { "XXXXXXXX" } }, };
+
+            mockCatalogs
+                .Setup(x => x.PostCatalogs(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(ptresult)));
+
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
+
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var sapDao = new SapDao(this.context, mockLog.Object);
+            var sapService = new SapAlmacenService(sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object, mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
+
+            // arrange
+            var order = "Linea1";
+
+            // act
+            var response = await sapService.GetLineScannedData(order);
+
+            // assert
+            Assert.That(response.Code == 404);
+            Assert.That(response.UserError == ServiceConstants.NoAvaiableBoxesError);
         }
 
         /// <summary>

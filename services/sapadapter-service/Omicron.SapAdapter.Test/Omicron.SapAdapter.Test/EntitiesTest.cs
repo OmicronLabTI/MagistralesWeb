@@ -77,7 +77,6 @@ namespace Omicron.SapAdapter.Test
             new InvoicesModel(),
             new RetrieveInvoiceModel(),
             new CompleteAlmacenOrderModel(),
-            new SaleOrderTypeModel(),
             new DeliveyJoinOrderModel(),
             new SalesPersonModel(),
             new AssignedBatches(),
@@ -96,6 +95,10 @@ namespace Omicron.SapAdapter.Test
             new RawMaterialRequestModel(),
             new CompleteRawMaterialRequestModel(),
             new OrdersFilterDto(),
+            new WarehouseModel(),
+            new ActiveWarehouseDto(),
+            new WarehouseDto(),
+            new ClassificationsModel(),
         };
 
         /// <summary>

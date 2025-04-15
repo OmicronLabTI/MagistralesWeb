@@ -11,6 +11,7 @@ namespace Omicron.Catalogos.Facade.Catalogs
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Catalogos.Dtos.Models;
+    using Omicron.Catalogos.Dtos.User;
 
     /// <summary>
     /// The interface for catalogs.
@@ -35,5 +36,24 @@ namespace Omicron.Catalogos.Facade.Catalogs
         /// </summary>
         /// <returns>Classification qfb.</returns>
         Task<ResultDto> GetActiveClassificationQfb();
+
+        /// <summary>
+        /// Import of valid warehouses through the Excel file.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultDto> UploadWarehouseFromExcel();
+
+        /// <summary>
+        /// Gets the values from parameters based in the dict.
+        /// </summary>
+        /// <param name="products">the dictionary.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetActivesWarehouses(List<ActiveWarehouseDto> products);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<ResultDto> GetClassifications();
     }
 }

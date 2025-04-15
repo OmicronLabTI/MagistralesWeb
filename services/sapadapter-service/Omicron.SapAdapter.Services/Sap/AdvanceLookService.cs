@@ -268,6 +268,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var catalogResponse = await this.catalogsService.GetParams($"{ServiceConstants.GetParams}?{ServiceConstants.CardCodeResponsibleMedic}={ServiceConstants.CardCodeResponsibleMedic}");
             var specialCardCodes = JsonConvert.DeserializeObject<List<ParametersModel>>(catalogResponse.Response.ToString()).Select(x => x.Value).ToList();
 
+            var typeOrders = sapDelivery.Select(x => x.TypeOrder).Distinct().ToList();
+            typeOrders.AddRange(sapSaleOrder.Select(x => x.OrderType));
+            var sapClasification = await this.sapDao.GetClassificationsByValue(typeOrders);
+
             var objectCardOrder = new ParamentsCards
             {
                 UserOrders = userOrders,
@@ -290,6 +294,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 DocNum = initialDocNum,
                 DeliveryAddress = doctorAddresses,
                 SpecialCardCodes = specialCardCodes,
+                Classifications = sapClasification.ToList(),
             };
 
             tupleIds.DistinctBy(order => new { order.Item1, order.Item2 }).ToList().ForEach(order =>
@@ -382,7 +387,6 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var order = new CompleteOrderModel();
             var status = string.Empty;
-            var productType = string.Empty;
             var saporders = new List<CompleteOrderModel>();
             var porRecibirDate = DateTime.Now;
             var hasCandidate = false;
@@ -398,7 +402,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = ServiceShared.CalculateTernary(ServiceConstants.StatusForBackOrder.Contains(userOrder.Status) && userOrder.StatusAlmacen == ServiceConstants.BackOrder, ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
                 status = ServiceShared.CalculateTernary(userOrder.Status != ServiceConstants.Finalizado && userOrder.Status != ServiceConstants.Almacenado && status != ServiceConstants.BackOrder, ServiceConstants.Pendiente, status);
                 status = ServiceShared.CalculateTernary(userOrder.Status == ServiceConstants.Almacenado && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(), ServiceConstants.Almacenado, status);
-                productType = ServiceShared.CalculateTernary(saporders.Any(x => x.Detalles != null && paramentsCards.ProductModel.Any(p => p == x.Detalles.ProductoId)), ServiceConstants.Mixto, ServiceConstants.Magistral);
                 porRecibirDate = userOrder.CloseDate ?? porRecibirDate;
                 comments.Append($"{userOrder.Comments}&");
                 hasCandidate = this.CalulateIfSaleOrderIsCandidate(userOrders, userOrder.Status, order, userOrder);
@@ -414,7 +417,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 status = ServiceShared.CalculateTernary(lineProductOrder == null, ServiceConstants.PorRecibir, lineProductOrder?.StatusAlmacen);
                 status = ServiceShared.CalculateTernary(lineProductOrder?.StatusAlmacen == ServiceConstants.Recibir, ServiceConstants.PorRecibir, status);
                 status = ServiceShared.CalculateTernary(lineProductOrder?.StatusAlmacen == ServiceConstants.Almacenado && order.PedidoMuestra.ValidateNull().ToLower() == ServiceConstants.IsSampleOrder.ToLower(), ServiceConstants.Almacenado, status);
-                productType = ServiceConstants.Linea;
                 porRecibirDate = ServiceShared.ParseExactDateOrDefault(order.FechaInicio, porRecibirDate);
                 hasCandidate = this.CalculateIfLineOrderIsCandidate(lineProductOrder, status, order);
             }
@@ -431,7 +433,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
             var initDate = ServiceShared.ParseExactDateOrDefault(order.FechaInicio, DateTime.Now);
             var lettersToRemoveDxpId = ServiceShared.CalculateTernary(paramentsCards.DocNum.Length > 1, 1, 0);
-
+            var productType = ServiceUtils.GetOrderTypeDescription([order.OrderType], paramentsCards.Classifications);
             var saleHeader = new AlmacenSalesHeaderModel
             {
                 DocNum = order.DocNum,
@@ -539,6 +541,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     LocalNeighbors = paramsCard.LocalNeighbors,
                     Payments = paramsCard.Payments,
                     DeliveryAddress = paramsCard.DeliveryAddress,
+                    Classifications = paramsCard.Classifications,
                 };
                 return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
@@ -562,6 +565,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     LocalNeighbors = paramsCard.LocalNeighbors,
                     Payments = paramsCard.Payments,
                     DeliveryAddress = paramsCard.DeliveryAddress,
+                    Classifications = paramsCard.Classifications,
                 };
                 return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
@@ -585,6 +589,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     LocalNeighbors = paramsCard.LocalNeighbors,
                     Payments = paramsCard.Payments,
                     DeliveryAddress = paramsCard.DeliveryAddress,
+                    Classifications = paramsCard.Classifications,
                 };
                 return this.GenerateCardForReceptionDelivery(paramsCardDelivery);
             }
@@ -602,6 +607,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = paramsCardDelivery.UserOrders;
             var lineProducts = paramsCardDelivery.LineProducts;
             var lineSapProducts = paramsCardDelivery.LineSapProducts;
+
+            string mixt = paramsCardDelivery.Classifications.Count() > 1 ? ServiceConstants.Mixto : string.Empty;
 
             foreach (var delivery in possibleDeliveries.Distinct())
             {
@@ -623,7 +630,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var payment = paramsCardDelivery.Payments.GetPaymentBydocNumDxp(header.DocNumDxp);
                 var deliveryAddress = paramsCardDelivery.DeliveryAddress.GetSpecificDeliveryAddress(header.CardCode, header.ShippingAddressName);
                 var invoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, paramsCardDelivery.LocalNeighbors, header.Address, payment);
-                var productType = this.GenerateListProductTypeDelivery(deliveryDetail, lineSapProducts);
+                var productType = !string.IsNullOrEmpty(mixt) ? mixt : paramsCardDelivery.Classifications.Where(x => x.Value == header.TypeOrder).Select(x => x.Description).FirstOrDefault();
 
                 var userOrderByDelivery = userOrders.FirstOrDefault(x => x.DeliveryId == delivery);
                 var lineProductByDelivery = lineProducts.FirstOrDefault(x => x.DeliveryId == delivery);
@@ -640,7 +647,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Remision = delivery,
                     TotalItems = totalItems,
                     TotalPieces = totalPieces,
-                    TypeSaleOrder = $"Pedido {productType}",
+                    TypeSaleOrder = productType,
                     InvoiceType = invoiceType,
                     DataCheckin = initDate.Value,
                     ListSaleOrder = string.Join(", ", salesOrders),

@@ -780,7 +780,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     lineProduct ??= new LineProductsModel();
                     var batchName = ServiceShared.DeserializeObject(lineProduct.BatchName, new List<AlmacenBatchModel>());
 
-                    listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, ServiceConstants.PT, batchName);
+                    listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, batchName);
                 }
 
                 var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice, saleId);
@@ -854,23 +854,20 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="delivery">the delivery.</param>
         /// <param name="itemCode">the item code.</param>
-        /// <param name="warehouse">the warehouse.</param>
         /// <returns>the data.</returns>
-        private async Task<List<string>> GetBatchesByDelivery(int delivery, string itemCode, string warehouse, List<AlmacenBatchModel> batchName)
+        private async Task<List<string>> GetBatchesByDelivery(int delivery, string itemCode, List<AlmacenBatchModel> batchName)
         {
             var batchTransacion = await this.sapDao.GetBatchesTransactionByOrderItem(itemCode, delivery);
-            var lastBatch = batchTransacion == null || !batchTransacion.Any() ? 0 : batchTransacion.Last().LogEntry;
-            var batchTrans = (await this.sapDao.GetBatchTransationsQtyByLogEntry(new List<int> { lastBatch })).ToList();
-            var listComponents = new List<CompleteDetalleFormulaModel>
-            {
-                new CompleteDetalleFormulaModel { ProductId = itemCode, Warehouse = warehouse },
-            };
-
-            var validBatches = (await this.sapDao.GetValidBatches(listComponents)).ToList();
-
+            var batchesQty = (await this.sapDao.GetBatchTransationsQtyByLogEntry(batchTransacion.Select(x => x.LogEntry).ToList())).ToList();
+            var tuple = batchesQty.Select(x => (x.SysNumber, x.ItemCode)).ToList();
+            var validBatches = (await this.sapDao.GetSelectedBatches(tuple)).ToList();
             var listToReturn = validBatches
-                .Where(x => batchTrans.Any(y => y.SysNumber == x.SysNumber))
-                .Select(z => $"{z.DistNumber} | {(int)batchName.GetBatch(z.DistNumber).BatchQty} pz | Cad: {z.FechaExp}")
+                .Where(x => batchName.Any(y => y.BatchNumber == x.DistNumber))
+                .Select(z =>
+                {
+                    var selectedBatch = batchName.Where(x => x.BatchNumber == z.DistNumber).First();
+                    return $"{selectedBatch.WarehouseCode ?? ServiceConstants.PT} | {z.DistNumber} | {(int)batchName.GetBatch(z.DistNumber).BatchQty} pz | Cad: {z.FechaExp}";
+                })
                 .ToList();
 
             return listToReturn;
