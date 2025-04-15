@@ -1090,6 +1090,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await this.RetryQuery(query);
         }
 
+        public async Task<IEnumerable<int>> GetDeliveryIdsByInvoice(int invoiceId)
+        {
+            var query = from invoice in this.databaseContext.InvoiceHeaderModel
+                        join deliveryDet in this.databaseContext.DeliveryDetailModel on invoice.InvoiceId equals deliveryDet.InvoiceId
+                        where invoice.DocNum == invoiceId
+                        select deliveryDet.DeliveryId;
+            return await this.RetryQuery(query.Distinct());
+        }
+
+
         /// <inheritdoc/>
         public async Task<List<Batches>> GetBatchByProductDistNumber(List<string> productCode, List<string> batchCode)
         {

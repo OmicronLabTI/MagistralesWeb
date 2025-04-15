@@ -273,6 +273,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<string> GetBatchCode(string productCode, string batchCode);
 
         /// <summary>
+        /// GetDeliveryIdsByInvoice.
+        /// </summary>
+        /// <param name="invoiceId">Invoiceid.</param>
+        /// <returns></returns>
+        Task<IEnumerable<int>> GetDeliveryIdsByInvoice(int invoiceId);
+
+
+        /// <summary>
         /// Gets the batches by a list of product ids and the dist number.
         /// </summary>
         /// <param name="productCode">the products.</param>

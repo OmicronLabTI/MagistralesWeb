@@ -133,6 +133,13 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetDeliveryIdsByInvoice(int invoiceId)
+        {
+            var result = await this.sapDao.GetDeliveryIdsByInvoice(invoiceId);
+            return ServiceUtils.CreateResult(true, 200, null, result, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> GetProductsDelivery(string saleId)
         {
             var saleArray = saleId.Split("-").ToList();
