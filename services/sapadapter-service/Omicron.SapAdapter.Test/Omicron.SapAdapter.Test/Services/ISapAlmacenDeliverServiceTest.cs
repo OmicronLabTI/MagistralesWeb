@@ -354,5 +354,39 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.That(response, Is.Not.Null);
         }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        [Test]
+        public void CalculateRemittedPieces()
+        {
+            // arrange
+            var itemCode = "REVE 16 - 1003";
+
+            var lineProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { ItemCode = "REVE 16", BatchName = "[{\"BatchQty\":5}]" },
+                new LineProductsModel { ItemCode = "REVE 16", BatchName = "[{\"BatchQty\":10}]" },
+                new LineProductsModel { ItemCode = "REVE 15", BatchName = "[{\"BatchQty\":10}]" },
+            };
+
+            var mockPedidos = new Mock<IPedidosService>();
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+
+            var mockProccessPayments = new Mock<IProccessPayments>();
+
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
+
+            // act
+            var response = service.CalculateRemittedPieces(itemCode, lineProducts);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response, Is.EqualTo(15));
+        }
     }
 }
