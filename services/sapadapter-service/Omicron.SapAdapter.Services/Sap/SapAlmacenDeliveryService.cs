@@ -158,6 +158,25 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, items, null, null);
         }
 
+        /// <summary>
+        /// Calculate Remitted Pieces.
+        /// </summary>
+        /// <param name="itemCode">item code.</param>
+        /// <param name="lineProducts">line products.</param>
+        /// <returns>Remitted Pieces for product.</returns>
+        public int CalculateRemittedPieces(string itemCode, List<LineProductsModel> lineProducts)
+        {
+            if (lineProducts == null || lineProducts.Count == 0)
+            {
+                return 0;
+            }
+
+            return (int)lineProducts
+                .Where(lp => itemCode.Contains(lp.ItemCode, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(lp.BatchName))
+                .SelectMany(lp => ServiceShared.DeserializeObject(lp.BatchName, new List<AlmacenBatchModel>()))
+                .Sum(b => b.BatchQty);
+        }
+
         private async Task<List<UserOrderModel>> GetUserOrdersRemision(Dictionary<string, string> parameters, DateTime startDate, DateTime endDate)
         {
             if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int remisionId))
@@ -482,6 +501,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     DeliveryId = order.DeliveryId,
                     SaleOrderId = order.BaseEntry.Value,
+                    RemittedPieces = this.CalculateRemittedPieces(itemcode, lineProducts),
                 });
             }
 
