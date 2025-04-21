@@ -98,6 +98,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             {
                 var firstBatch = product.Batches.FirstOrDefault();
                 newDeliveryNote.WarehouseCode = firstBatch != null ? firstBatch.WarehouseCode : orderLine.WarehouseCode;
+                newDeliveryNote.Quantity = product.Quantity;
                 foreach (var b in product.Batches)
                 {
                     var doubleQuantity = CastStringToDouble(b.BatchQty.ToString());

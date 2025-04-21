@@ -84,9 +84,8 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task GetScannedDataMagistral()
         {
-            var type = "magistral";
             var code = "75000-1000";
-            var response = await this.almacenFacade.GetScannedData(type, code);
+            var response = await this.almacenFacade.GetScannedDataMagistral(code);
 
             Assert.That(response, Is.Not.Null);
         }
@@ -98,9 +97,9 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task GetScannedDataLine()
         {
-            var type = "line";
+            var orderId = 75000;
             var code = "750001000";
-            var response = await this.almacenFacade.GetScannedData(type, code);
+            var response = await this.almacenFacade.GetScannedDataLinea(code, orderId);
 
             Assert.That(response, Is.Not.Null);
         }
@@ -240,9 +239,8 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task GetScannedDataRemision()
         {
-            var type = "remision";
             var code = "750001000";
-            var response = await this.almacenFacade.GetScannedData(type, code);
+            var response = await this.almacenFacade.GetScannedDataRemision(code);
 
             Assert.That(response, Is.Not.Null);
         }
@@ -254,9 +252,8 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task GetScannedDataRemisionMg()
         {
-            var type = "remisionmg";
             var code = "750001000";
-            var response = await this.almacenFacade.GetScannedData(type, code);
+            var response = await this.almacenFacade.GetScannedDataRemisionMg(code);
 
             Assert.That(response, Is.Not.Null);
         }
@@ -268,9 +265,8 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task GetScannedDataRemisionLn()
         {
-            var type = "remisionln";
             var code = "750001000";
-            var response = await this.almacenFacade.GetScannedData(type, code);
+            var response = await this.almacenFacade.GetScannedDataRemisionLn(code);
 
             Assert.That(response, Is.Not.Null);
         }
@@ -298,9 +294,21 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task GetScannedDataFactura()
         {
-            var type = "factura";
             var code = "750001000";
-            var response = await this.almacenFacade.GetScannedData(type, code);
+            var response = await this.almacenFacade.GetScannedDataFactura(code);
+
+            Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Test the get orders detail.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetDetallePedidoPiezas()
+        {
+            var orderId = 75000;
+            var response = await this.almacenFacade.GetDetailOrder(orderId);
 
             Assert.That(response, Is.Not.Null);
         }

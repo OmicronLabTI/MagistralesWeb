@@ -196,6 +196,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetOrdersByStatusAndUserId = "qfbOrders/{0}/{1}";
 
         /// <summary>
+        /// route to get the remitted pieces.
+        /// </summary>
+        public const string GetRemittedPieces = "infopieces/{0}/{1}";
+
+        /// <summary>
         /// Get users by id.
         /// </summary>
         public const string GetUsersById = "getUsersById";
