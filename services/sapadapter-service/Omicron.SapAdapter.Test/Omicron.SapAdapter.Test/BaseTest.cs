@@ -91,6 +91,9 @@ namespace Omicron.SapAdapter.Test
 
                 // for almacen packages
                 new DetallePedidoModel { Description = "Linea1", DetalleId = 1, PedidoId = 85001, ProductoId = "Linea1", Container = "NA", Quantity = 10, DocDate = DateTime.Today },
+
+                // for remissioned pieces
+                new DetallePedidoModel { PedidoId = 11, Description = "Linea50", DetalleId = 1, ProductoId = "Linea50", Container = "NA", Quantity = 10, DocDate = DateTime.Today },
             };
         }
 
@@ -160,6 +163,8 @@ namespace Omicron.SapAdapter.Test
                 // For Almacen
                 new BatchesQuantity { AbsEntry = 2, ItemCode = "Linea1", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
                 new BatchesQuantity { AbsEntry = 3, ItemCode = "Linea1", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
+
+                new BatchesQuantity { AbsEntry = 4, ItemCode = "Linea50", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
             };
         }
 
@@ -275,6 +280,8 @@ namespace Omicron.SapAdapter.Test
                 new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral1", ProductoName = "MagistralSolo1",  Unit = "PZ", LargeDescription = "MAAAAgistral1", NeedsCooling = "Y", ProductGroupId = 1, IsWorkableProduct = "Y" },
                 new ProductoModel { IsMagistral = "Y", ProductoId = "Magistral2", ProductoName = "MagistralSolo2",  Unit = "PZ", LargeDescription = "MAAAAgistral2", NeedsCooling = "N", ProductGroupId = 1, IsWorkableProduct = "Y" },
                 new ProductoModel { IsMagistral = "N", ProductoId = "Linea1", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea1", IsLine = "Y", ProductGroupId = 1, IsWorkableProduct = "Y" },
+
+                new ProductoModel { IsMagistral = "N", ProductoId = "Linea50", ProductoName = "MagistralLinea", Unit = "PZ", LargeDescription = "Liiiiinea1", NeedsCooling = "Y", BarCode = "Linea50", IsLine = "Y", ProductGroupId = 1, IsWorkableProduct = "Y" },
 
                 // For omigenomics
                 new ProductoModel { IsMagistral = "N", ProductoId = "Omigenomics", ProductoName = "Omigenomics", Unit = "PZ", LargeDescription = "Omigenomics", NeedsCooling = "Y", BarCode = "Omicenomics", IsLine = "Y", ProductGroupId = 2, IsWorkableProduct = "N" },
@@ -554,7 +561,7 @@ namespace Omicron.SapAdapter.Test
         {
             var listProducts = new List<LineProductsModel>
             {
-                new LineProductsModel { Id = 1, SaleOrderId = 75000, StatusAlmacen = "Almacenado" },
+                new LineProductsModel { Id = 1, SaleOrderId = 75000, ItemCode = "Linea1", StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(new[] { new AlmacenBatchModel { BatchQty = 1 } }) },
             };
 
             var incidence = new List<IncidentsModel>

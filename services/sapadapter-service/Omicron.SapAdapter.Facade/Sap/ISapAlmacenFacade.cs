@@ -35,10 +35,52 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <summary>
         /// Gets the data for the scanned qr or bar code.
         /// </summary>
-        /// <param name="type">the type of the scan.</param>
         /// <param name="code">the code scanned.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetScannedData(string type, string code);
+        Task<ResultDto> GetScannedDataMagistral(string code);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="code">the code scanned.</param>
+        /// <param name="orderId">the order Id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedDataLinea(string code, int orderId);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="code">the code scanned.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedDataRemision(string code);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="code">the code scanned.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedDataRemisionMg(string code);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="code">the code scanned.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedDataRemisionLn(string code);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="code">the code scanned.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedDataFactura(string code);
+
+        /// <summary>
+        /// Gets the data for order detail.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetDetailOrder(int orderId);
 
         /// <summary>
         /// Gets the products with codebars.
