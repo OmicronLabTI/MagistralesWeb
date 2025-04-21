@@ -54,5 +54,11 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.DeliveryNotes
         /// </summary>
         /// <value>The user that is assigning.</value>
         public bool IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The user that is assigning.</value>
+        public double Quantity { get; set; }
     }
 }
