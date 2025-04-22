@@ -561,7 +561,8 @@ namespace Omicron.SapAdapter.Test
         {
             var listProducts = new List<LineProductsModel>
             {
-                new LineProductsModel { Id = 1, SaleOrderId = 75000, ItemCode = "Linea1", StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(new[] { new AlmacenBatchModel { BatchQty = 1 } }) },
+                new LineProductsModel { Id = 1, SaleOrderId = 75000, ItemCode = "Linea1", StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(new[] { new AlmacenBatchModel { BatchQty = 1, WarehouseCode = "PT", BatchNumber = "55" } }), DeliveryId = 12 },
+                new LineProductsModel { Id = 2, SaleOrderId = 75000, ItemCode = "Linea1", StatusAlmacen = "Almacenado", BatchName = JsonConvert.SerializeObject(new[] { new AlmacenBatchModel { BatchQty = 1, WarehouseCode = "Prueba varios almacenes", BatchNumber = "55" } }) },
             };
 
             var incidence = new List<IncidentsModel>

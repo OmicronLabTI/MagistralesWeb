@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="ReceipcionPedidosDetailModel.cs" company="Axity">
+// <copyright file="ProductListRecepcionModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -11,20 +11,20 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     using System.Collections.Generic;
 
     /// <summary>
-    /// class for the detail.
+    /// ProductList model.
     /// </summary>
-    public class ReceipcionPedidosDetailModel
+    public class ProductListRecepcionModel : ProductListBaseModel
     {
         /// <summary>
-        /// Gets or sets Code.
+        /// Gets or sets a value indicating whether gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public AlmacenSalesHeaderModel AlmacenHeader { get; set; }
+        public List<int> DeliveryId { get; set; }
 
         /// <summary>
-        /// Gets or sets Code.
+        /// Gets or sets a value indicating whether Has Pending To Store.
         /// </summary>
         /// <value>The code.</value>
-        public List<ProductListRecepcionModel> Items { get; set; }
+        public bool HasPendingToStore { get; set; }
     }
 }
