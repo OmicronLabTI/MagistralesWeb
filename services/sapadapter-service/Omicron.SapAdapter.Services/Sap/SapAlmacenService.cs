@@ -704,8 +704,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     orderStatus = this.CalculateStatus(order.Canceled, (int)order.Detalles.Quantity, remittedPieces);
 
                     var matchedLines = lineProductsModel.Where(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == order.Producto.ProductoId).ToList();
-                    deliveryIds = matchedLines.Select(x => x.DeliveryId).ToList();
-                    hasDelivery = deliveryIds.Any() && deliveryIds.All(id => id != 0);
+                    deliveryIds = matchedLines.Where(x => x.DeliveryId != 0).Select(x => x.DeliveryId).ToList();
+                    hasDelivery = deliveryIds.Any();
 
                     var allBatchModels = matchedLines.SelectMany(x => ServiceShared.DeserializeObject(x.BatchName, new List<AlmacenBatchModel>())).ToList();
                     batches = allBatchModels
