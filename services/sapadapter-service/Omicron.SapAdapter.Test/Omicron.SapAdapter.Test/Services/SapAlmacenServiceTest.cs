@@ -483,6 +483,8 @@ namespace Omicron.SapAdapter.Test.Services
             var response = await localService.GetOrdersDetails(ids);
             var result = response.Response as ReceipcionPedidosDetailModel;
 
+            TestContext.WriteLine($"Result: {JsonConvert.SerializeObject(result, Formatting.Indented)}");
+
             // assert
             Assert.That(response, Is.Not.Null);
             Assert.That(result.AlmacenHeader.RemittedPieces, Is.EqualTo(1));

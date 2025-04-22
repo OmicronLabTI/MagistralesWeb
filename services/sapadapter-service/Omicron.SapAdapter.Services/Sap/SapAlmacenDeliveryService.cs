@@ -158,6 +158,25 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, items, null, null);
         }
 
+        /// <summary>
+        /// Calculate Remitted Pieces.
+        /// </summary>
+        /// <param name="itemCode">item code.</param>
+        /// <param name="lineProducts">line products.</param>
+        /// <returns>Remitted Pieces for product.</returns>
+        public int CalculateRemittedPieces(string itemCode, List<LineProductsModel> lineProducts)
+        {
+            if (lineProducts == null || lineProducts.Count == 0)
+            {
+                return 0;
+            }
+
+            return (int)lineProducts
+                .Where(lp => itemCode.Contains(lp.ItemCode, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(lp.BatchName) && lp.DeliveryId != 0)
+                .SelectMany(lp => ServiceShared.DeserializeObject(lp.BatchName, new List<AlmacenBatchModel>()))
+                .Sum(b => b.BatchQty);
+        }
+
         private async Task<List<UserOrderModel>> GetUserOrdersRemision(Dictionary<string, string> parameters, DateTime startDate, DateTime endDate)
         {
             if (parameters.ContainsKey(ServiceConstants.Chips) && int.TryParse(parameters[ServiceConstants.Chips], out int remisionId))
@@ -423,9 +442,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="deliveryDetails">The delivery details.</param>
         /// <returns>the data.</returns>
-        private async Task<List<ProductListModel>> GetProductListModel(List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<IncidentsModel> incidents, List<ProductoModel> products)
+        private async Task<List<ProductListRemisionModel>> GetProductListModel(List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<IncidentsModel> incidents, List<ProductoModel> products)
         {
-            var listToReturn = new List<ProductListModel>();
+            var listToReturn = new List<ProductListRemisionModel>();
             var saleId = deliveryDetails.FirstOrDefault().BaseEntry ?? 0;
             var baseDelivery = deliveryDetails.FirstOrDefault().DeliveryId;
             var prodOrders = (await this.sapDao.GetFabOrderBySalesOrderId(new List<int> { saleId })).ToList();
@@ -468,7 +487,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = incidentdb.Status,
                 };
 
-                listToReturn.Add(new ProductListModel
+                listToReturn.Add(new ProductListRemisionModel
                 {
                     Container = order.Container,
                     Description = item.LargeDescription.ToUpper(),
@@ -482,6 +501,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     DeliveryId = order.DeliveryId,
                     SaleOrderId = order.BaseEntry.Value,
+                    RemittedPieces = this.CalculateRemittedPieces(itemcode, lineProducts),
                 });
             }
 
