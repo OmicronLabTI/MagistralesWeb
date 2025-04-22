@@ -182,6 +182,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<DetallePedidoModel>> GetDetails(List<int?> ordersIds)
+        {
+            return (await this.RetryQuery(this.databaseContext.DetallePedido.Where(x => ordersIds.Contains(x.PedidoId) && x.ProductoId != "FL 1"))).ToList();
+        }
+
+        /// <inheritdoc/>
         public async Task<List<OrderModel>> GetOrdersById(int pedidoID)
         {
             return (await this.RetryQuery(this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoID))).ToList();
