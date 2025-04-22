@@ -366,9 +366,9 @@ namespace Omicron.SapAdapter.Test.Services
 
             var lineProducts = new List<LineProductsModel>
             {
-                new LineProductsModel { ItemCode = "REVE 16", BatchName = "[{\"BatchQty\":5}]" },
-                new LineProductsModel { ItemCode = "REVE 16", BatchName = "[{\"BatchQty\":10}]" },
-                new LineProductsModel { ItemCode = "REVE 15", BatchName = "[{\"BatchQty\":10}]" },
+                new LineProductsModel { ItemCode = "REVE 16", BatchName = "[{\"BatchQty\":5}]", DeliveryId = 123 },
+                new LineProductsModel { ItemCode = "REVE 16", BatchName = "[{\"BatchQty\":10}]", DeliveryId = 123 },
+                new LineProductsModel { ItemCode = "REVE 15", BatchName = "[{\"BatchQty\":10}]", DeliveryId = 123 },
             };
 
             var mockPedidos = new Mock<IPedidosService>();

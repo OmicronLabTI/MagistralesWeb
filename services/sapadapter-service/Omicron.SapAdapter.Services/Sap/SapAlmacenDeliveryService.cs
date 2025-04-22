@@ -172,7 +172,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return (int)lineProducts
-                .Where(lp => itemCode.Contains(lp.ItemCode, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(lp.BatchName))
+                .Where(lp => itemCode.Contains(lp.ItemCode, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(lp.BatchName) && lp.DeliveryId != 0)
                 .SelectMany(lp => ServiceShared.DeserializeObject(lp.BatchName, new List<AlmacenBatchModel>()))
                 .Sum(b => b.BatchQty);
         }
@@ -442,9 +442,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="deliveryDetails">The delivery details.</param>
         /// <returns>the data.</returns>
-        private async Task<List<ProductListModel>> GetProductListModel(List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<IncidentsModel> incidents, List<ProductoModel> products)
+        private async Task<List<ProductListRemisionModel>> GetProductListModel(List<DeliveryDetailModel> deliveryDetails, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, List<IncidentsModel> incidents, List<ProductoModel> products)
         {
-            var listToReturn = new List<ProductListModel>();
+            var listToReturn = new List<ProductListRemisionModel>();
             var saleId = deliveryDetails.FirstOrDefault().BaseEntry ?? 0;
             var baseDelivery = deliveryDetails.FirstOrDefault().DeliveryId;
             var prodOrders = (await this.sapDao.GetFabOrderBySalesOrderId(new List<int> { saleId })).ToList();
@@ -487,7 +487,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = incidentdb.Status,
                 };
 
-                listToReturn.Add(new ProductListModel
+                listToReturn.Add(new ProductListRemisionModel
                 {
                     Container = order.Container,
                     Description = item.LargeDescription.ToUpper(),
