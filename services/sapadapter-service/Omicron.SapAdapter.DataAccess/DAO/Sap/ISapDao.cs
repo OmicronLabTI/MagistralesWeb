@@ -66,6 +66,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> pedidoId);
 
         /// <summary>
+        /// gets the details.
+        /// </summary>
+        /// <param name="ordersIds">ordersIds</param>
+        /// <returns>the details.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetDetails(List<int?> ordersIds);
+
+        /// <summary>
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
