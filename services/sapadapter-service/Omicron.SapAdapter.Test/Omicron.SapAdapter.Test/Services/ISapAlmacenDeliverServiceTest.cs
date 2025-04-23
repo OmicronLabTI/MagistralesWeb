@@ -380,6 +380,7 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That(response.Success);
             Assert.That(response.Code == 200);
             Assert.That(response.Response, Is.InstanceOf<IEnumerable<int>>());
+        }
 
         /// <summary>
         /// Test the method to get the orders for almacen.
