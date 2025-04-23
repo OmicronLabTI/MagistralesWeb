@@ -42,8 +42,16 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the data of the line scanned bar.
         /// </summary>
         /// <param name="code">The code.</param>
+        /// <param name="orderId">The order id.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetLineScannedData(string code);
+        Task<ResultModel> GetLineScannedData(string code, int orderId);
+
+        /// <summary>
+        /// Gets the data of the line scanned bar.
+        /// </summary>
+        /// <param name="orderId">The order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetOrderDetail(int orderId);
 
         /// <summary>
         /// Gets the products with code bars.

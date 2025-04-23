@@ -161,7 +161,7 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetLineScannedData(string code)
+        public async Task<ResultModel> GetLineScannedData(string code, int orderId)
         {
             var product = (await this.sapDao.GetProductByCodeBar(code)).FirstOrDefault();
             if (product == null)
@@ -196,6 +196,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 return ServiceUtils.CreateResult(false, 404, ServiceConstants.NoAvaiableBoxesError, null, ServiceConstants.NoAvaiableBoxesError, null);
             }
 
+            var remissionPieces = await this.CalculateRemissionPieces(orderId, product.ProductoId);
+
             var lineData = new LineScannerModel
             {
                 Batches = listBatchesModel,
@@ -203,9 +205,17 @@ namespace Omicron.SapAdapter.Services.Sap
                 ItemCode = product.ProductoId,
                 ProductType = $"Producto {productType}",
                 NeedsCooling = product.NeedsCooling,
+                Pieces = remissionPieces,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrderDetail(int orderId)
+        {
+            var orders = (await this.sapDao.GetDetailByDocNum(new List<int> { orderId })).ToList();
+            return ServiceUtils.CreateResult(true, 200, null, orders, null, null);
         }
 
         /// <inheritdoc/>
@@ -293,6 +303,21 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var objectToReturn = new { DeliveryDetail = allDeliveries, DetallePedido = detailsSale.Where(d => d.IsPackage != ServiceConstants.IsPackage) };
             return ServiceUtils.CreateResult(true, 200, null, objectToReturn, null, null);
+        }
+
+        private async Task<RemittedPiecesModel> CalculateRemissionPieces(int orderId, string itemCode)
+        {
+            var response = await this.almacenService.GetAlmacenOrders(string.Format(ServiceConstants.GetRemittedPieces, itemCode, orderId));
+            var remissionPieces = JsonConvert.DeserializeObject<RemittedPiecesModel>(response.Response.ToString());
+
+            var orderPieces = await this.sapDao.GetDetailByDocNumAndItemCode(orderId, itemCode);
+
+            var totalPieces = orderPieces.Sum(x => x.Quantity);
+
+            remissionPieces.TotalPieces = (int)totalPieces;
+            remissionPieces.AvailablePieces = (int)totalPieces - remissionPieces.RemissionPieces;
+
+            return remissionPieces;
         }
 
         private async Task<List<string>> GetActivesWareHouseConfig(string itemCode, string catalog, string firmName)
@@ -404,6 +429,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 SapComments = order.Comments,
                 IsPackage = order.IsPackage == ServiceConstants.IsPackage,
                 IsOmigenomics = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(order.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(order.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(order.IsSecondary)),
+                RemittedPieces = productList.Sum(p => p.RemittedPieces),
             };
 
             var listToReturn = new ReceipcionPedidosDetailModel
@@ -646,7 +672,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="incidents">The incidents.</param>
         /// <param name="batchesDataBase">The batches.</param>
         /// <returns>the products.</returns>
-        private List<ProductListModel> GetProductListModel(List<UserOrderModel> userOrders, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<LineProductsModel> lineProductsModel, List<IncidentsModel> incidents, List<Batches> batchesDataBase)
+        private List<ProductListRecepcionModel> GetProductListModel(List<UserOrderModel> userOrders, List<CompleteRecepcionPedidoDetailModel> sapOrders, List<LineProductsModel> lineProductsModel, List<IncidentsModel> incidents, List<Batches> batchesDataBase)
         {
             var listToReturn = sapOrders.Select(order =>
             {
@@ -655,8 +681,10 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var orderStatus = ServiceConstants.PorRecibir;
                 var hasDelivery = false;
-                var deliveryId = 0;
+                var deliveryIds = new List<int>();
                 var batches = new List<string>();
+                var remittedPieces = 0;
+                var pendingToStore = false;
 
                 if (order.Producto.IsMagistral.Equals("Y"))
                 {
@@ -666,22 +694,26 @@ namespace Omicron.SapAdapter.Services.Sap
                     orderStatus = ServiceShared.CalculateTernary(ServiceShared.CalculateAnd(orderStatus == ServiceConstants.PorRecibir, userFabOrder.FinishedLabel == 0), ServiceConstants.Pendiente, orderStatus);
                     orderStatus = ServiceShared.CalculateTernary(userFabOrder.Status == ServiceConstants.Cancelado, ServiceConstants.Cancelado, orderStatus);
                     hasDelivery = userFabOrder.DeliveryId != 0;
-                    deliveryId = userFabOrder.DeliveryId;
+                    deliveryIds = new List<int> { userFabOrder.DeliveryId };
                 }
                 else
                 {
-                    var userFabLineOrder = lineProductsModel.FirstOrDefault(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode.Equals(order.Producto.ProductoId));
-                    userFabLineOrder ??= new LineProductsModel { StatusAlmacen = ServiceConstants.PorRecibir };
-                    orderStatus = ServiceShared.CalculateTernary(!userFabLineOrder.StatusAlmacen.Equals(ServiceConstants.Almacenado), orderStatus, userFabLineOrder.StatusAlmacen);
-                    orderStatus = ServiceShared.CalculateTernary(userFabLineOrder.StatusAlmacen == ServiceConstants.Cancelado, ServiceConstants.Cancelado, orderStatus);
-                    hasDelivery = userFabLineOrder.DeliveryId != 0;
-                    deliveryId = userFabLineOrder.DeliveryId;
+                    remittedPieces = lineProductsModel.Where(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == order.Producto.ProductoId && x.DeliveryId != 0)
+                            .SelectMany(x => ServiceShared.DeserializeObject(x.BatchName, new List<AlmacenBatchModel>())).Sum(b => (int)b.BatchQty);
 
-                    var batchObject = ServiceShared.DeserializeObject(userFabLineOrder.BatchName, new List<AlmacenBatchModel>());
-                    batches = batchObject
+                    orderStatus = this.CalculateStatus(order.Canceled, (int)order.Detalles.Quantity, remittedPieces);
+
+                    var matchedLines = lineProductsModel.Where(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == order.Producto.ProductoId).ToList();
+                    deliveryIds = matchedLines.Where(x => x.DeliveryId != 0).Select(x => x.DeliveryId).ToList();
+                    hasDelivery = deliveryIds.Any();
+
+                    var allBatchModels = matchedLines.SelectMany(x => ServiceShared.DeserializeObject(x.BatchName, new List<AlmacenBatchModel>())).ToList();
+                    batches = allBatchModels
                         .Select(y => $"{y.BatchNumber} | {(int)y.BatchQty} pz | Cad: {this.GetExpirationDate(batchesDataBase, y.BatchNumber, order.Producto.ProductoId)}")
                         .ToList();
                 }
+
+                pendingToStore = lineProductsModel.Any(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == order.Producto.ProductoId && x.DeliveryId == 0);
 
                 var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.DocNum, x.ItemCode == order.Producto.ProductoId));
                 incidentdb ??= new IncidentsModel();
@@ -694,7 +726,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = incidentdb.Status,
                 };
 
-                return new ProductListModel
+                return new ProductListRecepcionModel
                 {
                     Container = order.Detalles.Container,
                     Description = order.Producto.LargeDescription.ToUpper(),
@@ -707,12 +739,20 @@ namespace Omicron.SapAdapter.Services.Sap
                     Batches = batches,
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     HasDelivery = hasDelivery,
-                    DeliveryId = deliveryId,
+                    DeliveryId = deliveryIds,
+                    RemittedPieces = remittedPieces,
+                    HasPendingToStore = pendingToStore,
                 };
             }).ToList();
 
             return listToReturn;
         }
+
+        private string CalculateStatus(string isCanceled, int totalPieces, int remittedPieces) =>
+            isCanceled == "Y" ? ServiceConstants.Cancelado :
+            remittedPieces == 0 ? ServiceConstants.PorRecibir :
+            remittedPieces < totalPieces ? ServiceConstants.BackOrder :
+            ServiceConstants.Almacenado;
 
         private string GetStatusSaleOrder(UserOrderModel userOrder)
         {

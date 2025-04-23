@@ -66,6 +66,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> pedidoId);
 
         /// <summary>
+        /// gets the details.
+        /// </summary>
+        /// <param name="ordersIds">ordersIds</param>
+        /// <returns>the details.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetDetails(List<int?> ordersIds);
+
+        /// <summary>
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
@@ -381,6 +388,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="docuNums">the doc nums.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums);
+
+        /// <summary>
+        /// Get the delivery orders headers.
+        /// </summary>
+        /// <param name="docuNum">the doc num.</param>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNumAndItemCode(int docuNum, string itemCode);
 
         /// <summary>
         /// Gets the invoiceHeader by doc num.

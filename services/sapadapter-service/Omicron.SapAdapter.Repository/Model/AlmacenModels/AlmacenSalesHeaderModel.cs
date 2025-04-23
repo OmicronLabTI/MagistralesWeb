@@ -154,6 +154,12 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public bool IsOmigenomics { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int RemittedPieces { get; set; }
+
+        /// <summary>
         /// Gets OrderList.
         /// </summary>
         /// <value>The OrderList.</value>

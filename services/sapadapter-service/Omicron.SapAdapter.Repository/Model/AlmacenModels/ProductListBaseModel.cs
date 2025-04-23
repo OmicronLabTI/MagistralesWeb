@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="ProductListModel.cs" company="Axity">
+// <copyright file="ProductListBaseModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -13,7 +13,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     /// <summary>
     /// ProductList model.
     /// </summary>
-    public class ProductListModel
+    public class ProductListBaseModel
     {
         /// <summary>
         /// Gets or sets Code.
@@ -80,12 +80,6 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public bool HasDelivery { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public int DeliveryId { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether gets or sets Code.
