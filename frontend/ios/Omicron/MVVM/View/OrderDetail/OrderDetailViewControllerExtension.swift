@@ -11,7 +11,7 @@ import RxSwift
 
 extension OrderDetailViewController {
     func viewModelBinding2() {
-        self.orderDetailViewModel.showAlertConfirmation.observeOn(MainScheduler.instance)
+        self.orderDetailViewModel.showAlertConfirmation.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] data in
                 let alert = UIAlertController(title: data.message, message: nil, preferredStyle: .alert)
                 let cancelAction = UIAlertAction(title: CommonStrings.cancel, style: .destructive,
@@ -25,7 +25,7 @@ extension OrderDetailViewController {
                 alert.addAction(okAction)
                 self?.present(alert, animated: true, completion: nil)
             }).disposed(by: self.disposeBag)
-        self.orderDetailViewModel.sumFormula.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] sum in
+        self.orderDetailViewModel.sumFormula.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] sum in
                    guard let self = self else { return }
                    if sum != -1 {
                        if !self.isolatedOrder {
@@ -47,7 +47,7 @@ extension OrderDetailViewController {
                }).disposed(by: self.disposeBag)
     }
     func viewModelBinding3() {
-        self.orderDetailViewModel.orderDetailData.observeOn(MainScheduler.instance)
+        self.orderDetailViewModel.orderDetailData.observe(on: MainScheduler.instance)
         .subscribe(onNext: { [weak self] res in
             guard let self = self else { return }
             self.quantityTextField.isHidden = true

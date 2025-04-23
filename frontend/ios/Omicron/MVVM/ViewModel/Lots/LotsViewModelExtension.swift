@@ -12,7 +12,7 @@ import RxSwift
 extension LotsViewModel {
     func getLots() {
         self.loading.onNext(true)
-        self.networkManager.getLots(orderId).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
+        self.networkManager.getLots(orderId).observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] data in
             guard let self = self else { return }
             self.loading.onNext(false)
             if let lotsData = data.response {

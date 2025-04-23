@@ -40,7 +40,7 @@ class ChartViewController: UIViewController {
 
         chartViewModel
             .start
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] firstTime in
                 guard let self = self else { return }
                 if firstTime {
