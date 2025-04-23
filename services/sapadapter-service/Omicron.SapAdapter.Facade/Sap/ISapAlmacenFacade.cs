@@ -124,6 +124,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetOrdersDeliveryDetail(int deliveryId);
 
         /// <summary>
+        /// GetDeliveryIdsByInvoice.
+        /// </summary>
+        /// <param name="invoiceId">invoiceId.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetDeliveryIdsByInvoice(int invoiceId);
+
+        /// <summary>
         /// Gets the products of a specific delivery.
         /// </summary>
         /// <param name="saleId">the ids.</param>
