@@ -700,8 +700,8 @@ namespace Omicron.SapAdapter.Test
         {
             var userOrders = new List<UserOrderModel>
             {
-                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado" },
-                new UserOrderModel { Salesorderid = "75000", Productionorderid = "75001", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado" },
+                new UserOrderModel { Salesorderid = "75000", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 1, Productionorderid = "75001", StatusAlmacen = "Almacenado" },
+                new UserOrderModel { Salesorderid = "75000", Productionorderid = "75001", Comments = "Comments", FinishedLabel = 1, Status = "Almacenado", DeliveryId = 1, StatusAlmacen = "Empaquetado" },
             };
 
             return new ResultDto
