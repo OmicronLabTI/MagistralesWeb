@@ -734,7 +734,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         DeliveryId = y.DocNum,
                         DeliveryDocDate = y.Detalles.DocDate,
                         SaleOrder = salesOrders.Distinct().Count(),
-                        Status = ServiceShared.CalculateTernary(userOrderStatus.Any() && userOrderStatus.All(z => z == ServiceConstants.Empaquetado), ServiceConstants.Empaquetado, ServiceConstants.Almacenado),
+                        Status = ServiceShared.CalculateTernary(userOrderStatus.TrueForAll(z => z == ServiceConstants.Empaquetado), ServiceConstants.Empaquetado, userOrderStatus.Exists(z => z == ServiceConstants.Empaquetado) && userOrderStatus.Exists(z => z == ServiceConstants.Almacenado) ? ServiceConstants.BackOrder : ServiceConstants.Almacenado),
                         TotalItems = invoiceDetails.Where(a => a.Detail.BaseEntry.HasValue).Count(z => z.Detail.BaseEntry == y.DocNum),
                         IsPackage = y.IsPackage == "Y",
                     };
