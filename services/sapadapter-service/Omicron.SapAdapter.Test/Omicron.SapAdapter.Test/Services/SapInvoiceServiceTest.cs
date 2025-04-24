@@ -334,8 +334,8 @@ namespace Omicron.SapAdapter.Test.Services
         /// <param name="code">the code to look.</param>
         /// <returns>the data.</returns>
         [Test]
-        [TestCase("Linea1-1")]
-        [TestCase("Linea10-1")]
+        [TestCase("Linea1-1-0")]
+        [TestCase("Linea10-1-0")]
         public async Task GetDeliveryScannedDataLn(string code)
         {
             // arrange

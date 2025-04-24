@@ -137,8 +137,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
 
             var salesOrdersId = deliveryDetails.Where(y => y.Detalles != null && y.Detalles.BaseEntry.HasValue).Select(x => x.Detalles.BaseEntry.Value).ToList();
-            var userOrders = await this.GetUserOrders(ServiceConstants.GetUserSalesOrder, salesOrdersId);
-            var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, salesOrdersId);
+            var userOrders = await this.GetUserOrders(ServiceConstants.GetUserSalesOrder, salesOrdersId.Distinct().ToList());
+            var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, salesOrdersId.Distinct().ToList());
 
             var transactionsIds = invoiceDetails.Where(i => !string.IsNullOrEmpty(i.InvoiceHeader.DocNumDxp)).Select(o => o.InvoiceHeader.DocNumDxp).Distinct().ToList();
             var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).GetPaymentBydocNumDxp(invoiceDetails.First().InvoiceHeader.DocNumDxp);
@@ -275,6 +275,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var dataArray = code.Split("-");
             var codeBar = dataArray[0];
             var saleOrder = int.Parse(dataArray[1]);
+            var deliveryOrder = int.Parse(dataArray[2]);
 
             var itemCode = (await this.sapDao.GetProductByCodeBar(codeBar)).FirstOrDefault();
 
@@ -284,9 +285,9 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var productType = ServiceShared.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
-            var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId);
+            var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId, deliveryOrder);
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, new List<int> { saleOrder });
-            var lineProduct = lineOrders.FirstOrDefault(x => x.ItemCode == itemCode.ProductoId);
+            var lineProduct = lineOrders.FirstOrDefault(x => x.ItemCode == itemCode.ProductoId && x.DeliveryId == deliveryOrder);
             lineProduct ??= new LineProductsModel { BatchName = JsonConvert.SerializeObject(new List<AlmacenBatchModel>()) };
             var batchModel = JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
             var batches = await this.GetBatchesForInvoice(itemCode, batchModel);
@@ -534,6 +535,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     AvailableQuantity = b.BatchQty,
                     Batch = b.BatchNumber,
                     ExpDate = ServiceShared.GetDateValueOrDefault(batchDb.ExpDate, string.Empty),
+                    WarehouseCode = b.WarehouseCode,
                 });
             }
 
@@ -908,11 +910,11 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="saleOrder">the sale order.</param>
         /// <param name="itemCode">the item code.</param>
         /// <returns>the data.</returns>
-        private async Task<Tuple<InvoiceDetailModel, InvoiceHeaderModel>> GetSaleOrderInvoiceDataByItemCode(int saleOrder, string itemCode)
+        private async Task<Tuple<InvoiceDetailModel, InvoiceHeaderModel>> GetSaleOrderInvoiceDataByItemCode(int saleOrder, string itemCode, int deliveryId = 0)
         {
             var deliveryDetailsList = (await this.sapDao.GetDeliveryDetailBySaleOrder(new List<int> { saleOrder })).ToList();
             var deliveryHeaders = (await this.sapDao.GetDeliveryModelByDocNum(deliveryDetailsList.Select(x => x.DeliveryId).ToList())).Where(x => x.Canceled != "Y").ToList();
-            var deliveryDetails = deliveryDetailsList.FirstOrDefault(x => deliveryHeaders.Any(y => y.DocNum == x.DeliveryId) && x.ProductoId == itemCode && x.InvoiceId.HasValue);
+            var deliveryDetails = deliveryDetailsList.FirstOrDefault(x => deliveryHeaders.Any(y => y.DocNum == x.DeliveryId) && x.ProductoId == itemCode && x.InvoiceId.HasValue && (deliveryId == 0 ? true : x.DeliveryId == deliveryId));
             deliveryDetails ??= new DeliveryDetailModel { InvoiceId = 0 };
 
             var header = (await this.sapDao.GetInvoiceHeaderByInvoiceId(new List<int> { deliveryDetails.InvoiceId.Value })).FirstOrDefault();
