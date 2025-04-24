@@ -1,9 +1,8 @@
 PODS:
   - Alamofire (5.10.2)
-  - Charts (4.1.0):
-    - Charts/Core (= 4.1.0)
-  - Charts/Core (4.1.0):
-    - SwiftAlgorithms (~> 1.0)
+  - DGCharts (5.1.0):
+    - DGCharts/Core (= 5.1.0)
+  - DGCharts/Core (5.1.0)
   - Differentiator (5.0.0)
   - Eureka (5.5.0)
   - Firebase/Analytics (11.12.0):
@@ -144,11 +143,10 @@ PODS:
     - RxSwift (= 6.9.0)
   - RxSwift (6.9.0)
   - SignaturePad (1.0.3)
-  - SwiftAlgorithms (1.0.0)
   - TagListView (1.4.1)
 
 DEPENDENCIES:
-  - Charts (~> 4.1.0)
+  - DGCharts
   - Eureka
   - Firebase/Analytics
   - Firebase/Crashlytics
@@ -166,7 +164,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
-    - Charts
+    - DGCharts
     - Differentiator
     - Eureka
     - Firebase
@@ -194,12 +192,11 @@ SPEC REPOS:
     - RxRelay
     - RxSwift
     - SignaturePad
-    - SwiftAlgorithms
     - TagListView
 
 SPEC CHECKSUMS:
   Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
-  Charts: ce0768268078eee0336f122c3c4ca248e4e204c5
+  DGCharts: 1c6daf585b6cfc78807af44ea690d357c410627f
   Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
   Eureka: 1c18c7fcd8f772cc2ca42d6be36292dffa77eecb
   Firebase: 735108d2d0b67827cd929bfe8254983907c4479f
@@ -227,9 +224,8 @@ SPEC CHECKSUMS:
   RxRelay: 6b0c930e5cef57d5fe2032571e5e65b78e3cbdb1
   RxSwift: 31649ace6aceeb422e16ff71c60804f9c3281ed9
   SignaturePad: b0d6322a27e90fe3e7d55194606503f5dfacb077
-  SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
 
-PODFILE CHECKSUM: f05f9f2f841bbf24f616fa5df29519de2a452f2d
+PODFILE CHECKSUM: 992b3575e0b200951a1f216872ab3aa7730146b6
 
 COCOAPODS: 1.15.2

@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 import RxDataSources
-import Charts
+import DGCharts
 import PDFKit
 
 // swiftlint:disable type_body_length
