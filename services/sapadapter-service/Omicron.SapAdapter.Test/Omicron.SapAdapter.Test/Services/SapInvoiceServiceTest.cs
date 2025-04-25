@@ -271,7 +271,7 @@ namespace Omicron.SapAdapter.Test.Services
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
 
             // act
-            var response = await service.GetInvoiceProducts(1, "Distribucion", Enumerable.Empty<int>().ToList());
+            var response = await service.GetInvoiceProducts("1", "Distribucion", Enumerable.Empty<int>().ToList());
 
             // assert
             Assert.That(response, Is.Not.Null);

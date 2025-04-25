@@ -47,7 +47,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="type">The type.</param>
         /// <param name="deliveriesIds">The deliveriesIds.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetInvoiceProducts(int invoiceId, string type, List<int> deliveriesIds);
+        Task<ResultModel> GetInvoiceProducts(string invoiceId, string type, List<int> deliveriesIds);
 
         /// <summary>
         /// Gets the data of the delivey.

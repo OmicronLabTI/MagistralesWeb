@@ -178,8 +178,12 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetInvoiceProducts(int invoiceId, string type, List<int> deliveriesIds)
+        public async Task<ResultModel> GetInvoiceProducts(string invoiceId, string type, List<int> deliveriesIds)
         {
+            var parts = invoiceId.Split('-', 2);
+            var mainInvoiceId = int.Parse(parts[0]);
+            int invoiceSubId = parts.Length > 1 ? int.Parse(parts[1]) : 1;
+
             Dictionary<string, string> routes = ServiceShared.CalculateTernary(
                 type == ServiceConstants.Empaquetado,
                 new Dictionary<string, string>
@@ -192,7 +196,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     { "user-order", ServiceConstants.GetUserOrdersByInvoicesIds },
                     { "line-products", ServiceConstants.GetLineOrdersByInvoice },
-                    { "data", invoiceId.ToString() },
+                    { "data", mainInvoiceId.ToString() },
                 });
 
             var data = routes["data"].Split('|').Select(deliveryId => int.Parse(deliveryId));
@@ -203,7 +207,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProductsResponse = await this.almacenService.PostAlmacenOrders(routes["line-products"], data);
             var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
 
-            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { invoiceId })).FirstOrDefault();
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { mainInvoiceId })).FirstOrDefault();
             invoiceHeader ??= new InvoiceHeaderModel();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(new List<int> { invoiceHeader.InvoiceId })).ToList();
             var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntry(invoiceDetails.Select(x => x.BaseEntry.Value).ToList())).ToList();
@@ -214,7 +218,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
             var products = await this.GetProductModels(invoiceDetails, deliveryDetails, userOrders, lineProducts, fabOrders, incidents);
-            return ServiceUtils.CreateResult(true, 200, null, products, null, null);
+            var responseProducts = this.GetResponseProducts(products, userOrders, lineProducts, invoiceSubId, mainInvoiceId);
+            return ServiceUtils.CreateResult(true, 200, null, responseProducts, null, null);
         }
 
         /// <inheritdoc/>
@@ -815,6 +820,27 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             return listToReturn;
+        }
+
+        private List<InvoiceProductModel> GetResponseProducts(List<InvoiceProductModel> products, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, int invoiceSubId, int invoiceId)
+        {
+            return products.Where(item => this.Matches(item, userOrders, lineProducts, invoiceSubId, invoiceId)).ToList();
+        }
+
+        private bool Matches(InvoiceProductModel item, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, int invoiceSubId, int invoiceId)
+        {
+            return item.IsMagistral
+                ? userOrders.Any(uo =>
+                      uo.DeliveryId == item.DeliveryId
+                   && int.TryParse(uo.Salesorderid, out var so) && so == item.SaleOrderId
+                   && uo.InvoiceId == invoiceId
+                   && uo.InvoiceLineNum == invoiceSubId)
+                : lineProducts.Any(lp =>
+                      lp.ItemCode == item.ItemCode
+                   && lp.DeliveryId == item.DeliveryId
+                   && lp.SaleOrderId == item.SaleOrderId
+                   && lp.InvoiceId == invoiceId
+                   && lp.InvoiceLineNum == invoiceSubId);
         }
 
         /// <summary>
