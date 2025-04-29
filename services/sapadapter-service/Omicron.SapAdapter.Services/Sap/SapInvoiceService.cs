@@ -828,12 +828,12 @@ namespace Omicron.SapAdapter.Services.Sap
             if (isMagistral)
             {
                 var order = userOrders.FirstOrDefault(or => or.DeliveryId == deliveryId && or.Salesorderid == saleOrderId.ToString());
-                return order != null && order.StatusInvoice == null;
+                return order != null && order.StatusInvoice == null && order.StatusAlmacen == ServiceConstants.Empaquetado;
             }
             else
             {
                 var line = lineProducts.FirstOrDefault(lp => lp.DeliveryId == deliveryId && lp.SaleOrderId == saleOrderId && lp.ItemCode == productId);
-                return line != null && line.StatusInvoice == null;
+                return line != null && line.StatusInvoice == null && line.StatusAlmacen == ServiceConstants.Empaquetado;
             }
         }
 
