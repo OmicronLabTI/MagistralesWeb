@@ -229,7 +229,6 @@ namespace Omicron.SapAdapter.Services.Sap
 
             deliveryHeaders = await this.GetSapDeliveriesToLookByPedidoDoctor(deliveryHeaders, parameters);
             deliveryHeaders = deliveryHeaders.OrderByDescending(x => x.DocNum).ToList();
-            var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
 
             var filter = ServiceConstants.Filter
                 .Where(x => types.Exists(type => x.Key.Contains(type.ToUpper())))
@@ -243,7 +242,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var pedidos = deliveryHeaders.Select(x => x.PedidoId);
 
             deliveryToReturn = deliveryDetailDb.Where(x => pedidos.Contains(x.DeliveryId)).OrderByDescending(x => x.DeliveryId).ToList();
-
+            var filterCount = deliveryHeaders.DistinctBy(x => x.DocNum).Count();
             deliveryHeaders = this.GetOrdersToLook(deliveryHeaders, parameters);
 
             return new Tuple<List<DeliveryDetailModel>, List<DeliverModel>, int, List<InvoiceHeaderModel>>(deliveryToReturn, deliveryHeaders, filterCount, invoices.ToList());
@@ -326,7 +325,7 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private AlmacenOrdersModel GetOrdersToReturn(List<DeliveryDetailModel> details, List<DeliverModel> headers, List<InvoiceHeaderModel> invoices)
         {
-            var listIds = details.Select(x => x.DeliveryId).Distinct().ToList();
+            var listIds = headers.Select(x => x.DocNum).Distinct().ToList();
 
             var listToReturn = new AlmacenOrdersModel
             {
