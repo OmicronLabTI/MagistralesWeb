@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
 
     /// <summary>
@@ -38,6 +39,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="deliveryIds">the delivery.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> CancelDelivery(string type, CancelDeliveryPedidoCompleteModel deliveryIds);
+
+        /// <summary>
+        /// Cancels the delivery.
+        /// </summary>
+        /// <param name="cancelPackaging">the delivery.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CancelPackaging(CancelPackagingDto cancelPackaging);
 
         /// <summary>
         /// cleans up the invoices.
