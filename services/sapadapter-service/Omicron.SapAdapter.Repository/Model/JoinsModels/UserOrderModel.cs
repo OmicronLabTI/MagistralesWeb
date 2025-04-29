@@ -148,7 +148,7 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Datetime userid.
         /// </value>
         public string UserInvoiceStored { get; set; }
-        
+
         /// <summary>
         /// Gets or sets userid.
         /// </summary>
@@ -164,6 +164,5 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Datetime userid.
         /// </value>
         public int InvoiceLineNum { get; set; }
-
     }
 }

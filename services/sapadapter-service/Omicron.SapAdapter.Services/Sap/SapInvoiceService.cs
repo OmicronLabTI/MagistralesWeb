@@ -851,7 +851,6 @@ namespace Omicron.SapAdapter.Services.Sap
                    && lp.SaleOrderId == item.SaleOrderId
                    && lp.InvoiceId == invoiceId
                    && lp.InvoiceLineNum == invoiceSubId);
-
         }
 
         private bool DetermineCanCancel(bool isMagistral, int deliveryId, int saleOrderId, string productId, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
