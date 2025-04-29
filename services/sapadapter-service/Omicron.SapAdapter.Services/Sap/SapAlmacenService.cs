@@ -695,6 +695,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     orderStatus = ServiceShared.CalculateTernary(userFabOrder.Status == ServiceConstants.Cancelado, ServiceConstants.Cancelado, orderStatus);
                     hasDelivery = userFabOrder.DeliveryId != 0;
                     deliveryIds = new List<int> { userFabOrder.DeliveryId };
+                    pendingToStore = orderStatus == ServiceConstants.Almacenado && userFabOrder.DeliveryId == 0;
+                    remittedPieces = ServiceShared.CalculateTernary(userFabOrder.DeliveryId != 0, (int)userFabOrder.Quantity, 0);
                 }
                 else
                 {
@@ -711,9 +713,8 @@ namespace Omicron.SapAdapter.Services.Sap
                     batches = allBatchModels
                         .Select(y => $"{y.BatchNumber} | {(int)y.BatchQty} pz | Cad: {this.GetExpirationDate(batchesDataBase, y.BatchNumber, order.Producto.ProductoId)}")
                         .ToList();
+                    pendingToStore = lineProductsModel.Any(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == order.Producto.ProductoId && x.DeliveryId == 0);
                 }
-
-                pendingToStore = lineProductsModel.Any(x => x.SaleOrderId == order.DocNum && !string.IsNullOrEmpty(x.ItemCode) && x.ItemCode == order.Producto.ProductoId && x.DeliveryId == 0);
 
                 var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.DocNum, x.ItemCode == order.Producto.ProductoId));
                 incidentdb ??= new IncidentsModel();
