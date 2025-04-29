@@ -17,6 +17,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Dtos.DxpModels;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
@@ -787,6 +788,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice, saleId);
 
+                var canCancel = this.DetermineCanCancel(isMagistral: item.IsMagistral.Equals("Y"), invoice.BaseEntry.Value,  saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
+
                 var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == product.Item3, x.ItemCode == item.ProductoId));
                 incidentdb ??= new IncidentsModel();
 
@@ -813,10 +816,25 @@ namespace Omicron.SapAdapter.Services.Sap
                     OrderId = product.Item2,
                     SaleOrderId = product.Item3,
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
+                    CanCancel = canCancel,
                 });
             }
 
             return listToReturn;
+        }
+
+        private bool DetermineCanCancel(bool isMagistral, int deliveryId, int saleOrderId, string productId, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        {
+            if (isMagistral)
+            {
+                var order = userOrders.FirstOrDefault(or => or.DeliveryId == deliveryId && or.Salesorderid == saleOrderId.ToString());
+                return order != null && order.StatusInvoice == null;
+            }
+            else
+            {
+                var line = lineProducts.FirstOrDefault(lp => lp.DeliveryId == deliveryId && lp.SaleOrderId == saleOrderId && lp.ItemCode == productId);
+                return line != null && line.StatusInvoice == null;
+            }
         }
 
         /// <summary>

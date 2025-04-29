@@ -110,6 +110,7 @@ namespace Omicron.Pedidos.Test.Services
             var options = CreateNewContextOptions();
             this.context = new DatabaseContext(options);
             this.context.UserOrderModel.AddRange(this.GetUserOrderModelsForCancellationTests());
+            this.context.UserOrderModel.AddRange(this.GetUserModelsForPackangignCancelation());
             this.context.SaveChanges();
             this.pedidosDao = new PedidosDao(this.context);
 
@@ -588,6 +589,36 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Method to verify Get All Almacens.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        [TestCase("REVE 14")]
+        [TestCase("REVE 16")]
+        public async Task CancelPackaging(string itemCode)
+        {
+            // arrange
+            var request = new CancelPackagingDto { ItemCode = itemCode, DeliveryId = 15800, InvoiceId = 15700 };
+
+            this.cancelPedidosService = this.BuildService(this.GetSapAdapterOrderWithFinishedSalesOrder(), "Ok");
+
+            // act
+            var result = await this.cancelPedidosService.CancelPackaging(request);
+
+            // assert
+            if (itemCode == "REVE 14")
+            {
+                Assert.That(result.Code == 200, Is.True);
+            }
+            else
+            {
+                Assert.That(result.Code == 400, Is.True);
+                Assert.That(result.Comments as string == "No existe un registro que coincidan con estos datos ItemCode: REVE 16, DeliveryId: 15800, InvoiceId: 15700 o el producto ya se encuentra en distribución", Is.True);
+            }
         }
 
         /// <summary>
