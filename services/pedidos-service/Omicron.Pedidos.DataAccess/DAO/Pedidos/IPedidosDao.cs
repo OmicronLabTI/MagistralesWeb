@@ -31,6 +31,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<IEnumerable<UserOrderModel>> GetUserOrderBySaleOrder(List<string> listIDs);
 
         /// <summary>
+        /// Returns the user orders by InvoiceId (Pedido)
+        /// </summary>
+        /// <param name="listIDs">the list ids.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceId(List<int> listIDs);
+
+        /// <summary>
         /// Gets only the sale orders by id.
         /// </summary>
         /// <param name="listIds">the list ids.</param>

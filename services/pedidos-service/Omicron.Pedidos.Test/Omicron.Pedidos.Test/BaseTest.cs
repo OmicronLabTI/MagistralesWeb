@@ -169,6 +169,35 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public List<UserOrderModel> GetUserModelsForPackangignCancelation()
+        {
+            var magistralQr = new MagistralQrModel
+            {
+                NeedsCooling = "Y",
+                ProductionOrder = 100,
+                Quantity = 1,
+                SaleOrder = 100,
+                ItemCode = "REVE 14",
+            };
+
+            var remisionQr = new RemisionQrModel
+            {
+                RemisionId = 100,
+                NeedsCooling = true,
+                PedidoId = 300,
+                TotalPieces = 5,
+            };
+
+            return new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 10008000, Productionorderid = "304", Salesorderid = "701", Status = "Almacenado", Userid = "abc-123", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 15800, Quantity = 29, InvoiceId = 15700 },
+            };
+        }
+
+        /// <summary>
         /// retruns a list od completedetailorder.
         /// </summary>
         /// <returns>the data.</returns>

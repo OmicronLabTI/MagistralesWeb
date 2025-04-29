@@ -271,6 +271,24 @@ namespace Omicron.Pedidos.Test.Facade
         }
 
         /// <summary>
+        /// Test for get possible orders active for dxp project.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task CancelPackaging()
+        {
+            var request = new CancelPackagingDto { ItemCode = "REVE 14", DeliveryId = 15800, InvoiceId = 15700 };
+
+            // Act
+            var response = await this.almacenFacade.CancelPackaging(request);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Code == 200, Is.True);
+            Assert.That(response.Comments == null, Is.True);
+        }
+
+        /// <summary>
         /// the test.
         /// </summary>
         /// <returns>returns nothing.</returns>
