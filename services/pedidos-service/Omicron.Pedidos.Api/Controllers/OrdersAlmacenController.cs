@@ -274,6 +274,19 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <summary>
         /// Creates the pdf for the sale order.
         /// </summary>
+        /// <param name="cancelPackaging">Cancel packaging.</param>
+        /// <returns>the data.</returns>
+        [Route("/cancel/packaging")]
+        [HttpPost]
+        public async Task<IActionResult> CancelPackaging(CancelPackagingDto cancelPackaging)
+        {
+            var response = await this.pedidosAlmacenFacade.CancelPackaging(cancelPackaging);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
         /// <param name="invoiceId">the invoice id.</param>
         /// <returns>the data.</returns>
         [Route("/clean/invoice")]

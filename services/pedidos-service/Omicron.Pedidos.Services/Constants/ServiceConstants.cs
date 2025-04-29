@@ -251,6 +251,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string ErrirQfbAutomaticoParcial = "No se pudieron asignar los pedidos {0}se ha exedido el número de piezas por laboratorio, intenta con la asignación manual";
 
         /// <summary>
+        /// error almacenar.
+        /// </summary>
+        public const string ErrorDesempaquetar = "No existe un registro que coincidan con estos datos ItemCode: {0}, DeliveryId: {1}, InvoiceId: {2} o el producto ya se encuentra en distribución";
+
+        /// <summary>
         /// if the type is pedido.
         /// </summary>
         public const string TypePedido = "Pedido";
