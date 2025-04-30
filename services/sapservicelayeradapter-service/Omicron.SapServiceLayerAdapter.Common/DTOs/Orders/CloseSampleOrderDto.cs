@@ -30,5 +30,11 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Orders
         /// </summary>
         /// <value>The user that is assigning.</value>
         public List<CreateDeliveryDto> ItemsList { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets CloseOrder.
+        /// </summary>
+        /// <value>The CloseOrder.</value>
+        public bool CloseOrder { get; set; }
     }
 }

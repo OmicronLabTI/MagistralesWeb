@@ -56,3 +56,4 @@ global using Omicron.SapServiceLayerAdapter.Common.DTOs.BatchNumberDetails;
 global using Omicron.SapServiceLayerAdapter.Common;
 global using Omicron.SapServiceLayerAdapter.Common.DTOs.InventoryGenEntry;
 global using Omicron.SapServiceLayerAdapter.Services.ProductionOrders;
+global using Omicron.SapServiceLayerAdapter.Common.DTOs.Batches;

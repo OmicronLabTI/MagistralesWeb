@@ -17,6 +17,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.InventoryGenExit
         /// Gets or sets the Comments.
         /// </summary>
         /// <value>Comments.</value>
+        [JsonProperty("DocEntry")]
+        public int DocEntry { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Comments.
+        /// </summary>
+        /// <value>Comments.</value>
         [JsonProperty("Comments")]
         public string Comments { get; set; }
 

@@ -120,6 +120,14 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public string UserInvoiceStored { get; set; }
 
         /// <summary>
+        /// Gets or sets CloseSampleOrderId.
+        /// </summary>
+        /// <value>
+        /// Int userid.
+        /// </value>
+        public int CloseSampleOrderId { get; set; }
+
+        /// <summary>
         /// Gets or sets Invoice Line Num.
         /// </summary>
         /// <value>
