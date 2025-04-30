@@ -891,7 +891,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
             else
             {
-                var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleId, x.ItemCode == invoice.ProductoId, x.DeliveryId == invoice.InvoiceId));
+                var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleId, x.ItemCode == invoice.ProductoId, x.DeliveryId == invoice.BaseEntry));
                 status = ServiceShared.CalculateTernary(lineProduct == null, status, lineProduct?.StatusAlmacen);
                 order = new OrdenFabricacionModel { OrdenId = 0 };
             }
