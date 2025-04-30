@@ -271,7 +271,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                 var inventoryGenExitResponse = await this.serviceLayerClient.PostAsync(
                     ServiceQuerysConstants.QryPostInventoryGenExists, JsonConvert.SerializeObject(inventoryGenExitRequest));
 
-                var resultCloseOrder = JsonConvert.DeserializeObject<InventoryGenExitDto>(responseOrder.Response.ToString());
+                var resultCloseOrder = JsonConvert.DeserializeObject<InventoryGenExitDto>(inventoryGenExitResponse.Response.ToString());
 
                 if (!inventoryGenExitResponse.Success)
                 {
