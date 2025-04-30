@@ -194,7 +194,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         {
             var inventoryGenExitLines = new List<InventoryGenExitLineDto>();
             InventoryGenExitLineDto inventoryGenExitLine;
-            foreach (var line in orderLines)
+            foreach (var line in orderLines.Where(x => itemsList.Any(item => item.ItemCode == x.ItemCode)))
             {
                 var batches = CreateBatchLine(line, itemsList);
                 var product = itemsList.FirstOrDefault(x => x.ItemCode.Equals(line.ItemCode)) ?? new CreateDeliveryDto() { Batches = new List<AlmacenBatchDto> { new AlmacenBatchDto() { WarehouseCode = "PT" } } };

@@ -32,7 +32,7 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.InventoryGenExit
         /// </summary>
         /// <value>Price.</value>
         [JsonProperty("BaseLine")]
-        public int BaseLine { get; set; }
+        public int? BaseLine { get; set; }
 
         /// <summary>
         /// Gets or sets the Quantity.
