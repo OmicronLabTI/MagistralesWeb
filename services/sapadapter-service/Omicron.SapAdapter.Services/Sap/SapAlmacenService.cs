@@ -693,7 +693,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     orderStatus = ServiceShared.CalculateTernary(userFabOrder.Status == ServiceConstants.Finalizado, ServiceConstants.PorRecibir, userFabOrder.Status);
                     orderStatus = ServiceShared.CalculateTernary(ServiceShared.CalculateAnd(orderStatus == ServiceConstants.PorRecibir, userFabOrder.FinishedLabel == 0), ServiceConstants.Pendiente, orderStatus);
                     orderStatus = ServiceShared.CalculateTernary(userFabOrder.Status == ServiceConstants.Cancelado, ServiceConstants.Cancelado, orderStatus);
-                    hasDelivery = ServiceShared.CalculateAnd(userFabOrder.DeliveryId != 0, userFabOrder.CloseSampleOrderId != 0);
+                    hasDelivery = ServiceShared.CalculateOr(userFabOrder.DeliveryId != 0, userFabOrder.CloseSampleOrderId != 0);
                     deliveryIds = new List<int> { userFabOrder.DeliveryId };
                     pendingToStore = orderStatus == ServiceConstants.Almacenado && userFabOrder.DeliveryId == 0 && userFabOrder.CloseSampleOrderId == 0;
                     remittedPieces = ServiceShared.CalculateTernary(userFabOrder.DeliveryId != 0 || userFabOrder.CloseSampleOrderId != 0, (int)userFabOrder.Quantity, 0);
