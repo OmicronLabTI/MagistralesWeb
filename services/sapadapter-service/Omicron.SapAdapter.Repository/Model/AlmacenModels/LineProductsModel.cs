@@ -118,5 +118,13 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Datetime userid.
         /// </value>
         public string UserInvoiceStored { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public int CloseSampleOrderId { get; set; }
     }
 }
