@@ -120,6 +120,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.InvoiceId = order.InvoiceId;
                 x.InvoiceType = order.InvoiceType;
                 x.InvoiceLineNum = order.InvoiceLineNum;
+                x.CloseSampleOrderId = order.CloseSampleOrderId;
             });
 
             await this.pedidosDao.UpdateUserOrders(dataBaseOrders);

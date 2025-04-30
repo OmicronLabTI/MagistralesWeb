@@ -324,6 +324,14 @@ namespace Omicron.Pedidos.Entities.Model
         public short InvoiceLineNum { get; set; }
 
         /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("closeorderid")]
+        public int CloseSampleOrderId { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

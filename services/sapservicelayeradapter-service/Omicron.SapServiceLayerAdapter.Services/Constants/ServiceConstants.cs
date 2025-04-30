@@ -74,6 +74,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string DictionaryKeyOkGenericFormat = "{0}-Ok";
 
         /// <summary>
+        /// Query to get the Dictionary Key Ok Generic Format.
+        /// </summary>
+        public const string DictionaryKeyOkIdResult = "{0}-{1}-Ok";
+
+        /// <summary>
         /// Query to get the Ok Label response.
         /// </summary>
         public const string OkLabelResponse = "Ok";

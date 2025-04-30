@@ -7,4 +7,11 @@
       </column>
     </addColumn>
   </changeSet>
+  <changeSet author="d.vargas" id="changelog-1.2">
+    <addColumn tableName="usersorders">
+       <column name="closeorderid" type="int" defaultValue="0">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

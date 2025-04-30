@@ -158,6 +158,14 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         public double Quantity { get; set; }
 
         /// <summary>
+        /// Gets or sets CloseSampleOrderId.
+        /// </summary>
+        /// <value>
+        /// Int CloseSampleOrderId.
+        /// </value>
+        public int CloseSampleOrderId { get; set; }
+
+        /// <summary>
         /// Gets or sets Invoice Line Num.
         /// </summary>
         /// <value>
