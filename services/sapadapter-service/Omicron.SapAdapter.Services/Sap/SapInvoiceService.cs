@@ -179,8 +179,12 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetInvoiceProducts(int invoiceId, string type, List<int> deliveriesIds)
+        public async Task<ResultModel> GetInvoiceProducts(string invoiceId, string type, List<int> deliveriesIds)
         {
+            var parts = invoiceId.Split('-', 2);
+            var mainInvoiceId = int.Parse(parts[0]);
+            int invoiceSubId = parts.Length > 1 ? int.Parse(parts[1]) : 1;
+
             Dictionary<string, string> routes = ServiceShared.CalculateTernary(
                 type == ServiceConstants.Empaquetado,
                 new Dictionary<string, string>
@@ -193,7 +197,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     { "user-order", ServiceConstants.GetUserOrdersByInvoicesIds },
                     { "line-products", ServiceConstants.GetLineOrdersByInvoice },
-                    { "data", invoiceId.ToString() },
+                    { "data", mainInvoiceId.ToString() },
                 });
 
             var data = routes["data"].Split('|').Select(deliveryId => int.Parse(deliveryId));
@@ -204,7 +208,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var lineProductsResponse = await this.almacenService.PostAlmacenOrders(routes["line-products"], data);
             var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
 
-            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { invoiceId })).FirstOrDefault();
+            var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNum(new List<int> { mainInvoiceId })).FirstOrDefault();
             invoiceHeader ??= new InvoiceHeaderModel();
             var invoiceDetails = (await this.sapDao.GetInvoiceDetailByDocEntryJoinProduct(new List<int> { invoiceHeader.InvoiceId })).ToList();
             var deliveryDetails = (await this.sapDao.GetDeliveryDetailByDocEntry(invoiceDetails.Select(x => x.BaseEntry.Value).ToList())).ToList();
@@ -215,7 +219,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
             var products = await this.GetProductModels(invoiceDetails, deliveryDetails, userOrders, lineProducts, fabOrders, incidents);
-            return ServiceUtils.CreateResult(true, 200, null, products, null, null);
+            var responseProducts = this.GetResponseProducts(products, userOrders, lineProducts, invoiceSubId, mainInvoiceId);
+            return ServiceUtils.CreateResult(true, 200, null, responseProducts, null, null);
         }
 
         /// <inheritdoc/>
@@ -768,18 +773,22 @@ namespace Omicron.SapAdapter.Services.Sap
                 var item = items.FirstOrDefault(x => x.ProductoId == invoice.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                var localDeliverDetails = deliveryDetails.Where(x => !usedDeliveries.Any(y => y.ProductoId == x.ProductoId && x.BaseEntry == y.BaseEntry)).ToList();
-                var deliveriesDetail = localDeliverDetails.FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == invoice.BaseEntry.Value, x.ProductoId == invoice.ProductoId));
+                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == invoice.BaseEntry.Value, x.ProductoId == invoice.ProductoId));
                 var saleId = deliveriesDetail?.BaseEntry ?? 0;
                 var prodId = deliveriesDetail?.ProductoId ?? string.Empty;
 
-                usedDeliveries.Add(new DeliveryDetailModel { BaseEntry = saleId, ProductoId = prodId });
+                if (deliveriesDetail != null)
+                {
+                    usedDeliveries.Add(new DeliveryDetailModel { BaseEntry = saleId, ProductoId = prodId });
+                }
+
+                var localDeliverDetails = deliveryDetails.Where(x => !usedDeliveries.Any(y => y.ProductoId == x.ProductoId && y.BaseEntry == x.BaseEntry)).ToList();
 
                 var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
                 if (item.IsMagistral.Equals("N"))
                 {
-                    var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleId, x.ItemCode == invoice.ProductoId));
+                    var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleId, x.ItemCode == invoice.ProductoId, x.DeliveryId == invoice.BaseEntry.Value));
                     lineProduct ??= new LineProductsModel();
                     var batchName = ServiceShared.DeserializeObject(lineProduct.BatchName, new List<AlmacenBatchModel>());
 
@@ -823,6 +832,27 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
+        private List<InvoiceProductModel> GetResponseProducts(List<InvoiceProductModel> products, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, int invoiceSubId, int invoiceId)
+        {
+            return products.Where(item => this.Matches(item, userOrders, lineProducts, invoiceSubId, invoiceId)).ToList();
+        }
+
+        private bool Matches(InvoiceProductModel item, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, int invoiceSubId, int invoiceId)
+        {
+            return item.IsMagistral
+                ? userOrders.Any(uo =>
+                      uo.DeliveryId == item.DeliveryId
+                   && int.TryParse(uo.Salesorderid, out var so) && so == item.SaleOrderId
+                   && uo.InvoiceId == invoiceId
+                   && uo.InvoiceLineNum == invoiceSubId)
+                : lineProducts.Any(lp =>
+                      lp.ItemCode == item.ItemCode
+                   && lp.DeliveryId == item.DeliveryId
+                   && lp.SaleOrderId == item.SaleOrderId
+                   && lp.InvoiceId == invoiceId
+                   && lp.InvoiceLineNum == invoiceSubId);
+        }
+
         private bool DetermineCanCancel(bool isMagistral, int deliveryId, int saleOrderId, string productId, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
         {
             if (isMagistral)
@@ -861,7 +891,7 @@ namespace Omicron.SapAdapter.Services.Sap
             }
             else
             {
-                var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleId, x.ItemCode == invoice.ProductoId, x.DeliveryId == invoice.InvoiceId));
+                var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleId, x.ItemCode == invoice.ProductoId, x.DeliveryId == invoice.BaseEntry));
                 status = ServiceShared.CalculateTernary(lineProduct == null, status, lineProduct?.StatusAlmacen);
                 order = new OrdenFabricacionModel { OrdenId = 0 };
             }

@@ -240,7 +240,7 @@ namespace Omicron.SapAdapter.Test.Facade
         [Test]
         public async Task GetInvoiceProducts()
         {
-            var response = await this.almacenFacade.GetInvoiceProducts(10, "Distribucion", null);
+            var response = await this.almacenFacade.GetInvoiceProducts("10", "Distribucion", null);
 
             Assert.That(response, Is.Not.Null);
         }

@@ -165,7 +165,7 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="type">The type.</param>
         /// <param name="deliveriesIds">The deliveriesIds.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetInvoiceProducts(int invoiceId, string type, List<int> deliveriesIds);
+        Task<ResultDto> GetInvoiceProducts(string invoiceId, string type, List<int> deliveriesIds);
 
         /// <summary>
         /// Gets the headers from SAP.

@@ -302,7 +302,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <returns>the data.</returns>
         [Route("/invoice/{invoiceId}/{type}/products")]
         [HttpPost]
-        public async Task<IActionResult> GetInvoiceProducts([FromRoute] int invoiceId, [FromRoute] string type, [FromBody] List<int> deliveriesIds)
+        public async Task<IActionResult> GetInvoiceProducts([FromRoute] string invoiceId, [FromRoute] string type, [FromBody] List<int> deliveriesIds)
         {
             var response = await this.sapAlmacenFacade.GetInvoiceProducts(invoiceId, type, deliveriesIds);
             return this.Ok(response);

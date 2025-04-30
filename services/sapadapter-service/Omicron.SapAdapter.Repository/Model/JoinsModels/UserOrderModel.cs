@@ -156,5 +156,13 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Datetime userid.
         /// </value>
         public double Quantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets Invoice Line Num.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public int InvoiceLineNum { get; set; }
     }
 }
