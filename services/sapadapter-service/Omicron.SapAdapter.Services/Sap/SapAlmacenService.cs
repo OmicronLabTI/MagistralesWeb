@@ -401,7 +401,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var productList = this.GetProductListModel(pedidos, sapOrders, lineOrders, incidences, batches);
             var salesStatusMagistral = this.GetStatusSaleOrder(userOrder);
             salesStatusMagistral = ServiceShared.CalculateTernary(salesStatusMagistral == ServiceConstants.PorRecibir && productList.Any(y => y.Status == ServiceConstants.Pendiente), ServiceConstants.Pendiente, salesStatusMagistral);
-            var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
+            var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0 || x.CloseSampleOrderId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
             var salesStatus = ServiceShared.CalculateTernary(userOrder != null, salesStatusMagistral, salesStatusLinea);
             var userProdOrders = pedidos.Count(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.Productionorderid), x.Status.Equals(ServiceConstants.Almacenado)));
             var lineProductsCount = productList.Where(x => x.Pieces <= lineOrders.Where(y => y.ItemCode == x.ItemCode && y.StatusAlmacen == ServiceConstants.Almacenado).SelectMany(lp => ServiceShared.DeserializeObject(lp.BatchName, new List<AlmacenBatchModel>())).Sum(x => x.BatchQty)).Count();
@@ -615,7 +615,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var salesStatusMagistral = this.GetStatusSaleOrder(userOrder);
                 salesStatusMagistral = ServiceShared.CalculateTernary(ServiceShared.CalculateAnd(salesStatusMagistral == ServiceConstants.PorRecibir, localUserOrders.Any(y => ServiceShared.CalculateAnd(y.Status == ServiceConstants.Finalizado, y.FinishedLabel == 0))), ServiceConstants.Pendiente, salesStatusMagistral);
 
-                var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
+                var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.All(x => x.DeliveryId == 0 && x.CloseSampleOrderId == 0), ServiceConstants.PorRecibir, ServiceConstants.BackOrder);
                 var salesStatus = ServiceShared.CalculateTernary(userOrder != null, salesStatusMagistral, salesStatusLinea);
 
                 var salesOrderModel = new AlmacenSalesModel
