@@ -615,7 +615,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var salesStatusMagistral = this.GetStatusSaleOrder(userOrder);
                 salesStatusMagistral = ServiceShared.CalculateTernary(ServiceShared.CalculateAnd(salesStatusMagistral == ServiceConstants.PorRecibir, localUserOrders.Any(y => ServiceShared.CalculateAnd(y.Status == ServiceConstants.Finalizado, y.FinishedLabel == 0))), ServiceConstants.Pendiente, salesStatusMagistral);
 
-                var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
+                var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.All(x => x.DeliveryId == 0 && x.CloseSampleOrderId == 0), ServiceConstants.PorRecibir, ServiceConstants.BackOrder);
                 var salesStatus = ServiceShared.CalculateTernary(userOrder != null, salesStatusMagistral, salesStatusLinea);
 
                 var salesOrderModel = new AlmacenSalesModel
