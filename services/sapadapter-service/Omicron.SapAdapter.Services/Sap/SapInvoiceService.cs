@@ -219,7 +219,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
             var products = await this.GetProductModels(invoiceDetails, deliveryDetails, userOrders, lineProducts, fabOrders, incidents);
-            var responseProducts = this.GetResponseProducts(products, userOrders, lineProducts, invoiceSubId, mainInvoiceId);
+            var responseProducts = this.GetResponseProducts(products, userOrders, lineProducts, invoiceSubId, mainInvoiceId, type);
             return ServiceUtils.CreateResult(true, 200, null, responseProducts, null, null);
         }
 
@@ -832,8 +832,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
-        private List<InvoiceProductModel> GetResponseProducts(List<InvoiceProductModel> products, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, int invoiceSubId, int invoiceId)
+        private List<InvoiceProductModel> GetResponseProducts(List<InvoiceProductModel> products, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, int invoiceSubId, int invoiceId, string type)
         {
+            if (type == ServiceConstants.Empaquetado)
+            {
+                return products;
+            }
+
             return products.Where(item => this.Matches(item, userOrders, lineProducts, invoiceSubId, invoiceId)).ToList();
         }
 
