@@ -142,5 +142,13 @@ namespace Omicron.Pedidos.Dtos.Models
         /// Datetime userid.
         /// </value>
         public string InvoiceType { get; set; }
+
+        /// <summary>
+        /// Gets or sets InvoiceLineNum.
+        /// </summary>
+        /// <value>
+        /// Datetime InvoiceLineNum.
+        /// </value>
+        public short InvoiceLineNum { get; set; }
     }
 }
