@@ -150,6 +150,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var doctorData = (await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == invoiceHeader.InvoiceHeader.ShippingAddressName);
             doctorData ??= new DoctorDeliveryAddressModel { Contact = invoiceHeader.Medico };
 
+            var hasPendingPackings = userOrders.Any(invoice => invoice.InvoiceId != 0 && string.IsNullOrEmpty(invoice.StatusInvoice)) || lineOrders.Any(invoice => invoice.InvoiceId != 0 && string.IsNullOrEmpty(invoice.StatusInvoice));
             var invoiceToReturn = new InvoiceSaleHeaderModel
             {
                 Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoiceHeader.InvoiceHeader.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
@@ -167,6 +168,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 TotalPieces = invoiceDetails.Where(y => y.Detail.Quantity > 0).Sum(x => (int)x.Detail.Quantity),
                 IsPackage = invoiceHeader.InvoiceHeader.IsPackage == ServiceConstants.IsPackage,
                 IsDeliveredInOffice = invoiceHeader.InvoiceHeader.IsDeliveredInOffice ?? "N",
+                HasPendingPacking = hasPendingPackings,
             };
 
             var invoiceModelToAdd = new InvoicesModel
