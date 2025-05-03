@@ -100,6 +100,12 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public bool IsPackage { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public bool HasPendingPacking { get; set; }
+
+        /// <summary>
         /// Gets or sets the doctor degree type.
         /// </summary>
         /// <value>Degree Type.</value>
