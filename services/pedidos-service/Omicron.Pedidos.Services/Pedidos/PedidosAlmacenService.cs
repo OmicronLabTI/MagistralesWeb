@@ -222,7 +222,6 @@ namespace Omicron.Pedidos.Services.Pedidos
             }
 
             var orderToReturn = userOrderByType
-                .DistinctBy(y => y.InvoiceId)
                 .Select(x => new
                 {
                     x.InvoiceId,
