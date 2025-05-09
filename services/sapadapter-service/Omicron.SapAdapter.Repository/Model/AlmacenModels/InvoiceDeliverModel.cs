@@ -22,6 +22,22 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public int PackageNumber { get; set; }
 
         /// <summary>
+        /// Gets or sets Package.
+        /// </summary>
+        /// <value>
+        /// String Package.
+        /// </value>
+        public string Package { get; set; }
+
+        /// <summary>
+        /// Gets or sets InvoiceLineNum.
+        /// </summary>
+        /// <value>
+        /// short InvoiceLineNum.
+        /// </value>
+        public short InvoiceLineNum { get; set; }
+
+        /// <summary>
         /// Gets or sets FirstName.
         /// </summary>
         /// <value>

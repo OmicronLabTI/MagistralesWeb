@@ -210,7 +210,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             if (isValidId)
             {
-                userOrderByType = await this.pedidosDao.GetUserOrderByInvoiceTypeAndId([type.ToLower()], invoiceId);
+                userOrderByType = await this.pedidosDao.GetUserOrderByInvoiceTypeAndId([type.ToLower()], new List<int> { invoiceId });
             }
             else
             {

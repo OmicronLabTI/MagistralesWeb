@@ -776,6 +776,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string ClientTypeClinic = "clinica";
 
         /// <summary>
+        /// Constant to user orders.
+        /// </summary>
+        public const string UserOrders = "api/Pedidos/userorder/invoice?type=local";
+
+        /// <summary>
+        /// ClientTypeClinica.
+        /// </summary>
+        public const string GetLine = "getline/invoiceId";
+
+        /// <summary>
         /// Gets the clasification user DZ.
         /// </summary>
         /// <value>

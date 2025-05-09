@@ -129,12 +129,13 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// Gets the orders.
         /// </summary>
         /// <param name="code">The code scanned.</param>
+        /// <param name="subcode"> the invoice line num. </param>
         /// <returns>the data.</returns>
         [Route("/scanner/factura/{code}")]
         [HttpGet]
-        public async Task<IActionResult> GetScannedOrderFactura(string code)
+        public async Task<IActionResult> GetScannedOrderFactura(string code, string subcode)
         {
-            var response = await this.sapAlmacenFacade.GetScannedDataFactura(code);
+            var response = await this.sapAlmacenFacade.GetScannedDataFactura(code, subcode);
             return this.Ok(response);
         }
 

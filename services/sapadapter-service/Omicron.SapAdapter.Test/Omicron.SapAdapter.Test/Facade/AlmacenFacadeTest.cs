@@ -308,7 +308,9 @@ namespace Omicron.SapAdapter.Test.Facade
         public async Task GetScannedDataFactura()
         {
             var code = "750001000";
-            var response = await this.almacenFacade.GetScannedDataFactura(code);
+            var subcode = "1";
+
+            var response = await this.almacenFacade.GetScannedDataFactura(code, subcode);
 
             Assert.That(response, Is.Not.Null);
         }

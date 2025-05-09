@@ -409,10 +409,11 @@ namespace Omicron.SapAdapter.Test.Services
         /// Test the method to get the orders for almacen.
         /// </summary>
         /// <param name="code">the code to look.</param>
+        /// <param name="subcode"> the sub code to look.</param>
         /// <returns>the data.</returns>
         [Test]
-        [TestCase("1")]
-        public async Task GetInvoiceData(string code)
+        [TestCase("1", "1")]
+        public async Task GetInvoiceData(string code, string subcode)
         {
             // arrange
             var packages = new List<PackageModel>();
@@ -431,10 +432,30 @@ namespace Omicron.SapAdapter.Test.Services
                 new DoctorAddressModel { AddressId = "Address1", BetweenStreets = "steets", References = "reference", EtablishmentName = "stabblishment" },
             };
 
+            var userorders = new List<UserOrderDto>
+            {
+                new UserOrderDto { InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderDto { InvoiceId = 1, InvoiceLineNum = 2 },
+            };
+
+            var userordersResponse = this.GetResultDto(userorders);
+
             var mockPedidos = new Mock<IPedidosService>();
+
+            mockPedidos.Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(userordersResponse));
+
+            var lineproducts = new List<LineProductsDto>
+            {
+                new LineProductsDto { InvoiceId = 1, InvoiceLineNum = 3 },
+            };
+
+            var lineproductsResponse = this.GetResultDto(lineproducts);
+
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(lineproductsResponse))
                 .Returns(Task.FromResult(packagesResponse));
 
             mockAlmacen
@@ -455,7 +476,7 @@ namespace Omicron.SapAdapter.Test.Services
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
 
             // act
-            var response = await service.GetInvoiceData(code);
+            var response = await service.GetInvoiceData(code, subcode);
 
             // assert
             Assert.That(response, Is.Not.Null);

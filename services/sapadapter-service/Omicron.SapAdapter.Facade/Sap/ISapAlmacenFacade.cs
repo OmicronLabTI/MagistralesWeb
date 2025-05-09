@@ -72,8 +72,9 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// Gets the data for the scanned qr or bar code.
         /// </summary>
         /// <param name="code">the code scanned.</param>
+        /// <param name="subcode"> the invoice line num. </param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetScannedDataFactura(string code);
+        Task<ResultDto> GetScannedDataFactura(string code, string subcode);
 
         /// <summary>
         /// Gets the data for order detail.

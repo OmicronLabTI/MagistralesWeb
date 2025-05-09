@@ -317,7 +317,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="types">the list of users.</param>
         /// <param name="invoiceId">invoiceId.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, int invoiceId);
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, List<int> invoiceId);
 
         /// <summary>
         /// Get the data by finalized date.

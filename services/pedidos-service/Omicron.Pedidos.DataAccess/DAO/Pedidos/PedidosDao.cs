@@ -445,16 +445,15 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, int invoiceId)
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, List<int> invoiceId)
         {
             return await this.databaseContext.UserOrderModel
                .Where(userOrder =>
                    !string.IsNullOrEmpty(userOrder.Productionorderid) &&
-                   userOrder.InvoiceId == invoiceId &&
+                   invoiceId.Contains(userOrder.InvoiceId) &&
                    types.Contains(userOrder.InvoiceType) &&
                    userOrder.InvoiceStoreDate.HasValue).ToListAsync();
         }
-
 
         /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate)
