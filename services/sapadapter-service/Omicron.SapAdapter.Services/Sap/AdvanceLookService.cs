@@ -90,7 +90,11 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         private async Task<ResultModel> GetElementsById(string docNum)
         {
-            int.TryParse(docNum, out int intDocNum);
+            var stringDocNum = docNum.Split("-");
+            var stringInvoiceLinenum = stringDocNum.Count() > 1 ? stringDocNum[1] : "-1";
+            int.TryParse(stringDocNum[0], out int intDocNum);
+            int.TryParse(stringInvoiceLinenum, out int invoiceLineNum);
+
             var isDxpId = docNum.StartsWith(ServiceConstants.WildcardDocNumDxp);
             if (ServiceShared.CalculateAnd(intDocNum == 0, !isDxpId))
             {
@@ -122,7 +126,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenData = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
 
             var tupleList = this.KindLookUp(userOrders, almacenData, listDocs);
-            var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList, docNum);
+            var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList, docNum, invoiceLineNum);
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
@@ -143,7 +147,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenData = JsonConvert.DeserializeObject<AdnvaceLookUpModel>(almacenResponse.Response.ToString());
 
             var tupleList = this.KindLookUp(userOrders, almacenData, listDocs);
-            var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList, string.Empty);
+            var response = await this.GetStatusToSearch(userOrders, almacenData, tupleList, string.Empty, -1);
 
             response.CardOrder = response.CardOrder.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
             response.CardDelivery = response.CardDelivery.Where(x => doctorValue.All(y => x.Doctor.ToLower().Contains(y.ToLower()))).ToList();
@@ -204,7 +208,7 @@ namespace Omicron.SapAdapter.Services.Sap
             return tupleIds;
         }
 
-        private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData, List<Tuple<int, string>> tupleIds, string initialDocNum)
+        private async Task<CardsAdvancedLook> GetStatusToSearch(List<UserOrderModel> userOrders, AdnvaceLookUpModel almacenData, List<Tuple<int, string>> tupleIds, string initialDocNum, int invoiceLineNum)
         {
             var sapSaleOrder = (await this.sapDao.GetAllOrdersWIthDetailByIdsJoinProduct(tupleIds.Where(x => ServiceShared.CalculateOr(x.Item2 == ServiceConstants.SaleOrder, x.Item2 == ServiceConstants.DontExistsTable)).Select(y => y.Item1).ToList())).ToList();
             sapSaleOrder = await this.ExcludeSpecialsWarehouses(sapSaleOrder);
@@ -303,9 +307,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 cardToReturns.CardOrder.AddRange(this.GetIsReceptionOrdersSample(order, objectCardOrder));
                 cardToReturns.CardDelivery.AddRange(this.GetIsReceptionDelivery(order, objectCardOrder));
                 cardToReturns.CardInvoice.AddRange(this.GetIsPackageInvoice(order, objectCardOrder));
-                cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, objectCardOrder));
+                cardToReturns.CardDistribution.AddRange(this.GetIsPackageDistribution(order, objectCardOrder, invoiceLineNum));
             });
-
+            cardToReturns.CardDistribution = cardToReturns.CardDistribution.DistinctBy(x => x.Id).ToList();
             cardToReturns.CardDelivery = cardToReturns.CardDelivery.DistinctBy(cd => new { cd.Remision, cd.ListSaleOrder }).ToList();
             cardToReturns.CardInvoice = cardToReturns.CardInvoice.DistinctBy(cd => cd.Invoice).ToList();
             return cardToReturns;
@@ -431,6 +435,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, paramentsCards.LocalNeighbors, order.Address, payment);
             var totalItems = saporders.Count;
             var totalPieces = (int)saporders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity);
+            var activeDeliveries = paramentsCards.DeliveryDetails.Where(x => x.LineStatus != "C").ToList();
+            var totalRemisionedItems = saporders.Where(order => activeDeliveries.Any(x => x.ProductoId == order.Detalles.ProductoId)).Count();
+            var totalRemissionedPieces = (int)activeDeliveries.Sum(x => x.Quantity);
             var initDate = ServiceShared.ParseExactDateOrDefault(order.FechaInicio, DateTime.Now);
             var lettersToRemoveDxpId = ServiceShared.CalculateTernary(paramentsCards.DocNum.Length > 1, 1, 0);
             var productType = ServiceUtils.GetOrderTypeDescription([order.OrderType], paramentsCards.Classifications);
@@ -442,9 +449,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 Doctor = order.Medico,
                 InvoiceType = invoiceType,
                 TotalItems = totalItems,
+                RemissionedItems = totalRemisionedItems,
                 InitDate = initDate,
                 Client = deliveryAddress.Contact.ValidateNull(),
                 TotalPieces = totalPieces,
+                RemissionedPieces = totalRemissionedPieces,
                 DataCheckin = porRecibirDate,
                 OrderMuestra = ServiceShared.CalculateTernary(string.IsNullOrEmpty(order.PedidoMuestra), ServiceConstants.IsNotSampleOrder, order.PedidoMuestra),
                 Comments = comments.ToString(),
@@ -839,6 +848,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceDetailsToLook = paramsCardInvoice.InvoiceDetailsToLook;
             var userOrders = paramsCardInvoice.UserOrders;
             var lineProducts = paramsCardInvoice.LineProducts;
+            var (statusInvoices, deliveryIdsStored) = this.CalculateInvoiceStatusAndPackedDeliveries(userOrders, lineProducts);
 
             foreach (var delivery in listDeliveryId.Distinct())
             {
@@ -853,6 +863,11 @@ namespace Omicron.SapAdapter.Services.Sap
 
                     var invoiceDetail = invoiceDetailsToLook.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
                     var deliveryDetails = deliveryDetailModels.Where(x => x.InvoiceId == invoiceHeader.InvoiceId).ToList();
+                    var storedDeliveries = deliveryDetails.Where(detail => deliveryIdsStored.Contains(detail.DeliveryId)).ToList();
+
+                    var totalPackedProducts = storedDeliveries.Count();
+                    var totalPackedPieces = storedDeliveries.Sum(x => x.Quantity);
+                    var packedDeliveries = storedDeliveries.Select(x => x.DeliveryId).Distinct().Count();
 
                     var deliverys = this.GetDeliveryModel(deliveryDetails, invoiceDetail, userOrders, lineProducts);
                     var deliveryHeader = deliverys.FirstOrDefault(x => x.DeliveryId == delivery);
@@ -886,7 +901,7 @@ namespace Omicron.SapAdapter.Services.Sap
                             TotalProducts = totalProducts,
                             DeliverId = delivery,
                             SalesOrder = saleOrders,
-                            StatusDelivery = deliveryHeader.Status,
+                            StatusDelivery = string.Join(",", statusInvoices),
                             DataCheckin = initDate,
                             IsLookUpInvoices = false,
                             IsRefactura = ServiceShared.CalculateAnd(!string.IsNullOrEmpty(invoiceHeader.Refactura), invoiceHeader.Refactura == ServiceConstants.IsRefactura),
@@ -896,6 +911,9 @@ namespace Omicron.SapAdapter.Services.Sap
                             OrderList = orderListStr,
                             RemissionList = remissionListStr,
                             TotalPieces = invoiceDetail.Where(y => y.Quantity > 0).Sum(x => (int)x.Quantity),
+                            TotalPackedPieces = (int)totalPackedPieces,
+                            TotalPackedProducts = (int)totalPackedProducts,
+                            TotalPackedDeliveries = packedDeliveries,
                         };
                         invoicesHeaders.Add(invoiceHeaderLookUp);
                     }
@@ -905,14 +923,48 @@ namespace Omicron.SapAdapter.Services.Sap
             return invoicesHeaders;
         }
 
+        private (List<string>, List<int>) CalculateInvoiceStatusAndPackedDeliveries(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts)
+        {
+            var statusInvoices = new List<string>();
+            var invoiceProducts = new List<IStatusLookUpModel>();
+            var deliveryIdsStored = new List<int>();
+
+            invoiceProducts.AddRange(userOrders.Where(x => !string.IsNullOrEmpty(x.Salesorderid)));
+            invoiceProducts.AddRange(lineProducts.Where(x => !string.IsNullOrEmpty(x.ItemCode)));
+
+            var groupedByDeliveryId = invoiceProducts.GroupBy(x => x.DeliveryId).ToList();
+            groupedByDeliveryId.ForEach(group =>
+            {
+                var allPackaged = group.All(x => x.StatusAlmacen == ServiceConstants.Empaquetado && !string.IsNullOrEmpty(x.StatusInvoice));
+                var allStored = group.All(x => x.StatusAlmacen == ServiceConstants.Almacenado);
+
+                var secondValidation = ServiceUtils.CalculateTernary(allStored, ServiceConstants.Almacenado, ServiceConstants.BackOrder);
+                var status = ServiceUtils.CalculateTernary(allPackaged, ServiceConstants.Empaquetado, secondValidation);
+                statusInvoices.Add(status);
+                if (allPackaged)
+                {
+                    deliveryIdsStored.Add(group.Key);
+                }
+            });
+
+            statusInvoices.Sort();
+            return (statusInvoices.Distinct().ToList(), deliveryIdsStored);
+        }
+
         private List<InvoiceHeaderAdvancedLookUp> GenerateCardForPackageInvoice(List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, InvoiceHeaderModel invoiceHeaders, List<InvoiceDetailModel> invoiceDetailsToLook, List<DeliveryDetailModel> deliverysToLookSaleOrder, List<string> localNeigbors, List<PaymentsDto> payments, List<DoctorDeliveryAddressModel> deliveryAddressList)
         {
             var invoicesHeaders = new List<InvoiceHeaderAdvancedLookUp>();
+            var (statusInvoices, deliveryIdsStored) = this.CalculateInvoiceStatusAndPackedDeliveries(userOrders, lineProducts);
 
             if (deliverysToLookSaleOrder.Any(y => y.InvoiceId.HasValue && y.InvoiceId.Value != 0))
             {
                 var invoiceDetail = invoiceDetailsToLook.Where(x => x.InvoiceId == invoiceHeaders.InvoiceId).ToList();
                 var deliveryDetails = deliverysToLookSaleOrder.Where(x => x.InvoiceId == invoiceHeaders.InvoiceId).ToList();
+                var storedDeliveries = deliveryDetails.Where(detail => deliveryIdsStored.Contains(detail.DeliveryId)).ToList();
+
+                var totalPackedProducts = storedDeliveries.Count();
+                var totalPackedPieces = storedDeliveries.Sum(x => x.Quantity);
+                var totalPackedDeliveries = storedDeliveries.Select(x => x.DeliveryId).Distinct().Count();
 
                 var remissionList = invoiceDetail.DistinctBy(x => x.BaseEntry).Select(invoice => invoice.BaseEntry);
                 var remissionListStr = remissionList.Any() ? string.Join(", ", remissionList) : string.Empty;
@@ -944,7 +996,7 @@ namespace Omicron.SapAdapter.Services.Sap
                         ProductType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, invoiceHeaders.Address, payment),
                         TotalDeliveries = deliverys.Count,
                         TotalProducts = totalProducts,
-                        StatusDelivery = ServiceConstants.Almacenado,
+                        StatusDelivery = string.Join(",", statusInvoices),
                         DataCheckin = initDate.Value,
                         RemissionList = remissionListStr,
                         OrderList = orderListStr,
@@ -955,6 +1007,9 @@ namespace Omicron.SapAdapter.Services.Sap
                         IsPackage = invoiceHeaders.IsPackage == ServiceConstants.IsPackage,
                         IsDeliveredInOffice = invoiceHeaders.IsDeliveredInOffice ?? "N",
                         TotalPieces = invoiceDetail.Where(y => y.Quantity > 0).Sum(x => (int)x.Quantity),
+                        TotalPackedPieces = (int)totalPackedPieces,
+                        TotalPackedProducts = (int)totalPackedProducts,
+                        TotalPackedDeliveries = totalPackedDeliveries,
                     };
                     invoicesHeaders.Add(invoiceHeaderLookUp);
                 }
@@ -987,18 +1042,18 @@ namespace Omicron.SapAdapter.Services.Sap
             return listToReturn;
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GetIsPackageDistribution(Tuple<int, string> tuple, ParamentsCards paramentsCards)
+        private List<InvoiceHeaderAdvancedLookUp> GetIsPackageDistribution(Tuple<int, string> tuple, ParamentsCards paramentsCards, int invoiceLineNum)
         {
             return tuple.Item2 switch
             {
-                ServiceConstants.SaleOrder => this.GetDistributionCardFromSale(tuple, paramentsCards),
-                ServiceConstants.Delivery => this.GetDistributionCardFromDelivery(tuple, paramentsCards),
-                ServiceConstants.Invoice => this.GetDistributionCardFromInvoice(tuple, paramentsCards),
+                ServiceConstants.SaleOrder => this.GetDistributionCardFromSale(tuple, paramentsCards, invoiceLineNum),
+                ServiceConstants.Delivery => this.GetDistributionCardFromDelivery(tuple, paramentsCards, invoiceLineNum),
+                ServiceConstants.Invoice => this.GetDistributionCardFromInvoice(tuple, paramentsCards, invoiceLineNum),
                 _ => new List<InvoiceHeaderAdvancedLookUp>(),
             };
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromSale(Tuple<int, string> tuple, ParamentsCards paramentsCards)
+        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromSale(Tuple<int, string> tuple, ParamentsCards paramentsCards, int invoiceLineNum)
         {
             var listToReturn = new List<InvoiceHeaderAdvancedLookUp>();
 
@@ -1018,34 +1073,14 @@ namespace Omicron.SapAdapter.Services.Sap
                     continue;
                 }
 
-                userOrder.AddRange(lineProductOrder.Select(x => new UserOrderModel { StatusInvoice = x.StatusInvoice, InvoiceStoreDate = x.InvoiceStoreDate, DeliveryId = x.DeliveryId, Salesorderid = x.SaleOrderId.ToString(), UserInvoiceStored = x.UserInvoiceStored }));
-                var invoiceByOrder = userOrder.FirstOrDefault(x => x.Salesorderid == tuple.Item1.ToString());
-
-                var objectForDistribution = new ParametersCardForDistribution
-                {
-                    InvoiceId = invoice,
-                    UserOrder = invoiceByOrder,
-                    InvoiceHeader = paramentsCards.InvoiceHeaders,
-                    InvoiceDetails = paramentsCards.InvoiceDetailsToLook,
-                    DeliveryDetails = new List<DeliveryDetailModel>(),
-                    Packages = paramentsCards.Packages,
-                    IsFromInvoice = false,
-                    Repatridores = paramentsCards.Repatridores,
-                    Users = paramentsCards.Users,
-                    LocalNeighbors = paramentsCards.LocalNeighbors,
-                    Payments = paramentsCards.Payments,
-                    Boxes = paramentsCards.Boxes,
-                    DeliveryAddress = paramentsCards.DeliveryAddress,
-                    SpecialCardCodes = paramentsCards.SpecialCardCodes,
-                };
-
-                listToReturn.Add(this.GenerateCardForDistribution(objectForDistribution));
+                paramentsCards.DeliveryDetails = new List<DeliveryDetailModel>();
+                return this.GetInvoicesByLineNum(invoice, paramentsCards, userOrder, lineProductOrder.ToList(), false, invoiceLineNum);
             }
 
             return listToReturn;
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromDelivery(Tuple<int, string> tuple, ParamentsCards paramentsCards)
+        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromDelivery(Tuple<int, string> tuple, ParamentsCards paramentsCards, int invoiceLineNum)
         {
             var invoiceFromSaleMag = paramentsCards.UserOrders.FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == tuple.Item1, !string.IsNullOrEmpty(x.Productionorderid), x.InvoiceId != 0));
             var invoicefromSaleLine = paramentsCards.LineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == tuple.Item1, !string.IsNullOrEmpty(x.ItemCode), x.InvoiceId != 0));
@@ -1067,33 +1102,11 @@ namespace Omicron.SapAdapter.Services.Sap
                 return new List<InvoiceHeaderAdvancedLookUp>();
             }
 
-            userOrder.AddRange(lineProductOrder.Select(x => new UserOrderModel { StatusInvoice = x.StatusInvoice, InvoiceStoreDate = x.InvoiceStoreDate, DeliveryId = x.DeliveryId, Salesorderid = x.SaleOrderId.ToString(), UserInvoiceStored = x.UserInvoiceStored }));
-            var deliveryByTuple = userOrder.FirstOrDefault(x => x.DeliveryId == tuple.Item1);
-            deliveryByTuple ??= userOrder.FirstOrDefault();
-
-            var objectForDistribution = new ParametersCardForDistribution
-            {
-                InvoiceId = invoice,
-                UserOrder = deliveryByTuple,
-                InvoiceHeader = paramentsCards.InvoiceHeaders,
-                InvoiceDetails = paramentsCards.InvoiceDetailsToLook,
-                DeliveryDetails = new List<DeliveryDetailModel>(),
-                Packages = paramentsCards.Packages,
-                IsFromInvoice = false,
-                Repatridores = paramentsCards.Repatridores,
-                Users = paramentsCards.Users,
-                LocalNeighbors = paramentsCards.LocalNeighbors,
-                Payments = paramentsCards.Payments,
-                Boxes = paramentsCards.Boxes,
-                DeliveryAddress = paramentsCards.DeliveryAddress,
-                SpecialCardCodes = paramentsCards.SpecialCardCodes,
-            };
-
-            var card = this.GenerateCardForDistribution(objectForDistribution);
-            return new List<InvoiceHeaderAdvancedLookUp> { card };
+            paramentsCards.DeliveryDetails = new List<DeliveryDetailModel>();
+            return this.GetInvoicesByLineNum(invoice, paramentsCards, userOrder, lineProductOrder.ToList(), false, invoiceLineNum);
         }
 
-        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromInvoice(Tuple<int, string> tuple, ParamentsCards paramentsCards)
+        private List<InvoiceHeaderAdvancedLookUp> GetDistributionCardFromInvoice(Tuple<int, string> tuple, ParamentsCards paramentsCards, int invoiceLineNum)
         {
             var userOrder = paramentsCards.UserOrders.Where(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.Productionorderid), x.InvoiceId == tuple.Item1)).ToList();
             var lineProductOrder = paramentsCards.LineProducts.Where(x => ServiceShared.CalculateAnd(!string.IsNullOrEmpty(x.ItemCode), x.InvoiceId == tuple.Item1)).ToList();
@@ -1106,28 +1119,60 @@ namespace Omicron.SapAdapter.Services.Sap
                 return new List<InvoiceHeaderAdvancedLookUp>();
             }
 
-            userOrder.AddRange(lineProductOrder.Select(x => new UserOrderModel { StatusInvoice = x.StatusInvoice, InvoiceStoreDate = x.InvoiceStoreDate, DeliveryId = x.DeliveryId, Salesorderid = x.SaleOrderId.ToString(), UserInvoiceStored = x.UserInvoiceStored }));
+            return this.GetInvoicesByLineNum(tuple.Item1, paramentsCards, userOrder, lineProductOrder.ToList(), true, invoiceLineNum);
+        }
 
-            var objectForDistribution = new ParametersCardForDistribution
+        private List<InvoiceHeaderAdvancedLookUp> GetInvoicesByLineNum(int invoice, ParamentsCards paramentsCards, List<UserOrderModel> userOrders, List<LineProductsModel> lineProducts, bool isFromInvoice, int invoiceLineNum)
+        {
+            lineProducts = lineProducts.DistinctBy(x => x.Id).ToList();
+            userOrders = userOrders.DistinctBy(x => x.Id).ToList();
+
+            var invoiceLineNums = lineProducts.Select(x => x.InvoiceLineNum).ToList();
+            invoiceLineNums.AddRange(userOrders.Select(x => x.InvoiceLineNum));
+            invoiceLineNums = invoiceLineNums.Distinct().ToList();
+            var filterLineNums = new List<int>();
+
+            filterLineNums = invoiceLineNums;
+            if (invoiceLineNum != -1)
             {
-                InvoiceId = tuple.Item1,
-                UserOrder = userOrder.FirstOrDefault(),
-                InvoiceHeader = paramentsCards.InvoiceHeaders,
-                InvoiceDetails = paramentsCards.InvoiceDetailsToLook,
-                DeliveryDetails = paramentsCards.DeliveryDetails,
-                Packages = paramentsCards.Packages,
-                IsFromInvoice = true,
-                Repatridores = paramentsCards.Repatridores,
-                Users = paramentsCards.Users,
-                LocalNeighbors = paramentsCards.LocalNeighbors,
-                Payments = paramentsCards.Payments,
-                Boxes = paramentsCards.Boxes,
-                DeliveryAddress = paramentsCards.DeliveryAddress,
-                SpecialCardCodes = paramentsCards.SpecialCardCodes,
-            };
+                filterLineNums = invoiceLineNums.Where(x => x == invoiceLineNum).ToList();
+            }
 
-            var card = this.GenerateCardForDistribution(objectForDistribution);
-            return new List<InvoiceHeaderAdvancedLookUp> { card };
+            userOrders.AddRange(lineProducts.Select(x => new UserOrderModel { StatusInvoice = x.StatusInvoice, InvoiceStoreDate = x.InvoiceStoreDate, DeliveryId = x.DeliveryId, Salesorderid = x.SaleOrderId.ToString(), UserInvoiceStored = x.UserInvoiceStored, Quantity = (double)ServiceShared.DeserializeObject(x.BatchName, new List<AlmacenBatchModel>()).Sum(x => x.BatchQty), InvoiceLineNum = x.InvoiceLineNum }));
+            var invoices = new List<InvoiceHeaderAdvancedLookUp>();
+            filterLineNums.OrderDescending().ToList().ForEach(linenum =>
+            {
+                var filterProducts = userOrders.Where(x => x.InvoiceLineNum == linenum && !string.IsNullOrEmpty(x.StatusInvoice)).ToList();
+                var totalProducts = filterProducts.Count();
+                var totalSales = filterProducts.Select(x => x.Salesorderid).Distinct().Count();
+                var totalDeliveries = filterProducts.Select(x => x.DeliveryId).Distinct().Count();
+                var objectForDistribution = new ParametersCardForDistribution
+                {
+                    Id = ServiceUtils.CalculateTernary(invoiceLineNums.Count > 1, $"{invoice}-{linenum}", $"{invoice}"),
+                    InvoiceId = invoice,
+                    UserOrder = filterProducts.FirstOrDefault(),
+                    InvoiceHeader = paramentsCards.InvoiceHeaders,
+                    InvoiceDetails = paramentsCards.InvoiceDetailsToLook,
+                    DeliveryDetails = paramentsCards.DeliveryDetails,
+                    Packages = paramentsCards.Packages,
+                    IsFromInvoice = isFromInvoice,
+                    Repatridores = paramentsCards.Repatridores,
+                    Users = paramentsCards.Users,
+                    LocalNeighbors = paramentsCards.LocalNeighbors,
+                    Payments = paramentsCards.Payments,
+                    Boxes = paramentsCards.Boxes.Where(x => x.InvoiceLineNum == linenum).ToList(),
+                    DeliveryAddress = paramentsCards.DeliveryAddress,
+                    SpecialCardCodes = paramentsCards.SpecialCardCodes,
+                    TotalSales = totalSales,
+                    TotalDeliveries = totalDeliveries,
+                    TotalProducts = totalProducts,
+                };
+
+                var card = this.GenerateCardForDistribution(objectForDistribution);
+                invoices.Add(card);
+            });
+
+            return invoices;
         }
 
         private InvoiceHeaderAdvancedLookUp GenerateCardForDistribution(ParametersCardForDistribution parametersDistribution)
@@ -1159,17 +1204,18 @@ namespace Omicron.SapAdapter.Services.Sap
 
             return new InvoiceHeaderAdvancedLookUp
             {
+                Id = parametersDistribution.Id,
                 Invoice = invoiceId,
                 DeliverId = ServiceShared.CalculateTernary(!isFromInvoice, userOrder.DeliveryId, 0),
-                SalesOrder = !isFromInvoice ? int.Parse(userOrder.Salesorderid) : totalSales.Count,
+                SalesOrder = !isFromInvoice ? int.Parse(userOrder.Salesorderid) : parametersDistribution.TotalSales,
                 StatusDelivery = userOrder.StatusInvoice,
                 Address = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, invoice.Address.Replace("\r", string.Empty).ToUpper(), ServiceConstants.OnSiteDelivery.ToUpper()),
                 ProductType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, parametersDistribution.LocalNeighbors, invoice.Address, payment),
                 Doctor = invoice.Medico, // ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == invoice.CardCode), deliveryAddress.AddressId, invoice.Medico),
-                TotalDeliveries = localInvoiceDetails.Select(x => x.BaseEntry).Distinct().Count(),
+                TotalDeliveries = parametersDistribution.TotalDeliveries,
                 InvoiceDocDate = userOrder.InvoiceStoreDate.Value,
                 Client = deliveryAddress.Contact.ValidateNull(),
-                TotalProducts = localInvoiceDetails.Count,
+                TotalProducts = parametersDistribution.TotalProducts,
                 DeliveredBy = this.GetDeliveredBy(userOrder.StatusInvoice, package, parametersDistribution.Users),
                 DeliveryGuyName = package.Status == ServiceConstants.Entregado ? this.GetDeliveredGuyBy(package, parametersDistribution.Users) : string.Empty,
                 ReasonNotDelivered = ServiceShared.CalculateTernary(package.Status == ServiceConstants.NoEntregado, package.ReasonNotDelivered, string.Empty),
