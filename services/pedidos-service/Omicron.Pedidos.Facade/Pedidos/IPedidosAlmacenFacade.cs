@@ -112,6 +112,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <summary>
         /// The cancels the delivery.
         /// </summary>
+        /// <param name="deliveryIds">the delivery ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CancelTotalInfo(List<int> deliveryIds);
+
+        /// <summary>
+        /// The cancels the delivery.
+        /// </summary>
         /// <param name="cancelPackaging">the ids.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> CancelPackaging(CancelPackagingDto cancelPackaging);
