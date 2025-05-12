@@ -81,6 +81,13 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         public int FinishedLabel { get; set; }
 
         /// <summary>
+        /// Gets or sets magistralQr.
+        /// </summary>
+        /// <value>
+        /// String status.
+        public string MagistralQr { get; set; }
+
+        /// <summary>
         /// Gets or sets status.
         /// </summary>
         /// <value>
