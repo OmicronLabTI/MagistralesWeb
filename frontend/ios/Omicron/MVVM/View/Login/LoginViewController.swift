@@ -46,7 +46,7 @@ class LoginViewController: UIViewController {
             viewModel.canLogin.drive(loginButton.rx.isEnabled)
             ].forEach({ $0.disposed(by: disposeBag)})
         viewModel.loading
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] loading in
                 self?.loginButton.isEnabled = !loading
                 if loading {
@@ -56,13 +56,13 @@ class LoginViewController: UIViewController {
                 }
             }).disposed(by: disposeBag)
         viewModel.error
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] (error) in
                 self?.showError(error: error)
             })
             .disposed(by: disposeBag)
         viewModel.finishedLogin
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: {
                 if let window = UIApplication.shared.windows.first {
                     let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)

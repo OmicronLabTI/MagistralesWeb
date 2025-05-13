@@ -31,7 +31,7 @@ class SupplieViewModel {
         bindSendToStore()
     }
     func bindProperties() {
-        self.addComponent.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] supplie in
+        self.addComponent.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] supplie in
             guard let self = self else { return }
             let exists = self.supplieList.firstIndex(where: { $0.productId == supplie.productId })
             if exists != nil {
@@ -50,13 +50,13 @@ class SupplieViewModel {
             self.validateSendToStoreIsEnabled()
         }).disposed(by: disposeBag)
 
-        self.deleteComponents.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        self.deleteComponents.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.deleteSelectedComponents()
         }).disposed(by: disposeBag)
     }
     func bindSendToStore() {
-        self.sendToStore.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] observations in
+        self.sendToStore.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] observations in
             guard let self = self else { return }
             self.sentToStoreService(observations)
         }).disposed(by: disposeBag)

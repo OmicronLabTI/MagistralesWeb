@@ -49,7 +49,7 @@ extension OrderDetailViewModel {
             status: status,
             userType: rootViewModel.userType.rawValue)
         self.networkManager.changeStatusOrder([changeStatus])
-            .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+            .observe(on: MainScheduler.instance).subscribe(onNext: {[weak self] res in
             self?.loading.onNext(false)
             if res.code == 200 {
                 self?.rootViewModel.needsRefresh = true
@@ -107,7 +107,7 @@ extension OrderDetailViewModel {
             fechaFin: fechaFinFormated ?? String(), comments: String(),
             warehouse: tempOrderDetailData?.warehouse ?? String(), components: componets)
         self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             if self?.tempOrderDetailData != nil {
                 self?.loading.onNext(false)
                 self?.removeOfDetailsIndexs(indexs)
@@ -160,7 +160,7 @@ extension OrderDetailViewModel {
                                       qfbSignature: qfbSignature,
                                       technicalSignature: technicalSignature)
         self.networkManager.finishOrder(finishOrder)
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] res in
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
                 if res.code != 200 {
                     self.loading.onNext(false)
@@ -214,7 +214,7 @@ extension OrderDetailViewModel {
             fechaFin: fechaFinFormated ?? String(), comments: String(),
             warehouse: tempOrderDetailData?.warehouse ?? String(), components: [])
         self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             if self?.tempOrderDetailData != nil {
                 self?.inboxViewModel.selectedOrder?.plannedQuantity = plannedQuantity
                 self?.getOrdenDetail(isRefresh: false)

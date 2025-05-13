@@ -51,7 +51,7 @@ class RootViewModel {
     }
     // MARK: - Functions
     func logoutDidTapBinding() {
-        self.logoutDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        self.logoutDidTap.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.loading.onNext(true)
 

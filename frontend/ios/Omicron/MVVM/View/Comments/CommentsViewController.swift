@@ -49,7 +49,7 @@ class CommentsViewController: UIViewController {
     }
     func viewModelBinding() {
         self.commentsViewModel.originView = self.originView
-        self.commentsViewModel.backToOrderDetail.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        self.commentsViewModel.backToOrderDetail.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.dismissCommentsView()
             self?.orderDetailVC.getOrdenDetail()
         }).disposed(by: self.disposeBag)
@@ -59,10 +59,10 @@ class CommentsViewController: UIViewController {
         }).disposed(by: self.disposeBag)
         self.aceptButton.rx.tap.bind(to: commentsViewModel.aceptDidTap).disposed(by: self.disposeBag)
         self.textView.rx.text.orEmpty.bind(to: commentsViewModel.textView).disposed(by: self.disposeBag)
-        self.commentsViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
+        self.commentsViewModel.showAlert.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] message in
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
-        self.commentsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
+        self.commentsViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if showLoading {
                 self?.lottieManager.showLoading()
                 return
