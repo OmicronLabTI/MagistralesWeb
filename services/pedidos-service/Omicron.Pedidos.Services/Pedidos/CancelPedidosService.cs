@@ -176,6 +176,26 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> CancelTotalInfo(List<int> deliveryIds)
+        {
+            var ordersFromDeliveries = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
+            var salesOrderIds = ordersFromDeliveries.Select(x => x.Salesorderid).Distinct().ToList();
+            var ordersFromSalesOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(salesOrderIds)).ToList();
+
+            var isTotalRemission = ordersFromSalesOrders
+                .GroupBy(o => o.Salesorderid)
+                .All(group =>
+                {
+                    var distinctDeliveries = group.Select(g => g.DeliveryId).Distinct().Count();
+                    var header = group.FirstOrDefault(g => g.Productionorderid == null);
+
+                    return header != null && distinctDeliveries <= 1 && header.StatusAlmacen == ServiceConstants.Almacenado;
+                });
+
+            return ServiceUtils.CreateResult(true, 200, null, isTotalRemission, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> CancelPackaging(CancelPackagingDto cancelPackaging)
         {
             var userOrders = await this.pedidosDao.GetUserOrderByInvoiceId(new List<int> { cancelPackaging.InvoiceId });

@@ -111,6 +111,7 @@ namespace Omicron.Pedidos.Test.Services
             this.context = new DatabaseContext(options);
             this.context.UserOrderModel.AddRange(this.GetUserOrderModelsForCancellationTests());
             this.context.UserOrderModel.AddRange(this.GetUserModelsForPackangignCancelation());
+            this.context.UserOrderModel.AddRange(this.GetUserModelsForTotalCancellationInformation());
             this.context.SaveChanges();
             this.pedidosDao = new PedidosDao(this.context);
 
@@ -589,6 +590,37 @@ namespace Omicron.Pedidos.Test.Services
 
             // assert
             Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// test the cancel.
+        /// </summary>
+        /// <param name="deliveryId">the delivery id.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase(150158)]
+        [TestCase(150160)]
+        public async Task CancelTotalInfo(int deliveryId)
+        {
+            List<int> deliverys = new List<int> { deliveryId };
+
+            // arrange
+            this.cancelPedidosService = this.BuildService(this.GetSapAdapterOrderWithFinishedSalesOrder(), "Ok");
+
+            // act
+            var response = await this.cancelPedidosService.CancelTotalInfo(deliverys);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+
+            if (deliveryId == 150158)
+            {
+                Assert.That(response.Response, Is.True);
+            }
+            else
+            {
+                Assert.That(response.Response, Is.False);
+            }
         }
 
         /// <summary>
