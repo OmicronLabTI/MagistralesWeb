@@ -157,5 +157,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="deliveryIds">deliveryIds.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds);
+
+        /// <summary>
+        /// unassign the batch from a product.
+        /// </summary>
+        /// <param name="dto">the order id.</param>
+        /// <returns>the result.</returns>
+        Task<ResultDto> GetInfoPiecesByOrderId(InvoiceProductsDto dto);
     }
 }

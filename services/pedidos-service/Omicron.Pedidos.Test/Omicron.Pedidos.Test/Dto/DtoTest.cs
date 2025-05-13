@@ -42,6 +42,8 @@ namespace Omicron.Pedidos.Test.Dto
             new CancelDeliveryPedidoDto(),
             new DetallePedidoDto(),
             new CancelPackagingDto(),
+            new InvoiceLineProducts(),
+            new InvoiceProductsDto(),
         };
 
         /// <summary>
