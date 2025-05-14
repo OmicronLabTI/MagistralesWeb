@@ -9,10 +9,11 @@
 namespace Omicron.SapAdapter.Entities.Model.JoinsModels
 {
     using System;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 
     /// <summary>/// Class OrderLog Model.
     /// </summary>
-    public class UserOrderModel
+    public class UserOrderModel : IStatusLookUpModel
     {
         /// <summary>
         /// Gets or sets Id.
@@ -79,6 +80,13 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// <value>
         /// String status.
         public int FinishedLabel { get; set; }
+
+        /// <summary>
+        /// Gets or sets magistralQr.
+        /// </summary>
+        /// <value>
+        /// String status.
+        public string MagistralQr { get; set; }
 
         /// <summary>
         /// Gets or sets status.

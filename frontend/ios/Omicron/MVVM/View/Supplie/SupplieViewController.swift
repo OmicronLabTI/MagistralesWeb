@@ -216,7 +216,7 @@ class SupplieViewController: UIViewController {
                                       dismissTime: 2)
     }
     func bindLoading() {
-        self.supplieViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: {loading in
+        self.supplieViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: {loading in
             if loading {
                 self.lottieManager.showLoading()
                 return

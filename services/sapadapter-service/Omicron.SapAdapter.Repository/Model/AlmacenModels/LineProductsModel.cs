@@ -13,7 +13,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     /// <summary>
     /// The line products model.
     /// </summary>
-    public class LineProductsModel
+    public class LineProductsModel : IStatusLookUpModel
     {
         /// <summary>
         /// Gets or sets Id.

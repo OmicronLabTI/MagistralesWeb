@@ -111,7 +111,7 @@ extension InboxViewController {
 
     func modelBindingExtension3() {
         // Muestra o oculta el loading
-        inboxViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
+        inboxViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             guard let self = self else { return }
             self.view.isUserInteractionEnabled = true
             if showLoading {
@@ -121,11 +121,11 @@ extension InboxViewController {
             self.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
         // Muestra un mensaje AlertViewController
-        inboxViewModel.showAlert.observeOn(MainScheduler.instance)
+        inboxViewModel.showAlert.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [unowned self] message in
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
-        collectionView.rx.itemSelected.observeOn(MainScheduler.instance)
+        collectionView.rx.itemSelected.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] indexPath in
                 guard let self = self else { return }
                 guard self.indexPathsSelected.count > 0 else {
@@ -159,7 +159,7 @@ extension InboxViewController {
 
         inboxViewModel
             .reloadData
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self, let lastRect = self.lastRect else { return }
                 self.collectionView.scrollRectToVisible(lastRect, animated: true)

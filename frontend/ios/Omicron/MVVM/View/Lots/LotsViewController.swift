@@ -117,7 +117,7 @@ class LotsViewController: UIViewController {
         // Detecta que item de la tabla linea de documentos fué seleccionada
         self.lineDocTable.rx.modelSelected(Lots.self).bind(to: lotsViewModel.productSelected).disposed(by: disposeBag)
         self.lineDocTable.rx.modelSelected(Lots.self)
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] item in
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] item in
             self?.lotsViewModel.updateInfoSelectedBatch(lot: item)
         }).disposed(by: self.disposeBag)
         // Detecta que item de la tabla lotes disponibles fue selecionado
@@ -136,13 +136,13 @@ class LotsViewController: UIViewController {
         self.lotsSelectedTable.rx.modelSelected(LotsSelected.self)
             .bind(to: lotsViewModel.batchSelected).disposed(by: disposeBag)
         self.lotsSelectedTable.rx.modelSelected(LotsSelected.self)
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] item in
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] item in
             self?.lotsViewModel.itemLotSelected = item
         }).disposed(by: self.disposeBag)
         // Detecta el item de la tabla linea de documentos que fué seleccionado
         self.lineDocTable.rx.itemSelected.bind(to: lotsViewModel.indexProductSelected).disposed(by: disposeBag)
         // Muestra u oculta el loading
-        self.lotsViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
+        self.lotsViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if showLoading {
                 self?.lottieManager.showLoading()
                 return
@@ -304,7 +304,7 @@ class LotsViewController: UIViewController {
             }
         }.disposed(by: self.disposeBag)
         // Muestra un AlertMessage
-        self.lotsViewModel.showMessage.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
+        self.lotsViewModel.showMessage.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] message in
             guard let self = self else { return }
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)

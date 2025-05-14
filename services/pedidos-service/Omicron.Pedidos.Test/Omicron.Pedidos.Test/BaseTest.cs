@@ -165,6 +165,8 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 141, Productionorderid = "224212", Salesorderid = "902", Status = "Proceso", Userid = "abcquimico",  TecnicId = "tecnicoqfb", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2, StatusForTecnic = "Asignado" },
                 new UserOrderModel { Id = 142, Productionorderid = "224211", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
                 new UserOrderModel { Id = 143, Productionorderid = "224159", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
+
+                new UserOrderModel { Id = 144, Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), FinishedLabel = 1, FinalizedDate = DateTime.Now, MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
             };
         }
 
@@ -194,6 +196,43 @@ namespace Omicron.Pedidos.Test
             return new List<UserOrderModel>
             {
                 new UserOrderModel { Id = 10008000, Productionorderid = "304", Salesorderid = "701", Status = "Almacenado", Userid = "abc-123", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 15800, Quantity = 29, InvoiceId = 15700 },
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public List<UserOrderModel> GetUserModelsForTotalCancellationInformation()
+        {
+            var magistralQr = new MagistralQrModel
+            {
+                NeedsCooling = "Y",
+                ProductionOrder = 100,
+                Quantity = 1,
+                SaleOrder = 100,
+                ItemCode = "REVE 14",
+            };
+
+            var remisionQr = new RemisionQrModel
+            {
+                RemisionId = 100,
+                NeedsCooling = true,
+                PedidoId = 300,
+                TotalPieces = 5,
+            };
+
+            return new List<UserOrderModel>
+            {
+                // Remision completa
+                new UserOrderModel { Id = 10008001, Productionorderid = "304", Salesorderid = "246", Status = "Almacenado", Userid = "abc-123", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 150158, Quantity = 29, InvoiceId = 15700, StatusAlmacen = "Almacenado" },
+                new UserOrderModel { Id = 10008002, Productionorderid = "304", Salesorderid = "246", Status = "Almacenado", Userid = "abc-123", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 150158, Quantity = 29, InvoiceId = 15700, StatusAlmacen = "Almacenado" },
+                new UserOrderModel { Id = 10008003, Productionorderid = null, Salesorderid = "246", Status = "Almacenado", Userid = "abc-123", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 150158, Quantity = 29, InvoiceId = 15700, StatusAlmacen = "Almacenado" },
+
+                // Remision parcial
+                new UserOrderModel { Id = 10008004, Productionorderid = "304", Salesorderid = "701", Status = "Almacenado", Userid = "abc-123", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 150160, Quantity = 29, InvoiceId = 15700, StatusAlmacen = "Almacenado" },
+                new UserOrderModel { Id = 10008005, Productionorderid = "304", Salesorderid = "701", Status = "Almacenado", Userid = "abc-123", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 150160, Quantity = 29, InvoiceId = 15700, StatusAlmacen = "Almacenado" },
+                new UserOrderModel { Id = 10008006, Productionorderid = null, Salesorderid = "701", Status = "Almacenado", Userid = "abc-123", FinishDate = new DateTime(2020, 8, 29), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), DeliveryId = 150159, Quantity = 29, InvoiceId = 15700, StatusAlmacen = "Back Order" },
             };
         }
 
@@ -708,7 +747,7 @@ namespace Omicron.Pedidos.Test
                     IsTecnicRequired = true,
                     IsValidTecnic = isValidtecnic,
                     QfbFirstName = "Juan",
-                    QfbLastName = "Pérez",
+                    QfbLastName = "Pï¿½rez",
                     QfbId = "abc",
                     TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b801",
                     IsValidQfbConfiguration = true,
