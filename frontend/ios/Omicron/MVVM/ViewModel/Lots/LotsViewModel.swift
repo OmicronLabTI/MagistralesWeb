@@ -77,7 +77,7 @@ class LotsViewModel {
     }
 
     func saveLotsDidTapBinding() {
-        self.saveLotsDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        self.saveLotsDidTap.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.assignLots()
         }).self.disposed(by: self.disposeBag)
     }

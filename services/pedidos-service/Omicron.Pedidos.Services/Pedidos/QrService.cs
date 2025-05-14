@@ -214,13 +214,15 @@ namespace Omicron.Pedidos.Services.Pedidos
                     {
                         Salesorderid = y.SaleOrderId.ToString(),
                         InvoiceQr = y.InvoiceQr,
+                        InvoiceId = y.Id,
+                        InvoiceLineNum = y.InvoiceLineNum,
                     };
 
                     saleOrders.Add(newOrder);
                 });
             }
 
-            saleOrders = saleOrders.DistinctBy(x => x.InvoiceId).ToList();
+            saleOrders = saleOrders.DistinctBy(x => (x.InvoiceId, x.InvoiceLineNum)).ToList();
             var dimensionsQr = this.GetDeliveryParameters(parameters);
             var urls = await this.GetUrlQrFactura(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
             urls.AddRange(savedQrRoutes);
@@ -393,13 +395,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
                 using var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
-                var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}qr.png");
-                dataQrBuffer = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, modelQr.InvoiceId.ToString(), parameters, false);
+                var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}-{modelQr.InvoiceLineNum}qr.png");
+                dataQrBuffer = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, $"{modelQr.InvoiceId}-{modelQr.InvoiceLineNum}", parameters, false);
                 await this.UploadQrToAzure(dataQrBuffer, azureAccount, azureKey, pathTosave);
                 var modelToSave = new ProductionFacturaQrModel
                 {
                     Id = Guid.NewGuid().ToString("D"),
                     FacturaId = modelQr.InvoiceId,
+                    SubFacturaId = modelQr.InvoiceLineNum,
                     FacturaQrRoute = pathTosave,
                 };
 

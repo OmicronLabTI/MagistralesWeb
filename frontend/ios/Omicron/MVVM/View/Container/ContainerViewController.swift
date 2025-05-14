@@ -40,7 +40,7 @@ class ContainerViewController: UIViewController {
 
         containerViewModel
             .loading
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] loadingResponse in
                 if loadingResponse {
                     self?.lottieManager.showLoading()

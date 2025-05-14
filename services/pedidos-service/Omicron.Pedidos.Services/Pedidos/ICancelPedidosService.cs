@@ -43,6 +43,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Cancels the delivery.
         /// </summary>
+        /// <param name="deliveryIds">the delivery.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> CancelTotalInfo(List<int> deliveryIds);
+
+        /// <summary>
+        /// Cancels the delivery.
+        /// </summary>
         /// <param name="cancelPackaging">the delivery.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> CancelPackaging(CancelPackagingDto cancelPackaging);

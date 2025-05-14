@@ -18,6 +18,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Dtos.DxpModels;
     using Omicron.SapAdapter.Dtos.Models;
+    using Omicron.SapAdapter.Dtos.Models.Almacen;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
@@ -150,6 +151,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var doctorData = (await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == invoiceHeader.InvoiceHeader.ShippingAddressName);
             doctorData ??= new DoctorDeliveryAddressModel { Contact = invoiceHeader.Medico };
 
+            var (storedPices, storedProducts) = this.CalculateStored(lineOrders, userOrders);
+
             var hasPendingPackings = userOrders.Any(invoice => invoice.InvoiceId != 0 && string.IsNullOrEmpty(invoice.StatusInvoice)) || lineOrders.Any(invoice => invoice.InvoiceId != 0 && string.IsNullOrEmpty(invoice.StatusInvoice));
             var invoiceToReturn = new InvoiceSaleHeaderModel
             {
@@ -169,6 +172,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsPackage = invoiceHeader.InvoiceHeader.IsPackage == ServiceConstants.IsPackage,
                 IsDeliveredInOffice = invoiceHeader.InvoiceHeader.IsDeliveredInOffice ?? "N",
                 HasPendingPacking = hasPendingPackings,
+                TotalHeaderPackedPieces = storedPices,
+                TotalHeaderPackedProducts = storedProducts,
             };
 
             var invoiceModelToAdd = new InvoicesModel
@@ -393,11 +398,15 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> GetInvoiceData(string code)
+        public async Task<ResultModel> GetInvoiceData(string code, string subcode)
         {
             int.TryParse(code, out var intDocNum);
+            int.TryParse(subcode, out var invoicelinenum);
+
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(new List<int> { intDocNum })).FirstOrDefault();
             invoiceHeader ??= new InvoiceHeaderModel();
+
+            (string package, short subpackage) = await this.GetPackageAndSubpackage(intDocNum, invoicelinenum);
 
             var packagesResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetPackagesByInvoice, new List<int> { intDocNum });
             var packages = JsonConvert.DeserializeObject<List<PackageModel>>(packagesResponse.Response.ToString());
@@ -430,6 +439,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 Comments = invoiceHeader.CommentsInvoice,
                 Doctor = invoiceHeader.Medico,
                 PackageNumber = invoiceHeader.DocNum,
+                Package = package,
+                InvoiceLineNum = subpackage,
                 Status = status,
                 NeedsDelivery = dxpTransactions.ShippingCostAccepted == 1,
                 BetweenStreets = address.BetweenStreets,
@@ -522,6 +533,69 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var invoicesHeader = await this.sapDao.GetClosedInvoicesByDocNum(docNums);
             return ServiceUtils.CreateResult(true, 200, null, invoicesHeader, null, null);
+        }
+
+        private async Task<(string Package, short Subpackage)> GetPackageAndSubpackage(int intDocNum, int invoicelinenum)
+        {
+            if (invoicelinenum <= 0)
+            {
+                return (string.Empty, 0);
+            }
+
+            var ordresponse = await this.pedidosService.PostPedidos(new List<int> { intDocNum }, ServiceConstants.UserOrders);
+            List<UserOrderDto> userorders = JsonConvert.DeserializeObject<List<UserOrderDto>>(ordresponse.Response.ToString());
+
+            var lineresponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLine, new List<int> { intDocNum });
+            List<LineProductsDto> lineproducts = JsonConvert.DeserializeObject<List<LineProductsDto>>(lineresponse.Response.ToString());
+
+            var subpacklines = lineproducts
+                .Select(lp => (lp.InvoiceId, lp.InvoiceLineNum))
+                .Distinct();
+
+            var subpackorders = userorders
+                .Select(uo => (uo.InvoiceId, uo.InvoiceLineNum))
+                .Distinct();
+
+            var subpackages = subpacklines
+                .Union(subpackorders)
+                .Where(x => x.InvoiceId == intDocNum)
+                .Distinct()
+                .ToList();
+
+            var subp = subpackages.Find(x => x.InvoiceLineNum == invoicelinenum);
+
+            string package = subpackages.Count > 1
+                ? $"{subp.InvoiceId}-{subp.InvoiceLineNum}"
+                : $"{subp.InvoiceId}";
+
+            return (package, subp.InvoiceLineNum);
+        }
+
+        /// <summary>
+        /// Calculate stored.
+        /// </summary>
+        /// <param name="lineProducts">line products.</param>
+        /// <param name="usersOrders">user orders.</param>
+        /// <returns>packaged pices and products.</returns>
+        public (int, int) CalculateStored(List<LineProductsModel> lineProducts, List<UserOrderModel> usersOrders)
+        {
+            var storedPices = 0;
+            var storedProducts = 0;
+
+            storedProducts = lineProducts.Where(lp => !string.IsNullOrEmpty(lp.ItemCode) && lp.StatusAlmacen == ServiceConstants.Empaquetado).Select(lp => lp.ItemCode).Count();
+            storedProducts += usersOrders.Where(uo => !string.IsNullOrEmpty(uo.Productionorderid) && uo.StatusAlmacen == ServiceConstants.Empaquetado).Select(uo => uo.Productionorderid).Count();
+
+            var batchNames = lineProducts.Where(lp => !string.IsNullOrEmpty(lp.BatchName)).Select(lp => lp.BatchName).ToList();
+            var batchmodels = batchNames.SelectMany(JsonConvert.DeserializeObject<List<AlmacenBatchModel>>).ToList();
+
+            storedPices = (int)batchmodels.Sum(b => b.BatchQty);
+
+            var magistralQr = usersOrders.Where(uo => !string.IsNullOrEmpty(uo.MagistralQr)).Select(ou => ou.MagistralQr).ToList();
+            var magistralQrModel = magistralQr.Select(JsonConvert.DeserializeObject<PedidosMagistralQrModel>).ToList();
+
+            storedPices += (int)magistralQrModel.Sum(m => m.Quantity);
+
+            return (storedPices, storedProducts);
         }
 
         /// <summary>

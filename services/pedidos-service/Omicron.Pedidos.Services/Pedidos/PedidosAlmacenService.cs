@@ -16,6 +16,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Services.Constants;
     using Omicron.Pedidos.Services.SapFile;
@@ -210,7 +211,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             if (isValidId)
             {
-                userOrderByType = await this.pedidosDao.GetUserOrderByInvoiceTypeAndId([type.ToLower()], invoiceId);
+                userOrderByType = await this.pedidosDao.GetUserOrderByInvoiceTypeAndId([type.ToLower()], new List<int> { invoiceId });
             }
             else
             {
@@ -399,6 +400,21 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var userOrders = await this.pedidosDao.GetUserOrdersForInvoiceByDeliveryIds(deliveryIds, ServiceConstants.Almacenado, ServiceConstants.Empaquetado);
             return ServiceUtils.CreateResult(true, 200, null, userOrders, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetInfoPiecesByOrderId(InvoiceProductsDto dto)
+        {
+            var userOrders = await this.pedidosDao.GetUserOrdersByInvoiceIdAndLineNumber(dto.Invoices, dto.LineNumbers);
+            var result = userOrders.ToList().Select(static x => new InvoiceLineProducts()
+            {
+                ItemCode = JsonConvert.DeserializeObject<MagistralQrModel>(x.MagistralQr).ItemCode,
+                Quantity = (int)x.Quantity,
+                InvoiceLineNum = x.InvoiceLineNum,
+                Invoice = x.InvoiceId,
+                SaleOrderId = int.Parse(x.Salesorderid),
+            });
+            return ServiceUtils.CreateResult(true, 200, null, result, null, null);
         }
 
         /// <summary>

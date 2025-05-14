@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 import RxDataSources
-import Charts
+import DGCharts
 import PDFKit
 
 // swiftlint:disable type_body_length
@@ -177,7 +177,7 @@ class InboxViewController: UIViewController {
             self.removeOrdersSelectedView.backgroundColor = self.updateRemoveViewColor(title: title)
         }).disposed(by: disposeBag)
         inboxViewModel.refreshDataWhenChangeProcessIsSucces
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
                 self.rootViewModel.getOrders()
             }).disposed(by: self.disposeBag)
@@ -190,7 +190,7 @@ class InboxViewController: UIViewController {
             guard let self = self else { return }
             self.pendingButton.isEnabled = isEnable
         }).self.disposed(by: self.disposeBag)
-        inboxViewModel.orderURLPDF.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] urlPDF in
+        inboxViewModel.orderURLPDF.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] urlPDF in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 let pdfViewController = PDFViewController()
@@ -198,7 +198,7 @@ class InboxViewController: UIViewController {
                 self.present(pdfViewController, animated: true, completion: nil)
             }
         }).disposed(by: disposeBag)
-        inboxViewModel.goToSuppliesView.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        inboxViewModel.goToSuppliesView.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.goToSupplies()
         }).disposed(by: self.disposeBag)
         self.modelBindingGrouped()
@@ -212,7 +212,7 @@ class InboxViewController: UIViewController {
     func modelBindingExtension1() {
         // Muestra un alert para la confirmación de cambio de estatus de una orden
         inboxViewModel.showAlertToChangeOrderOfStatus
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] data in
                 guard let self = self else { return }
                 if data.typeOfStatus == StatusNameConstants.finishedStatus {
                     self.inboxViewModel.validOrders(indexPathOfOrdersSelected: self.indexPathsSelected)
@@ -242,7 +242,7 @@ class InboxViewController: UIViewController {
     }
 
     func showKPIViewBinding() {
-        inboxViewModel.showKPIView.observeOn(MainScheduler.instance)
+        inboxViewModel.showKPIView.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] show in
                 guard let self = self else { return }
                 if show { self.title = "Indicadores" }
@@ -282,7 +282,7 @@ class InboxViewController: UIViewController {
         layout.minimumLineSpacing = 16
         collectionView.setCollectionViewLayout(layout, animated: true)
         heigthCollectionViewConstraint.constant = 8
-        inboxViewModel.resetData.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] in
+        inboxViewModel.resetData.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] in
             guard let self = self else { return }
             self.indexPathsSelected.removeAll()
             self.collectionView.reloadData()

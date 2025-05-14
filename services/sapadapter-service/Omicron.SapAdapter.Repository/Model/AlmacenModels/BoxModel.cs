@@ -46,5 +46,13 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// register Datetime.
         /// </value>
         public DateTime RegisterDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets Invoice Line Num.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public int InvoiceLineNum { get; set; }
     }
 }

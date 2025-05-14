@@ -294,6 +294,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         Task<List<UserOrderModel>> GetUserOrdersByInvoiceId(List<int> invoiceId);
 
+                /// <summary>
+        /// Gets the production qr invoice by invoiceid.
+        /// </summary>
+        /// <param name="invoiceId">the invoice.</param>
+        /// <param name="linenumbers">the list of linenumbers.</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>> GetUserOrdersByInvoiceIdAndLineNumber(List<int> invoiceId, List<int> linenumbers);
+
         /// <summary>
         /// Returns the user order by user id.
         /// </summary>
@@ -317,7 +325,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="types">the list of users.</param>
         /// <param name="invoiceId">invoiceId.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, int invoiceId);
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, List<int> invoiceId);
 
         /// <summary>
         /// Get the data by finalized date.

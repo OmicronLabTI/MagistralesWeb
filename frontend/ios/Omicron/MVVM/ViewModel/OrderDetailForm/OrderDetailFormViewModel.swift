@@ -50,7 +50,7 @@ class  OrderDetailFormViewModel {
 
     func updateDeleteItemOfTableService(_ order: OrderDetailRequest, _ data: OrderDetail, _ index: Int) {
         self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
                 self.loading.onNext(false)

@@ -94,9 +94,9 @@ namespace Omicron.SapAdapter.Facade.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> GetScannedDataFactura(string code)
+        public async Task<ResultDto> GetScannedDataFactura(string code, string subcode)
         {
-            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceData(code));
+            return this.mapper.Map<ResultDto>(await this.sapInvoiceService.GetInvoiceData(code, subcode));
         }
 
         /// <inheritdoc/>

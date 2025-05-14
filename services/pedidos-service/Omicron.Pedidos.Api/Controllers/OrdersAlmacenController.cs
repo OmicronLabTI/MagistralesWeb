@@ -274,6 +274,19 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <summary>
         /// Creates the pdf for the sale order.
         /// </summary>
+        /// <param name="deliveryIds">the delivery id's.</param>
+        /// <returns>the data.</returns>
+        [Route("/cancel/total/info")]
+        [HttpPost]
+        public async Task<IActionResult> CancelTotalInfo(List<int> deliveryIds)
+        {
+            var response = await this.pedidosAlmacenFacade.CancelTotalInfo(deliveryIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
         /// <param name="cancelPackaging">Cancel packaging.</param>
         /// <returns>the data.</returns>
         [Route("/cancel/packaging")]
@@ -346,6 +359,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds)
         {
             var response = await this.pedidosAlmacenFacade.GetUserOrdersForInvoiceByDeliveryIds(deliveryIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// GetInfoPiecesByOrderId.
+        /// </summary>
+        /// <param name="request">request.</param>
+        /// <returns>the data.</returns>
+        [Route("/products/invoice/linenums")]
+        [HttpPost]
+        public async Task<IActionResult> GetInfoPiecesByOrderId(InvoiceProductsDto request)
+        {
+            var response = await this.pedidosAlmacenFacade.GetInfoPiecesByOrderId(request);
             return this.Ok(response);
         }
     }

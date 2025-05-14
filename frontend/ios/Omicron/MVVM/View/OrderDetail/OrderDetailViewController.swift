@@ -123,7 +123,7 @@ class OrderDetailViewController: UIViewController {
         self.viewModelBinding3()
         self.viewModelBinding4()
         self.deleteManyDidEnableBinding()
-        self.orderDetailViewModel.showIconComments.observeOn(MainScheduler.instance)
+        self.orderDetailViewModel.showIconComments.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] iconName in
                 guard let self = self else { return }
                 let comments = UIBarButtonItem(image: UIImage(systemName: iconName),
@@ -131,11 +131,11 @@ class OrderDetailViewController: UIViewController {
                                                action: #selector(self.goToCommentsViewController))
                 self.navigationItem.rightBarButtonItems = [self.getOmniconLogo(), comments]
             }).disposed(by: self.disposeBag)
-        orderDetailViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
+        orderDetailViewModel.showAlert.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] message in
             guard let self = self else { return }
             AlertManager.shared.showAlert(message: message, view: self)
         }).disposed(by: self.disposeBag)
-        orderDetailViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
+        orderDetailViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if showLoading {
                 self?.lottieManager.showLoading()
             } else {
@@ -143,7 +143,7 @@ class OrderDetailViewController: UIViewController {
             }
         }).disposed(by: self.disposeBag)
         self.orderDetailViewModel.showSignatureView
-            .observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] titleView in
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] titleView in
                 let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
                 let signatureVC = storyboard.instantiateViewController(
                     identifier: ViewControllerIdentifiers.signaturePadViewController) as? SignaturePadViewController
@@ -156,13 +156,13 @@ class OrderDetailViewController: UIViewController {
     }
     func viewModelBinding1() {
         // Termina la ejecución del refresh control
-        self.orderDetailViewModel.endRefreshing.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
+        self.orderDetailViewModel.endRefreshing.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
             self?.refreshControl.endRefreshing()
         }).disposed(by: self.disposeBag)
-        self.orderDetailViewModel.backToInboxView.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        self.orderDetailViewModel.backToInboxView.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.navigationController?.popToRootViewController(animated: true)
         }).disposed(by: self.disposeBag)
-        self.orderDetailViewModel.goToSeeLotsViewController.observeOn(MainScheduler.instance)
+        self.orderDetailViewModel.goToSeeLotsViewController.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
                 let lotsVC = storyboard.instantiateViewController(
@@ -317,7 +317,7 @@ class OrderDetailViewController: UIViewController {
     }
 
     func deleteManyDidEnableBinding() {
-        self.orderDetailViewModel.deleteManyButtonIsEnable.observeOn(MainScheduler.instance)
+        self.orderDetailViewModel.deleteManyButtonIsEnable.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] isEnable in
             self?.deleteManyButton.isHidden = !isEnable
         }).disposed(by: self.disposeBag)

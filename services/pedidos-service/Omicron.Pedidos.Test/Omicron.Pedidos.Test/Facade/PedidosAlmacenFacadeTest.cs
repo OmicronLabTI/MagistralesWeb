@@ -271,6 +271,24 @@ namespace Omicron.Pedidos.Test.Facade
         }
 
         /// <summary>
+        /// the test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task CancelTotalInfo()
+        {
+            // arrange
+            var delivery = new List<int> { 150158 };
+
+            // act
+            var response = await this.almacenFacade.CancelTotalInfo(delivery);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
         /// Test for get possible orders active for dxp project.
         /// </summary>
         /// <returns>nothing.</returns>
@@ -366,6 +384,22 @@ namespace Omicron.Pedidos.Test.Facade
             // arrange
             // act
             var response = await this.almacenFacade.GetUserOrdersForInvoiceByDeliveryIds([]);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetInfoPiecesByOrderId()
+        {
+            // arrange
+            // act
+            var response = await this.almacenFacade.GetInfoPiecesByOrderId(new InvoiceProductsDto());
 
             // Assert
             Assert.That(response, Is.Not.Null);
