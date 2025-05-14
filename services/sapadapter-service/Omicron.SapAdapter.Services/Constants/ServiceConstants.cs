@@ -778,7 +778,7 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// Constant to user orders.
         /// </summary>
-        public const string UserOrders = "api/Pedidos/userorder/invoice?type=local";
+        public const string UserOrders = "userorder/invoice?type=local";
 
         /// <summary>
         /// ClientTypeClinica.

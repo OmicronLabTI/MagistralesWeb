@@ -577,7 +577,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <param name="invoicesid"> List of invoice ids. </param>
         /// <param name="type"> List of production order types to include in the search. </param>
         /// <returns> A result containing the matching user production orders. </returns>
-        [Route("userorder/invoice")]
+        [Route("/userorder/invoice")]
         [HttpPost]
         public async Task<IActionResult> GetUserOrdersByInvoiceId([FromBody] List<int> invoicesid, [FromQuery] string type)
         {
