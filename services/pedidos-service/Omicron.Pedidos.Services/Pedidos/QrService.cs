@@ -402,7 +402,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 {
                     Id = Guid.NewGuid().ToString("D"),
                     FacturaId = modelQr.InvoiceId,
-                    SubFacturaId= modelQr.InvoiceLineNum,
+                    SubFacturaId = modelQr.InvoiceLineNum,
                     FacturaQrRoute = pathTosave,
                 };
 
