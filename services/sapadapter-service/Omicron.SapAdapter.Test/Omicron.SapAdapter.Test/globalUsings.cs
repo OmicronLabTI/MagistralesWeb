@@ -11,6 +11,7 @@ global using NUnit.Framework;
 global using Omicron.SapAdapter.DataAccess.DAO.Sap;
 global using Omicron.SapAdapter.Dtos.DxpModels;
 global using Omicron.SapAdapter.Dtos.Models;
+global using Omicron.SapAdapter.Dtos.Models.Almacen;
 global using Omicron.SapAdapter.Entities.Context;
 global using Omicron.SapAdapter.Entities.Model;
 global using Omicron.SapAdapter.Entities.Model.AlmacenModels;

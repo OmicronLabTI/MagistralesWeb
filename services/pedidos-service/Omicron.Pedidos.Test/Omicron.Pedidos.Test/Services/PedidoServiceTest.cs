@@ -1266,5 +1266,35 @@ namespace Omicron.Pedidos.Test.Services
                 Assert.That(response.Response, Is.EqualTo(new List<string>()));
             }
         }
+
+        /// <summary>
+        /// the processs.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task GetUserOrdersByInvoiceId()
+        {
+            // arrange
+            List<int> invoicesid = new List<int> { 1, 2 };
+            string type = "local";
+
+            var users = new Mock<IUsersService>();
+            var sapAdapter = new Mock<ISapAdapter>();
+            var sapFile = new Mock<ISapFileService>();
+
+            var sap = new Mock<ISapDiApi>();
+            var pedido = new PedidosService(sapAdapter.Object, this.pedidosDao, users.Object, sapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, sap.Object);
+
+            // act
+            var response = await pedido.GetUserOrdersByInvoiceId(invoicesid, type);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.Comments, Is.Null);
+            Assert.That(response.UserError, Is.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code.Equals(200));
+        }
     }
 }

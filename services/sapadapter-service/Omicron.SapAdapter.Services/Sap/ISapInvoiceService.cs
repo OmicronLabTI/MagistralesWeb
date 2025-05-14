@@ -81,8 +81,9 @@ namespace Omicron.SapAdapter.Services.Sap
         /// Gets the code for the invoice.
         /// </summary>
         /// <param name="code">the invoice.</param>
+        /// <param name="subcode"> the invoice line num. </param>
         /// <returns>the data.</returns>
-        Task<ResultModel> GetInvoiceData(string code);
+        Task<ResultModel> GetInvoiceData(string code, string subcode);
 
         /// <summary>
         /// Gets the delivery and invoice id by sales id.

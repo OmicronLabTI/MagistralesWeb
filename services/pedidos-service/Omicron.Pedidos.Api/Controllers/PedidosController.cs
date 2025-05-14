@@ -572,6 +572,20 @@ namespace Omicron.Pedidos.Api.Controllers
         }
 
         /// <summary>
+        /// Retrieves the user orders based on invoice ids and order types.
+        /// </summary>
+        /// <param name="invoicesid"> List of invoice ids. </param>
+        /// <param name="type"> List of production order types to include in the search. </param>
+        /// <returns> A result containing the matching user production orders. </returns>
+        [Route("/userorder/invoice")]
+        [HttpPost]
+        public async Task<IActionResult> GetUserOrdersByInvoiceId([FromBody] List<int> invoicesid, [FromQuery] string type)
+        {
+            var response = await this.pedidoFacade.GetUserOrdersByInvoiceId(invoicesid, type);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Makes the ping.
         /// </summary>
         /// <returns>return the pong.</returns>
