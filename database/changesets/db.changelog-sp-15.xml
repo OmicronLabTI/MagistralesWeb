@@ -7,4 +7,10 @@
       </column>
     </addColumn>
   </changeSet>
+  <changeSet author="itzelmd" id="changelog-1.2">
+	<addDefaultValue 
+		tableName="productionfacturaqr" 
+        columnName="subfacturaid" 
+        defaultValueNumeric="1" />
+  </changeSet>
 </databaseChangeLog>
