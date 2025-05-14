@@ -10,6 +10,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
 
     /// <summary>
@@ -134,5 +135,12 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="deliveryIds">deliveryIds.</param>
         /// <returns>the data.</returns>
         Task<ResultModel> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds);
+
+        /// <summary>
+        /// unassign the batch from a product.
+        /// </summary>
+        /// <param name="dto">the order id.</param>
+        /// <returns>the result.</returns>
+        Task<ResultModel> GetInfoPiecesByOrderId(InvoiceProductsDto dto);
     }
 }

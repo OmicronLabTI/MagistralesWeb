@@ -389,5 +389,21 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.That(response, Is.Not.Null);
             Assert.That(response.Success);
         }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetInfoPiecesByOrderId()
+        {
+            // arrange
+            // act
+            var response = await this.almacenFacade.GetInfoPiecesByOrderId(new InvoiceProductsDto());
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
     }
 }

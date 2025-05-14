@@ -361,5 +361,18 @@ namespace Omicron.Pedidos.Api.Controllers
             var response = await this.pedidosAlmacenFacade.GetUserOrdersForInvoiceByDeliveryIds(deliveryIds);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// GetInfoPiecesByOrderId.
+        /// </summary>
+        /// <param name="request">request.</param>
+        /// <returns>the data.</returns>
+        [Route("/products/invoice/linenums")]
+        [HttpPost]
+        public async Task<IActionResult> GetInfoPiecesByOrderId(InvoiceProductsDto request)
+        {
+            var response = await this.pedidosAlmacenFacade.GetInfoPiecesByOrderId(request);
+            return this.Ok(response);
+        }
     }
 }

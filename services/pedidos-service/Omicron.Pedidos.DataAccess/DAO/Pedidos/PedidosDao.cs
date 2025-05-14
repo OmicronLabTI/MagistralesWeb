@@ -426,6 +426,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetUserOrdersByInvoiceIdAndLineNumber(List<int> invoices, List<int> linenumbers)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => invoices.Contains(x.InvoiceId) && linenumbers.Contains(x.InvoiceLineNum)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByStatusInvoice(List<string> listStatus)
         {
             return await this.databaseContext.UserOrderModel.Where(x => listStatus.Contains(x.StatusInvoice)).ToListAsync();

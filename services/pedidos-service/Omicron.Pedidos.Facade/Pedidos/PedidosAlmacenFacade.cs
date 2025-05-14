@@ -165,5 +165,11 @@ namespace Omicron.Pedidos.Facade.Pedidos
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.GetUserOrdersForInvoiceByDeliveryIds(deliveryIds));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInfoPiecesByOrderId(InvoiceProductsDto dto)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetInfoPiecesByOrderId(dto));
+        }
     }
 }

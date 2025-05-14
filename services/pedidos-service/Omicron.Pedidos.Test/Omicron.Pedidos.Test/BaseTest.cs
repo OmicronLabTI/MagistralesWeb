@@ -165,6 +165,8 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 141, Productionorderid = "224212", Salesorderid = "902", Status = "Proceso", Userid = "abcquimico",  TecnicId = "tecnicoqfb", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 2, StatusForTecnic = "Asignado" },
                 new UserOrderModel { Id = 142, Productionorderid = "224211", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
                 new UserOrderModel { Id = 143, Productionorderid = "224159", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
+
+                new UserOrderModel { Id = 144, Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), FinishedLabel = 1, FinalizedDate = DateTime.Now, MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
             };
         }
 
@@ -745,7 +747,7 @@ namespace Omicron.Pedidos.Test
                     IsTecnicRequired = true,
                     IsValidTecnic = isValidtecnic,
                     QfbFirstName = "Juan",
-                    QfbLastName = "Pérez",
+                    QfbLastName = "Pï¿½rez",
                     QfbId = "abc",
                     TecnicId = "6bc7f8a8-8617-43ac-a804-79cf9667b801",
                     IsValidQfbConfiguration = true,
