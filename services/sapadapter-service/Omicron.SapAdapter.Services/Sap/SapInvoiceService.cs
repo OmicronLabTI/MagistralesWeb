@@ -535,6 +535,33 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, invoicesHeader, null, null);
         }
 
+        /// <summary>
+        /// Calculate stored.
+        /// </summary>
+        /// <param name="lineProducts">line products.</param>
+        /// <param name="usersOrders">user orders.</param>
+        /// <returns>packaged pices and products.</returns>
+        public (int, int) CalculateStored(List<LineProductsModel> lineProducts, List<UserOrderModel> usersOrders)
+        {
+            var storedPices = 0;
+            var storedProducts = 0;
+
+            storedProducts = lineProducts.Where(lp => !string.IsNullOrEmpty(lp.ItemCode) && lp.StatusAlmacen == ServiceConstants.Empaquetado).Select(lp => lp.ItemCode).Count();
+            storedProducts += usersOrders.Where(uo => !string.IsNullOrEmpty(uo.Productionorderid) && uo.StatusAlmacen == ServiceConstants.Empaquetado).Select(uo => uo.Productionorderid).Count();
+
+            var batchNames = lineProducts.Where(lp => !string.IsNullOrEmpty(lp.BatchName)).Select(lp => lp.BatchName).ToList();
+            var batchmodels = batchNames.SelectMany(JsonConvert.DeserializeObject<List<AlmacenBatchModel>>).ToList();
+
+            storedPices = (int)batchmodels.Sum(b => b.BatchQty);
+
+            var magistralQr = usersOrders.Where(uo => !string.IsNullOrEmpty(uo.MagistralQr)).Select(ou => ou.MagistralQr).ToList();
+            var magistralQrModel = magistralQr.Select(JsonConvert.DeserializeObject<PedidosMagistralQrModel>).ToList();
+
+            storedPices += (int)magistralQrModel.Sum(m => m.Quantity);
+
+            return (storedPices, storedProducts);
+        }
+
         private async Task<(string Package, short Subpackage)> GetPackageAndSubpackage(int intDocNum, int invoicelinenum)
         {
             if (invoicelinenum <= 0)
@@ -569,33 +596,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 : $"{subp.InvoiceId}";
 
             return (package, subp.InvoiceLineNum);
-        }
-
-        /// <summary>
-        /// Calculate stored.
-        /// </summary>
-        /// <param name="lineProducts">line products.</param>
-        /// <param name="usersOrders">user orders.</param>
-        /// <returns>packaged pices and products.</returns>
-        public (int, int) CalculateStored(List<LineProductsModel> lineProducts, List<UserOrderModel> usersOrders)
-        {
-            var storedPices = 0;
-            var storedProducts = 0;
-
-            storedProducts = lineProducts.Where(lp => !string.IsNullOrEmpty(lp.ItemCode) && lp.StatusAlmacen == ServiceConstants.Empaquetado).Select(lp => lp.ItemCode).Count();
-            storedProducts += usersOrders.Where(uo => !string.IsNullOrEmpty(uo.Productionorderid) && uo.StatusAlmacen == ServiceConstants.Empaquetado).Select(uo => uo.Productionorderid).Count();
-
-            var batchNames = lineProducts.Where(lp => !string.IsNullOrEmpty(lp.BatchName)).Select(lp => lp.BatchName).ToList();
-            var batchmodels = batchNames.SelectMany(JsonConvert.DeserializeObject<List<AlmacenBatchModel>>).ToList();
-
-            storedPices = (int)batchmodels.Sum(b => b.BatchQty);
-
-            var magistralQr = usersOrders.Where(uo => !string.IsNullOrEmpty(uo.MagistralQr)).Select(ou => ou.MagistralQr).ToList();
-            var magistralQrModel = magistralQr.Select(JsonConvert.DeserializeObject<PedidosMagistralQrModel>).ToList();
-
-            storedPices += (int)magistralQrModel.Sum(m => m.Quantity);
-
-            return (storedPices, storedProducts);
         }
 
         /// <summary>
