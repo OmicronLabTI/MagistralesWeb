@@ -9,10 +9,11 @@
 namespace Omicron.SapAdapter.Entities.Model.JoinsModels
 {
     using System;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 
     /// <summary>/// Class OrderLog Model.
     /// </summary>
-    public class UserOrderModel
+    public class UserOrderModel : IStatusLookUpModel
     {
         /// <summary>
         /// Gets or sets Id.

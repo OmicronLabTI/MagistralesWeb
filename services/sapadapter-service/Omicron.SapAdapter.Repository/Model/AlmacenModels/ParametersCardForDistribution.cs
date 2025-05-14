@@ -24,6 +24,12 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public int InvoiceId { get; set; }
 
         /// <summary>
@@ -103,5 +109,23 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public List<string> SpecialCardCodes { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int TotalDeliveries { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int TotalProducts { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int TotalSales { get; set; }
     }
 }
