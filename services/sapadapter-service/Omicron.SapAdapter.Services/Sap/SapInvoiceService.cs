@@ -150,6 +150,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var doctorData = (await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == invoiceHeader.InvoiceHeader.ShippingAddressName);
             doctorData ??= new DoctorDeliveryAddressModel { Contact = invoiceHeader.Medico };
 
+            var (storedPices, storedProducts) = this.CalculateStored(lineOrders, userOrders);
+
             var hasPendingPackings = userOrders.Any(invoice => invoice.InvoiceId != 0 && string.IsNullOrEmpty(invoice.StatusInvoice)) || lineOrders.Any(invoice => invoice.InvoiceId != 0 && string.IsNullOrEmpty(invoice.StatusInvoice));
             var invoiceToReturn = new InvoiceSaleHeaderModel
             {
@@ -169,6 +171,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 IsPackage = invoiceHeader.InvoiceHeader.IsPackage == ServiceConstants.IsPackage,
                 IsDeliveredInOffice = invoiceHeader.InvoiceHeader.IsDeliveredInOffice ?? "N",
                 HasPendingPacking = hasPendingPackings,
+                TotalHeaderPackedPieces = storedPices,
+                TotalHeaderPackedProducts = storedProducts,
             };
 
             var invoiceModelToAdd = new InvoicesModel
@@ -522,6 +526,33 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var invoicesHeader = await this.sapDao.GetClosedInvoicesByDocNum(docNums);
             return ServiceUtils.CreateResult(true, 200, null, invoicesHeader, null, null);
+        }
+
+        /// <summary>
+        /// Calculate stored.
+        /// </summary>
+        /// <param name="lineProducts">line products.</param>
+        /// <param name="usersOrders">user orders.</param>
+        /// <returns>packaged pices and products.</returns>
+        public (int, int) CalculateStored(List<LineProductsModel> lineProducts, List<UserOrderModel> usersOrders)
+        {
+            var storedPices = 0;
+            var storedProducts = 0;
+
+            storedProducts = lineProducts.Where(lp => !string.IsNullOrEmpty(lp.ItemCode) && lp.StatusAlmacen == ServiceConstants.Empaquetado).Select(lp => lp.ItemCode).Count();
+            storedProducts += usersOrders.Where(uo => !string.IsNullOrEmpty(uo.Productionorderid) && uo.StatusAlmacen == ServiceConstants.Empaquetado).Select(uo => uo.Productionorderid).Count();
+
+            var batchNames = lineProducts.Where(lp => !string.IsNullOrEmpty(lp.BatchName)).Select(lp => lp.BatchName).ToList();
+            var batchmodels = batchNames.SelectMany(JsonConvert.DeserializeObject<List<AlmacenBatchModel>>).ToList();
+
+            storedPices = (int)batchmodels.Sum(b => b.BatchQty);
+
+            var magistralQr = usersOrders.Where(uo => !string.IsNullOrEmpty(uo.MagistralQr)).Select(ou => ou.MagistralQr).ToList();
+            var magistralQrModel = magistralQr.Select(JsonConvert.DeserializeObject<PedidosMagistralQrModel>).ToList();
+
+            storedPices += (int)magistralQrModel.Sum(m => m.Quantity);
+
+            return (storedPices, storedProducts);
         }
 
         /// <summary>
