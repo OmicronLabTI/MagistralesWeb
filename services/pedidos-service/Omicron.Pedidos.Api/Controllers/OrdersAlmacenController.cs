@@ -83,7 +83,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>the data.</returns>
         [Route("/qr/factura")]
         [HttpPost]
-        public async Task<IActionResult> CreateInvoiceQr(List<int> orderIds)
+        public async Task<IActionResult> CreateInvoiceQr(List<string> orderIds)
         {
             var response = await this.qrsFacade.CreateInvoiceQr(orderIds);
             return this.Ok(response);

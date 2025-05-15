@@ -104,6 +104,14 @@ namespace Omicron.Pedidos.Entities.Model
         public int DeliveryId { get; set; }
 
         /// <summary>
+        /// Gets or sets InvoiceId.
+        /// </summary>
+        /// <value>
+        /// Int Id.
+        /// </value>
+        public int InvoiceId { get; set; }
+
+        /// <summary>
         /// Gets or sets InvoiceLineNum.
         /// </summary>
         /// <value>

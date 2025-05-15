@@ -198,7 +198,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var service = new QrService(this.pedidosDao, this.configuration.Object, mockAzure.Object, mockAlmacen.Object);
 
-            var listOrdersId = new List<int> { 100 };
+            var listOrdersId = new List<string> { "100" };
 
             var response = await service.CreateInvoiceQr(listOrdersId);
 
@@ -236,7 +236,7 @@ namespace Omicron.Pedidos.Test.Services
 
             var service = new QrService(this.pedidosDao, this.configuration.Object, mockAzure.Object, mockAlmacen.Object);
 
-            var listOrdersId = new List<int> { 107 };
+            var listOrdersId = new List<string> { "107" };
 
             var response = await service.CreateInvoiceQr(listOrdersId);
 
