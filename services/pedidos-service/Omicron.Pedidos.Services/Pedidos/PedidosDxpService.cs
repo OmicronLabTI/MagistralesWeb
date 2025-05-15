@@ -45,6 +45,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.Productionorderid,
                 x.Status,
                 x.StatusAlmacen,
+                x.DeliveryId,
                 x.StatusInvoice,
                 x.IsSalesOrder,
                 x.InvoiceStoreDate,
