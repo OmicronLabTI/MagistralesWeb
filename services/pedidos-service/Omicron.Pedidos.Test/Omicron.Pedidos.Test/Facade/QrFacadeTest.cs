@@ -100,7 +100,7 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task CreateInvoiceQr()
         {
             // arrange
-            var order = new List<int>();
+            var order = new List<string>();
 
             // act
             var response = await this.qrsFacade.CreateInvoiceQr(order);
