@@ -638,6 +638,8 @@ namespace Omicron.SapAdapter.Test.Services
                 new UserOrderModel { Id = 43, InvoiceId = 150199, StatusAlmacen = "Empaquetado", Salesorderid = "175527", Productionorderid = "226239", MagistralQr = JsonConvert.SerializeObject(new PedidosMagistralQrModel { SaleOrder = 175527, ProductionOrder = 226239, Quantity = 2, ItemCode = "BE 01   30 CAP" }) },
             };
 
+            var invoice = 150199;
+
             var mockPedidos = new Mock<IPedidosService>();
             var mockAlmacen = new Mock<IAlmacenService>();
             var mockProccessPayments = new Mock<IProccessPayments>();
@@ -646,7 +648,7 @@ namespace Omicron.SapAdapter.Test.Services
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
 
             // act
-            var (piezas, productos) = service.CalculateStored(lineProducts, usersOrder);
+            var (piezas, productos) = service.CalculateStored(lineProducts, usersOrder, invoice);
 
             // assert
             Assert.That(piezas, Is.EqualTo(15));
@@ -681,6 +683,8 @@ namespace Omicron.SapAdapter.Test.Services
 
             var usersOrder = new List<UserOrderModel>();
 
+            var invoice = 150163;
+
             var mockPedidos = new Mock<IPedidosService>();
             var mockAlmacen = new Mock<IAlmacenService>();
             var mockProccessPayments = new Mock<IProccessPayments>();
@@ -689,7 +693,7 @@ namespace Omicron.SapAdapter.Test.Services
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
 
             // act
-            var (piezas, productos) = service.CalculateStored(lineProducts, usersOrder);
+            var (piezas, productos) = service.CalculateStored(lineProducts, usersOrder, invoice);
 
             // assert
             Assert.That(piezas, Is.EqualTo(18));
