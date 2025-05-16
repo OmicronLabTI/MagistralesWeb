@@ -204,6 +204,9 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listSavedQr = await this.pedidosDao.GetQrFacturaRouteByInvoice(invoiceIds);
 
+            listSavedQr = listSavedQr.Where(x => separated.Exists(s => s.Id == x.FacturaId &&
+                (s.Suffix == null || s.Suffix == x.SubFacturaId))).ToList();
+
             var savedQrFactura = listSavedQr.Select(c => c.FacturaId).ToList();
             var savedQrRoutes = listSavedQr.Select(r => r.FacturaQrRoute).ToList();
 
