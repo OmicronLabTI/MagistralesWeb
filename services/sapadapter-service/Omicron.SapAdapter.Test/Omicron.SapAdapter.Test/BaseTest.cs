@@ -147,6 +147,8 @@ namespace Omicron.SapAdapter.Test
 
                 // For Almacen
                 new Batches { AbsEntry = 2, DistNumber = "Lote1", ItemCode = "Linea1", SysNumber = 1 },
+
+                new Batches { AbsEntry = 4, DistNumber = "Linea50", ItemCode = "Linea50", SysNumber = 1 },
             };
         }
 

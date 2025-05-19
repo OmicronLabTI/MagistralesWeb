@@ -1182,7 +1182,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var isFromInvoice = parametersDistribution.IsFromInvoice;
 
             var invoice = parametersDistribution.InvoiceHeader.FirstOrDefault(x => x.DocNum == invoiceId);
-            invoice ??= new InvoiceHeaderModel();
+            invoice ??= new InvoiceHeaderModel { Address = string.Empty };
 
             var localInvoiceDetails = parametersDistribution.InvoiceDetails.Where(x => x.InvoiceId == invoice.InvoiceId).ToList();
             var totalSales = parametersDistribution.DeliveryDetails.Where(y => y.InvoiceId.HasValue && y.InvoiceId == invoice.InvoiceId).Select(x => x.BaseEntry).Distinct().ToList();
