@@ -446,42 +446,28 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <returns>the data.</returns>
         public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<CompleteDetalleFormulaModel> components)
         {
-            var listToReturn = new List<CompleteBatchesJoinModel>();
-            var productIds = components.Select(c => c.ProductId).Distinct();
-            var warehouseIds = components.Select(c => c.Warehouse).Distinct();
+            var productIds = components.Select(c => c.ProductId).Distinct().ToList();
+            var warehouseIds = components.Select(c => c.Warehouse).Distinct().ToList();
 
-            var querybatches = await this.databaseContext.BatchesQuantity
-                .Where(b => productIds.Contains(b.ItemCode) && warehouseIds.Contains(b.WhsCode) && b.Quantity > 0)
-                .AsNoTracking()
-                .ToListAsync();
-
-
-            var validBatches = querybatches.Select(x => x.SysNumber);
-
-            var batches = await this.databaseContext.Batches
-                .Where(x => productIds.Contains(x.ItemCode)
-                        && validBatches.Contains(x.SysNumber))
-                .AsNoTracking()
-                .ToListAsync();
-
-            querybatches.ForEach(x =>
-            {
-                var batch = batches.FirstOrDefault(y => x.SysNumber == y.SysNumber && x.ItemCode == y.ItemCode);
-                batch ??= new Batches();
-                listToReturn.Add(new CompleteBatchesJoinModel
+            return await (
+                from bq in databaseContext.BatchesQuantity
+                join b in databaseContext.Batches
+                    on new { bq.ItemCode, bq.SysNumber } equals new { b.ItemCode, b.SysNumber }
+                where productIds.Contains(bq.ItemCode)
+                    && warehouseIds.Contains(bq.WhsCode)
+                    && bq.Quantity > 0
+                select new CompleteBatchesJoinModel
                 {
-                    CommitQty = x.CommitQty ?? 0,
-                    Quantity = x.Quantity ?? 0,
-                    DistNumber = batch.DistNumber ?? string.Empty,
-                    SysNumber = x.SysNumber,
-                    FechaExp = !batch.ExpDate.HasValue ? null : batch.ExpDate.Value.ToString("dd/MM/yyyy"),
-                    FechaExpDateTime = batch.ExpDate,
-                    ItemCode = x.ItemCode,
-                    WarehouseCode = x.WhsCode,
-                });
-            });
-
-            return listToReturn;
+                    CommitQty = bq.CommitQty ?? 0,
+                    Quantity = bq.Quantity ?? 0,
+                    DistNumber = b.DistNumber ?? string.Empty,
+                    SysNumber = bq.SysNumber,
+                    FechaExp = b.ExpDate.HasValue ? b.ExpDate.Value.ToString("dd/MM/yyyy") : null,
+                    FechaExpDateTime = b.ExpDate,
+                    ItemCode = bq.ItemCode,
+                    WarehouseCode = bq.WhsCode
+                }
+            ).AsNoTracking().ToListAsync();
         }
 
         /// <summary>
@@ -537,6 +523,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(List<int> logEntry)
         {
             return await this.RetryQuery(this.databaseContext.BatchesTransactionQtyModel.Where(x => logEntry.Contains(x.LogEntry)).AsNoTracking());
+        }
+
+        /// <summary>
+        /// Gets the record from ITL1 by log entry.
+        /// </summary>
+        /// <param name="logEntry">the log entry.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntryAndQuantity(List<int> logEntry)
+        {
+            return await this.RetryQuery(
+                this.databaseContext.BatchesTransactionQtyModel
+                .Where(x => logEntry.Contains(x.LogEntry) && x.AllocQty > 0)
+                .AsNoTracking());
         }
 
         /// <inheritdoc/>

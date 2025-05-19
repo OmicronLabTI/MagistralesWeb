@@ -299,7 +299,7 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the desition.</returns>
         public static bool IsTypeLocal(string state, List<string> neigborhood, string address, PaymentsDto payment)
         {
-            var isLocal = address.ToLower().Contains(state.ToLower()) && neigborhood.Any(x => address.ToLower().Contains(x.ToLower()));
+            var isLocal = address.SafeLowerCase().Contains(state.SafeLowerCase()) && neigborhood.Any(x => address.SafeLowerCase().Contains(x.SafeLowerCase()));
             isLocal = ServiceShared.CalculateTernary(payment.ShippingCostAccepted == ServiceConstants.ShippingCostAccepted, isLocal, true);
             return isLocal;
         }
@@ -326,6 +326,18 @@ namespace Omicron.SapAdapter.Services.Utils
         public static bool IsLocalString(string word)
         {
             return word == ServiceConstants.Local;
+        }
+
+        /// <summary>
+        /// SafeLowerCase.
+        /// </summary>
+        /// <param name="value">Value.</param>
+        /// <returns>lower value.</returns>
+        public static string SafeLowerCase(this string value)
+        {
+            return string.IsNullOrEmpty(value)
+                ? string.Empty
+                : value.ToLower();
         }
 
         /// <summary>
