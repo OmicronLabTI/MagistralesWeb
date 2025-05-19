@@ -151,7 +151,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var doctorData = (await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, addressesToFind)).FirstOrDefault(x => x.AddressId == invoiceHeader.InvoiceHeader.ShippingAddressName);
             doctorData ??= new DoctorDeliveryAddressModel { Contact = invoiceHeader.Medico };
 
-            var (storedPices, storedProducts) = this.CalculateStored(lineOrders, userOrders);
+            var (storedPices, storedProducts) = this.CalculateStored(lineOrders, userOrders, invoiceHeader.InvoiceHeader.DocNum);
 
             var hasPendingPackings = userOrders.Any(invoice => invoice.InvoiceId != 0 && string.IsNullOrEmpty(invoice.StatusInvoice)) || lineOrders.Any(invoice => invoice.InvoiceId != 0 && string.IsNullOrEmpty(invoice.StatusInvoice));
             var invoiceToReturn = new InvoiceSaleHeaderModel
@@ -540,11 +540,15 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <param name="lineProducts">line products.</param>
         /// <param name="usersOrders">user orders.</param>
+        /// <param name="invoice">invoice.</param>
         /// <returns>packaged pices and products.</returns>
-        public (int, int) CalculateStored(List<LineProductsModel> lineProducts, List<UserOrderModel> usersOrders)
+        public (int, int) CalculateStored(List<LineProductsModel> lineProducts, List<UserOrderModel> usersOrders, int invoice)
         {
             var storedPices = 0;
             var storedProducts = 0;
+
+            lineProducts = lineProducts.Where(lp => lp.InvoiceId == invoice).ToList();
+            usersOrders = usersOrders.Where(lp => lp.InvoiceId == invoice).ToList();
 
             storedProducts = lineProducts.Where(lp => !string.IsNullOrEmpty(lp.ItemCode) && lp.StatusAlmacen == ServiceConstants.Empaquetado).Select(lp => lp.ItemCode).Count();
             storedProducts += usersOrders.Where(uo => !string.IsNullOrEmpty(uo.Productionorderid) && uo.StatusAlmacen == ServiceConstants.Empaquetado).Select(uo => uo.Productionorderid).Count();

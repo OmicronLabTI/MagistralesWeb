@@ -184,13 +184,28 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> CreateInvoiceQr(List<int> invoiceIds)
+        public async Task<ResultModel> CreateInvoiceQr(List<string> orderIds)
         {
+            var separated = orderIds
+                .Select(id =>
+                {
+                    var parts = id.Split('-');
+                    return parts.Length == 2
+                        ? (Id: int.Parse(parts[0]), Suffix: int.Parse(parts[1]))
+                        : (Id: int.Parse(parts[0]), Suffix: (int?)null);
+                })
+                .ToList();
+
+            List<int> invoiceIds = separated.Select(x => x.Id).ToList();
+
             var azureAccount = this.configuration[ServiceConstants.AzureAccountName];
             var azureKey = this.configuration[ServiceConstants.AzureAccountKey];
             var azureqrContainer = this.configuration[ServiceConstants.InvoiceQrContainer];
 
             var listSavedQr = await this.pedidosDao.GetQrFacturaRouteByInvoice(invoiceIds);
+
+            listSavedQr = listSavedQr.Where(x => separated.Exists(s => s.Id == x.FacturaId &&
+                (s.Suffix == null || s.Suffix == x.SubFacturaId))).ToList();
 
             var savedQrFactura = listSavedQr.Select(c => c.FacturaId).ToList();
             var savedQrRoutes = listSavedQr.Select(r => r.FacturaQrRoute).ToList();
@@ -214,7 +229,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                     {
                         Salesorderid = y.SaleOrderId.ToString(),
                         InvoiceQr = y.InvoiceQr,
-                        InvoiceId = y.Id,
+                        InvoiceId = y.InvoiceId,
                         InvoiceLineNum = y.InvoiceLineNum,
                     };
 
@@ -222,9 +237,20 @@ namespace Omicron.Pedidos.Services.Pedidos
                 });
             }
 
-            saleOrders = saleOrders.DistinctBy(x => (x.InvoiceId, x.InvoiceLineNum)).ToList();
+            var count = saleOrders
+                .GroupBy(x => x.InvoiceId)
+                .ToDictionary(g => g.Key, g => g.Select(x => x.InvoiceLineNum)
+                .Distinct()
+                .Count());
+
+            saleOrders = saleOrders
+                .Where(x => separated.Exists(s => s.Id == x.InvoiceId &&
+                (s.Suffix == null || s.Suffix == x.InvoiceLineNum)))
+                .DistinctBy(x => (x.InvoiceId, x.InvoiceLineNum))
+                .ToList();
+
             var dimensionsQr = this.GetDeliveryParameters(parameters);
-            var urls = await this.GetUrlQrFactura(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer);
+            var urls = await this.GetUrlQrFactura(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer, count);
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
 
@@ -385,7 +411,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             return listUrls;
         }
 
-        private async Task<List<string>> GetUrlQrFactura(List<UserOrderModel> saleOrders, QrDimensionsModel parameters, List<string> existingUrls, string azureAccount, string azureKey, string container)
+        private async Task<List<string>> GetUrlQrFactura(List<UserOrderModel> saleOrders, QrDimensionsModel parameters, List<string> existingUrls, string azureAccount, string azureKey, string container, Dictionary<int, int> count)
         {
             var listUrls = new List<string>();
             var listToSave = new List<ProductionFacturaQrModel>();
@@ -395,8 +421,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             {
                 var modelQr = JsonConvert.DeserializeObject<InvoiceQrModel>(so.InvoiceQr);
                 using var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
-                var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{modelQr.InvoiceId}-{modelQr.InvoiceLineNum}qr.png");
-                dataQrBuffer = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, $"{modelQr.InvoiceId}-{modelQr.InvoiceLineNum}", parameters, false);
+
+                int val = count.Where(x => x.Key == modelQr.InvoiceId).Select(x => x.Value).FirstOrDefault();
+                string num = val > 1 ? $"{modelQr.InvoiceId}-{modelQr.InvoiceLineNum}" : $"{modelQr.InvoiceId}";
+
+                var pathTosave = string.Format(ServiceConstants.BlobUrlTemplate, azureAccount, container, $"{num}qr.png");
+                dataQrBuffer = this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, num, parameters, false);
                 await this.UploadQrToAzure(dataQrBuffer, azureAccount, azureKey, pathTosave);
                 var modelToSave = new ProductionFacturaQrModel
                 {

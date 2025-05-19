@@ -186,7 +186,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 .GroupBy(o => o.Salesorderid)
                 .All(group =>
                 {
-                    var distinctDeliveries = group.Select(g => g.DeliveryId).Distinct().Count();
+                    var distinctDeliveries = group.Where(g => g.Productionorderid != null).Select(g => g.DeliveryId).Distinct().Count();
                     var header = group.FirstOrDefault(g => g.Productionorderid == null);
 
                     return header != null && distinctDeliveries <= 1 && header.StatusAlmacen == ServiceConstants.Almacenado;
