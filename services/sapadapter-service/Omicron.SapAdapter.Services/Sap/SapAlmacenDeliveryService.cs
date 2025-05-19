@@ -536,23 +536,6 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
-        /// Get the valid batchs.
-        /// </summary>
-        /// <param name="products">the products.</param>
-        /// <param name="whsCode">the code.</param>
-        /// <returns>the batches.</returns>
-        private async Task<List<CompleteBatchesJoinModel>> GetValidBatches(List<string> products, string whsCode)
-        {
-            var listComponents = products.Select(item => new CompleteDetalleFormulaModel
-            {
-                ProductId = item,
-                Warehouse = whsCode,
-            }).ToList();
-
-            return (await this.sapDao.GetValidBatches(listComponents)).ToList();
-        }
-
-        /// <summary>
         /// Gets the batches.
         /// </summary>
         /// <param name="itemCode">the code.</param>

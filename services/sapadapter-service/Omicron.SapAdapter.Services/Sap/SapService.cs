@@ -523,44 +523,42 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data to return.</returns>
         public async Task<ResultModel> GetBatchesComponents(int ordenId)
         {
-            var componentes = await this.sapDao.GetComponentByBatches(ordenId);
+            var componentes = (await this.sapDao.GetComponentByBatches(ordenId)).ToList();
+            var lotes = (await this.GetValidBatches(componentes)).ToList();
+            var batches = (await this.GetTransacitionBatches(componentes, lotes, ordenId)).ToList();
+
             var listToReturn = new List<BatchesComponentModel>();
 
-            var lotes = await this.GetValidBatches(componentes.ToList());
-            var batches = await this.GetTransacitionBatches(componentes.ToList(), lotes.ToList());
-            double totalNecesario = 0;
-            double doubleTotalBathches = 0;
-            decimal totalBatches = 0;
-            foreach (var x in componentes)
+            foreach (var componente in componentes)
             {
-                var localLotes = lotes
-                .Where(y => ServiceShared.CalculateAnd(y.ItemCode == x.ProductId, y.Quantity > 0))
-                .ToList();
+                var itemCode = componente.ProductId;
 
-                var lotesNames = new HashSet<int>(localLotes.Select(x => x.SysNumber));
+                var localLotes = lotes
+                    .Where(l => ServiceShared.CalculateAnd(l.ItemCode == itemCode, l.Quantity > 0))
+                    .ToList();
+
+                var lotesSysNumbers = new HashSet<int>(localLotes.Select(l => l.SysNumber));
 
                 var localBatches = batches
-                    .Where(y => ServiceShared.CalculateAnd(lotesNames.Contains(y.SysNumber), y.ItemCode == x.ProductId));
+                    .Where(b => ServiceShared.CalculateAnd(lotesSysNumbers.Contains(b.SysNumber), b.ItemCode == itemCode))
+                    .ToList();
 
-                double.TryParse(x.PendingQuantity.ToString(), out totalNecesario);
-                totalBatches = localBatches.Any() ? localBatches.Sum(y => y.CantidadSeleccionada) : 0;
-                double.TryParse(totalBatches.ToString(), out doubleTotalBathches);
+                var totalNecesario = Math.Round(Convert.ToDouble(componente.PendingQuantity), 6);
+                var totalSeleccionado = Math.Round(Convert.ToDouble(localBatches.Sum(b => b.CantidadSeleccionada)), 6);
 
-                totalNecesario = Math.Round(totalNecesario, 6);
-                doubleTotalBathches = Math.Round(doubleTotalBathches, 6);
-
-                var orderedList = localLotes.Where(x => x.FechaExpDateTime.HasValue).OrderBy(y => y.FechaExpDateTime).ToList();
-                orderedList.AddRange(localLotes.Where(x => !x.FechaExpDateTime.HasValue));
+                var orderedLotes = localLotes
+                    .OrderBy(l => l.FechaExpDateTime ?? DateTime.MaxValue)
+                    .ToList();
 
                 listToReturn.Add(new BatchesComponentModel
                 {
-                    Almacen = x.Warehouse,
-                    CodigoProducto = x.ProductId,
-                    DescripcionProducto = x.Description,
-                    TotalNecesario = Math.Round(totalNecesario - doubleTotalBathches, 6),
-                    TotalSeleccionado = doubleTotalBathches,
-                    Lotes = orderedList,
-                    LotesAsignados = localBatches.ToList(),
+                    Almacen = componente.Warehouse,
+                    CodigoProducto = itemCode,
+                    DescripcionProducto = componente.Description,
+                    TotalNecesario = totalNecesario - totalSeleccionado,
+                    TotalSeleccionado = totalSeleccionado,
+                    Lotes = orderedLotes,
+                    LotesAsignados = localBatches,
                 });
             }
 
@@ -978,7 +976,7 @@ namespace Omicron.SapAdapter.Services.Sap
         private async Task<IEnumerable<ValidBatches>> GetValidBatches(List<CompleteDetalleFormulaModel> details)
         {
             var batches = await this.sapDao.GetValidBatches(details);
-            var listToReturn = batches.Select(x =>
+            return batches.Select(x =>
                 new ValidBatches
                 {
                     SysNumber = x.SysNumber,
@@ -990,8 +988,6 @@ namespace Omicron.SapAdapter.Services.Sap
                     Quantity = x.Quantity,
                     FechaExpDateTime = x.FechaExpDateTime,
                 }).ToList();
-
-            return listToReturn;
         }
 
         /// <summary>
@@ -1031,37 +1027,50 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <param name="components">the componentes.</param>
         /// <param name="validBatches">the valid batches.</param>
         /// <returns>the data.</returns>
-        private async Task<List<AssignedBatches>> GetTransacitionBatches(List<CompleteDetalleFormulaModel> components, List<ValidBatches> validBatches)
+        private async Task<List<AssignedBatches>> GetTransacitionBatches(
+            List<CompleteDetalleFormulaModel> components,
+            List<ValidBatches> validBatches,
+            int orderFabId)
         {
-            var batchTransactions = await this.sapDao.GetBatchesTransactionByOrderItem(new List<int> { components.FirstOrDefault().OrderFabId });
+            var batchTransactions = await this.sapDao.GetBatchesTransactionByOrderItem([orderFabId]);
 
-            var listLastTransacionts = new List<BatchTransacitions>();
-            components.ForEach(x =>
-            {
-                var trasnByCode = batchTransactions.Where(y => y.ItemCode == x.ProductId).OrderBy(z => z.LogEntry);
-                if (trasnByCode.ToList().Count != 0)
-                {
-                    listLastTransacionts.Add(trasnByCode.Last(x => x.DocQuantity > 0));
-                }
-            });
+            var listLastTransacionts = components
+                                        .Select(x =>
+                                        {
+                                            var transByCode = batchTransactions
+                                                .Where(y => y.ItemCode == x.ProductId)
+                                                .OrderBy(z => z.LogEntry)
+                                                .LastOrDefault(z => z.DocQuantity > 0);
+
+                                            return transByCode;
+                                        })
+                                        .Where(x => x != null)
+                                        .ToList();
 
             if (listLastTransacionts.Count == 0)
             {
                 return new List<AssignedBatches>();
             }
 
-            var batchesQty = await this.sapDao.GetBatchTransationsQtyByLogEntry(listLastTransacionts.Select(x => x.LogEntry).ToList());
-            var listToReturn = (from x in batchesQty
-                                let batch = validBatches.FirstOrDefault(y => ServiceShared.CalculateAnd(y.SysNumber == x.SysNumber, x.ItemCode == y.ItemCode))
-                                where x.AllocQty > 0
-                                select new AssignedBatches
-                                {
-                                    CantidadSeleccionada = x.AllocQty,
-                                    NumeroLote = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.NumeroLote),
-                                    SysNumber = x.SysNumber,
-                                    ItemCode = ServiceShared.CalculateTernary(batch == null, string.Empty, batch?.ItemCode),
-                                }).ToList();
-            return listToReturn;
+            var batchesQty = await this.sapDao.GetBatchTransationsQtyByLogEntryAndQuantity(listLastTransacionts.Select(x => x.LogEntry).ToList());
+
+            var validBatchDict = validBatches
+                .GroupBy(v => (v.SysNumber, v.ItemCode))
+                .ToDictionary(g => g.Key, g => g.First());
+
+            return batchesQty
+                .Select(x =>
+                {
+                    validBatchDict.TryGetValue((x.SysNumber, x.ItemCode), out var batch);
+                    return new AssignedBatches
+                    {
+                        CantidadSeleccionada = x.AllocQty,
+                        NumeroLote = batch?.NumeroLote ?? string.Empty,
+                        SysNumber = x.SysNumber,
+                        ItemCode = batch?.ItemCode ?? string.Empty,
+                    };
+                })
+                .ToList();
         }
 
         /// <summary>
