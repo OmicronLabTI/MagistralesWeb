@@ -156,6 +156,12 @@ namespace Omicron.SapAdapter.Facade.Sap
             return this.mapper.Map<ResultDto>(await this.sapService.GetBatchesComponents(ordenId));
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetBatchesComponentsByItemCodeAndWarehouses(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetBatchesComponentsByItemCodeAndWarehouses(parameters));
+        }
+
         /// <summary>
         /// Get last id of isolated production order created.
         /// </summary>
