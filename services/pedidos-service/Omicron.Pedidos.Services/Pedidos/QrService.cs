@@ -202,7 +202,12 @@ namespace Omicron.Pedidos.Services.Pedidos
             var azureKey = this.configuration[ServiceConstants.AzureAccountKey];
             var azureqrContainer = this.configuration[ServiceConstants.InvoiceQrContainer];
 
+            var parameters = await this.pedidosDao.GetParamsByFieldContainsQueryOnly(ServiceConstants.DeliveryQr);
+            var dimensionsQr = this.GetDeliveryParameters(parameters);
+
             var listSavedQr = await this.pedidosDao.GetQrFacturaRouteByInvoice(invoiceIds);
+
+            await this.UpdateQrCodes(listSavedQr, azureAccount, azureKey, separated, dimensionsQr);
 
             listSavedQr = listSavedQr.Where(x => separated.Exists(s => s.Id == x.FacturaId &&
                 (s.Suffix == null || s.Suffix == x.SubFacturaId))).ToList();
@@ -217,7 +222,6 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return ServiceUtils.CreateResult(true, 200, null, savedQrRoutes, null, null);
             }
 
-            var parameters = await this.pedidosDao.GetParamsByFieldContainsQueryOnly(ServiceConstants.DeliveryQr);
             var saleOrders = await this.pedidosDao.GetUserOrdersByInvoiceId(invoiceIds);
 
             if (!saleOrders.Any())
@@ -249,12 +253,60 @@ namespace Omicron.Pedidos.Services.Pedidos
                 .DistinctBy(x => (x.InvoiceId, x.InvoiceLineNum))
                 .ToList();
 
-            var dimensionsQr = this.GetDeliveryParameters(parameters);
             var urls = await this.GetUrlQrFactura(saleOrders, dimensionsQr, savedQrRoutes, azureAccount, azureKey, azureqrContainer, count);
             urls.AddRange(savedQrRoutes);
             urls = urls.Distinct().ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, urls, null, null);
+        }
+
+        private async Task<byte[]> GenerateQrData(int facturaId, int suffix, QrDimensionsModel parameters)
+        {
+            var modelQr = new InvoiceQrModel
+            {
+                InvoiceId = facturaId,
+                InvoiceLineNum = (short)suffix,
+            };
+
+            using var surface = this.CreateSKQrCode(parameters, JsonConvert.SerializeObject(modelQr));
+            return this.AddTextToSKQr(surface, modelQr.NeedsCooling, ServiceConstants.QrBottomTextFactura, $"{facturaId}-{suffix}", parameters, false);
+        }
+
+        private async Task UpdateQrCodes(List<ProductionFacturaQrModel> savedqr, string azureaccount, string azurekey, List<(int Id, int? Suffix)> separated, QrDimensionsModel parameters)
+        {
+            var withoutsuffix = savedqr.Where(x => !x.FacturaQrRoute.Contains("-") && x.FacturaQrRoute.EndsWith(ServiceConstants.QrPng)).ToList();
+
+            if (!withoutsuffix.Any())
+            {
+                return;
+            }
+
+            var withsuffix = separated.Where(x => x.Suffix.HasValue && x.Suffix.Value > 1).Distinct().ToList();
+
+            if (withsuffix.Count >= 1)
+            {
+                foreach (var qrwithout in withoutsuffix)
+                {
+                    var newname = $"{qrwithout.FacturaId}-{qrwithout.SubFacturaId}{ServiceConstants.QrPng}";
+                    var nuevaroute = qrwithout.FacturaQrRoute.Replace($"{qrwithout.FacturaId}{ServiceConstants.QrPng}", newname);
+
+                    var dataQrBuffer = await this.GenerateQrData(qrwithout.FacturaId, qrwithout.SubFacturaId, parameters);
+
+                    await this.UploadQrToAzure(dataQrBuffer, azureaccount, azurekey, nuevaroute);
+
+                    await this.azureService.DeleteIfExist(azureaccount, azurekey, qrwithout.FacturaQrRoute);
+
+                    var updatedModel = new ProductionFacturaQrModel
+                    {
+                        Id = qrwithout.Id,
+                        FacturaId = qrwithout.FacturaId,
+                        SubFacturaId = qrwithout.SubFacturaId,
+                        FacturaQrRoute = nuevaroute,
+                    };
+
+                    await this.pedidosDao.UpdatesQrRouteFactura(new List<ProductionFacturaQrModel> { updatedModel });
+                }
+            }
         }
 
         /// <summary>

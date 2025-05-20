@@ -73,5 +73,21 @@ namespace Omicron.Pedidos.Services.Azure
 
             return tupleToReturn;
         }
+
+        /// <inheritdoc/>
+        public async Task<bool> DeleteIfExist(string azureAccount, string azureKey, string route)
+        {
+            try
+            {
+                var credentials = new StorageSharedKeyCredential(azureAccount, azureKey);
+                var blobClient = new BlobClient(new Uri(route), credentials);
+                var response = await blobClient.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+                return response.Value;
+            }
+            catch (Exception ex)
+            {
+                throw new CustomServiceException(ex.Message, System.Net.HttpStatusCode.BadRequest);
+            }
+        }
     }
 }
