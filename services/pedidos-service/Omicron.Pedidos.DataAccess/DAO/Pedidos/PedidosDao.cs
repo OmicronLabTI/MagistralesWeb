@@ -394,7 +394,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <inheritdoc/>
         public async Task<List<ProductionFacturaQrModel>> GetQrFacturaRouteByInvoice(List<int> invoiceId)
         {
-            return await this.databaseContext.ProductionFacturaQrModel.Where(x => invoiceId.Contains(x.FacturaId)).ToListAsync();
+            return await this.databaseContext.ProductionFacturaQrModel.AsNoTracking().Where(x => invoiceId.Contains(x.FacturaId)).ToListAsync();
         }
 
         /// <inheritdoc/>
@@ -623,6 +623,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                  })
                  .AsNoTracking()
                 .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdatesQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave)
+        {
+            this.databaseContext.ProductionFacturaQrModel.UpdateRange(modelsToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
         }
     }
 }

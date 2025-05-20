@@ -37,5 +37,14 @@ namespace Omicron.Pedidos.Services.Azure
         /// <param name="fileNames">the complete rote.</param>
         /// <returns>the data.</returns>
         Task<List<Tuple<string, bool>>> ValidateIfExist(string azureAccount, string azureKey, List<string> fileNames);
+
+        /// <summary>
+        /// Validates if the file exist.
+        /// </summary>
+        /// <param name="azureAccount">the account.</param>
+        /// <param name="azureKey">the key.</param>
+        /// <param name="route">the complete rote.</param>
+        /// <returns>the data.</returns>
+        Task<bool> DeleteIfExist(string azureAccount, string azureKey, string route);
     }
 }
