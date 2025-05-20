@@ -9,7 +9,9 @@
 namespace Omicron.SapAdapter.Services.Catalog
 {
     using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Services.Utils;
     using Serilog;
@@ -49,6 +51,25 @@ namespace Omicron.SapAdapter.Services.Catalog
             using (var response = await this.httpClient.GetAsync(url))
             {
                 result = await ServiceUtils.GetResponse(response, this.logger, "Error peticion catalogs");
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// get orders with the data.
+        /// </summary>
+        /// <param name="dataToSend">the orders.</param>
+        /// <param name="route">the route.</param>
+        /// <returns>the return.</returns>
+        public async Task<ResultDto> PostCatalogs(object dataToSend, string route)
+        {
+            ResultDto result;
+            var stringContent = new StringContent(JsonConvert.SerializeObject(dataToSend), UnicodeEncoding.UTF8, "application/json");
+            var url = this.httpClient.BaseAddress + route;
+            using (var response = await this.httpClient.PostAsync(url, stringContent))
+            {
+                result = await ServiceUtils.GetResponse(response, this.logger, "Error peticion catalogos");
             }
 
             return result;

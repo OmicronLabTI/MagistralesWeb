@@ -62,6 +62,9 @@ namespace Omicron.SapAdapter.Entities.Context
         public virtual DbSet<ItemWarehouseModel> ItemWarehouseModel { get; set; }
 
         /// <inheritdoc/>
+        public virtual DbSet<WarehouseModel> WarehouseModel { get; set; }
+
+        /// <inheritdoc/>
         public virtual DbSet<Users> Users { get; set; }
 
         /// <inheritdoc/>
@@ -111,6 +114,9 @@ namespace Omicron.SapAdapter.Entities.Context
 
         /// <inheritdoc/>
         public virtual DbSet<RawMaterialRequestModel> RawMaterialRequestModel { get; set; }
+
+        /// <inheritdoc/>
+        public virtual DbSet<LblContainerModel> LblContainerModel { get; set; }
 
         /// <summary>
         /// model creating.

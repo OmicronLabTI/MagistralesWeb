@@ -14,6 +14,14 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     public class AlmacenBatchModel
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="AlmacenBatchModel"/> class.
+        /// </summary>
+        public AlmacenBatchModel()
+        {
+            this.WarehouseCode = "PT";
+        }
+
+        /// <summary>
         /// Gets or sets FirstName.
         /// </summary>
         /// <value>
@@ -28,5 +36,13 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// String FirstName.
         /// </value>
         public decimal BatchQty { get; set; }
+
+        /// <summary>
+        /// Gets or sets FirstName.
+        /// </summary>
+        /// <value>
+        /// String FirstName.
+        /// </value>
+        public string WarehouseCode { get; set; }
     }
 }

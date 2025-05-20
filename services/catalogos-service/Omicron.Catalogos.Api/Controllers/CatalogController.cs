@@ -12,6 +12,8 @@ namespace Omicron.Catalogos.Api.Controllers
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Omicron.Catalogos.Dtos.Models;
+    using Omicron.Catalogos.Dtos.User;
     using Omicron.Catalogos.Facade.Catalogs;
 
     /// <summary>
@@ -66,6 +68,43 @@ namespace Omicron.Catalogos.Api.Controllers
         public async Task<IActionResult> GetActiveClassificationQfb()
         {
             var response = await this.catalogFacade.GetActiveClassificationQfb();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
+        [Route("/upload/warehouses")]
+        [HttpPost]
+        public async Task<IActionResult> UploadWarehouseFromExcel()
+        {
+            var response = await this.catalogFacade.UploadWarehouseFromExcel();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the value from params where contains field.
+        /// </summary>
+        /// <param name="products">the parameters.</param>
+        /// <returns>the data.</returns>
+        [Route("/warehouse/actives")]
+        [HttpPost]
+        public async Task<IActionResult> GetActivesWarehouses([FromBody] List<ActiveWarehouseDto> products)
+        {
+            var response = await this.catalogFacade.GetActivesWarehouses(products);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultDto}"/> containing the classification data.</returns>
+        [Route("/classifications")]
+        [HttpGet]
+        public async Task<IActionResult> GetClassifications()
+        {
+            var response = await this.catalogFacade.GetClassifications();
             return this.Ok(response);
         }
     }

@@ -24,5 +24,19 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The IsChecked.</value>
         public int DocNum { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public string CatalogGroup { get; set; }
+
+        /// <summary>
+        /// Gets or sets ProductFirmName.
+        /// </summary>
+        /// <value>
+        /// string ProductFirmName.
+        /// </value>
+        public string ProductFirmName { get; set; }
     }
 }

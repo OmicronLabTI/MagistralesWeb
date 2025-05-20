@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 
     /// <summary>
     /// the IsapDao.
@@ -209,6 +210,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<CompleteDetalleFormulaModel> components);
 
         /// <summary>
+        /// gets the valid batches by item.
+        /// </summary>
+        /// <param name="selectedBatches">the components.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<CompleteBatchesJoinModel>> GetSelectedBatches(List<(int sysNumber, string itemCode)> selectedBatches);
+
+        /// <summary>
         /// Gest the batch transaction by order and item code.
         /// </summary>
         /// <param name="itemCode">the item code.</param>
@@ -222,6 +230,15 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="orderId">the order id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId);
+
+        /// <summary>
+        /// Gest the batch transaction by order and item code.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <param name="itemCodes">the item code.</param>d
+        /// <param name="saleId">the saleId.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderAndItemCodes(List<int> orderId, List<string> itemCodes, int saleId);
 
         /// <summary>
         /// Gets the record from ITL1 by log entry.
@@ -584,6 +601,40 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="invoicesIds">the orders id.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DeliveryDetailModel>> GetDeliveryDetailJoinProductByInvoicesIds(List<int> invoicesIds);
+
+        /// <summary>
+        /// Gets the matching warehouse.
+        /// </summary>
+        /// <param name="warehouses"> warehouse collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<WarehouseModel>> GetWarehouses(List<string> warehouses);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="classifications"> classifications collection to search. </param>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<IEnumerable<LblContainerModel>> GetClassifications(List<string> classifications);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<IEnumerable<ClassificationsModel>> GetAllClassifications(List<string> invalidClassifications);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="classifications"> classifications collection to search. </param>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<IEnumerable<ClassificationsModel>> GetClassificationsByValue(List<string> classificationsValues);
+
+        /// <summary>
+        /// Gets the deliveries by invoice.
+        /// </summary>
+        /// <param name="invoices">the invoices.</param>
+        /// <returns>the data.</returns>
+        Task<List<DeliverModel>> GetDeliveriesByDocNums(List<int> docNums);
 
         /// <summary>
         /// GetClosedInvoicesByDocNum.

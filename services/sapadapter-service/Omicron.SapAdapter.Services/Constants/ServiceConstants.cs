@@ -518,21 +518,6 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// all types.
         /// </summary>
-        public const string AllTypes = "magistral,mixto,linea,maquila,muestra,paquetes,omigenomics";
-
-        /// <summary>
-        /// all types.
-        /// </summary>
-        public const string AllTypesByDoctor = "magistral,mixto,linea,maquila,paquetes,omigenomics";
-
-        /// <summary>
-        /// all types.
-        /// </summary>
-        public const string AllTypesByDxp = "magistral,mixto,linea,maquila,paquetes,omigenomics";
-
-        /// <summary>
-        /// all types.
-        /// </summary>
         public const string AllStatus = "Recibir,Pendiente,Back Order,Cancelado";
 
         /// <summary>
@@ -842,6 +827,38 @@ namespace Omicron.SapAdapter.Services.Constants
         public static string DateTimeFormatddMMyyyy => "dd/MM/yyyy";
 
         /// <summary>
+        /// Gets GetWareHouseConfigUrl.
+        /// </summary>
+        /// <value>
+        /// String GetWareHouseConfigUrl.
+        /// </value>
+        public static string GetWareHouseConfigUrl => "warehouse/actives";
+
+        /// <summary>
+        /// Gets GetWareHouseConfigUrl.
+        /// </summary>
+        /// <value>
+        /// String GetWareHouseConfigUrl.
+        /// </value>
+        public static string NoActiveWarehouseError => "El producto no tiene almacenes activos configurados";
+
+        /// <summary>
+        /// Gets GetWareHouseConfigUrl.
+        /// </summary>
+        /// <value>
+        /// String GetWareHouseConfigUrl.
+        /// </value>
+        public static string NoAvaiableBoxesError => "El almacén no cuenta con lotes disponibles";
+
+        /// <summary>
+        /// Gets Pedido.
+        /// </summary>
+        /// <value>
+        /// String Pedido.
+        /// </value>
+        public static string Description => "Pedido {0}";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -1068,6 +1085,16 @@ namespace Omicron.SapAdapter.Services.Constants
         };
 
         /// <summary>
+        /// Gets list of client types excluding general.
+        /// </summary>
+        /// <value>List of client types.</value>
+        public static List<string> ClientTypesInstitucionalList { get; } = new List<string>
+        {
+            ClientTypeInstitutional,
+            ClientTypeClinic,
+        };
+
+        /// <summary>
         /// Gets the status of the order liberado.
         /// </summary>
         /// <value>
@@ -1078,6 +1105,55 @@ namespace Omicron.SapAdapter.Services.Constants
             "SI",
             "Y",
             "1",
+        };
+
+        /// <summary>
+        /// Gets the Default Filters.
+        /// </summary>
+        /// <value>
+        /// default filters.
+        /// </value>
+        public static List<string> DefaultFilters { get; } =
+        [
+            "mixto",
+            "maquila",
+            "muestra",
+            "paquetes",
+            "omigenomics",
+        ];
+
+        /// <summary>
+        /// Gets the Default Filters.
+        /// </summary>
+        /// <value>
+        /// default filters.
+        /// </value>
+        public static List<string> InvalidClassifications { get; } =
+        [
+            "MQ",
+            "MX",
+        ];
+
+        /// <summary>
+        /// Gets the descriptions.
+        /// </summary>
+        /// <value>
+        /// descriptions.
+        /// </value>
+        public static Dictionary<string, string> Descriptions { get; } = new Dictionary<string, string>
+        {
+            { "De Linea", "De Línea" },
+        };
+
+        /// <summary>
+        /// Gets the descriptions.
+        /// </summary>
+        /// <value>
+        /// descriptions.
+        /// </value>
+        public static Dictionary<string, string> Filter { get; } = new Dictionary<string, string>
+        {
+            { ServiceConstants.Maquila.ToUpper(), "MQ" },
         };
     }
 }

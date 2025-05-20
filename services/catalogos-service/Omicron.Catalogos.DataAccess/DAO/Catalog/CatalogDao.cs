@@ -64,5 +64,24 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
 
             return listParameters;
         }
+
+        public async Task<List<WarehouseModel>> GetWarehouses(List<string> warehouses)
+        {
+            var warehousesUpper = warehouses.Select(x => x.ToUpper());
+            return await this.databaseContext.WarehousesModel.Where(x => warehousesUpper.Contains(x.Name.ToUpper())).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<bool> InsertWarehouses(List<WarehouseModel> warehouses)
+        {
+            this.databaseContext.WarehousesModel.UpdateRange(warehouses);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<List<WarehouseModel>> GetActiveWarehouses()
+        {
+            return await this.databaseContext.WarehousesModel.Where(x => x.IsActive).AsNoTracking().ToListAsync();
+        }
     }
 }

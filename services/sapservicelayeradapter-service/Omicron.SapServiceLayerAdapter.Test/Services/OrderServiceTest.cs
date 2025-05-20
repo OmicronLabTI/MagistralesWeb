@@ -450,6 +450,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 OrderComments = "Comentarios sobre la orden",
                 EmployeeId = 1,
                 Items = new List<ShoppingCartItemDto>(),
+                ManufacturerClassificationCode = "LN",
             };
             request.Items.Add(item);
 

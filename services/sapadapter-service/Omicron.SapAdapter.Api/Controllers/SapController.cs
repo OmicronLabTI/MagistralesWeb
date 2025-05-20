@@ -445,5 +445,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapFacade.GetOrderInformationByTransaction(parameters);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Gets the matching warehouses.
+        /// </summary>
+        /// <param name="warehouses"> warehouses collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        [Route("/warehouses")]
+        [HttpPost]
+        public async Task<IActionResult> GetWarehouses([FromBody] List<string> warehouses)
+        {
+            var response = await this.sapFacade.GetWarehouses(warehouses);
+            return this.Ok(response);
+        }
     }
 }

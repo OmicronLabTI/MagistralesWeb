@@ -10,12 +10,15 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Omicron.SapAdapter.DataAccess.Extensions;
     using Omicron.SapAdapter.Entities.Context;
     using Omicron.SapAdapter.Entities.Model;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.DbModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
@@ -219,6 +222,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                             IsSecondary = order.IsSecondary,
                             ProffesionalLicense = doctor.ProffesionalLicense,
+                            ClientType = order.ClientType,
                         };
 
             return (await this.RetryQuery(query)).ToList();
@@ -467,10 +471,38 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     FechaExp = !batch.ExpDate.HasValue ? null : batch.ExpDate.Value.ToString("dd/MM/yyyy"),
                     FechaExpDateTime = batch.ExpDate,
                     ItemCode = x.ItemCode,
+                    WarehouseCode = x.WhsCode,
                 });
             });
 
             return listToReturn;
+        }
+
+        /// <summary>
+        /// gets the valid batches by item.
+        /// </summary>
+        /// <param name="itemCode">the item code.</param>
+        /// <param name="warehouse">the warehouse.</param>
+        /// <returns>the data.</returns>
+        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetSelectedBatches(List<(int sysNumber, string itemCode)> selectedBatches)
+        {
+            var predicate = PredicateBuilder.False<Batches>();
+            foreach (var (sysNumber, itemCode) in selectedBatches)
+            {
+                predicate = predicate.Or(b => b.SysNumber == sysNumber && b.ItemCode == itemCode);
+            }
+            var batches = await this.databaseContext.Batches
+                .Where(predicate)
+                .ToListAsync();
+
+            return batches.Select(batch => new CompleteBatchesJoinModel
+            {
+                DistNumber = batch.DistNumber ?? string.Empty,
+                SysNumber = batch.SysNumber,
+                FechaExp = !batch.ExpDate.HasValue ? null : batch.ExpDate.Value.ToString("dd/MM/yyyy"),
+                FechaExpDateTime = batch.ExpDate,
+                ItemCode = batch.ItemCode,
+            });
         }
 
         /// <inheritdoc/>
@@ -483,6 +515,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderItem(List<int> orderId)
         {
             return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum)).AsNoTracking());
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<BatchTransacitions>> GetBatchesTransactionByOrderAndItemCodes(List<int> orderId, List<string> itemCodes, int saleId)
+        {
+            return await this.RetryQuery(this.databaseContext.BatchTransacitions.Where(x => orderId.Contains(x.DocNum) && itemCodes.Contains(x.ItemCode) && x.BaseEntry == saleId).AsNoTracking());
         }
 
         /// <summary>
@@ -601,8 +639,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenById(int saleOrderId)
         {
             var query = from order in this.databaseContext.OrderModel.Where(x => x.DocNum == saleOrderId)
-                        join detail in this.databaseContext.DetallePedido on order.DocNum equals detail.PedidoId
-                        join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
                         join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                         join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
                          new
@@ -618,12 +654,16 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          }
                         into detalleDireccion
                         from dop in detalleDireccion.DefaultIfEmpty()
+                        join detail in this.databaseContext.DetallePedido on order.DocNum equals detail.PedidoId
+                        join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
+                        join firm in this.databaseContext.ProductFirmModel on product.ProductFirmCode equals firm.ProductFirmCode
+                          into productFirm
+                        from fm in productFirm.DefaultIfEmpty()
                         where product.IsWorkableProduct == "Y"
                         select new CompleteAlmacenOrderModel
                         {
                             Cliente = dop.Address2 ?? string.Empty,
                             DocNum = order.DocNum,
-                            Detalles = detail,
                             FechaInicio = order.FechaInicio,
                             Medico = doctor.AliasName,
                             Address = order.Address,
@@ -633,6 +673,23 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             IsPackage = order.IsPackage,
                             IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
                             IsSecondary = order.IsSecondary,
+                            Detalles = new DetallePedidoModel
+                            {
+                                PedidoId = detail.PedidoId,
+                                DetalleId = detail.DetalleId,
+                                ProductoId = detail.ProductoId,
+                                Description = detail.Description,
+                                Quantity = detail.Quantity,
+                                Label = detail.Label,
+                                Container = detail.Container,
+                                DestinyAddress = detail.DestinyAddress,
+                                HasRecipe = detail.HasRecipe,
+                                LineStatus = detail.LineStatus,
+                                DocDate = detail.DocDate,
+                                WhsCode = detail.WhsCode,
+                                CatalogGroup = string.Empty,
+                                ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                            },
                         };
             return await this.RetryQuery(query);
         }
@@ -644,12 +701,32 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             var query = (from order in this.databaseContext.OrderModel
                          join detail in this.databaseContext.DetallePedido on order.DocNum equals detail.PedidoId
                          join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
+                         join catalog in this.databaseContext.CatalogProductModel on product.ProductGroupId equals catalog.ProductGroupId
+                         join firm in this.databaseContext.ProductFirmModel on product.ProductFirmCode equals firm.ProductFirmCode
+                          into productFirm
+                         from fm in productFirm.DefaultIfEmpty()
                          where dxpIds.Contains(order.DocNumDxp)
                          select new CompleteAlmacenOrderModel
                          {
                              DocNumDxp = order.DocNumDxp,
                              DocNum = order.DocNum,
-                             Detalles = detail,
+                             Detalles = new DetallePedidoModel
+                             {
+                                 PedidoId = detail.PedidoId,
+                                 DetalleId = detail.DetalleId,
+                                 ProductoId = detail.ProductoId,
+                                 Description = detail.Description,
+                                 Quantity = detail.Quantity,
+                                 Label = detail.Label,
+                                 Container = detail.Container,
+                                 DestinyAddress = detail.DestinyAddress,
+                                 HasRecipe = detail.HasRecipe,
+                                 LineStatus = detail.LineStatus,
+                                 DocDate = detail.DocDate,
+                                 WhsCode = detail.WhsCode,
+                                 CatalogGroup = catalog.CatalogName,
+                                 ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                             },
                              IsWorkableProduct = product.IsWorkableProduct
                          });
 
@@ -752,6 +829,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             LineStatus = deliveryDet.LineStatus,
                             ProductoId = deliveryDet.ProductoId,
                             Quantity = deliveryDet.Quantity,
+                            WarehouseCode = deliveryDet.WarehouseCode,
                         };
             return (await this.RetryQuery(query));
         }
@@ -759,7 +837,32 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <inheritdoc/>
         public async Task<IEnumerable<ProductoModel>> GetProductByCodeBar(string codeBar)
         {
-            return await this.databaseContext.ProductoModel.Where(x => x.BarCode.Equals(codeBar)).AsNoTracking().ToListAsync();
+            // return await this.databaseContext.ProductoModel.Where(x => x.BarCode.Equals(codeBar)).AsNoTracking().ToListAsync();
+            var query = (from p in this.databaseContext.ProductoModel.Where(x => x.BarCode.Equals(codeBar))
+                         join g in this.databaseContext.CatalogProductModel on p.ProductGroupId equals g.ProductGroupId
+                         join firm in this.databaseContext.ProductFirmModel on p.ProductFirmCode equals firm.ProductFirmCode
+                         into productFirm
+                         from fm in productFirm.DefaultIfEmpty()
+                         select new ProductoModel
+                         {
+                             BarCode = p.BarCode,
+                             IsLine = p.IsLine,
+                             IsMagistral = p.IsMagistral,
+                             LargeDescription = p.LargeDescription,
+                             ManagedBatches = p.ManagedBatches,
+                             NeedsCooling = p.NeedsCooling,
+                             OnHand = p.OnHand,
+                             ProductGroupId = p.ProductGroupId,
+                             ProductoId = p.ProductoId,
+                             ProductoName = p.ProductoName,
+                             Unit = p.Unit,
+                             Groupname = g.CatalogName,
+                             IsWorkableProduct = p.IsWorkableProduct,
+                             IsPackage = p.IsPackage,
+                             ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                         }).AsNoTracking();
+
+            return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
@@ -772,6 +875,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<List<DeliverModel>> GetDeliveryModelByDocNumJoinDoctor(List<int> docuNums)
         {
             var query = this.GetDeliveryJoinDoctorQuery().Where(x => docuNums.Contains(x.DocNum));
+            return (await this.RetryQuery(query)).ToList();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<DeliverModel>> GetDeliveriesByDocNums(List<int> docuNums)
+        {
+            var query = this.GetDeliveries().Where(x => docuNums.Contains(x.DocNum));
             return (await this.RetryQuery(query)).ToList();
         }
 
@@ -1409,6 +1519,65 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                 .ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<WarehouseModel>> GetWarehouses(List<string> warehouses)
+        {
+            var products = await this.databaseContext.WarehouseModel
+                .ToListAsync();
+
+            return products;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<LblContainerModel>> GetClassifications(List<string> classifications)
+        {
+            var query = this.databaseContext.LblContainerModel
+                .Where(classification => classification.FieldId == 24
+                && (classification.TableId == "ADOC" || classification.TableId == "OCIN")
+                && classifications.Contains(classification.Value))
+                .GroupBy(classification => classification.Value)
+                .Select(group => group.FirstOrDefault());
+
+            return await query.ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ClassificationsModel>> GetAllClassifications(List<string> invalidClassifications)
+        {
+            var query = this.databaseContext.LblContainerModel
+                .Where(classification =>
+                    classification.FieldId == 24 &&
+                    (classification.TableId == "ADOC" || classification.TableId == "OCIN") &&
+                    !invalidClassifications.Contains(classification.Value))
+                .Select(classification => new ClassificationsModel
+                {
+                    Value = classification.Value,
+                    Description = classification.Description,
+                })
+                .Distinct();
+
+            return await query.ToListAsync();
+        }
+
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ClassificationsModel>> GetClassificationsByValue(List<string> classificationsValues)
+        {
+            var query = this.databaseContext.LblContainerModel
+                .Where(classification =>
+                    classification.FieldId == 24 &&
+                    (classification.TableId == "ADOC" || classification.TableId == "OCIN") &&
+                    classificationsValues.Contains(classification.Value))
+                .Select(classification => new ClassificationsModel
+                {
+                    Value = classification.Value,
+                    Description = classification.Description,
+                })
+                .Distinct();
+
+            return await query.ToListAsync();
+        }
+
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
         {
             return from invoice in this.databaseContext.InvoiceHeaderModel
@@ -1622,6 +1791,46 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         Medico = doctor.AliasName,
                         PedidoId = delivery.PedidoId,
                         TypeOrder = delivery.TypeOrder,
+                        IsPackage = delivery.IsPackage,
+                        DocNumDxp = delivery.DocNumDxp,
+                        IsOmigenomics = delivery.IsOmigenomics,
+                        IsSecondary = delivery.IsSecondary,
+                    });
+        }
+
+        private IQueryable<DeliverModel> GetDeliveries()
+        {
+            return (from delivery in this.databaseContext.DeliverModel
+                    join detail in this.databaseContext.DeliveryDetailModel on delivery.PedidoId equals detail.DeliveryId
+                    join order in this.databaseContext.OrderModel on detail.BaseEntry equals order.PedidoId
+                    join doctor in this.databaseContext.ClientCatalogModel on delivery.CardCode equals doctor.ClientId
+                    join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
+                    new
+                    {
+                        DoctorId = delivery.CardCode,
+                        Address = delivery.ShippingAddressName
+                    }
+                    equals
+                    new
+                    {
+                        DoctorId = doctordet.CardCode,
+                        Address = doctordet.NickName
+                    }
+                    into detalleDireccion
+                    from dop in detalleDireccion.DefaultIfEmpty()
+                    select new DeliverModel
+                    {
+                        Address = delivery.Address,
+                        ShippingAddressName = delivery.ShippingAddressName,
+                        Canceled = delivery.Canceled,
+                        CardCode = delivery.CardCode,
+                        Cliente = dop.Address2 ?? string.Empty,
+                        DeliveryStatus = delivery.DeliveryStatus,
+                        DocNum = delivery.DocNum,
+                        FechaInicio = delivery.FechaInicio,
+                        Medico = doctor.AliasName,
+                        PedidoId = delivery.PedidoId,
+                        TypeOrder = order.OrderType,
                         IsPackage = delivery.IsPackage,
                         DocNumDxp = delivery.DocNumDxp,
                         IsOmigenomics = delivery.IsOmigenomics,

@@ -28,5 +28,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Batches
         /// String FirstName.
         /// </value>
         public decimal BatchQty { get; set; }
+
+        /// <summary>
+        /// Gets or sets WarehouseCode.
+        /// </summary>
+        /// <value>
+        /// String WarehouseCode.
+        /// </value>
+        public string WarehouseCode { get; set; }
     }
 }
