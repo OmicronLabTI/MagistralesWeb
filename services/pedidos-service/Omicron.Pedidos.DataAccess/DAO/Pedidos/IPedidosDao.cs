@@ -407,5 +407,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="statusForOrder">the status for the order.</param>
         /// </summary>
         Task<IEnumerable<UserOrdersForInvoicesModel>> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds, string statusForSale, string statusForOrder);
+
+        /// <summary>
+        /// Updates the data to the data base.
+        /// </summary>
+        /// <param name="modelsToSave"> the models to save. </param>
+        /// <returns> the data. </returns>
+        Task<bool> UpdatesQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave);
     }
 }

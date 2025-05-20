@@ -976,6 +976,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string PngFileFormat = "png";
 
         /// <summary>
+        /// Get the value for format.
+        /// </summary>
+        public const string QrPng = "qr.png";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
