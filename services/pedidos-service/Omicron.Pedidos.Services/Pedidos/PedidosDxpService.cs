@@ -52,6 +52,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.InvoiceId,
                 x.PlanningDate,
                 x.InvoiceType,
+                x.Quantity,
             }).ToList();
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }
