@@ -217,6 +217,32 @@ class NetworkManager: SessionProtocol {
         let res: Observable<RawMaterialHistory> = makeRequest(request: req)
         return res
     }
+    
+    func getLotsByProductAndWarehouse(warehouseCode: String, product: String) -> Observable<LotsByProductResponse> {
+        /*let req: ApiService = ApiService.getLotsByProduct(warehouseCode: warehouseCode, product: product)
+        let res: Observable<LotsByProductResponse> = makeRequest(request: req)*/
+        let mockLot = LotsAvailable(
+            numeroLote: "L-0000007",
+            cantidadDisponible: Decimal(16.0),
+            cantidadAsignada: Decimal(3.0),
+            cantidadSeleccionada: Decimal(0.0), // puedes ajustar si necesitas otro valor
+            sysNumber: 7,
+            fechaExp: "19/09/2025"
+        )
+
+        let mockAddComponentLots = AddComponentLots(
+            codigoProducto: "LOTES 1",
+            almacen: warehouseCode,
+            lotes: [mockLot]
+        )
+
+        let mockLotsByProductResponse = LotsByProductResponse(JSON: [
+            "code": 200,
+            "success": true
+        ])!
+        return Observable.just(mockLotsByProductResponse)
+        // return res
+    }
 
     private func makeRequest<T: BaseMappable>(
         request: ApiService, needsVPN: Bool = false) -> Observable<T> {

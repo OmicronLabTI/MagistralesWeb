@@ -12,11 +12,16 @@ import RxSwift
 import RxCocoa
 import Resolver
 
+protocol ComponentsDelegate: AnyObject {
+    func okAction(component: ComponentFormValues)
+}
+
 class ComponentFormViewController: FormViewController {
     // MARK: Variables
     @Injected var componentsViewModel: ComponentsViewModel
     @Injected var lottieManager: LottieManager
     @Injected var inboxViewModel: InboxViewModel
+    var delegate: ComponentsDelegate?
     var disposeBag = DisposeBag()
     var selectedComponent = ComponentO()
     weak var baseQuantity: TextRow?
@@ -230,6 +235,13 @@ class ComponentFormViewController: FormViewController {
                                              requiredQuantity: requiredQuantityValue,
                                              warehouse: warehouseValue,
                                              selectedComponent: self.selectedComponent)
+            
+            if (self.delegate != nil)
+            {
+                self.componentsViewModel.saveSuccess.onNext(())
+                self.delegate?.okAction(component: values)
+                return
+            }
             self.componentsViewModel.saveDidTap.onNext(values)
         }
     }

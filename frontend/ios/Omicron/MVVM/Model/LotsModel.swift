@@ -17,6 +17,39 @@ class AssingbBatchResponse: HttpResponse {
         response <- map["response"]
     }
 }
+
+class LotsByProductResponse: HttpResponse {
+    var response: AddComponentLots?
+    required init?(map: Map) {
+        super.init(map: map)
+    }
+    override func mapping(map: Map) {
+        super.mapping(map: map)
+        response <- map["response"]
+    }
+}
+
+class AddComponentLots: Mappable {
+    var codigoProducto, almacen: String
+    var lotes: [LotsAvailable]
+    
+    init(codigoProducto: String, almacen: String, lotes: [LotsAvailable]) {
+        self.codigoProducto = codigoProducto
+        self.almacen = almacen
+        self.lotes = lotes
+    }
+    required init?(map: Map) {
+        self.codigoProducto = String()
+        self.almacen = String()
+        self.lotes = []
+    }
+    func mapping(map: Map) {
+        self.codigoProducto <- map["codigoProducto"]
+        self.almacen <- map["almacen"]
+        self.lotes <- map["lotes"]
+    }
+}
+
 class LotsResponse: HttpResponse {
     var response: [Lots]?
     required init?(map: Map) {
