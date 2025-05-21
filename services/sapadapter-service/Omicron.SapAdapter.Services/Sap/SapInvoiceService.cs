@@ -406,16 +406,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var invoiceHeader = (await this.sapDao.GetInvoiceHeadersByDocNumJoinDoctor(new List<int> { intDocNum })).FirstOrDefault();
             invoiceHeader ??= new InvoiceHeaderModel();
 
-            (string package, short subpackage) = await this.GetPackageAndSubpackage(intDocNum, invoicelinenum);
-
-            var packagesResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetPackagesByInvoice, new List<int> { intDocNum });
-            var packages = JsonConvert.DeserializeObject<List<PackageModel>>(packagesResponse.Response.ToString());
+            (string package, short subpackage, string status) = await this.GetPackageAndSubpackage(intDocNum, invoicelinenum);
 
             var clientesResponse = await this.almacenService.GetAlmacenOrders(ServiceConstants.SpecialClients);
             var clients = JsonConvert.DeserializeObject<List<ExclusivePartnersModel>>(clientesResponse.Response.ToString());
             var localNeighbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
-
-            var status = !packages.Any() ? ServiceConstants.Empaquetado : packages.OrderByDescending(x => x.AssignedDate.Value).FirstOrDefault().Status;
 
             var pickupOffcieInt = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(invoiceHeader.IsDeliveredInOffice) && invoiceHeader.IsDeliveredInOffice == "Y", 0, 1);
             var dxpTransaction = ServiceShared.CalculateTernary(string.IsNullOrEmpty(invoiceHeader.DocNumDxp), string.Empty, invoiceHeader.DocNumDxp);
@@ -566,11 +561,11 @@ namespace Omicron.SapAdapter.Services.Sap
             return (storedPices, storedProducts);
         }
 
-        private async Task<(string Package, short Subpackage)> GetPackageAndSubpackage(int intDocNum, int invoicelinenum)
+        private async Task<(string Package, short Subpackage, string StatusInvoice)> GetPackageAndSubpackage(int intDocNum, int invoicelinenum)
         {
             if (invoicelinenum <= 0)
             {
-                return (string.Empty, 0);
+                return (string.Empty, 0, string.Empty);
             }
 
             var ordresponse = await this.pedidosService.PostPedidos(new List<int> { intDocNum }, ServiceConstants.UserOrders);
@@ -580,12 +575,12 @@ namespace Omicron.SapAdapter.Services.Sap
             List<LineProductsDto> lineproducts = JsonConvert.DeserializeObject<List<LineProductsDto>>(lineresponse.Response.ToString());
 
             var subpacklines = lineproducts
-                .Select(lp => (lp.InvoiceId, lp.InvoiceLineNum))
-                .Distinct();
+                .Select(lp => (lp.InvoiceId, lp.InvoiceLineNum, lp.StatusInvoice))
+                .DistinctBy(lp => (lp.InvoiceId, lp.InvoiceLineNum));
 
             var subpackorders = userorders
-                .Select(uo => (uo.InvoiceId, uo.InvoiceLineNum))
-                .Distinct();
+                .Select(uo => (uo.InvoiceId, uo.InvoiceLineNum, uo.StatusInvoice))
+                .DistinctBy(uo => (uo.InvoiceId, uo.InvoiceLineNum));
 
             var subpackages = subpacklines
                 .Union(subpackorders)
@@ -599,7 +594,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 ? $"{subp.InvoiceId}-{subp.InvoiceLineNum}"
                 : $"{subp.InvoiceId}";
 
-            return (package, subp.InvoiceLineNum);
+            return (package, subp.InvoiceLineNum, subp.StatusInvoice);
         }
 
         /// <summary>

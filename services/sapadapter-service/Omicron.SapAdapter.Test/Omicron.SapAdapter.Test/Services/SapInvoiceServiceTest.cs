@@ -434,7 +434,7 @@ namespace Omicron.SapAdapter.Test.Services
 
             var userorders = new List<UserOrderDto>
             {
-                new UserOrderDto { InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderDto { InvoiceId = 1, InvoiceLineNum = 1, StatusInvoice = "Empaquetado" },
                 new UserOrderDto { InvoiceId = 1, InvoiceLineNum = 2 },
             };
 
