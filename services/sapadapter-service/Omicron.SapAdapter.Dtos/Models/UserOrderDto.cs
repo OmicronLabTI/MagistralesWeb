@@ -111,5 +111,13 @@ namespace Omicron.SapAdapter.Dtos.Models
         /// short InvoiceLineNum.
         /// </value>
         public short InvoiceLineNum { get; set; }
+
+        /// <summary>
+        /// Gets or sets StatusInvoice.
+        /// </summary>
+        /// <value>
+        /// string StatusInvoice.
+        /// </value>
+        public string StatusInvoice { get; set; }
     }
 }
