@@ -239,8 +239,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateSentOrders(List<UserOrderModel> userToUpdate)
         {
-            var invoicesId = userToUpdate.Select(x => x.InvoiceId).ToList();
-            var orders = (await this.pedidosDao.GetUserOrdersByInvoiceId(invoicesId)).ToList();
+            var ids = userToUpdate.Select(x => x.InvoiceId).ToList();
+            var tuple = userToUpdate.Select(x => new UserOrderByInvoiceAndLineNum() { InvoiceId = x.InvoiceId, InvoiceLineNum = x.InvoiceLineNum }).ToList();
+            var orders = (await this.pedidosDao.GetUserOrdersByInvoiceId(ids)).ToList();
+
+            orders = orders.Where(order => tuple.Any(x => x.InvoiceId == order.InvoiceId && x.InvoiceLineNum == order.InvoiceLineNum)).ToList();
 
             orders.ForEach(x =>
             {
