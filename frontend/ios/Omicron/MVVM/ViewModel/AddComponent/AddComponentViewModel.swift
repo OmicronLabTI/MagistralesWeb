@@ -19,6 +19,8 @@ class AddComponentViewModel {
     var showAlert = PublishSubject<String>()
     var renderProducts = PublishSubject<[AddComponent]>()
     var products: [AddComponent] = []
+    var dataLotsAvailable = BehaviorSubject<[LotsAvailable]>(value: [])
+
     
     func getLotsByProduct(component: ComponentFormValues) {
         let productId = component.selectedComponent.productId ?? String()
@@ -37,9 +39,13 @@ class AddComponentViewModel {
                                           selectedLots: [],
                                           requiredQuantity: component.requiredQuantity,
                                           selectedQuantity: 0,
-                                          baseQuantity: component.baseQuantity)
+                                          baseQuantity: component.baseQuantity,
+                                          totalNecesary: Decimal(component.requiredQuantity),
+                                          selectedTotal: 0)
             self.products.append(newProduct)
             self.renderProducts.onNext(self.products)
+            self.dataLotsAvailable.onNext(newProduct.availableLots)
+            // self.dataOfLots.onNext(self.products)
             // self.loading.onNext(false)
         }, onError: { [weak self] _ in
             guard let self = self else { return }

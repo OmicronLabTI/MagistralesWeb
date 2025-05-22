@@ -25,6 +25,8 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate {
     override func viewDidLoad() {
         initComponents()
         bindSubjects()
+        bindTableAvailableSubjects()
+        bindTableSelectedSubjects()
         bindLineDocumentsTable()
         changeTextColorOfLabels(color: .white)
         setBackButtonLabelText()
@@ -53,6 +55,11 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate {
                 }
             }
         }.disposed(by: self.disposeBag)
+        
+        self.lineDocTable.rx.modelSelected(AddComponent.self).observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] item in
+            self?.addComponentViewModel.dataLotsAvailable.onNext(item.availableLots)
+        }).disposed(by: self.disposeBag)
+
     }
     func bindSubjects() {
         addComponentViewModel.showAlert.subscribe(onNext: {[weak self] error in
@@ -74,6 +81,67 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate {
         }).disposed(by: disposeBag)
     }
     
+    
+    func bindTableAvailableSubjects() {
+        /*
+       Observable.combineLatest(self.lotsAvailablesTable.rx.itemSelected,
+                                 self.addComponentViewModel.lastResponderAvailable, resultSelector: { [weak self] index, responder in
+            if let cell = self?.lotsAvailablesTable.cellForRow(at: index) as? LotsAvailableTableViewCell,
+                let lastText = responder as? UITextField {
+                if cell.quantitySelected != lastText && !cell.quantitySelected.isEditing {
+                    self?.view.endEditing(false)
+                }
+            }
+        }).subscribe().disposed(by: disposeBag)
+        
+        self.lotsAvailablesTable.rx.modelSelected(LotsAvailable.self)
+            .bind(to: addComponentViewModel.availableSelected).disposed(by: disposeBag)
+
+        self.addLotButton.rx.tap.subscribe(onNext: { [weak self] _ in
+            if let indexPath = self?.lotsAvailablesTable.indexPathForSelectedRow,
+                let cell = self?.lotsAvailablesTable.cellForRow(at: indexPath) as? LotsAvailableTableViewCell {
+                cell.quantitySelected.resignFirstResponder()
+            }
+        }).disposed(by: disposeBag)
+        */
+        // Muestra los datos en la tabla de lotes disponibles
+        self.addComponentViewModel.dataLotsAvailable.bind(to: lotsAvailablesTable.rx.items(
+            cellIdentifier: ViewControllerIdentifiers.lotsAvailableTableViewCell,
+            cellType: LotsAvailableTableViewCell.self)) { [weak self] (row: Int, data: LotsAvailable, cell: LotsAvailableTableViewCell) in
+            cell.row = row
+            cell.lotsLabel.text = data.numeroLote
+            cell.quantityAvailableLabel.text = self?.formatter.string(from: (data.cantidadDisponible ?? 0) as NSNumber)
+            cell.quantitySelected.text = self?.formatter.string(from: (data.cantidadSeleccionada ?? 0) as NSNumber)
+            cell.quantityAssignedLabel.text = self?.formatter.string(from: (data.cantidadAsignada ?? 0) as NSNumber)
+            cell.setExpiredBatches(data.expiredBatch)
+        }.disposed(by: self.disposeBag)
+        
+        lotsAvailablesTable.rx.itemSelected.subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            let enable = self.statusType == CommonStrings.finished || self.statusType == CommonStrings.pending
+            self.addLotButton.isEnabled = !enable
+        }).disposed(by: disposeBag)
+    }
+    func bindTableSelectedSubjects() {
+        /*self.addComponentViewModel.dataLotsSelected.bind(to: lotsSelectedTable.rx.items(
+            cellIdentifier: ViewControllerIdentifiers.lotsSelectedTableViewCell,
+            cellType: LotsSelectedTableViewCell.self)) { [weak self] _, data, cell in
+            cell.lotsLabel.text = data.numeroLote
+            cell.quantitySelectedLabel.text = self?.formatter.string(from: (data.cantidadSeleccionada ?? 0) as NSNumber)
+            cell.setExpiredBatches(data.expiredBatch)
+        }.disposed(by: self.disposeBag)
+        self.lotsSelectedTable.rx.modelSelected(LotsSelected.self)
+            .bind(to: addComponentViewModel.batchSelected).disposed(by: disposeBag)
+        self.lotsSelectedTable.rx.modelSelected(LotsSelected.self)
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] item in
+            self?.addComponentViewModel.itemLotSelected = item
+        }).disposed(by: self.disposeBag)
+        lotsSelectedTable.rx.itemSelected.subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            let enable = self.statusType == CommonStrings.finished || self.statusType == CommonStrings.pending
+            self.removeLotButton.isEnabled = !enable
+        }).disposed(by: disposeBag)*/
+    }
     func initComponents() {
         self.title = CommonStrings.addComponentTitle
         UtilsManager.shared.labelsStyle(label: self.titleLabel, text: CommonStrings.documentsLines, fontSize: 20)
@@ -119,6 +187,9 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate {
         self.setStyleView(view: self.lotsAvailable)
         self.setStyleView(view: self.lotsSelected)
         
+        self.lineDocTable.delegate = self
+        self.lotsAvailablesTable.delegate = self
+        self.lotsSelectedTable.delegate = self
         
         self.lineDocTable.tableFooterView = UIView()
         self.lotsAvailablesTable.tableFooterView = UIView()

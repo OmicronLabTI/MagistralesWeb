@@ -221,26 +221,33 @@ class NetworkManager: SessionProtocol {
     func getLotsByProductAndWarehouse(warehouseCode: String, product: String) -> Observable<LotsByProductResponse> {
         /*let req: ApiService = ApiService.getLotsByProduct(warehouseCode: warehouseCode, product: product)
         let res: Observable<LotsByProductResponse> = makeRequest(request: req)*/
-        let mockLot = LotsAvailable(
+        let mockLot1 = LotsAvailable(
             numeroLote: "L-0000007",
             cantidadDisponible: Decimal(16.0),
             cantidadAsignada: Decimal(3.0),
-            cantidadSeleccionada: Decimal(0.0), // puedes ajustar si necesitas otro valor
+            cantidadSeleccionada: Decimal(0.0),
             sysNumber: 7,
             fechaExp: "19/09/2025"
+        )
+        
+        let mockLot2 = LotsAvailable(
+            numeroLote: "L-0000008",
+            cantidadDisponible: Decimal(16.0),
+            cantidadAsignada: Decimal(3.0),
+            cantidadSeleccionada: Decimal(0.0),
+            sysNumber: 7,
+            fechaExp: "19/02/2025"
         )
 
         let mockAddComponentLots = AddComponentLots(
             codigoProducto: "LOTES 1",
             almacen: warehouseCode,
-            lotes: [mockLot]
+            lotes: [mockLot1, mockLot2]
         )
 
-        let mockLotsByProductResponse = LotsByProductResponse(JSON: [
-            "code": 200,
-            "success": true
-        ])!
-        return Observable.just(mockLotsByProductResponse)
+        let lotsByProductResponse = LotsByProductResponse(map: Map(mappingType: .fromJSON, JSON: [:]))!
+        lotsByProductResponse.response = mockAddComponentLots
+        return Observable.just(lotsByProductResponse)
         // return res
     }
 

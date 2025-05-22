@@ -14,8 +14,8 @@ class AddComponent {
     var availableLots: [LotsAvailable]
     var selectedLots: [LotsAvailable]
     var requiredQuantity, selectedQuantity, baseQuantity: Double
-        
-    init(productId: String, description: String, warehouse: String, availableLots: [LotsAvailable], selectedLots: [LotsAvailable], requiredQuantity: Double, selectedQuantity: Double, baseQuantity: Double) {
+    var totalNecesary, selectedTotal: Decimal
+    init(productId: String, description: String, warehouse: String, availableLots: [LotsAvailable], selectedLots: [LotsAvailable], requiredQuantity: Double, selectedQuantity: Double, baseQuantity: Double, totalNecesary: Decimal, selectedTotal: Decimal) {
         self.productId = productId
         self.description = description
         self.warehouse = warehouse
@@ -24,5 +24,7 @@ class AddComponent {
         self.requiredQuantity = requiredQuantity
         self.selectedQuantity = selectedQuantity
         self.baseQuantity = baseQuantity
+        self.totalNecesary = totalNecesary
+        self.selectedTotal = selectedTotal
     }
 }

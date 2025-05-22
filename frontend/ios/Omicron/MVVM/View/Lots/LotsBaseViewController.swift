@@ -117,3 +117,23 @@ class LotsBaseViewController: UIViewController {
         }
     }
 }
+
+
+extension LotsBaseViewController: UITableViewDelegate {
+    // Pinta una fila o otra no en la tabla
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let customView = UIView()
+        customView.backgroundColor = OmicronColors.blue
+        cell.selectedBackgroundView = customView
+        if indexPath.row%2 == 0 {
+            cell.backgroundColor = OmicronColors.tableColorRow
+        } else {
+            cell.backgroundColor = .white
+        }
+    }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard let tableView = scrollView as? UITableView else { return }
+        tableView.removeMoreIndicator()
+    }
+    // swiftlint:disable file_length
+}
