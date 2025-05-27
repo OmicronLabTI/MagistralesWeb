@@ -811,6 +811,14 @@ namespace Omicron.SapAdapter.Services.Constants
         public static string EndpointGetUserOrdersAlmancenByRangeDate => "userorders/almacen/byrangedates?startdate={0}&enddate={1}";
 
         /// <summary>
+        /// Gets EndpointGetUserOrdersAlmancenByOrdersId.
+        /// </summary>
+        /// <value>
+        /// String EndpointGetUserOrdersAlmancenByOrdersId.
+        /// </value>
+        public static string EndpointGetUserOrdersAlmancenByOrdersId => "userorders/almacen/byordersid";
+
+        /// <summary>
         /// Gets EndPointGetLineProductPedidosByRangeDate.
         /// </summary>
         /// <value>

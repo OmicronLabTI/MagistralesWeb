@@ -323,6 +323,22 @@ namespace Omicron.Pedidos.Test.Facade
         }
 
         /// <summary>
+        /// GetOrdersForAlmacenByRangeDates.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetOrdersForAlmacenByOrdersId()
+        {
+            // arrange
+            // act
+            var response = await this.almacenFacade.GetOrdersForAlmacenByOrdersId([]);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
         /// test tet.
         /// </summary>
         /// <returns>test.</returns>

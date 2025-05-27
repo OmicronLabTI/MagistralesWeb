@@ -39,5 +39,21 @@ namespace Omicron.SapAdapter.Dtos.Models
         /// String StartDate.
         /// </value>
         public DateTime EndDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets OrdersIds.
+        /// </summary>
+        /// <value>
+        /// OrdersIds.
+        /// </value>
+        public List<int> OrdersIds { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets HasChips.
+        /// </summary>
+        /// <value>
+        /// HasChips.
+        /// </value>
+        public bool HasChips { get; set; }
     }
 }
