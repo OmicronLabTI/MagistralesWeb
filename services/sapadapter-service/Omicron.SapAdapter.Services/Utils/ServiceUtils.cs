@@ -654,13 +654,13 @@ namespace Omicron.SapAdapter.Services.Utils
         {
             if (classification.Equals(ServiceConstants.OrderTypeMQ))
             {
-                return orderModels = orderModels.Where(x => x.OrderType.Equals(classification)).ToList();
+                return orderModels = orderModels.Where(x => x.OrderType == classification).ToList();
             }
 
             return orderModels.Where(x =>
                  ServiceShared.CalculateOr(
-                     x.OrderType.Equals(classification),
-                     ServiceShared.CalculateAnd(x.SubOrderType.Equals(classification), x.OrderType.Equals(ServiceConstants.OrderTypeMU)))).ToList();
+                     x.OrderType == classification,
+                     ServiceShared.CalculateAnd(x.SubOrderType == classification, x.OrderType == ServiceConstants.OrderTypeMU))).ToList();
         }
     }
 }
