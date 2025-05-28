@@ -118,6 +118,68 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         }
 
         /// <summary>
+        /// Test To create user.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task CreateUserAnyClassification()
+        {
+            // arrange
+            var user = new UserModel
+            {
+                UserName = "pruebaDesinger",
+                FirstName = "prueba",
+                LastName = "usuario",
+                Password = "QXhpdHkyMDI0",
+                Activo = 1,
+                Role = 4,
+                Asignable = 1,
+                Piezas = 200,
+                Classification = "MN, MG",
+                TechnicalRequire = false,
+                TecnicId = null,
+            };
+
+            // act
+            var response = await this.userServices.CreateUser(user);
+
+            // arrange
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
+        /// Test To create user.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task CreateUserAllClassification()
+        {
+            // arrange
+            var user = new UserModel
+            {
+                UserName = "pruebaLogistica",
+                FirstName = "prueba",
+                LastName = "usuario",
+                Password = "QXhpdHkyMDI0",
+                Activo = 1,
+                Role = 3,
+                Asignable = 1,
+                Piezas = 200,
+                Classification = "Todas",
+                TechnicalRequire = false,
+                TecnicId = null,
+            };
+
+            // act
+            var response = await this.userServices.CreateUser(user);
+
+            // arrange
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
         /// creates the user with error the user exist.
         /// </summary>
         [Test]

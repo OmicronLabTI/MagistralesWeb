@@ -73,7 +73,7 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <inheritdoc/>
         public async Task<ResultModel> GetActiveClassificationQfb()
         {
-            var classifications = (await this.catalogDao.GetActiveClassificationQfb()).Select(x => new { x.Value, x.Description }).ToList();
+            var classifications = (await this.catalogDao.GetActiveClassificationQfb()).Select(x => new { x.Value, x.Description }).OrderBy(x => x.Description).ToList();
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, classifications, null);
         }
 

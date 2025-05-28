@@ -11,4 +11,5 @@
 	<include file="changesets/db.changelog-sp-13.xml"/>
   <include file="changesets/db.changelog-sp-14.xml"/>
   <include file="changesets/db.changelog-sp-15.xml"/>
+  <include file="changesets/db.changelog-sp-16.xml"/>
 </databaseChangeLog>
