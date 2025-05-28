@@ -312,7 +312,7 @@ namespace Omicron.SapAdapter.Services.Utils
             var sapOrdersGroup = sapOrders.GroupBy(x => x.DocNumDxp).ToList();
             clasificationFilters.ForEach(c =>
             {
-                var keysOrderPerClassification = sapOrdersGroup.Where(so => so.All(det => det.TypeOrder.Equals(c, StringComparison.CurrentCultureIgnoreCase))).Select(x => x.Key).ToList();
+                var keysOrderPerClassification = sapOrdersGroup.Where(so => so.All(det => det.TypeOrder == c)).Select(x => x.Key).ToList();
                 listToReturn.AddRange(sapOrders.Where(x => keysOrderPerClassification.Contains(x.DocNumDxp)));
                 sapOrdersGroup.RemoveAll(x => keysOrderPerClassification.Contains(x.Key));
             });
