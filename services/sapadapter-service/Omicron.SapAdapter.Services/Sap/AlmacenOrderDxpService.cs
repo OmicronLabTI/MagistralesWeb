@@ -82,15 +82,28 @@ namespace Omicron.SapAdapter.Services.Sap
             var endDate = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.EndDateParam, DateTime.Now.ToString(ServiceConstants.DateTimeFormatddMMyyyy))
                                       .ToUniversalDateTime().Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
-            var userOrders = await ServiceUtilsAlmacen.GetUserOrdersAlmacenLeftList(this.pedidosService, startDate, endDate);
+            var sapOrdersIds = new List<int>();
+            var sapOrdersByTransactionId = new List<CompleteAlmacenOrderModel>();
+            var hasChips = false;
+            if (parameters.ContainsKey(ServiceConstants.Chips))
+            {
+                var chip = parameters[ServiceConstants.Chips].ToLower().Remove(0, 1);
+                sapOrdersByTransactionId = (await this.sapDao.GetOrdersByTransactionIdForAlmacenDxp([chip])).ToList();
+                sapOrdersIds = sapOrdersByTransactionId.Select(x => x.DocNum).Distinct().ToList();
+                hasChips = true;
+            }
+
+            var userOrders = await ServiceUtilsAlmacen.GetUserOrdersAlmacenLeftList(this.pedidosService, hasChips, sapOrdersIds, startDate, endDate);
 
             var lineProductsTuple = await ServiceUtilsAlmacen.GetLineProductsAlmacenLeftList(
                 this.almacenService,
+                sapOrdersIds,
+                hasChips,
                 userOrders.Select(x => int.Parse(x.Salesorderid)).Distinct().ToList(),
                 startDate,
                 endDate);
 
-            var sapOrders = await this.GetSapOrders(userOrders, startDate, endDate, lineProductsTuple, types);
+            var sapOrders = await this.GetSapOrders(sapOrdersByTransactionId, hasChips, userOrders, startDate, endDate, lineProductsTuple, types);
             var ordersByFilter = await this.GetSapOrdersToLookByDoctor(sapOrders.Item1, parameters);
             var totalFilter = ordersByFilter.Select(x => x.DocNumDxp).Distinct().ToList().Count;
             var listToReturn = this.GetCardOrdersToReturn(ordersByFilter, parameters, sapOrders.Item2, sapOrders.Item3, sapClasification);
@@ -143,6 +156,8 @@ namespace Omicron.SapAdapter.Services.Sap
         /// </summary>
         /// <returns>the data.</returns>
         private async Task<Tuple<List<CompleteAlmacenOrderModel>, List<string>, List<string>>> GetSapOrders(
+            List<CompleteAlmacenOrderModel> sapOrdersByTransactionId,
+            bool hasChips,
             List<UserOrderModel> userOrders,
             DateTime startDate,
             DateTime endDate,
@@ -151,8 +166,7 @@ namespace Omicron.SapAdapter.Services.Sap
             List<string> types)
         {
             var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
-
-            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, userOrders, startDate, endDate, lineProductTuple, true);
+            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, sapOrdersByTransactionId, hasChips, userOrders, startDate, endDate, lineProductTuple, true);
             var orderWithPackages = sapOrders.Where(x => x.IsPackage == ServiceConstants.IsPackage).Select(p => p.DocNumDxp).Distinct().ToList();
             var orderWithOmigenomics = sapOrders.Where(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))).Select(p => p.DocNumDxp).Distinct().ToList();
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
@@ -170,17 +184,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
         private async Task<List<CompleteAlmacenOrderModel>> GetSapOrdersToLookByDoctor(List<CompleteAlmacenOrderModel> sapOrders, Dictionary<string, string> parameters)
         {
-            sapOrders = await ServiceUtilsAlmacen.FilterSapOrdersByTypeShipping(sapOrders, parameters, this.proccessPayments, this.redisService, this.catalogsService);
-
-            if (!parameters.ContainsKey(ServiceConstants.Chips))
-            {
-                return sapOrders;
-            }
-
-            var chip = parameters[ServiceConstants.Chips].ToLower().Remove(0, 1);
-            return sapOrders.Where(x =>
-                                        x.DocNumDxp.GetShortShopTransaction().ToLower() == chip ||
-                                        x.DocNumDxp.Contains(chip)).ToList();
+            return await ServiceUtilsAlmacen.FilterSapOrdersByTypeShipping(sapOrders, parameters, this.proccessPayments, this.redisService, this.catalogsService);
         }
 
         private AlmacenOrdersByDoctorModel GetCardOrdersToReturn(
