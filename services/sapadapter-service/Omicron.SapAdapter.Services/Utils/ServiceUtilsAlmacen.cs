@@ -66,6 +66,8 @@ namespace Omicron.SapAdapter.Services.Utils
         /// Get the orders for recepcion pedidos.
         /// </summary>
         /// <param name="sapDao">dao.</param>
+        /// <param name="sapOrdersByTransactionId">sapOrdersByTransactionId.</param>
+        /// <param name="hasChips">HasChips.</param>
         /// <param name="userOrders">userOrders.</param>
         /// <param name="startDate">startDate.</param>
         /// <param name="endDate">endDate.</param>
@@ -74,6 +76,8 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <returns>the orders.</returns>
         public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(
             ISapDao sapDao,
+            List<CompleteAlmacenOrderModel> sapOrdersByTransactionId,
+            bool hasChips,
             List<UserOrderModel> userOrders,
             DateTime startDate,
             DateTime endDate,
@@ -81,12 +85,8 @@ namespace Omicron.SapAdapter.Services.Utils
             bool needOnlyDxp)
         {
             var idsMagistrales = userOrders.Select(x => int.Parse(x.Salesorderid)).Distinct();
-
-            var sapOrders = needOnlyDxp ?
-                await sapDao.GetAllOrdersForAlmacenDxp(startDate, endDate) :
-                await sapDao.GetAllOrdersForAlmacen(startDate, endDate);
-
-            sapOrders = sapOrders.Where(x => x.Detalles != null);
+            var sapOrders = await GetSapInformation(sapDao, sapOrdersByTransactionId, hasChips, startDate, endDate, needOnlyDxp);
+            sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
             sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList().ForEach(x =>
@@ -117,15 +117,28 @@ namespace Omicron.SapAdapter.Services.Utils
         /// Gets the user orders for almacen.
         /// </summary>
         /// <param name="pedidosService">the pedidos service.</param>
+        /// <param name="hasChips">hasChips.</param>
+        /// <param name="ordersIds">Orders Ids.</param>
         /// <param name="startDate">StartDate.</param>
         /// <param name="endDate">EndDate.</param>
         /// <returns>the data.</returns>
         public static async Task<List<UserOrderModel>> GetUserOrdersAlmacenLeftList(
             IPedidosService pedidosService,
+            bool hasChips,
+            List<int> ordersIds,
             DateTime startDate,
             DateTime endDate)
         {
-            var userOrderModel = await pedidosService.GetUserPedidos(
+            var userOrderModel = new ResultDto();
+            if (hasChips)
+            {
+                userOrderModel = await pedidosService.PostPedidos(
+                ordersIds,
+                ServiceConstants.EndpointGetUserOrdersAlmancenByOrdersId);
+                return JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
+            }
+
+            userOrderModel = await pedidosService.GetUserPedidos(
                 string.Format(ServiceConstants.EndpointGetUserOrdersAlmancenByRangeDate, startDate.ToString("dd/MM/yyyy"), endDate.ToString("dd/MM/yyyy")));
             return JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrderModel.Response.ToString());
         }
@@ -134,12 +147,16 @@ namespace Omicron.SapAdapter.Services.Utils
         /// Gets the list of line order based on datetime and user orders.
         /// </summary>
         /// <param name="almacenService">the service.</param>
+        /// <param name="ordersIds">ordersIds.</param>
+        /// <param name="hasChips">hasChips.</param>
         /// <param name="magistralIds">the magistralIds.</param>
         /// <param name="startDate">startDate.</param>
         /// <param name="endDate">endDate.</param>
         /// <returns>the data.</returns>
         public static async Task<Tuple<List<LineProductsModel>, List<int>>> GetLineProductsAlmacenLeftList(
             IAlmacenService almacenService,
+            List<int> ordersIds,
+            bool hasChips,
             List<int> magistralIds,
             DateTime startDate,
             DateTime endDate)
@@ -151,6 +168,8 @@ namespace Omicron.SapAdapter.Services.Utils
                     MagistralIds = magistralIds,
                     StartDate = startDate,
                     EndDate = endDate,
+                    HasChips = hasChips,
+                    OrdersIds = ordersIds,
                 });
 
             var lineProducts = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineProductsResponse.Response.ToString());
@@ -340,6 +359,26 @@ namespace Omicron.SapAdapter.Services.Utils
             });
 
             return listToReturn;
+        }
+
+        private static async Task<List<CompleteAlmacenOrderModel>> GetSapInformation(
+           ISapDao sapDao,
+           List<CompleteAlmacenOrderModel> sapOrdersByTransactionId,
+           bool hasChips,
+           DateTime startDate,
+           DateTime endDate,
+           bool needOnlyDxp)
+        {
+            {
+                if (hasChips)
+                {
+                    return sapOrdersByTransactionId;
+                }
+
+                return needOnlyDxp ?
+                    (await sapDao.GetAllOrdersForAlmacenDxp(startDate, endDate)).ToList() :
+                    (await sapDao.GetAllOrdersForAlmacen(startDate, endDate)).ToList();
+            }
         }
     }
 }
