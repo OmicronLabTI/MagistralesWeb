@@ -1238,17 +1238,17 @@ namespace Omicron.SapAdapter.Services.Sap
             };
         }
 
-        private DateTime CalculateDistributioDate(string status, PackageModel package, UserOrderModel order)
+        private DateTime? CalculateDistributioDate(string status, PackageModel package, UserOrderModel order)
         {
             return status switch
             {
-                ServiceConstants.Empaquetado => order.InvoiceStoreDate.Value,
-                ServiceConstants.Enviado => order.InvoiceStoreDate.Value,
-                ServiceConstants.Asignado => package.AssignedDate.Value,
-                ServiceConstants.Camino => package.InWayDate.Value,
-                ServiceConstants.NoEntregado => package.DeliveredDate.Value,
-                ServiceConstants.Entregado => package.DeliveredDate.Value,
-                _ => order.InvoiceStoreDate.Value,
+                ServiceConstants.Empaquetado => order.InvoiceStoreDate,
+                ServiceConstants.Enviado => order.InvoiceStoreDate,
+                ServiceConstants.Asignado => package.AssignedDate,
+                ServiceConstants.Camino => package.InWayDate,
+                ServiceConstants.NoEntregado => package.DeliveredDate,
+                ServiceConstants.Entregado => package.DeliveredDate,
+                _ => order.InvoiceStoreDate,
             };
         }
 
