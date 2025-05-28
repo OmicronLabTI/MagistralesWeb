@@ -487,6 +487,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(
                 this.sapDao,
+                [],
+                false,
                 userOrders,
                 startDate,
                 endDate,

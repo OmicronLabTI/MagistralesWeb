@@ -334,6 +334,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteAlmacenOrderModel>> GetAllOrdersForAlmacenDxp(DateTime startDate, DateTime endDate);
 
         /// <summary>
+        /// GetOrdersByTransactionIdForAlmacenDxp.
+        /// </summary>
+        /// <param name="transactionIds">transactionIds.</param>
+        /// <returns>the attachaments.</returns>
+        Task<IEnumerable<CompleteAlmacenOrderModel>> GetOrdersByTransactionIdForAlmacenDxp(List<string> transactionIds);
+
+        /// <summary>
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>

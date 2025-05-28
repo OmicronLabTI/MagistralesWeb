@@ -239,8 +239,11 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> UpdateSentOrders(List<UserOrderModel> userToUpdate)
         {
-            var invoicesId = userToUpdate.Select(x => x.InvoiceId).ToList();
-            var orders = (await this.pedidosDao.GetUserOrdersByInvoiceId(invoicesId)).ToList();
+            var ids = userToUpdate.Select(x => x.InvoiceId).ToList();
+            var tuple = userToUpdate.Select(x => new UserOrderByInvoiceAndLineNum() { InvoiceId = x.InvoiceId, InvoiceLineNum = x.InvoiceLineNum }).ToList();
+            var orders = (await this.pedidosDao.GetUserOrdersByInvoiceId(ids)).ToList();
+
+            orders = orders.Where(order => tuple.Any(x => x.InvoiceId == order.InvoiceId && x.InvoiceLineNum == order.InvoiceLineNum)).ToList();
 
             orders.ForEach(x =>
             {
@@ -383,6 +386,30 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.FinishedLabel,
                 x.TypeOrder,
             });
+
+            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersForAlmacenByOrdersId(List<int> ordersId)
+        {
+            var orders = await this.pedidosDao.GetSaleOrderForAlmacenByOrderIds(
+                ordersId.Select(n => n.ToString()).ToList(),
+                ServiceConstants.StatuPendingAlmacen,
+                ServiceConstants.Finalizado,
+                ServiceConstants.Almacenado);
+
+            var ordersToReturn = orders.DistinctBy(x => x.Id).ToList().Select(x => new
+            {
+                x.Salesorderid,
+                x.Productionorderid,
+                x.Status,
+                x.Comments,
+                x.DeliveryId,
+                x.StatusAlmacen,
+                x.FinishedLabel,
+                x.TypeOrder,
+            }).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, null);
         }
