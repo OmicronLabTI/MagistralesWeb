@@ -538,47 +538,21 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                             x.CloseDate.Value <= endDateUtc &&
                             x.FinishedLabel == 1 &&
                             listStatustoLook.Contains(x.Status));
+            return await this.GetSaleOrderForAlmacenCommon(ordersQuery, statusPending, status, secondStatus);
+        }
 
-            // Obtener IDs de órdenes finalizadas sin hacer una consulta extra
-            var idsSaleFinalized = await ordersQuery
-                .Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status == status)
-                .Select(y => y.Salesorderid)
-                .ToListAsync();
+        /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetSaleOrderForAlmacenByOrderIds(List<string> orderIds, List<string> statusPending, string status, string secondStatus)
+        {
+            var listStatustoLook = new List<string> { status, secondStatus };
 
-            // Obtener órdenes finalizadas y de maquila en una sola consulta
-            var orderstoReturn = await this.databaseContext.UserOrderModel
-                .Where(x => idsSaleFinalized.Contains(x.Salesorderid) ||
-                            (x.TypeOrder == "MQ" && x.FinishedLabel == 1 && x.Status == status))
-                .ToListAsync();
-
-            // Obtener posibles pendientes
-            var possiblePending = await ordersQuery
-                .Where(x => !string.IsNullOrEmpty(x.Productionorderid))
-                .Select(y => y.Salesorderid)
-                .Distinct()
-                .ToListAsync();
-
-            // Obtener las órdenes pendientes directamente
-            var pendingOrders = await this.databaseContext.UserOrderModel
-                .Where(x => possiblePending.Contains(x.Salesorderid) &&
-                            x.Status != "Cancelado")
-                .ToListAsync();
-
-            // Optimizar la lógica de filtrado de órdenes pendientes
-            foreach (var group in pendingOrders.GroupBy(x => x.Salesorderid))
-            {
-                var orders = group.Where(z => z.IsProductionOrder).ToList();
-                var productionStatus = orders.Where(z => z.Status == status || z.Status == secondStatus).ToList();
-
-                if (productionStatus.Count > 0 &&
-                    productionStatus.All(z => z.FinishedLabel == 1) &&
-                    orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
-                {
-                    orderstoReturn.AddRange(group);
-                }
-            }
-
-            return orderstoReturn;
+            // Filtrar una sola vez desde la base de datos
+            var ordersQuery = this.databaseContext.UserOrderModel
+                .Where(x => x.CloseDate.HasValue &&
+                            orderIds.Contains(x.Salesorderid) &&
+                            x.FinishedLabel == 1 &&
+                            listStatustoLook.Contains(x.Status));
+            return await this.GetSaleOrderForAlmacenCommon(ordersQuery, statusPending, status, secondStatus);
         }
 
         /// <inheritdoc/>
@@ -631,6 +605,54 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             this.databaseContext.ProductionFacturaQrModel.UpdateRange(modelsToSave);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             return true;
+        }
+
+        private async Task<List<UserOrderModel>> GetSaleOrderForAlmacenCommon(
+            IQueryable<UserOrderModel> ordersQuery,
+            List<string> statusPending,
+            string status,
+            string secondStatus)
+        {
+            // Obtener IDs de órdenes finalizadas sin hacer una consulta extra
+            var idsSaleFinalized = await ordersQuery
+                .Where(x => string.IsNullOrEmpty(x.Productionorderid) && x.Status == status)
+                .Select(y => y.Salesorderid)
+                .ToListAsync();
+
+            // Obtener órdenes finalizadas y de maquila en una sola consulta
+            var orderstoReturn = await this.databaseContext.UserOrderModel
+            .Where(x => idsSaleFinalized.Contains(x.Salesorderid) ||
+                            (x.TypeOrder == "MQ" && x.FinishedLabel == 1 && x.Status == status))
+                .ToListAsync();
+
+            // Obtener posibles pendientes
+            var possiblePending = await ordersQuery
+                .Where(x => !string.IsNullOrEmpty(x.Productionorderid))
+                .Select(y => y.Salesorderid)
+                .Distinct()
+                .ToListAsync();
+
+            // Obtener las órdenes pendientes directamente
+            var pendingOrders = await this.databaseContext.UserOrderModel
+                .Where(x => possiblePending.Contains(x.Salesorderid) &&
+                            x.Status != "Cancelado")
+                .ToListAsync();
+
+            // Optimizar la lógica de filtrado de órdenes pendientes
+            foreach (var group in pendingOrders.GroupBy(x => x.Salesorderid))
+            {
+                var orders = group.Where(z => z.IsProductionOrder).ToList();
+                var productionStatus = orders.Where(z => z.Status == status || z.Status == secondStatus).ToList();
+
+                if (productionStatus.Count > 0 &&
+                    productionStatus.All(z => z.FinishedLabel == 1) &&
+                    orders.All(z => statusPending.Contains(z.Status) && !orders.All(z => z.Status == secondStatus)))
+                {
+                    orderstoReturn.AddRange(group);
+                }
+            }
+
+            return orderstoReturn;
         }
     }
 }
