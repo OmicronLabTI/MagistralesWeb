@@ -27,9 +27,11 @@ class LotsBaseViewController: UIViewController {
     @IBOutlet weak var lotsSelectedLabel: UILabel!
     @IBOutlet weak var lsLotsLabel: UILabel!
     @IBOutlet weak var lsQuantityAvailableLabel: UILabel!
+    
     @IBOutlet weak var lineDocTable: UITableView!
     @IBOutlet weak var lotsAvailablesTable: UITableView!
     @IBOutlet weak var lotsSelectedTable: UITableView!
+    
     @IBOutlet weak var codeDescriptionLabel: UILabel!
     @IBOutlet weak var orderNumberLabel: UILabel!
     @IBOutlet weak var manufacturingOrderLabel: UILabel!

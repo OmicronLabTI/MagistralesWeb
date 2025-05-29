@@ -12,10 +12,10 @@ class AddComponent {
     var description: String
     var warehouse: String
     var availableLots: [LotsAvailable]
-    var selectedLots: [LotsAvailable]
+    var selectedLots: [LotsSelected]
     var requiredQuantity, selectedQuantity, baseQuantity: Double
     var totalNecesary, selectedTotal: Decimal
-    init(productId: String, description: String, warehouse: String, availableLots: [LotsAvailable], selectedLots: [LotsAvailable], requiredQuantity: Double, selectedQuantity: Double, baseQuantity: Double, totalNecesary: Decimal, selectedTotal: Decimal) {
+    init(productId: String, description: String, warehouse: String, availableLots: [LotsAvailable], selectedLots: [LotsSelected], requiredQuantity: Double, selectedQuantity: Double, baseQuantity: Double, totalNecesary: Decimal, selectedTotal: Decimal) {
         self.productId = productId
         self.description = description
         self.warehouse = warehouse

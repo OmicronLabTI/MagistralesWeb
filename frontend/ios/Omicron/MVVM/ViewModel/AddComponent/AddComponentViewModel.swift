@@ -20,7 +20,10 @@ class AddComponentViewModel {
     var renderProducts = PublishSubject<[AddComponent]>()
     var products: [AddComponent] = []
     var dataLotsAvailable = BehaviorSubject<[LotsAvailable]>(value: [])
+    var dataLotsSelected = BehaviorSubject<[LotsSelected]>(value: [])
+    var selectLineDocIndex = PublishSubject<Int>()
 
+    var selectedLineDoc = 0
     
     func getLotsByProduct(component: ComponentFormValues) {
         let productId = component.selectedComponent.productId ?? String()
@@ -44,13 +47,41 @@ class AddComponentViewModel {
                                           selectedTotal: 0)
             self.products.append(newProduct)
             self.renderProducts.onNext(self.products)
+            self.selectedLineDoc = products.count - 1
+            self.selectLineDocIndex.onNext(self.selectedLineDoc)
             self.dataLotsAvailable.onNext(newProduct.availableLots)
-            // self.dataOfLots.onNext(self.products)
+            self.dataLotsSelected.onNext(newProduct.selectedLots)
             // self.loading.onNext(false)
         }, onError: { [weak self] _ in
             guard let self = self else { return }
             self.loading.onNext(false)
             self.showAlert.onNext(CommonStrings.errorGetLotsByProduct)
         }).disposed(by: disposeBag)
+    }
+    
+    func selectedQuantityChange(row: Int) {
+        let product = self.products[selectedLineDoc]
+        let available = product.availableLots[row]
+    
+        // valida si la cantidad es cero o si es mayor al necesario, en este caso no hacer nada
+        let quantity = available.cantidadSeleccionada ?? 0
+        if quantity == 0 || quantity > product.totalNecesary || available.cantidadDisponible
+            == 0 || quantity > (available.cantidadDisponible ?? 0) {
+            return
+        }
+
+        // en caso de que si restarle el total necesario esta cantidad
+        product.totalNecesary = (product.totalNecesary) - quantity
+        product.selectedTotal = product.selectedLots.compactMap({ $0.cantidadSeleccionada }).reduce(0, +)
+        product.availableLots.forEach({ lot in
+            if lot.numeroLote == available.numeroLote {
+                lot.cantidadDisponible = (lot.cantidadDisponible ?? 0) - quantity
+            }
+            lot.cantidadSeleccionada = min(product.totalNecesary, lot.cantidadDisponible ?? 0)
+        })
+        /*if let availableBatches = product.lotesDisponibles {
+            self?.dataLotsAvailable.onNext(availableBatches)
+        }
+        self?.dataOfLots.onNext(self?.documentLines ?? [])*/
     }
 }
