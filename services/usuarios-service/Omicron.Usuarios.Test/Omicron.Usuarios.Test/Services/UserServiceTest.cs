@@ -258,8 +258,6 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             var response = await this.userServices.GetUsers(dic);
             var result = response.Response as List<UserModel>;
 
-            TestContext.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
-
             // Assert
             Assert.That(response, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(2));
@@ -287,8 +285,6 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // act
             var response = await this.userServices.GetUsers(dic);
             var result = response.Response as List<UserModel>;
-
-            TestContext.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
 
             // Assert
             Assert.That(response, Is.Not.Null);
@@ -319,8 +315,6 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
             // act
             var response = await this.userServices.GetUsers(dic);
             var result = response.Response as List<UserModel>;
-
-            TestContext.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
 
             // Assert
             Assert.That(response, Is.Not.Null);
