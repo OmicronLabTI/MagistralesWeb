@@ -46,6 +46,14 @@ namespace Omicron.Usuarios.Test
                 new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b805", FirstName = "Sergio", LastName = "Rocha", UserName = "SergioTecnico", Password = "QXhpdHkyMDIw", Role = 9, Activo = 1, Piezas = 200, Asignable = 1, Deleted = false, },
                 new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b806", FirstName = "Rogelio", LastName = "Casas", UserName = "RogelioTecnico", Password = "QXhpdHkyMDIw", Role = 9, Activo = 0, Piezas = 200, Asignable = 1, Deleted = false, },
                 new UserModel { Id = "6bc7f8a8-8617-43ac-a804-79cf9667b807", FirstName = "Ricardo", LastName = "Rocha", UserName = "RicardoQfb", Password = "QXhpdHkyMDIw", Role = 1, Activo = 0, Piezas = 200, Asignable = 0, Deleted = true, TechnicalRequire = false },
+
+                // For new classifications
+                new UserModel { Id = "ca552afe-d559-433d-9956-c68090b110c9", FirstName = "Victor", LastName = "Sanchez", UserName = "vicDesigner", Password = "QXhpdHkyMDIw", Role = 4, Activo = 1, Piezas = 200, Asignable = 0, Deleted = false, TechnicalRequire = false, Classification = "BE, MG" },
+                new UserModel { Id = "39e7e0d1-6dd9-4668-8a0f-2b7857d3f986", FirstName = "Adzuira", LastName = "Lopez", UserName = "KarenAD", Password = "QXhpdHkyMDIw", Role = 3, Activo = 1, Piezas = 200, Asignable = 0, Deleted = false, TechnicalRequire = false, Classification = "MG" },
+                new UserModel { Id = "42b7df01-d09b-4418-80e1-c3ea7deadc19", FirstName = "Daniel", LastName = "Vargas", UserName = "danyTodas", Password = "QXhpdHkyMDIw", Role = 4, Activo = 1, Piezas = 200, Asignable = 0, Deleted = false, TechnicalRequire = false, Classification = "Todas" },
+                new UserModel { Id = "b550e8f1-0520-496a-ae2a-1d9684d964fd", FirstName = "javier", LastName = "reyes", UserName = "javierlog", Password = "QXhpdHkyMDIw", Role = 3, Activo = 1, Piezas = 200, Asignable = 0, Deleted = false, TechnicalRequire = false, Classification = "DZ" },
+                new UserModel { Id = "35642b3a-9471-4b89-9862-8bee6d98c361", FirstName = "benny", LastName = "benny", UserName = "benny", Password = "QXhpdHkyMDIw", Role = 3, Activo = 1, Piezas = 200, Asignable = 0, Deleted = false, TechnicalRequire = false, Classification = "DZ, BE" },
+                new UserModel { Id = "c154202f-7be7-4b00-a6c4-3e8082d7be47", FirstName = "janette", LastName = "zavala", UserName = "Janettelog", Password = "QXhpdHkyMDIw", Role = 3, Activo = 1, Piezas = 200, Asignable = 0, Deleted = false, TechnicalRequire = false, Classification = "MN" },
             };
         }
 

@@ -25,14 +25,15 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// Init configuration.
         /// </summary>
-        [OneTimeSetUp]
+        [SetUp]
         public void Init()
         {
             var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
             this.mapper = mapperConfiguration.CreateMapper();
 
+            var dbname = Guid.NewGuid().ToString();
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: "Temporal")
+                .UseInMemoryDatabase(dbname)
                 .Options;
 
             this.context = new DatabaseContext(options);
@@ -234,6 +235,101 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             // Assert
             Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Gets the users with offset.
+        /// </summary>
+        /// <param name="classifications">Clasiffications.</param>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        [TestCase("MN")]
+        public async Task GetAllUsersWithFiltersClassifications(string classifications)
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+                { ServiceConstants.TypeQfb, classifications },
+            };
+
+            // act
+            var response = await this.userServices.GetUsers(dic);
+            var result = response.Response as List<UserModel>;
+
+            TestContext.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "Janettelog"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "danyTodas"));
+        }
+
+        /// <summary>
+        /// Gets the users with offset.
+        /// </summary>
+        /// <param name="classifications">Clasiffications.</param>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        [TestCase("MN, BE")]
+        public async Task GetAllUsersWithFiltersClassificationsTwo(string classifications)
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+                { ServiceConstants.TypeQfb, classifications },
+            };
+
+            // act
+            var response = await this.userServices.GetUsers(dic);
+            var result = response.Response as List<UserModel>;
+
+            TestContext.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "Janettelog"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "danyTodas"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "vicDesigner"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "benny"));
+        }
+
+        /// <summary>
+        /// Gets the users with offset.
+        /// </summary>
+        /// <param name="classifications">Clasiffications.</param>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        [TestCase("MG, BE, DZ")]
+        public async Task GetAllUsersWithFiltersClassificationsThree(string classifications)
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+                { ServiceConstants.TypeQfb, classifications },
+            };
+
+            // act
+            var response = await this.userServices.GetUsers(dic);
+            var result = response.Response as List<UserModel>;
+
+            TestContext.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(5));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "vicDesigner"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "KarenAD"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "danyTodas"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "javierlog"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "benny"));
         }
 
         /// <summary>

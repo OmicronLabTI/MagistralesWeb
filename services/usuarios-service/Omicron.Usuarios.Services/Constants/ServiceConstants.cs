@@ -86,6 +86,11 @@ namespace Omicron.Usuarios.Services.Constants
         public const string Status = "status";
 
         /// <summary>
+        /// All Classifications.
+        /// </summary>
+        public const string AllClassifications = "Todas";
+
+        /// <summary>
         /// the qfb role.
         /// </summary>
         public const int RoleQfb = 2;
