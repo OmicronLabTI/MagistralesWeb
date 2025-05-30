@@ -24,6 +24,8 @@ namespace Omicron.Catalogos.Test
             new WarehouseDto(),
             new ManufacturersDto(),
             new ClassificationDto(),
+            new SortingRouteModel(),
+            new ClassificationsDto(),
         };
 
         /// <summary>

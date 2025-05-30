@@ -81,5 +81,11 @@ namespace Omicron.Catalogos.Facade.Catalogs
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.GetClassifications());
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UploadSortingRouteFromExcel()
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.UploadSortingRouteFromExcel());
+        }
     }
 }

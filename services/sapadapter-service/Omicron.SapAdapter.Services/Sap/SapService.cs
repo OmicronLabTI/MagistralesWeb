@@ -890,6 +890,22 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == pedidoLocal.Codigo), pedidoLocal.ShippingAddressName, clientDxp);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetClassificationsByDescription(List<string> classifications)
+        {
+            var products = await this.sapDao.GetAllClassifications();
+
+            var items = products.Select(x => new LblContainerModel
+            {
+                Description = NormalizeAndToUpper(x.Description),
+                FieldId = x.FieldId,
+            });
+
+            var response = items.Where(x => classifications.Contains(x.Description)).DistinctBy(x => x.Description).ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
         private static string NormalizeAndToUpper(string input)
         {
             return new string(input.Normalize(NormalizationForm.FormD)

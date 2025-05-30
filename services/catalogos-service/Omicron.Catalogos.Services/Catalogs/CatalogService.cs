@@ -12,6 +12,7 @@ namespace Omicron.Catalogos.Services.Catalogs
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.IdentityModel.Tokens;
     using Omicron.Catalogos.DataAccess.DAO.Catalog;
@@ -139,6 +140,35 @@ namespace Omicron.Catalogos.Services.Catalogs
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> UploadSortingRouteFromExcel()
+        {
+            List<SortingRouteModel> valids = new ();
+            List<SortingRouteModel> invalids = new ();
+
+            var sortingroute = await this.GetSortingRouteFromExcel();
+
+            ValidSortingRoutes(sortingroute, valids, invalids);
+
+            await this.ClassificationValidation(valids, invalids);
+            await this.ItemCodeValidation(valids, invalids);
+            await this.ExceptionValidation(valids, invalids);
+            ColorValidation(valids, invalids);
+
+            var updates = await this.catalogDao.GetSortingRoutes(valids.Select(x => x.Classification).ToList());
+            var dictionary = updates.ToDictionary(u => u.Classification, u => u.Id);
+
+            valids.ForEach(m => m.Id = dictionary.GetValueOrDefault(m.Classification));
+
+            await this.catalogDao.InsertSortingRoute(valids);
+
+            var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification }).Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct().ToList();
+
+            var comments = values.Count > 0 ? string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(values)) : null;
+            return ServiceUtils.CreateResult(true, 200, null, null, comments);
+        }
+
         private static List<string> GetValidStringList(string value)
         {
             return value.IsNullOrEmpty() ? new List<string>() : value.ToUpper().Split(",").ToList();
@@ -150,6 +180,222 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
                 .ToArray())
                 .ToUpper();
+        }
+
+        private static void ValidateClassificationsFound(HashSet<string> found, List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        {
+            var cleanedValids = new List<SortingRouteModel>();
+
+            var withClassification = valids.Where(x => !string.IsNullOrWhiteSpace(x.Classification)).ToList();
+            var withoutClassification = valids.Where(x => string.IsNullOrWhiteSpace(x.Classification)).ToList();
+
+            var grouped = withClassification
+                .GroupBy(w => NormalizeAndToUpper(w.Classification))
+                .Select(g => g.First())
+                .ToList();
+
+            var duplicates = withClassification
+                .Except(grouped)
+                .ToList();
+
+            invalids.AddRange(duplicates);
+
+            foreach (var item in grouped)
+            {
+                if (found.Contains(NormalizeAndToUpper(item.Classification)))
+                {
+                    cleanedValids.Add(item);
+                }
+                else
+                {
+                    invalids.Add(item);
+                }
+            }
+
+            cleanedValids.AddRange(withoutClassification);
+
+            valids.Clear();
+            valids.AddRange(cleanedValids);
+        }
+
+        private static void ValidateItemCodesFound(HashSet<string> found, List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        {
+            var cleanedValids = new List<SortingRouteModel>();
+
+            var withItemCode = valids.Where(x => !string.IsNullOrWhiteSpace(x.ItemCode)).ToList();
+            var withoutItemCode = valids.Where(x => string.IsNullOrWhiteSpace(x.ItemCode)).ToList();
+
+            var grouped = withItemCode
+                .GroupBy(w => NormalizeAndToUpper(w.ItemCode))
+                .Select(g => g.First())
+                .ToList();
+
+            var duplicates = withItemCode
+                .Except(grouped)
+                .ToList();
+
+            invalids.AddRange(duplicates);
+
+            foreach (var item in grouped)
+            {
+                if (found.Contains(NormalizeAndToUpper(item.ItemCode)))
+                {
+                    cleanedValids.Add(item);
+                }
+                else
+                {
+                    invalids.Add(item);
+                }
+            }
+
+            cleanedValids.AddRange(withoutItemCode);
+
+            valids.Clear();
+            valids.AddRange(cleanedValids);
+        }
+
+        private static void ValidateExceptionFound(HashSet<string> found, List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        {
+            var matchingException = valids
+                .Where(item =>
+                !string.IsNullOrEmpty(item.ItemCode) &&
+                !string.IsNullOrEmpty(item.Exceptions))
+                .Where(item =>
+                {
+                    var products = NormalizeAndToUpper(item.ItemCode)
+                        .Split(',')
+                        .Select(p => p.Trim())
+                        .Where(p => !string.IsNullOrWhiteSpace(p))
+                        .ToList();
+
+                    var exceptionProducts = NormalizeAndToUpper(item.Exceptions)
+                        .Split(',')
+                        .Select(p => p.Trim())
+                        .Where(p => !string.IsNullOrWhiteSpace(p))
+                        .ToList();
+
+                    var validExceptionProducts = exceptionProducts
+                        .Where(found.Contains)
+                        .ToList();
+
+                    return products.Exists(product => validExceptionProducts.Contains(product));
+                })
+                .ToList();
+
+            invalids.AddRange(matchingException);
+            valids.RemoveAll(item => matchingException.Contains(item));
+        }
+
+        private static void ValidSortingRoutes(List<SortingRouteModel> sortingroute, List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        {
+            if (sortingroute == null || sortingroute.Count == 0)
+            {
+                return;
+            }
+
+            NormalizeSortingRoutes(sortingroute);
+
+            foreach (var route in sortingroute)
+            {
+                if (IsValidRoute(route))
+                {
+                    valids.Add(route);
+                }
+                else
+                {
+                    invalids.Add(route);
+                }
+            }
+        }
+
+        private static void NormalizeSortingRoutes(List<SortingRouteModel> sortingRoutes)
+        {
+            sortingRoutes.ForEach(x =>
+            {
+                if (!string.IsNullOrEmpty(x.Classification))
+                {
+                    x.Classification = NormalizeAndToUpper(x.Classification);
+                }
+
+                if (!string.IsNullOrEmpty(x.ItemCode))
+                {
+                    x.ItemCode = NormalizeAndToUpper(x.ItemCode);
+                }
+            });
+        }
+
+        private static bool IsValidRoute(SortingRouteModel route)
+        {
+            return !string.IsNullOrWhiteSpace(route.Classification) ||
+                   !string.IsNullOrWhiteSpace(route.ItemCode);
+        }
+
+        private static void ColorValidation(List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        {
+            var hexColorRegex = new Regex(ServiceConstants.HexColor);
+
+            var invalidColorItems = valids
+                .Where(x => !string.IsNullOrWhiteSpace(x.Color))
+                .Where(x => !hexColorRegex.IsMatch(x.Color))
+                .ToList();
+
+            invalids.AddRange(invalidColorItems);
+
+            valids.RemoveAll(x => invalidColorItems.Contains(x));
+        }
+
+        private async Task ClassificationValidation(List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        {
+            List<string> classifications = valids.Where(c => !string.IsNullOrWhiteSpace(c.Classification))
+                .Select(c => c.Classification)
+                .Distinct().ToList();
+
+            ResultDto response = await this.sapAdapter.Post(classifications, ServiceConstants.GetClassificationsByDescription);
+            List<ClassificationsDto> classificationsfound = JsonConvert.DeserializeObject<List<ClassificationsDto>>(response.Response.ToString());
+
+            HashSet<string> found = classificationsfound.Select(x => NormalizeAndToUpper(x.Description)).ToHashSet();
+
+            ValidateClassificationsFound(found, valids, invalids);
+        }
+
+        private async Task ItemCodeValidation(List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        {
+            var products = valids
+                .Where(x => !string.IsNullOrEmpty(x.ItemCode))
+                .Select(x => x.ItemCode.Split(',').Select(s => s.Trim()).ToList())
+                .ToList();
+
+            var names = products.SelectMany(x => x)
+                .Where(name => !string.IsNullOrEmpty(name)).Distinct().ToList();
+            if (names.Any())
+            {
+                var response = await this.catalogsdxp.Post(names, ServiceConstants.Products);
+                var data = JsonConvert.DeserializeObject<List<string>>(response.Response.ToString());
+
+                var found = new HashSet<string>(data.Select(NormalizeAndToUpper));
+
+                ValidateItemCodesFound(found, valids, invalids);
+            }
+        }
+
+        private async Task ExceptionValidation(List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        {
+            var products = valids
+                .Where(x => !string.IsNullOrEmpty(x.Exceptions))
+                .Select(x => x.Exceptions.Split(',').Select(s => s.Trim()).ToList())
+                .ToList();
+
+            var names = products.SelectMany(x => x)
+                .Where(name => !string.IsNullOrEmpty(name)).Distinct().ToList();
+            if (names.Any())
+            {
+                var response = await this.catalogsdxp.Post(names, ServiceConstants.Products);
+                var data = JsonConvert.DeserializeObject<List<string>>(response.Response.ToString());
+
+                var found = new HashSet<string>(data.Select(NormalizeAndToUpper));
+
+                ValidateExceptionFound(found, valids, invalids);
+            }
         }
 
         private List<WarehouseModel> CompareProductsExceptions(List<WarehouseModel> exceptions)
@@ -262,7 +508,7 @@ namespace Omicron.Catalogos.Services.Catalogs
 
         private async Task<List<WarehouseModel>> GetWarehousesFromExcel()
         {
-            var table = await this.ObtainDataFromExcel(ServiceConstants.WarehousesFileUrl);
+            var table = await this.ObtainDataFromExcel(ServiceConstants.WarehousesFileUrl, 1);
 
             var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
 
@@ -285,7 +531,34 @@ namespace Omicron.Catalogos.Services.Catalogs
             return warehouses;
         }
 
-        private async Task<DataTable> ObtainDataFromExcel(string url)
+        private async Task<List<SortingRouteModel>> GetSortingRouteFromExcel()
+        {
+            var table = await this.ObtainDataFromExcel(ServiceConstants.ManufacturersFileUrl, 2);
+
+            var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
+
+            var classification = columns[0];
+            var exception = columns[1];
+            var itemcode = columns[2];
+            var color = columns[3];
+            var route = columns[4];
+            var isactive = columns[5];
+
+            var sortingroute = table.AsEnumerable()
+            .Select(row => new SortingRouteModel
+            {
+                Classification = row[classification].ToString(),
+                Exceptions = row[exception].ToString(),
+                ItemCode = row[itemcode].ToString(),
+                Color = row[color].ToString(),
+                Route = row[route].ToString(),
+                Status = row[isactive].ToString().Equals(1),
+            }).ToList();
+
+            return sortingroute;
+        }
+
+        private async Task<DataTable> ObtainDataFromExcel(string url, int sheet)
         {
             var key = this.configuration[ServiceConstants.AzureAccountKey];
             var account = this.configuration[ServiceConstants.AzureAccountName];
@@ -296,7 +569,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             await this.azureService.GetElementsFromAzure(account, key, file, streamWoorkbook);
             using var workbook = new XLWorkbook(streamWoorkbook);
 
-            DataTable table = ServiceUtils.ReadSheet(workbook, 1);
+            DataTable table = ServiceUtils.ReadSheet(workbook, sheet);
 
             return table;
         }
