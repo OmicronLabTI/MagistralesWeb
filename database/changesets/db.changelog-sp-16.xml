@@ -8,6 +8,9 @@
 	  <column name="classification" type="TEXT">
 		<constraints nullable="true" />
 	  </column>
+		<column name="classificationcode" type="VARCHAR(10)">
+			<constraints nullable="true" />
+		</column>
 	  <column name="exception" type="TEXT">
 		<constraints nullable="true" />
 	  </column>

@@ -84,6 +84,11 @@ namespace Omicron.Catalogos.Services.Constants
         public const string HexColor = @"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$";
 
         /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string RedisKey = "sortingroute-valids";
+
+        /// <summary>
         /// NoMatching.
         /// </summary>
         public const string InvalidsSortingRoutes = "Los siguientes productos o clasificaciones {0} tienen una configuración incorrecta: no están registrados en SAP, presentan duplicidad en su registro o son inexistentes.";

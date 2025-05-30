@@ -8,7 +8,6 @@
 
 namespace Omicron.Catalogos.Dtos.SapAdapter
 {
-
     /// <summary>
     /// Classification.
     /// </summary>

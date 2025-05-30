@@ -33,6 +33,13 @@ namespace Omicron.Catalogos.Entities.Model
         public string Classification { get; set; }
 
         /// <summary>
+        /// Gets or sets a value classification.
+        /// </summary>
+        /// <value> Classification. </value>
+        [Column("classificationcode")]
+        public string ClassificationCode { get; set; }
+
+        /// <summary>
         /// Gets or sets a value exceptions.
         /// </summary>
         /// <value> Exceptions. </value>

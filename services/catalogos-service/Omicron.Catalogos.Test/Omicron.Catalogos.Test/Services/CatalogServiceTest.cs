@@ -39,6 +39,7 @@ namespace Omicron.Catalogos.Test.Services
             var azure = new Mock<IAzureService>();
             var sapAdapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
 
             this.context = new DatabaseContext(options);
             this.context.RoleModel.AddRange(this.GetListRoles());
@@ -48,7 +49,7 @@ namespace Omicron.Catalogos.Test.Services
             this.context.SaveChanges();
 
             this.catalogDao = new CatalogDao(this.context);
-            this.catalogService = new CatalogService(this.catalogDao, config.Object, azure.Object, sapAdapter.Object, catalogsdxp.Object);
+            this.catalogService = new CatalogService(this.catalogDao, config.Object, azure.Object, sapAdapter.Object, catalogsdxp.Object, redis.Object);
         }
 
         /// <summary>
@@ -111,6 +112,7 @@ namespace Omicron.Catalogos.Test.Services
             var azure = new Mock<IAzureService>();
             var sapadapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
 
             config.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountKey")]).Returns("AzureAccountKey");
             config.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountName")]).Returns("AzureAccountName");
@@ -133,7 +135,7 @@ namespace Omicron.Catalogos.Test.Services
                     workbook.CopyTo(stream);
                 });
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
 
             var result = await service.UploadWarehouseFromExcel();
 
@@ -155,8 +157,9 @@ namespace Omicron.Catalogos.Test.Services
             var azure = new Mock<IAzureService>();
             var sapadapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
 
             var products = new List<ActiveWarehouseDto>() { new ActiveWarehouseDto { ItemCode = "REVE 42", CatalogName = string.Empty, FirmName = "REVE" }, };
             var result = await service.GetActivesWarehouses(products);
@@ -179,13 +182,14 @@ namespace Omicron.Catalogos.Test.Services
             var azure = new Mock<IAzureService>();
             var sapadapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
 
             var manufacturers = new List<ManufacturersDto>() { new ManufacturersDto { Id = 1, Classification = "Classification unique administration", ClassificationCode = "CUA" }, };
 
             catalogsdxp.SetupSequence(x => x.Get(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(manufacturers)));
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
 
             var result = await service.GetClassifications();
 
@@ -207,13 +211,14 @@ namespace Omicron.Catalogos.Test.Services
             var azure = new Mock<IAzureService>();
             var sapadapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
 
             config.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountKey")]).Returns("AzureAccountKey");
             config.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountName")]).Returns("AzureAccountName");
             config.SetupGet(x => x[It.Is<string>(s => s == "ManufacturersFileUrl")]).Returns("ManufacturersFileUrl");
 
             sapadapter.SetupSequence(x => x.Post(It.IsAny<object>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(this.GetResultDto(new List<ClassificationsDto>() { new () { Description = "MAGISTRALES" }, new () { Description = "DE LINEA" } })));
+                .Returns(Task.FromResult(this.GetResultDto(new List<ClassificationsDto>() { new () { Description = "MAGISTRALES", Value = "MG" }, new () { Description = "DE LINEA", Value = "LN" } })));
 
             catalogsdxp.SetupSequence(x => x.Post(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(new List<string>() { "DZ 21", "DZ 44", "OMI 02" })))
@@ -229,7 +234,7 @@ namespace Omicron.Catalogos.Test.Services
                     workbook.CopyTo(stream);
                 });
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
 
             var result = await service.UploadSortingRouteFromExcel();
 
@@ -269,8 +274,7 @@ namespace Omicron.Catalogos.Test.Services
                     model.ItemCode ?? string.Empty,
                     model.Color ?? string.Empty,
                     ServiceConstants.IsActive,
-                    model.Route ?? string.Empty
-                );
+                    model.Route ?? string.Empty);
             });
 
             var mss = new MemoryStream();

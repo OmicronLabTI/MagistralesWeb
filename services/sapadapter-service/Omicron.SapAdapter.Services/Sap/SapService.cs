@@ -898,7 +898,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var items = products.Select(x => new LblContainerModel
             {
                 Description = NormalizeAndToUpper(x.Description),
-                FieldId = x.FieldId,
+                Value = x.Value,
             });
 
             var response = items.Where(x => classifications.Contains(x.Description)).DistinctBy(x => x.Description).ToList();
