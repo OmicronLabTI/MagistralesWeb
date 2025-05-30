@@ -391,6 +391,30 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetOrdersForAlmacenByOrdersId(List<int> ordersId)
+        {
+            var orders = await this.pedidosDao.GetSaleOrderForAlmacenByOrderIds(
+                ordersId.Select(n => n.ToString()).ToList(),
+                ServiceConstants.StatuPendingAlmacen,
+                ServiceConstants.Finalizado,
+                ServiceConstants.Almacenado);
+
+            var ordersToReturn = orders.DistinctBy(x => x.Id).ToList().Select(x => new
+            {
+                x.Salesorderid,
+                x.Productionorderid,
+                x.Status,
+                x.Comments,
+                x.DeliveryId,
+                x.StatusAlmacen,
+                x.FinishedLabel,
+                x.TypeOrder,
+            }).ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, ordersToReturn, null, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> GetOrdersForInvoiceByRangeDates(Dictionary<string, string> parameters)
         {
             var (startDate, endDate) = this.GetyStartDateAndEndDateParameterWithFormat(parameters);

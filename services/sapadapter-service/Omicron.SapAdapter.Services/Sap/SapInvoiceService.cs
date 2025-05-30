@@ -142,6 +142,11 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = await this.GetUserOrders(ServiceConstants.GetUserSalesOrder, salesOrdersId.Distinct().ToList());
             var lineOrders = await this.GetLineProducts(ServiceConstants.GetLinesBySaleOrder, salesOrdersId.Distinct().ToList());
 
+            var linenums = lineOrders.Select(x => x.InvoiceLineNum).ToList();
+            linenums.AddRange(userOrders.Select(x => x.InvoiceLineNum));
+
+            var lastLinenum = linenums.Distinct().Max();
+
             var transactionsIds = invoiceDetails.Where(i => !string.IsNullOrEmpty(i.InvoiceHeader.DocNumDxp)).Select(o => o.InvoiceHeader.DocNumDxp).Distinct().ToList();
             var payment = (await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds)).GetPaymentBydocNumDxp(invoiceDetails.First().InvoiceHeader.DocNumDxp);
 
@@ -181,6 +186,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 Deliveries = this.GetDeliveryModel(deliveryDetails, invoiceDetails, userOrders, lineOrders),
                 InvoiceHeader = invoiceToReturn,
                 InvoiceSale = null,
+                LastInvoiceLineNum = lastLinenum,
             };
             return ServiceUtils.CreateResult(true, 200, null, invoiceModelToAdd, null, null);
         }

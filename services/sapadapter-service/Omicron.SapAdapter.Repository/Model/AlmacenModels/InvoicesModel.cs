@@ -32,5 +32,11 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public List<InvoiceDeliveryModel> Deliveries { get; set; }
+
+        /// <summary>
+        /// Gets or sets LastInvoiceLineNum.
+        /// </summary>
+        /// <value>The LastInvoiceLineNum.</value>
+        public int LastInvoiceLineNum { get; set; }
     }
 }
