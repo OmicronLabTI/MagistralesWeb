@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import Resolver
-import Charts
+import DGCharts
 
 enum TypeOfCalendarChart: String {
     case day = "Día"

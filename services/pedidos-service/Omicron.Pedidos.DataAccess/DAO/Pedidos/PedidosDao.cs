@@ -48,6 +48,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceId(List<int> listIDs)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => listIDs.Contains(x.InvoiceId)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetOnlySaleOrderBySaleId(List<string> listIds)
         {
             return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.Salesorderid) && string.IsNullOrEmpty(x.Productionorderid)).ToListAsync();
@@ -388,7 +394,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <inheritdoc/>
         public async Task<List<ProductionFacturaQrModel>> GetQrFacturaRouteByInvoice(List<int> invoiceId)
         {
-            return await this.databaseContext.ProductionFacturaQrModel.Where(x => invoiceId.Contains(x.FacturaId)).ToListAsync();
+            return await this.databaseContext.ProductionFacturaQrModel.AsNoTracking().Where(x => invoiceId.Contains(x.FacturaId)).ToListAsync();
         }
 
         /// <inheritdoc/>
@@ -420,6 +426,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<List<UserOrderModel>> GetUserOrdersByInvoiceIdAndLineNumber(List<int> invoices, List<int> linenumbers)
+        {
+            return await this.databaseContext.UserOrderModel.Where(x => invoices.Contains(x.InvoiceId) && linenumbers.Contains(x.InvoiceLineNum)).ToListAsync();
+        }
+
+        /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByStatusInvoice(List<string> listStatus)
         {
             return await this.databaseContext.UserOrderModel.Where(x => listStatus.Contains(x.StatusInvoice)).ToListAsync();
@@ -439,16 +451,15 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, int invoiceId)
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, List<int> invoiceId)
         {
             return await this.databaseContext.UserOrderModel
                .Where(userOrder =>
                    !string.IsNullOrEmpty(userOrder.Productionorderid) &&
-                   userOrder.InvoiceId == invoiceId &&
+                   invoiceId.Contains(userOrder.InvoiceId) &&
                    types.Contains(userOrder.InvoiceType) &&
                    userOrder.InvoiceStoreDate.HasValue).ToListAsync();
         }
-
 
         /// <inheritdoc/>
         public async Task<IEnumerable<UserOrderModel>> GetUserOrderByFinalizeDate(DateTime init, DateTime endDate)
@@ -586,6 +597,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
                  })
                  .AsNoTracking()
                 .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdatesQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave)
+        {
+            this.databaseContext.ProductionFacturaQrModel.UpdateRange(modelsToSave);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
         }
 
         private async Task<List<UserOrderModel>> GetSaleOrderForAlmacenCommon(

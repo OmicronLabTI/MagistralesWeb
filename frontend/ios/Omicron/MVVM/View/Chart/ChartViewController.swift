@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Charts
+import DGCharts
 import Resolver
 import RxSwift
 
@@ -29,18 +29,18 @@ class ChartViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModelBingind()
         flowLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         collectionView.setCollectionViewLayout(flowLayout, animated: false)
         collectionView.contentInsetAdjustmentBehavior = .always
         alertDataBinding()
+        viewModelBingind()
     }
 
     func viewModelBingind() {
 
         chartViewModel
             .start
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] firstTime in
                 guard let self = self else { return }
                 if firstTime {
@@ -76,13 +76,13 @@ class ChartViewController: UIViewController {
 
         chartViewModel
             .workloadData
+            .compactMap { $0 }
             .bind(to: collectionView.rx.items(
-                    cellIdentifier: "chart",
-                    cellType: ChartCollectionViewCell.self)) { _, data, cell in
-                cell.setData(data: data)
+                cellIdentifier: "chart",
+                cellType: ChartCollectionViewCell.self)) { _, data, cell in
+                    cell.setData(data: data)
             }
             .disposed(by: disposeBag)
-
     }
 
     @IBAction func leftButtonDidPressed(_ sender: Any) {

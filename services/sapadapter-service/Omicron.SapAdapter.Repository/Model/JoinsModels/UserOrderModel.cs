@@ -9,10 +9,11 @@
 namespace Omicron.SapAdapter.Entities.Model.JoinsModels
 {
     using System;
+    using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 
     /// <summary>/// Class OrderLog Model.
     /// </summary>
-    public class UserOrderModel
+    public class UserOrderModel : IStatusLookUpModel
     {
         /// <summary>
         /// Gets or sets Id.
@@ -79,6 +80,13 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// <value>
         /// String status.
         public int FinishedLabel { get; set; }
+
+        /// <summary>
+        /// Gets or sets magistralQr.
+        /// </summary>
+        /// <value>
+        /// String status.
+        public string MagistralQr { get; set; }
 
         /// <summary>
         /// Gets or sets status.
@@ -148,5 +156,29 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// Datetime userid.
         /// </value>
         public string UserInvoiceStored { get; set; }
+
+        /// <summary>
+        /// Gets or sets userid.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public double Quantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets CloseSampleOrderId.
+        /// </summary>
+        /// <value>
+        /// Int CloseSampleOrderId.
+        /// </value>
+        public int CloseSampleOrderId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Invoice Line Num.
+        /// </summary>
+        /// <value>
+        /// Datetime userid.
+        /// </value>
+        public int InvoiceLineNum { get; set; }
     }
 }

@@ -98,6 +98,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             {
                 var firstBatch = product.Batches.FirstOrDefault();
                 newDeliveryNote.WarehouseCode = firstBatch != null ? firstBatch.WarehouseCode : orderLine.WarehouseCode;
+                newDeliveryNote.Quantity = product.Quantity;
                 foreach (var b in product.Batches)
                 {
                     var doubleQuantity = CastStringToDouble(b.BatchQty.ToString());
@@ -456,7 +457,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
             return deliveryNote;
         }
 
-        private Task<DeliveryNoteDto> CreateDeliveryNotePartial(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsIds, Dictionary<string, string> dictionaryResult)
+        private async Task<DeliveryNoteDto> CreateDeliveryNotePartial(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsIds, Dictionary<string, string> dictionaryResult)
         {
             var deliveryNote = new DeliveryNoteDto();
             deliveryNote.DocumentsOwner = saleOrder.DocumentsOwner;
@@ -493,6 +494,26 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
 
                 var price = CastStringToDouble(shippingCost.OrderType);
 
+                if (shippingOrder == null)
+                {
+                    var correctBaseLineId = await this.GetShippingCostBaseLine(shippingCost.ShippingCostOrderId);
+                    var newData = new DeliveryNoteLineDto()
+                    {
+                        ItemCode = shippingCost.ItemCode,
+                        Quantity = 1,
+                        BaseType = 17,
+                        BaseEntry = shippingCost.ShippingCostOrderId,
+                        UnitPrice = price,
+                        BaseLine = correctBaseLineId,
+                        SalesPersonCode = saleOrder.SalesPersonCode,
+                        Price = price,
+                        LineTotal = price,
+                    };
+                    deliveryNote.DeliveryNoteLines.Add(newData);
+                    await this.UpdateShippingCostBaseLine(shippingCost.ShippingCostOrderId, saleOrder.IsOmigenomics, saleOrder.SalesPersonCode, saleOrder.DocumentsOwner);
+                    return deliveryNote;
+                }
+
                 var newDeliveryNote = new DeliveryNoteLineDto()
                 {
                     ItemCode = shippingCost.ItemCode,
@@ -515,7 +536,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.DeliveryNotes
                 deliveryNote.DeliveryNoteLines.Add(newDeliveryNote);
             }
 
-            return Task.FromResult(deliveryNote);
+            return deliveryNote;
         }
 
         private async Task<DeliveryNoteDto> CreateDeliveryNoteBatch(OrderDto saleOrder, int saleOrderId, List<CreateDeliveryNoteDto> createDelivery, List<string> productsIds, Dictionary<string, string> dictionaryResult)

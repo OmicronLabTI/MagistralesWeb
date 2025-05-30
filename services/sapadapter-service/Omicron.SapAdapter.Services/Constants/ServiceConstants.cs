@@ -196,6 +196,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetOrdersByStatusAndUserId = "qfbOrders/{0}/{1}";
 
         /// <summary>
+        /// route to get the remitted pieces.
+        /// </summary>
+        public const string GetRemittedPieces = "infopieces/{0}/{1}";
+
+        /// <summary>
         /// Get users by id.
         /// </summary>
         public const string GetUsersById = "getUsersById";
@@ -769,6 +774,16 @@ namespace Omicron.SapAdapter.Services.Constants
         /// ClientTypeClinica.
         /// </summary>
         public const string ClientTypeClinic = "clinica";
+
+        /// <summary>
+        /// Constant to user orders.
+        /// </summary>
+        public const string UserOrders = "userorder/invoice?type=local";
+
+        /// <summary>
+        /// ClientTypeClinica.
+        /// </summary>
+        public const string GetLine = "getline/invoiceId";
 
         /// <summary>
         /// Gets the clasification user DZ.

@@ -1,3 +1,11 @@
+//
+//  DayRangeIndicatorView.swift
+//  OmicronAlmacen
+//
+//  Created by Daniel Vargas on 21/02/25.
+//  Copyright © 2025 AxityDev. All rights reserved.
+//
+
 import UIKit
 import HorizonCalendar
 final class DayRangeIndicatorView: UIView {
@@ -48,5 +56,5 @@ final class DayRangeIndicatorView: UIView {
       context?.fillPath()
     }
   }
-
 }
+

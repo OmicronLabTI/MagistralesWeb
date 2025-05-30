@@ -9,22 +9,23 @@
 import HorizonCalendar
 
 extension DayRangeIndicatorView: CalendarItemViewRepresentable {
+
   struct InvariantViewProperties: Hashable {
-      let indicatorColor = OmicronColors.primaryBlue.withAlphaComponent(0.15)
+    var indicatorColor = UIColor(.accentColor.opacity(0.15))
   }
 
-  struct ViewModel: Equatable {
+  struct Content: Equatable {
     let framesOfDaysToHighlight: [CGRect]
   }
 
   static func makeView(
     withInvariantViewProperties invariantViewProperties: InvariantViewProperties)
-    -> DayRangeIndicatorView {
+    -> DayRangeIndicatorView
+  {
     DayRangeIndicatorView(indicatorColor: invariantViewProperties.indicatorColor)
   }
 
-  static func setViewModel(_ viewModel: ViewModel, on view: DayRangeIndicatorView) {
-    view.framesOfDaysToHighlight = viewModel.framesOfDaysToHighlight
+  static func setContent(_ content: Content, on view: DayRangeIndicatorView) {
+    view.framesOfDaysToHighlight = content.framesOfDaysToHighlight
   }
-
 }

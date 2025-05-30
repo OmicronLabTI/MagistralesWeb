@@ -66,7 +66,7 @@ class CommentsTest: XCTestCase {
     func testValidResponse() {
         self.networkmanager
             .updateDeleteItemOfTableInOrderDetail(self.order!)
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { res in
                 XCTAssertNotNil(res.response)
             }).disposed(by: self.disposeBag!)

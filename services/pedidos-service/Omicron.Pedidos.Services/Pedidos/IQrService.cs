@@ -41,8 +41,8 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <summary>
         /// Get the qr for the invoices.
         /// </summary>
-        /// <param name="invoiceIds">the invoices id.</param>
+        /// <param name="orderIds">the invoices id.</param>
         /// <returns>the data.</returns>
-        Task<ResultModel> CreateInvoiceQr(List<int> invoiceIds);
+        Task<ResultModel> CreateInvoiceQr(List<string> orderIds);
     }
 }

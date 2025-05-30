@@ -99,6 +99,12 @@ namespace Omicron.SapAdapter.Test
             new ActiveWarehouseDto(),
             new WarehouseDto(),
             new ClassificationsModel(),
+            new RemittedPiecesModel(),
+            new ProductListBaseModel(),
+            new ProductListRecepcionModel(),
+            new ProductListRemisionModel(),
+            new LineProductsDto(),
+            new PedidosMagistralQrModel(),
         };
 
         /// <summary>

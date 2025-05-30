@@ -20,6 +20,12 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public int Invoice { get; set; }
 
         /// <summary>
@@ -63,6 +69,14 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public int TotalProducts { get; set; }
+
+    /// <summary>
+        /// Gets or sets TotalPieces.
+        /// </summary>
+        /// <value>
+        /// Int TotalPieces.
+        /// </value>
+        public int TotalPackedProducts { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -238,11 +252,27 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         public int TotalPieces { get; set; }
 
         /// <summary>
+        /// Gets or sets TotalPieces.
+        /// </summary>
+        /// <value>
+        /// Int TotalPieces.
+        /// </value>
+        public int TotalPackedPieces { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets or sets is doctor direction.
         /// </summary>
         /// <value>
         /// ItemCode.
         /// </value>
         public bool IsDoctorDirection { get; set; }
+
+       /// <summary>
+        /// Gets or sets TotalpackedDeliveries.
+        /// </summary>
+        /// <value>
+        /// Int TotalpackedDeliveries.
+        /// </value>
+        public int TotalPackedDeliveries { get; set; }
     }
 }

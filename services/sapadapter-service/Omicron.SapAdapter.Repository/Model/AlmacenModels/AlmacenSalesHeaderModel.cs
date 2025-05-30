@@ -49,7 +49,19 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
+        public int RemissionedItems { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
         public decimal TotalPieces { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public decimal RemissionedPieces { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -152,6 +164,12 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
         /// </summary>
         /// <value>The code.</value>
         public bool IsOmigenomics { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int RemittedPieces { get; set; }
 
         /// <summary>
         /// Gets OrderList.

@@ -35,10 +35,53 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <summary>
         /// Gets the data for the scanned qr or bar code.
         /// </summary>
-        /// <param name="type">the type of the scan.</param>
         /// <param name="code">the code scanned.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetScannedData(string type, string code);
+        Task<ResultDto> GetScannedDataMagistral(string code);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="code">the code scanned.</param>
+        /// <param name="orderId">the order Id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedDataLinea(string code, int orderId);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="code">the code scanned.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedDataRemision(string code);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="code">the code scanned.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedDataRemisionMg(string code);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="code">the code scanned.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedDataRemisionLn(string code);
+
+        /// <summary>
+        /// Gets the data for the scanned qr or bar code.
+        /// </summary>
+        /// <param name="code">the code scanned.</param>
+        /// <param name="subcode"> the invoice line num. </param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetScannedDataFactura(string code, string subcode);
+
+        /// <summary>
+        /// Gets the data for order detail.
+        /// </summary>
+        /// <param name="orderId">the order id.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetDetailOrder(int orderId);
 
         /// <summary>
         /// Gets the products with codebars.
@@ -82,6 +125,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetOrdersDeliveryDetail(int deliveryId);
 
         /// <summary>
+        /// GetDeliveryIdsByInvoice.
+        /// </summary>
+        /// <param name="invoiceId">invoiceId.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> GetDeliveryIdsByInvoice(int invoiceId);
+
+        /// <summary>
         /// Gets the products of a specific delivery.
         /// </summary>
         /// <param name="saleId">the ids.</param>
@@ -116,7 +166,7 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="type">The type.</param>
         /// <param name="deliveriesIds">The deliveriesIds.</param>
         /// <returns>the data.</returns>
-        Task<ResultDto> GetInvoiceProducts(int invoiceId, string type, List<int> deliveriesIds);
+        Task<ResultDto> GetInvoiceProducts(string invoiceId, string type, List<int> deliveriesIds);
 
         /// <summary>
         /// Gets the headers from SAP.

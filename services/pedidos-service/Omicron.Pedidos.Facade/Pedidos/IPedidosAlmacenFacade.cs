@@ -110,6 +110,20 @@ namespace Omicron.Pedidos.Facade.Pedidos
         Task<ResultDto> CancelDelivery(string type, CancelDeliveryPedidoCompleteDto deliveryIds);
 
         /// <summary>
+        /// The cancels the delivery.
+        /// </summary>
+        /// <param name="deliveryIds">the delivery ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CancelTotalInfo(List<int> deliveryIds);
+
+        /// <summary>
+        /// The cancels the delivery.
+        /// </summary>
+        /// <param name="cancelPackaging">the ids.</param>
+        /// <returns>the data.</returns>
+        Task<ResultDto> CancelPackaging(CancelPackagingDto cancelPackaging);
+
+        /// <summary>
         /// Cleans the invoices.
         /// </summary>
         /// <param name="invoiceIds">the invoice ids.</param>
@@ -157,5 +171,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="deliveryIds">deliveryIds.</param>
         /// <returns>the data.</returns>
         Task<ResultDto> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds);
+
+        /// <summary>
+        /// unassign the batch from a product.
+        /// </summary>
+        /// <param name="dto">the order id.</param>
+        /// <returns>the result.</returns>
+        Task<ResultDto> GetInfoPiecesByOrderId(InvoiceProductsDto dto);
     }
 }

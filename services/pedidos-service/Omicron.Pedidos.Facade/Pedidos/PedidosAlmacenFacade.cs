@@ -119,6 +119,18 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> CancelTotalInfo(List<int> deliveryIds)
+        {
+            return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CancelTotalInfo(deliveryIds));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> CancelPackaging(CancelPackagingDto cancelPackaging)
+        {
+            return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CancelPackaging(cancelPackaging));
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> CleanInvoices(List<int> invoiceIds)
         {
             return this.mapper.Map<ResultDto>(await this.cancelPedidosService.CleanInvoices(invoiceIds));
@@ -158,6 +170,12 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds)
         {
             return this.mapper.Map<ResultDto>(await this.almacenService.GetUserOrdersForInvoiceByDeliveryIds(deliveryIds));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetInfoPiecesByOrderId(InvoiceProductsDto dto)
+        {
+            return this.mapper.Map<ResultDto>(await this.almacenService.GetInfoPiecesByOrderId(dto));
         }
     }
 }

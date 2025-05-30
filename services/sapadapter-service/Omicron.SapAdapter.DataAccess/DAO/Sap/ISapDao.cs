@@ -66,6 +66,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> pedidoId);
 
         /// <summary>
+        /// gets the details.
+        /// </summary>
+        /// <param name="ordersIds">ordersIds</param>
+        /// <returns>the details.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetDetails(List<int?> ordersIds);
+
+        /// <summary>
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
@@ -248,6 +255,13 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntry(List<int> logEntry);
 
         /// <summary>
+        /// Gets the record from ITL1 by log entry.
+        /// </summary>
+        /// <param name="logEntry">the log entry.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<BatchesTransactionQtyModel>> GetBatchTransationsQtyByLogEntryAndQuantity(List<int> logEntry);
+
+        /// <summary>
         /// Get last id of isolated production order created.
         /// </summary>
         /// <param name="productId">the product id.</param>
@@ -271,6 +285,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="batchCode">the product code.</param>
         /// <returns>the data.</returns>
         Task<string> GetBatchCode(string productCode, string batchCode);
+
+        /// <summary>
+        /// GetDeliveryIdsByInvoice.
+        /// </summary>
+        /// <param name="invoiceId">Invoiceid.</param>
+        /// <returns></returns>
+        Task<IEnumerable<int>> GetDeliveryIdsByInvoice(int invoiceId);
+
 
         /// <summary>
         /// Gets the batches by a list of product ids and the dist number.
@@ -380,6 +402,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="docuNums">the doc nums.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNum(List<int> docuNums);
+
+        /// <summary>
+        /// Get the delivery orders headers.
+        /// </summary>
+        /// <param name="docuNum">the doc num.</param>
+        /// <param name="itemCode">the item code.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<DetallePedidoModel>> GetDetailByDocNumAndItemCode(int docuNum, string itemCode);
 
         /// <summary>
         /// Gets the invoiceHeader by doc num.

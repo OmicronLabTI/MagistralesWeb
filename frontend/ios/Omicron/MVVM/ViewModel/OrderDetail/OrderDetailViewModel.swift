@@ -57,7 +57,7 @@ class OrderDetailViewModel {
     // MARK: - Functions Binding
     // MARK: - FINISH BINDINGACTION
     func finishBtnActionBinding() {
-        self.finishedButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        self.finishedButtonDidTap.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.validIfOrderCanBeFinalized(orderId: self.orderId)
         }).disposed(by: self.disposeBag)
@@ -68,7 +68,7 @@ class OrderDetailViewModel {
     }
 
     func processBtnBinding() {
-        self.processButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        self.processButtonDidTap.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             let message = MessageToChangeStatus(
                 message: CommonStrings.confirmationMessageProcessStatus,
@@ -78,7 +78,7 @@ class OrderDetailViewModel {
     }
 
     func pendingBtnbinding() {
-        self.pendingButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        self.pendingButtonDidTap.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             let message = MessageToChangeStatus(message: CommonStrings.confirmationMessagePendingStatus,
                                                 typeOfStatus: StatusNameConstants.penddingStatus)
@@ -87,7 +87,7 @@ class OrderDetailViewModel {
     }
 
     func seeLotsBtnBinding() {
-        self.seeLotsButtonDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
+        self.seeLotsButtonDidTap.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self]  _ in
             guard let self = self else { return }
             self.goToSeeLotsViewController.onNext(())
         }).disposed(by: self.disposeBag)
@@ -98,7 +98,7 @@ class OrderDetailViewModel {
         deleteManyButtonIsEnable.onNext(false)
         if needsRefresh { loading.onNext(true) }
         networkManager.getOrdenDetail(self.orderId)
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: {[weak self] res in
                 guard let self = self else { return }
                 self.onSuccessOrderDetail(response: res, isRefresh)
