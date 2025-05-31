@@ -256,14 +256,14 @@ namespace Omicron.Catalogos.Test.Services
             dataTable.Columns.Add("Status");
             dataTable.Columns.Add("Ruta");
 
-            var models = new List<SortingRouteModel>
+            var models = new List<ConfigRoutesModel>
             {
-                new SortingRouteModel { Classification = "de LiNea", ItemCode = "omI 02", Route = "Almacén" },
-                new SortingRouteModel { Classification = "de linea", ItemCode = "DZ 22" },
-                new SortingRouteModel { Classification = null, ItemCode = string.Empty },
-                new SortingRouteModel { Classification = "magistraLEs", ItemCode = string.Empty, Color = "#ABCDEF", Route = "Almacén" },
-                new SortingRouteModel { Classification = string.Empty, ItemCode = "DZ 21", Exceptions = "DZ 21" },
-                new SortingRouteModel { Classification = string.Empty, ItemCode = "DZ 44", Exceptions = "DZ 49", Color = "FFF" },
+                new ConfigRoutesModel { Classification = "de LiNea", ItemCode = "omI 02", Route = "Almacén" },
+                new ConfigRoutesModel { Classification = "de linea", ItemCode = "DZ 22" },
+                new ConfigRoutesModel { Classification = null, ItemCode = string.Empty },
+                new ConfigRoutesModel { Classification = "magistraLEs", ItemCode = string.Empty, Color = "#ABCDEF", Route = "Almacén" },
+                new ConfigRoutesModel { Classification = string.Empty, ItemCode = "DZ 21", Exceptions = "DZ 21" },
+                new ConfigRoutesModel { Classification = string.Empty, ItemCode = "DZ 44", Exceptions = "DZ 49", Color = "FFF" },
             };
 
             models.ForEach(model =>

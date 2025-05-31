@@ -112,7 +112,7 @@ namespace Omicron.Catalogos.Api.Controllers
         /// Import of valid classifications through the Excel file.
         /// </summary>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
-        [Route("/upload/sorting/route")]
+        [Route("/upload/config/routes")]
         [HttpPost]
         public async Task<IActionResult> UploadSortingRouteFromExcel()
         {

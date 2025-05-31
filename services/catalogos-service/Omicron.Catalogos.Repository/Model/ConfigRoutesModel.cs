@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="SortingRouteModel.cs" company="Axity">
+// <copyright file="ConfigRoutesModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -14,8 +14,8 @@ namespace Omicron.Catalogos.Entities.Model
     /// <summary>
     /// Class sorting route.
     /// </summary>
-    [Table("sortingroute")]
-    public class SortingRouteModel
+    [Table("configproductroutesbyclassification")]
+    public class ConfigRoutesModel
     {
         /// <summary>
         /// Gets or sets Id.

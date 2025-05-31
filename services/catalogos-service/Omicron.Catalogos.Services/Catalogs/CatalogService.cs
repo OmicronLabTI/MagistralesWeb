@@ -147,8 +147,8 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <inheritdoc/>
         public async Task<ResultModel> UploadSortingRouteFromExcel()
         {
-            List<SortingRouteModel> valids = new ();
-            List<SortingRouteModel> invalids = new ();
+            List<ConfigRoutesModel> valids = new ();
+            List<ConfigRoutesModel> invalids = new ();
 
             var sortingroute = await this.GetSortingRouteFromExcel();
 
@@ -182,9 +182,9 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .ToUpper();
         }
 
-        private static void ValidateClassificationsFound(HashSet<(string Classification, string Code)> found, List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        private static void ValidateClassificationsFound(HashSet<(string Classification, string Code)> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
-            var cleanedValids = new List<SortingRouteModel>();
+            var cleanedValids = new List<ConfigRoutesModel>();
 
             var withClassification = valids.Where(x => !string.IsNullOrWhiteSpace(x.Classification)).ToList();
             var withoutClassification = valids.Where(x => string.IsNullOrWhiteSpace(x.Classification)).ToList();
@@ -221,9 +221,9 @@ namespace Omicron.Catalogos.Services.Catalogs
             valids.AddRange(cleanedValids);
         }
 
-        private static void ValidateItemCodesFound(HashSet<string> found, List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        private static void ValidateItemCodesFound(HashSet<string> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
-            var cleanedValids = new List<SortingRouteModel>();
+            var cleanedValids = new List<ConfigRoutesModel>();
 
             var withItemCode = valids.Where(x => !string.IsNullOrWhiteSpace(x.ItemCode)).ToList();
             var withoutItemCode = valids.Where(x => string.IsNullOrWhiteSpace(x.ItemCode)).ToList();
@@ -257,7 +257,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             valids.AddRange(cleanedValids);
         }
 
-        private static void ValidateExceptionFound(HashSet<string> found, List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        private static void ValidateExceptionFound(HashSet<string> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
             var matchingException = valids
                 .Where(item =>
@@ -289,7 +289,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             valids.RemoveAll(item => matchingException.Contains(item));
         }
 
-        private static void ValidSortingRoutes(List<SortingRouteModel> sortingroute, List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        private static void ValidSortingRoutes(List<ConfigRoutesModel> sortingroute, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
             if (sortingroute == null || sortingroute.Count == 0)
             {
@@ -311,7 +311,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             }
         }
 
-        private static void NormalizeSortingRoutes(List<SortingRouteModel> sortingRoutes)
+        private static void NormalizeSortingRoutes(List<ConfigRoutesModel> sortingRoutes)
         {
             sortingRoutes.ForEach(x =>
             {
@@ -327,13 +327,13 @@ namespace Omicron.Catalogos.Services.Catalogs
             });
         }
 
-        private static bool IsValidRoute(SortingRouteModel route)
+        private static bool IsValidRoute(ConfigRoutesModel route)
         {
             return !string.IsNullOrWhiteSpace(route.Classification) ||
                    !string.IsNullOrWhiteSpace(route.ItemCode);
         }
 
-        private static void ColorValidation(List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        private static void ColorValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
             var hexColorRegex = new Regex(ServiceConstants.HexColor);
 
@@ -347,7 +347,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             valids.RemoveAll(x => invalidColorItems.Contains(x));
         }
 
-        private async Task InsertSortingRoutes(List<SortingRouteModel> valids)
+        private async Task InsertSortingRoutes(List<ConfigRoutesModel> valids)
         {
             var updates = await this.catalogDao.GetSortingRoutes(valids.Select(x => x.Classification).ToList());
             var dictionary = updates.ToDictionary(u => u.Classification, u => u.Id);
@@ -359,7 +359,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             await this.SaveValidsToRedis(valids);
         }
 
-        private async Task SaveValidsToRedis(List<SortingRouteModel> valids)
+        private async Task SaveValidsToRedis(List<ConfigRoutesModel> valids)
         {
             var key = ServiceConstants.RedisKey;
 
@@ -367,7 +367,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             await this.redisService.WriteToRedis(key, serialized, new TimeSpan(8, 0, 0));
         }
 
-        private async Task ClassificationValidation(List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        private async Task ClassificationValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
             List<string> classifications = valids.Where(c => !string.IsNullOrWhiteSpace(c.Classification))
                 .Select(c => c.Classification)
@@ -381,7 +381,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             ValidateClassificationsFound(found, valids, invalids);
         }
 
-        private async Task ItemCodeValidation(List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        private async Task ItemCodeValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
             var products = valids
                 .Where(x => !string.IsNullOrEmpty(x.ItemCode))
@@ -401,7 +401,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             }
         }
 
-        private async Task ExceptionValidation(List<SortingRouteModel> valids, List<SortingRouteModel> invalids)
+        private async Task ExceptionValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
             var products = valids
                 .Where(x => !string.IsNullOrEmpty(x.Exceptions))
@@ -554,7 +554,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             return warehouses;
         }
 
-        private async Task<List<SortingRouteModel>> GetSortingRouteFromExcel()
+        private async Task<List<ConfigRoutesModel>> GetSortingRouteFromExcel()
         {
             var table = await this.ObtainDataFromExcel(ServiceConstants.ManufacturersFileUrl, 2);
 
@@ -568,7 +568,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             var route = columns[5];
 
             var sortingroute = table.AsEnumerable()
-            .Select(row => new SortingRouteModel
+            .Select(row => new ConfigRoutesModel
             {
                 Classification = row[classification].ToString(),
                 Exceptions = row[exception].ToString(),
