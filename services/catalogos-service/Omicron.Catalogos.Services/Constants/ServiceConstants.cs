@@ -34,6 +34,11 @@ namespace Omicron.Catalogos.Services.Constants
         public const string WarehousesFileUrl = "WarehousesFileUrl";
 
         /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ManufacturersFileUrl = "ManufacturersFileUrl";
+
+        /// <summary>
         /// Is active.
         /// </summary>
         public const string IsActive = "activo";
@@ -67,6 +72,26 @@ namespace Omicron.Catalogos.Services.Constants
         /// Error request.
         /// </summary>
         public const string ErrorRequest = "Catalogos - Error peticion catalogs dxp service";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string GetClassificationsByDescription = "classifications";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string HexColor = @"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string RedisKey = "configroute-valids";
+
+        /// <summary>
+        /// NoMatching.
+        /// </summary>
+        public const string InvalidsSortingRoutes = "Los siguientes productos o clasificaciones {0} tienen una configuración incorrecta: no están registrados en SAP, presentan duplicidad en su registro o son inexistentes.";
 
         /// <summary>
         /// Gets the order.

@@ -61,6 +61,14 @@ namespace Omicron.Catalogos.Entities.Context
         /// </value>
         public virtual DbSet<WarehouseModel> WarehousesModel { get; set; }
 
+        /// <summary>
+        /// Gets or sets sortingroute model.
+        /// </summary>
+        /// <value>
+        /// Object sortingroute model.
+        /// </value>
+        public virtual DbSet<ConfigRoutesModel> SortingRouteModel { get; set; }
+
         /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

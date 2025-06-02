@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <changeSet author="itzelmd" id="changelog-1.1">
+	<createTable tableName="configproductroutesbyclassification">
+	  <column name="id" type="INT" autoIncrement="true">
+	    <constraints nullable="false" primaryKey="true" />
+	  </column>
+	  <column name="classification" type="TEXT">
+		<constraints nullable="true" />
+	  </column>
+		<column name="classificationcode" type="VARCHAR(10)">
+			<constraints nullable="true" />
+		</column>
+	  <column name="exception" type="TEXT">
+		<constraints nullable="true" />
+	  </column>
+	  <column name="itemcode" type="TEXT">
+		<constraints nullable="true" />
+	  </column>
+	  <column name="color" type="VARCHAR(20)">
+		<constraints nullable="true" />
+	  </column>
+	  <column name="route" type="VARCHAR(100)">
+		<constraints nullable="false" />
+	  </column>
+	  <column name="isactive" type="BOOLEAN" defaultValue="true">
+		<constraints nullable="false" />
+	  </column>
+	</createTable>
+  </changeSet>
+</databaseChangeLog>

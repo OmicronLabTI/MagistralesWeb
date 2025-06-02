@@ -39,6 +39,7 @@ namespace Omicron.Catalogos.Test.Services
             var azure = new Mock<IAzureService>();
             var sapAdapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
 
             this.context = new DatabaseContext(options);
             this.context.RoleModel.AddRange(this.GetListRoles());
@@ -48,7 +49,7 @@ namespace Omicron.Catalogos.Test.Services
             this.context.SaveChanges();
 
             this.catalogDao = new CatalogDao(this.context);
-            this.catalogService = new CatalogService(this.catalogDao, config.Object, azure.Object, sapAdapter.Object, catalogsdxp.Object);
+            this.catalogService = new CatalogService(this.catalogDao, config.Object, azure.Object, sapAdapter.Object, catalogsdxp.Object, redis.Object);
         }
 
         /// <summary>
@@ -111,6 +112,7 @@ namespace Omicron.Catalogos.Test.Services
             var azure = new Mock<IAzureService>();
             var sapadapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
 
             config.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountKey")]).Returns("AzureAccountKey");
             config.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountName")]).Returns("AzureAccountName");
@@ -133,7 +135,7 @@ namespace Omicron.Catalogos.Test.Services
                     workbook.CopyTo(stream);
                 });
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
 
             var result = await service.UploadWarehouseFromExcel();
 
@@ -155,8 +157,9 @@ namespace Omicron.Catalogos.Test.Services
             var azure = new Mock<IAzureService>();
             var sapadapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
 
             var products = new List<ActiveWarehouseDto>() { new ActiveWarehouseDto { ItemCode = "REVE 42", CatalogName = string.Empty, FirmName = "REVE" }, };
             var result = await service.GetActivesWarehouses(products);
@@ -179,13 +182,14 @@ namespace Omicron.Catalogos.Test.Services
             var azure = new Mock<IAzureService>();
             var sapadapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
 
             var manufacturers = new List<ManufacturersDto>() { new ManufacturersDto { Id = 1, Classification = "Classification unique administration", ClassificationCode = "CUA" }, };
 
             catalogsdxp.SetupSequence(x => x.Get(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(manufacturers)));
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
 
             var result = await service.GetClassifications();
 
@@ -194,6 +198,95 @@ namespace Omicron.Catalogos.Test.Services
             Assert.That(result.Success, Is.True);
             Assert.That(result.UserError, Is.Null);
             Assert.That(result.Code == 200, Is.True);
+        }
+
+        /// <summary>
+        /// Method to verify upload sorting from excel.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task UploadConfigRouteFromExcel()
+        {
+            var config = new Mock<IConfiguration>();
+            var azure = new Mock<IAzureService>();
+            var sapadapter = new Mock<ISapAdapterService>();
+            var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
+
+            config.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountKey")]).Returns("AzureAccountKey");
+            config.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountName")]).Returns("AzureAccountName");
+            config.SetupGet(x => x[It.Is<string>(s => s == "ManufacturersFileUrl")]).Returns("ManufacturersFileUrl");
+
+            sapadapter.SetupSequence(x => x.Post(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(new List<ClassificationsDto>() { new () { Description = "MAGISTRALES", Value = "MG" }, new () { Description = "DE LINEA", Value = "LN" } })));
+
+            catalogsdxp.SetupSequence(x => x.Post(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(new List<string>() { "DZ 21", "DZ 44", "OMI 02" })))
+                .Returns(Task.FromResult(this.GetResultDto(new List<string>() { "DZ 21", "DZ 49" })));
+
+            using var memoryStream = new MemoryStream();
+            var workbook = CreateExcelSortingRoute();
+
+            azure
+                .Setup(x => x.GetElementsFromAzure(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Stream>()))
+                .Callback<string, string, string, Stream>((param1, param2, param3, stream) =>
+                {
+                    workbook.CopyTo(stream);
+                });
+
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
+
+            var result = await service.UploadConfigurationRouteFromExcel();
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Code == 200, Is.True);
+        }
+
+        private static MemoryStream CreateExcelSortingRoute()
+        {
+            var dataTable = new DataTable();
+            dataTable.TableName = "sortingroute";
+            dataTable.Columns.Add("Clasificacion");
+            dataTable.Columns.Add("Excepciones");
+            dataTable.Columns.Add("ItemCode");
+            dataTable.Columns.Add("Color");
+            dataTable.Columns.Add("Status");
+            dataTable.Columns.Add("Ruta");
+
+            var models = new List<ConfigRoutesModel>
+            {
+                new ConfigRoutesModel { Classification = "de LiNea", ItemCode = "omI 02", Route = "Almacén" },
+                new ConfigRoutesModel { Classification = "de linea", ItemCode = "DZ 22" },
+                new ConfigRoutesModel { Classification = null, ItemCode = string.Empty },
+                new ConfigRoutesModel { Classification = "magistraLEs", ItemCode = string.Empty, Color = "#ABCDEF", Route = "Almacén" },
+                new ConfigRoutesModel { Classification = string.Empty, ItemCode = "DZ 21", Exceptions = "DZ 21" },
+                new ConfigRoutesModel { Classification = string.Empty, ItemCode = "DZ 44", Exceptions = "DZ 49", Color = "FFF" },
+            };
+
+            models.ForEach(model =>
+            {
+                dataTable.Rows.Add(
+                    model.Classification ?? string.Empty,
+                    model.Exceptions ?? string.Empty,
+                    model.ItemCode ?? string.Empty,
+                    model.Color ?? string.Empty,
+                    ServiceConstants.IsActive,
+                    model.Route ?? string.Empty);
+            });
+
+            var mss = new MemoryStream();
+            var wb = new XLWorkbook();
+
+            wb.AddWorksheet("Hoja1");
+
+            wb.Worksheets.Add(dataTable);
+            wb.SaveAs(mss);
+            mss.Position = 0;
+
+            return mss;
         }
 
         private static MemoryStream CreateExcel()

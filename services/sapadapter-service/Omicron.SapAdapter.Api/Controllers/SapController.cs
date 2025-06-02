@@ -458,5 +458,18 @@ namespace Omicron.SapAdapter.Api.Controllers
             var response = await this.sapFacade.GetWarehouses(warehouses);
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="classifications"> classifications collection to search. </param>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        [Route("/classifications")]
+        [HttpPost]
+        public async Task<IActionResult> GetClassificationsByDescription([FromBody] List<string> classifications)
+        {
+            var response = await this.sapFacade.GetClassificationsByDescription(classifications);
+            return this.Ok(response);
+        }
     }
 }

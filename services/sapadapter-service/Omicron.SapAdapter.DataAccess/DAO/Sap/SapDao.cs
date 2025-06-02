@@ -1605,6 +1605,17 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await query.ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<LblContainerModel>> GetAllClassifications()
+        {
+            var query = this.databaseContext.LblContainerModel
+                .Where(classification => classification.FieldId == 24
+                && (classification.TableId == "ADOC" || classification.TableId == "OCIN"));
+
+            return await query.ToListAsync();
+        }
+
+
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
         {
             return from invoice in this.databaseContext.InvoiceHeaderModel
