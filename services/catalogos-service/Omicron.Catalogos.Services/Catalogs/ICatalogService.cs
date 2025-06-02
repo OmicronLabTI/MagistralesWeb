@@ -55,5 +55,11 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// </summary>
         /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
         Task<ResultModel> GetClassifications();
+
+        /// <summary>
+        /// Import of valid classifications through the Excel file.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultModel> UploadConfigurationRouteFromExcel();
     }
 }

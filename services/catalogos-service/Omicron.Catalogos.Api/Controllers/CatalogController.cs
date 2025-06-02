@@ -107,5 +107,17 @@ namespace Omicron.Catalogos.Api.Controllers
             var response = await this.catalogFacade.GetClassifications();
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Import of valid classifications through the Excel file.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        [Route("/upload/config/routes")]
+        [HttpPost]
+        public async Task<IActionResult> UploadConfigRouteFromExcel()
+        {
+            var response = await this.catalogFacade.UploadConfigRouteFromExcel();
+            return this.Ok(response);
+        }
     }
 }

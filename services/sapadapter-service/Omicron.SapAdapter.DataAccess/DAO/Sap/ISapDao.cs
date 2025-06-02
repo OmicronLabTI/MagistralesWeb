@@ -679,5 +679,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="docNums">docNums.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<InvoiceHeaderModel>> GetClosedInvoicesByDocNum(List<int> docNums);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<IEnumerable<LblContainerModel>> GetAllClassifications();
     }
 }

@@ -293,5 +293,11 @@ namespace Omicron.SapAdapter.Facade.Sap
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetWarehouses(warehouses));
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetClassificationsByDescription(List<string> classifications)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetClassificationsByDescription(classifications));
+        }
     }
 }
