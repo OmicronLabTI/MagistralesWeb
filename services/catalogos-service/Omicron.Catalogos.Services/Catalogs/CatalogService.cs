@@ -164,7 +164,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification }).Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct().ToList();
 
-            var comments = values.Count > 0 ? string.Format(ServiceConstants.NoMatching, JsonConvert.SerializeObject(values)) : null;
+            var comments = values.Count > 0 ? string.Format(ServiceConstants.InvalidsSortingRoutes, JsonConvert.SerializeObject(values)) : null;
 
             return ServiceUtils.CreateResult(true, 200, null, null, comments);
         }
@@ -241,7 +241,11 @@ namespace Omicron.Catalogos.Services.Catalogs
 
             foreach (var item in grouped)
             {
-                if (found.Contains(NormalizeAndToUpper(item.ItemCode)))
+                var itemCodes = NormalizeAndToUpper(item.ItemCode)
+                .Split(',')
+                .Select(code => code.Trim());
+
+                if (itemCodes.Any(code => found.Contains(code)))
                 {
                     cleanedValids.Add(item);
                 }
