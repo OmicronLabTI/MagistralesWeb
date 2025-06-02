@@ -205,7 +205,7 @@ namespace Omicron.Catalogos.Test.Services
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Test]
-        public async Task UploadSortingRouteFromExcel()
+        public async Task UploadConfigRouteFromExcel()
         {
             var config = new Mock<IConfiguration>();
             var azure = new Mock<IAzureService>();
@@ -236,7 +236,7 @@ namespace Omicron.Catalogos.Test.Services
 
             var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
 
-            var result = await service.UploadSortingRouteFromExcel();
+            var result = await service.UploadConfigurationRouteFromExcel();
 
             // assert
             Assert.That(result, Is.Not.Null);

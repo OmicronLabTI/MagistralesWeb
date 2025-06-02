@@ -114,9 +114,9 @@ namespace Omicron.Catalogos.Api.Controllers
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
         [Route("/upload/config/routes")]
         [HttpPost]
-        public async Task<IActionResult> UploadSortingRouteFromExcel()
+        public async Task<IActionResult> UploadConfigRouteFromExcel()
         {
-            var response = await this.catalogFacade.UploadSortingRouteFromExcel();
+            var response = await this.catalogFacade.UploadConfigRouteFromExcel();
             return this.Ok(response);
         }
     }

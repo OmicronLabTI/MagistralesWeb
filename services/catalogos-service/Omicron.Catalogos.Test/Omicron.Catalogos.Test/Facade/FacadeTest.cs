@@ -69,7 +69,7 @@ namespace Omicron.Catalogos.Test.Facade
                .Returns(Task.FromResult(response));
 
             mockServicesCat
-               .Setup(m => m.UploadSortingRouteFromExcel())
+               .Setup(m => m.UploadConfigurationRouteFromExcel())
                .Returns(Task.FromResult(response));
 
             this.catalogFacade = new CatalogFacade(mockServicesCat.Object, this.mapper);
@@ -198,10 +198,10 @@ namespace Omicron.Catalogos.Test.Facade
         /// </summary>
         /// <returns> upload sorting route from excel. </returns>
         [Test]
-        public async Task UploadSortingRouteFromExcel()
+        public async Task UploadConfigRouteFromExcel()
         {
             // Act
-            var response = await this.catalogFacade.UploadSortingRouteFromExcel();
+            var response = await this.catalogFacade.UploadConfigRouteFromExcel();
 
             // Assert
             Assert.That(response, Is.Not.Null);

@@ -86,7 +86,7 @@ namespace Omicron.Catalogos.Services.Constants
         /// <summary>
         /// the container file.
         /// </summary>
-        public const string RedisKey = "sortingroute-valids";
+        public const string RedisKey = "configroute-valids";
 
         /// <summary>
         /// NoMatching.

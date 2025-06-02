@@ -60,6 +60,6 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// Import of valid classifications through the Excel file.
         /// </summary>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
-        Task<ResultModel> UploadSortingRouteFromExcel();
+        Task<ResultModel> UploadConfigurationRouteFromExcel();
     }
 }

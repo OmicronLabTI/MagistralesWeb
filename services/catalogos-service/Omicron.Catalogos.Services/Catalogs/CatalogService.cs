@@ -145,21 +145,21 @@ namespace Omicron.Catalogos.Services.Catalogs
         }
 
         /// <inheritdoc/>
-        public async Task<ResultModel> UploadSortingRouteFromExcel()
+        public async Task<ResultModel> UploadConfigurationRouteFromExcel()
         {
             List<ConfigRoutesModel> valids = new ();
             List<ConfigRoutesModel> invalids = new ();
 
-            var sortingroute = await this.GetSortingRouteFromExcel();
+            var configroute = await this.GetConfigurationRoutesFromExcel();
 
-            ValidSortingRoutes(sortingroute, valids, invalids);
+            ValidConfigRoutes(configroute, valids, invalids);
 
             await this.ClassificationValidation(valids, invalids);
             await this.ItemCodeValidation(valids, invalids);
             await this.ExceptionValidation(valids, invalids);
             ColorValidation(valids, invalids);
 
-            await this.InsertSortingRoutes(valids);
+            await this.InsertConfigRoutes(valids);
 
             var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification }).Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct().ToList();
@@ -289,16 +289,16 @@ namespace Omicron.Catalogos.Services.Catalogs
             valids.RemoveAll(item => matchingException.Contains(item));
         }
 
-        private static void ValidSortingRoutes(List<ConfigRoutesModel> sortingroute, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        private static void ValidConfigRoutes(List<ConfigRoutesModel> confingroute, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
-            if (sortingroute == null || sortingroute.Count == 0)
+            if (confingroute == null || confingroute.Count == 0)
             {
                 return;
             }
 
-            NormalizeSortingRoutes(sortingroute);
+            NormalizeSortingRoutes(confingroute);
 
-            foreach (var route in sortingroute)
+            foreach (var route in confingroute)
             {
                 if (IsValidRoute(route))
                 {
@@ -347,7 +347,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             valids.RemoveAll(x => invalidColorItems.Contains(x));
         }
 
-        private async Task InsertSortingRoutes(List<ConfigRoutesModel> valids)
+        private async Task InsertConfigRoutes(List<ConfigRoutesModel> valids)
         {
             var updates = await this.catalogDao.GetSortingRoutes(valids.Select(x => x.Classification).ToList());
             var dictionary = updates.ToDictionary(u => u.Classification, u => u.Id);
@@ -554,7 +554,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             return warehouses;
         }
 
-        private async Task<List<ConfigRoutesModel>> GetSortingRouteFromExcel()
+        private async Task<List<ConfigRoutesModel>> GetConfigurationRoutesFromExcel()
         {
             var table = await this.ObtainDataFromExcel(ServiceConstants.ManufacturersFileUrl, 2);
 

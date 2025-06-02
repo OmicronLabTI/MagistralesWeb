@@ -83,9 +83,9 @@ namespace Omicron.Catalogos.Facade.Catalogs
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> UploadSortingRouteFromExcel()
+        public async Task<ResultDto> UploadConfigRouteFromExcel()
         {
-            return this.mapper.Map<ResultDto>(await this.catalogService.UploadSortingRouteFromExcel());
+            return this.mapper.Map<ResultDto>(await this.catalogService.UploadConfigurationRouteFromExcel());
         }
     }
 }
