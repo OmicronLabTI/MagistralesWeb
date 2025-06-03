@@ -52,3 +52,9 @@ struct WorkloadRequest: Encodable {
     var fini: String
     var qfb: String
 }
+
+
+struct LotsByProductRequest: Encodable {
+    var itemcode: String
+    var warehouse: String
+}

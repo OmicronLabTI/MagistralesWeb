@@ -219,7 +219,8 @@ class NetworkManager: SessionProtocol {
     }
     
     func getLotsByProductAndWarehouse(warehouseCode: String, product: String) -> Observable<LotsByProductResponse> {
-        let req: ApiService = ApiService.getLotsByProduct(warehouseCode: warehouseCode, product: product)
+        var request = LotsByProductRequest(itemcode: product, warehouse: warehouseCode)
+        let req: ApiService = ApiService.getLotsByProduct(data: request)
         let res: Observable<LotsByProductResponse> = makeRequest(request: req)
         return res
     }

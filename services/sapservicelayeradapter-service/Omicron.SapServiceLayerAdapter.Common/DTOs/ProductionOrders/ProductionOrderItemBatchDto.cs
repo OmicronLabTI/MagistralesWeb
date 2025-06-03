@@ -11,36 +11,8 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
     /// <summary>
     /// the class ProductionOrderItemBatchDto.
     /// </summary>
-    public class ProductionOrderItemBatchDto
+    public class ProductionOrderItemBatchDto : BaseBatchProductionOrderDto
     {
-        /// <summary>
-        /// Gets or sets the BatchNumber.
-        /// </summary>
-        /// <value>BatchNumber.</value>
-        [JsonProperty("BatchNumber")]
-        public string BatchNumber { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ItemCode.
-        /// </summary>
-        /// <value>ItemCode.</value>
-        [JsonProperty("ItemCode")]
-        public string ItemCode { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Quantity.
-        /// </summary>
-        /// <value>Quantity.</value>
-        [JsonProperty("Quantity")]
-        public double Quantity { get; set; }
-
-        /// <summary>
-        /// Gets or sets the SystemSerialNumber.
-        /// </summary>
-        /// <value>SystemSerialNumber.</value>
-        [JsonProperty("SystemSerialNumber")]
-        public int SystemSerialNumber { get; set; }
-
         /// <summary>
         /// Gets or sets the BaseLineNumber.
         /// </summary>

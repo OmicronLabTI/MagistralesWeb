@@ -48,7 +48,9 @@
             <button mat-raised-button (click)="openMiListaDialog()" class="button-blue">
             Crear lista de componentes
             </button>
-            <button mat-raised-button class="button-blue" (click)="openDialog()">
+            <button mat-raised-button class="button-blue"  [routerLink]="['/addComponent', oldDataFormulaDetail.baseDocument,
+                                                            oldDataFormulaDetail.productionOrderId, oldDataFormulaDetail.code , oldDataFormulaDetail.productDescription,
+                                                            oldDataFormulaDetail.hasMissingStock ? 1 : 0, isFromDetail ? 1 : 0, detailOrders.toString()]">
             Agregar componente
             </button>
             <button mat-raised-button [ngClass]="isComponentsToDelete ? 'button-blue' : 'disable-button'" [disabled]="!isComponentsToDelete" (click)="deleteComponents()">
