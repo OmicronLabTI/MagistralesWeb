@@ -87,5 +87,11 @@ namespace Omicron.Catalogos.Facade.Catalogs
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.UploadConfigurationRouteFromExcel());
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetActiveRouteConfigurationsForProducts()
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.GetActiveRouteConfigurationsForProducts());
+        }
     }
 }

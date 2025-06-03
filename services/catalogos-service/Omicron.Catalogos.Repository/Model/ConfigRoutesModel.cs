@@ -72,6 +72,6 @@ namespace Omicron.Catalogos.Entities.Model
         /// </summary>
         /// <value> Status. </value>
         [Column("isactive")]
-        public bool Status { get; set; }
+        public bool IsActive { get; set; }
     }
 }
