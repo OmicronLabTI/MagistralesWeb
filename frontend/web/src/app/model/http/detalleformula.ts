@@ -1,4 +1,4 @@
-import {BaseResponseHttp} from './commons';
+import { BaseResponseHttp } from './commons';
 
 export class IFormulaRes extends BaseResponseHttp {
     response: IFormulaReq;
@@ -69,6 +69,14 @@ export class IFormulaDetalleReq {
     productoId?: string;
     isContainer?: boolean;
     isLabel?: boolean;
+    assignedBatches?: ISaveAssignedBatches[];
+}
+
+export class ISaveAssignedBatches {
+    assignedQty: number;
+    batchNumber: string;
+    areBatchesComplete: number;
+    sysNumber: number;
 }
 
 

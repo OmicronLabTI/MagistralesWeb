@@ -73,6 +73,11 @@ describe('PedidosService', () => {
         expect(service.getComponents('anyQueryStringToGetComponents', false) instanceof Observable).toBeTruthy();
         expect(service.getComponents('anyQueryStringToGetComponents', true) instanceof Observable).toBeTruthy();
     });
+  it('should getComponentsLotes', () => {
+        const service: PedidosService = TestBed.get(PedidosService);
+        expect(service.getComponentsLotes('anyQueryStringToGetComponents') instanceof Observable).toBeTruthy();
+        expect(service.getComponentsLotes('anyQueryStringToGetComponents') instanceof Observable).toBeTruthy();
+    });
   it('should updateFormula', () => {
         const service: PedidosService = TestBed.get(PedidosService);
         const componentsToSaveReq = new IComponentsSaveReq();

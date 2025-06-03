@@ -26,6 +26,7 @@ export const Endpoints = {
     formulaCarousel: `${environment.baseUrl}/api/sapadapter/faborders/details`,
     placeOrders: `${environment.baseUrl}/api/pedidos/asignar/manual`,
     components: `${environment.baseUrl}/api/sapadapter/componentes`,
+    componentsLotes: `${environment.baseUrl}/api/sapadapter/components/lotes/byitemcode`,
     updateFormula: `${environment.baseUrl}/api/pedidos/formula`,
     processOrdersDetail: `${environment.baseUrl}/api/pedidos/processByOrder`,
     placeOrdersAutomatic: `${environment.baseUrl}/api/pedidos/asignar/automatico`,

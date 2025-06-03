@@ -4,6 +4,7 @@ import { CommentsConfig } from '../model/device/incidents.model';
 import { ParamsPedidos } from '../model/http/pedidos';
 
 import { ObservableService } from './observable.service';
+import { componentLoteMock } from 'src/mocks/componentsMock';
 
 describe('ObservableService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
@@ -63,6 +64,14 @@ describe('ObservableService', () => {
     });
     service.setNewFormulaComponent({ modalType: 'formulaComponent' });
   });
+  it('should setNewComponentLotes', (done) => {
+    const service: ObservableService = TestBed.get(ObservableService);
+    service.getNewComponentLotes().subscribe(res => {
+      expect(res).toEqual(componentLoteMock);
+      done();
+    });
+    service.setNewComponentLotes(componentLoteMock);
+  });
   it('should materialComponent', (done) => {
     const service: ObservableService = TestBed.get(ObservableService);
     service.getNewMaterialComponent().subscribe(res => {
@@ -99,6 +108,22 @@ describe('ObservableService', () => {
       done();
     });
     service.setSearchComponentModal({
+      modalType: 'search',
+      filterOrdersData: filterOrdersDataConfig, data: [123, 1234, 1345]
+    });
+  });
+  it('should SearchComponentLoteModal', (done) => {
+    const service: ObservableService = TestBed.get(ObservableService);
+    const filterOrdersDataConfig = {
+      dateType: ConstOrders.defaultDateInit,
+      dateFull: '20/12/2020-01/12/2021', isFromIncidents: true, clientName: 'Client name',
+      status: ConstStatus.finalizado, docNum: 12345
+    } as ParamsPedidos;
+    service.getSearchComponentLoteModal().subscribe(res => {
+      expect(res.filterOrdersData).toEqual(filterOrdersDataConfig);
+      done();
+    });
+    service.setSearchComponentLoteModal({
       modalType: 'search',
       filterOrdersData: filterOrdersDataConfig, data: [123, 1234, 1345]
     });
