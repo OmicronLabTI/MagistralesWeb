@@ -217,6 +217,12 @@ class NetworkManager: SessionProtocol {
         let res: Observable<RawMaterialHistory> = makeRequest(request: req)
         return res
     }
+    
+    func getLotsByProductAndWarehouse(warehouseCode: String, product: String) -> Observable<LotsByProductResponse> {
+        let req: ApiService = ApiService.getLotsByProduct(warehouseCode: warehouseCode, product: product)
+        let res: Observable<LotsByProductResponse> = makeRequest(request: req)
+        return res
+    }
 
     private func makeRequest<T: BaseMappable>(
         request: ApiService, needsVPN: Bool = false) -> Observable<T> {

@@ -882,6 +882,22 @@ namespace Omicron.SapAdapter.Services.Constants
         public static string Description => "Pedido {0}";
 
         /// <summary>
+        /// Gets ItemCodeParam.
+        /// </summary>
+        /// <value>
+        /// String ItemCodeParam.
+        /// </value>
+        public static string ItemCodeParam => "itemcode";
+
+        /// <summary>
+        /// Gets WarehouseParam.
+        /// </summary>
+        /// <value>
+        /// String WarehouseParam.
+        /// </value>
+        public static string WarehouseParam => "warehouse";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

@@ -444,11 +444,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="itemCode">the item code.</param>
         /// <param name="warehouse">the warehouse.</param>
         /// <returns>the data.</returns>
-        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<CompleteDetalleFormulaModel> components)
+        public async Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<string> productIds, List<string> warehouseIds)
         {
-            var productIds = components.Select(c => c.ProductId).Distinct().ToList();
-            var warehouseIds = components.Select(c => c.Warehouse).Distinct().ToList();
-
             return await (
                 from bq in databaseContext.BatchesQuantity
                 join b in databaseContext.Batches

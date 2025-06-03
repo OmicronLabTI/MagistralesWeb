@@ -85,7 +85,7 @@ class BatchesTest: XCTestCase {
         // Given
         let dateTest = "30/11/2020"
         // When
-        let result = self.lotsViewModel!.calculateExpiredBatch(date: dateTest)
+        let result = UtilsManager.shared.calculateExpiredBatch(date: dateTest)
         // Then
         XCTAssertTrue(result)
         lotsViewModel?.validIfOrderCanBeFinalized()
@@ -94,7 +94,7 @@ class BatchesTest: XCTestCase {
         // Given
         let dateTest: String? = nil
         // When
-        let result = self.lotsViewModel!.calculateExpiredBatch(date: dateTest)
+        let result = UtilsManager.shared..calculateExpiredBatch(date: dateTest)
         // Then
         XCTAssertFalse(result)
     }
@@ -102,7 +102,7 @@ class BatchesTest: XCTestCase {
         // Given
         let dateTest: String = ""
         // Then
-        let result = self.lotsViewModel!.calculateExpiredBatch(date: dateTest)
+        let result = UtilsManager.shared..calculateExpiredBatch(date: dateTest)
         // When
         XCTAssertFalse(result)
     }
