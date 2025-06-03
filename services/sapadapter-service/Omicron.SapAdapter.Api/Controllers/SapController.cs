@@ -201,6 +201,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// GetBatchesComponentsByItemCodeAndWarehouses.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>the data to return.</returns>
+        [Route("/components/lotes/byitemcode")]
+        [HttpGet]
+        public async Task<IActionResult> GetBatchesComponentsByItemCodeAndWarehouses([FromQuery] Dictionary<string, string> parameters)
+        {
+            var result = await this.sapFacade.GetBatchesComponentsByItemCodeAndWarehouses(parameters);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Get last id of isolated production order created.
         /// </summary>
         /// <param name="productId">the product id.</param>

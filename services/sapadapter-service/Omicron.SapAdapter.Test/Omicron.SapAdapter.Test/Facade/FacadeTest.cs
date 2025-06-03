@@ -222,6 +222,23 @@ namespace Omicron.SapAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Test GetBatchesComponentsByItemCodeAndWarehouses.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetBatchesComponentsByItemCodeAndWarehouses()
+        {
+            // arrange
+            var parameters = new Dictionary<string, string>();
+
+            // act
+            var response = await this.sapFacade.GetBatchesComponentsByItemCodeAndWarehouses(parameters);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// test tet.
         /// </summary>
         /// <returns>test.</returns>
