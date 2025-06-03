@@ -349,20 +349,39 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
         private static List<ProductionOrderLineDto> AddComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> components, int orderId)
         {
-            var componentsToAdd = components.Where(x => !completeList.Any(c => c.ItemNo.Equals(x.ProductId))).ToList();
-            foreach (var component in componentsToAdd)
-            {
-                var newComponent = new ProductionOrderLineDto();
-                newComponent.ItemNo = component.ProductId;
-                newComponent.Warehouse = component.Warehouse;
-                newComponent.BaseQuantity = (double)component.BaseQuantity;
-                newComponent.PlannedQuantity = (double)component.RequiredQuantity;
-                newComponent.DocumentAbsoluteEntry = orderId;
-                newComponent.BatchNumbers = new List<ProductionOrderItemBatchDto>();
-                completeList.Add(newComponent);
-            }
+            var existingItemCodes = new HashSet<string>(completeList.Select(c => c.ItemNo));
+
+            completeList.AddRange(
+                components
+                    .Where(x => !existingItemCodes.Contains(x.ProductId))
+                    .Select(component => new ProductionOrderLineDto
+                    {
+                        ItemNo = component.ProductId,
+                        Warehouse = component.Warehouse,
+                        BaseQuantity = (double)component.BaseQuantity,
+                        PlannedQuantity = (double)component.RequiredQuantity,
+                        DocumentAbsoluteEntry = orderId,
+                        BatchNumbers = AssignedBatchesOnNewComponent(component),
+                    }));
 
             return completeList;
+        }
+
+        private static List<ProductionOrderItemBatchDto> AssignedBatchesOnNewComponent(CompleteDetalleFormulaDto component)
+        {
+            if (component.AssignedBatches.ListIsNullOrEmpty())
+            {
+                return new List<ProductionOrderItemBatchDto>();
+            }
+
+            return component.AssignedBatches.Select(ab => new ProductionOrderItemBatchDto
+            {
+                BatchNumber = ab.BatchNumber,
+                Quantity = ab.AssignedQty,
+                ItemCode = component.ProductId,
+                BaseLineNumber = 0,
+                SystemSerialNumber = ab.SysNumber,
+            }).ToList();
         }
 
         private static List<BatchNumbersDto> GetBatchNumbers(ProductionOrderLineDto productionOrderProducts)

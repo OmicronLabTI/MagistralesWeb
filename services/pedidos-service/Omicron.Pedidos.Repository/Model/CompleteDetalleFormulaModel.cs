@@ -8,6 +8,8 @@
 
 namespace Omicron.Pedidos.Entities.Model
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// class to join wor1 with oitm and oitw.
     /// </summary>
@@ -90,5 +92,11 @@ namespace Omicron.Pedidos.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         public string Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets AssignedBatches.
+        /// </summary>
+        /// <value>The AssignedBatches.</value>
+        public List<AssignBatchModel> AssignedBatches { get; set; }
     }
 }

@@ -26,6 +26,8 @@ class ComponentsViewController: UIViewController {
     var isLoading = false
     var typeOpen = TypeComponentsOpenDialog.detailOrder
     var disposeBag = DisposeBag()
+    var delegate: ComponentsDelegate?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         initComponents()
@@ -115,6 +117,7 @@ class ComponentsViewController: UIViewController {
         self.componentsViewModel.selectedComponent.onNext(data)
         let compFormVC = ComponentFormViewController()
         compFormVC.selectedComponent = data
+        compFormVC.delegate = self.delegate
         self.navigationController?.pushViewController(compFormVC, animated: true)
     }
     func closeSelection(data: ComponentO) {

@@ -90,5 +90,11 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         /// </summary>
         /// <value>The code.</value>
         public string Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets AssignedBatches.
+        /// </summary>
+        /// <value>The AssignedBatches.</value>
+        public List<AssignBatchDto> AssignedBatches { get; set; }
     }
 }

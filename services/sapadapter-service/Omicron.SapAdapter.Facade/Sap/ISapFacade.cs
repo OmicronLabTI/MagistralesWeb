@@ -99,6 +99,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetBatchesComponents(int ordenId);
 
         /// <summary>
+        /// GetBatchesComponentsByItemCodeAndWarehouses.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>the data to return.</returns>
+        Task<ResultDto> GetBatchesComponentsByItemCodeAndWarehouses(Dictionary<string, string> parameters);
+
+        /// <summary>
         /// Get last id of isolated production order created.
         /// </summary>
         /// <param name="productId">the product id.</param>

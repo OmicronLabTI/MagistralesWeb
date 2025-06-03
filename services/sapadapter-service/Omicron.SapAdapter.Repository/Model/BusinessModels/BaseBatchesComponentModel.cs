@@ -1,5 +1,5 @@
 ﻿// <summary>
-// <copyright file="BatchesComponentModel.cs" company="Axity">
+// <copyright file="BaseBatchesComponentModel.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
@@ -13,30 +13,24 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
     /// <summary>
     /// The batch component.
     /// </summary>
-    public class BatchesComponentModel : BaseBatchesComponentModel
+    public class BaseBatchesComponentModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string DescripcionProducto { get; set; }
+        public string CodigoProducto { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public double TotalNecesario { get; set; }
+        public string Almacen { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public double TotalSeleccionado { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public List<AssignedBatches> LotesAsignados { get; set; }
+        public List<ValidBatches> Lotes { get; set; }
     }
 }
