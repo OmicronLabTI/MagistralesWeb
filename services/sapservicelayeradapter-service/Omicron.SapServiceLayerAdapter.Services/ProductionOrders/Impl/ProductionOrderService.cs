@@ -15,16 +15,19 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
     {
         private readonly IServiceLayerClient serviceLayerClient;
         private readonly ILogger logger;
+        private readonly IMapper mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductionOrderService"/> class.
         /// </summary>
         /// <param name="serviceLayerClient">The serviceLayerClient.</param>
         /// <param name="logger">The logger.</param>
-        public ProductionOrderService(IServiceLayerClient serviceLayerClient, ILogger logger)
+        /// <param name="mapper">The mapper.</param>
+        public ProductionOrderService(IServiceLayerClient serviceLayerClient, ILogger logger, IMapper mapper)
         {
             this.serviceLayerClient = serviceLayerClient.ThrowIfNull(nameof(serviceLayerClient));
             this.logger = logger.ThrowIfNull(nameof(logger));
+            this.mapper = mapper.ThrowIfNull(nameof(mapper));
         }
 
         /// <inheritdoc/>
@@ -109,7 +112,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 productionOrder.ProductionOrderLines = UpdateComponents(productionOrder.ProductionOrderLines, updateFormula.Components);
                 productionOrder.ProductionOrderLines = DeleteComponents(productionOrder.ProductionOrderLines, deleteItems);
 
-                await this.SaveChanges(productionOrder, updateFormula.FabOrderId);
+                var request = this.mapper.Map<UpdateProductionOrderDto>(productionOrder);
+                await this.SaveChanges(request, updateFormula.FabOrderId);
             }
             catch (Exception ex)
             {
@@ -594,7 +598,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             return JsonConvert.DeserializeObject<T>(response.Response.ToString());
         }
 
-        private async Task SaveChanges(ProductionOrderDto productionOrder, int id)
+        private async Task SaveChanges(UpdateProductionOrderDto productionOrder, int id)
         {
             var body = JsonConvert.SerializeObject(productionOrder);
             var result = await this.serviceLayerClient.PutAsync(string.Format(ServiceQuerysConstants.QryProductionOrderById, id), body);
