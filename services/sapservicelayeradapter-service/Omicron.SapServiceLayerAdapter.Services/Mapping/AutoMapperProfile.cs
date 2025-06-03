@@ -21,6 +21,9 @@ namespace Omicron.SapServiceLayerAdapter.Services.Mapping
             this.CreateMap<DateTime, string>().ConvertUsing(date => date.ToString("yyyy-MM-ddTHH:mm:ss.fff"));
             this.CreateMap<string, DateTime>().ConvertUsing(dateStr => DateTime.Parse(dateStr));
             this.CreateMap<ResultModel, ResultDto>();
+            this.CreateMap<ProductionOrderDto, UpdateProductionOrderDto>();
+            this.CreateMap<ProductionOrderLineDto, BaseCreateProductionOrderLineDto>();
+            this.CreateMap<ProductionOrderItemBatchDto, BaseBatchProductionOrderDto>();
         }
     }
 }
