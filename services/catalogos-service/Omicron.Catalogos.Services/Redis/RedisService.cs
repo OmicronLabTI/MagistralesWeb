@@ -44,5 +44,12 @@ namespace Omicron.Catalogos.Services.Redis
             await this.database.StringSetAsync(key, value, timeToLive);
             return true;
         }
+
+        /// <inheritdoc/>
+        public async Task<string> GetRedisKey(string key)
+        {
+            var result = await this.database.StringGetAsync(key);
+            return result.HasValue ? result.ToString() : string.Empty;
+        }
     }
 }
