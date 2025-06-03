@@ -55,14 +55,16 @@ class AddComponentViewModel {
         loadLotsByProductAndWarehouse(productId: productId, warehouseCode: component.warehouse, product: newProduct, callback: addNewComponent)
     }
 
-    func selectedQuantityChange(quantity: Decimal) {
+    func addNewLot(quantity: Decimal) {
         let row = self.selectedAvailable
         let product = self.products[selectedLineDoc]
         let available = product.availableLots[row]
     
         // valida si la cantidad es cero o si es mayor al necesario, en este caso no hacer nada
-        if quantity == 0 || quantity > product.totalNecesary || available.cantidadDisponible
-            == 0 || quantity > (available.cantidadDisponible ?? 0) {
+        var first = NSDecimalNumber(decimal: quantity).doubleValue  > NSDecimalNumber(decimal: product.totalNecesary).doubleValue
+        var second = available.cantidadDisponible == 0
+        var third = quantity > (available.cantidadDisponible ?? 0)
+        if quantity == 0 || first || second || third {
             return
         }
         
@@ -108,7 +110,7 @@ class AddComponentViewModel {
         self.dataLotsSelected.onNext(product.selectedLots)
     }
     
-    func  calculateSelectedQuanties(product: AddComponent) {
+    func calculateSelectedQuanties(product: AddComponent) {
         // despues hacer los calculos del total necesario, total seleccionado
         let selectedsQuantityTotal = product.selectedLots.compactMap({ $0.cantidadSeleccionada }).reduce(0, +)
         product.totalNecesary = Decimal(product.requiredQuantity) - selectedsQuantityTotal
@@ -246,22 +248,21 @@ class AddComponentViewModel {
             self.dataLotsAvailable.onNext(newProduct.availableLots)
             self.dataLotsSelected.onNext(newProduct.selectedLots)
             self.selectedLineDoc = productIndex
-            self.saveButtonEnabled.onNext(false)
             self.deleteButtonEnabled.onNext(false)
             self.addButtonEnabled.onNext(false)
+            self.validateSaveButton()
     }
     
     func addNewComponent(availableLots: [LotsAvailable], newProduct: AddComponent) -> Void {
             newProduct.availableLots = availableLots
-            self.calculateSelectedQuanties(product: newProduct)
-            self.products.append(newProduct)
-            self.renderProducts.onNext(self.products)
-            self.selectedLineDoc = products.count - 1
-            self.selectLineDocIndex.onNext(self.selectedLineDoc)
-            self.dataLotsAvailable.onNext(newProduct.availableLots)
-            self.dataLotsSelected.onNext(newProduct.selectedLots)
-            self.saveButtonEnabled.onNext(false)
-             validateSaveButton()
+            calculateSelectedQuanties(product: newProduct)
+            products.append(newProduct)
+            renderProducts.onNext(self.products)
+            selectedLineDoc = products.count - 1
+            selectLineDocIndex.onNext(self.selectedLineDoc)
+            dataLotsAvailable.onNext(newProduct.availableLots)
+            dataLotsSelected.onNext(newProduct.selectedLots)
+            validateSaveButton()
     }
     
     func loadLotsByProductAndWarehouse(productId: String,

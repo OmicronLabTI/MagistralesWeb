@@ -86,7 +86,7 @@ namespace Omicron.Catalogos.Services.Constants
         /// <summary>
         /// the container file.
         /// </summary>
-        public const string RedisKey = "configroute-valids";
+        public const string ConfigRoutesRedisKey = "configroute-valids";
 
         /// <summary>
         /// NoMatching.
