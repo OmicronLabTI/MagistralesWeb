@@ -199,5 +199,17 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
                 ? string.Format(ServiceConstants.DictionaryValueFormat, existingMessage, value)
                 : value;
         }
+
+        /// <summary>
+        /// Validate if list is null or empty.
+        /// </summary>
+        /// <typeparam name="T">Type.</typeparam>
+        /// <param name="source">Generic list source.</param>
+        /// <returns>Validation Result.</returns>
+        public static bool ListIsNullOrEmpty<T>(this IEnumerable<T> source)
+        {
+            return source == null || !source.Any();
+        }
+
     }
 }

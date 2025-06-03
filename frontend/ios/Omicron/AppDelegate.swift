@@ -58,5 +58,6 @@ import  Firebase
         Resolver.register { ContainerViewModel() }.scope(.unique)
         Resolver.register { BulkOrderViewModel() }.scope(.unique)
         Resolver.register { HistoryViewModel() }.scope(.application)
+        Resolver.register { AddComponentViewModel() }.scope(.application)
     }
 }

@@ -149,6 +149,8 @@ namespace Omicron.SapAdapter.Test
                 new Batches { AbsEntry = 2, DistNumber = "Lote1", ItemCode = "Linea1", SysNumber = 1 },
 
                 new Batches { AbsEntry = 4, DistNumber = "Linea50", ItemCode = "Linea50", SysNumber = 1 },
+
+                new Batches { AbsEntry = 5, DistNumber = "PROD 01", ItemCode = "PROD 01", SysNumber = 1 },
             };
         }
 
@@ -167,6 +169,10 @@ namespace Omicron.SapAdapter.Test
                 new BatchesQuantity { AbsEntry = 3, ItemCode = "Linea1", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
 
                 new BatchesQuantity { AbsEntry = 4, ItemCode = "Linea50", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "PT" },
+
+                new BatchesQuantity { AbsEntry = 5, ItemCode = "PROD 01", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "BE" },
+
+                new BatchesQuantity { AbsEntry = 6, ItemCode = "PROD 01", SysNumber = 1, CommitQty = 10, Quantity = 100, WhsCode = "BQ" },
             };
         }
 
