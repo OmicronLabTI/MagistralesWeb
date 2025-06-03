@@ -97,5 +97,10 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
             var classificationsUpper = classifications.Select(x => x.ToUpper());
             return await this.databaseContext.SortingRouteModel.Where(x => classificationsUpper.Contains(x.Classification.ToUpper())).AsNoTracking().ToListAsync();
         }
+
+        public async Task<List<ConfigRoutesModel>> GetConfigurationRoute()
+        {
+            return await this.databaseContext.SortingRouteModel.Where(x => x.Status).AsNoTracking().ToListAsync();
+        }
     }
 }
