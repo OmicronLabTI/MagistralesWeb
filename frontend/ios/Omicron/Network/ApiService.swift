@@ -33,7 +33,7 @@ enum ApiService {
     case createOrderBulk(data: BulkOrderCreate)
     case createComponents(data: SendToStoreRequest)
     case getHistory(data: RawMaterialHistoryReq)
-    case getLotsByProduct(warehouseCode: String, product: String)
+    case getLotsByProduct(data: LotsByProductRequest)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -101,8 +101,8 @@ extension ApiService: AuthorizedTargetType {
             return "/warehouses/request/rawmaterial"
         case .getHistory:
             return "/sapadapter/get/rawmaterialrequest"
-        case .getLotsByProduct(let warehouseCode, let product):
-            return "/sapadapter/components/lotes/byitemcode?itemcode=\(product)&warehouse=\(warehouseCode)"
+        case .getLotsByProduct:
+            return "/sapadapter/components/lotes/byitemcode"
         }
     }
     var method: Moya.Method {
@@ -146,8 +146,7 @@ extension ApiService: AuthorizedTargetType {
              .getOrdenDetail,
              .askIfOrderCanBeFinalized,
              .getConnect,
-             .getContainer,
-             .getLotsByProduct:
+             .getContainer:
             return .requestPlain
         case .createComponents(let data):
             return .requestJSONEncodable(data)
@@ -166,6 +165,8 @@ extension ApiService: AuthorizedTargetType {
         case .getComponents(let data):
             return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
         case .getWorkload(let data):
+            return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
+        case .getLotsByProduct(let data):
             return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
         case .postOrdersPDF(let data):
             return .requestJSONEncodable(data)

@@ -20,11 +20,12 @@ import {SignaturePadModule} from 'angular2-signaturepad';
 import {AddCommentsDialogComponent} from './dialogs/add-comments-dialog/add-comments-dialog.component';
 import { NgxMaskModule } from 'ngx-mask';
 import { LimitEntiresDirective } from './directives/limit-entires.directive';
+import { SearchComponentLoteDialogComponent } from './dialogs/search-component-lote-dialog/search-component-lote-dialog.component';
 
 @NgModule({
     declarations: [
         AppComponent, PlaceOrderDialogComponent, ComponentSearchComponent, FindOrdersDialogComponent, MiListaComponent,
-        ComponentslistComponent, RequestSignatureDialogComponent, AddCommentsDialogComponent
+        ComponentslistComponent, RequestSignatureDialogComponent, AddCommentsDialogComponent, SearchComponentLoteDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -51,7 +52,8 @@ import { LimitEntiresDirective } from './directives/limit-entires.directive';
         MiListaComponent,
         ComponentslistComponent,
         RequestSignatureDialogComponent,
-        AddCommentsDialogComponent
+        AddCommentsDialogComponent,
+        SearchComponentLoteDialogComponent
     ],
     exports: [
     ],
