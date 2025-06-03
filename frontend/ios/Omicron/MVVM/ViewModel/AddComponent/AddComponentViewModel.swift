@@ -22,66 +22,239 @@ class AddComponentViewModel {
     var dataLotsAvailable = BehaviorSubject<[LotsAvailable]>(value: [])
     var dataLotsSelected = BehaviorSubject<[LotsSelected]>(value: [])
     var selectLineDocIndex = PublishSubject<Int>()
+    var updateProduct = PublishSubject<(AddComponent, Int)>()
+    var deleteButtonEnabled = PublishSubject<Bool>()
+    var addButtonEnabled = PublishSubject<Bool>()
+    var saveButtonEnabled = PublishSubject<Bool>()
+    var details: [Detail] = []
+    var returnBackPage = PublishSubject<Void>()
 
-    var selectedLineDoc = 0
+    var selectedLineDoc = -1
+    var selectedAvailable = -1
+    var selectedLotsSelected = -1
     
     func getLotsByProduct(component: ComponentFormValues) {
         let productId = component.selectedComponent.productId ?? String()
-        if (products.contains { $0.productId == productId }) {
+        if (products.contains { $0.productId == productId } || details.contains { $0.productID == productId }) {
             self.showAlert.onNext("El componente \(productId) ya existe para esta solicitud")
             return
         }
-        // self.loading.onNext(true)
-        networkManager.getLotsByProductAndWarehouse(warehouseCode: component.warehouse, product: productId).subscribe(onNext: {[weak self] res in
-            let product = res.response
+        let newProduct = AddComponent(productId: productId,
+                                      description: component.selectedComponent.description ?? String(),
+                                      warehouse: component.warehouse,
+                                      availableLots: [],
+                                      selectedLots: [],
+                                      requiredQuantity: component.requiredQuantity,
+                                      selectedQuantity: 0,
+                                      baseQuantity: component.baseQuantity,
+                                      totalNecesary: Decimal(component.requiredQuantity),
+                                      selectedTotal: 0,
+                                      componentInfo: component.selectedComponent,
+                                      unit: component.selectedComponent.unit ?? String())
+        
+        loadLotsByProductAndWarehouse(productId: productId, warehouseCode: component.warehouse, product: newProduct, callback: addNewComponent)
+    }
+
+    func selectedQuantityChange(quantity: Decimal) {
+        let row = self.selectedAvailable
+        let product = self.products[selectedLineDoc]
+        let available = product.availableLots[row]
+    
+        // valida si la cantidad es cero o si es mayor al necesario, en este caso no hacer nada
+        if quantity == 0 || quantity > product.totalNecesary || available.cantidadDisponible
+            == 0 || quantity > (available.cantidadDisponible ?? 0) {
+            return
+        }
+        
+        // primero agregar este nuevo lote a selectedLots si no existe, en caso contrario solo sumar
+        let selectedLotIndex = product.selectedLots.firstIndex(where: ({ $0.numeroLote == available.numeroLote }))
+        if (selectedLotIndex != nil) {
+            product.selectedLots[selectedLotIndex ?? 0].cantidadSeleccionada! += quantity
+        } else {
+            product.selectedLots.append(LotsSelected(numeroLote: available.numeroLote ?? String(),
+                                                     cantidadSeleccionada: quantity,
+                                                     sysNumber: available.sysNumber ?? 0,
+                                                     expiredBatch: available.expiredBatch))
+        }
+        // restarle a cantidad disponible la cantidad usada
+        product.availableLots[row].cantidadDisponible! -= quantity
+        self.calcValues(product: product)
+        self.addButtonEnabled.onNext(false)
+        self.validateSaveButton()
+    }
+    
+    func deleteSelectedLot() {
+        let product = products[self.selectedLineDoc]
+        let selectedLot = product.selectedLots[selectedLotsSelected]
+        
+        let availableIndex = product.availableLots.firstIndex(where: { $0.numeroLote == selectedLot.numeroLote })
+        if (availableIndex != nil) {
+            product.availableLots[availableIndex ?? 0].cantidadDisponible! += selectedLot.cantidadSeleccionada ?? 0
+            product.selectedLots.remove(at: selectedLotsSelected)
+        } else {
+            return
+        }
+
+        calcValues(product: product)
+        self.selectedLotsSelected = -1
+        self.deleteButtonEnabled.onNext(false)
+        validateSaveButton()
+    }
+    
+    func calcValues(product: AddComponent)  {
+        calculateSelectedQuanties(product: product)
+        self.updateProduct.onNext((product, self.selectedLineDoc))
+        self.dataLotsAvailable.onNext(product.availableLots)
+        self.dataLotsSelected.onNext(product.selectedLots)
+    }
+    
+    func calculateSelectedQuanties(product: AddComponent) {
+        // despues hacer los calculos del total necesario, total seleccionado
+        let selectedsQuantityTotal = product.selectedLots.compactMap({ $0.cantidadSeleccionada }).reduce(0, +)
+        product.totalNecesary = Decimal(product.requiredQuantity) - selectedsQuantityTotal
+        product.selectedTotal = selectedsQuantityTotal
+
+        product.availableLots.forEach({ lot in
+            lot.cantidadSeleccionada = min(product.totalNecesary, lot.cantidadDisponible ?? 0)
+        })
+    }
+    
+    func deleteComponent(row: Int) {
+        products.remove(at: row)
+        renderProducts.onNext(products)
+        selectedLineDoc = -1
+        selectedAvailable = -1
+        selectedLotsSelected = -1
+        dataLotsAvailable.onNext([])
+        dataLotsSelected.onNext([])
+        addButtonEnabled.onNext(false)
+        deleteButtonEnabled.onNext(false)
+        validateSaveButton()
+    }
+    
+    func resetValues() {
+        products = []
+        selectedLineDoc = -1
+        selectedAvailable = -1
+        selectedLotsSelected = -1
+        renderProducts.onNext([])
+        dataLotsAvailable.onNext([])
+        dataLotsSelected.onNext([])
+        saveButtonEnabled.onNext(false)
+    }
+    
+    func validateSaveButton() {
+        if products.isEmpty {
+            saveButtonEnabled.onNext(false)
+            return
+        }
+        
+        let allBatchesAssigned = products.allSatisfy(({ $0.totalNecesary == 0}))
+        saveButtonEnabled.onNext(allBatchesAssigned)
+    }
+
+    func saveChanges(detail: OrderDetail) {
+        var components: [Component] = []
+        products.forEach(({
+            let product = $0
+            let assignedBatches: [AssignedBatch] = product.selectedLots
+                .map(({ return AssignedBatch(assignedQty: NSDecimalNumber(decimal:  $0.cantidadSeleccionada ?? 0.0).doubleValue,
+                                             batchNumber: $0.numeroLote ?? String(),
+                                             areBatchesComplete: 1,
+                                             sysNumber: $0.sysNumber ?? 0)
+            }))
+            
+            let newComponent = Component(orderFabID: 0,
+                                         productId: product.productId,
+                                         componentDescription: product.description,
+                                         baseQuantity: product.baseQuantity,
+                                         requiredQuantity: product.requiredQuantity,
+                                         consumed: NSDecimalNumber(decimal: product.componentInfo.consumed ?? 0.0).doubleValue,
+                                         available: NSDecimalNumber(decimal: product.componentInfo.available ?? 0.0).doubleValue,
+                                         unit: product.componentInfo.unit ?? String(),
+                                         warehouse: product.warehouse,
+                                         pendingQuantity: 0,
+                                         stock: NSDecimalNumber(decimal: product.componentInfo.stock ?? 0.0).doubleValue,
+                                         warehouseQuantity: NSDecimalNumber(decimal: product.componentInfo.warehouseQuantity ?? 0.0).doubleValue,
+                                         action: "insert",
+                                         assignedBatches: assignedBatches)
+            
+            components.append(newComponent)
+        }))
+        
+        let fechaFinFormated = UtilsManager.shared.formattedDateFromString(
+            dateString: detail.dueDate ?? String(), withFormat: DateFormat.yyyymmdd)
+        let request = OrderDetailRequest(fabOrderID: detail.productionOrderID ?? 0,
+                                         plannedQuantity: detail.plannedQuantity ?? 0,
+                                         fechaFin: fechaFinFormated ?? String(),
+                                         comments: detail.comments ?? String(),
+                                         warehouse: detail.warehouse ?? String(),
+                                         components: components)
+
+        self.loading.onNext(true)
+        networkManager.updateDeleteItemOfTableInOrderDetail(request).subscribe(onNext: {[weak self] res in
             guard let self = self else { return }
-            let newProduct = AddComponent(productId: productId,
-                                          description: component.selectedComponent.description ?? String(),
-                                          warehouse: component.warehouse,
-                                          availableLots: product?.lotes ?? [],
-                                          selectedLots: [],
-                                          requiredQuantity: component.requiredQuantity,
-                                          selectedQuantity: 0,
-                                          baseQuantity: component.baseQuantity,
-                                          totalNecesary: Decimal(component.requiredQuantity),
-                                          selectedTotal: 0)
+            self.loading.onNext(false)
+            self.returnBackPage.onNext(())
+        }, onError: { [weak self] _ in
+            guard let self = self else { return }
+            self.loading.onNext(false)
+            self.showAlert.onNext(CommonStrings.errorSaveLots)
+        }).disposed(by: disposeBag)
+    }
+    
+    func changeWarehouseCode(productId: String, warehouseCode: String) {
+        let productIndex = products.firstIndex(where: ({ $0.productId == productId }))
+        if (productIndex != nil) {
+            products[productIndex ?? 0].warehouse = warehouseCode
+            loadLotsByProductAndWarehouse(productId: productId, warehouseCode: warehouseCode, product: products[productIndex ?? 0], callback: editComponent)
+        }
+    }
+    
+    
+    func editComponent(availableLots: [LotsAvailable], newProduct: AddComponent) -> Void {
+            newProduct.availableLots = availableLots
+            newProduct.selectedLots = []
+            let productIndex = products.firstIndex(where: ({ $0.productId == newProduct.productId })) ?? 0
+            self.calculateSelectedQuanties(product: newProduct)
+            self.updateProduct.onNext((newProduct, productIndex))
+            self.dataLotsAvailable.onNext(newProduct.availableLots)
+            self.dataLotsSelected.onNext(newProduct.selectedLots)
+            self.selectedLineDoc = productIndex
+            self.saveButtonEnabled.onNext(false)
+            self.deleteButtonEnabled.onNext(false)
+            self.addButtonEnabled.onNext(false)
+    }
+    
+    func addNewComponent(availableLots: [LotsAvailable], newProduct: AddComponent) -> Void {
+            newProduct.availableLots = availableLots
+            self.calculateSelectedQuanties(product: newProduct)
             self.products.append(newProduct)
             self.renderProducts.onNext(self.products)
             self.selectedLineDoc = products.count - 1
             self.selectLineDocIndex.onNext(self.selectedLineDoc)
             self.dataLotsAvailable.onNext(newProduct.availableLots)
             self.dataLotsSelected.onNext(newProduct.selectedLots)
-            // self.loading.onNext(false)
-        }, onError: { [weak self] _ in
-            guard let self = self else { return }
-            self.loading.onNext(false)
-            self.showAlert.onNext(CommonStrings.errorGetLotsByProduct)
-        }).disposed(by: disposeBag)
+            self.saveButtonEnabled.onNext(false)
     }
     
-    func selectedQuantityChange(row: Int) {
-        let product = self.products[selectedLineDoc]
-        let available = product.availableLots[row]
-    
-        // valida si la cantidad es cero o si es mayor al necesario, en este caso no hacer nada
-        let quantity = available.cantidadSeleccionada ?? 0
-        if quantity == 0 || quantity > product.totalNecesary || available.cantidadDisponible
-            == 0 || quantity > (available.cantidadDisponible ?? 0) {
-            return
-        }
+    func loadLotsByProductAndWarehouse(productId: String,
+                                       warehouseCode: String,
+                                       product: AddComponent,
+                                       callback: @escaping ([LotsAvailable], AddComponent) -> Void) {
+        self.loading.onNext(true)
+        networkManager.getLotsByProductAndWarehouse(warehouseCode: warehouseCode, product: productId)
+            .subscribe(onNext: { [weak self] res in
+                guard self != nil else { return }
+                guard let self = self else { return }
+                guard let productResponse = res.response else { return }
+                callback(productResponse.lotes, product)
+                self.loading.onNext(false)
+            }, onError: { [weak self] _ in
+                guard let self = self else { return }
+                self.loading.onNext(false)
+                self.showAlert.onNext(CommonStrings.errorGetLotsByProduct)
+            }).disposed(by: disposeBag)
+    }
 
-        // en caso de que si restarle el total necesario esta cantidad
-        product.totalNecesary = (product.totalNecesary) - quantity
-        product.selectedTotal = product.selectedLots.compactMap({ $0.cantidadSeleccionada }).reduce(0, +)
-        product.availableLots.forEach({ lot in
-            if lot.numeroLote == available.numeroLote {
-                lot.cantidadDisponible = (lot.cantidadDisponible ?? 0) - quantity
-            }
-            lot.cantidadSeleccionada = min(product.totalNecesary, lot.cantidadDisponible ?? 0)
-        })
-        /*if let availableBatches = product.lotesDisponibles {
-            self?.dataLotsAvailable.onNext(availableBatches)
-        }
-        self?.dataOfLots.onNext(self?.documentLines ?? [])*/
-    }
 }

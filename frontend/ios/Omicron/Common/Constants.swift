@@ -220,6 +220,7 @@ struct CommonStrings {
     static let errorGetHistoryOrders = "Error al obtener el historial de solicitudes de traslados"
     static let selectFilter = "Selecciona un filtro"
     static let errorGetLotsByProduct = "Error al obtener los lotes"
+    static let errorSaveLots = "Error al guardar los nuevos componentes"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"

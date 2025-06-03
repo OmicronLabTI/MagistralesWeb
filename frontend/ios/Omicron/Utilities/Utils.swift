@@ -26,7 +26,7 @@ class UtilsManager {
             button.titleLabel?.font = .fontDefaultBold(16)
         button.backgroundColor = backgroudColor
     }
-    func labelsStyle(label: UILabel, text: String, fontSize: CGFloat, typeFont: String = "medium") {
+    func  labelsStyle(label: UILabel, text: String, fontSize: CGFloat, typeFont: String = "medium") {
         label.text = text
         switch typeFont {
         case "bold":

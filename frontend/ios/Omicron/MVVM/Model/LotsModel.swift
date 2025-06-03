@@ -137,6 +137,20 @@ extension LotsSelected: Mappable {
     }
 }
 
+class AssignedBatch: Codable {
+    var assignedQty: Double
+    var batchNumber: String
+    var areBatchesComplete: Int
+    var sysNumber: Int
+
+    init(assignedQty: Double, batchNumber: String, areBatchesComplete: Int, sysNumber: Int) {
+        self.assignedQty = assignedQty
+        self.batchNumber = batchNumber
+        self.areBatchesComplete = areBatchesComplete
+        self.sysNumber = sysNumber
+    }
+}
+
 class BatchSelected: Codable {
     var orderId: Int?
     var assignedQty: Decimal?
