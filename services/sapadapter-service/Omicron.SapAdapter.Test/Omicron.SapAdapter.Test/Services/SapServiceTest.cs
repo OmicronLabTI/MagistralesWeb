@@ -1247,6 +1247,81 @@ namespace Omicron.SapAdapter.Test.Services
         }
 
         /// <summary>
+        /// gets the orders test.
+        /// </summary>
+        /// <returns>the orders.</returns>
+        [Test]
+        public async Task GetOrdersAllClassifications()
+        {
+            // arrange
+            var dates = new DateTime(2025, 05, 28).ToString("dd/MM/yyyy");
+            var dateFinal = new DateTime(2025, 05, 30).ToString("dd/MM/yyyy");
+
+            var parameters = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                { ServiceConstants.Classifications, "Todas" },
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+            };
+
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockDao = new Mock<ISapDao>();
+
+            mockDao
+            .Setup(dao => dao.GetAllOrdersByFechaIni(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .ReturnsAsync(this.GetCompleteOrderModel());
+
+            var mockLog = new Mock<ILogger>();
+            mockLog
+                .Setup(m => m.Information(It.IsAny<string>()));
+
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
+            mockCatalogs
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultCatalogosDto()));
+
+            mockPedidoService
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrders()));
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
+
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "OmicronRecipeAddress")]).Returns("http://localhost:5002/");
+
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(mockDao.Object, mockLog.Object);
+            var localService = new SapService(mockDao.Object, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
+
+            // act
+            var result = await localService.GetOrders(parameters);
+            var response = result.Response as List<CompleteOrderModel>;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(response.Count, Is.EqualTo(3));
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(response, Is.Not.Null);
+                Assert.That(response.Count, Is.EqualTo(3));
+                Assert.That(response.Any(x => x.DocNum == 175623), Is.True);
+                Assert.That(response.Any(x => x.DocNum == 175627), Is.True);
+                Assert.That(response.Any(x => x.DocNum == 175629), Is.True);
+            });
+        }
+
+        /// <summary>
         /// Get Raw Material Request.
         /// </summary>
         /// <param name="userId">User id.</param>

@@ -86,6 +86,16 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string Limit = "limit";
 
         /// <summary>
+        /// Const for the all classifications.
+        /// </summary>
+        public const string AllClassifications = "Todas";
+
+        /// <summary>
+        /// Const for the classifications.
+        /// </summary>
+        public const string Classifications = "classifications";
+
+        /// <summary>
         /// the filter for orders.
         /// </summary>
         public const string ItemCode = "code";

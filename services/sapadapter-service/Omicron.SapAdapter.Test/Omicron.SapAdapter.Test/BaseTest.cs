@@ -784,6 +784,26 @@ namespace Omicron.SapAdapter.Test
         /// </summary>
         /// <param name="dataToSend">the data to send.</param>
         /// <returns>the object.</returns>
+        public ResultDto GetResultCatalogosDto()
+        {
+            var userOrders = new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Field = ServiceConstants.CardCodeResponsibleMedic, Value = "C05298" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                Comments = null,
+                Response = JsonConvert.SerializeObject(userOrders),
+            };
+        }
+
+        /// <summary>
+        /// Gets the resultDto.
+        /// </summary>
+        /// <param name="dataToSend">the data to send.</param>
+        /// <returns>the object.</returns>
         public ResultModel GetResultModel(object dataToSend)
         {
             return new ResultModel
@@ -1006,6 +1026,44 @@ namespace Omicron.SapAdapter.Test
             {
                new WarehouseModel { WarehouseCode = "AMP", WarehouseName = "Materias Primas Alfareros", },
                new WarehouseModel { WarehouseCode = "be", WarehouseName = "BIOEQUAL", },
+            };
+        }
+
+        /// <summary>
+        /// Gets the attachments models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<CompleteOrderModel> GetCompleteOrderModel()
+        {
+            return new List<CompleteOrderModel>
+            {
+               new CompleteOrderModel { DocNum = 175623, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "MG", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
+               new CompleteOrderModel { DocNum = 175627, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "MN", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
+               new CompleteOrderModel { DocNum = 175629, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "BE", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the attachments models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetUserOrders()
+        {
+            var userOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 1000, Productionorderid = "226274", Salesorderid = "175623", Status = "Finalizado", Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", CloseDate = new DateTime(2025, 5, 28), Comments = "comments", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1 },
+                new UserOrderModel { Id = 1002, Productionorderid = "226278", Salesorderid = "175627", Status = "Finalizado", Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", CloseDate = new DateTime(2025, 5, 28), Comments = "comments", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1 },
+                new UserOrderModel { Id = 1003, Productionorderid = "226280", Salesorderid = "175629", Status = "Finalizado", Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", CloseDate = new DateTime(2025, 5, 28), Comments = "comments", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1 },
+            };
+
+            return new ResultDto
+            {
+                Response = JsonConvert.SerializeObject(userOrders),
+                Code = 200,
+                Comments = string.Empty,
+                ExceptionMessage = string.Empty,
+                Success = true,
+                UserError = string.Empty,
             };
         }
     }
