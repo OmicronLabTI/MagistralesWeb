@@ -84,6 +84,7 @@ export const mockIFormulaDetalleReq: IFormulaDetalleReq[] = [
         productoId: 'PROD001',
         isContainer: false,
         isLabel: false,
+        action: 'insert',
         assignedBatches: [
             {
                 assignedQty: 60,
@@ -112,7 +113,7 @@ export const lotesComponentMock: IComponentLotes = {
             cantidadAsignada: 2.673856,
             sysNumber: 158,
             fechaExp: '29/03/2023',
-            fechaExpDateTime: '2023-03-29T00:00:00',
+            fechaExpDateTime: new Date(),
             itemCode: 'MP-109',
             quantity: 4.07925
         },
