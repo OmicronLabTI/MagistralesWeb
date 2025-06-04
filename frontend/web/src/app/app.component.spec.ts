@@ -153,7 +153,9 @@ describe('AppComponent', () => {
           'setNewMaterialComponent',
           'setNewSearchOrderModal',
           'setNewCommentsResult',
-          'setNewDataSignature'
+          'setNewDataSignature',
+          'getSearchComponentLoteModal',
+          'setNewComponentLotes'
         ]
       );
 
@@ -172,6 +174,7 @@ describe('AppComponent', () => {
     observableServiceSpy.getOpenSignatureDialog.and.returnValue(of(''));
     observableServiceSpy.getOpenCommentsDialog.and.returnValue(of(commentsConfig));
     observableServiceSpy.setCallHttpService.and.returnValue();
+    observableServiceSpy.getSearchComponentLoteModal.and.returnValue(of(searchComponentModal));
 
     TestBed.configureTestingModule({
       imports: [

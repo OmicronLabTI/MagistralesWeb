@@ -72,6 +72,10 @@ namespace Omicron.Catalogos.Test.Facade
                .Setup(m => m.UploadConfigurationRouteFromExcel())
                .Returns(Task.FromResult(response));
 
+            mockServicesCat
+               .Setup(m => m.GetActiveRouteConfigurationsForProducts())
+               .Returns(Task.FromResult(response));
+
             this.catalogFacade = new CatalogFacade(mockServicesCat.Object, this.mapper);
             this.userFacade = new UserFacade(mockServices.Object);
         }
@@ -202,6 +206,21 @@ namespace Omicron.Catalogos.Test.Facade
         {
             // Act
             var response = await this.catalogFacade.UploadConfigRouteFromExcel();
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
+        }
+
+        /// <summary>
+        /// GetActiveRouteConfigurationsForProducts.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        [Test]
+        public async Task GetActiveRouteConfigurationsForProducts()
+        {
+            // Act
+            var response = await this.catalogFacade.GetActiveRouteConfigurationsForProducts();
 
             // Assert
             Assert.That(response, Is.Not.Null);

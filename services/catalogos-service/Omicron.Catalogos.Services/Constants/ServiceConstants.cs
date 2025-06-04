@@ -86,7 +86,7 @@ namespace Omicron.Catalogos.Services.Constants
         /// <summary>
         /// the container file.
         /// </summary>
-        public const string RedisKey = "configroute-valids";
+        public const string ConfigRoutesRedisKey = "configroute-valids";
 
         /// <summary>
         /// NoMatching.
@@ -103,6 +103,18 @@ namespace Omicron.Catalogos.Services.Constants
         {
             "MX",
             "MQ",
+        };
+
+        /// <summary>
+        /// Gets the order.
+        /// </summary>
+        /// <value>
+        /// the order.
+        /// </value>
+        public static List<string> Routes { get; } = new List<string>
+        {
+            "MAG",
+            "ALM",
         };
     }
 }

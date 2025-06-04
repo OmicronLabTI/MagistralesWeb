@@ -81,7 +81,7 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
 
         public async Task<bool> InsertSortingRoute(List<ConfigRoutesModel> sortingroute)
         {
-            this.databaseContext.SortingRouteModel.UpdateRange(sortingroute);
+            this.databaseContext.ConfigRoutesModel.UpdateRange(sortingroute);
             await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
             
             return true;
@@ -95,7 +95,13 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         public async Task<List<ConfigRoutesModel>> GetSortingRoutes(List<string> classifications)
         {
             var classificationsUpper = classifications.Select(x => x.ToUpper());
-            return await this.databaseContext.SortingRouteModel.Where(x => classificationsUpper.Contains(x.Classification.ToUpper())).AsNoTracking().ToListAsync();
+            return await this.databaseContext.ConfigRoutesModel.Where(x => classificationsUpper.Contains(x.Classification.ToUpper())).AsNoTracking().ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ConfigRoutesModel>> GetConfigRoutesModel()
+        {
+            return await this.databaseContext.ConfigRoutesModel.AsNoTracking().ToListAsync();
         }
 
         public async Task<List<ConfigRoutesModel>> GetConfigurationRoute()

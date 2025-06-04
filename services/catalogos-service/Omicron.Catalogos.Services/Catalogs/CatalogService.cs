@@ -153,15 +153,33 @@ namespace Omicron.Catalogos.Services.Catalogs
             await this.ItemCodeValidation(valids, invalids);
             await this.ExceptionValidation(valids, invalids);
             ColorValidation(valids, invalids);
+            RouteValidation(valids, invalids);
 
             await this.InsertConfigRoutes(valids);
 
-            var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification }).Where(s => !string.IsNullOrWhiteSpace(s))
+            var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification, x.Route }).Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct().ToList();
 
             var comments = values.Count > 0 ? string.Format(ServiceConstants.InvalidsSortingRoutes, JsonConvert.SerializeObject(values)) : null;
 
             return ServiceUtils.CreateResult(true, 200, null, null, comments);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetActiveRouteConfigurationsForProducts()
+        {
+            var routeConfiguration = await ServiceUtils.DeserializeRedisValue(
+                new List<ConfigRoutesModel>(),
+                ServiceConstants.ConfigRoutesRedisKey,
+                this.redisService);
+
+            if (routeConfiguration.Count == 0)
+            {
+                routeConfiguration = await this.catalogDao.GetConfigRoutesModel();
+                await this.SaveValidsToRedis(routeConfiguration);
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, routeConfiguration.Where(x => x.IsActive).ToList(), null);
         }
 
         private static List<string> GetValidStringList(string value)
@@ -323,6 +341,11 @@ namespace Omicron.Catalogos.Services.Catalogs
                 {
                     x.ItemCode = NormalizeAndToUpper(x.ItemCode);
                 }
+
+                if (!string.IsNullOrEmpty(x.Route))
+                {
+                    x.Route = NormalizeAndToUpper(x.Route);
+                }
             });
         }
 
@@ -376,6 +399,14 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .ToList();
 
             return classifications;
+		}
+		
+        private static void RouteValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var notallowed = valids.Where(x => !ServiceConstants.Routes.Contains(x.Route)).ToList();
+
+            invalids.AddRange(notallowed);
+            valids.RemoveAll(x => notallowed.Contains(x));
         }
 
         private async Task InsertConfigRoutes(List<ConfigRoutesModel> valids)
@@ -392,10 +423,8 @@ namespace Omicron.Catalogos.Services.Catalogs
 
         private async Task SaveValidsToRedis(List<ConfigRoutesModel> valids)
         {
-            var key = ServiceConstants.RedisKey;
-
             var serialized = JsonConvert.SerializeObject(valids);
-            await this.redisService.WriteToRedis(key, serialized, new TimeSpan(8, 0, 0));
+            await this.redisService.WriteToRedis(ServiceConstants.ConfigRoutesRedisKey, serialized, new TimeSpan(8, 0, 0));
         }
 
         private async Task ClassificationValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
@@ -606,7 +635,7 @@ namespace Omicron.Catalogos.Services.Catalogs
                 ItemCode = row[itemcode].ToString(),
                 Color = row[color].ToString(),
                 Route = row[route].ToString(),
-                Status = row[isactive].ToString().Equals("1"),
+                IsActive = row[isactive].ToString().Equals("1"),
             }).ToList();
 
             return sortingroute;

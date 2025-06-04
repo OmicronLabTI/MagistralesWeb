@@ -55,14 +55,16 @@ class AddComponentViewModel {
         loadLotsByProductAndWarehouse(productId: productId, warehouseCode: component.warehouse, product: newProduct, callback: addNewComponent)
     }
 
-    func selectedQuantityChange(quantity: Decimal) {
+    func addNewLot(quantity: Decimal) {
         let row = self.selectedAvailable
         let product = self.products[selectedLineDoc]
         let available = product.availableLots[row]
     
         // valida si la cantidad es cero o si es mayor al necesario, en este caso no hacer nada
-        if quantity == 0 || quantity > product.totalNecesary || available.cantidadDisponible
-            == 0 || quantity > (available.cantidadDisponible ?? 0) {
+        var first = NSDecimalNumber(decimal: quantity).doubleValue  > NSDecimalNumber(decimal: product.totalNecesary).doubleValue
+        var second = available.cantidadDisponible == 0
+        var third = quantity > (available.cantidadDisponible ?? 0)
+        if quantity == 0 || first || second || third {
             return
         }
         
@@ -194,7 +196,14 @@ class AddComponentViewModel {
         self.loading.onNext(true)
         networkManager.updateDeleteItemOfTableInOrderDetail(request).subscribe(onNext: {[weak self] res in
             guard let self = self else { return }
+            guard let response = res.response else { return }
             self.loading.onNext(false)
+            if (res.code != 200) {
+                let errorMessage = getResponseErrors(jsonString: response)
+                self.showAlert.onNext(errorMessage)
+                return
+            }
+
             self.returnBackPage.onNext(())
         }, onError: { [weak self] _ in
             guard let self = self else { return }
@@ -203,6 +212,24 @@ class AddComponentViewModel {
         }).disposed(by: disposeBag)
     }
     
+    func getResponseErrors(jsonString: String) -> String {
+        guard let data = jsonString.data(using: .utf8) else {
+                return ""
+        }
+        
+        do {
+            if let dictionary = try JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
+                // Ordena las keys alfabéticamente y extrae los valores
+                let valores = dictionary.keys.sorted().compactMap { dictionary[$0] }
+                return valores.joined(separator: ", ")
+            } else {
+                return ""
+            }
+        } catch {
+            return ""
+        }
+    }
+
     func changeWarehouseCode(productId: String, warehouseCode: String) {
         let productIndex = products.firstIndex(where: ({ $0.productId == productId }))
         if (productIndex != nil) {
@@ -221,21 +248,21 @@ class AddComponentViewModel {
             self.dataLotsAvailable.onNext(newProduct.availableLots)
             self.dataLotsSelected.onNext(newProduct.selectedLots)
             self.selectedLineDoc = productIndex
-            self.saveButtonEnabled.onNext(false)
             self.deleteButtonEnabled.onNext(false)
             self.addButtonEnabled.onNext(false)
+            self.validateSaveButton()
     }
     
     func addNewComponent(availableLots: [LotsAvailable], newProduct: AddComponent) -> Void {
             newProduct.availableLots = availableLots
-            self.calculateSelectedQuanties(product: newProduct)
-            self.products.append(newProduct)
-            self.renderProducts.onNext(self.products)
-            self.selectedLineDoc = products.count - 1
-            self.selectLineDocIndex.onNext(self.selectedLineDoc)
-            self.dataLotsAvailable.onNext(newProduct.availableLots)
-            self.dataLotsSelected.onNext(newProduct.selectedLots)
-            self.saveButtonEnabled.onNext(false)
+            calculateSelectedQuanties(product: newProduct)
+            products.append(newProduct)
+            renderProducts.onNext(self.products)
+            selectedLineDoc = products.count - 1
+            selectLineDocIndex.onNext(self.selectedLineDoc)
+            dataLotsAvailable.onNext(newProduct.availableLots)
+            dataLotsSelected.onNext(newProduct.selectedLots)
+            validateSaveButton()
     }
     
     func loadLotsByProductAndWarehouse(productId: String,

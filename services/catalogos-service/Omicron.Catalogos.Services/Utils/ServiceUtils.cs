@@ -113,5 +113,24 @@ namespace Omicron.Catalogos.Services.Utils
 
             return JsonConvert.DeserializeObject<ResultDto>(await response.Content.ReadAsStringAsync());
         }
+
+        /// <summary>
+        /// Deserilize redis info.
+        /// </summary>
+        /// <typeparam name="T">List.</typeparam>
+        /// <param name="list">Default list.</param>
+        /// <param name="redisKey">Redis key.</param>
+        /// <param name="redisService">Redis service interface.</param>
+        /// <returns>Deserialized object.</returns>
+        public static async Task<List<T>> DeserializeRedisValue<T>(List<T> list, string redisKey, IRedisService redisService)
+        {
+            if (redisService.IsConnectedRedis())
+            {
+                var redisValues = await redisService.GetRedisKey(redisKey);
+                return !string.IsNullOrEmpty(redisValues) ? JsonConvert.DeserializeObject<List<T>>(redisValues) : list;
+            }
+
+            return list;
+        }
     }
 }

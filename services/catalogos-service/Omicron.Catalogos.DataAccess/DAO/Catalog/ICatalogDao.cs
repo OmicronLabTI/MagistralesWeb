@@ -67,7 +67,7 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// <summary>
         /// Method to obtain classifications.
         /// </summary>
-        /// <param name="warehouses"> classifications to search. </param>
+        /// <param name="classifications"> classifications to search. </param>
         /// <returns> boolean indicating whether the insert was successful. </returns>
         Task<List<ConfigRoutesModel>> GetSortingRoutes(List<string> classifications);
 
@@ -76,5 +76,11 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// </summary>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
         Task<List<ConfigRoutesModel>> GetConfigurationRoute();
+
+        /// <summary>
+        /// GetConfigRoutesModel.
+        /// </summary>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<List<ConfigRoutesModel>> GetConfigRoutesModel();
     }
 }

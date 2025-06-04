@@ -6,6 +6,7 @@ import { CommentsConfig } from '../model/device/incidents.model';
 import { CancelOrders, SearchComponentModal } from '../model/device/orders';
 import { ParamsPedidos } from '../model/http/pedidos';
 import { QfbWithNumber } from '../model/http/users';
+import { IComponentLotes } from '../model/http/addComponent';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,9 @@ export class ObservableService {
   private pathUrl = new Subject<any[]>();
   private isLogout = new Subject<boolean>();
   private searchComponentModal = new Subject<SearchComponentModal>();
+  private searchComponentLoteModal = new Subject<SearchComponentModal>();
   private newFormulaComponent = new Subject<any>();
+  private newComponentLotes = new Subject<IComponentLotes>();
   private newMaterialComponent = new Subject<any>();
   private searchOrdersModal = new Subject<SearchComponentModal>();
   private newSearchOrdersParams = new Subject<ParamsPedidos>();
@@ -76,6 +79,13 @@ export class ObservableService {
   getNewFormulaComponent(): Observable<any> {
     return this.newFormulaComponent.asObservable();
   }
+
+  setNewComponentLotes(newFormulaComponent: IComponentLotes): void {
+    this.newComponentLotes.next(newFormulaComponent);
+  }
+  getNewComponentLotes(): Observable<IComponentLotes> {
+    return this.newComponentLotes.asObservable();
+  }
   setNewMaterialComponent(newFormulaComponent: any): void {
     this.newMaterialComponent.next(newFormulaComponent);
   }
@@ -88,6 +98,14 @@ export class ObservableService {
   getSearchComponentModal(): Observable<SearchComponentModal> {
     return this.searchComponentModal.asObservable();
   }
+
+  setSearchComponentLoteModal(searchComponentModal: SearchComponentModal): void {
+    this.searchComponentLoteModal.next(searchComponentModal);
+  }
+  getSearchComponentLoteModal(): Observable<SearchComponentModal> {
+    return this.searchComponentLoteModal.asObservable();
+  }
+
   setIsLogout(isLogout: boolean): void {
     this.isLogout.next(isLogout);
   }

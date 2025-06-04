@@ -119,5 +119,17 @@ namespace Omicron.Catalogos.Api.Controllers
             var response = await this.catalogFacade.UploadConfigRouteFromExcel();
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultDto}"/> containing the classification data.</returns>
+        [Route("/active/route/confgurations")]
+        [HttpGet]
+        public async Task<IActionResult> GetActiveRouteConfigurationsForProducts()
+        {
+            var response = await this.catalogFacade.GetActiveRouteConfigurationsForProducts();
+            return this.Ok(response);
+        }
     }
 }

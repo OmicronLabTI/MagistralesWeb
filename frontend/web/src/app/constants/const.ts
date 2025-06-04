@@ -209,6 +209,7 @@ export const pathRoles = {
         'login',
         'workLoad',
         'materialRequest',
+        'addComponent',
         '**'
     ],
     design: [
@@ -238,7 +239,9 @@ export const RouterPaths = {
     warehousePage: 'warehouse',
     orderDetail: 'pdetalle',
     detailFormula: 'ordenfabricacion',
-    pedido: 'pedidos'
+    pedido: 'pedidos',
+    addComponent: 'addComponent'
+
 };
 export enum TypeProperty {
     code,
