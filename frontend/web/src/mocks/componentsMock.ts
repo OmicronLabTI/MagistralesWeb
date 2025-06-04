@@ -60,7 +60,7 @@ export const searchComponentsLotesMock: IComponentsLotesRes = {
     userError: null,
     exceptionMessage: null,
     success: true,
-    response: [
+    response:
         {
             codigoProducto: 'MP-109',
             almacen: 'PROD',
@@ -71,7 +71,7 @@ export const searchComponentsLotesMock: IComponentsLotesRes = {
                     cantidadAsignada: 2.673856,
                     sysNumber: 158,
                     fechaExp: '29/03/2023',
-                    fechaExpDateTime: '2023-03-29T00:00:00',
+                    fechaExpDateTime: new Date(),
                     itemCode: 'MP-109',
                     quantity: 4.07925
                 },
@@ -86,7 +86,7 @@ export const searchComponentsLotesMock: IComponentsLotesRes = {
                     quantity: 99.085
                 }
             ]
-        }],
+        },
     comments: null
 };
 
@@ -100,7 +100,7 @@ export const componentLoteMock: IComponentLotes = {
             cantidadAsignada: 2.673856,
             sysNumber: 158,
             fechaExp: '29/03/2023',
-            fechaExpDateTime: '2023-03-29T00:00:00',
+            fechaExpDateTime: new Date(),
             itemCode: 'MP-109',
             quantity: 4.07925
         },

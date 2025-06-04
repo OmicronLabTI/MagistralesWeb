@@ -23,7 +23,8 @@ import {
   IPedidoDetalleListRes,
   IPedidoRefuseRes, IQrByOrdersRes
 } from '../model/http/detallepedidos.model';
-import { IComponentsLotesRes } from '../model/http/addComponent';
+import { IComponentsLotesRes, IResponseSaveChanges } from '../model/http/addComponent';
+import { BaseResponseHttp } from '../model/http/commons';
 
 
 @Injectable({
@@ -71,7 +72,7 @@ export class PedidosService {
   }
 
   updateFormula(formulaTOSave: IComponentsSaveReq) {
-    return this.consumeService.httpPut(Endpoints.pedidos.updateFormula, formulaTOSave);
+    return this.consumeService.httpPut<IResponseSaveChanges>(Endpoints.pedidos.updateFormula, formulaTOSave);
   }
   postPlaceOrdersDetail(placeOrderDetail: ProcessOrdersDetailReq) {
     return this.consumeService.httpPost<IProcessOrdersRes>(Endpoints.pedidos.processOrdersDetail, placeOrderDetail);

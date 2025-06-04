@@ -127,19 +127,14 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <inheritdoc/>
         public async Task<ResultModel> GetClassifications()
         {
-            var response = await this.catalogsdxp.Get(ServiceConstants.Manufacturers);
+            List<ClassificationDto> byfilter = await this.FilterClasifications();
+            List<ColorsDto> colors = await this.ClassificationColors();
 
-            var data = JsonConvert.DeserializeObject<List<ManufacturersDto>>(response.Response.ToString());
-
-            var result = data
-                .GroupBy(x => new { x.Classification, x.ClassificationCode })
-                .Select(g => new ClassificationDto
-                {
-                    Classification = g.Key.Classification,
-                    ClassificationCode = g.Key.ClassificationCode,
-                })
-                .Where(x => !ServiceConstants.Exlusions.Contains(x.ClassificationCode))
-                .ToList();
+            ClassificationGroupDto result = new ()
+            {
+                Filters = byfilter,
+                Colors = colors,
+            };
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
         }
@@ -380,6 +375,43 @@ namespace Omicron.Catalogos.Services.Catalogs
 
             invalids.AddRange(notallowed);
             valids.RemoveAll(x => notallowed.Contains(x));
+        }
+
+        private async Task<List<ColorsDto>> ClassificationColors()
+        {
+            var rules = await ServiceUtils.DeserializeRedisValue(new List<ConfigRoutesModel>(), ServiceConstants.ConfigRoutesRedisKey, this.redisService);
+
+            if (rules.Count == 0)
+            {
+                rules = await this.catalogDao.GetConfigurationRoute();
+            }
+
+            return rules.Select(x => new ColorsDto
+            {
+                Classification = x.Classification,
+                ClassificationCode = x.ClassificationCode,
+                ClassificationColor = string.IsNullOrWhiteSpace(x.Color)
+                    ? ServiceConstants.DefaultColor
+                    : x.Color,
+            }).ToList();
+        }
+
+        private async Task<List<ClassificationDto>> FilterClasifications()
+        {
+            var response = await this.catalogsdxp.Get(ServiceConstants.Manufacturers);
+            var data = JsonConvert.DeserializeObject<List<ManufacturersDto>>(response.Response.ToString());
+
+            var classifications = data
+                .GroupBy(x => new { x.Classification, x.ClassificationCode })
+                .Select(g => new ClassificationDto
+                {
+                    Classification = g.Key.Classification,
+                    ClassificationCode = g.Key.ClassificationCode,
+                })
+                .Where(x => !ServiceConstants.Exlusions.Contains(x.ClassificationCode))
+                .ToList();
+
+            return classifications;
         }
 
         private async Task InsertConfigRoutes(List<ConfigRoutesModel> valids)
