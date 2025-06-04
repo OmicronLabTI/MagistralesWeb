@@ -46,6 +46,7 @@ namespace Omicron.Catalogos.Test.Services
             this.context.ParametersModel.AddRange(this.GetParameters());
             this.context.ClassificationQfbModel.AddRange(this.GetActiveClassificationQfbModel());
             this.context.WarehousesModel.AddRange(this.GetWarehouses());
+            this.context.ConfigRoutesModel.AddRange(this.GetConfigRoutesModel());
             this.context.SaveChanges();
 
             this.catalogDao = new CatalogDao(this.context);
@@ -243,6 +244,44 @@ namespace Omicron.Catalogos.Test.Services
             Assert.That(result.Success, Is.True);
             Assert.That(result.UserError, Is.Null);
             Assert.That(result.Code == 200, Is.True);
+        }
+
+        /// <summary>
+        /// Get product and container catalog without parameters.
+        /// </summary>
+        /// <param name="isRedisConnected">If redis is conected.</param>
+        /// <returns>representing the asynchronous unit test.</returns>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task TestGetActiveRouteConfigurationsForProducts(bool isRedisConnected)
+        {
+            // Arrange
+            var config = new Mock<IConfiguration>();
+            var azure = new Mock<IAzureService>();
+            var sapadapter = new Mock<ISapAdapterService>();
+            var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
+
+            redis
+                .Setup(m => m.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetConfigRoutesModelFromRedis()));
+
+            redis.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+
+            redis.Setup(m => m.IsConnectedRedis()).Returns(isRedisConnected);
+
+            var catalogServiceMock = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
+
+            // Act
+            var result = await catalogServiceMock.GetActiveRouteConfigurationsForProducts();
+            var response = (List<ConfigRoutesModel>)result.Response;
+
+            // Assets
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.Response, Is.InstanceOf<List<ConfigRoutesModel>>());
+            Assert.That(response.Count == 2, Is.True);
         }
 
         private static MemoryStream CreateExcelSortingRoute()
