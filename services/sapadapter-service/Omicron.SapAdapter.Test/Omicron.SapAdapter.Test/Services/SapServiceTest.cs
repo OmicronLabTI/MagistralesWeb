@@ -49,6 +49,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.RawMaterialRequestModel.AddRange(this.GetRawMaterialRequestModel());
             this.context.RawMaterialRequestDetailModel.AddRange(this.GetRawMaterialRequestDetailModel());
             this.context.WarehouseModel.AddRange(this.GetWarehouse());
+            this.context.LblContainerModel.AddRange(this.GetLblContainer());
 
             this.context.SaveChanges();
             var mockPedidoService = new Mock<IPedidosService>();
@@ -640,6 +641,35 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.That(result, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Get the order with details.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetBatchesComponentsByItemCodeAndWarehouses()
+        {
+            // arrange
+            var parameters = new Dictionary<string, string>
+            {
+                { ServiceConstants.ItemCodeParam, "PROD 01" },
+                { ServiceConstants.WarehouseParam, "BE" },
+            };
+
+            // act
+            var result = await this.sapService.GetBatchesComponentsByItemCodeAndWarehouses(parameters);
+            var componentBatches = (BaseBatchesComponentModel)result.Response;
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Code, Is.EqualTo(200));
+            Assert.That(result.Response, Is.InstanceOf<BaseBatchesComponentModel>());
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.ExceptionMessage, Is.Null);
+            Assert.That(result.Comments, Is.Null);
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(componentBatches.Lotes.Count, Is.EqualTo(1));
         }
 
         /// <summary>
@@ -1440,6 +1470,27 @@ namespace Omicron.SapAdapter.Test.Services
 
             // act
             var response = await this.sapService.GetWarehouses(dict);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Test to get classifications.
+        /// </summary>
+        /// <returns> The data. </returns>
+        [Test]
+        public async Task GetClassificationsByDescription()
+        {
+            // arrange
+            var dict = new List<string>()
+            {
+                "BIOEQUAL",
+                "BIOELITE",
+            };
+
+            // act
+            var response = await this.sapService.GetClassificationsByDescription(dict);
 
             // assert
             Assert.That(response, Is.Not.Null);

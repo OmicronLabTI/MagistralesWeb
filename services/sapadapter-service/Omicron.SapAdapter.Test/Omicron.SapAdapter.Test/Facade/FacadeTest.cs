@@ -222,6 +222,23 @@ namespace Omicron.SapAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Test GetBatchesComponentsByItemCodeAndWarehouses.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetBatchesComponentsByItemCodeAndWarehouses()
+        {
+            // arrange
+            var parameters = new Dictionary<string, string>();
+
+            // act
+            var response = await this.sapFacade.GetBatchesComponentsByItemCodeAndWarehouses(parameters);
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// test tet.
         /// </summary>
         /// <returns>test.</returns>
@@ -492,6 +509,20 @@ namespace Omicron.SapAdapter.Test.Facade
         {
             // act
             var response = await this.sapFacade.GetWarehouses(new List<string>());
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
+        /// Gets the classification data based on the provided parameters.
+        /// </summary>
+        /// <returns> containing the classification data. </returns>
+        [Test]
+        public async Task GetClassificationsByDescription()
+        {
+            // act
+            var response = await this.sapFacade.GetClassificationsByDescription(new List<string>());
 
             // assert
             this.AssertResponse(response);

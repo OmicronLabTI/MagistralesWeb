@@ -38,6 +38,8 @@ import { CommentsConfig } from './model/device/incidents.model';
 import { LocalStorageService } from './services/local-storage.service';
 import { ObservableService } from './services/observable.service';
 import { MessagesService } from './services/messages.service';
+import { SearchComponentLoteDialogComponent } from './dialogs/search-component-lote-dialog/search-component-lote-dialog.component';
+import { IComponentLotes } from './model/http/addComponent';
 
 @Component({
     selector: 'app-root',
@@ -98,6 +100,8 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
         this.subscriptionObservables.add(this.observableService.getIsLogout().subscribe(() => this.logoutSession(false)));
         this.subscriptionObservables.add(this.observableService.getSearchComponentModal().subscribe(resultSearchComponentModal =>
             this.onSuccessSearchComponentModal(resultSearchComponentModal)));
+        this.subscriptionObservables.add(this.observableService.getSearchComponentLoteModal().subscribe(resultSearchComponentLoteModal =>
+            this.onSuccesSearchComponentLoteModal(resultSearchComponentLoteModal)));
         this.subscriptionObservables.add(this.observableService.getSearchOrdersModal().subscribe(resultSearchOrdersModal =>
             this.onSuccessSearchOrders(resultSearchOrdersModal)));
         this.subscriptionObservables.add(this.observableService.getOpenSignatureDialog().subscribe(dataSignature =>
@@ -352,6 +356,26 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
             }
         });
     }
+
+    private onSuccesSearchComponentLoteModal(resultSearchComponentModal: SearchComponentModal) {
+        const dialogRef = this.dialog.open(SearchComponentLoteDialogComponent, {
+            panelClass: 'custom-dialog-container',
+            data: {
+                modalType: resultSearchComponentModal.modalType,
+                chips: resultSearchComponentModal.chips,
+                data: resultSearchComponentModal.data,
+                catalogGroupName: resultSearchComponentModal.catalogGroupName || ''
+            }
+        });
+        dialogRef.afterClosed().subscribe((resultComponents: any) => {
+            this.checkComponentsLotes(resultComponents);
+        });
+    }
+
+    checkComponentsLotes(resultComponents: IComponentLotes) {
+        this.observableService.setNewComponentLotes(resultComponents);
+    }
+
     checkResultModalTypeSearch(
         resultSearchComponentModal: SearchComponentModal,
         resultComponents: any): void {

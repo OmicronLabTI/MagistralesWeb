@@ -15,16 +15,19 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
     {
         private readonly IServiceLayerClient serviceLayerClient;
         private readonly ILogger logger;
+        private readonly IMapper mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductionOrderService"/> class.
         /// </summary>
         /// <param name="serviceLayerClient">The serviceLayerClient.</param>
         /// <param name="logger">The logger.</param>
-        public ProductionOrderService(IServiceLayerClient serviceLayerClient, ILogger logger)
+        /// <param name="mapper">The mapper.</param>
+        public ProductionOrderService(IServiceLayerClient serviceLayerClient, ILogger logger, IMapper mapper)
         {
             this.serviceLayerClient = serviceLayerClient.ThrowIfNull(nameof(serviceLayerClient));
             this.logger = logger.ThrowIfNull(nameof(logger));
+            this.mapper = mapper.ThrowIfNull(nameof(mapper));
         }
 
         /// <inheritdoc/>
@@ -109,7 +112,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 productionOrder.ProductionOrderLines = UpdateComponents(productionOrder.ProductionOrderLines, updateFormula.Components);
                 productionOrder.ProductionOrderLines = DeleteComponents(productionOrder.ProductionOrderLines, deleteItems);
 
-                await this.SaveChanges(productionOrder, updateFormula.FabOrderId);
+                var request = this.mapper.Map<UpdateProductionOrderDto>(productionOrder);
+                await this.SaveChanges(request, updateFormula.FabOrderId);
             }
             catch (Exception ex)
             {
@@ -349,20 +353,39 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
         private static List<ProductionOrderLineDto> AddComponents(List<ProductionOrderLineDto> completeList, List<CompleteDetalleFormulaDto> components, int orderId)
         {
-            var componentsToAdd = components.Where(x => !completeList.Any(c => c.ItemNo.Equals(x.ProductId))).ToList();
-            foreach (var component in componentsToAdd)
-            {
-                var newComponent = new ProductionOrderLineDto();
-                newComponent.ItemNo = component.ProductId;
-                newComponent.Warehouse = component.Warehouse;
-                newComponent.BaseQuantity = (double)component.BaseQuantity;
-                newComponent.PlannedQuantity = (double)component.RequiredQuantity;
-                newComponent.DocumentAbsoluteEntry = orderId;
-                newComponent.BatchNumbers = new List<ProductionOrderItemBatchDto>();
-                completeList.Add(newComponent);
-            }
+            var existingItemCodes = new HashSet<string>(completeList.Select(c => c.ItemNo));
+
+            completeList.AddRange(
+                components
+                    .Where(x => !existingItemCodes.Contains(x.ProductId))
+                    .Select(component => new ProductionOrderLineDto
+                    {
+                        ItemNo = component.ProductId,
+                        Warehouse = component.Warehouse,
+                        BaseQuantity = (double)component.BaseQuantity,
+                        PlannedQuantity = (double)component.RequiredQuantity,
+                        DocumentAbsoluteEntry = orderId,
+                        BatchNumbers = AssignedBatchesOnNewComponent(component),
+                    }));
 
             return completeList;
+        }
+
+        private static List<ProductionOrderItemBatchDto> AssignedBatchesOnNewComponent(CompleteDetalleFormulaDto component)
+        {
+            if (component.AssignedBatches.ListIsNullOrEmpty())
+            {
+                return new List<ProductionOrderItemBatchDto>();
+            }
+
+            return component.AssignedBatches.Select(ab => new ProductionOrderItemBatchDto
+            {
+                BatchNumber = ab.BatchNumber,
+                Quantity = ab.AssignedQty,
+                ItemCode = component.ProductId,
+                BaseLineNumber = 0,
+                SystemSerialNumber = ab.SysNumber,
+            }).ToList();
         }
 
         private static List<BatchNumbersDto> GetBatchNumbers(ProductionOrderLineDto productionOrderProducts)
@@ -575,7 +598,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             return JsonConvert.DeserializeObject<T>(response.Response.ToString());
         }
 
-        private async Task SaveChanges(ProductionOrderDto productionOrder, int id)
+        private async Task SaveChanges(UpdateProductionOrderDto productionOrder, int id)
         {
             var body = JsonConvert.SerializeObject(productionOrder);
             var result = await this.serviceLayerClient.PutAsync(string.Format(ServiceQuerysConstants.QryProductionOrderById, id), body);

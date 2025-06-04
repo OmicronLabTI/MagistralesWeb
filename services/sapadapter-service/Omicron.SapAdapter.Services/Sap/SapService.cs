@@ -548,10 +548,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 var totalNecesario = Math.Round(Convert.ToDouble(componente.PendingQuantity), 6);
                 var totalSeleccionado = Math.Round(Convert.ToDouble(localBatches.Sum(b => b.CantidadSeleccionada)), 6);
 
-                var orderedLotes = localLotes
-                    .OrderBy(l => l.FechaExpDateTime ?? DateTime.MaxValue)
-                    .ToList();
-
                 listToReturn.Add(new BatchesComponentModel
                 {
                     Almacen = componente.Warehouse,
@@ -559,12 +555,33 @@ namespace Omicron.SapAdapter.Services.Sap
                     DescripcionProducto = componente.Description,
                     TotalNecesario = totalNecesario - totalSeleccionado,
                     TotalSeleccionado = totalSeleccionado,
-                    Lotes = orderedLotes,
+                    Lotes = localLotes.OrderBy(l => l.FechaExpDateTime ?? DateTime.MaxValue).ToList(),
                     LotesAsignados = localBatches,
                 });
             }
 
             return ServiceUtils.CreateResult(true, 200, null, listToReturn.OrderBy(x => x.DescripcionProducto), null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetBatchesComponentsByItemCodeAndWarehouses(Dictionary<string, string> parameters)
+        {
+            var itemCode = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.ItemCodeParam, string.Empty);
+            var warehouse = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.WarehouseParam, string.Empty);
+
+            var validBatches = await this.sapDao.GetValidBatches(
+                [itemCode],
+                [warehouse]);
+
+            var batches = this.CreateValidBatchesObject(validBatches);
+            var componentDetail = new BaseBatchesComponentModel
+            {
+                Almacen = warehouse,
+                CodigoProducto = itemCode,
+                Lotes = batches.OrderBy(l => l.FechaExpDateTime ?? DateTime.MaxValue).ToList(),
+            };
+
+            return ServiceUtils.CreateResult(true, 200, null, componentDetail, null, null);
         }
 
         /// <summary>
@@ -892,6 +909,22 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceShared.CalculateTernary(specialCardCodes.Any(x => x == pedidoLocal.Codigo), pedidoLocal.ShippingAddressName, clientDxp);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetClassificationsByDescription(List<string> classifications)
+        {
+            var products = await this.sapDao.GetAllClassifications();
+
+            var items = products.Select(x => new LblContainerModel
+            {
+                Description = NormalizeAndToUpper(x.Description),
+                Value = x.Value,
+            });
+
+            var response = items.Where(x => classifications.Contains(x.Description)).DistinctBy(x => x.Description).ToList();
+
+            return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
         private static string NormalizeAndToUpper(string input)
         {
             return new string(input.Normalize(NormalizationForm.FormD)
@@ -988,13 +1021,20 @@ namespace Omicron.SapAdapter.Services.Sap
         }
 
         /// <summary>
-        /// Get the valid batches by component.
+        /// Get the valid batches by components.
         /// </summary>
-        /// <param name="details">the details.</param>
+        /// <param name="components">the components.</param>
         /// <returns>the value.</returns>
-        private async Task<IEnumerable<ValidBatches>> GetValidBatches(List<CompleteDetalleFormulaModel> details)
+        private async Task<IEnumerable<ValidBatches>> GetValidBatches(List<CompleteDetalleFormulaModel> components)
         {
-            var batches = await this.sapDao.GetValidBatches(details);
+            var batches = await this.sapDao.GetValidBatches(
+                components.Select(c => c.ProductId).Distinct().ToList(),
+                components.Select(c => c.Warehouse).Distinct().ToList());
+            return this.CreateValidBatchesObject(batches);
+        }
+
+        private IEnumerable<ValidBatches> CreateValidBatchesObject(IEnumerable<CompleteBatchesJoinModel> batches)
+        {
             return batches.Select(x =>
                 new ValidBatches
                 {

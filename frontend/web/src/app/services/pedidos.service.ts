@@ -23,6 +23,7 @@ import {
   IPedidoDetalleListRes,
   IPedidoRefuseRes, IQrByOrdersRes
 } from '../model/http/detallepedidos.model';
+import { IComponentsLotesRes } from '../model/http/addComponent';
 
 
 @Injectable({
@@ -65,6 +66,10 @@ export class PedidosService {
     return this.consumeService.httpGet<IComponentsRes>(`${isFromSearchComponents ? Endpoints.pedidos.components :
             Endpoints.pedidos.getProducts}${queryStringComponents}`);
   }
+  getComponentsLotes(queryString: string) {
+    return this.consumeService.httpGet<IComponentsLotesRes>(`${Endpoints.pedidos.componentsLotes}${queryString}`);
+  }
+
   updateFormula(formulaTOSave: IComponentsSaveReq) {
     return this.consumeService.httpPut(Endpoints.pedidos.updateFormula, formulaTOSave);
   }

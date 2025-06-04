@@ -97,16 +97,6 @@ class OrderDetailViewController: UIViewController {
         commentsVC?.modalTransitionStyle = .crossDissolve
         self.present(commentsVC ?? CommentsViewController(), animated: true, completion: nil)
     }
-    // click boton de agregar componente
-    func goToComponentsViewController() {
-        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
-        let componentsVC = storyboard.instantiateViewController(
-            withIdentifier: ViewControllerIdentifiers.componentsViewController) as? ComponentsViewController
-        componentsVC!.clearObservables()
-        let navigationVC = UINavigationController(rootViewController: componentsVC ?? ComponentsViewController())
-        navigationVC.modalPresentationStyle = .formSheet
-        self.present(navigationVC, animated: true, completion: nil)
-    }
     // Inicia la ejecución del refresh control
     func refreshViewControl() {
         self.refreshControl.tintColor = OmicronColors.blue
@@ -164,25 +154,9 @@ class OrderDetailViewController: UIViewController {
         }).disposed(by: self.disposeBag)
         self.orderDetailViewModel.goToSeeLotsViewController.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
-                let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
-                let lotsVC = storyboard.instantiateViewController(
-                    identifier: ViewControllerIdentifiers.lotsViewController) as? LotsViewController
-                if self?.orderId != nil && self?.statusType != nil && self?.orderDetail != nil {
-                    lotsVC?.orderId = self?.orderId ?? 0
-                    if let self = self { lotsVC?.emptyStockProductId = self.emptyStockProductId }
-                    lotsVC?.statusType = self?.statusType ?? String()
-                    lotsVC?.orderDetail = self?.orderDetail ?? []
-                    if let order = self?.orderDetail.first {
-                        if order.productDescription != nil && order.code != nil &&
-                            order.productionOrderID != nil && order.baseDocument != nil {
-                            lotsVC?.orderNumber =  "\(order.baseDocument ?? 0)"
-                            lotsVC?.manufacturingOrder = "\(order.productionOrderID ?? 0)"
-                            lotsVC?.codeDescription =
-                                "\(order.code ?? String())  \(order.productDescription ?? String())"
-                        }
-                    }
-                    self?.navigationController?.pushViewController(lotsVC ?? LotsViewController(), animated: true)
-                }
+                guard let self = self else { return }
+                self.goToPage(identifier: ViewControllerIdentifiers.lotsViewController,
+                                                  controllerType: LotsViewController.self)
             }).disposed(by: self.disposeBag)
         self.processButton.rx.tap.bind(to: orderDetailViewModel.processButtonDidTap).disposed(by: self.disposeBag)
         self.seeLotsButton.rx.tap.bind(to: orderDetailViewModel.seeLotsButtonDidTap).disposed(by: self.disposeBag)
@@ -194,12 +168,42 @@ class OrderDetailViewController: UIViewController {
         }).disposed(by: self.disposeBag)
         self.addComponentButton.rx.tap.subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
-            self.goToComponentsViewController()
+            self.goToPage(identifier: ViewControllerIdentifiers.addComponentViewController,
+                          controllerType: AddComponentViewController.self)
+            // self.goToComponentsViewController()
         }).disposed(by: disposeBag)
     }
     func getDecimalPartOfDouble(number: Double) -> Double {
         return number.truncatingRemainder(dividingBy: 1)
     }
+    
+    func goToPage<T: LotsBaseViewController>(identifier: String, controllerType: T.Type) {
+        let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
+        
+        guard let viewController = storyboard.instantiateViewController(withIdentifier: identifier) as? T else {
+            print("⚠️ No se pudo instanciar \(T.self) con el identificador \(identifier)")
+            return
+        }
+        
+        if self.orderId != nil && self.statusType != nil && self.orderDetail != nil {
+            viewController.orderId = self.orderId
+            viewController.emptyStockProductId = self.emptyStockProductId
+            viewController.statusType = self.statusType
+            viewController.orderDetail = self.orderDetail
+            if let order = self.orderDetail.first {
+                if order.productDescription != nil && order.code != nil &&
+                    order.productionOrderID != nil && order.baseDocument != nil {
+                    viewController.orderNumber =  "\(order.baseDocument ?? 0)"
+                    viewController.manufacturingOrder = "\(order.productionOrderID ?? 0)"
+                    viewController.codeDescription =
+                    "\(order.code ?? String())  \(order.productDescription ?? String())"
+                }
+            }
+            
+            self.navigationController?.pushViewController(viewController, animated: true)
+        }
+    }
+
     func initComponents() {
         UtilsManager.shared.setStyleButtonStatus(
             button: self.deleteManyButton,
@@ -286,7 +290,7 @@ class OrderDetailViewController: UIViewController {
                                   addComp: true, save: true, seeBatches: false)
         case StatusNameConstants.finishedStatus:
             hideBtn = HideButtons(process: true, finished: true, pending: true,
-                                  addComp: true, save: true, seeBatches: false)
+                                  addComp: false, save: true, seeBatches: false)
         case StatusNameConstants.reassignedStatus:
             hideBtn = HideButtons(process: true, finished: false, pending: false,
                                   addComp: false, save: true, seeBatches: false)

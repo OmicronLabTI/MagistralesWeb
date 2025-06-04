@@ -201,6 +201,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// GetBatchesComponentsByItemCodeAndWarehouses.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>the data to return.</returns>
+        [Route("/components/lotes/byitemcode")]
+        [HttpGet]
+        public async Task<IActionResult> GetBatchesComponentsByItemCodeAndWarehouses([FromQuery] Dictionary<string, string> parameters)
+        {
+            var result = await this.sapFacade.GetBatchesComponentsByItemCodeAndWarehouses(parameters);
+            return this.Ok(result);
+        }
+
+        /// <summary>
         /// Get last id of isolated production order created.
         /// </summary>
         /// <param name="productId">the product id.</param>
@@ -456,6 +469,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         public async Task<IActionResult> GetWarehouses([FromBody] List<string> warehouses)
         {
             var response = await this.sapFacade.GetWarehouses(warehouses);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="classifications"> classifications collection to search. </param>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        [Route("/classifications")]
+        [HttpPost]
+        public async Task<IActionResult> GetClassificationsByDescription([FromBody] List<string> classifications)
+        {
+            var response = await this.sapFacade.GetClassificationsByDescription(classifications);
             return this.Ok(response);
         }
     }

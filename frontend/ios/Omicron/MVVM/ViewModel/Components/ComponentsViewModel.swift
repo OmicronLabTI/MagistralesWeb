@@ -111,7 +111,8 @@ class ComponentsViewModel {
                 stock: NSDecimalNumber(decimal: values.selectedComponent.stock ?? 0).doubleValue,
                 warehouseQuantity: NSDecimalNumber(decimal:
                                                     values.selectedComponent.warehouseQuantity ?? 0).doubleValue,
-                action: Actions.insert.rawValue)
+                action: Actions.insert.rawValue,
+                assignedBatches: [])
             let orderDetailReq = OrderDetailRequest(
                 fabOrderID: component.orderFabId,
                 plannedQuantity: order.plannedQuantity ?? 0, fechaFin: (order.finishDate != nil ?

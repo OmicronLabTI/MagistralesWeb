@@ -21,6 +21,7 @@ namespace Omicron.Catalogos.DependencyInjection
     using Omicron.Catalogos.Services.Catalogs;
     using Omicron.Catalogos.Services.CatalogsDxp;
     using Omicron.Catalogos.Services.Mapping;
+    using Omicron.Catalogos.Services.Redis;
     using Omicron.Catalogos.Services.SapAdapter;
     using Omicron.Catalogos.Services.User;
 
@@ -52,6 +53,7 @@ namespace Omicron.Catalogos.DependencyInjection
             Services.AddTransient<IAzureService, AzureService>();
 
             Services.AddTransient<IDatabaseContext, DatabaseContext>();
+            Services.AddTransient<IRedisService, RedisService>();
             return Services;
         }
 

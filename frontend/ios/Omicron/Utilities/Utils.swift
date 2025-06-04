@@ -26,7 +26,7 @@ class UtilsManager {
             button.titleLabel?.font = .fontDefaultBold(16)
         button.backgroundColor = backgroudColor
     }
-    func labelsStyle(label: UILabel, text: String, fontSize: CGFloat, typeFont: String = "medium") {
+    func  labelsStyle(label: UILabel, text: String, fontSize: CGFloat, typeFont: String = "medium") {
         label.text = text
         switch typeFont {
         case "bold":
@@ -107,6 +107,22 @@ class UtilsManager {
                   return Data()
               }
         return data
+    }
+    func calculateExpiredBatch(date: String?) -> Bool {
+        let date = date?.replacingOccurrences(
+            of: "\"", with: CommonStrings.empty, options: String.CompareOptions.literal, range: nil)
+        if let date = date {
+            let formatter = DateFormatter()
+            formatter.dateFormat = DateFormat.ddMMyyyy
+            if let dateFormatter = formatter.date(from: date) {
+                let roundedToday = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())
+                let roundedDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: dateFormatter)
+                if roundedDate ?? Date() <= roundedToday ?? Date() {
+                    return true
+                }
+            }
+        }
+        return false
     }
 }
 open class DecimalTransform: TransformType {
