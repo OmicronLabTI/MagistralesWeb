@@ -158,10 +158,11 @@ namespace Omicron.Catalogos.Services.Catalogs
             await this.ItemCodeValidation(valids, invalids);
             await this.ExceptionValidation(valids, invalids);
             ColorValidation(valids, invalids);
+            RouteValidation(valids, invalids);
 
             await this.InsertConfigRoutes(valids);
 
-            var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification }).Where(s => !string.IsNullOrWhiteSpace(s))
+            var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification, x.Route }).Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct().ToList();
 
             var comments = values.Count > 0 ? string.Format(ServiceConstants.InvalidsSortingRoutes, JsonConvert.SerializeObject(values)) : null;
@@ -345,6 +346,11 @@ namespace Omicron.Catalogos.Services.Catalogs
                 {
                     x.ItemCode = NormalizeAndToUpper(x.ItemCode);
                 }
+
+                if (!string.IsNullOrEmpty(x.Route))
+                {
+                    x.Route = NormalizeAndToUpper(x.Route);
+                }
             });
         }
 
@@ -366,6 +372,14 @@ namespace Omicron.Catalogos.Services.Catalogs
             invalids.AddRange(invalidColorItems);
 
             valids.RemoveAll(x => invalidColorItems.Contains(x));
+        }
+
+        private static void RouteValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var notallowed = valids.Where(x => !ServiceConstants.Routes.Contains(x.Route)).ToList();
+
+            invalids.AddRange(notallowed);
+            valids.RemoveAll(x => notallowed.Contains(x));
         }
 
         private async Task InsertConfigRoutes(List<ConfigRoutesModel> valids)

@@ -104,5 +104,17 @@ namespace Omicron.Catalogos.Services.Constants
             "MX",
             "MQ",
         };
+
+        /// <summary>
+        /// Gets the order.
+        /// </summary>
+        /// <value>
+        /// the order.
+        /// </value>
+        public static List<string> Routes { get; } = new List<string>
+        {
+            "MAG",
+            "ALM",
+        };
     }
 }
