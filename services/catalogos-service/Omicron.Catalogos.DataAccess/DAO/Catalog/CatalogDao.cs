@@ -106,7 +106,7 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
 
         public async Task<List<ConfigRoutesModel>> GetConfigurationRoute()
         {
-            return await this.databaseContext.SortingRouteModel.Where(x => x.Status).AsNoTracking().ToListAsync();
+            return await this.databaseContext.ConfigRoutesModel.Where(x => x.IsActive).AsNoTracking().ToListAsync();
         }
     }
 }

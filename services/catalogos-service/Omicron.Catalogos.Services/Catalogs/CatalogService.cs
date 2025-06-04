@@ -369,18 +369,31 @@ namespace Omicron.Catalogos.Services.Catalogs
             valids.RemoveAll(x => invalidColorItems.Contains(x));
         }
 
+        private static void RouteValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var notallowed = valids.Where(x => !ServiceConstants.Routes.Contains(x.Route)).ToList();
+
+            invalids.AddRange(notallowed);
+            valids.RemoveAll(x => notallowed.Contains(x));
+        }
+
         private async Task<List<ColorsDto>> ClassificationColors()
         {
-            var response = await this.catalogDao.GetConfigurationRoute();
+            var rules = await ServiceUtils.DeserializeRedisValue(new List<ConfigRoutesModel>(), ServiceConstants.ConfigRoutesRedisKey, this.redisService);
 
-            return response
-                    .Select(x => new ColorsDto
-                    {
-                        Classification = x.Classification,
-                        ClassificationCode = x.ClassificationCode,
-                        Color = string.IsNullOrWhiteSpace(x.Color) ? " " : x.Color,
-                    })
-                    .ToList();
+            if (rules.Count == 0)
+            {
+                rules = await this.catalogDao.GetConfigurationRoute();
+            }
+
+            return rules.Select(x => new ColorsDto
+            {
+                Classification = x.Classification,
+                ClassificationCode = x.ClassificationCode,
+                ClassificationColor = string.IsNullOrWhiteSpace(x.Color)
+                    ? ServiceConstants.DefaultColor
+                    : x.Color,
+            }).ToList();
         }
 
         private async Task<List<ClassificationDto>> FilterClasifications()
@@ -399,14 +412,6 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .ToList();
 
             return classifications;
-		}
-		
-        private static void RouteValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
-        {
-            var notallowed = valids.Where(x => !ServiceConstants.Routes.Contains(x.Route)).ToList();
-
-            invalids.AddRange(notallowed);
-            valids.RemoveAll(x => notallowed.Contains(x));
         }
 
         private async Task InsertConfigRoutes(List<ConfigRoutesModel> valids)

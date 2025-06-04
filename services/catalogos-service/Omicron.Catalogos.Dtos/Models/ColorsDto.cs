@@ -29,6 +29,6 @@ namespace Omicron.Catalogos.Dtos.Models
         /// Gets or sets Color.
         /// </summary>
         /// <value> Color.</value>
-        public string Color { get; set; }
+        public string ClassificationColor { get; set; }
     }
 }
