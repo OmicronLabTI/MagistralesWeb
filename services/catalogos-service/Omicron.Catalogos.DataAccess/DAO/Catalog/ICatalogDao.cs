@@ -72,6 +72,12 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         Task<List<ConfigRoutesModel>> GetSortingRoutes(List<string> classifications);
 
         /// <summary>
+        /// Gets the configuration route used for processing or classification logic.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<List<ConfigRoutesModel>> GetConfigurationRoute();
+
+        /// <summary>
         /// GetConfigRoutesModel.
         /// </summary>
         /// <returns> boolean indicating whether the insert was successful. </returns>
