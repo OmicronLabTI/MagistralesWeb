@@ -66,6 +66,7 @@ struct ViewControllerIdentifiers {
     static let dateRangeSelectorViewController = "DateRangeSelectorViewController"
     static let dropdownViewController = "DropdownViewController"
     static let historyTableViewCell = "HistoryTableViewCell"
+    static let addComponentViewController = "AddComponentViewController"
 }
 struct OmicronColors {
     static let blue = UIColor.init(red: 16/255, green: 149/255, blue: 200/255, alpha: 1)
@@ -218,6 +219,8 @@ struct CommonStrings {
     static let createBuildOrder = "Crear orden de fabricaciòn"
     static let errorGetHistoryOrders = "Error al obtener el historial de solicitudes de traslados"
     static let selectFilter = "Selecciona un filtro"
+    static let errorGetLotsByProduct = "Error al obtener los lotes"
+    static let errorSaveLots = "Error al guardar los nuevos componentes"
 }
 struct FontsNames {
     static let SFProDisplayBold = "SFProDisplay-Bold"

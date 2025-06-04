@@ -156,6 +156,12 @@ namespace Omicron.SapAdapter.Facade.Sap
             return this.mapper.Map<ResultDto>(await this.sapService.GetBatchesComponents(ordenId));
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetBatchesComponentsByItemCodeAndWarehouses(Dictionary<string, string> parameters)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetBatchesComponentsByItemCodeAndWarehouses(parameters));
+        }
+
         /// <summary>
         /// Get last id of isolated production order created.
         /// </summary>
@@ -292,6 +298,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         public async Task<ResultDto> GetWarehouses(List<string> warehouses)
         {
             return this.mapper.Map<ResultDto>(await this.sapService.GetWarehouses(warehouses));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> GetClassificationsByDescription(List<string> classifications)
+        {
+            return this.mapper.Map<ResultDto>(await this.sapService.GetClassificationsByDescription(classifications));
         }
     }
 }

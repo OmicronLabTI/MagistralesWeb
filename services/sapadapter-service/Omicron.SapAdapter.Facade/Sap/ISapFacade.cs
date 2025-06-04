@@ -99,6 +99,13 @@ namespace Omicron.SapAdapter.Facade.Sap
         Task<ResultDto> GetBatchesComponents(int ordenId);
 
         /// <summary>
+        /// GetBatchesComponentsByItemCodeAndWarehouses.
+        /// </summary>
+        /// <param name="parameters">parameters.</param>
+        /// <returns>the data to return.</returns>
+        Task<ResultDto> GetBatchesComponentsByItemCodeAndWarehouses(Dictionary<string, string> parameters);
+
+        /// <summary>
         /// Get last id of isolated production order created.
         /// </summary>
         /// <param name="productId">the product id.</param>
@@ -212,5 +219,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="warehouses"> warehouse collection to search. </param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultDto> GetWarehouses(List<string> warehouses);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="classifications"> classifications collection to search. </param>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<ResultDto> GetClassificationsByDescription(List<string> classifications);
     }
 }

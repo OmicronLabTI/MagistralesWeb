@@ -97,7 +97,8 @@ extension OrderDetailViewModel {
                 pendingQuantity: itemToDelete.pendingQuantity ?? 0.0,
                 stock: itemToDelete.stock ?? 0.0,
                 warehouseQuantity: itemToDelete.warehouseQuantity ?? 0.0,
-                action: Actions.delete.rawValue)
+                action: Actions.delete.rawValue,
+                assignedBatches: [])
         })
         let fechaFinFormated = UtilsManager.shared.formattedDateFromString(
             dateString: tempOrderDetailData?.dueDate ?? String(), withFormat: DateFormat.yyyymmdd)

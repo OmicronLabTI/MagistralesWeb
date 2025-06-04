@@ -177,10 +177,11 @@ class Component: Codable {
     warehouseQuantity, consumed, available: Double
     let unit, warehouse: String
     let action: String
+    let assignedBatches: [AssignedBatch]
     init(orderFabID: Int, productId: String, componentDescription: String,
          baseQuantity: Double, requiredQuantity: Double, consumed: Double, available: Double,
          unit: String, warehouse: String, pendingQuantity: Double, stock: Double,
-         warehouseQuantity: Double, action: String) {
+         warehouseQuantity: Double, action: String, assignedBatches: [AssignedBatch]) {
         self.orderFabId = orderFabID
         self.productId = productId
         self.componentDescription = componentDescription
@@ -194,6 +195,7 @@ class Component: Codable {
         self.stock = stock
         self.warehouseQuantity = warehouseQuantity
         self.action = action
+        self.assignedBatches = assignedBatches
     }
 }
 class ChangeStatusRequest: Codable {

@@ -210,11 +210,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         Task<IEnumerable<ProductoModel>> GetProductByCodeBar(string codeBar);
 
         /// <summary>
-        /// gets the valid batches by item.
+        /// gets the valid batches by itemcodes and warehouses.
         /// </summary>
-        /// <param name="components">the components.</param>
+        /// <param name="productIds">the productIds.</param>
+        /// <param name="warehouseIds">the warehouseIds.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<CompleteDetalleFormulaModel> components);
+        Task<IEnumerable<CompleteBatchesJoinModel>> GetValidBatches(List<string> productIds, List<string> warehouseIds);
 
         /// <summary>
         /// gets the valid batches by item.
@@ -679,5 +680,11 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="docNums">docNums.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<InvoiceHeaderModel>> GetClosedInvoicesByDocNum(List<int> docNums);
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
+        Task<IEnumerable<LblContainerModel>> GetAllClassifications();
     }
 }
