@@ -264,5 +264,6 @@ class DeleteOrUpdateItemOfTableResponse: HttpResponse {
     }
     override func mapping(map: Map) {
         response <- map["response"]
+        code <- map["code"]
     }
 }
