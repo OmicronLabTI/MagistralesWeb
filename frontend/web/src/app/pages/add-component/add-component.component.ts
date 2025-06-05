@@ -178,7 +178,6 @@ export class AddComponentComponent implements OnInit {
       warehouseQuantity: resultNewFormulaComponent.warehouseQuantity,
       totalNecesario: resultNewFormulaComponent.baseQuantity,
       totalSeleccionado: 0,
-      selected: true,
       action: CONST_DETAIL_FORMULA.insert,
       lotes: dataLotesTable,
       lotesAsignados: []
@@ -193,11 +192,9 @@ export class AddComponentComponent implements OnInit {
     if (elements !== undefined) {
       this.indexSelected = this.dataSourceComponents.data.indexOf(elements);
       this.dataSourceComponents.data.forEach(item => {
-        if (item.selected) {
-          item.selected = BOOLEANS.falso;
-        }
-        elements.selected = !elements.selected;
+        item.selected = false;
       });
+      this.dataSourceComponents.data[this.indexSelected].selected = true;
       this.getBatchesFromSelected(elements.codigoProducto);
     }
   }
@@ -247,8 +244,13 @@ export class AddComponentComponent implements OnInit {
   }
 
   onSelectWareHouseChange(value: string, index: number) {
-    this.dataSourceComponents.data[index].warehouse = value;
-    this.dataSourceLotesAsignados.data.forEach(element => this.deleteLotes(element));
+    const componente = this.dataSourceComponents.data[index].codigoProducto;
+    const query = `?offset=${0}&limit=${1}&chips=${componente}&catalogGroup=${value}`;
+    this.pedidosService.getComponents(query, true).subscribe( response => {
+      this.dataSourceComponents.data[index].isChecked = true;
+      this.deleteComponents();
+      this.getLotesForComponent(response.response[0]);
+    });
   }
 
   addLotes(element: ILotesReq): void {
@@ -336,7 +338,6 @@ export class AddComponentComponent implements OnInit {
 
   saveChanges(): void {
     this.pedidosService.updateFormula(this.objectDataToSave).subscribe((response) => {
-      console.log(response);
       if (response.code === 200) {
         this.createMessageOkHttp();
         this.goToOrdenFab(['/ordenfabricacion', this.ordenFabricacionId, this.detailOrders, this.isFromDetail ? '1' : '0']);
@@ -513,7 +514,7 @@ export class AddComponentComponent implements OnInit {
 
   isDue(element: ILotesReq) {
     if (element.fechaExp !== null && element.fechaExp !== undefined) {
-      const strFechaExp = String(element.fechaExp).split('/');
+      const strFechaExp = String(element.fechaExp).split('-');
       const dtFechaExp = new Date(parseInt(strFechaExp[2], 10), parseInt(strFechaExp[1], 10) - 1, parseInt(strFechaExp[0], 10));
       element.isValid = (dtFechaExp >= this.today);
       return dtFechaExp < this.today;
