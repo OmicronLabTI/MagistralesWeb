@@ -17,6 +17,7 @@ export class IAddComponentsAndLotesTable {
     totalSeleccionado: number;
     selected?: boolean;
     action?: string;
+    isChecked?: boolean;
 
     lotes: ILotesReq[]; // Lotes disponibles para asignar
     lotesAsignados: ILotesAsignadosReq[]; // Lotes ya guardados (provienen del back)
@@ -24,7 +25,7 @@ export class IAddComponentsAndLotesTable {
 }
 
 export class IComponentsLotesRes extends BaseResponseHttp {
-    response: IComponentLotes[];
+    response: IComponentLotes;
 }
 
 export class IComponentLotes {
@@ -40,7 +41,11 @@ export class Lotes {
     cantidadAsignada: number;
     sysNumber: number;
     fechaExp?: string;
-    fechaExpDateTime?: string;
+    fechaExpDateTime?: Date;
     itemCode: string;
     quantity: number;
+}
+
+export class IResponseSaveChanges extends BaseResponseHttp {
+    response: string;
 }

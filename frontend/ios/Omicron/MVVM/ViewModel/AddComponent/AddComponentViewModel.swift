@@ -198,13 +198,13 @@ class AddComponentViewModel {
             guard let self = self else { return }
             guard let response = res.response else { return }
             self.loading.onNext(false)
-            if (res.code != 200) {
-                let errorMessage = getResponseErrors(jsonString: response)
-                self.showAlert.onNext(errorMessage)
+            if (res.code == 200) {
+                self.returnBackPage.onNext(())
                 return
             }
 
-            self.returnBackPage.onNext(())
+            let errorMessage = getResponseErrors(jsonString: response)
+            self.showAlert.onNext(errorMessage)
         }, onError: { [weak self] _ in
             guard let self = self else { return }
             self.loading.onNext(false)
