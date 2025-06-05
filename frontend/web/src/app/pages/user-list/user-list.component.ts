@@ -93,8 +93,8 @@ export class UserListComponent implements OnInit, OnDestroy {
             this.dataSource.data.forEach(user => {
                 user.isChecked = false;
                 user.piezas = this.dataService.getFormattedNumber(user.piezas);
-                if (user.classification) {
-                    user.fullClasification = this.getClassification(user.classification);
+                if (user.classificationDescription) {
+                    user.fullClasification = user.classificationDescription;
                 }
             });
             this.isAllComplete = false;

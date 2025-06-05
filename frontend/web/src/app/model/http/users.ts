@@ -52,6 +52,7 @@ export class IUserReq {
     fullClasification?: string;
     tecnicId: string | null;
     technicalRequire: boolean;
+    classificationDescription?: string;
     constructor() {
         this.isChecked = false;
         this.technicalRequire = false;
