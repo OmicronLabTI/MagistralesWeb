@@ -1,3 +1,5 @@
+import { Clasification, ClasificationsResponse } from 'src/app/model/http/users';
+
 export const UserListMock = {
     code: 200,
     comments: 20,
@@ -40,6 +42,55 @@ export const UserListMock = {
             classification: 'MG',
             tecnicId: null,
             technicalRequire: false
+        }
+    ]
+};
+
+export const userClasificationMock: ClasificationsResponse = {
+    code: 200,
+    userError: null,
+    exceptionMessage: null,
+    success: true,
+    response: [
+        {
+            value: 'Todas',
+            description: 'TODAS',
+            classificationQfb: false
+        },
+        {
+            value: 'MN',
+            description: 'OMIGENOMICS',
+            classificationQfb: false
+        },
+        {
+            value: 'BE',
+            description: 'BIOELITE',
+            classificationQfb: false
+        },
+        {
+            value: 'MN',
+            description: 'Bioelite (MN)',
+            classificationQfb: true
+        },
+        {
+            value: 'BE',
+            description: 'Bioequal (BE)',
+            classificationQfb: true
+        },
+        {
+            value: 'DZ',
+            description: 'Dermazone (DZ)',
+            classificationQfb: true
+        },
+        {
+            value: 'MG',
+            description: 'Magistral (MG)',
+            classificationQfb: true
+        },
+        {
+            value: 'MG',
+            description: 'MAGISTRALES',
+            classificationQfb: false
         }
     ]
 };
