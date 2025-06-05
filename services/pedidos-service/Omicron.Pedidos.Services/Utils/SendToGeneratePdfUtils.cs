@@ -54,7 +54,7 @@ namespace Omicron.Pedidos.Services.Utils
 
             if (ordersId.Any())
             {
-                listOrdersWithDetail = await GetDetails(ordersId, sapAdapter, ServiceConstants.GetOrderWithDetail);
+                listOrdersWithDetail = await ServiceUtils.GetOrdersDetailsForMagistral(sapAdapter, ordersId);
                 var listIdString = ordersId.Select(x => x.ToString()).ToList();
                 var userSaleOrders = (await pedidosDao.GetUserOrderBySaleOrder(listIdString)).Where(x => x.Status != ServiceConstants.Cancelled).ToList();
                 userSaleOrders = ServiceShared.CalculateTernary(onlyFinalized, userSaleOrders.Where(x => x.Status == ServiceConstants.Finalizado).ToList(), userSaleOrders);
@@ -251,18 +251,6 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var sapResponse = await sapAdapter.PostSapAdapter(orderIds, route);
             return JsonConvert.DeserializeObject<List<OrderRecipeModel>>(JsonConvert.SerializeObject(sapResponse.Response));
-        }
-
-        /// <summary>
-        /// Gets The recipes.
-        /// </summary>
-        /// <param name="orderIds">the orders id.</param>
-        /// <param name="sapAdapter">the sap adapter.</param>
-        /// <returns>the data.</returns>
-        private static async Task<List<OrderWithDetailModel>> GetDetails(List<int> orderIds, ISapAdapter sapAdapter, string route)
-        {
-            var sapResponse = await sapAdapter.PostSapAdapter(orderIds, route);
-            return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(sapResponse.Response));
         }
 
         /// <summary>

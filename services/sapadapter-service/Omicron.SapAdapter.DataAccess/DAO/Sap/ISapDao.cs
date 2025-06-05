@@ -25,14 +25,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// Get the orders.
         /// </summary>
+        /// <param name="initDate">initDate.</param>
+        /// <param name="endDate">endDate.</param>
+        /// <param name="orderFiltersByConfigType">orderFiltersByConfigType.</param>
         /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaIni(DateTime initDate, DateTime endDate);
+        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaIni(DateTime initDate, DateTime endDate, OrderFiltersByConfigType orderFiltersByConfigType);
 
         /// <summary>
         /// Get the orders.
         /// </summary>
+        /// <param name="ids">ids.</param>
+        /// <param name="orderFiltersByConfigType">orderFiltersByConfigType.</param>
         /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByIds(List<int> ids);
+        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByIds(List<int> ids, OrderFiltersByConfigType orderFiltersByConfigType);
 
         /// <summary>
         /// Get the orders.
@@ -61,9 +66,17 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// gets the details.
         /// </summary>
-        /// <param name="pedidoId">PedidoID</param>
+        /// <param name="ordersIds">ordersIds</param>
         /// <returns>the details.</returns>
-        Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> pedidoId);
+        Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> ordersIds);
+
+        /// <summary>
+        /// GetAllDetailsByRoutesConfiguration.
+        /// </summary>
+        /// <param name="ordersIds">ordersIds</param>
+        /// <param name="orderFiltersByConfigType">orderFiltersByConfigType.</param>
+        /// <returns>the details.</returns>
+        Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetailsByRoutesConfiguration(List<int?> ordersIds, OrderFiltersByConfigType orderFiltersByConfigType);
 
         /// <summary>
         /// gets the details.
@@ -75,15 +88,19 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <summary>
         /// Get the orders.
         /// </summary>
+        /// <param name="init">init.</param>
+        /// <param name="end">end.</param>
+        /// <param name="orderFiltersByConfigType">orderFiltersByConfigType.</param>
         /// <returns>get the orders.</returns>
-        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int init, int end);
+        Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int init, int end, OrderFiltersByConfigType orderFiltersByConfigType);
 
         /// <summary>
         /// REturns the order by docnum dxp.
         /// </summary>
         /// <param name="docNumDxp">the docnum.</param>
+        /// <param name="orderFiltersByConfigType">orderFiltersByConfigType.</param>
         /// <returns>the data.</returns>
-        Task<List<CompleteOrderModel>> GetAllOrdersByDocNumDxp(string docNumDxp);
+        Task<List<CompleteOrderModel>> GetAllOrdersByDocNumDxp(string docNumDxp, OrderFiltersByConfigType orderFiltersByConfigType);
 
         /// <summary>
         /// REturns the order by docnum dxp.
