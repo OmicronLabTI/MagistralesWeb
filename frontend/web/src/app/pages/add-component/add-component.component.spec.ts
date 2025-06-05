@@ -145,8 +145,8 @@ describe('AddComponentComponent', () => {
   });
   it('should call onSelectWareHouseChange', () => {
     component.dataSourceComponents.data = dataSourceComponentsMock;
-    component.onSelectWareHouseChange('MAG', 0);
-    expect(component.dataSourceComponents.data[0].warehouse).toBe('MAG');
+    component.onSelectWareHouseChange('MG', 0);
+    expect(component.dataSourceComponents.data[0].warehouse).toBe('MG');
   });
   it('should call addLotes', () => {
     component.generateObjectsForTables(mockIFormulaDetalleReq[0], lotesComponentMock);
