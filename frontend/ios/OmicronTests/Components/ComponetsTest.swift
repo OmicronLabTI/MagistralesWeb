@@ -152,7 +152,8 @@ class ComponetsTest: XCTestCase {
             pendingQuantity: NSDecimalNumber(decimal: comp.pendingQuantity ?? 0).doubleValue,
             stock: NSDecimalNumber(decimal: comp.stock ?? 0).doubleValue,
             warehouseQuantity: NSDecimalNumber(decimal: comp.warehouseQuantity ?? 0).doubleValue,
-            action: "insert")
+            action: "insert",
+            assignedBatches: [])
         let orderDetailReq = OrderDetailRequest(
             fabOrderID: component.orderFabId,
             plannedQuantity: plannedQuantity,
