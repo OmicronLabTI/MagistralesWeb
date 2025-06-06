@@ -61,5 +61,6 @@ export const Messages = {
   deliveredOrders: '¿Deseas cambiar a estatus entregado la(s) orden(es) seleccionada(s)',
   errorOnDownloadImage: 'Error al descargar el código QR: ',
   noComponentsToCreateList: 'No existen componentes para crear una lista',
-  removeListComponents: '¿Deseas borrar la lista de componentes llamada '
+  removeListComponents: '¿Deseas borrar la lista de componentes llamada ',
+  cantBeDeletedDueToAssignedBatches: 'No se puede eliminar componente debido a que tiene lote(s) asignado(s)'
 };
