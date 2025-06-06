@@ -112,7 +112,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             try
             {
                 await this.BlockSaleOrderWhilePlaning(new List<int> { processByOrder.PedidoId });
-                var ordersSap = await this.GetOrdersWithDetail(new List<int> { processByOrder.PedidoId });
+                var ordersSap = await ServiceUtils.GetOrdersDetailsForMagistral(this.sapAdapter, new List<int> { processByOrder.PedidoId });
                 var productNoLabel = (await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.ProductNoLabel)).Select(x => x.Value).ToList();
 
                 var orders = ordersSap.FirstOrDefault(x => x.Order.PedidoId == processByOrder.PedidoId);
@@ -188,18 +188,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         }
 
         /// <summary>
-        /// gets the details with the order.
-        /// </summary>
-        /// <param name="listSalesOrder">the list ids.</param>
-        /// <returns>the data.</returns>
-        private async Task<List<OrderWithDetailModel>> GetOrdersWithDetail(List<int> listSalesOrder)
-        {
-            var sapResponse = await this.sapAdapter.PostSapAdapter(listSalesOrder, ServiceConstants.GetOrderWithDetail);
-            var ordersSap = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(sapResponse.Response));
-            return ordersSap;
-        }
-
-        /// <summary>
         /// Gets the orders by dict with ok value id-itemCode.
         /// </summary>
         /// <param name="listToLook">the list of values.</param>
@@ -218,7 +206,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>the data.</returns>
         private async Task<List<OrderWithDetailModel>> GetListToCreateFromOrders(ProcessOrderModel pedidosId)
         {
-            var ordersSap = await this.GetOrdersWithDetail(pedidosId.ListIds);
+            var ordersSap = await ServiceUtils.GetOrdersDetailsForMagistral(this.sapAdapter, pedidosId.ListIds);
             var listToSend = new List<OrderWithDetailModel>();
 
             ordersSap.ForEach(o =>

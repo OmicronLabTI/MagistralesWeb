@@ -1014,5 +1014,22 @@ namespace Omicron.SapAdapter.Test
                new WarehouseModel { WarehouseCode = "be", WarehouseName = "BIOEQUAL", },
             };
         }
+
+        /// <summary>
+        /// GetActiveConfigRoutesModel.
+        /// </summary>
+        /// <returns>ActiveConfigRoutesModel.</returns>
+        public List<ActiveConfigRoutesModel> GetActiveConfigRoutesModel()
+        {
+            return new List<ActiveConfigRoutesModel>
+            {
+                new ActiveConfigRoutesModel { Id = 1, ClassificationCode = "MG", Exceptions = null, ItemCode = null, IsActive = true, Route = "MAG" },
+                new ActiveConfigRoutesModel { Id = 2, ClassificationCode = "LN", Exceptions = null, ItemCode = null, IsActive = true, Route = "MAG" },
+                new ActiveConfigRoutesModel { Id = 3, ClassificationCode = "BE", Exceptions = null, ItemCode = null, IsActive = true, Route = "MAG" },
+                new ActiveConfigRoutesModel { Id = 4, ClassificationCode = "BQ", Exceptions = "BQ 41", ItemCode = null, IsActive = true, Route = "ALM" },
+                new ActiveConfigRoutesModel { Id = 5, ClassificationCode = "DZ", Exceptions = "DZ 51", ItemCode = "REVE 53", IsActive = true, Route = "MAG" },
+                new ActiveConfigRoutesModel { Id = 6, ClassificationCode = "REVE", Exceptions = "REVE 1", ItemCode = null, IsActive = true, Route = "ALM" },
+            };
+        }
     }
 }

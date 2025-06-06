@@ -677,7 +677,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var saleOrder = allOrders.Where(x => x.IsSalesOrder).ToList();
                 var saleIds = saleOrder.Select(y => int.Parse(y.Salesorderid)).ToList();
-                var preProdOrderSap = await ServiceUtils.GetSalesOrdersFromSap(saleIds, this.sapAdapter);
+                var preProdOrderSap = await ServiceUtils.GetOrdersDetailsForMagistral(this.sapAdapter, saleIds);
 
                 saleOrder.ForEach(sale =>
                 {
