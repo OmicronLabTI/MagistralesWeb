@@ -17,8 +17,10 @@ import { DatePipe } from '@angular/common';
 import { PedidosService } from 'src/app/services/pedidos.service';
 import { DetalleFormulaMock } from 'src/mocks/pedidosListMock';
 import { IFormulaDetalleReq, IFormulaReq } from 'src/app/model/http/detalleformula';
-import { mockIFormulaDetalleReq, lotesComponentMock, mockIFormulaReqResponse,
-  ILotesFormulaReqMock, dataSourceComponentsMock } from 'src/mocks/componentsLotesMock';
+import {
+  mockIFormulaDetalleReq, lotesComponentMock, mockIFormulaReqResponse,
+  ILotesFormulaReqMock, dataSourceComponentsMock
+} from 'src/mocks/componentsLotesMock';
 
 describe('AddComponentComponent', () => {
   let component: AddComponentComponent;
@@ -44,13 +46,14 @@ describe('AddComponentComponent', () => {
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getFormulaDetail',
       'getComponents',
-      'updateFormula'
+      'updateFormula',
+      'getComponentsLotes'
     ]);
     errorServiceSpy = jasmine.createSpyObj<ErrorService>('ErrorService', [
       'httpError'
     ]);
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService', [
-      'getNewComponentLotes',
+      'getNewFormulaComponent',
       'setGeneralNotificationMessage',
       'setUrlActive',
       'setPathUrl',
@@ -69,12 +72,13 @@ describe('AddComponentComponent', () => {
       'presentToastCustom',
       'getMessageTitle',
     ]);
-    observableServiceSpy.getNewComponentLotes.and.callFake(() => {
+    observableServiceSpy.getNewFormulaComponent.and.callFake(() => {
       return new Observable();
     });
 
     pedidosServiceSpy.getFormulaDetail.and.returnValue(of({ response: mockIFormulaReqResponse }));
-    pedidosServiceSpy.getComponents.and.returnValue(of({response: mockIFormulaDetalleReq}));
+    pedidosServiceSpy.getComponents.and.returnValue(of({ response: mockIFormulaDetalleReq }));
+    pedidosServiceSpy.getComponentsLotes.and.returnValue(of({ response: lotesComponentMock }));
     pedidosServiceSpy.updateFormula.and.returnValue(of());
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
       return validation ? firstValue : secondaValue;
@@ -90,7 +94,7 @@ describe('AddComponentComponent', () => {
 
     messagesServiceSpy.presentToastCustom.and.returnValue(Promise.resolve());
     messagesServiceSpy.getMessageTitle.and.returnValue('');
-    // --- Observable Service
+
     observableServiceSpy.setGeneralNotificationMessage.and.returnValue();
     observableServiceSpy.setUrlActive.and.returnValue();
     observableServiceSpy.setPathUrl.and.returnValue();
@@ -108,7 +112,7 @@ describe('AddComponentComponent', () => {
         DatePipe,
         { provide: ObservableService, useValue: observableServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
-        { provide: PedidosService, useValue: pedidosServiceSpy}
+        { provide: PedidosService, useValue: pedidosServiceSpy }
       ]
     })
       .compileComponents();
@@ -123,38 +127,29 @@ describe('AddComponentComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should call reloadData', async () => {
-    expect(component).toBeTruthy();
-    spyOn(component, 'getDetalleFormula').and.returnValue(Promise.resolve());
-    spyOn(component, 'getInventoryBatches').and.returnValue(Promise.resolve());
-    const generateObjectsSpy = spyOn(component, 'generateObjects');
-    await component.reloadData();
-    expect(generateObjectsSpy).toHaveBeenCalled();
+  it('should getLotesForComponent', () => {
+    component.getLotesForComponent(mockIFormulaDetalleReq[0]);
+    expect(component.dataSourceComponents.data.length).toBe(1);
   });
-  it('should call onSuccessDetailFormula', () => {
-    component.onSuccessDetailFormula(mockIFormulaReqResponse);
-    expect(component.componentsData).toEqual(mockIFormulaReqResponse.details);
-  });
-  it('should call getNewComponent', () => {
-    component.getNewComponent(lotesComponentMock);
-    expect(pedidosServiceSpy.getComponents).toHaveBeenCalled();
-  });
-  it('should call generateObjects', () => {
-    component.componentsData = mockIFormulaDetalleReq;
-    component.lotesData = ILotesFormulaReqMock;
-    component.generateObjects();
-    expect(component.dataSourceLotes.data.length).toBe(2);
-  });
-  it('should call setSelectedTr', () => {
+  it('should call onBaseQuantityChange', () => {
     component.dataSourceComponents.data = dataSourceComponentsMock;
-    component.setSelectedTr(dataSourceComponentsMock[0]);
-    expect(component.dataSourceLotes.data).toEqual(dataSourceComponentsMock[0].lotes);
+    component.plannedQuantityControl = 2;
+    component.onBaseQuantityChange(4, 0);
+    expect(component.dataSourceComponents.data[0].requiredQuantity).toBe(8);
+  });
+  it('should call onRequiredQuantityChange', () => {
+    component.dataSourceComponents.data = dataSourceComponentsMock;
+    component.plannedQuantityControl = 2;
+    component.onRequiredQuantityChange(4, 0);
+    expect(component.dataSourceComponents.data[0].baseQuantity).toBe(2);
+  });
+  it('should call onSelectWareHouseChange', () => {
+    component.dataSourceComponents.data = dataSourceComponentsMock;
+    component.onSelectWareHouseChange('MG', 0);
+    expect(component.dataSourceComponents.data[0].warehouse).toBe('MG');
   });
   it('should call addLotes', () => {
-    component.indexSelected = 0;
-    component.componentsData = mockIFormulaDetalleReq;
-    component.lotesData = ILotesFormulaReqMock;
-    component.generateObjects();
+    component.generateObjectsForTables(mockIFormulaDetalleReq[0], lotesComponentMock);
     component.addLotes(component.dataSourceLotes.data[0]);
     expect(component.isReadyToSave).toBe(true);
   });
@@ -163,41 +158,16 @@ describe('AddComponentComponent', () => {
     component.deleteLotes(dataSourceComponentsMock[0].lotesAsignados[0]);
     expect(component.isReadyToSave).toBe(true);
   });
-  it('should call onBaseQuantityChange', () => {
-    component.dataSourceComponents.data = dataSourceComponentsMock;
-    component.onBaseQuantityChange(4, 0);
-    expect(component.isReadyToSave).toBe(true);
-  });
-  it('should call onRequiredQuantityChange', () => {
-    component.dataSourceComponents.data = dataSourceComponentsMock;
-    component.onRequiredQuantityChange(4, 0);
-    expect(component.isReadyToSave).toBe(true);
-  });
-  it('should call onSelectWareHouseChange', () => {
-    component.dataSourceComponents.data = dataSourceComponentsMock;
-    component.onSelectWareHouseChange('MAG', 0);
-    expect(component.dataSourceComponents.data[0].warehouse).toBe('MAG');
-  });
-  it('should call getInsertElementsToSave', () => {
-    component.componentsData = mockIFormulaDetalleReq;
-    component.lotesData = ILotesFormulaReqMock;
-    component.generateObjects();
-    component.dataSourceComponents.data[0].action = 'insert';
-    component.getInsertElementsToSave();
-    expect(component.objectDataToSave.components[0].action).toBe(component.dataSourceComponents.data[0].action);
-  });
-  it('should call getUpdateElementsToSave', () => {
-    component.componentsData = mockIFormulaDetalleReq;
-    component.lotesData = ILotesFormulaReqMock;
-    component.generateObjects();
-    component.dataSourceComponents.data[0].action = 'update';
-    component.getUpdateElementsToSave();
-    expect(component.objectDataToSave.components[0].action).toBe(component.dataSourceComponents.data[0].action);
-  });
   it('should call buildObjectToSap', () => {
-    component.componentsData = mockIFormulaDetalleReq;
-    component.lotesData = ILotesFormulaReqMock;
-    component.generateObjects();
+    component.generateObjectsForTables(mockIFormulaDetalleReq[0], lotesComponentMock);
+    component.generateObjectToSave();
     component.buildObjectToSap();
+    expect(pedidosServiceSpy.updateFormula).toHaveBeenCalled();
+  });
+  it('should call deleteComponents', () => {
+    component.generateObjectsForTables(mockIFormulaDetalleReq[0], lotesComponentMock);
+    component.generateObjectToSave();
+    component.dataSourceComponents.data[0].isChecked = true;
+    component.deleteComponents();
   });
 });

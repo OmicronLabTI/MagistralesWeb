@@ -22,7 +22,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
     @IBOutlet weak var unitLabel: UILabel!
     @Injected var addComponentViewModel: AddComponentViewModel
 
-    let disposeBag = DisposeBag()
+    var disposeBag: DisposeBag? = DisposeBag()
     var isLoading = false
 
     override func viewDidLoad() {
@@ -44,19 +44,19 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
                 let indexPath = IndexPath(row: index, section: 0)
                 lineDocTable.reloadRows(at: [indexPath], with: .none)
                 lineDocTable.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
         
         self.addComponentViewModel.saveButtonEnabled
             .subscribe(onNext: {[weak self] enabled in
                 guard let self = self else { return }
                 saveButton.isEnabled = enabled
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
         
         addComponentViewModel.returnBackPage
             .subscribe(onNext: {[weak self] enabled in
                 guard let self = self else { return }
                 self.navigationController?.popViewController(animated: true)
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     
         self.addComponentViewModel.renderProducts.bind(to: lineDocTable.rx.items(
             cellIdentifier: ViewControllerIdentifiers.lotsTableViewCell,
@@ -84,7 +84,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
                     self.orderNumberLabel.isHidden = true
                 }
             }
-        }.disposed(by: self.disposeBag)
+        }.disposed(by: self.disposeBag!)
         
         Observable.zip(
             lineDocTable.rx.itemSelected,
@@ -98,7 +98,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
             self?.addComponentViewModel.dataLotsAvailable.onNext(item.availableLots)
             self?.addComponentViewModel.dataLotsSelected.onNext(item.selectedLots)
         })
-        .disposed(by: disposeBag)
+        .disposed(by: disposeBag!)
         
         Observable.zip(
             lotsSelectedTable.rx.itemSelected,
@@ -109,7 +109,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
             self?.addComponentViewModel.selectedLotsSelected = indexPath.row
             self?.removeLotButton.isEnabled = true
         })
-        .disposed(by: disposeBag)
+        .disposed(by: disposeBag!)
         
         // aqui se obtiene cuando se esta editando algun elemento de la tabla
         Observable.combineLatest(self.lotsAvailablesTable.rx.itemSelected,
@@ -120,23 +120,23 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
                     self?.view.endEditing(false)
                 }
             }
-        }).subscribe().disposed(by: disposeBag)
+        }).subscribe().disposed(by: disposeBag!)
         
         addComponentViewModel.selectLineDocIndex.subscribe(onNext: {[weak self] index in
             guard let self = self else { return }
             self.addComponentViewModel.selectedLineDoc = index
             self.selectDocumentLineIndex(index: index)
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
 
     }
     func bindSubjects() {
         addComponentViewModel.deleteButtonEnabled.subscribe(onNext: {[weak self] enabled in
             self?.removeLotButton.isEnabled = enabled
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
         
         addComponentViewModel.addButtonEnabled.subscribe(onNext: {[weak self] enabled in
             self?.addLotButton.isEnabled = enabled
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     
     
         addComponentViewModel.showAlert.subscribe(onNext: {[weak self] error in
@@ -146,7 +146,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
                                           view: self,
                                           autoDismiss: true,
                                           dismissTime: 2)
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
         
         addComponentViewModel.loading.subscribe(onNext: { loading in
             self.isLoading = loading
@@ -155,7 +155,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
                 return
             }
             LottieManager.shared.hideLoading()
-        }).disposed(by: disposeBag)
+        }).disposed(by: disposeBag!)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -167,6 +167,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
         super.viewDidDisappear(animated)
         addComponentViewModel.resetValues()
         addComponentViewModel.details = []
+        disposeBag = nil
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -217,7 +218,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
             cell.quantityAssignedLabel.text = self?.formatter.string(from: (data.cantidadAsignada ?? 0) as NSNumber)
             cell.setExpiredBatches(data.expiredBatch)
             cell.delegate = self
-        }.disposed(by: self.disposeBag)
+        }.disposed(by: self.disposeBag!)
         
         
         Observable.zip(
@@ -229,7 +230,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
             self?.addLotButton.isEnabled = true
             self?.addComponentViewModel.selectedAvailable = indexPath.row
         })
-        .disposed(by: disposeBag)
+        .disposed(by: disposeBag!)
     }
 
     func bindTableSelectedSubjects() {
@@ -239,7 +240,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
             cell.lotsLabel.text = data.numeroLote
             cell.quantitySelectedLabel.text = self?.formatter.string(from: (data.cantidadSeleccionada ?? 0) as NSNumber)
             cell.setExpiredBatches(data.expiredBatch)
-        }.disposed(by: self.disposeBag)
+        }.disposed(by: self.disposeBag!)
     }
     
     func selectDocumentLineIndex(index: Int) {

@@ -60,10 +60,14 @@ class AddComponentViewModel {
         let product = self.products[selectedLineDoc]
         let available = product.availableLots[row]
     
-        // valida si la cantidad es cero o si es mayor al necesario, en este caso no hacer nada
-        var first = NSDecimalNumber(decimal: quantity).doubleValue  > NSDecimalNumber(decimal: product.totalNecesary).doubleValue
+
+        let quantityDecimal = quantity as NSDecimalNumber
+        let totalNecesaryDecimal = product.totalNecesary as NSDecimalNumber
+        
+        var first = quantityDecimal.compare(totalNecesaryDecimal) == .orderedDescending
         var second = available.cantidadDisponible == 0
         var third = quantity > (available.cantidadDisponible ?? 0)
+
         if quantity == 0 || first || second || third {
             return
         }
@@ -198,13 +202,13 @@ class AddComponentViewModel {
             guard let self = self else { return }
             guard let response = res.response else { return }
             self.loading.onNext(false)
-            if (res.code != 200) {
-                let errorMessage = getResponseErrors(jsonString: response)
-                self.showAlert.onNext(errorMessage)
+            if (res.code == 200) {
+                self.returnBackPage.onNext(())
                 return
             }
 
-            self.returnBackPage.onNext(())
+            let errorMessage = getResponseErrors(jsonString: response)
+            self.showAlert.onNext(errorMessage)
         }, onError: { [weak self] _ in
             guard let self = self else { return }
             self.loading.onNext(false)

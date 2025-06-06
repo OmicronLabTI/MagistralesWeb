@@ -58,6 +58,7 @@ export class AddComponentComponent implements OnInit {
 
   // MARK: COLUMNAS MAT-TABLE
   detailsColumns: string[] = [
+    'select',
     'cons',
     'codigoProducto',
     'descripcionProducto',
@@ -108,9 +109,9 @@ export class AddComponentComponent implements OnInit {
       this.detailOrders = params.get('detailOrders');
       this.titleService.setTitle('OmicronLab - Componentes/Lotes ' + this.ordenFabricacionId);
     });
-    this.subscription.add(this.observableService.getNewComponentLotes().subscribe(resultNewFormulaComponent => {
+    this.subscription.add(this.observableService.getNewFormulaComponent().subscribe(resultNewFormulaComponent => {
       if (resultNewFormulaComponent) {
-        this.getNewComponent(resultNewFormulaComponent);
+        this.getLotesForComponent(resultNewFormulaComponent);
       }
     }));
     this.reloadData();
@@ -119,9 +120,8 @@ export class AddComponentComponent implements OnInit {
   async reloadData() {
     await Promise.all([
       this.getDetalleFormula(),
-      this.getInventoryBatches()
     ]);
-    this.generateObjects();
+    this.generateObjectToSave();
   }
 
   getDetalleFormula(): Promise<void> {
@@ -140,127 +140,61 @@ export class AddComponentComponent implements OnInit {
     this.warehouse = response.warehouse;
     this.comments = response.comments || '';
     this.isReadyToSave = false;
-    this.dataService.setIsToSaveAnything(false);
     this.catalogGroupName = response.catalogGroupName || '';
   }
 
-  getInventoryBatches() {
-    return this.batchesService.getInventoryBatches(this.ordenFabricacionId).toPromise().then(batchesRes => {
-      batchesRes.response.forEach(batches => batches.descripcionProducto = batches.descripcionProducto.toUpperCase());
-      this.lotesData = batchesRes.response;
-    }).catch(error => {
-      this.errorService.httpError(error);
+  getLotesForComponent(resultNewFormulaComponent: IFormulaDetalleReq) {
+    const queryParams = `?itemcode=${resultNewFormulaComponent.productId}&warehouse=${resultNewFormulaComponent.warehouse}`;
+    this.pedidosService.getComponentsLotes(queryParams).subscribe(resLotes => {
+      this.generateObjectsForTables(resultNewFormulaComponent, resLotes.response);
     });
   }
 
-  getNewComponent(componentLotes: IComponentLotes) {
-    const queryParams = `?offset=0&limit=10&chips=${componentLotes.codigoProducto}&catalogGroup=${componentLotes.almacen}`;
-    this.pedidosService.getComponents(queryParams, true).subscribe(resComponets => {
-      if (resComponets) {
-        this.generateNewComponentRow(resComponets.response[0], componentLotes);
-      }
-    });
-  }
+  generateObjectsForTables(resultNewFormulaComponent: IFormulaDetalleReq, lotes: IComponentLotes) {
+    const dataLotesTable: ILotesReq[] = [];
 
-  generateObjects(): void {
-    this.generateObjectToSave();
-    this.generateTablesObjects();
-  }
-
-  generateObjectToSave(): void {
-    const endDateToString = this.dateService.transformDate(this.endDateGeneral).split('/');
-    this.objectDataToSave = {
-      comments: '',
-      fabOrderId: Number(this.ordenFabricacionId),
-      fechaFin: `${endDateToString[2]}-${endDateToString[1]}-${endDateToString[0]}`,
-      plannedQuantity: this.plannedQuantityControl,
-      warehouse: this.warehouse,
-      components: [],
-    };
-  }
-
-  generateTablesObjects(): void {
-    const dataTable: IAddComponentsAndLotesTable[] = [];
-
-    this.componentsData.forEach((d, index) => {
-      const dataRow: IAddComponentsAndLotesTable = {
-        codigoProducto: d.productId,
-        description: d.description,
-        baseQuantity: d.baseQuantity,
-        requiredQuantity: d.requiredQuantity,
-        consumed: d.consumed,
-        available: d.available,
-        unit: d.unit,
-        warehouse: d.warehouse,
-        pendingQuantity: d.pendingQuantity,
-        stock: d.stock,
-        warehouseQuantity: d.warehouseQuantity,
-        totalNecesario: this.lotesData[index].totalNecesario,
-        totalSeleccionado: this.lotesData[index].totalSeleccionado,
-
-        lotes: this.lotesData[index].lotes,
-        lotesAsignados: this.lotesData[index].lotesAsignados,
-        lotesSeleccionados: this.lotesData[index].lotesAsignados,
+    lotes.lotes.forEach(lote => {
+      const dataLotesRow: ILotesReq = {
+        numeroLote: lote.numeroLote,
+        cantidadDisponible: lote.cantidadDisponible,
+        cantidadAsignada: lote.cantidadAsignada,
+        cantidadSeleccionada: lote.cantidadAsignada,
+        sysNumber: lote.sysNumber,
+        fechaExp: lote.fechaExpDateTime
       };
-      dataTable.push(dataRow);
+      dataLotesTable.push(dataLotesRow);
     });
-
-    dataTable[CONST_NUMBER.zero].selected = true;
-
-    this.dataSourceComponents.data = [...dataTable];
-    this.dataSourceLotes.data = this.dataSourceComponents.data[0].lotes;
-    this.dataSourceLotesAsignados.data = this.dataSourceComponents.data[0].lotesAsignados;
-
-    this.setSelectedQuantity(this.dataSourceComponents.data[0].totalNecesario);
-    if (this.dataSourceLotes.data.length === CONST_NUMBER.one && this.dataSourceLotesAsignados.data.length === CONST_NUMBER.zero) {
-      this.addLotes(this.dataSourceLotes.data[CONST_NUMBER.zero]);
-    }
-  }
-
-  generateNewComponentRow(component: IFormulaDetalleReq, lotes: IComponentLotes) {
-    const lotesToSave: ILotesReq[] = [];
-    lotes.lotes.forEach(elements => {
-      const lote: ILotesReq = {
-        numeroLote: elements.numeroLote,
-        cantidadDisponible: elements.cantidadDisponible,
-        cantidadAsignada: elements.cantidadAsignada,
-        sysNumber: elements.sysNumber,
-        fechaExp: new Date()
-      };
-      lotesToSave.push(lote);
-    });
-    const dataRow: IAddComponentsAndLotesTable = {
-      codigoProducto: component.productId,
-      description: component.description,
-      baseQuantity: component.baseQuantity,
-      requiredQuantity: component.requiredQuantity,
-      consumed: component.consumed,
-      available: component.available,
-      unit: component.unit,
-      warehouse: component.warehouse,
-      pendingQuantity: component.pendingQuantity,
-      stock: component.stock,
-      warehouseQuantity: component.warehouseQuantity,
-      totalNecesario: component.requiredQuantity,
+    const dataComponentRow: IAddComponentsAndLotesTable = {
+      codigoProducto: resultNewFormulaComponent.productId,
+      description: resultNewFormulaComponent.description,
+      baseQuantity: resultNewFormulaComponent.baseQuantity,
+      requiredQuantity: resultNewFormulaComponent.requiredQuantity,
+      consumed: resultNewFormulaComponent.consumed,
+      available: resultNewFormulaComponent.available,
+      unit: resultNewFormulaComponent.unit,
+      warehouse: resultNewFormulaComponent.warehouse,
+      pendingQuantity: resultNewFormulaComponent.pendingQuantity,
+      stock: resultNewFormulaComponent.stock,
+      warehouseQuantity: resultNewFormulaComponent.warehouseQuantity,
+      totalNecesario: resultNewFormulaComponent.baseQuantity,
       totalSeleccionado: 0,
-      lotes: lotesToSave,
-      lotesAsignados: [],
-      lotesSeleccionados: [],
-      action: CONST_DETAIL_FORMULA.insert
+      action: CONST_DETAIL_FORMULA.insert,
+      lotes: dataLotesTable,
+      lotesAsignados: []
     };
-    this.dataSourceComponents.data.push(dataRow);
+    this.componentsData.push(resultNewFormulaComponent);
+    this.dataSourceComponents.data.push(dataComponentRow);
     this.dataSourceComponents._updateChangeSubscription();
+    this.setSelectedTr(dataComponentRow);
   }
 
   setSelectedTr(elements?: IAddComponentsAndLotesTable): void {
     if (elements !== undefined) {
       this.indexSelected = this.dataSourceComponents.data.indexOf(elements);
       this.dataSourceComponents.data.forEach(item => {
-        if (item.selected) {
-          item.selected = BOOLEANS.falso;
-        }
-        elements.selected = !elements.selected;
+        item.selected = false;
       });
+      this.dataSourceComponents.data[this.indexSelected].selected = true;
       this.getBatchesFromSelected(elements.codigoProducto);
     }
   }
@@ -287,6 +221,36 @@ export class AddComponentComponent implements OnInit {
         }
       });
     }
+  }
+
+  onBaseQuantityChange(baseQuantity: any, index: number) {
+    if (baseQuantity !== null && baseQuantity > 0) {
+      this.dataSourceComponents.data[index].requiredQuantity =
+        Number((baseQuantity * this.plannedQuantityControl).toFixed(CONST_NUMBER.ten));
+      this.dataSourceComponents.data[index].totalNecesario =
+        Number((baseQuantity * this.plannedQuantityControl).toFixed(CONST_NUMBER.ten)) -
+        this.dataSourceComponents.data[index].totalSeleccionado;
+    }
+  }
+
+  onRequiredQuantityChange(requiredQuantity: any, index: number) {
+    if (requiredQuantity !== null && requiredQuantity > 0) {
+      this.dataSourceComponents.data[index].baseQuantity =
+        Number((requiredQuantity / this.plannedQuantityControl).toFixed(CONST_NUMBER.ten));
+      this.dataSourceComponents.data[index].totalNecesario =
+        Number((requiredQuantity / this.plannedQuantityControl).toFixed(CONST_NUMBER.ten)) -
+        this.dataSourceComponents.data[index].totalSeleccionado;
+    }
+  }
+
+  onSelectWareHouseChange(value: string, index: number) {
+    const componente = this.dataSourceComponents.data[index].codigoProducto;
+    const query = `?offset=${0}&limit=${1}&chips=${componente}&catalogGroup=${value}`;
+    this.pedidosService.getComponents(query, true).subscribe( response => {
+      this.dataSourceComponents.data[index].isChecked = true;
+      this.deleteComponents();
+      this.getLotesForComponent(response.response[0]);
+    });
   }
 
   addLotes(element: ILotesReq): void {
@@ -322,42 +286,6 @@ export class AddComponentComponent implements OnInit {
     }
   }
 
-  deleteLotes(element?: ILotesAsignadosReq) {
-    if (element !== undefined) {
-      const indiceBorrar = this.dataSourceComponents.data[this.indexSelected].lotesAsignados.indexOf(element);
-      if (indiceBorrar !== -1) {
-        this.deleteDetails(element);
-        this.dataSourceComponents.data[this.indexSelected].lotesAsignados.splice(indiceBorrar, CONST_NUMBER.one);
-      }
-      this.dataSourceLotesAsignados._updateChangeSubscription();
-      this.dataSourceComponents.data[this.indexSelected].lotes.forEach(item => {
-        if (item.numeroLote === element.numeroLote) {
-          item.cantidadDisponible = parseFloat((item.cantidadDisponible + element.cantidadSeleccionada).toFixed(6));
-        }
-      });
-      this.setTotales(-element.cantidadSeleccionada);
-      this.isReadyToSave = true;
-    }
-    return false;
-  }
-
-  deleteDetails(element?: ILotesAsignadosReq) {
-    if (element !== undefined) {
-      const tomarEnCuenta = this.updateBatches(element);
-      if (tomarEnCuenta) {
-        this.dataSourceComponents.data[this.indexSelected].lotesSeleccionados.push({
-          numeroLote: element.numeroLote,
-          noidb: BOOLEANS.falso,
-          sysNumber: element.sysNumber,
-          cantidadSeleccionada: element.cantidadSeleccionada,
-          action: CONST_DETAIL_FORMULA.delete
-        });
-      }
-    }
-    return false;
-  }
-
-
   tableLotesView() {
     const dataSourceDetails = this.dataSourceComponents;
     const dataSourceLotesAsignados = this.dataSourceLotesAsignados;
@@ -380,6 +308,96 @@ export class AddComponentComponent implements OnInit {
         dataSourceLotesAsignados._updateChangeSubscription();
       }
     });
+  }
+
+  deleteLotes(element?: ILotesAsignadosReq) {
+    if (element !== undefined) {
+      const indiceBorrar = this.dataSourceComponents.data[this.indexSelected].lotesAsignados.indexOf(element);
+      if (indiceBorrar !== -1) {
+        this.deleteDetails(element);
+        this.dataSourceComponents.data[this.indexSelected].lotesAsignados.splice(indiceBorrar, CONST_NUMBER.one);
+      }
+      this.dataSourceLotesAsignados._updateChangeSubscription();
+      this.dataSourceComponents.data[this.indexSelected].lotes.forEach(item => {
+        if (item.numeroLote === element.numeroLote) {
+          item.cantidadDisponible = parseFloat((item.cantidadDisponible + element.cantidadSeleccionada).toFixed(6));
+        }
+      });
+      this.setTotales(-element.cantidadSeleccionada);
+      this.isReadyToSave = true;
+    }
+    return false;
+  }
+
+  buildObjectToSap(): void {
+    this.objectDataToSave.components = [];
+    this.getInsertElementsToSave();
+    this.dataService.setIsToSaveAnything(false);
+    this.saveChanges();
+  }
+
+  saveChanges(): void {
+    this.pedidosService.updateFormula(this.objectDataToSave).subscribe((response) => {
+      if (response.code === 200) {
+        this.createMessageOkHttp();
+        this.goToOrdenFab(['/ordenfabricacion', this.ordenFabricacionId, this.detailOrders, this.isFromDetail ? '1' : '0']);
+      } else {
+        this.createMessageErrorHttp(response.response);
+      }
+    }, error => {
+      this.errorService.httpError(error);
+      this.reloadData();
+    });
+  }
+
+  generateObjectToSave(): void {
+    const endDateToString = this.dateService.transformDate(this.endDateGeneral).split('/');
+    this.objectDataToSave = {
+      comments: '',
+      fabOrderId: Number(this.ordenFabricacionId),
+      fechaFin: `${endDateToString[2]}-${endDateToString[1]}-${endDateToString[0]}`,
+      plannedQuantity: this.plannedQuantityControl,
+      warehouse: this.warehouse,
+      components: [],
+    };
+  }
+
+  createMessageOkHttp() {
+    this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
+  }
+
+  createMessageErrorHttp(Message: string) {
+    this.observableService.setMessageGeneralCallHttp({ title: Message, icon: 'error', isButtonAccept: false });
+  }
+
+  deleteComponents() {
+    const componentsToDeleteOnSave = [...this.dataSourceComponents.data.filter(component => component.isChecked)];
+    if (componentsToDeleteOnSave.length > 0) {
+      componentsToDeleteOnSave.forEach(component => {
+        const elementComponentData = this.componentsData.filter(data => data.productId === component.codigoProducto);
+        const index = this.dataSourceComponents.data.indexOf(component);
+        const indexelementComponentData = this.componentsData.indexOf(elementComponentData[0]);
+        this.dataSourceComponents.data.splice(index, 1);
+        this.componentsData.splice(indexelementComponentData, 1);
+      });
+      this.dataSourceComponents._updateChangeSubscription();
+    }
+  }
+
+  deleteDetails(element?: ILotesAsignadosReq) {
+    if (element !== undefined) {
+      const tomarEnCuenta = this.updateBatches(element);
+      if (tomarEnCuenta) {
+        this.dataSourceComponents.data[this.indexSelected].lotesSeleccionados.push({
+          numeroLote: element.numeroLote,
+          noidb: BOOLEANS.falso,
+          sysNumber: element.sysNumber,
+          cantidadSeleccionada: element.cantidadSeleccionada,
+          action: CONST_DETAIL_FORMULA.delete
+        });
+      }
+    }
+    return false;
   }
 
   getAssignedLot(
@@ -405,30 +423,6 @@ export class AddComponentComponent implements OnInit {
     };
   }
 
-  onBaseQuantityChange(baseQuantity: any, index: number) {
-    if (baseQuantity !== null && baseQuantity > 0) {
-      this.dataSourceComponents.data[index].requiredQuantity =
-        Number((baseQuantity * this.plannedQuantityControl).toFixed(CONST_NUMBER.ten));
-      this.dataSourceComponents.data[index].totalNecesario =
-        Number((baseQuantity * this.plannedQuantityControl).toFixed(CONST_NUMBER.ten)) -
-        this.dataSourceComponents.data[index].totalSeleccionado;
-      this.getIsReadyTOSave();
-      this.getAction(index);
-    }
-  }
-
-  onRequiredQuantityChange(requiredQuantity: any, index: number) {
-    if (requiredQuantity !== null && requiredQuantity > 0) {
-      this.dataSourceComponents.data[index].baseQuantity =
-        Number((requiredQuantity / this.plannedQuantityControl).toFixed(CONST_NUMBER.ten));
-      this.dataSourceComponents.data[index].totalNecesario =
-        Number((requiredQuantity / this.plannedQuantityControl).toFixed(CONST_NUMBER.ten)) -
-        this.dataSourceComponents.data[index].totalSeleccionado;
-      this.getIsReadyTOSave();
-      this.getAction(index);
-    }
-  }
-
   setTotales(cantidadSeleccionada?: number) {
     if (cantidadSeleccionada !== undefined) {
       this.dataSourceComponents.data[this.indexSelected].totalSeleccionado = parseFloat(
@@ -439,20 +433,6 @@ export class AddComponentComponent implements OnInit {
       );
       this.setInputNecesaryQty();
     }
-  }
-
-  getAction(index: number) {
-    this.dataSourceComponents.data[index].action =
-      !this.dataSourceComponents.data[index].action ||
-        (this.dataSourceComponents.data[index].action && this.dataSourceComponents.data[index].action !== CONST_DETAIL_FORMULA.insert) ?
-        CONST_DETAIL_FORMULA.update : this.dataSourceComponents.data[index].action;
-  }
-
-  onSelectWareHouseChange(value: string, index: number) {
-    this.dataSourceComponents.data[index].warehouse = value;
-    this.dataSourceLotesAsignados.data.forEach(element => this.deleteLotes(element));
-    this.getAction(index);
-    this.getIsReadyTOSave();
   }
 
   getInsertElementsToSave() {
@@ -476,33 +456,7 @@ export class AddComponentComponent implements OnInit {
         warehouse: element.warehouse,
         warehouseQuantity: element.warehouseQuantity,
         isChecked: false,
-        assignedBatches: lote
-      };
-      this.objectDataToSave.components.push(insertData);
-    });
-  }
-
-  getUpdateElementsToSave() {
-    const elementsToInsert = this.dataSourceComponents.data.filter(element => element.action === CONST_DETAIL_FORMULA.update);
-    elementsToInsert.forEach(element => {
-      const lote = this.getBatches(element.lotesSeleccionados);
-      const insertData: IFormulaDetalleReq = {
-        action: element.action,
-        available: element.available,
-        baseQuantity: element.baseQuantity,
-        consumed: element.consumed,
-        description: element.description,
-        isContainer: this.validateIsContainer(element.codigoProducto),
-        isItemSelected: element.selected,
-        orderFabId: 0,
-        pendingQuantity: element.pendingQuantity,
-        productId: element.codigoProducto,
-        requiredQuantity: element.requiredQuantity,
-        stock: element.stock,
-        unit: element.unit,
-        warehouse: element.warehouse,
-        warehouseQuantity: element.warehouseQuantity,
-        isChecked: false,
+        isLabel: false,
         assignedBatches: lote
       };
       this.objectDataToSave.components.push(insertData);
@@ -529,7 +483,7 @@ export class AddComponentComponent implements OnInit {
       const loteToSave: ISaveAssignedBatches = {
         assignedQty: element.cantidadSeleccionada,
         batchNumber: element.numeroLote,
-        areBatchesComplete: 0,
+        areBatchesComplete: 1,
         sysNumber: element.sysNumber
       };
       lotesToSave.push(loteToSave);
@@ -540,11 +494,6 @@ export class AddComponentComponent implements OnInit {
   validateIsContainer(productId: string) {
     const productIdType = productId.split('-')[0];
     return productIdType === CONST_CONTAINER.en || productIdType === CONST_CONTAINER.em;
-  }
-
-  getIsReadyTOSave() {
-    this.isReadyToSave = true;
-    this.dataService.setIsToSaveAnything(true);
   }
 
   updateBatches(element?: ILotesAsignadosReq): boolean {
@@ -565,7 +514,7 @@ export class AddComponentComponent implements OnInit {
 
   isDue(element: ILotesReq) {
     if (element.fechaExp !== null && element.fechaExp !== undefined) {
-      const strFechaExp = String(element.fechaExp).split('/');
+      const strFechaExp = String(element.fechaExp).split('-');
       const dtFechaExp = new Date(parseInt(strFechaExp[2], 10), parseInt(strFechaExp[1], 10) - 1, parseInt(strFechaExp[0], 10));
       element.isValid = (dtFechaExp >= this.today);
       return dtFechaExp < this.today;
@@ -583,32 +532,10 @@ export class AddComponentComponent implements OnInit {
     return element.isValid;
   }
 
-  buildObjectToSap(): void {
-    this.objectDataToSave.components = [];
-    this.getInsertElementsToSave();
-    this.getUpdateElementsToSave();
-
-    this.saveChanges();
-  }
-
-  saveChanges(): void {
-    this.pedidosService.updateFormula(this.objectDataToSave).subscribe(() => {
-      this.createMessageOkHttp();
-      this.reloadData();
-    }, error => {
-      this.errorService.httpError(error);
-      this.reloadData();
-    });
-  }
-
-  createMessageOkHttp() {
-    this.observableService.setMessageGeneralCallHttp({ title: Messages.success, icon: 'success', isButtonAccept: false });
-  }
-
   openDialog() {
-    this.observableService.setSearchComponentLoteModal({
+    this.observableService.setSearchComponentModal({
       modalType: ComponentSearch.searchComponent,
-      data: this.dataSourceComponents.data,
+      data: this.componentsData,
       catalogGroupName: this.catalogGroupName
     });
   }

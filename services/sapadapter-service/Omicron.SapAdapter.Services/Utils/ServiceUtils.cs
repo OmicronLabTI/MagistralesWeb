@@ -612,6 +612,110 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// GetRouteConfigurationsForProducts.
+        /// </summary>
+        /// <param name="catalogsService">catalogsService.</param>
+        /// <param name="redisService">redisService.</param>
+        /// <param name="routeParam">routeParam.</param>
+        /// <returns>routeConfiguration.</returns>
+        public static async Task<OrderFiltersByConfigType> GetRouteConfigurationsForProducts(
+            ICatalogsService catalogsService,
+            IRedisService redisService,
+            string routeParam)
+        {
+            var routeConfiguration = await GetActiveRouteConfigurationsForProducts(catalogsService, redisService);
+
+            var selectedRoutes = routeConfiguration
+                .Where(r => r.Route?.Equals(routeParam, StringComparison.OrdinalIgnoreCase) == true);
+
+            var oppositeRoutes = routeConfiguration
+                .Where(r => !r.Route?.Equals(routeParam, StringComparison.OrdinalIgnoreCase) == true);
+
+            var classificationCodes = selectedRoutes
+                .Select(r => r.ClassificationCode)
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Distinct()
+                .ToList();
+
+            var itemCodesExcludedByException = SplitAndClean(selectedRoutes.Select(r => r.Exceptions));
+
+            var itemCodesFromSelected = SplitAndClean(selectedRoutes.Select(r => r.ItemCode));
+            var exceptionsFromOpposite = SplitAndClean(oppositeRoutes.Select(r => r.Exceptions));
+
+            var itemCodesIncludedByConfigRules = itemCodesFromSelected
+                .Concat(exceptionsFromOpposite)
+                .Distinct()
+                .ToList();
+
+            return new OrderFiltersByConfigType
+            {
+                ClassificationCodes = classificationCodes,
+                InvalidCatalogsGroups = ServiceConstants.InvalidCatalogsGroups,
+                ItemCodesExcludedByException = itemCodesExcludedByException,
+                ItemCodesIncludedByConfigRules = itemCodesIncludedByConfigRules,
+            };
+        }
+
+        /// <summary>
+        /// GetActiveRouteConfigurationsForProducts.
+        /// </summary>
+        /// <param name="catalogsService">catalogsService.</param>
+        /// <param name="redisService">redisService.</param>
+        /// <returns>routeConfiguration.</returns>
+        public static async Task<List<ActiveConfigRoutesModel>> GetActiveRouteConfigurationsForProducts(
+            ICatalogsService catalogsService,
+            IRedisService redisService)
+        {
+            var routeConfiguration = await DeserializeRedisValue(
+                new List<ActiveConfigRoutesModel>(),
+                ServiceConstants.ConfigRoutesRedisKey,
+                redisService);
+
+            if (routeConfiguration.Count == 0)
+            {
+                var catalogResponse = await catalogsService.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint);
+                routeConfiguration = JsonConvert.DeserializeObject<List<ActiveConfigRoutesModel>>(catalogResponse.Response.ToString());
+            }
+
+            return routeConfiguration.Where(x => x.IsActive).ToList();
+        }
+
+        /// <summary>
+        /// Splits a collection of comma-separated strings, trims each entry, removes nulls/empties and returns a distinct list.
+        /// </summary>
+        /// <param name="values">Values.</param>
+        /// <returns>Splited List.</returns>
+        public static List<string> SplitAndClean(IEnumerable<string> values)
+        {
+            return values
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .SelectMany(s => s.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                .Select(s => s.Trim())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct()
+                .ToList();
+        }
+
+        /// <summary>
+        /// Deserilize redis info.
+        /// </summary>
+        /// <typeparam name="T">List.</typeparam>
+        /// <param name="list">Default list.</param>
+        /// <param name="redisKey">Redis key.</param>
+        /// <param name="redisService">Redis service interface.</param>
+        /// <returns>Deserialized object.</returns>
+        public static async Task<List<T>> DeserializeRedisValue<T>(List<T> list, string redisKey, IRedisService redisService)
+        {
+            if (redisService.IsConnectedRedis())
+            {
+                var redisValues = await redisService.GetRedisKey(redisKey);
+                return !string.IsNullOrEmpty(redisValues) ? JsonConvert.DeserializeObject<List<T>>(redisValues) : list;
+            }
+
+            return list;
+        }
+
+        /// <summary>
         /// gets the dictionary.
         /// </summary>
         /// <param name="dateRange">the date range.</param>

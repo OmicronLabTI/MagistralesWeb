@@ -99,6 +99,11 @@ namespace Omicron.Catalogos.Services.Constants
         public const string InvalidsSortingRoutes = "Los siguientes productos o clasificaciones {0} tienen una configuración incorrecta: no están registrados en SAP, presentan duplicidad en su registro o son inexistentes.";
 
         /// <summary>
+        /// NoMatching.
+        /// </summary>
+        public const string DefaultColor = "#FBC115";
+
+        /// <summary>
         /// Gets the order.
         /// </summary>
         /// <value>
@@ -108,6 +113,18 @@ namespace Omicron.Catalogos.Services.Constants
         {
             "MX",
             "MQ",
+        };
+
+        /// <summary>
+        /// Gets the order.
+        /// </summary>
+        /// <value>
+        /// the order.
+        /// </value>
+        public static List<string> Routes { get; } = new List<string>
+        {
+            "MAG",
+            "ALM",
         };
     }
 }

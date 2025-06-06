@@ -11,7 +11,9 @@ import RxSwift
 import RxCocoa
 import Resolver
 // swiftlint:disable type_body_length
-class LotsViewController: LotsBaseViewController {
+class LotsViewController: LotsBaseViewController, ChangeInputValueDelegate {
+    var lastResponder = PublishSubject<Any?>()
+    
     // MARK: - OUTLEST
     @IBOutlet weak var pendingButton: UIButton!
     @IBOutlet weak var saveLotsButton: UIButton!
@@ -22,7 +24,7 @@ class LotsViewController: LotsBaseViewController {
     @Injected var lotsViewModel: LotsViewModel
     @Injected var lottieManager: LottieManager
 
-    let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initComponents()
@@ -53,6 +55,8 @@ class LotsViewController: LotsBaseViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         splitViewController?.preferredDisplayMode = .primaryHidden
+        lastResponder = PublishSubject<Any?>()
+        disposeBag = DisposeBag()
     }
     // MARK: - Functions
     func bindGestureRecognizer() {
@@ -84,7 +88,7 @@ class LotsViewController: LotsBaseViewController {
         }).disposed(by: self.disposeBag)
         // Detecta que item de la tabla lotes disponibles fue selecionado
         Observable.combineLatest(self.lotsAvailablesTable.rx.itemSelected,
-                                 self.lotsViewModel.lastResponder, resultSelector: { [weak self] index, responder in
+                                 self.lastResponder, resultSelector: { [weak self] index, responder in
             if let cell = self?.lotsAvailablesTable.cellForRow(at: index) as? LotsAvailableTableViewCell,
                 let lastText = responder as? UITextField {
                 if cell.quantitySelected != lastText && !cell.quantitySelected.isEditing {
@@ -200,6 +204,7 @@ class LotsViewController: LotsBaseViewController {
             cell.quantitySelected.text = self?.formatter.string(from: (data.cantidadSeleccionada ?? 0) as NSNumber)
             cell.quantityAssignedLabel.text = self?.formatter.string(from: (data.cantidadAsignada ?? 0) as NSNumber)
             cell.setExpiredBatches(data.expiredBatch)
+            cell.delegate = self
         }.disposed(by: self.disposeBag)
 
         lotsAvailablesTable.rx.itemSelected.subscribe(onNext: { [weak self] _ in
