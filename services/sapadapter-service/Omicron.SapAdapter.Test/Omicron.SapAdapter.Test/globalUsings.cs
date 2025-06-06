@@ -18,6 +18,7 @@ global using Omicron.SapAdapter.Entities.Model.AlmacenModels;
 global using Omicron.SapAdapter.Entities.Model.BusinessModels;
 global using Omicron.SapAdapter.Entities.Model.DbModels;
 global using Omicron.SapAdapter.Entities.Model.JoinsModels;
+global using Omicron.SapAdapter.Entities.Model.Wraps;
 global using Omicron.SapAdapter.Facade.Sap;
 global using Omicron.SapAdapter.Resources.Exceptions;
 global using Omicron.SapAdapter.Resources.Extensions;

@@ -45,5 +45,36 @@ namespace Omicron.SapAdapter.DataAccess.Extensions
                 ClientType = s.OrderModel.ClientType,
             });
         }
+
+        /// <summary>
+        /// Method to get GetCompleteDetailOrderModel
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns>GetCompleteDetailOrderModel.</returns>
+        public static IQueryable<CompleteDetailOrderModel> GetCompleteDetailOrderModel(this IQueryable<DetailOrderJoinModelWrap> source)
+        {
+            return source.Select(x => new CompleteDetailOrderModel
+            {
+                OrdenFabricacionId = x.OrdenFabricacionModel == default ? 0 : x.OrdenFabricacionModel.OrdenId,
+                CodigoProducto = x.DetallePedidoModel.ProductoId,
+                DescripcionProducto = x.ProductoModel.LargeDescription,
+                DescripcionCorta = x.ProductoModel.ProductoName,
+                QtyPlanned = x.OrdenFabricacionModel == default ? 0 : x.OrdenFabricacionModel.Quantity,
+                QtyPlannedDetalle = (int)x.DetallePedidoModel.Quantity,
+                FechaOf = x.OrdenFabricacionModel.PostDate.HasValue ? x.OrdenFabricacionModel.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                FechaOfFin = x.OrdenFabricacionModel.DueDate.HasValue ? x.OrdenFabricacionModel.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                Status = x.OrdenFabricacionModel == default ? string.Empty : x.OrdenFabricacionModel.Status,
+                IsChecked = false,
+                CreatedDate = x.OrdenFabricacionModel.CreatedDate.HasValue ? x.OrdenFabricacionModel.CreatedDate.Value : null,
+                Label = x.DetallePedidoModel.Label,
+                NeedsCooling = x.ProductoModel.NeedsCooling,
+                Container = x.DetallePedidoModel.Container,
+                PatientName = x.OrderModel.Patient ?? string.Empty,
+                PedidoId = x.DetallePedidoModel.PedidoId ?? 0,
+                CatalogGroup = x.CatalogProductModel.CatalogName,
+                IsOmigenomics = x.CatalogProductModel.CatalogName.ToLower() == "omigenomics",
+                ProductFirmName = x.ProductFirmModel == default ? string.Empty : x.ProductFirmModel.ProductFirmName,
+            });
+        }
     }
 }
