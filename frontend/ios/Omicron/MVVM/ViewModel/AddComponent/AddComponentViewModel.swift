@@ -60,10 +60,14 @@ class AddComponentViewModel {
         let product = self.products[selectedLineDoc]
         let available = product.availableLots[row]
     
-        // valida si la cantidad es cero o si es mayor al necesario, en este caso no hacer nada
-        var first = NSDecimalNumber(decimal: quantity).doubleValue  > NSDecimalNumber(decimal: product.totalNecesary).doubleValue
+
+        let quantityDecimal = quantity as NSDecimalNumber
+        let totalNecesaryDecimal = product.totalNecesary as NSDecimalNumber
+        
+        var first = quantityDecimal.compare(totalNecesaryDecimal) == .orderedDescending
         var second = available.cantidadDisponible == 0
         var third = quantity > (available.cantidadDisponible ?? 0)
+
         if quantity == 0 || first || second || third {
             return
         }
