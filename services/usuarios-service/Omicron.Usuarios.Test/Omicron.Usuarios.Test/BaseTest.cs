@@ -151,5 +151,29 @@ namespace Omicron.Usuarios.Test
                 UserError = string.Empty,
             };
         }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetClassificationDescriptionModel()
+        {
+            var classifications = new List<ClassificationMagistralModel>
+            {
+                new ClassificationMagistralModel { Value = "MN", Description = "Bioelite (MN)" },
+                new ClassificationMagistralModel { Value = "BE", Description = "Bioequal (BE)" },
+                new ClassificationMagistralModel { Value = "MG", Description = "Magistral (MG)" },
+                new ClassificationMagistralModel { Value = "DZ", Description = "Dermazone (DZ)" },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(classifications),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
     }
 }

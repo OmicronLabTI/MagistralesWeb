@@ -106,6 +106,11 @@ namespace Omicron.Usuarios.Services.Constants
         public const string QfbOrders = "qfbOrders";
 
         /// <summary>
+        /// gets the roles from catalogservice.
+        /// </summary>
+        public const string GetClassifications = "getclassificationqfb";
+
+        /// <summary>
         /// Get fab orders.
         /// </summary>
         public const string GetFabOrders = "fabOrderId";

@@ -78,6 +78,7 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <inheritdoc/>
         public async Task<ResultModel> GetActiveClassificationQfb()
         {
+            var textInfo = CultureInfo.CurrentCulture.TextInfo;
             var classifications = (await this.catalogDao.GetActiveClassificationQfb())
                 .Select(x => new ClassificationMagistralModel
                 {
@@ -90,7 +91,7 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .Where(x => x.Route == ServiceConstants.Magistrales).Select(x => new ClassificationMagistralModel
                 {
                     Value = x.ClassificationCode,
-                    Description = x.Classification,
+                    Description = $"{textInfo.ToTitleCase(x.Classification.ToLower())} ({x.ClassificationCode})",
                     ClassificationQfb = false,
                 }).ToList();
 
