@@ -16,6 +16,7 @@ import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { WorkTeamComponent } from 'src/app/dialogs/work-team/work-team.component';
 import { WorkTeamDialogConfig } from 'src/app/model/device/workteam.model';
+import { UserListMock } from 'src/mocks/userListMock';
 
 @Component({
     selector: 'app-user-list',
@@ -93,9 +94,9 @@ export class UserListComponent implements OnInit, OnDestroy {
             this.dataSource.data.forEach(user => {
                 user.isChecked = false;
                 user.piezas = this.dataService.getFormattedNumber(user.piezas);
-                if (user.classificationDescription) {
-                    user.fullClasification = user.classificationDescription;
-                }
+                user.fullClasification = this.dataService.calculateOrValueList([
+                    user.role === 2, user.role === 3, user.role === 4
+                ]) ? user.classificationDescription : 'NO APLICA';
             });
             this.isAllComplete = false;
             this.isOnInit = false;
