@@ -108,7 +108,16 @@
                     <div class="form-field">
                         <mat-form-field appearance="outline" class="custom-field magin-top-field">
                             <mat-label>Selecciona clasificación</mat-label>
-                            <mat-select formControlName="classificationQFB" (selectionChange)="changeClasification()">
+                            <mat-select *ngIf="addUserForm.get('userTypeR').value !== '2'"
+                                formControlName="clasificationLogDis" multiple>
+                                <ng-container *ngFor="let clasification of activeClasifications">
+                                    <mat-option [value]="clasification.value">
+                                        {{ clasification.description}}
+                                    </mat-option>
+                                </ng-container>
+                            </mat-select>
+                            <mat-select *ngIf="addUserForm.get('userTypeR').value === '2'"
+                                formControlName="classificationQFB" (selectionChange)="changeClasification()">
                                 <ng-container *ngFor="let clasification of activeClasifications">
                                     <mat-option [value]="clasification.value">
                                         {{ clasification.description}}

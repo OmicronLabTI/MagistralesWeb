@@ -28,4 +28,11 @@
 	  </column>
 	</createTable>
   </changeSet>
+
+  <changeSet author="vsanchez" id="changelog-1.2">
+    <update tableName="user">
+      <column name="classification" value="Todas"/>
+      <where>role IN (3,4)</where>
+    </update>
+  </changeSet>
 </databaseChangeLog>

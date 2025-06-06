@@ -19,6 +19,7 @@ namespace Omicron.Usuarios.Api
     using Microsoft.OpenApi.Models;
     using Omicron.Usuarios.Api.Filters;
     using Omicron.Usuarios.DependencyInjection;
+    using Omicron.Usuarios.Services.Catalogos;
     using Omicron.Usuarios.Services.Pedidos;
     using Omicron.Usuarios.Services.SapAdapter;
     using Prometheus;
@@ -102,6 +103,11 @@ namespace Omicron.Usuarios.Api
                 c.BaseAddress = new Uri(this.Configuration["SapAdapterUrl"]);
             })
             .AddTypedClient<ISapAdapter, SapAdapter>();
+
+            services.AddHttpClient("catalogos", c =>
+            {
+                c.BaseAddress = new Uri(this.Configuration["CatalogService"]);
+            }).AddTypedClient<ICatalogosService, CatalogosService>();
 
             this.AddRedis(services, Log.Logger);
 

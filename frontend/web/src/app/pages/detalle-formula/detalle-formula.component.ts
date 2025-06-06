@@ -252,7 +252,8 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
         if (resultDeleteMessage.isConfirmed) {
           const detailComponentsToDelete = this.createDetailTOSave();
           const componentsToDeleteOnSave = [...this.dataSource.data.filter(component => component.isChecked &&
-            (component.action === CONST_DETAIL_FORMULA.update || !component.action))];
+            this.dataService.calculateOrValueList([component.action === CONST_DETAIL_FORMULA.update,
+              !component.action, component.action === CONST_DETAIL_FORMULA.delete]))];
           componentsToDeleteOnSave.forEach(component => {
             component.stock = component.stock || CONST_NUMBER.zero;
             component.action = CONST_DETAIL_FORMULA.delete;
@@ -260,7 +261,12 @@ export class DetalleFormulaComponent implements OnInit, OnDestroy {
             component.warehouseQuantity = Number(component.warehouseQuantity.toString().replace(',', ''));
           });
           detailComponentsToDelete.components = componentsToDeleteOnSave;
-
+          if (detailComponentsToDelete.components.some(component => component.hasBatches)) {
+            this.observableService.setMessageGeneralCallHttp(
+              { title: Messages.cantBeDeletedDueToAssignedBatches, icon: 'error', isButtonAccept: false }
+            );
+            return;
+          }
           this.pedidosService.updateFormula(detailComponentsToDelete).subscribe(() => {
             this.dataSource.data = this.dataSource.data.filter(component => !component.isChecked);
             this.oldDataFormulaDetail.details = this.dataSource.data;

@@ -78,8 +78,26 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <inheritdoc/>
         public async Task<ResultModel> GetActiveClassificationQfb()
         {
-            var classifications = (await this.catalogDao.GetActiveClassificationQfb()).Select(x => new { x.Value, x.Description }).ToList();
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, classifications, null);
+            var textInfo = CultureInfo.CurrentCulture.TextInfo;
+            var classifications = (await this.catalogDao.GetActiveClassificationQfb())
+                .Select(x => new ClassificationMagistralModel
+                {
+                    Value = x.Value,
+                    Description = x.Description,
+                    ClassificationQfb = true,
+                }).ToList();
+
+            var newClassifications = (await this.catalogDao.GetConfigRoutesModel())
+                .Where(x => x.Route == ServiceConstants.Magistrales).Select(x => new ClassificationMagistralModel
+                {
+                    Value = x.ClassificationCode,
+                    Description = $"{textInfo.ToTitleCase(x.Classification.ToLower())} ({x.ClassificationCode})",
+                    ClassificationQfb = false,
+                }).ToList();
+
+            var combinedList = classifications.Concat(newClassifications).OrderBy(x => x.Description).ToList();
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, combinedList, null);
         }
 
         /// <inheritdoc/>
