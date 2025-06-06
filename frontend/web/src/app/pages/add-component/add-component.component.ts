@@ -30,6 +30,7 @@ export class AddComponentComponent implements OnInit {
   productId = CONST_STRING.empty;
   isFromDetail = false;
   detailOrders = CONST_STRING.empty;
+  element: any;
 
   subscription = new Subscription();
   isReadyToSave = false;
