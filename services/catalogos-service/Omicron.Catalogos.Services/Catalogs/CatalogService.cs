@@ -157,7 +157,7 @@ namespace Omicron.Catalogos.Services.Catalogs
 
             await this.InsertConfigRoutes(valids);
 
-            var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification, x.Route }).Where(s => !string.IsNullOrWhiteSpace(s))
+            var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification, x.Exceptions, x.Route }).Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct().ToList();
 
             var comments = values.Count > 0 ? string.Format(ServiceConstants.InvalidsSortingRoutes, JsonConvert.SerializeObject(values)) : null;
@@ -236,29 +236,28 @@ namespace Omicron.Catalogos.Services.Catalogs
 
         private static void ValidateItemCodesFound(HashSet<string> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
+            var seenCodes = new HashSet<string>();
             var cleanedValids = new List<ConfigRoutesModel>();
 
             var withItemCode = valids.Where(x => !string.IsNullOrWhiteSpace(x.ItemCode)).ToList();
             var withoutItemCode = valids.Where(x => string.IsNullOrWhiteSpace(x.ItemCode)).ToList();
 
-            var grouped = withItemCode
-                .GroupBy(w => NormalizeAndToUpper(w.ItemCode))
-                .Select(g => g.First())
-                .ToList();
-
-            var duplicates = withItemCode
-                .Except(grouped)
-                .ToList();
-
-            invalids.AddRange(duplicates);
-
-            foreach (var item in grouped)
+            foreach (var item in withItemCode)
             {
-                var itemCodes = NormalizeAndToUpper(item.ItemCode)
-                .Split(',')
-                .Select(code => code.Trim());
+                var itemCodes = item.ItemCode
+                    .Split(',')
+                    .Select(code => NormalizeAndToUpper(code.Trim()))
+                    .ToList();
 
-                if (itemCodes.Any(code => found.Contains(code)))
+                if (itemCodes.Exists(code => seenCodes.Contains(code)))
+                {
+                    invalids.Add(item);
+                    continue;
+                }
+
+                itemCodes.ForEach(code => seenCodes.Add(code));
+
+                if (itemCodes.TrueForAll(code => found.Contains(code)))
                 {
                     cleanedValids.Add(item);
                 }
@@ -276,34 +275,41 @@ namespace Omicron.Catalogos.Services.Catalogs
 
         private static void ValidateExceptionFound(HashSet<string> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
-            var matchingException = valids
-                .Where(item =>
-                !string.IsNullOrEmpty(item.ItemCode) &&
-                !string.IsNullOrEmpty(item.Exceptions))
-                .Where(item =>
+            var seenExceptions = new HashSet<string>();
+            var cleanedValids = new List<ConfigRoutesModel>();
+
+            var withException = valids.Where(x => !string.IsNullOrWhiteSpace(x.Exceptions)).ToList();
+            var withoutException = valids.Where(x => string.IsNullOrWhiteSpace(x.Exceptions)).ToList();
+
+            foreach (var item in withException)
+            {
+                var exceptions = item.Exceptions
+                    .Split(',')
+                    .Select(code => NormalizeAndToUpper(code.Trim()))
+                    .ToList();
+
+                if (exceptions.Exists(code => seenExceptions.Contains(code)))
                 {
-                    var products = NormalizeAndToUpper(item.ItemCode)
-                        .Split(',')
-                        .Select(p => p.Trim())
-                        .Where(p => !string.IsNullOrWhiteSpace(p))
-                        .ToList();
+                    invalids.Add(item);
+                    continue;
+                }
 
-                    var exceptionProducts = NormalizeAndToUpper(item.Exceptions)
-                        .Split(',')
-                        .Select(p => p.Trim())
-                        .Where(p => !string.IsNullOrWhiteSpace(p))
-                        .ToList();
+                exceptions.ForEach(code => seenExceptions.Add(code));
 
-                    var validExceptionProducts = exceptionProducts
-                        .Where(found.Contains)
-                        .ToList();
+                if (exceptions.TrueForAll(code => found.Contains(code)))
+                {
+                    cleanedValids.Add(item);
+                }
+                else
+                {
+                    invalids.Add(item);
+                }
+            }
 
-                    return products.Exists(product => validExceptionProducts.Contains(product));
-                })
-                .ToList();
+            cleanedValids.AddRange(withoutException);
 
-            invalids.AddRange(matchingException);
-            valids.RemoveAll(item => matchingException.Contains(item));
+            valids.Clear();
+            valids.AddRange(cleanedValids);
         }
 
         private static void ValidConfigRoutes(List<ConfigRoutesModel> confingroute, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
