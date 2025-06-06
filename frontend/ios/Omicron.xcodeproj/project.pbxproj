@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -838,9 +838,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		11254FBE2DDD30D100B71F9B /* AddComponent */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AddComponent; sourceTree = "<group>"; };
-		11580C302DDBEC4500C00FE1 /* AddComponent */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AddComponent; sourceTree = "<group>"; };
-		115D38722DE91AB5008451A6 /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
+		11254FBE2DDD30D100B71F9B /* AddComponent */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AddComponent;
+			sourceTree = "<group>";
+		};
+		11580C302DDBEC4500C00FE1 /* AddComponent */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AddComponent;
+			sourceTree = "<group>";
+		};
+		115D38722DE91AB5008451A6 /* Extensions */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1779,7 +1791,6 @@
 				};
 			};
 			buildConfigurationList = 98015CA724AFBC6C00E7772F /* Build configuration list for PBXProject "Omicron" */;
-			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1787,6 +1798,7 @@
 				Base,
 			);
 			mainGroup = 98015CA324AFBC6C00E7772F;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 98015CAD24AFBC6C00E7772F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
