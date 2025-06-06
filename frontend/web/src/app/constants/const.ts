@@ -340,6 +340,7 @@ export enum CatalogTypes {
 }
 
 export const TypeClasifications = {
+    todas: 'Todas',
     dermazone: 'DZ',
     bioelite: 'MN',
     bioequal: 'BE',
