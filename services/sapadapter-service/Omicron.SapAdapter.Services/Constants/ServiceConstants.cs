@@ -908,6 +908,30 @@ namespace Omicron.SapAdapter.Services.Constants
         public static string WarehouseParam => "warehouse";
 
         /// <summary>
+        /// Gets ConfigRoutesRedisKey.
+        /// </summary>
+        /// <value>
+        /// String ConfigRoutesRedisKey.
+        /// </value>
+        public static string ConfigRoutesRedisKey => "configroute-valids";
+
+        /// <summary>
+        /// Gets GetActiveRouteConfigurationsEndPoint.
+        /// </summary>
+        /// <value>
+        /// String GetActiveRouteConfigurationsEndPoint.
+        /// </value>
+        public static string GetActiveRouteConfigurationsEndPoint => "active/route/confgurations";
+
+        /// <summary>
+        /// Gets MagistralesDbValue.
+        /// </summary>
+        /// <value>
+        /// String MagistralesDbValue.
+        /// </value>
+        public static string MagistralesDbValue => "MAG";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
@@ -1204,5 +1228,17 @@ namespace Omicron.SapAdapter.Services.Constants
         {
             { ServiceConstants.Maquila.ToUpper(), "MQ" },
         };
+
+        /// <summary>
+        /// Gets the Default Filters.
+        /// </summary>
+        /// <value>
+        /// default filters.
+        /// </value>
+        public static List<string> InvalidCatalogsGroups { get; } =
+        [
+            "Envases",
+            "Paqueteria",
+        ];
     }
 }

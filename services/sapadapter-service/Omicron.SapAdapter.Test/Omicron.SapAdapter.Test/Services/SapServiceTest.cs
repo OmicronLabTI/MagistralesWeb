@@ -121,8 +121,50 @@ namespace Omicron.SapAdapter.Test.Services
                 { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
             };
 
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Value = "A1", Field = "Medic" },
+                new ParametersModel { Id = 2, Value = "Codigo", Field = "CardCodeResponsibleMedic" },
+            };
+
+            mockCatalogs
+                .SetupSequence(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetActiveConfigRoutesModel())))
+                .Returns(Task.FromResult(this.GetResultDto(parameters)));
+
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "OmicronRecipeAddress")]).Returns("http://localhost:5002/");
+
+            mockPedidoService
+                .Setup(m => m.PostPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
+
+            mockPedidoService
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDtoGetPedidosService()));
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
+
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
+            var mockLog = new Mock<ILogger>();
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            var sapServiceMock = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
+
             // act
-            var result = await this.sapService.GetOrders(dicParams);
+            var result = await sapServiceMock.GetOrders(dicParams);
 
             Assert.That(result, Is.Not.Null);
         }
@@ -326,8 +368,50 @@ namespace Omicron.SapAdapter.Test.Services
             // arrange
             var listIds = new List<int> { 100 };
 
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockUserService = new Mock<IUsersService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+            var mockRedis = new Mock<IRedisService>();
+            var mockCatalogs = new Mock<ICatalogsService>();
+
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Value = "A1", Field = "Medic" },
+                new ParametersModel { Id = 2, Value = "Codigo", Field = "CardCodeResponsibleMedic" },
+            };
+
+            mockCatalogs
+                .SetupSequence(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetActiveConfigRoutesModel())))
+                .Returns(Task.FromResult(this.GetResultDto(parameters)));
+
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:prefix")]).Returns("L-");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "SapOmicron:BatchCodes:numberPositions")]).Returns("7");
+            mockConfiguration.SetupGet(x => x[It.Is<string>(s => s == "OmicronRecipeAddress")]).Returns("http://localhost:5002/");
+
+            mockPedidoService
+                .Setup(m => m.PostPedidos(It.IsAny<List<int>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultGetUserPedidos()));
+
+            mockPedidoService
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDtoGetPedidosService()));
+
+            mockUserService
+                .Setup(m => m.GetUsersById(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDtoGetUsersById()));
+
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
+            var mockLog = new Mock<ILogger>();
+            IGetProductionOrderUtils getProdUtils = new GetProductionOrderUtils(this.sapDao, mockLog.Object);
+            var sapServiceMock = new SapService(this.sapDao, mockPedidoService.Object, mockUserService.Object, mockConfiguration.Object, mockLog.Object, getProdUtils, mockRedis.Object, mockDoctor.Object, mockCatalogs.Object);
+
             // act
-            var result = await this.sapService.GetPedidoWithDetailAndDxp(listIds);
+            var result = await sapServiceMock.GetPedidoWithDetailAndDxp(listIds);
 
             // assert
             Assert.That(result, Is.Not.Null);

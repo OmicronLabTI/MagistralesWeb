@@ -78,8 +78,26 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <inheritdoc/>
         public async Task<ResultModel> GetActiveClassificationQfb()
         {
-            var classifications = (await this.catalogDao.GetActiveClassificationQfb()).Select(x => new { x.Value, x.Description }).OrderBy(x => x.Description).ToList();
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, classifications, null);
+            var textInfo = CultureInfo.CurrentCulture.TextInfo;
+            var classifications = (await this.catalogDao.GetActiveClassificationQfb())
+                .Select(x => new ClassificationMagistralModel
+                {
+                    Value = x.Value,
+                    Description = x.Description,
+                    ClassificationQfb = true,
+                }).ToList();
+
+            var newClassifications = (await this.catalogDao.GetConfigRoutesModel())
+                .Where(x => x.Route == ServiceConstants.Magistrales).Select(x => new ClassificationMagistralModel
+                {
+                    Value = x.ClassificationCode,
+                    Description = $"{textInfo.ToTitleCase(x.Classification.ToLower())} ({x.ClassificationCode})",
+                    ClassificationQfb = false,
+                }).ToList();
+
+            var combinedList = classifications.Concat(newClassifications).OrderBy(x => x.Description).ToList();
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, combinedList, null);
         }
 
         /// <inheritdoc/>
@@ -127,19 +145,14 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <inheritdoc/>
         public async Task<ResultModel> GetClassifications()
         {
-            var response = await this.catalogsdxp.Get(ServiceConstants.Manufacturers);
+            List<ClassificationDto> byfilter = await this.FilterClasifications();
+            List<ColorsDto> colors = await this.ClassificationColors();
 
-            var data = JsonConvert.DeserializeObject<List<ManufacturersDto>>(response.Response.ToString());
-
-            var result = data
-                .GroupBy(x => new { x.Classification, x.ClassificationCode })
-                .Select(g => new ClassificationDto
-                {
-                    Classification = g.Key.Classification,
-                    ClassificationCode = g.Key.ClassificationCode,
-                })
-                .Where(x => !ServiceConstants.Exlusions.Contains(x.ClassificationCode))
-                .ToList();
+            ClassificationGroupDto result = new ()
+            {
+                Filters = byfilter,
+                Colors = colors,
+            };
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, result, null);
         }
@@ -158,10 +171,11 @@ namespace Omicron.Catalogos.Services.Catalogs
             await this.ItemCodeValidation(valids, invalids);
             await this.ExceptionValidation(valids, invalids);
             ColorValidation(valids, invalids);
+            RouteValidation(valids, invalids);
 
             await this.InsertConfigRoutes(valids);
 
-            var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification }).Where(s => !string.IsNullOrWhiteSpace(s))
+            var values = invalids.SelectMany(x => new[] { x.ItemCode, x.Classification, x.Exceptions, x.Route }).Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct().ToList();
 
             var comments = values.Count > 0 ? string.Format(ServiceConstants.InvalidsSortingRoutes, JsonConvert.SerializeObject(values)) : null;
@@ -240,29 +254,28 @@ namespace Omicron.Catalogos.Services.Catalogs
 
         private static void ValidateItemCodesFound(HashSet<string> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
+            var seenCodes = new HashSet<string>();
             var cleanedValids = new List<ConfigRoutesModel>();
 
             var withItemCode = valids.Where(x => !string.IsNullOrWhiteSpace(x.ItemCode)).ToList();
             var withoutItemCode = valids.Where(x => string.IsNullOrWhiteSpace(x.ItemCode)).ToList();
 
-            var grouped = withItemCode
-                .GroupBy(w => NormalizeAndToUpper(w.ItemCode))
-                .Select(g => g.First())
-                .ToList();
-
-            var duplicates = withItemCode
-                .Except(grouped)
-                .ToList();
-
-            invalids.AddRange(duplicates);
-
-            foreach (var item in grouped)
+            foreach (var item in withItemCode)
             {
-                var itemCodes = NormalizeAndToUpper(item.ItemCode)
-                .Split(',')
-                .Select(code => code.Trim());
+                var itemCodes = item.ItemCode
+                    .Split(',')
+                    .Select(code => NormalizeAndToUpper(code.Trim()))
+                    .ToList();
 
-                if (itemCodes.Any(code => found.Contains(code)))
+                if (itemCodes.Exists(code => seenCodes.Contains(code)))
+                {
+                    invalids.Add(item);
+                    continue;
+                }
+
+                itemCodes.ForEach(code => seenCodes.Add(code));
+
+                if (itemCodes.TrueForAll(code => found.Contains(code)))
                 {
                     cleanedValids.Add(item);
                 }
@@ -280,34 +293,41 @@ namespace Omicron.Catalogos.Services.Catalogs
 
         private static void ValidateExceptionFound(HashSet<string> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
         {
-            var matchingException = valids
-                .Where(item =>
-                !string.IsNullOrEmpty(item.ItemCode) &&
-                !string.IsNullOrEmpty(item.Exceptions))
-                .Where(item =>
+            var seenExceptions = new HashSet<string>();
+            var cleanedValids = new List<ConfigRoutesModel>();
+
+            var withException = valids.Where(x => !string.IsNullOrWhiteSpace(x.Exceptions)).ToList();
+            var withoutException = valids.Where(x => string.IsNullOrWhiteSpace(x.Exceptions)).ToList();
+
+            foreach (var item in withException)
+            {
+                var exceptions = item.Exceptions
+                    .Split(',')
+                    .Select(code => NormalizeAndToUpper(code.Trim()))
+                    .ToList();
+
+                if (exceptions.Exists(code => seenExceptions.Contains(code)))
                 {
-                    var products = NormalizeAndToUpper(item.ItemCode)
-                        .Split(',')
-                        .Select(p => p.Trim())
-                        .Where(p => !string.IsNullOrWhiteSpace(p))
-                        .ToList();
+                    invalids.Add(item);
+                    continue;
+                }
 
-                    var exceptionProducts = NormalizeAndToUpper(item.Exceptions)
-                        .Split(',')
-                        .Select(p => p.Trim())
-                        .Where(p => !string.IsNullOrWhiteSpace(p))
-                        .ToList();
+                exceptions.ForEach(code => seenExceptions.Add(code));
 
-                    var validExceptionProducts = exceptionProducts
-                        .Where(found.Contains)
-                        .ToList();
+                if (exceptions.TrueForAll(code => found.Contains(code)))
+                {
+                    cleanedValids.Add(item);
+                }
+                else
+                {
+                    invalids.Add(item);
+                }
+            }
 
-                    return products.Exists(product => validExceptionProducts.Contains(product));
-                })
-                .ToList();
+            cleanedValids.AddRange(withoutException);
 
-            invalids.AddRange(matchingException);
-            valids.RemoveAll(item => matchingException.Contains(item));
+            valids.Clear();
+            valids.AddRange(cleanedValids);
         }
 
         private static void ValidConfigRoutes(List<ConfigRoutesModel> confingroute, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
@@ -345,6 +365,11 @@ namespace Omicron.Catalogos.Services.Catalogs
                 {
                     x.ItemCode = NormalizeAndToUpper(x.ItemCode);
                 }
+
+                if (!string.IsNullOrEmpty(x.Route))
+                {
+                    x.Route = NormalizeAndToUpper(x.Route);
+                }
             });
         }
 
@@ -366,6 +391,51 @@ namespace Omicron.Catalogos.Services.Catalogs
             invalids.AddRange(invalidColorItems);
 
             valids.RemoveAll(x => invalidColorItems.Contains(x));
+        }
+
+        private static void RouteValidation(List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
+        {
+            var notallowed = valids.Where(x => !ServiceConstants.Routes.Contains(x.Route)).ToList();
+
+            invalids.AddRange(notallowed);
+            valids.RemoveAll(x => notallowed.Contains(x));
+        }
+
+        private async Task<List<ColorsDto>> ClassificationColors()
+        {
+            var rules = await ServiceUtils.DeserializeRedisValue(new List<ConfigRoutesModel>(), ServiceConstants.ConfigRoutesRedisKey, this.redisService);
+
+            if (rules.Count == 0)
+            {
+                rules = await this.catalogDao.GetConfigurationRoute();
+            }
+
+            return rules.Select(x => new ColorsDto
+            {
+                Classification = x.Classification,
+                ClassificationCode = x.ClassificationCode,
+                ClassificationColor = string.IsNullOrWhiteSpace(x.Color)
+                    ? ServiceConstants.DefaultColor
+                    : x.Color,
+            }).ToList();
+        }
+
+        private async Task<List<ClassificationDto>> FilterClasifications()
+        {
+            var response = await this.catalogsdxp.Get(ServiceConstants.Manufacturers);
+            var data = JsonConvert.DeserializeObject<List<ManufacturersDto>>(response.Response.ToString());
+
+            var classifications = data
+                .GroupBy(x => new { x.Classification, x.ClassificationCode })
+                .Select(g => new ClassificationDto
+                {
+                    Classification = g.Key.Classification,
+                    ClassificationCode = g.Key.ClassificationCode,
+                })
+                .Where(x => !ServiceConstants.Exlusions.Contains(x.ClassificationCode))
+                .ToList();
+
+            return classifications;
         }
 
         private async Task InsertConfigRoutes(List<ConfigRoutesModel> valids)

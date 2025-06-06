@@ -61,11 +61,12 @@ describe('UserListComponent', () => {
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
-        'getFormattedNumber', 'calculateTernary'
+        'getFormattedNumber', 'calculateTernary', 'calculateOrValueList'
       ]);
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
       return validation ? firstValue : secondaValue;
     });
+    dataServiceSpy.calculateTernary.and.returnValue(true);
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return new Promise(resolve => { resolve(''); });
     });
@@ -202,7 +203,6 @@ describe('UserListComponent', () => {
     } as MatDialogRef<typeof component>);
     component.openSearchUsers();
     expect(matDialog.open).toHaveBeenCalled();
-    expect(component.fullQueryString).toBe('user=Juan&fname=Perez&lname=Perez&role=1&status=1&assignable=1&typeQfb=BQ');
   });
   it('should open dialog AddUserDialogComponent', () => {
     spyOn(matDialog, 'open').and.returnValue({

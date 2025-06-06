@@ -13,13 +13,9 @@ namespace Omicron.SapAdapter.Services.Sap
     using System.Globalization;
     using System.Linq;
     using System.Net;
-    using System.Numerics;
-    using System.Runtime.CompilerServices;
     using System.Text;
-    using System.Text.Json;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
-    using System.Xml.Linq;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
@@ -144,7 +140,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var alias = await this.sapDao.GetClientCatalogCardCode(cardcodes);
 
-            orderToReturn.ForEach(async o =>
+            orderToReturn.ForEach(o =>
             {
                 var doctor = listDoctors.FirstOrDefault(x => x.CardCode == o.Codigo);
                 doctor ??= new DoctorPrescriptionInfoModel { DoctorName = o.Medico };
@@ -168,7 +164,12 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public async Task<ResultModel> GetOrderDetails(int docId)
         {
-            var details = await this.sapDao.GetAllDetails(new List<int?> { docId });
+            var orderFiltersByConfigType = await ServiceUtils.GetRouteConfigurationsForProducts(
+                this.catalogsService,
+                this.redisService,
+                ServiceConstants.MagistralesDbValue);
+
+            var details = await this.sapDao.GetAllDetailsByRoutesConfiguration(new List<int?> { docId }, orderFiltersByConfigType);
 
             var usersOrderModel = await this.pedidosService.PostPedidos(new List<int> { docId }, ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(usersOrderModel.Response.ToString());
@@ -211,8 +212,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         public async Task<ResultModel> GetPedidoWithDetail(List<int> pedidosIds)
         {
+            var orderFiltersByConfigType = await ServiceUtils.GetRouteConfigurationsForProducts(
+                this.catalogsService,
+                this.redisService,
+                ServiceConstants.MagistralesDbValue);
+
             var orders = (await this.sapDao.GetOrdersById(pedidosIds)).ToList();
-            var orderDetails = (await this.sapDao.GetAllDetails(pedidosIds.Cast<int?>().ToList())).ToList();
+            var orderDetails = (await this.sapDao.GetAllDetailsByRoutesConfiguration(pedidosIds.Cast<int?>().ToList(), orderFiltersByConfigType)).ToList();
 
             var listData = pedidosIds.Select(mj => new OrderWithDetailModel
             {
@@ -230,8 +236,13 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>the data.</returns>
         public async Task<ResultModel> GetPedidoWithDetailAndDxp(List<int> pedidosIds)
         {
+            var orderFiltersByConfigType = await ServiceUtils.GetRouteConfigurationsForProducts(
+                this.catalogsService,
+                this.redisService,
+                ServiceConstants.MagistralesDbValue);
+
             var orders = (await this.sapDao.GetOrdersById(pedidosIds)).ToList();
-            var orderDetails = (await this.sapDao.GetAllDetails(pedidosIds.Cast<int?>().ToList())).ToList();
+            var orderDetails = (await this.sapDao.GetAllDetailsByRoutesConfiguration(pedidosIds.Cast<int?>().ToList(), orderFiltersByConfigType)).ToList();
 
             var listData = pedidosIds.Select(mj => new OrderWithDetailModel
             {
@@ -981,25 +992,30 @@ namespace Omicron.SapAdapter.Services.Sap
         /// <returns>teh orders.</returns>
         private async Task<List<CompleteOrderModel>> GetSapDbOrders(Dictionary<string, string> parameters, Dictionary<string, DateTime> dateFilter, List<int> salesIdsToLook)
         {
-            if (parameters.ContainsKey(ServiceConstants.DocNum))
+            var orderFiltersByConfigType = await ServiceUtils.GetRouteConfigurationsForProducts(
+                this.catalogsService,
+                this.redisService,
+                ServiceConstants.MagistralesDbValue);
+
+            if (parameters.TryGetValue(ServiceConstants.DocNum, out string docNumParam))
             {
-                var valueSplit = parameters[ServiceConstants.DocNum].Split("-");
+                var valueSplit = docNumParam.Split("-");
 
                 int.TryParse(valueSplit[0], out int docNumInit);
                 int.TryParse(valueSplit[1], out int docNumEnd);
-                return (await this.sapDao.GetAllOrdersById(docNumInit, docNumEnd)).ToList();
+                return (await this.sapDao.GetAllOrdersById(docNumInit, docNumEnd, orderFiltersByConfigType)).ToList();
             }
-            else if (parameters.ContainsKey(ServiceConstants.DocNumDxp))
+            else if (parameters.TryGetValue(ServiceConstants.DocNumDxp, out string docNumDxpParam))
             {
-                return await this.sapDao.GetAllOrdersByDocNumDxp(parameters[ServiceConstants.DocNumDxp]);
+                return await this.sapDao.GetAllOrdersByDocNumDxp(docNumDxpParam, orderFiltersByConfigType);
             }
             else if (parameters.ContainsKey(ServiceConstants.FechaInicio))
             {
-                return (await this.sapDao.GetAllOrdersByFechaIni(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin])).ToList();
+                return (await this.sapDao.GetAllOrdersByFechaIni(dateFilter[ServiceConstants.FechaInicio], dateFilter[ServiceConstants.FechaFin], orderFiltersByConfigType)).ToList();
             }
             else
             {
-                return (await this.sapDao.GetAllOrdersByIds(salesIdsToLook)).ToList();
+                return (await this.sapDao.GetAllOrdersByIds(salesIdsToLook, orderFiltersByConfigType)).ToList();
             }
         }
 

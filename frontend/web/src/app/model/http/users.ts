@@ -52,6 +52,7 @@ export class IUserReq {
     fullClasification?: string;
     tecnicId: string | null;
     technicalRequire: boolean;
+    classificationDescription?: string;
     constructor() {
         this.isChecked = false;
         this.technicalRequire = false;
@@ -119,8 +120,10 @@ export class SearchUsersData {
 export class Clasification {
     value: string;
     description: string;
+    classificationQfb: boolean;
     constructor() {
         this.value = '';
         this.description = '';
+        this.classificationQfb = false;
     }
 }

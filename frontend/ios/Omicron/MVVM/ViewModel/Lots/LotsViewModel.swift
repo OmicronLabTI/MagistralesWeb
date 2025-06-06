@@ -16,7 +16,6 @@ class LotsViewModel {
     var showMessage = PublishSubject<String>()
     var orderId = -1
     var disposeBag = DisposeBag()
-    var lastResponder = PublishSubject<Any?>()
     var dataOfLots = BehaviorSubject<[Lots]>(value: [])
     var dataLotsAvailable = BehaviorSubject<[LotsAvailable]>(value: [])
     var dataLotsSelected = BehaviorSubject<[LotsSelected]>(value: [])

@@ -117,7 +117,7 @@ namespace Omicron.Pedidos.Services.Utils
             var userOrderBySales = (await pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
 
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
-            var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersWithFabOrders(sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
+            var sapOrders = listSalesNumber.Any() ? await ServiceUtils.GetOrdersDetailsForMagistral(sapAdapter, listSalesNumber) : new List<OrderWithDetailModel>();
 
             var getUpdateUserOrderModel = GetUpdateUserOrderModel(userOrdersByProd, userOrderBySales, sapOrders, assignModel.UserId, ServiceConstants.Asignado, assignModel.UserLogistic, true, qfbInfoValidated);
             userOrdersByProd = getUpdateUserOrderModel.Item1;

@@ -35,5 +35,4 @@
       <where>role IN (3,4)</where>
     </update>
   </changeSet>
-
 </databaseChangeLog>

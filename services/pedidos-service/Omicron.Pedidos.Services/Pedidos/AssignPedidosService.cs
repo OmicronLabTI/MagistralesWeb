@@ -271,7 +271,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var userOrdersBySale = (await this.pedidosDao.GetUserOrderBySaleOrder(listSales)).ToList();
 
             var listSalesNumber = listSales.Where(y => !string.IsNullOrEmpty(y)).Select(x => int.Parse(x)).ToList();
-            var sapOrders = ServiceShared.CalculateTernary(listSalesNumber.Any(), await ServiceUtils.GetOrdersWithFabOrders(this.sapAdapter, listSalesNumber), new List<OrderWithDetailModel>());
+            var sapOrders = ServiceShared.CalculateTernary(listSalesNumber.Any(), await ServiceUtils.GetOrdersDetailsForMagistral(this.sapAdapter, listSalesNumber), new List<OrderWithDetailModel>());
 
             var getUpdateUserOrderModel = AsignarLogic.GetUpdateUserOrderModel(orders, userOrdersBySale, sapOrders, assignModel.UserId, ServiceConstants.Reasignado, assignModel.UserLogistic, false, qfbInfoValidated);
             var ordersToUpdate = getUpdateUserOrderModel.Item1;

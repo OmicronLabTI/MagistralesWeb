@@ -50,7 +50,8 @@ describe('AddUserDialogComponent', () => {
 
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
       [
-        'getNormalizeString'
+        'getNormalizeString',
+        'calculateOrValueList'
       ]);
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService',
       [
@@ -88,13 +89,14 @@ describe('AddUserDialogComponent', () => {
     userServiceSpy.createUserService.and.callFake(() => {
       return of({});
     });
+    dataServiceSpy.calculateOrValueList.and.returnValue(false);
 
     userServiceSpy.getClasifications.and.returnValue(of({
       response: [
-        { value: 'MN', description: 'Bioelite (MN)' },
-        { value: 'BE', description: 'Bioequal (BE)' },
-        { value: 'MG', description: 'Magistral (MG)' },
-        { value: 'DZ', description: 'Dermazon (DZ)' }
+        { value: 'MN', description: 'Bioelite (MN)', classificationQfb: true },
+        { value: 'BE', description: 'Bioequal (BE)', classificationQfb: true },
+        { value: 'MG', description: 'Magistral (MG)', classificationQfb: true },
+        { value: 'DZ', description: 'Dermazon (DZ)', classificationQfb: true }
       ]
     }));
 
@@ -201,16 +203,40 @@ describe('AddUserDialogComponent', () => {
   it('should validateClasification as QFB', () => {
     component.userRoles = RolesMock.response;
     component.clasifications = [
-      { value: 'MN', description: 'Bioelite (MN)' },
-      { value: 'BE', description: 'Bioequal (BE)' },
-      { value: 'MG', description: 'Magistral (MG)' },
-      { value: 'DZ', description: 'Dermazon (DZ)' }];
+      {
+        value: 'MN', description: 'Bioelite (MN)',
+        classificationQfb: true
+      },
+      {
+        value: 'BE', description: 'Bioequal (BE)',
+        classificationQfb: true
+      },
+      {
+        value: 'MG', description: 'Magistral (MG)',
+        classificationQfb: true
+      },
+      {
+        value: 'DZ', description: 'Dermazon (DZ)',
+        classificationQfb: true
+      }];
     component.addUserForm.get('userTypeR').setValue(RolesMock.response[0].id, { emitEvent: false });
     component.activeClasifications = [
-      { value: 'MN', description: 'Bioelite (MN)' },
-      { value: 'BE', description: 'Bioequal (BE)' },
-      { value: 'MG', description: 'Magistral (MG)' },
-      { value: 'DZ', description: 'Dermazon (DZ)' }];
+      {
+        value: 'MN', description: 'Bioelite (MN)',
+        classificationQfb: true
+      },
+      {
+        value: 'BE', description: 'Bioequal (BE)',
+        classificationQfb: true
+      },
+      {
+        value: 'MG', description: 'Magistral (MG)',
+        classificationQfb: true
+      },
+      {
+        value: 'DZ', description: 'Dermazon (DZ)',
+        classificationQfb: true
+      }];
     component.validateClasification();
     expect(component.activeClasifications.length).toBe(4);
   });
@@ -218,12 +244,24 @@ describe('AddUserDialogComponent', () => {
     component.userRoles = RolesMock.response;
     component.addUserForm.get('userTypeR').setValue(RolesMock.response[2].id);
     component.activeClasifications = [
-      { value: 'MN', description: 'Bioelite (MN)' },
-      { value: 'BE', description: 'Bioequal (BE)' },
-      { value: 'MG', description: 'Magistral (MG)' },
-      { value: 'DZ', description: 'Dermazon (DZ)' }];
+      {
+        value: 'MN', description: 'Bioelite (MN)',
+        classificationQfb: false
+      },
+      {
+        value: 'BE', description: 'Bioequal (BE)',
+        classificationQfb: false
+      },
+      {
+        value: 'MG', description: 'Magistral (MG)',
+        classificationQfb: false
+      },
+      {
+        value: 'DZ', description: 'Dermazon (DZ)',
+        classificationQfb: false
+      }];
     component.validateClasification();
-    expect(component.activeClasifications.length).toBe(3);
+    expect(component.activeClasifications.length).toBe(0);
   });
   it('should changeClasification with DZ value', () => {
     component.addUserForm.get('classificationQFB').setValue('DZ');

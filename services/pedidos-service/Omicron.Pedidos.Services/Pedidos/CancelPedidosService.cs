@@ -717,8 +717,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Sales order.</returns>
         private async Task<OrderWithDetailModel> GetSalesOrdersFromSap(int salesOrderId)
         {
-            var orders = await this.sapAdapter.PostSapAdapter(new List<int> { salesOrderId }, ServiceConstants.GetOrderWithDetail);
-            var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var sapOrders = await ServiceUtils.GetOrdersDetailsForMagistral(
+                this.sapAdapter,
+                [salesOrderId]);
+
             sapOrders = sapOrders.Where(x => x.Order != null).ToList();
             sapOrders.ForEach(o =>
             {

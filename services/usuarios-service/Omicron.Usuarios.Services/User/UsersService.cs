@@ -19,6 +19,7 @@ namespace Omicron.Usuarios.Services.User
     using Omicron.Usuarios.Dtos.User;
     using Omicron.Usuarios.Entities.Model;
     using Omicron.Usuarios.Resources.Exceptions;
+    using Omicron.Usuarios.Services.Catalogos;
     using Omicron.Usuarios.Services.Constants;
     using Omicron.Usuarios.Services.Pedidos;
     using Omicron.Usuarios.Services.SapAdapter;
@@ -37,6 +38,8 @@ namespace Omicron.Usuarios.Services.User
 
         private readonly ISapAdapter sapService;
 
+        private readonly ICatalogosService catalogsService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersService"/> class.
         /// </summary>
@@ -44,12 +47,14 @@ namespace Omicron.Usuarios.Services.User
         /// <param name="userDao">Object to userDao.</param>
         /// <param name="pedidoService">The pedido service.</param>
         /// <param name="sapAdapter">The sap adapter.</param>
-        public UsersService(IMapper mapper, IUserDao userDao, IPedidosService pedidoService, ISapAdapter sapAdapter)
+        /// <param name="catalogsService">The catalogs.</param>
+        public UsersService(IMapper mapper, IUserDao userDao, IPedidosService pedidoService, ISapAdapter sapAdapter, ICatalogosService catalogsService)
         {
             this.mapper = mapper;
             this.userDao = userDao ?? throw new ArgumentNullException(nameof(userDao));
             this.pedidoService = pedidoService ?? throw new ArgumentNullException(nameof(pedidoService));
             this.sapService = sapAdapter ?? throw new ArgumentException(nameof(sapAdapter));
+            this.catalogsService = catalogsService ?? throw new ArgumentException(nameof(catalogsService));
         }
 
         /// <inheritdoc/>
@@ -108,6 +113,11 @@ namespace Omicron.Usuarios.Services.User
 
             var usersOrdered = users.OrderBy(x => x.FirstName).ToList();
             var listUsers = usersOrdered.Skip(offsetNumber).Take(limitNumber).ToList();
+
+            var catalogosResponse = await this.catalogsService.GetCatalogos(ServiceConstants.GetClassifications);
+            var classifications = JsonConvert.DeserializeObject<List<ClassificationMagistralModel>>(catalogosResponse.Response.ToString());
+
+            this.SetClassificationDescriptions(listUsers, classifications);
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, listUsers, null, users.Count);
         }
@@ -393,6 +403,41 @@ namespace Omicron.Usuarios.Services.User
             }
 
             return qfbInfo;
+        }
+
+        private void SetClassificationDescriptions(List<UserModel> users, List<ClassificationMagistralModel> classifications)
+        {
+            var classificationDict = classifications.OrderBy(c => c.Value).DistinctBy(x => x.Value).ToDictionary(g => g.Value, g => g.Description);
+
+            foreach (var user in users)
+            {
+                if (!string.IsNullOrWhiteSpace(user.Classification) && !user.Classification.Equals(ServiceConstants.AllClassifications, StringComparison.OrdinalIgnoreCase))
+                {
+                    user.Classification = string.Join(",", user.Classification.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(code => code.Trim()));
+                }
+
+                user.ClassificationDescription = this.GetClassificationDescription(user.Classification, classificationDict);
+            }
+        }
+
+        private string GetClassificationDescription(string classification, Dictionary<string, string> classificationDict)
+        {
+            if (string.IsNullOrEmpty(classification))
+            {
+                return string.Empty;
+            }
+
+            if (classification.Equals(ServiceConstants.AllClassifications, StringComparison.OrdinalIgnoreCase))
+            {
+                return ServiceConstants.AllClassifications;
+            }
+
+            var descripciones = classification
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(code => classificationDict.TryGetValue(code, out var description) ? description : null)
+                .Where(description => description != null);
+
+            return string.Join(", ", descripciones);
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     {
         private IUsersService userServices;
 
+        private ICatalogosService catalogosService;
+
         private IMapper mapper;
 
         private IUserDao userDao;
@@ -51,8 +53,13 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultFabOrders()));
 
+            var mockCatalogosService = new Mock<ICatalogosService>();
+            mockCatalogosService
+                .Setup(m => m.GetCatalogos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetClassificationDescriptionModel()));
+
             this.userDao = new UserDao(this.context);
-            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object, mockSapAdapter.Object);
+            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object, mockSapAdapter.Object, mockCatalogosService.Object);
         }
 
         /// <summary>
@@ -301,7 +308,7 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <param name="classifications">Clasiffications.</param>
         /// <returns>returns nothing.</returns>
         [Test]
-        [TestCase("MG, BE, DZ")]
+        [TestCase("MG,BE,DZ")]
         public async Task GetAllUsersWithFiltersClassificationsThree(string classifications)
         {
             // arrange
