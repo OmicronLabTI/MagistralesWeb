@@ -71,7 +71,8 @@ describe('DetalleFormulaComponent', () => {
       'setIsToSaveAnything',
       'setIsToSaveAnything',
       'getFullStringForCarousel',
-      'getIsToSaveAnything'
+      'getIsToSaveAnything',
+      'calculateOrValueList'
     ]);
     dataServiceSpy.getIsToSaveAnything.and.callFake(() => {
       return true;
