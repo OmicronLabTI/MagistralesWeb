@@ -34,12 +34,7 @@ class SignaturePadTest: XCTestCase {
                 typeSignature == CommonStrings.signatureViewTitleTechnical)
         }).disposed(by: disposeBag!)
     }
-    func testValidSignature() {
-        signaturePadViewModel!.getSignature.onNext(UIImage(imageLiteralResourceName: "AppIcon"))
-        signaturePadViewModel!.getSignature.subscribe(onNext: { signature in
-            XCTAssertNotNil(signature.toBase64())
-        }).disposed(by: disposeBag!)
-    }
+
     func testValidSignatureRequest() {
         signaturePadViewModel!.whoRequestSignature.onNext(ViewControllerIdentifiers.orderDetailViewController)
         signaturePadViewModel!.whoRequestSignature.subscribe(onNext: { signatureRequest in

@@ -94,7 +94,7 @@ class BatchesTest: XCTestCase {
         // Given
         let dateTest: String? = nil
         // When
-        let result = UtilsManager.shared..calculateExpiredBatch(date: dateTest)
+        let result = UtilsManager.shared.calculateExpiredBatch(date: dateTest)
         // Then
         XCTAssertFalse(result)
     }
@@ -102,7 +102,7 @@ class BatchesTest: XCTestCase {
         // Given
         let dateTest: String = ""
         // Then
-        let result = UtilsManager.shared..calculateExpiredBatch(date: dateTest)
+        let result = UtilsManager.shared.calculateExpiredBatch(date: dateTest)
         // When
         XCTAssertFalse(result)
     }
