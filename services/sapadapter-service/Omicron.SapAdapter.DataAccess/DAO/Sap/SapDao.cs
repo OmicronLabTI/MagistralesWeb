@@ -342,6 +342,10 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = from saleOrder in this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoId)
                         join saleDetail in this.databaseContext.DetallePedido on saleOrder.PedidoId equals saleDetail.PedidoId
+                        join o in this.databaseContext.OrdenFabricacionModel on
+                        new { Pedido = saleDetail.PedidoId, ItemCode = saleDetail.ProductoId }
+                            equals new { Pedido = o.PedidoId, ItemCode = o.ProductoId } into DetallePedido
+                        from fabOrder in DetallePedido.DefaultIfEmpty()
                         join product in this.databaseContext.ProductoModel on saleDetail.ProductoId equals product.ProductoId
                         where product.IsWorkableProduct == "Y"
                         select new DetallePedidoModel
@@ -357,7 +361,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             PedidoId = saleDetail.PedidoId,
                             ProductoId = saleDetail.ProductoId,
                             Quantity = saleDetail.Quantity,
-                            CanceledOrder = saleOrder.Canceled
+                            CanceledOrder = saleOrder.Canceled,
+                            ProductionOrderId = fabOrder != default ? fabOrder.OrdenId : 0,
                         };
             return await this.RetryQuery(query);
         }
@@ -578,6 +583,10 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                          into DetalleOrden
                          from dp in DetalleOrden.DefaultIfEmpty()
+                         join o in this.databaseContext.OrdenFabricacionModel on
+                         new { Pedido = dp.PedidoId, ItemCode = dp.ProductoId }
+                            equals new { Pedido = o.PedidoId, ItemCode = o.ProductoId } into DetallePedido
+                         from fabOrder in DetallePedido.DefaultIfEmpty()
                          join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
                          join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                          join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
@@ -613,6 +622,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = order.DocNumDxp,
                              IsOmigenomics = order.IsOmigenomics,
                              IsSecondary = order.IsSecondary,
+                             ProductionOrderId = fabOrder != default ? fabOrder.OrdenId : 0,
                          });
 
             return await this.RetryQuery(query);
@@ -1677,6 +1687,10 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                     into DetalleOrden
                     from dp in DetalleOrden.DefaultIfEmpty()
+                    join o in this.databaseContext.OrdenFabricacionModel on
+                       new { Pedido = dp.PedidoId, ItemCode = dp.ProductoId }
+                       equals new { Pedido = o.PedidoId, ItemCode = o.ProductoId } into DetallePedido
+                    from fabOrder in DetallePedido.DefaultIfEmpty()
                     join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
                     join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                     join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
@@ -1716,7 +1730,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         DocNumDxp = order.DocNumDxp,
                         IsOmigenomics = order.IsOmigenomics,
                         IsSecondary = order.IsSecondary,
-                    });
+                        ProductionOrderId = fabOrder != default ? fabOrder.OrdenId : 0,
+                    }).OrderByDescending(x => x.DocNum);
         }
 
         private IQueryable<CompleteAlmacenOrderModel> GetOrdersByTransactionIdsForAlmacenQuery(List<string> transactionIds)

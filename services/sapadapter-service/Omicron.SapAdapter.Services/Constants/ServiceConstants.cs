@@ -932,6 +932,14 @@ namespace Omicron.SapAdapter.Services.Constants
         public static string MagistralesDbValue => "MAG";
 
         /// <summary>
+        /// Gets MagistralesDbValue.
+        /// </summary>
+        /// <value>
+        /// String MagistralesDbValue.
+        /// </value>
+        public static string AlmacenDbValue => "ALM";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>
