@@ -5,6 +5,7 @@ import { UsersService } from '../../services/users.service';
 import { Clasification, IAddUserDialogConfig, IUserReq, RoleUser, TechnicalUser } from '../../model/http/users';
 import { ErrorService } from '../../services/error.service';
 import {
+  AllClasification,
   CONST_NUMBER, CONST_STRING,
   CONST_USER_DIALOG,
   HttpServiceTOCall,
@@ -79,7 +80,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
 
   async getClassifications(): Promise<void> {
     return this.usersService.getClasifications().toPromise().then((res) => {
-      this.clasifications = Object.assign(res.response, []);
+      const clasificationList = Object.assign(res.response, []);
+      this.clasifications = [AllClasification, ...clasificationList];
       this.activeClasifications = this.clasifications;
     }).catch((error) => this.callErrorOnService(error));
   }

@@ -79,12 +79,19 @@ export class SearchUsersDialogComponent implements OnInit, OnDestroy {
   }
   getClassifications(): void {
     this.usersService.getClasifications().subscribe((res) => {
-      this.clasifications = Object.assign(res.response, []);
+      this.clasifications = this.deleteDuplicateClasifications(res.response);
       this.setFormValues();
     }, error => {
       this.errorService.httpError(error);
       this.dialogRef.close();
     });
+  }
+
+  deleteDuplicateClasifications(clasifications: Clasification[]): Clasification[] {
+    const clasificationList = Array.from(
+      new Map(clasifications.map(clasification => [clasification.value, clasification])).values()
+    );
+    return clasificationList;
   }
 
   searchUser(): void {
