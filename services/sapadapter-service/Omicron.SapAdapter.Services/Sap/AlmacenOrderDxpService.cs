@@ -165,7 +165,6 @@ namespace Omicron.SapAdapter.Services.Sap
             List<int>> lineProductTuple,
             List<string> types)
         {
-            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
             var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, sapOrdersByTransactionId, hasChips, userOrders, startDate, endDate, lineProductTuple, true, this.catalogsService, this.redisService);
             var orderWithPackages = sapOrders.Where(x => x.IsPackage == ServiceConstants.IsPackage).Select(p => p.DocNumDxp).Distinct().ToList();
             var orderWithOmigenomics = sapOrders.Where(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))).Select(p => p.DocNumDxp).Distinct().ToList();
