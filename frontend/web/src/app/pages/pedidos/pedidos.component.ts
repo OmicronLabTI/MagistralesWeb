@@ -57,6 +57,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   lengthPaginator = CONST_NUMBER.zero;
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
+  userClasification = CONST_STRING.empty;
   queryString = CONST_STRING.empty;
   fullQueryString = CONST_STRING.empty;
   isDateInit = true;
@@ -91,6 +92,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
+    this.userClasification = this.localStorageService.getUserClasification();
     if (this.localStorageService.getFiltersActives()) {
       this.onSuccessSearchOrderModal(this.localStorageService.getFiltersActivesAsModel());
     } else {
@@ -272,7 +274,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
 
   }
   getFullQueryString() {
-    this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
+    this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}&classifications=${this.userClasification}`;
   }
 
   ngOnDestroy() {
