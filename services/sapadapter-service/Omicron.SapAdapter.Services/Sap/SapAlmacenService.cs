@@ -96,7 +96,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
             if (parameters.ContainsKey(ServiceConstants.Chips) &&
                 int.TryParse(parameters[ServiceConstants.Chips], out int pedidoId) &&
-                !this.ValidateOrdersById(userOrders, sapOrders, lineProducts.Item1))
+                !await this.ValidateOrdersById(userOrders, sapOrders, lineProducts.Item1))
             {
                 var emptyData = new AlmacenOrdersModel { SalesOrders = new List<SalesModel>() };
                 return ServiceUtils.CreateResult(true, 200, null, emptyData, null, "0-0");
@@ -347,19 +347,25 @@ namespace Omicron.SapAdapter.Services.Sap
             return JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
         }
 
-        private bool ValidateOrdersById(List<UserOrderModel> userOrderModels, List<CompleteAlmacenOrderModel> sapOrders, List<LineProductsModel> lineProducts)
+        private async Task<bool> ValidateOrdersById(List<UserOrderModel> userOrderModels, List<CompleteAlmacenOrderModel> sapOrders, List<LineProductsModel> lineProducts)
         {
             if (lineProducts.Where(x => string.IsNullOrEmpty(x.ItemCode)).Any(x => x.StatusAlmacen == ServiceConstants.Cancelado))
             {
                 return false;
             }
 
-            if (!sapOrders.Any(x => x.IsMagistral == "Y"))
+            var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(this.catalogsService, this.redisService, ServiceConstants.AlmacenDbValue);
+            var hasProductsWithValidConfig = sapOrders
+                    .Where(x => ((sapOrdersConfiguration.ClassificationCodes.Contains(x.TypeOrder) &&
+                                !sapOrdersConfiguration.ItemCodesExcludedByException.Contains(x.Detalles.ProductoId)) ||
+                                sapOrdersConfiguration.ItemCodesIncludedByConfigRules.Contains(x.Detalles.ProductoId)) && x.ProductionOrderId == 0).Count() > 0;
+
+            if (hasProductsWithValidConfig)
             {
                 return true;
             }
 
-            var magistralProducts = sapOrders.Count(x => x.IsMagistral == "Y");
+            var magistralProducts = sapOrders.Count(x => x.ProductionOrderId != 0);
             if (!userOrderModels.Any() || magistralProducts != userOrderModels.Count(x => !string.IsNullOrEmpty(x.Productionorderid)))
             {
                 return false;
@@ -493,15 +499,13 @@ namespace Omicron.SapAdapter.Services.Sap
                 startDate,
                 endDate,
                 lineProductTuple,
-                false);
+                false,
+                this.catalogsService,
+                this.redisService);
 
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y");
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
             sapOrders = ServiceUtils.GetOrdersWithValidWareHouse(sapOrders, parametersWhs);
-            var possibleIdsToIgnore = sapOrders.Where(x => !userOrders.Any(y => y.Salesorderid == x.DocNum.ToString()));
-            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
-            var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key);
-            sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
             sapOrders.AddRange(sapCancelled);
             return ServiceUtilsAlmacen.GetSapOrderByType(types, sapOrders);
         }

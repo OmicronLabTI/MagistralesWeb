@@ -73,6 +73,8 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="endDate">endDate.</param>
         /// <param name="lineProductTuple">line produc tuple.</param>
         /// <param name="needOnlyDxp">if the query only needs the dxp order.</param>
+        /// <param name="catalogsService">the catalogs service.</param>
+        /// <param name="redisService">the redis service.</param>
         /// <returns>the orders.</returns>
         public static async Task<List<CompleteAlmacenOrderModel>> GetSapOrderForRecepcionPedidos(
             ISapDao sapDao,
@@ -82,29 +84,33 @@ namespace Omicron.SapAdapter.Services.Utils
             DateTime startDate,
             DateTime endDate,
             Tuple<List<LineProductsModel>, List<int>> lineProductTuple,
-            bool needOnlyDxp)
+            bool needOnlyDxp,
+            ICatalogsService catalogsService,
+            IRedisService redisService)
         {
             var idsMagistrales = userOrders.Select(x => int.Parse(x.Salesorderid)).Distinct();
             var sapOrders = await GetSapInformation(sapDao, sapOrdersByTransactionId, hasChips, startDate, endDate, needOnlyDxp);
             sapOrders = sapOrders.Where(x => x.Detalles != null).ToList();
             var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
-            sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList().ForEach(x =>
+            var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(catalogsService, redisService, ServiceConstants.AlmacenDbValue);
+
+            sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList().ForEach(orders =>
             {
-                if (ServiceShared.CalculateAnd(x.All(y => y.IsMagistral == "Y"), idsMagistrales.Contains(x.Key)))
+                var hasProductsWithValidConfig = orders
+                    .Where(x => ((sapOrdersConfiguration.ClassificationCodes.Contains(x.TypeOrder) &&
+                                !sapOrdersConfiguration.ItemCodesExcludedByException.Contains(x.Detalles.ProductoId)) ||
+                                sapOrdersConfiguration.ItemCodesIncludedByConfigRules.Contains(x.Detalles.ProductoId)) && x.ProductionOrderId == 0).Count() > 0;
+                if (lineProductTuple.Item2.Contains(orders.Key) || hasProductsWithValidConfig)
                 {
-                    arrayOfSaleToProcess.AddRange(x.ToList());
+                    arrayOfSaleToProcess.AddRange(orders.ToList());
                 }
-                else if (ServiceShared.CalculateAnd(x.All(y => y.IsLine == "Y"), !lineProductTuple.Item2.Contains(x.Key)))
+
+                if (idsMagistrales.Contains(orders.Key))
                 {
-                    arrayOfSaleToProcess.AddRange(x.ToList());
-                }
-                else if (ServiceShared.CalculateAnd(x.Any(y => y.IsLine == "Y"), x.Any(y => y.IsMagistral == "Y"), idsMagistrales.Contains(x.Key)))
-                {
-                    arrayOfSaleToProcess.AddRange(x.ToList());
+                    arrayOfSaleToProcess.AddRange(orders.ToList());
                 }
             });
-
             arrayOfSaleToProcess.AddRange(sapOrders.Where(o => o.Canceled == "Y"));
             var orderToAppear = userOrders.Select(x => int.Parse(x.Salesorderid));
 
