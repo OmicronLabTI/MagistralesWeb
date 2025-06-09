@@ -357,3 +357,9 @@ export const CallBackEmptyConst = () => { };
 export const CONST_ARRAY = {
     empty: []
 };
+
+export const AllClasification = {
+    value: 'Todas',
+    description: 'Todas',
+    classificationQfb: false
+};
