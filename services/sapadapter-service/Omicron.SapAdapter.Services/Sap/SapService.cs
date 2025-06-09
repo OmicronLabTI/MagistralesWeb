@@ -152,6 +152,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 o.Cliente = client;
             });
 
+            orderToReturn = FilterByClassifications(orderToReturn, parameters);
+
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);
         }
 
@@ -940,6 +942,23 @@ namespace Omicron.SapAdapter.Services.Sap
                 .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
                 .ToArray())
                 .ToUpper();
+        }
+
+        private static List<CompleteOrderModel> FilterByClassifications(List<CompleteOrderModel> orders, Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Classifications) || string.IsNullOrWhiteSpace(parameters[ServiceConstants.Classifications]) || parameters[ServiceConstants.Classifications] == ServiceConstants.AllClassifications)
+            {
+                return orders;
+            }
+
+            var allowedClassifications = parameters[ServiceConstants.Classifications]
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(c => c.Trim())
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            return orders
+                .Where(order => allowedClassifications.Contains(order.OrderType))
+                .ToList();
         }
 
         private (string, string, string) RefillOrders(CompleteOrderModel order, string doctorName, List<string> specialCardCodes, List<ClientCatalogModel> alias)

@@ -128,7 +128,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> ordersIds)
         {
             var query = this.GetDetailOrderModelsQueryWrap(ordersIds)
-                .Where(x => x.ProductoModel.IsMagistral == "Y")
                 .AsNoTracking()
                 .GetCompleteDetailOrderModel();
 
@@ -238,11 +237,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return (await (from order in this.databaseContext.OrdenFabricacionModel.Where(x => pedidoId.Contains(x.OrdenId))
                            join prod in this.databaseContext.ProductoModel on order.ProductoId equals prod.ProductoId
                            join catalog in this.databaseContext.CatalogProductModel on prod.ProductGroupId equals catalog.ProductGroupId
-                           select new { order, catalog })
+                           join pedidoGroup in this.databaseContext.OrderModel on order.PedidoId equals pedidoGroup.PedidoId into pedidosJoin
+                           from pedido in pedidosJoin.DefaultIfEmpty()
+                           select new { order, catalog, pedido })
             .ToListAsync())
             .Select(x =>
             {
                 x.order.IsOmigenomics = x.catalog.CatalogName.ToLower() == "omigenomics";
+                x.order.OrderType = x.pedido != null ? x.pedido.OrderType : null;
                 return x.order;
             });
         }

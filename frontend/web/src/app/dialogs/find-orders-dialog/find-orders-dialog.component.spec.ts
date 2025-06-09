@@ -18,6 +18,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ErrorService } from '../../services/error.service';
 import { ParamsPedidos } from 'src/app/model/http/pedidos';
 import { DataService } from 'src/app/services/data.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 
 describe('FindOrdersDialogComponent', () => {
   let component: FindOrdersDialogComponent;
@@ -26,6 +27,7 @@ describe('FindOrdersDialogComponent', () => {
   let ordersServiceSpy;
   let errorServiceSpy;
   let dataServiceSpy: jasmine.SpyObj<DataService>;
+  let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   const filterData = {
     modalType: ConstOrders.modalOrders,
     filterOrdersData: {
@@ -57,12 +59,17 @@ describe('FindOrdersDialogComponent', () => {
   ];
   beforeEach(async(() => {
     userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
-      'getUsers', 'getRoles'
+      'getUsers', 'getRoles', 'getClasifications'
     ]);
     dataServiceSpy = jasmine.createSpyObj<DataService>('UsersService', [
       'calculateTernary',
       'calculateAndValueList',
       'calculateOrValueList']);
+
+    localStorageServiceSpy = jasmine.createSpyObj<LocalStorageService>('LocalStorageService', [
+      'getUserClasification',
+      'getUserRole'
+    ]);
 
     dataServiceSpy.calculateAndValueList.and.callFake((list: boolean[]) => {
       const res = list.every((value) => value === true);
@@ -78,6 +85,14 @@ describe('FindOrdersDialogComponent', () => {
     userServiceSpy.getUsers.and.callFake(() => {
       return of(UserListMock);
     });
+    userServiceSpy.getClasifications.and.returnValue(of({
+      response: [
+        { value: 'MN', description: 'Bioelite (MN)', classificationQfb: true },
+        { value: 'BE', description: 'Bioequal (BE)', classificationQfb: true },
+        { value: 'MG', description: 'Magistral (MG)', classificationQfb: true },
+        { value: 'DZ', description: 'Dermazon (DZ)', classificationQfb: true }
+      ]
+    }));
     ordersServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getQfbs'
     ]);
@@ -90,6 +105,8 @@ describe('FindOrdersDialogComponent', () => {
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
       return validation ? firstValue : secondaValue;
     });
+    localStorageServiceSpy.getUserClasification.and.returnValue('MN,MG');
+    localStorageServiceSpy.getUserRole.and.returnValue('3');
     TestBed.configureTestingModule({
       imports: [
         BrowserAnimationsModule,
@@ -107,6 +124,7 @@ describe('FindOrdersDialogComponent', () => {
         { provide: PedidosService, useValue: ordersServiceSpy },
         { provide: UsersService, useValue: userServiceSpy },
         { provide: DataService, useValue: dataServiceSpy },
+        { provide: LocalStorageService, useValue: localStorageServiceSpy },
         DatePipe,
       ]
     })

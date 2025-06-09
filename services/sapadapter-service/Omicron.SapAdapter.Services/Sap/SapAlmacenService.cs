@@ -694,7 +694,7 @@ namespace Omicron.SapAdapter.Services.Sap
                 var remittedPieces = 0;
                 var pendingToStore = false;
 
-                if (order.Producto.IsMagistral.Equals("Y"))
+                if (!string.IsNullOrEmpty(order.FabricationOrder))
                 {
                     var userFabOrder = userOrders.FirstOrDefault(x => !string.IsNullOrEmpty(x.Productionorderid) && x.Productionorderid.Equals(order.FabricationOrder));
                     userFabOrder ??= new UserOrderModel { Status = ServiceConstants.Finalizado };
