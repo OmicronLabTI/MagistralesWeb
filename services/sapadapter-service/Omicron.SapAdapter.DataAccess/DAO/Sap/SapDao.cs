@@ -128,7 +128,6 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> ordersIds)
         {
             var query = this.GetDetailOrderModelsQueryWrap(ordersIds)
-                .Where(x => x.ProductoModel.IsMagistral == "Y")
                 .AsNoTracking()
                 .GetCompleteDetailOrderModel();
 
