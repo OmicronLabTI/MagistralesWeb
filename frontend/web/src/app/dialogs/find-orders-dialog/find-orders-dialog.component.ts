@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS } from '../../constants/const';
+import { CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS, TypeClasifications } from '../../constants/const';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PedidosService } from '../../services/pedidos.service';
 import { ErrorService } from '../../services/error.service';
@@ -110,9 +110,17 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     }
 
     setClasificationListUser(clasifications: Clasification[]): Clasification[] {
-        const userClasificationList = this.localStorageService.getUserClasification().split(',');
-        const clasificationFiltered = clasifications.filter(clasification =>
-            userClasificationList.includes(clasification.value));
+        const userClasification = this.localStorageService.getUserClasification();
+        let clasificationFiltered = [];
+
+        if (userClasification === TypeClasifications.todas) {
+            clasificationFiltered = [...clasifications];
+        } else {
+            const userClasificationList = userClasification.split(',');
+            clasificationFiltered = clasifications.filter(clasification =>
+                userClasificationList.includes(clasification.value));
+        }
+
         return clasificationFiltered;
     }
 
