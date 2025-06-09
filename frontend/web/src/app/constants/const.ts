@@ -340,6 +340,7 @@ export enum CatalogTypes {
 }
 
 export const TypeClasifications = {
+    todas: 'Todas',
     dermazone: 'DZ',
     bioelite: 'MN',
     bioequal: 'BE',
@@ -355,4 +356,10 @@ export const CallBackEmptyConst = () => { };
 
 export const CONST_ARRAY = {
     empty: []
+};
+
+export const AllClasification = {
+    value: 'Todas',
+    description: 'Todas',
+    classificationQfb: false
 };

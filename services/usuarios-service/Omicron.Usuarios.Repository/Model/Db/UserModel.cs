@@ -135,5 +135,14 @@ namespace Omicron.Usuarios.Entities.Model
         /// </value>
         [Column("technicalrequire")]
         public bool TechnicalRequire { get; set; }
+
+        /// <summary>
+        /// Gets or sets the classification description.
+        /// </summary>
+        /// <value>
+        /// String description.
+        /// </value>
+        [NotMapped]
+        public string ClassificationDescription { get; set; }
     }
 }

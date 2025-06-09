@@ -5,6 +5,7 @@ import { UsersService } from '../../services/users.service';
 import { Clasification, IAddUserDialogConfig, IUserReq, RoleUser, TechnicalUser } from '../../model/http/users';
 import { ErrorService } from '../../services/error.service';
 import {
+  AllClasification,
   CONST_NUMBER, CONST_STRING,
   CONST_USER_DIALOG,
   HttpServiceTOCall,
@@ -18,6 +19,7 @@ import { SweetAlertIcon } from 'sweetalert2';
 import { Subscription } from 'rxjs';
 import { ErrorHttpInterface } from '../../model/http/commons';
 import { ObservableService } from 'src/app/services/observable.service';
+import { userClasificationMock } from 'src/mocks/userListMock';
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -34,6 +36,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   activeClasifications: Clasification[] = [];
   qfbRolId = 0;
   technicalUser: TechnicalUser[] = [];
+  clasificationArray: string[] = [];
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: IAddUserDialogConfig,
     private formBuilder: FormBuilder,
@@ -56,6 +59,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       piezas: [CONST_USER_DIALOG.defaultNumberOfPieces, [Validators.required, Validators.maxLength(5)]],
       asignable: ['', [Validators.required]],
       classificationQFB: ['', [Validators.required]],
+      clasificationLogDis: ['', [Validators.required]],
       requireTechnical: [false, [Validators.required]],
       technical: ['', [Validators.required]]
     });
@@ -76,7 +80,8 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
 
   async getClassifications(): Promise<void> {
     return this.usersService.getClasifications().toPromise().then((res) => {
-      this.clasifications = Object.assign(res.response, []);
+      const clasificationList = Object.assign(res.response, []);
+      this.clasifications = [AllClasification, ...clasificationList];
       this.activeClasifications = this.clasifications;
     }).catch((error) => this.callErrorOnService(error));
   }
@@ -135,12 +140,14 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('classificationQFB').disable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('requireTechnical').disable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('technical').disable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('clasificationLogDis').disable({ onlySelf: true, emitEvent: false });
       this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     } else if (userTypeR && userTypeR !== '2') {
       this.clearTechnical();
       this.addUserForm.get('piezas').disable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('asignable').disable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('classificationQFB').disable({ onlySelf: true, emitEvent: false });
+      this.disableclassificationQFBForm(userTypeR);
       this.addUserForm.get('requireTechnical').disable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('technical').disable({ onlySelf: true, emitEvent: false });
       this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
@@ -151,10 +158,20 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('classificationQFB').enable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('requireTechnical').enable({ onlySelf: true, emitEvent: false });
       this.addUserForm.get('technical').enable({ onlySelf: true, emitEvent: false });
+      this.addUserForm.get('clasificationLogDis').disable({ onlySelf: true, emitEvent: false });
       this.requireTechnicalChange();
       this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     }
   }
+
+  disableclassificationQFBForm(userTypeR: string) {
+    if (this.dataService.calculateOrValueList([userTypeR === '3', userTypeR === '4'])) {
+      this.addUserForm.get('clasificationLogDis').enable({ onlySelf: true, emitEvent: false });
+    } else {
+      this.addUserForm.get('clasificationLogDis').disable({ onlySelf: true, emitEvent: false });
+    }
+  }
+
   clearTechnical(): void {
     this.addUserForm.get('requireTechnical').setValue('0', { emitEvent: false });
     this.addUserForm.get('technical').setValue('', { emitEvent: false });
@@ -180,12 +197,9 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     const rolId = Number(this.addUserForm.get('userTypeR').value);
     const rol = this.getRol(rolId);
     if (rol.toUpperCase() === CONST_USER_DIALOG.defaultQfb.toUpperCase()) {
-      this.activeClasifications = this.clasifications;
+      this.activeClasifications = this.clasifications.filter(clasification => clasification.classificationQfb);
     } else {
-      this.activeClasifications = this.activeClasifications.filter(clasification =>
-        clasification.value.toUpperCase() !== TypeClasifications.dermazone.toUpperCase());
-      const isDZSelection = this.addUserForm.get('classificationQFB').value === TypeClasifications.dermazone.toUpperCase();
-      this.addUserForm.get('classificationQFB').setValue(isDZSelection ? '' : this.addUserForm.get('classificationQFB').value);
+      this.activeClasifications = this.clasifications.filter(clasification => !clasification.classificationQfb);
     }
   }
   setFormValues(): void {
@@ -204,10 +218,25 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       this.addUserForm.get('activo').setValue(this.userToEdit.activo.toString());
       this.addUserForm.get('piezas').setValue(this.userToEdit.piezas);
       this.addUserForm.get('asignable').setValue(this.userToEdit.asignable.toString());
-      this.addUserForm.get('classificationQFB').setValue(this.userToEdit.classification);
+      this.setUpdateClasification(this.userToEdit.role);
       this.addUserForm.get('requireTechnical').setValue(this.userToEdit.technicalRequire ? '1' : '0');
       this.addUserForm.get('technical').setValue(this.userToEdit.tecnicId);
       this.changeClasification(this.userToEdit.piezas);
+      this.addUserForm.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+    }
+    this.validateClasification();
+  }
+
+  setUpdateClasification(role: number) {
+    if (this.dataService.calculateOrValueList([role === 3, role === 4])) {
+      const clasificationsLogDis = this.dataService.calculateTernary(
+        this.userToEdit.classification !== '',
+        this.userToEdit.classification.split(','),
+        []
+      );
+      this.addUserForm.get('clasificationLogDis').setValue(clasificationsLogDis);
+    } else {
+      this.addUserForm.get('classificationQFB').setValue(this.userToEdit.classification);
     }
   }
 
@@ -221,6 +250,20 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  buildClasification(): string {
+    const userTypeR = this.addUserForm.get('userTypeR').value;
+    if (this.dataService.calculateOrValueList([userTypeR === '3', userTypeR === '4'])) {
+      this.clasificationArray = this.addUserForm.get('clasificationLogDis').value;
+      return this.dataService.calculateTernary(
+        this.clasificationArray.includes(TypeClasifications.todas),
+        TypeClasifications.todas,
+        this.clasificationArray.join(',')
+      );
+    } else {
+      return this.addUserForm.get('classificationQFB').value;
+    }
+  }
+
   saveUser(requireTecnic: boolean, tecnicId?: string): void {
     const user: IUserReq = {
       ...this.addUserForm.value,
@@ -228,7 +271,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       role: Number(this.addUserForm.get('userTypeR').value),
       asignable: Number(this.addUserForm.get('asignable').value),
       piezas: Number(this.addUserForm.get('piezas').value),
-      classification: this.addUserForm.get('classificationQFB').value,
+      classification: this.buildClasification(),
       technicalRequire: requireTecnic,
       tecnicId
     };
@@ -247,7 +290,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
       asignable: Number(this.addUserForm.get('asignable').value),
       activo: Number(this.addUserForm.get('activo').value),
       piezas: Number(this.addUserForm.get('piezas').value),
-      classification: this.addUserForm.get('classificationQFB').value,
+      classification: this.buildClasification(),
       technicalRequire: requireTecnic,
       tecnicId
     };
