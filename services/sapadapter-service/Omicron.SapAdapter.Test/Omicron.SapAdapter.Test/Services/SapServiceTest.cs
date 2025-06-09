@@ -1387,7 +1387,7 @@ namespace Omicron.SapAdapter.Test.Services
             var mockDao = new Mock<ISapDao>();
 
             mockDao
-            .Setup(dao => dao.GetAllOrdersByFechaIni(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .Setup(dao => dao.GetAllOrdersByFechaIni(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<OrderFiltersByConfigType>()))
             .ReturnsAsync(this.GetCompleteOrderModel());
 
             var mockLog = new Mock<ILogger>();
