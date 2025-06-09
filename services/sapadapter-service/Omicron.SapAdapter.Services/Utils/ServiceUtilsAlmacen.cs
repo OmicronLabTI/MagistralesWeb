@@ -201,7 +201,7 @@ namespace Omicron.SapAdapter.Services.Utils
 
             foreach (var p in groups)
             {
-                if (p.All(g => g.IsMagistral == "Y"))
+                if (p.All(g => g.ProductionOrderId != 0))
                 {
                     var saleOrder = userOrders.GetSaleOrderHeader(p.Key.ToString());
                     var familyByOrder = GetFamilyUserOrders(userOrders, p.Key.ToString());
@@ -210,7 +210,7 @@ namespace Omicron.SapAdapter.Services.Utils
                     continue;
                 }
 
-                if (p.All(g => g.IsLine == "Y"))
+                if (p.All(g => g.ProductionOrderId == 0))
                 {
                     var saleOrderLn = lineProductsModel.GetLineProductOrderHeader(p.Key);
                     var userFabLineOrder = GetFamilyLineProducts(lineProductsModel, p.Key);
