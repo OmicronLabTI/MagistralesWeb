@@ -638,6 +638,7 @@ namespace Omicron.SapAdapter.Services.Utils
                 .ToList();
 
             var itemCodesExcludedByException = SplitAndClean(selectedRoutes.Select(r => r.Exceptions));
+            var exclusionByOpposite = SplitAndClean(oppositeRoutes.Select(x => x.ItemCode));
 
             var itemCodesFromSelected = SplitAndClean(selectedRoutes.Select(r => r.ItemCode));
             var exceptionsFromOpposite = SplitAndClean(oppositeRoutes.Select(r => r.Exceptions));
@@ -647,11 +648,16 @@ namespace Omicron.SapAdapter.Services.Utils
                 .Distinct()
                 .ToList();
 
+            var itemCodesExclusionsByConfiguRules = itemCodesExcludedByException
+                .Concat(exclusionByOpposite)
+                .Distinct()
+                .ToList();
+
             return new OrderFiltersByConfigType
             {
                 ClassificationCodes = classificationCodes,
                 InvalidCatalogsGroups = ServiceConstants.InvalidCatalogsGroups,
-                ItemCodesExcludedByException = itemCodesExcludedByException,
+                ItemCodesExcludedByException = itemCodesExclusionsByConfiguRules,
                 ItemCodesIncludedByConfigRules = itemCodesIncludedByConfigRules,
             };
         }

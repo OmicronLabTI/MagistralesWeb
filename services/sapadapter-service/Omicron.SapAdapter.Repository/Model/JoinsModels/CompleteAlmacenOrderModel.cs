@@ -127,5 +127,11 @@ namespace Omicron.SapAdapter.Entities.Model.JoinsModels
         /// </summary>
         /// <value>The code.</value>
         public string IsSecondary { get; set; }
+
+        /// <summary>
+        /// Gets or sets ProductionOrderId.
+        /// </summary>
+        /// <value>The ProductionOrderId.</value>
+        public int ProductionOrderId { get; set; }
     }
 }
