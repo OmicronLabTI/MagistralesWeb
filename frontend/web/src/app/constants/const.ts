@@ -128,7 +128,8 @@ export const ConstToken = {
     detailOrderCurrent: 'detail-current',
     productNoLabel: 'productNoLabel',
     materialRequest: 'materialRequest',
-    historyQuery: 'historyQuery'
+    historyQuery: 'historyQuery',
+    clasification: 'clasification'
 };
 export const BOOLEANS = {
     verdadero: true,

@@ -55,7 +55,8 @@ describe('PedidosComponent', () => {
       'setFiltersActives',
       'getFiltersActives',
       'removeFiltersActive',
-      'getFiltersActivesAsModel'
+      'getFiltersActivesAsModel',
+      'getUserClasification'
     ]);
     // localStorageServiceSpy.getUserRole.and.returnValue('');
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
@@ -69,6 +70,7 @@ describe('PedidosComponent', () => {
 
     localStorageServiceSpy.getFiltersActives.and.returnValue('');
     localStorageServiceSpy.getFiltersActivesAsModel.and.returnValue(paramsPedidos);
+    localStorageServiceSpy.getUserClasification.and.returnValue('MN,MG');
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos',
       'processOrders',
@@ -189,10 +191,11 @@ describe('PedidosComponent', () => {
     component.offset = 0;
     component.limit = 10;
     component.queryString = 'rango de fechas';
+    component.userClasification = 'MN,MG'
     component.getFullQueryString();
-    expect(component.fullQueryString).toEqual(`${component.queryString}&offset=0&limit=10`);
+    expect(component.fullQueryString).toEqual(`${component.queryString}&offset=0&limit=10&classifications=MN,MG`);
     component.getPedidos();
-    expect(pedidosServiceSpy.getPedidos).toHaveBeenCalledWith(`${component.queryString}&offset=0&limit=10`);
+    expect(pedidosServiceSpy.getPedidos).toHaveBeenCalledWith(`${component.queryString}&offset=0&limit=10&classifications=MN,MG`);
     expect(component.lengthPaginator).toEqual(PedidosListMock.comments);
     expect(component.dataSource.data).toEqual(PedidosListMock.response);
     component.dataSource.data.filter(pedido => pedido.pedidoStatus === ConstStatus.abierto)

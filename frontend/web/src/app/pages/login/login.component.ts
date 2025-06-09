@@ -63,6 +63,7 @@ export class LoginComponent implements OnInit {
               this.localStorageService.setUserId(userRes.response.id);
               this.localStorageService.setUserName(`${userRes.response.firstName} ${userRes.response.lastName}`);
               this.localStorageService.setUserRole(userRes.response.role);
+              this.localStorageService.setUserClasification(userRes.response.classification);
           }
       ).catch((error) => {
         this.errorService.httpError(error);

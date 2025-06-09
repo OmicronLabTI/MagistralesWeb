@@ -55,6 +55,7 @@ describe('LoginComponent', () => {
       'setUserName',
       'setUserRole',
       'getUserRole',
+      'setUserClasification'
     ]);
     localStorageServiceSpy.setUserId.and.callFake(() => {
       return;
@@ -63,6 +64,9 @@ describe('LoginComponent', () => {
       return;
     });
     localStorageServiceSpy.getUserRole.and.callFake(() => {
+      return '';
+    });
+    localStorageServiceSpy.setUserClasification.and.callFake(() => {
       return '';
     });
     //  --- Observable Service
