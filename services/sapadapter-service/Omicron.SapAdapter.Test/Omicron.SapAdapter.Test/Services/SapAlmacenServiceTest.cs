@@ -103,6 +103,11 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
 
+            var result = new List<ActiveConfigRoutesModel>();
+            mockCatalogos
+                .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
+
             var mockProccessPayments = new Mock<IProccessPayments>();
             var dictionary = new Dictionary<string, string>
             {
@@ -162,6 +167,10 @@ namespace Omicron.SapAdapter.Test.Services
             mockCatalogos
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
+
+            mockCatalogos
+                .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
 
             var dictionary = new Dictionary<string, string>
             {
@@ -231,6 +240,10 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
 
+            mockCatalogos
+                .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
+
             var dictionary = new Dictionary<string, string>
             {
                 { ServiceConstants.Offset, "0" },
@@ -294,6 +307,9 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
 
+            mockCatalogos
+                .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
             var dictionary = new Dictionary<string, string>
             {
                 { ServiceConstants.Offset, "0" },
@@ -353,7 +369,9 @@ namespace Omicron.SapAdapter.Test.Services
             mockCatalogos
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
-
+            mockCatalogos
+                .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
             var mockProccessPayments = new Mock<IProccessPayments>();
             var dictionary = new Dictionary<string, string>
             {
@@ -878,6 +896,73 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetOrdersWithNewValues()
+        {
+            // arrange
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "Apodaca" },
+            };
+
+            var parametersResponse = this.GetResultDto(parameters);
+
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.GetUserPedidos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
+
+            mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderModelAlmacen()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetLineProducts()))
+                .Returns(Task.FromResult(this.GetIncidents()));
+
+            var mockCatalogos = new Mock<ICatalogsService>();
+            mockCatalogos
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(parametersResponse));
+
+            var result = new List<ActiveConfigRoutesModel>();
+            mockCatalogos
+                .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
+
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var dictionary = new Dictionary<string, string>
+            {
+                { ServiceConstants.Offset, "0" },
+                { ServiceConstants.Limit, "10" },
+                { ServiceConstants.Type, "LN,BQ,MQ,MG,MN,BE,mixto" },
+            };
+
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
+
+            // act
+            var response = await localService.GetOrders(dictionary);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+        }
+
+        private List<ActiveConfigRoutesModel> GetConfigs(List<string> classifications)
+        {
+            return classifications.Select(x => new ActiveConfigRoutesModel() { Classification = x, ClassificationCode = x, IsActive = true, ItemCode = string.Empty, Exceptions = string.Empty, Route = "ALM" }).ToList();
         }
     }
 }

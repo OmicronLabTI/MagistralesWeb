@@ -133,5 +133,12 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </value>
         [NotMapped]
         public string ProductFirmName { get; set; }
+
+        /// <summary>
+        /// Gets or sets ProductionOrderId.
+        /// </summary>
+        /// <value>The ProductionOrderId.</value>
+        [NotMapped]
+        public int ProductionOrderId { get; set; }
     }
 }
