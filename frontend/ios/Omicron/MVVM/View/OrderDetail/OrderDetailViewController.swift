@@ -202,7 +202,6 @@ class OrderDetailViewController: UIViewController {
                     "\(order.code ?? String())  \(order.productDescription ?? String())"
                 }
             }
-            
             self.navigationController?.pushViewController(viewController, animated: true)
         }
     }
