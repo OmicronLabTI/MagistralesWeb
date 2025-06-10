@@ -424,6 +424,10 @@ namespace Omicron.SapAdapter.Test.Services
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
 
+            mockCatalogos
+                .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
+
             var ids = 75000;
 
             var payments = new List<PaymentsDto>()
@@ -478,6 +482,10 @@ namespace Omicron.SapAdapter.Test.Services
             mockCatalogos
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(parametersResponse));
+
+            mockCatalogos
+                .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
 
             var ids = 75000;
 
