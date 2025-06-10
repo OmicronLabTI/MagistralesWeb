@@ -402,11 +402,35 @@ namespace Omicron.SapAdapter.Services.Sap
             List<DoctorDeliveryAddressModel> doctorData)
         {
             var userOrder = pedidos.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
-            var order = sapOrders.FirstOrDefault();
+            var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(this.catalogsService, this.redisService, ServiceConstants.AlmacenDbValue);
+            var usersOrdersIds = pedidos.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid));
+            var lineOrdersIds = lineOrders.Select(x => x.SaleOrderId).ToList();
+            var sapOrdersFiltered = new List<CompleteRecepcionPedidoDetailModel>();
+            sapOrders.ForEach(order =>
+            {
+                var hasProductsWithValidConfig = ServiceShared.CalculateAnd(sapOrdersConfiguration.ClassificationCodes.Contains(order.TypeOrder), !sapOrdersConfiguration.ItemCodesExcludedByException.Contains(order.Detalles.ProductoId));
+                var second = ServiceShared.CalculateAnd(sapOrdersConfiguration.ItemCodesIncludedByConfigRules.Contains(order.Detalles.ProductoId), string.IsNullOrEmpty(order.FabricationOrder));
+                var isInLineOrders = lineOrders.Any(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.DocNum, x.ItemCode == order.Detalles.ProductoId));
+
+                if (ServiceShared.CalculateOr(isInLineOrders || hasProductsWithValidConfig || second))
+                {
+                    sapOrdersFiltered.Add(order);
+                }
+
+                var validFabOrder = int.TryParse(order.FabricationOrder, out int fabOrderId);
+                if (validFabOrder && usersOrdersIds.Contains(fabOrderId))
+                {
+                    sapOrdersFiltered.Add(order);
+                }
+            });
+
+            sapOrdersFiltered = sapOrdersFiltered.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
+
+            var order = sapOrdersFiltered.FirstOrDefault();
             var payment = payments.FirstOrDefault(p => ServiceShared.ValidateShopTransaction(p.TransactionId, order.DocNumDxp));
             payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
             var invoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeigbors, order.Address, payment);
-            var productList = this.GetProductListModel(pedidos, sapOrders, lineOrders, incidences, batches);
+            var productList = this.GetProductListModel(pedidos, sapOrdersFiltered, lineOrders, incidences, batches);
             var salesStatusMagistral = this.GetStatusSaleOrder(userOrder);
             salesStatusMagistral = ServiceShared.CalculateTernary(salesStatusMagistral == ServiceConstants.PorRecibir && productList.Any(y => y.Status == ServiceConstants.Pendiente), ServiceConstants.Pendiente, salesStatusMagistral);
             var salesStatusLinea = ServiceShared.CalculateTernary(lineOrders.Any(x => x.DeliveryId != 0 || x.CloseSampleOrderId != 0), ServiceConstants.BackOrder, ServiceConstants.PorRecibir);
@@ -427,8 +451,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 Doctor = order.Medico,
                 InitDate = order?.FechaInicio ?? DateTime.Now,
                 Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, salesStatus),
-                TotalItems = sapOrders.DistinctBy(x => x.Producto.ProductoId).Count(),
-                TotalPieces = sapOrders.DistinctBy(x => x.Producto.ProductoId).Sum(y => y.Detalles.Quantity),
+                TotalItems = sapOrdersFiltered.DistinctBy(x => x.Producto.ProductoId).Count(),
+                TotalPieces = sapOrdersFiltered.DistinctBy(x => x.Producto.ProductoId).Sum(y => y.Detalles.Quantity),
                 TypeSaleOrder = $"Pedido {productType}",
                 OrderCounter = $"{totalAlmacenados}/{productList.Count}",
                 InvoiceType = invoiceType,

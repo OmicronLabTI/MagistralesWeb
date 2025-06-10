@@ -61,8 +61,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
                 var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
                 var saleDetail = saleDetails.FirstOrDefault(x => x.CodigoProducto == detail.ProductoId);
-                var orderId = saleDetail?.OrdenFabricacionId.ToString() ?? string.Empty;
-                var itemcode = ServiceShared.CalculateTernary(!string.IsNullOrEmpty(orderId), $"{item.ProductoId} - {orderId}", item.ProductoId);
+                var orderId = saleDetail?.OrdenFabricacionId ?? 0;
+                var itemcode = ServiceShared.CalculateTernary(orderId != 0, $"{item.ProductoId} - {orderId}", item.ProductoId);
 
                 var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == saleorderid && x.ItemCode == item.ProductoId);
                 incidentdb ??= new IncidentsModel();
