@@ -19,7 +19,7 @@ class OrderDetailViewModel {
     var tableData: BehaviorSubject<[Detail]> = BehaviorSubject<[Detail]>(value: [])
     var showAlert: PublishSubject<String> = PublishSubject()
     var showAlertConfirmation = PublishSubject<MessageToChangeStatus>()
-    var loading: BehaviorSubject<Bool> = BehaviorSubject<Bool>(value: false)
+    var loading: PublishSubject<Bool> = PublishSubject()
     var sumFormula: BehaviorRelay<Double> = BehaviorRelay<Double>(value: -1)
     var auxTabledata: [Detail] = []
     var processButtonDidTap = PublishSubject<Void>()

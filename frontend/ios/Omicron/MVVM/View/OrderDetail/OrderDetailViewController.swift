@@ -75,7 +75,7 @@ class OrderDetailViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        self.disposeBag = DisposeBag()
+        cleanLabels()
         self.initComponents()
         self.viewModelBinding()
         quantityButtonBindind()
@@ -85,6 +85,8 @@ class OrderDetailViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         disposeBag = DisposeBag()
+        cleanLabels()
+        orderDetailViewModel.tableData.onNext([])
     }
     // MARK: - Functions
     @objc func goToCommentsViewController() {
@@ -155,6 +157,7 @@ class OrderDetailViewController: UIViewController {
         self.orderDetailViewModel.goToSeeLotsViewController.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
+                
                 self.goToPage(identifier: ViewControllerIdentifiers.lotsViewController,
                                                   controllerType: LotsViewController.self)
             }).disposed(by: self.disposeBag)
@@ -339,5 +342,28 @@ class OrderDetailViewController: UIViewController {
         alert.addAction(cancelAction)
         alert.addAction(okAction)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    func cleanLabels() {
+        titleLabel.text = ""
+        codeDescriptionLabel.text = ""
+        documentBaseDescriptionLabel.text = ""
+        containerDescriptionLabel.text = ""
+        tagDescriptionLabel.text = ""
+        sumFormulaDescriptionLabel.text = ""
+        quantityPlannedDescriptionLabel.text = ""
+        startDateDescriptionLabel.text = ""
+        finishedDateDescriptionLabel.text = ""
+        productDescritionLabel.text = ""
+        hashtagLabel.text = ""
+        htCode.text = ""
+        htDescription.text = ""
+        htBaseQuantity.text = ""
+        htrequiredQuantity.text = ""
+        htUnit.text = ""
+        htWerehouse.text = ""
+        destinyLabel.text = ""
+        labelSpaceQuantity.text = ""
+
     }
 }
