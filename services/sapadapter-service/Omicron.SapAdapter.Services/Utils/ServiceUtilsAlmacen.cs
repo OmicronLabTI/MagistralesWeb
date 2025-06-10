@@ -278,6 +278,41 @@ namespace Omicron.SapAdapter.Services.Utils
         }
 
         /// <summary>
+        /// filter orders by config.
+        /// </summary>
+        /// <param name="sapOrders">the saporders.</param>
+        /// <param name="userOrders">user order.</param>
+        /// <param name="lineOrders">the lineOrders.</param>
+        /// <param name="catalogsService">the catalogsService.</param>
+        /// <param name="redisService">the redisService.</param>
+        /// <returns>the data.</returns>
+        public static async Task<List<CompleteRecepcionPedidoDetailModel>> GetFilterSapOrdersByConfig(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<UserOrderModel> userOrders, List<LineProductsModel> lineOrders, ICatalogsService catalogsService, IRedisService redisService)
+        {
+            var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(catalogsService, redisService, ServiceConstants.AlmacenDbValue);
+            var usersOrdersIds = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid));
+            var sapOrdersFiltered = new List<CompleteRecepcionPedidoDetailModel>();
+            sapOrders.ForEach(order =>
+            {
+                var hasProductsWithValidConfig = ServiceShared.CalculateAnd(sapOrdersConfiguration.ClassificationCodes.Contains(order.TypeOrder), !sapOrdersConfiguration.ItemCodesExcludedByException.Contains(order.Detalles.ProductoId));
+                var second = ServiceShared.CalculateAnd(sapOrdersConfiguration.ItemCodesIncludedByConfigRules.Contains(order.Detalles.ProductoId), string.IsNullOrEmpty(order.FabricationOrder));
+                var isInLineOrders = lineOrders.Any(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.DocNum, x.ItemCode == order.Detalles.ProductoId));
+
+                if (ServiceShared.CalculateOr(isInLineOrders || hasProductsWithValidConfig || second))
+                {
+                    sapOrdersFiltered.Add(order);
+                }
+
+                var validFabOrder = int.TryParse(order.FabricationOrder, out int fabOrderId);
+                if (validFabOrder && usersOrdersIds.Contains(fabOrderId))
+                {
+                    sapOrdersFiltered.Add(order);
+                }
+            });
+
+            return sapOrdersFiltered.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
+        }
+
+        /// <summary>
         /// get sap orders by type shipping.
         /// </summary>
         /// <param name="sapOrders">the sap orders.</param>

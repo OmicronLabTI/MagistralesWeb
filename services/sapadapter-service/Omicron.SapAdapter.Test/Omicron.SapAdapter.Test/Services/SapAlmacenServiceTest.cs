@@ -967,10 +967,5 @@ namespace Omicron.SapAdapter.Test.Services
             // assert
             Assert.That(response, Is.Not.Null);
         }
-
-        private List<ActiveConfigRoutesModel> GetConfigs(List<string> classifications)
-        {
-            return classifications.Select(x => new ActiveConfigRoutesModel() { Classification = x, ClassificationCode = x, IsActive = true, ItemCode = string.Empty, Exceptions = string.Empty, Route = "ALM" }).ToList();
-        }
     }
 }

@@ -821,6 +821,16 @@ namespace Omicron.SapAdapter.Test
         }
 
         /// <summary>
+        /// Gets the resultDto.
+        /// </summary>
+        /// <param name="classifications">the data to send.</param>
+        /// <returns>the object.</returns>
+        public List<ActiveConfigRoutesModel> GetConfigs(List<string> classifications)
+        {
+            return classifications.Select(x => new ActiveConfigRoutesModel() { Classification = x, ClassificationCode = x, IsActive = true, ItemCode = string.Empty, Exceptions = string.Empty, Route = "ALM" }).ToList();
+        }
+
+        /// <summary>
         /// gets the resultdto for getuserpedidos.
         /// </summary>
         /// <returns>the data.</returns>
@@ -922,7 +932,7 @@ namespace Omicron.SapAdapter.Test
             {
                 new OrderModel { PedidoId = 84503, AsesorId = 1, Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = DateTime.Today.AddDays(-1), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ", Canceled = "N", Address = "CDMX", DocNumDxp = "1234A1" },
                 new OrderModel { PedidoId = 84517, AsesorId = 1, Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX", DocNumDxp = "1234A2" },
-                new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX", DocNumDxp = "1234A3", IsOmigenomics = "Y" },
+                new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX", DocNumDxp = "1234A3", IsOmigenomics = "Y", OrderType = "MG" },
             };
         }
 
