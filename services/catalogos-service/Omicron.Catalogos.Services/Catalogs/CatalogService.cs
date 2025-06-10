@@ -87,7 +87,7 @@ namespace Omicron.Catalogos.Services.Catalogs
                     ClassificationQfb = true,
                 }).ToList();
 
-            var newClassifications = (await this.catalogDao.GetConfigRoutesModel())
+            var newClassifications = (await this.catalogDao.GetConfigurationRoute())
                 .Where(x => x.Route == ServiceConstants.Magistrales).Select(x => new ClassificationMagistralModel
                 {
                     Value = x.ClassificationCode,
