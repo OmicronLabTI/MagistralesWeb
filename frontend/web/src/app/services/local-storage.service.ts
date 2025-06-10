@@ -72,6 +72,13 @@ export class LocalStorageService {
   getUserRole() {
     return localStorage.getItem(ConstToken.userRole);
   }
+  setUserClasification(clasification: string) {
+    localStorage.setItem(ConstToken.clasification, clasification);
+  }
+
+  getUserClasification() {
+    return localStorage.getItem(ConstToken.clasification);
+  }
   getOrderIsolated() {
     return localStorage.getItem(ConstToken.isolatedOrder);
   }

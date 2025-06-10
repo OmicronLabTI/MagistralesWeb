@@ -49,6 +49,7 @@ describe('FabordersListComponent', () => {
       'getFiltersActivesOrders',
       'removeFiltersActiveOrders',
       'getFiltersActivesAsModelOrders',
+      'getUserClasification',
     ]);
 
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService', [
@@ -67,6 +68,7 @@ describe('FabordersListComponent', () => {
     localStorageServiceSpy.getOrderIsolated.and.callFake(() => {
       return '12345Id';
     });
+    localStorageServiceSpy.getUserClasification.and.returnValue('MN,MG');
 
     dataServiceSpy.getItemOnDataOnlyIds.and.callFake(() => {
       return [];
@@ -198,8 +200,9 @@ describe('FabordersListComponent', () => {
     component.queryString = '?status=Abierto';
     component.offset = 10;
     component.limit = 20;
+    component.userClasification = 'MN,MG';
     component.getFullQueryString();
-    expect(component.fullQueryString).toEqual('?status=Abierto&offset=10&limit=20');
+    expect(component.fullQueryString).toEqual('?status=Abierto&offset=10&limit=20&classifications=MN,MG');
   });
   it('should getDateFormatted()', () => {
     component.getDateFormatted(new Date(), new Date(), true);

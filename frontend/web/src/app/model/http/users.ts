@@ -70,6 +70,7 @@ export class UserRes {
     lastName: string;
     role: number;
     userName: string;
+    classification: string;
 }
 export class IPlaceOrdersReq {
     userLogistic: string;

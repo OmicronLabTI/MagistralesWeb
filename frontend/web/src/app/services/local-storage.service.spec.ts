@@ -117,4 +117,9 @@ describe('LocalStorageService', () => {
     service.removeOrderIsolated();
     expect(service.removeOrderIsolated).toBeTruthy();
   });
+  it('should getUserClasification', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setUserClasification('MN');
+    expect(service.getUserClasification).toBeTruthy('MN');
+  });
 });

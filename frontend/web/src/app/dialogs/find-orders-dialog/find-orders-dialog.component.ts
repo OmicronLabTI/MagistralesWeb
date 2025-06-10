@@ -1,10 +1,10 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS } from '../../constants/const';
+import { CONST_STRING, CONST_USER_DIALOG, ConstOrders, MODAL_FIND_ORDERS, TypeClasifications } from '../../constants/const';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PedidosService } from '../../services/pedidos.service';
 import { ErrorService } from '../../services/error.service';
-import { QfbSelect } from '../../model/http/users';
+import { Clasification, QfbSelect } from '../../model/http/users';
 import { Subscription } from 'rxjs';
 import { UsersService } from '../../services/users.service';
 import { DataService } from '../../services/data.service';
@@ -30,6 +30,7 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
     defaultEndDate: Date;
     isWithError = true;
     isLessDocNumUntil = true;
+    clasifications: Clasification[] = [];
     constructor(
         private formBuilder: FormBuilder,
         @Inject(MAT_DIALOG_DATA) public filterData: any,
@@ -85,10 +86,44 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                 this.dialogRef.close();
                 this.errorService.httpError(error);
             });
+        this.getClassifications();
         this.setFormValues();
         this.getMaxDate();
         this.formValueChangesSubscription();
     }
+
+    getClassifications(): void {
+        this.usersService.getClasifications().subscribe((res) => {
+            this.clasifications = this.deleteDuplicateClasifications(res.response);
+            this.setFormValues();
+        }, error => {
+            this.errorService.httpError(error);
+            this.dialogRef.close();
+        });
+    }
+
+    deleteDuplicateClasifications(clasifications: Clasification[]): Clasification[] {
+        const clasificationList = Array.from(
+            new Map(clasifications.map(clasification => [clasification.value, clasification])).values()
+        );
+        return this.setClasificationListUser(clasificationList);
+    }
+
+    setClasificationListUser(clasifications: Clasification[]): Clasification[] {
+        const userClasification = this.localStorageService.getUserClasification();
+        let clasificationFiltered = [];
+
+        if (userClasification === TypeClasifications.todas) {
+            clasificationFiltered = [...clasifications];
+        } else {
+            const userClasificationList = userClasification.split(',');
+            clasificationFiltered = clasifications.filter(clasification =>
+                userClasificationList.includes(clasification.value));
+        }
+
+        return clasificationFiltered;
+    }
+
     setFormValues(): void {
         this.findOrdersForm.get('docNum').setValue(this.dataService.calculateTernary(
             this.filterData.filterOrdersData.docNum,
