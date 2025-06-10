@@ -187,6 +187,10 @@ namespace Omicron.SapAdapter.Test.Services
             };
 
             this.catalogService
+                .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
+                .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
+
+            this.catalogService
                 .Setup(m => m.GetParams(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(localNeighBors)));
 

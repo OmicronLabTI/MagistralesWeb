@@ -405,27 +405,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(this.catalogsService, this.redisService, ServiceConstants.AlmacenDbValue);
             var usersOrdersIds = pedidos.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid));
             var lineOrdersIds = lineOrders.Select(x => x.SaleOrderId).ToList();
-            var sapOrdersFiltered = new List<CompleteRecepcionPedidoDetailModel>();
-            sapOrders.ForEach(order =>
-            {
-                var hasProductsWithValidConfig = ServiceShared.CalculateAnd(sapOrdersConfiguration.ClassificationCodes.Contains(order.TypeOrder), !sapOrdersConfiguration.ItemCodesExcludedByException.Contains(order.Detalles.ProductoId));
-                var second = ServiceShared.CalculateAnd(sapOrdersConfiguration.ItemCodesIncludedByConfigRules.Contains(order.Detalles.ProductoId), string.IsNullOrEmpty(order.FabricationOrder));
-                var isInLineOrders = lineOrders.Any(x => ServiceShared.CalculateAnd(x.SaleOrderId == order.DocNum, x.ItemCode == order.Detalles.ProductoId));
-
-                if (ServiceShared.CalculateOr(isInLineOrders || hasProductsWithValidConfig || second))
-                {
-                    sapOrdersFiltered.Add(order);
-                }
-
-                var validFabOrder = int.TryParse(order.FabricationOrder, out int fabOrderId);
-                if (validFabOrder && usersOrdersIds.Contains(fabOrderId))
-                {
-                    sapOrdersFiltered.Add(order);
-                }
-            });
-
-            sapOrdersFiltered = sapOrdersFiltered.DistinctBy(x => new { x.DocNum, x.Detalles.ProductoId }).ToList();
-
+            var sapOrdersFiltered = await ServiceUtilsAlmacen.GetFilterSapOrdersByConfig(sapOrders, pedidos, lineOrders, this.catalogsService, this.redisService);
             var order = sapOrdersFiltered.FirstOrDefault();
             var payment = payments.FirstOrDefault(p => ServiceShared.ValidateShopTransaction(p.TransactionId, order.DocNumDxp));
             payment ??= new PaymentsDto { ShippingCostAccepted = 1 };
