@@ -49,7 +49,7 @@ import  Firebase
         Resolver.register { OrderDetailViewModel()}.scope(.shared)
         Resolver.register { OrderDetailFormViewModel()}.scope(.application)
         Resolver.register { CommentsViewModel() }.scope(.shared)
-        Resolver.register { LotsViewModel() }.scope(.shared)
+        Resolver.register { LotsViewModel() }.scope(.unique)
         Resolver.register { SignaturePadViewModel() }.scope(.shared)
         Resolver.register { LottieManager() }.scope(.shared)
         Resolver.register { SupplieViewModel() }.scope(.shared)

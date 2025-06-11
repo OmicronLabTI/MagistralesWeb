@@ -250,6 +250,7 @@ struct StatusNameConstants {
     static let sendToStore = "Enviar a almacén"
     static let getSupplies = "Solicitar insumos"
     static let createBulk = "Crear granel"
+    static let addComponentAndLots = "Agregar componente y asignar lotes"
 }
 struct ImageButtonNames {
     static let assigned = "showAssignedDetailButton.png"

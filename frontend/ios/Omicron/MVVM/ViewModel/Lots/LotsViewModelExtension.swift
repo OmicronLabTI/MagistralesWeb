@@ -24,7 +24,7 @@ extension LotsViewModel {
                             return BatchSelected(
                                 orderId: self.orderId, assignedQty: sel.cantidadSeleccionada,
                                 batchNumber: sel.numeroLote, itemCode: batch.codigoProducto,
-                                action: nil, sysNumber: sel.sysNumber,
+                                action: Actions.insert.rawValue, sysNumber: sel.sysNumber,
                                 expiredBatch: sel.expiredBatch, areBatchesComplete: 0)
                         }) : []
                         return selected
