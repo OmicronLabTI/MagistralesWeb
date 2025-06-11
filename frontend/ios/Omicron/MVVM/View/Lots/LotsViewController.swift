@@ -147,6 +147,7 @@ class LotsViewController: LotsBaseViewController, ChangeInputValueDelegate {
         }).disposed(by: self.disposeBag)
         // Muestra el componente de firma
         self.lotsViewModel.showSignatureView.subscribe(onNext: { [weak self] titleView in
+            guard let self = self else { return }
             let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
             let signatureVC = storyboard.instantiateViewController(
                 identifier: ViewControllerIdentifiers.signaturePadViewController) as? SignaturePadViewController
@@ -154,7 +155,8 @@ class LotsViewController: LotsBaseViewController, ChangeInputValueDelegate {
             signatureVC?.originView = ViewControllerIdentifiers.lotsViewController
             signatureVC?.modalPresentationStyle = .overCurrentContext
             signatureVC?.modalTransitionStyle = .crossDissolve
-            self?.present(signatureVC!, animated: true, completion: nil)
+            signatureVC?.signaturePadViewModel.lotsViewModel = self.lotsViewModel
+            self.present(signatureVC!, animated: true, completion: nil)
         }).disposed(by: self.disposeBag)
         self.initObs()
     }
