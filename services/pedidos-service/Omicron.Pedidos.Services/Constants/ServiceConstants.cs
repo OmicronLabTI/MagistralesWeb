@@ -991,6 +991,11 @@ namespace Omicron.Pedidos.Services.Constants
         public const string QrPng = "qr.png";
 
         /// <summary>
+        /// const for OrdersToExcludeKey.
+        /// </summary>
+        public const string OrdersToExcludeKey = "OrdersToExclude";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

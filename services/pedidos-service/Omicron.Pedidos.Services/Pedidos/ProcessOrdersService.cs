@@ -71,14 +71,22 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var listOrders = await this.GetFabOrdersByIdCode(dictResult[ServiceConstants.Ok]);
                 var productNoLabel = (await this.pedidosDao.GetParamsByFieldContains(ServiceConstants.ProductNoLabel)).Select(x => x.Value).ToList();
 
-                var listPedidos = pedidosId.ListIds.Select(x => x.ToString()).ToList();
+                var listPedidos = pedidosId.ListIds
+                    .Where(x => !dictResult[ServiceConstants.OrdersToExcludeKey].Contains(x.ToString()))
+                    .Select(x => x.ToString()).ToList();
+
                 var dataBaseSaleOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(listPedidos)).ToList();
 
                 var createUserModelOrders = this.CreateUserModelOrders(listOrders, listToSend, pedidosId.User, productNoLabel);
                 var listToInsert = createUserModelOrders.Item1;
                 var listOrderLogToInsert = new List<SalesLogs>();
                 listOrderLogToInsert.AddRange(createUserModelOrders.Item2);
-                var dataToInsertUpdate = this.GetListToUpdateInsert(pedidosId.ListIds, dataBaseSaleOrders, dictResult[ServiceConstants.ErrorCreateFabOrd], listToSend, pedidosId.User, createUserModelOrders.Item1);
+
+                var ordersIdsToProcess = pedidosId.ListIds
+                    .Where(x => !dictResult[ServiceConstants.OrdersToExcludeKey].Contains(x.ToString()))
+                    .ToList();
+
+                var dataToInsertUpdate = this.GetListToUpdateInsert(ordersIdsToProcess, dataBaseSaleOrders, dictResult[ServiceConstants.ErrorCreateFabOrd], listToSend, pedidosId.User, createUserModelOrders.Item1);
                 listToInsert.AddRange(dataToInsertUpdate.Item1);
                 var listToUpdate = new List<UserOrderModel>(dataToInsertUpdate.Item2);
                 listOrderLogToInsert.AddRange(dataToInsertUpdate.Item3);
@@ -241,6 +249,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
             var listToLook = ServiceUtils.GetValuesByExactValue(dictResult, ServiceConstants.Ok);
             var listWithError = ServiceUtils.GetValuesContains(dictResult, ServiceConstants.ErrorCreateFabOrd);
+            var listOrdersIdToExclude = new List<string>();
             var listErrorsToReturn = new List<string>();
             listWithError.ForEach(x =>
             {
@@ -248,12 +257,14 @@ namespace Omicron.Pedidos.Services.Pedidos
                 var key = x.Split("-");
 
                 listErrorsToReturn.Add($"{key[0]}-{key[1]}: {dictValue.LastOrDefault()}");
+                listOrdersIdToExclude.Add(key[0]);
             });
 
             return new Dictionary<string, List<string>>
             {
                 { ServiceConstants.Ok, listToLook },
                 { ServiceConstants.ErrorCreateFabOrd, listErrorsToReturn },
+                { ServiceConstants.OrdersToExcludeKey, listOrdersIdToExclude },
             };
         }
 
