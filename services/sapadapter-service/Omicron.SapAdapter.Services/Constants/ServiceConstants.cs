@@ -613,6 +613,11 @@ namespace Omicron.SapAdapter.Services.Constants
         /// <summary>
         /// the insert value.
         /// </summary>
+        public const string OrderTypePackage = "PQ";
+
+        /// <summary>
+        /// the insert value.
+        /// </summary>
         public const string Maquila = "Maquila";
 
         /// <summary>
