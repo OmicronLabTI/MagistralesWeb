@@ -115,7 +115,6 @@ namespace Omicron.SapAdapter.Services.Sap
         {
             var sapOrders = await this.sapDao.GetSapOrderDetailForAlmacenRecepcionById(details.SaleOrders);
             var ordersByDxp = await this.sapDao.GetCountOrdersWIthDetailByDocNumDxpJoinProduct(details.DxpId);
-            var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(this.catalogsService, this.redisService, ServiceConstants.AlmacenDbValue);
             var totalOrdersWithDeliverys = ordersByDxp.Where(ord => ServiceShared.CalculateAnd(ord.PedidoStatus == "C", ord.Canceled != "Y"))
                 .Select(ord => ord.DocNum)
                 .Distinct().Count();

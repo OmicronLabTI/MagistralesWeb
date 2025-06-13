@@ -355,6 +355,8 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(this.catalogsService, this.redisService, ServiceConstants.AlmacenDbValue);
+            sapOrdersConfiguration.ClassificationCodes.AddRange(new List<string> { ServiceConstants.OrderTypeMQ, ServiceConstants.OrderTypeMU, ServiceConstants.OrderTypePackage });
+
             var hasProductsWithValidConfig = sapOrders
                     .Where(x => ((sapOrdersConfiguration.ClassificationCodes.Contains(x.TypeOrder) &&
                                 !sapOrdersConfiguration.ItemCodesExcludedByException.Contains(x.Detalles.ProductoId)) ||
@@ -402,9 +404,6 @@ namespace Omicron.SapAdapter.Services.Sap
             List<DoctorDeliveryAddressModel> doctorData)
         {
             var userOrder = pedidos.FirstOrDefault(x => string.IsNullOrEmpty(x.Productionorderid));
-            var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(this.catalogsService, this.redisService, ServiceConstants.AlmacenDbValue);
-            var usersOrdersIds = pedidos.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid));
-            var lineOrdersIds = lineOrders.Select(x => x.SaleOrderId).ToList();
             var sapOrdersFiltered = await ServiceUtilsAlmacen.GetFilterSapOrdersByConfig(sapOrders, pedidos, lineOrders, this.catalogsService, this.redisService);
             var order = sapOrdersFiltered.FirstOrDefault();
             var payment = payments.FirstOrDefault(p => ServiceShared.ValidateShopTransaction(p.TransactionId, order.DocNumDxp));
