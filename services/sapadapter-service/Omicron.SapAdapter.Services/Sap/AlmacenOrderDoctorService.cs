@@ -110,7 +110,6 @@ namespace Omicron.SapAdapter.Services.Sap
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
             var lineResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesBySaleOrder, new List<int> { saleorderid });
             var lineOrders = JsonConvert.DeserializeObject<List<LineProductsModel>>(lineResponse.Response.ToString());
-            var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(this.catalogsService, this.redisService, ServiceConstants.AlmacenDbValue);
             var usersOrdersIds = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid));
             return await ServiceUtilsAlmacen.GetFilterSapOrdersByConfig(sapOrders, userOrders, lineOrders, this.catalogsService, this.redisService);
         }

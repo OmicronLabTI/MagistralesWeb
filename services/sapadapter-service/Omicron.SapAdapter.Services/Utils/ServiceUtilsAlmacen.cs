@@ -94,6 +94,7 @@ namespace Omicron.SapAdapter.Services.Utils
             var arrayOfSaleToProcess = new List<CompleteAlmacenOrderModel>();
 
             var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(catalogsService, redisService, ServiceConstants.AlmacenDbValue);
+            sapOrdersConfiguration.ClassificationCodes.AddRange(new List<string> { ServiceConstants.OrderTypeMQ, ServiceConstants.OrderTypeMU, ServiceConstants.OrderTypePackage });
 
             sapOrders.Where(o => o.Canceled == "N").GroupBy(x => x.DocNum).ToList().ForEach(orders =>
             {
@@ -289,6 +290,7 @@ namespace Omicron.SapAdapter.Services.Utils
         public static async Task<List<CompleteRecepcionPedidoDetailModel>> GetFilterSapOrdersByConfig(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<UserOrderModel> userOrders, List<LineProductsModel> lineOrders, ICatalogsService catalogsService, IRedisService redisService)
         {
             var sapOrdersConfiguration = await ServiceUtils.GetRouteConfigurationsForProducts(catalogsService, redisService, ServiceConstants.AlmacenDbValue);
+            sapOrdersConfiguration.ClassificationCodes.AddRange(new List<string> { ServiceConstants.OrderTypeMQ, ServiceConstants.OrderTypeMU, ServiceConstants.OrderTypePackage });
             var usersOrdersIds = userOrders.Where(x => !string.IsNullOrEmpty(x.Productionorderid)).Select(x => int.Parse(x.Productionorderid));
             var sapOrdersFiltered = new List<CompleteRecepcionPedidoDetailModel>();
             sapOrders.ForEach(order =>
