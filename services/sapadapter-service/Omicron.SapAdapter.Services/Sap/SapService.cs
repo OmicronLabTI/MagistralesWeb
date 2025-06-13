@@ -122,6 +122,8 @@ namespace Omicron.SapAdapter.Services.Sap
 
             orders = ServiceUtils.FilterList(orders, parameters, userOrders, listUsers);
 
+            orders = FilterByClassifications(orders, parameters);
+
             var offset = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Offset, "0");
             var limit = ServiceShared.GetDictionaryValueString(parameters, ServiceConstants.Limit, "1");
 
@@ -151,8 +153,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 o.ClientType = clientType;
                 o.Cliente = client;
             });
-
-            orderToReturn = FilterByClassifications(orderToReturn, parameters);
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, orderToReturn, null, orders.Count);
         }
