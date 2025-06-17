@@ -86,6 +86,8 @@ class LotsViewController: LotsBaseViewController, ChangeInputValueDelegate {
             .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] item in
             self?.lotsViewModel.updateInfoSelectedBatch(lot: item)
         }).disposed(by: self.disposeBag)
+        // Detecta el item de la tabla linea de documentos que fué seleccionado
+        self.lineDocTable.rx.itemSelected.bind(to: lotsViewModel.indexProductSelected).disposed(by: disposeBag)
         // Detecta que item de la tabla lotes disponibles fue selecionado
         Observable.combineLatest(self.lotsAvailablesTable.rx.itemSelected,
                                  self.lastResponder, resultSelector: { [weak self] index, responder in
@@ -105,8 +107,6 @@ class LotsViewController: LotsBaseViewController, ChangeInputValueDelegate {
             .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] item in
             self?.lotsViewModel.itemLotSelected = item
         }).disposed(by: self.disposeBag)
-        // Detecta el item de la tabla linea de documentos que fué seleccionado
-        self.lineDocTable.rx.itemSelected.bind(to: lotsViewModel.indexProductSelected).disposed(by: disposeBag)
         // Muestra u oculta el loading
         self.lotsViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] showLoading in
             if showLoading {
