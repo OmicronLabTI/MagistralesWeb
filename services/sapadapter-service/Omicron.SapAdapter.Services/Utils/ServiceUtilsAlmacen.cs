@@ -240,8 +240,9 @@ namespace Omicron.SapAdapter.Services.Utils
         /// <param name="localNeighbors">the local neighboors.</param>
         /// <param name="usersOrders">user order.</param>
         /// <param name="payments">the payments.</param>
+        /// <param name="classifications">the classifications.</param>
         /// <returns>the data.</returns>
-        public static List<OrderListByDoctorModel> GetTotalOrdersForDoctorAndDxp(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<string> localNeighbors, List<UserOrderModel> usersOrders, List<PaymentsDto> payments)
+        public static List<OrderListByDoctorModel> GetTotalOrdersForDoctorAndDxp(List<CompleteRecepcionPedidoDetailModel> sapOrders, List<string> localNeighbors, List<UserOrderModel> usersOrders, List<PaymentsDto> payments, List<ClassificationsModel> classifications)
         {
             var listOrders = new List<OrderListByDoctorModel>();
             var salesIds = sapOrders.Select(x => x.DocNum).Distinct().OrderByDescending(x => x);
@@ -251,12 +252,9 @@ namespace Omicron.SapAdapter.Services.Utils
                 var orders = sapOrders.Where(x => x.DocNum == so).DistinctBy(y => y.Detalles.ProductoId).ToList();
                 var order = orders.FirstOrDefault();
 
-                var productType = ServiceShared.CalculateTernary(orders.All(x => ServiceShared.CalculateAnd(x.Detalles != null, x.Producto.IsMagistral == "Y")), ServiceConstants.Magistral, ServiceConstants.Mixto);
-                productType = ServiceShared.CalculateTernary(orders.All(x => ServiceShared.CalculateAnd(x.Detalles != null, x.Producto.IsLine == "Y")), ServiceConstants.Linea, productType);
-
                 var payment = payments.GetPaymentBydocNumDxp(order.DocNumDxp);
                 var userOrder = usersOrders.GetSaleOrderHeader(so.ToString());
-
+                var typeOrder = ServiceUtils.GetOrderTypeDescription(orders.Select(x => x.TypeOrder).Distinct().ToList(), classifications);
                 listOrders.Add(new OrderListByDoctorModel
                 {
                     DocNum = so,
@@ -264,7 +262,7 @@ namespace Omicron.SapAdapter.Services.Utils
                     Status = ServiceShared.CalculateTernary(order.Canceled == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
                     TotalItems = orders.Count,
                     TotalPieces = orders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
-                    TypeSaleOrder = $"Pedido {productType}",
+                    TypeSaleOrder = $"Pedido {typeOrder}",
                     InvoiceType = ServiceUtils.CalculateTypeShip(ServiceConstants.NuevoLeon, localNeighbors, order.Address, payment),
                     Comments = userOrder?.Comments ?? string.Empty,
                     OrderType = order.TypeOrder,
