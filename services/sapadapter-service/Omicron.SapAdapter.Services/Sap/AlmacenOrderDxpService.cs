@@ -133,6 +133,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var doctorPrescriptionData = await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, adressesToFind);
             var doctor = doctorPrescriptionData.FirstOrDefault(x => x.AddressId == order.DeliveryAddressId);
             doctor ??= new DoctorDeliveryAddressModel { Contact = order.Cliente };
+            var classifications = await this.sapDao.GetClassificationsByValue(sapOrders.Select(x => x.TypeOrder).ToList());
 
             var saleModel = new SalesByDoctorModel
             {
@@ -149,7 +150,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     TotalOrdersWithDelivery = totalOrdersWithDeliverys,
                     IsOmigenomics = sapOrders.Exists(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))),
                 },
-                Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrdersFiltered, localNeigbors, userOrders, payments),
+                Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrdersFiltered, localNeigbors, userOrders, payments, classifications.ToList()),
             };
 
             return ServiceUtils.CreateResult(true, 200, null, saleModel, null, null);
