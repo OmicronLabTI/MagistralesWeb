@@ -150,7 +150,7 @@ class LotsViewModel {
                 if existing.action != nil {
                     if let index = self?.selectedBatches
                         .firstIndex(
-                            where: { $0.batchNumber == existing.batchNumber && $0.action != Actions.delete.rawValue }) {
+                            where: { $0.batchNumber == existing.batchNumber && $0.action != Actions.delete.rawValue && $0.itemCode == existing.itemCode }) {
                         self?.selectedBatches.remove(at: index)
                         let newSelected = self?.getFilteredSelected(itemCode: existing.itemCode) ?? []
                         self?.dataLotsSelected.onNext(newSelected)
