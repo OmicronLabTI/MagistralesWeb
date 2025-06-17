@@ -145,7 +145,7 @@ class LotsViewModel {
         self.removeLotDidTap.withLatestFrom(inputsRemove).subscribe(onNext: { [weak self] document, batch in
             self?.enableRemoveButton.onNext(false)
             if let existing = self?.selectedBatches.first(where: { batchItem in
-                return batchItem.batchNumber == batch?.numeroLote
+                return batchItem.batchNumber == batch?.numeroLote && batchItem.itemCode == document?.codigoProducto
             }) {
                 if existing.action != nil {
                     if let index = self?.selectedBatches
