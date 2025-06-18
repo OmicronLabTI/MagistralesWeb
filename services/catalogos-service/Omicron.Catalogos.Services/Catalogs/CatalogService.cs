@@ -210,10 +210,23 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .Select(g => g.First())
                 .ToList();
 
-            await this.catalogDao.InsertProductTypecolors(productTypeColors);
+            var temaIds = productTypeColors.Select(x => x.TemaId).ToList();
+            var existingTemaIds = await this.catalogDao.GetExistingTemaIds(temaIds);
+            var recordsToUpdate = productTypeColors.Where(x => existingTemaIds.Contains(x.TemaId)).ToList();
+            var recordsToInsert = productTypeColors.Where(x => !existingTemaIds.Contains(x.TemaId)).ToList();
+
+            if (recordsToUpdate.Any())
+            {
+                await this.catalogDao.UpdateProductTypecolors(recordsToUpdate);
+            }
+
+            if (recordsToInsert.Any())
+            {
+                await this.catalogDao.InsertProductTypecolors(recordsToInsert);
+            }
 
             await this.redisService.WriteToRedis(
-            "ProductTypeColors",
+            ServiceConstants.ProductTypeColors,
             JsonConvert.SerializeObject(productTypeColors),
             TimeSpan.FromHours(12));
 

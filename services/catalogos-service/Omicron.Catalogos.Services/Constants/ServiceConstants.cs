@@ -109,6 +109,11 @@ namespace Omicron.Catalogos.Services.Constants
         public const string ProductTypeColorsFileUrl = "ProductTypeColorsFileUrl";
 
         /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ProductTypeColors = "ProductTypeColors";
+
+        /// <summary>
         /// Gets the order.
         /// </summary>
         /// <value>
