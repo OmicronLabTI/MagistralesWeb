@@ -44,6 +44,11 @@ namespace Omicron.Catalogos.Services.Constants
         public const string IsActive = "activo";
 
         /// <summary>
+        /// Is active excel.
+        /// </summary>
+        public const string IsActiveProduct = "1";
+
+        /// <summary>
         /// Is magistrales.
         /// </summary>
         public const string Magistrales = "MAG";

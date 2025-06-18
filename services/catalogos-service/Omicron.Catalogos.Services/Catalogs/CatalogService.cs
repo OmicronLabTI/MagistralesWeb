@@ -205,6 +205,11 @@ namespace Omicron.Catalogos.Services.Catalogs
         {
             var productTypeColors = await this.GetProductTypeColorsFromExcel();
 
+            foreach (var item in productTypeColors)
+            {
+                item.TemaId = NormalizeComplete(item.TemaId);
+            }
+
             productTypeColors = productTypeColors
                 .GroupBy(p => p.TemaId)
                 .Select(g => g.First())
@@ -244,6 +249,21 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
                 .ToArray())
                 .ToUpper();
+        }
+
+        private static string NormalizeComplete(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            string normalized = NormalizeAndToUpper(input);
+            return normalized
+                .Replace(" - ", "-")
+                .Replace("- ", "-")
+                .Replace(" -", "-")
+                .Replace(" ", string.Empty);
         }
 
         private static void ValidateClassificationsFound(HashSet<(string Classification, string Code)> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
@@ -670,7 +690,7 @@ namespace Omicron.Catalogos.Services.Catalogs
                 BackgroundColor = row[backgroundColor].ToString(),
                 LabelText = row[labelText].ToString(),
                 TextColor = row[textColor].ToString(),
-                IsActive = row[isActive].ToString().Trim().Equals(ServiceConstants.IsActive, StringComparison.OrdinalIgnoreCase),
+                IsActive = row[isActive].ToString().Trim().Equals(ServiceConstants.IsActiveProduct, StringComparison.OrdinalIgnoreCase),
             }).ToList();
 
             return typeColors;
