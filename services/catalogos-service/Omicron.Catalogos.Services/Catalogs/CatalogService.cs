@@ -200,6 +200,26 @@ namespace Omicron.Catalogos.Services.Catalogs
             return ServiceUtils.CreateResult(true, 200, null, routeConfiguration.Where(x => x.IsActive).ToList(), null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> UploadProductTypeColorsFromExcel()
+        {
+            var productTypeColors = await this.GetProductTypeColorsFromExcel();
+
+            productTypeColors = productTypeColors
+                .GroupBy(p => p.TemaId)
+                .Select(g => g.First())
+                .ToList();
+
+            await this.catalogDao.InsertProductTypecolors(productTypeColors);
+
+            await this.redisService.WriteToRedis(
+            "ProductTypeColors",
+            JsonConvert.SerializeObject(productTypeColors),
+            TimeSpan.FromHours(12));
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+        }
+
         private static List<string> GetValidStringList(string value)
         {
             return value.IsNullOrEmpty() ? new List<string>() : value.ToUpper().Split(",").ToList();
@@ -616,6 +636,31 @@ namespace Omicron.Catalogos.Services.Catalogs
             }
 
             return valids;
+        }
+
+        private async Task<List<ProductTypeColorsModel>> GetProductTypeColorsFromExcel()
+        {
+            var table = await this.ObtainDataFromExcel(ServiceConstants.ProductTypeColorsFileUrl, 1);
+
+            var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
+
+            var temaId = columns[0];
+            var backgroundColor = columns[1];
+            var labelText = columns[2];
+            var textColor = columns[3];
+            var isActive = columns[4];
+
+            var typeColors = table.AsEnumerable()
+            .Select(row => new ProductTypeColorsModel
+            {
+                TemaId = row[temaId].ToString().Trim(),
+                BackgroundColor = row[backgroundColor].ToString(),
+                LabelText = row[labelText].ToString(),
+                TextColor = row[textColor].ToString(),
+                IsActive = row[isActive].ToString().Trim().Equals(ServiceConstants.IsActive, StringComparison.OrdinalIgnoreCase),
+            }).ToList();
+
+            return typeColors;
         }
 
         private async Task<List<WarehouseModel>> GetWarehousesFromExcel()

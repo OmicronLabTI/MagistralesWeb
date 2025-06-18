@@ -104,6 +104,11 @@ namespace Omicron.Catalogos.Services.Constants
         public const string DefaultColor = "#FBC115";
 
         /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ProductTypeColorsFileUrl = "ProductTypeColorsFileUrl";
+
+        /// <summary>
         /// Gets the order.
         /// </summary>
         /// <value>

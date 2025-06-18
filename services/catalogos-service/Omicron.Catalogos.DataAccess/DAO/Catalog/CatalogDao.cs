@@ -87,6 +87,14 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
             return true;
         }
 
+        public async Task<bool> InsertProductTypecolors(List<ProductTypeColorsModel> producttypecolors)
+        {
+            this.databaseContext.ProductTypeColorsModel.UpdateRange(producttypecolors);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<List<WarehouseModel>> GetActiveWarehouses()
         {
             return await this.databaseContext.WarehousesModel.Where(x => x.IsActive).AsNoTracking().ToListAsync();

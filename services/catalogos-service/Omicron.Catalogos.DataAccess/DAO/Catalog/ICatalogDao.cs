@@ -82,5 +82,12 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// </summary>
         /// <returns> boolean indicating whether the insert was successful. </returns>
         Task<List<ConfigRoutesModel>> GetConfigRoutesModel();
+
+        /// <summary>
+        /// Method to insert new producttypecolors.
+        /// </summary>
+        /// <param name="producttypecolors"> new producttypecolors to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<bool> InsertProductTypecolors(List<ProductTypeColorsModel> producttypecolors);
     }
 }
