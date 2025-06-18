@@ -69,6 +69,10 @@ namespace Omicron.Catalogos.Test.Facade
                .Returns(Task.FromResult(response));
 
             mockServicesCat
+                .Setup(m => m.UploadProductTypeColorsFromExcel())
+                .Returns(Task.FromResult(response));
+
+            mockServicesCat
                .Setup(m => m.UploadConfigurationRouteFromExcel())
                .Returns(Task.FromResult(response));
 
@@ -191,6 +195,21 @@ namespace Omicron.Catalogos.Test.Facade
         {
             // Act
             var response = await this.catalogFacade.UploadWarehouseFromExcel();
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
+        }
+
+        /// <summary>
+        /// Test to verify upload product type colors from excel.
+        /// </summary>
+        /// <returns>Upload product type colors from excel result.</returns>
+        [Test]
+        public async Task UploadProductTypeColorsFromExcel()
+        {
+            // Act
+            var response = await this.catalogFacade.UploadProductTypeColorsFromExcel();
 
             // Assert
             Assert.That(response, Is.Not.Null);
