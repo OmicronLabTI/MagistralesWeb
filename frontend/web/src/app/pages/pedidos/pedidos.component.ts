@@ -9,6 +9,7 @@ import {
   CONST_STRING,
   ConstOrders,
   ConstStatus,
+  defaultClasificationColor,
   FromToFilter,
   HttpServiceTOCall,
   HttpStatus,
@@ -40,6 +41,7 @@ import { ObservableService } from '../../services/observable.service';
 import { DateService } from '../../services/date.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { FiltersService } from '../../services/filters.service';
+import { Clasification } from 'src/app/model/http/users';
 
 @Component({
   selector: 'app-pedidos',
@@ -74,6 +76,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   isThereOrdersToRequest = false;
   isOnInit = true;
   isTherePedidosToViewPdf = false;
+  clasificationList: Clasification[] = [];
   constructor(
     private pedidosService: PedidosService,
     public dataService: DataService,
@@ -93,6 +96,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
     this.userClasification = this.localStorageService.getUserClasification();
+    this.clasificationList = [...this.localStorageService.getClasificationList()];
     if (this.localStorageService.getFiltersActives()) {
       this.onSuccessSearchOrderModal(this.localStorageService.getFiltersActivesAsModel());
     } else {
@@ -169,6 +173,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
               break;
           }
           element.classClasification = this.getClassClasification(element.orderType);
+          element.color = this.getClasificationColor(element.orderType);
         });
         this.isTherePedidosToViewPdf = false;
         this.isCheckedOrders = false;
@@ -186,6 +191,12 @@ export class PedidosComponent implements OnInit, OnDestroy {
         this.dataSource.data = [];
       }
     );
+  }
+
+  getClasificationColor(clasification: string): string {
+    const color = this.clasificationList.find(clas => clas.value === clasification) !== undefined
+      ? this.clasificationList.find(clas => clas.value === clasification).color : defaultClasificationColor;
+    return color;
   }
 
   updateAllComplete() {

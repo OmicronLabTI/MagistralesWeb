@@ -215,4 +215,12 @@ describe('DataService', () => {
     const service: DataService = TestBed.get(DataService);
     expect(service.calculateAndValueList([true, true, true])).toBe(true);
   });
+  it('should validHexadecimalColor', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.validHexadecimalColor('#FBC115')).toBe(true);
+  });
+  it('should validateValidString', () => {
+    const service: DataService = TestBed.get(DataService);
+    expect(service.validateValidString('')).toBe(false);
+  });
 });
