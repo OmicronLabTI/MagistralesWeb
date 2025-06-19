@@ -207,7 +207,7 @@ namespace Omicron.Catalogos.Services.Catalogs
 
             foreach (var item in productTypeColors)
             {
-                item.TemaId = NormalizeComplete(item.TemaId);
+                item.TemaId = ServiceUtils.NormalizeComplete(item.TemaId);
             }
 
             productTypeColors = productTypeColors
@@ -249,21 +249,6 @@ namespace Omicron.Catalogos.Services.Catalogs
                 .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
                 .ToArray())
                 .ToUpper();
-        }
-
-        private static string NormalizeComplete(string input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return input;
-            }
-
-            string normalized = NormalizeAndToUpper(input);
-            return normalized
-                .Replace(" - ", "-")
-                .Replace("- ", "-")
-                .Replace(" -", "-")
-                .Replace(" ", string.Empty);
         }
 
         private static void ValidateClassificationsFound(HashSet<(string Classification, string Code)> found, List<ConfigRoutesModel> valids, List<ConfigRoutesModel> invalids)
