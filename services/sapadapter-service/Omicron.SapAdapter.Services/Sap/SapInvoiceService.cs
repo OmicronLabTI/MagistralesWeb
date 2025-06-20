@@ -900,7 +900,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     ProductType = $"Producto {productType}",
                     Quantity = invoice.Quantity,
                     Status = product.Item1,
-                    IsMagistral = item.IsMagistral.Equals("Y"),
+                    IsMagistral = product.Item2 != 0,
                     DeliveryId = invoice.BaseEntry.Value,
                     OrderId = product.Item2,
                     SaleOrderId = product.Item3,
