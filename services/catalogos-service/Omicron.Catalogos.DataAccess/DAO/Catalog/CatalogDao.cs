@@ -41,12 +41,6 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
             return await this.databaseContext.RoleModel.ToListAsync();
         }
 
-        /// <inheritdoc/>
-        public async Task<IEnumerable<ClassificationQfbModel>> GetActiveClassificationQfb()
-        {
-            return await this.databaseContext.ClassificationQfbModel.Where(c => c.Active).ToListAsync();
-        }
-
         /// <summary>
         /// Looks the values by field.
         /// </summary>
@@ -107,6 +101,15 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         public async Task<List<ConfigRoutesModel>> GetConfigurationRoute()
         {
             return await this.databaseContext.ConfigRoutesModel.Where(x => x.IsActive).AsNoTracking().ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ConfigRoutesModel>> GetActiveClassificationColorsByRoutes(List<string> routes)
+        {
+            return await this.databaseContext.ConfigRoutesModel
+                .Where(x => x.IsActive && routes.Contains(x.Route))
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }
