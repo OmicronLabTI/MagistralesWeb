@@ -31,12 +31,6 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         Task<IEnumerable<ParametersModel>> GetParamsByField(List<string> fields);
 
         /// <summary>
-        /// Get classification qfb.
-        /// </summary>
-        /// <returns>Classification qfb.</returns>
-        Task<IEnumerable<ClassificationQfbModel>> GetActiveClassificationQfb();
-
-        /// <summary>
         /// Method to obtain warehouses.
         /// </summary>
         /// <param name="warehouses"> warehouses to search. </param>
@@ -82,5 +76,11 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// </summary>
         /// <returns> boolean indicating whether the insert was successful. </returns>
         Task<List<ConfigRoutesModel>> GetConfigRoutesModel();
+
+        /// <summary>
+        /// GetActiveClassificationColorsByRoutes.
+        /// </summary>
+        /// <returns>Active classification colors by routes.</returns>
+        Task<List<ConfigRoutesModel>> GetActiveClassificationColorsByRoutes(List<string> routes);
     }
 }

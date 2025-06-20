@@ -16,6 +16,8 @@ import { ErrorService } from 'src/app/services/error.service';
 import { IUserRes, UserRes } from 'src/app/model/http/users';
 import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { ObservableService } from 'src/app/services/observable.service';
+import { UsersService } from 'src/app/services/users.service';
+import { userClasificationMock } from 'src/mocks/userListMock';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
@@ -23,6 +25,7 @@ describe('LoginComponent', () => {
   let localStorageServiceSpy: jasmine.SpyObj<LocalStorageService>;
   let errorServiceSpy;
   let observableServiceSpy: jasmine.SpyObj<ObservableService>;
+  let userServiceSpy: jasmine.SpyObj<UsersService>;
 
   const routerSpy = {
     navigate: jasmine.createSpy('navigate')
@@ -57,6 +60,9 @@ describe('LoginComponent', () => {
       'getUserRole',
       'setUserClasification'
     ]);
+    userServiceSpy = jasmine.createSpyObj<UsersService>('UsersService', [
+      'getClasifications'
+    ]);
     localStorageServiceSpy.setUserId.and.callFake(() => {
       return;
     });
@@ -69,6 +75,7 @@ describe('LoginComponent', () => {
     localStorageServiceSpy.setUserClasification.and.callFake(() => {
       return '';
     });
+    userServiceSpy.getClasifications.and.returnValue(of(userClasificationMock));
     //  --- Observable Service
     observableServiceSpy = jasmine.createSpyObj<ObservableService>('ObservableService',
       [
@@ -95,7 +102,8 @@ describe('LoginComponent', () => {
         { provide: ErrorService, useValue: errorServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: ObservableService, useValue: observableServiceSpy },
-        { provide: LocalStorageService, useValue: localStorageServiceSpy}
+        { provide: LocalStorageService, useValue: localStorageServiceSpy },
+        { provide: UsersService, useValue: userServiceSpy }
       ]
     })
       .compileComponents();
