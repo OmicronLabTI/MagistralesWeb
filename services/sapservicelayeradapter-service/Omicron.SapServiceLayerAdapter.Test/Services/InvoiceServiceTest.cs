@@ -90,5 +90,67 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
             Assert.That(result.Response, Is.Not.Null);
             Assert.That(result.Comments, Is.Null);
         }
+
+        /// <summary>
+        /// InvoiceTrackingInfoTest.
+        /// </summary>
+        /// <param name="sapTrackingNumber">Sap Tracking Number.</param>
+        /// <param name="sapExtendedTrackingNumbers">sapExtendedTrackingNumbers.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase(null, null)]
+        [TestCase("1001-9001", null)]
+        [TestCase("1001-9001,1002-9002", null)]
+        [TestCase("1001-9001,1002-9002,1003-9003", null)]
+        [TestCase("1001-9001,1002-9002,1003-9003", "1004-9004")]
+        public async Task InvoiceTrackingInfoTest(string sapTrackingNumber, string sapExtendedTrackingNumbers)
+        {
+            int invoiceId = 149812;
+            var trackingInfo = new TrackingInformationDto
+            {
+                TrackingNumber = "9005",
+                TransportMode = "DHL",
+                PackageId = 1005,
+            };
+
+            // arrange
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var mockLogger = new Mock<ILogger>();
+            var invoiceResult = new InvoiceDto
+            {
+                DocumentEntry = 3,
+                TrackingNumber = sapTrackingNumber,
+                ExtendedTrackingNumbers = sapExtendedTrackingNumbers,
+            };
+
+            var responseInvoice = GetGenericResponseModel(200, true, invoiceResult, null);
+            var shippingTypesObject = new List<ShippingTypesResponseDto>
+            {
+                new () { TransportCode = 1, TransportName = "DHL" },
+            };
+
+            var resultShippingTypes = GetGenericResponseModel(
+                200,
+                true,
+                new ServiceLayerResponseDto
+                {
+                    Metadata = "metadata",
+                    Value = JsonConvert.SerializeObject(shippingTypesObject),
+                });
+
+            mockServiceLayerClient
+                .SetupSequence(sl => sl.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(responseInvoice))
+                .Returns(Task.FromResult(resultShippingTypes));
+
+            var invoiceServiceMock = new InvoiceService(mockServiceLayerClient.Object, mockLogger.Object);
+            var result = await invoiceServiceMock.UpdateInvoiceTrackingInfo(invoiceId, trackingInfo);
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<ResultModel>());
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.Comments, Is.Null);
+        }
     }
 }
