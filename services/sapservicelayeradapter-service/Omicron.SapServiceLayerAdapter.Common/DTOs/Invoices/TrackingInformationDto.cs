@@ -28,5 +28,11 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices
         /// String FirstName.
         /// </value>
         public string TransportMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets Code.
+        /// </summary>
+        /// <value>The code.</value>
+        public int PackageId { get; set; }
     }
 }
