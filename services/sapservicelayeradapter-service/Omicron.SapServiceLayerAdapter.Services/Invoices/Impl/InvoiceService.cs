@@ -55,7 +55,14 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                 {
                     var shippingDetail = responseShippingTypes.First();
                     resultInvoice.TransportationCode = shippingDetail.TransportCode;
-                    resultInvoice.TrackingNumber = packageInformationSend.TrackingNumber;
+                    (string sapTrackingNumber, string sapExtendedTrackingNumbers) = UpdateSapTracking(
+                        packageInformationSend.PackageId,
+                        packageInformationSend.TrackingNumber,
+                        resultInvoice.TrackingNumber,
+                        resultInvoice.ExtendedTrackingNumbers);
+
+                    resultInvoice.TrackingNumber = sapTrackingNumber;
+                    resultInvoice.ExtendedTrackingNumbers = sapExtendedTrackingNumbers;
                 }
 
                 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -83,6 +90,64 @@ namespace Omicron.SapServiceLayerAdapter.Services.Invoices.Impl
                 dictionaryResult.Add(string.Format(ServiceConstants.ServiceLayerErrorHandled, invoiceId), $"{ex.Message}");
                 return ServiceUtils.CreateResult(true, 200, null, dictionaryResult, null);
             }
+        }
+
+        private static (string sapTrackingNumber, string sapExtendedTrackingNumbers) UpdateSapTracking(
+        int packageId,
+        string trackingNumber,
+        string sapTrackingNumber,
+        string sapExtendedTrackingNumbers)
+        {
+            string newKey = packageId.ToString();
+            string newValue = trackingNumber;
+
+            var combinedTrackingEntriesFromSap = $"{sapTrackingNumber},{sapExtendedTrackingNumbers}"
+                .Split(ServiceConstants.CommaChar, StringSplitOptions.RemoveEmptyEntries)
+                .Select(e => e.Trim())
+                .Where(e => e.Contains(ServiceConstants.HypenChar))
+                .Select(e =>
+                {
+                    var parts = e.Split(ServiceConstants.HypenChar, 2);
+                    return (Key: parts[0], Value: parts[1]);
+                })
+                .GroupBy(p => p.Key)
+                .ToDictionary(g => g.Key, g => g.Last().Value);
+
+            combinedTrackingEntriesFromSap[newKey] = newValue;
+
+            var orderedPairs = combinedTrackingEntriesFromSap
+                .Select(kvp => $"{kvp.Key}-{kvp.Value}")
+                .ToList();
+
+            var (trackingBuilder, extendedBuilder) = orderedPairs.Aggregate(
+                (trackingBuilder: new StringBuilder(), extendedBuilder: new StringBuilder()),
+                (acc, entry) =>
+                {
+                    int projectedLength = acc.trackingBuilder.Length + entry.Length + (acc.trackingBuilder.Length > 0 ? 1 : 0);
+
+                    if (projectedLength <= ServiceConstants.MaxSapTrackingLength)
+                    {
+                        AppendWithComma(acc.trackingBuilder, entry);
+                    }
+                    else
+                    {
+                        AppendWithComma(acc.extendedBuilder, entry);
+                    }
+
+                    return acc;
+                });
+
+            return (trackingBuilder.ToString(), extendedBuilder.ToString());
+        }
+
+        private static void AppendWithComma(StringBuilder sb, string value)
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append(ServiceConstants.CommaChar);
+            }
+
+            sb.Append(value);
         }
     }
 }
