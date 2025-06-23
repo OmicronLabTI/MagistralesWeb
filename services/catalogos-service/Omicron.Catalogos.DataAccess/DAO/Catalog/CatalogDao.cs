@@ -47,6 +47,12 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
             return await this.databaseContext.ClassificationQfbModel.Where(c => c.Active).ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductTypeColorsModel>> GetProductsColors()
+        {
+            return await this.databaseContext.ProductTypeColorsModel.Where(c => c.IsActive).ToListAsync();
+        }
+
         /// <summary>
         /// Looks the values by field.
         /// </summary>

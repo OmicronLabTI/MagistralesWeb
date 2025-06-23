@@ -30,6 +30,7 @@ namespace Omicron.Catalogos.Test
             new ColorsDto(),
             new ClassificationGroupDto(),
             new ProductTypeColorsModel(),
+            new ProductColorsDto(),
         };
 
         /// <summary>
