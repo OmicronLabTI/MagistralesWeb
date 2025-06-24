@@ -108,7 +108,15 @@ extension OrderDetailViewModel {
             fechaFin: fechaFinFormated ?? String(), comments: String(),
             warehouse: tempOrderDetailData?.warehouse ?? String(), components: componets)
         self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
-            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] res in
+            guard let response = res.response else { return }
+            if (res.code != 200) {
+                self?.loading.onNext(false)
+                let errorMessage = UtilsManager.shared.getResponseErrors(jsonString: response)
+                self?.showAlert.onNext(errorMessage)
+                return
+            }
+
             if self?.tempOrderDetailData != nil {
                 self?.loading.onNext(false)
                 self?.removeOfDetailsIndexs(indexs)
@@ -215,7 +223,15 @@ extension OrderDetailViewModel {
             fechaFin: fechaFinFormated ?? String(), comments: String(),
             warehouse: tempOrderDetailData?.warehouse ?? String(), components: [])
         self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
-            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+            .observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] res in
+            guard let response = res.response else { return }
+            if (res.code != 200) {
+                self?.loading.onNext(false)
+                let errorMessage = UtilsManager.shared.getResponseErrors(jsonString: response)
+                self?.showAlert.onNext(errorMessage)
+                return
+            }
+
             if self?.tempOrderDetailData != nil {
                 self?.inboxViewModel.selectedOrder?.plannedQuantity = plannedQuantity
                 self?.getOrdenDetail(isRefresh: false)
