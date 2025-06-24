@@ -31,10 +31,10 @@ spec:
             - containerPort: 8090
           resources:
             limits:
-              cpu: 2124m
+              cpu: 1225m
               memory: 1563Mi
             requests:
-              cpu: 1062m # -50% limit (50% del limite)
+              cpu: 613m # -50% limit (50% del limite)
               memory: 1094Mi # -30% limit (70% del limite)
       imagePullSecrets:
         - name: pullsecret
