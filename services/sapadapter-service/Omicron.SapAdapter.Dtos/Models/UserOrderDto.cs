@@ -103,5 +103,21 @@ namespace Omicron.SapAdapter.Dtos.Models
         /// Datetime userid.
         /// </value>
         public int InvoiceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets InvoiceLineNum.
+        /// </summary>
+        /// <value>
+        /// short InvoiceLineNum.
+        /// </value>
+        public short InvoiceLineNum { get; set; }
+
+        /// <summary>
+        /// Gets or sets StatusInvoice.
+        /// </summary>
+        /// <value>
+        /// string StatusInvoice.
+        /// </value>
+        public string StatusInvoice { get; set; }
     }
 }

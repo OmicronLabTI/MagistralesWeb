@@ -16,7 +16,6 @@ class LotsViewModel {
     var showMessage = PublishSubject<String>()
     var orderId = -1
     var disposeBag = DisposeBag()
-    var lastResponder = PublishSubject<Any?>()
     var dataOfLots = BehaviorSubject<[Lots]>(value: [])
     var dataLotsAvailable = BehaviorSubject<[LotsAvailable]>(value: [])
     var dataLotsSelected = BehaviorSubject<[LotsSelected]>(value: [])
@@ -77,7 +76,7 @@ class LotsViewModel {
     }
 
     func saveLotsDidTapBinding() {
-        self.saveLotsDidTap.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        self.saveLotsDidTap.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.assignLots()
         }).self.disposed(by: self.disposeBag)
     }
@@ -188,7 +187,7 @@ class LotsViewModel {
     func updateInfoSelectedBatch(lot: Lots) {
         if lot.lotesDisponibles?.count ?? 0 > 0 {
             for lote in lot.lotesDisponibles! {
-                lote.expiredBatch = calculateExpiredBatch(date: lote.fechaExp)
+                lote.expiredBatch = UtilsManager.shared.calculateExpiredBatch(date: lote.fechaExp)
             }
             lot.lotesDisponibles?.sort { ($0.expiredBatch && !$1.expiredBatch) }
             self.dataLotsAvailable.onNext(lot.lotesDisponibles ?? [])
@@ -199,7 +198,7 @@ class LotsViewModel {
         if selected.count > 0 {
             for select in selected {
                 select.expiredBatch = ((lot.lotesDisponibles?.first(where: { lote -> Bool in
-                    return lote.numeroLote == select.numeroLote && calculateExpiredBatch(date: lote.fechaExp)
+                    return lote.numeroLote == select.numeroLote && UtilsManager.shared.calculateExpiredBatch(date: lote.fechaExp)
                 })) != nil)
             }
             selected.sort { ($0.expiredBatch && !$1.expiredBatch) }
@@ -210,6 +209,7 @@ class LotsViewModel {
         }
         self.selectBatchIfNeeded(lot: lot, selected: selected)
     }
+
     func selectBatchIfNeeded(lot: Lots, selected: [LotsSelected]) {
         // Selección automática de lote disponible
         if lot.lotesDisponibles!.count == 1 && selected.count == 0 {

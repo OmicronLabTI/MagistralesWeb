@@ -15,7 +15,7 @@ class LottieManager {
     // MARK: Functions
     func showLoading() {
         if let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first {
-            let loadingView = AnimationView(name: "loading")
+            let loadingView = LottieAnimationView(name: "loading")
             loadingView.loopMode = .loop
             loadingView.play()
             let backView = UIView(frame: window.bounds)

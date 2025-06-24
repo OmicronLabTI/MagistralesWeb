@@ -38,6 +38,7 @@ import { CommentsConfig } from './model/device/incidents.model';
 import { LocalStorageService } from './services/local-storage.service';
 import { ObservableService } from './services/observable.service';
 import { MessagesService } from './services/messages.service';
+import { IComponentLotes } from './model/http/addComponent';
 
 @Component({
     selector: 'app-root',
@@ -352,6 +353,11 @@ export class AppComponent implements AfterViewChecked, OnDestroy, OnInit {
             }
         });
     }
+
+    checkComponentsLotes(resultComponents: IComponentLotes) {
+        this.observableService.setNewComponentLotes(resultComponents);
+    }
+
     checkResultModalTypeSearch(
         resultSearchComponentModal: SearchComponentModal,
         resultComponents: any): void {

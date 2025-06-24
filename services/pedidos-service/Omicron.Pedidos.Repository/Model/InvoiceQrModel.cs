@@ -22,6 +22,14 @@ namespace Omicron.Pedidos.Entities.Model
         public int InvoiceId { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets or sets InvoiceLineNum.
+        /// </summary>
+        /// <value>
+        /// int InvoiceLineNum.
+        /// </value>
+        public short InvoiceLineNum { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets or sets FirstName.
         /// </summary>
         /// <value>

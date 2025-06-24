@@ -17,6 +17,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         private Mock<ILogger> mockLogger;
         private IProductionOrderService productionOrderService;
 
+        private IMapper mapper;
+
         /// <summary>
         /// Init configuration.
         /// </summary>
@@ -25,7 +27,9 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             this.mockLogger = new Mock<ILogger>();
-            this.productionOrderService = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object);
+            var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
+            this.mapper = mapperConfiguration.CreateMapper();
+            this.productionOrderService = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
         }
 
         /// <summary>
@@ -37,7 +41,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
 
             mockServiceLayerClient
                 .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
@@ -78,7 +82,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
 
             mockServiceLayerClient
                 .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
@@ -144,13 +148,16 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         /// <summary>
         /// validate update formula.
         /// </summary>
+        /// <param name="hasAssignedBatches">HasAssignedBatches.</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [Test]
-        public async Task UpdateFormulaTest()
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task UpdateFormulaTest(bool hasAssignedBatches)
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -159,6 +166,12 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             mockServiceLayerClient
                 .Setup(x => x.PutAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(GetResult(true, null)));
+
+            var assignedBatches = new List<AssignBatchDto>
+            {
+                new AssignBatchDto { AssignedQty = 5, BatchNumber = "BATCH-001", SysNumber = 1 },
+                new AssignBatchDto { AssignedQty = 5, BatchNumber = "BATCH-002", SysNumber = 1 },
+            };
 
             var deleteComponent = new CompleteDetalleFormulaDto()
             {
@@ -175,6 +188,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
                 BaseQuantity = 10,
                 RequiredQuantity = 10,
                 Warehouse = "MN",
+                AssignedBatches = hasAssignedBatches ? assignedBatches : null,
             };
             var editedComponent = new CompleteDetalleFormulaDto()
             {
@@ -208,7 +222,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -266,7 +280,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
 
             mockServiceLayerClient
                 .SetupSequence(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
@@ -315,7 +329,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -360,7 +374,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -392,7 +406,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
@@ -426,7 +440,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
         {
             var mockServiceLayerClient = new Mock<IServiceLayerClient>();
             var mockLogger = new Mock<ILogger>();
-            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object);
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, mockLogger.Object, this.mapper);
 
             mockServiceLayerClient
                 .Setup(x => x.GetAsync(It.IsAny<string>()))

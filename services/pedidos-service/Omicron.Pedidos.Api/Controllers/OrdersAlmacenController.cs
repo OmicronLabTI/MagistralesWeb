@@ -83,7 +83,7 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <returns>the data.</returns>
         [Route("/qr/factura")]
         [HttpPost]
-        public async Task<IActionResult> CreateInvoiceQr(List<int> orderIds)
+        public async Task<IActionResult> CreateInvoiceQr(List<string> orderIds)
         {
             var response = await this.qrsFacade.CreateInvoiceQr(orderIds);
             return this.Ok(response);
@@ -274,6 +274,32 @@ namespace Omicron.Pedidos.Api.Controllers
         /// <summary>
         /// Creates the pdf for the sale order.
         /// </summary>
+        /// <param name="deliveryIds">the delivery id's.</param>
+        /// <returns>the data.</returns>
+        [Route("/cancel/total/info")]
+        [HttpPost]
+        public async Task<IActionResult> CancelTotalInfo(List<int> deliveryIds)
+        {
+            var response = await this.pedidosAlmacenFacade.CancelTotalInfo(deliveryIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
+        /// <param name="cancelPackaging">Cancel packaging.</param>
+        /// <returns>the data.</returns>
+        [Route("/cancel/packaging")]
+        [HttpPost]
+        public async Task<IActionResult> CancelPackaging(CancelPackagingDto cancelPackaging)
+        {
+            var response = await this.pedidosAlmacenFacade.CancelPackaging(cancelPackaging);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Creates the pdf for the sale order.
+        /// </summary>
         /// <param name="invoiceId">the invoice id.</param>
         /// <returns>the data.</returns>
         [Route("/clean/invoice")]
@@ -346,6 +372,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds)
         {
             var response = await this.pedidosAlmacenFacade.GetUserOrdersForInvoiceByDeliveryIds(deliveryIds);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// GetInfoPiecesByOrderId.
+        /// </summary>
+        /// <param name="request">request.</param>
+        /// <returns>the data.</returns>
+        [Route("/products/invoice/linenums")]
+        [HttpPost]
+        public async Task<IActionResult> GetInfoPiecesByOrderId(InvoiceProductsDto request)
+        {
+            var response = await this.pedidosAlmacenFacade.GetInfoPiecesByOrderId(request);
             return this.Ok(response);
         }
     }

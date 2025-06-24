@@ -194,17 +194,22 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
         {
             var inventoryGenExitLines = new List<InventoryGenExitLineDto>();
             InventoryGenExitLineDto inventoryGenExitLine;
-            foreach (var line in orderLines)
+            foreach (var line in orderLines.Where(x => itemsList.Any(item => item.ItemCode == x.ItemCode)))
             {
+                var batches = CreateBatchLine(line, itemsList);
+                var product = itemsList.FirstOrDefault(x => x.ItemCode.Equals(line.ItemCode)) ?? new CreateDeliveryDto() { Batches = new List<AlmacenBatchDto> { new AlmacenBatchDto() { WarehouseCode = "PT" } } };
+                var warehouseCode = product.Batches.Count() == 0 ? "PT" : product.Batches.First().WarehouseCode;
+                var total = batches.Count() == 0 ? line.Quantity : batches.Sum(x => x.Quantity);
                 inventoryGenExitLine = new InventoryGenExitLineDto
                 {
+                    BaseEntry = line.BaseEntry,
                     ItemCode = line.ItemCode,
                     BaseType = -1,
                     BaseLine = line.LineNum,
-                    Quantity = line.Quantity,
-                    WarehouseCode = "PT",
+                    Quantity = total,
+                    WarehouseCode = warehouseCode,
                     AccountCode = "6213001",
-                    BatchNumbers = CreateBatchLine(line, itemsList),
+                    BatchNumbers = batches,
                 };
 
                 inventoryGenExitLines.Add(inventoryGenExitLine);
@@ -266,6 +271,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                 var inventoryGenExitResponse = await this.serviceLayerClient.PostAsync(
                     ServiceQuerysConstants.QryPostInventoryGenExists, JsonConvert.SerializeObject(inventoryGenExitRequest));
 
+                var resultCloseOrder = JsonConvert.DeserializeObject<InventoryGenExitDto>(inventoryGenExitResponse.Response.ToString());
+
                 if (!inventoryGenExitResponse.Success)
                 {
                     this.logger.Error(string.Format(ServiceConstants.CloseSampleOrderErrorToCreateInventoryGenExit, inventoryGenExitResponse.UserError));
@@ -277,21 +284,24 @@ namespace Omicron.SapServiceLayerAdapter.Services.Orders.Impl
                             string.Format(ServiceConstants.DictionaryValueErrorGenericFormat, inventoryGenExitResponse.UserError)));
                 }
 
-                var closeOrderResponse = await this.serviceLayerClient.PostAsync(
-                    string.Format(ServiceQuerysConstants.QryPostCloseOrderById, sampleOrder.SaleOrderId), string.Empty);
-
-                if (!closeOrderResponse.Success)
+                if (sampleOrder.CloseOrder)
                 {
-                    this.logger.Error(string.Format(ServiceConstants.CloseSampleOrderErrorToCloseOrder, sampleOrder.SaleOrderId, closeOrderResponse.UserError));
-                    return (
-                        string.Format(ServiceConstants.DictionaryKeyErrorGenericFormat, sampleOrder.SaleOrderId),
-                        ServiceUtils.GetDictionaryValueString(
-                            ServiceConstants.RelationMessagesServiceLayer,
-                            closeOrderResponse.UserError,
-                            string.Format(ServiceConstants.DictionaryValueErrorGenericFormat, closeOrderResponse.UserError)));
+                    var closeOrderResponse = await this.serviceLayerClient.PostAsync(
+                        string.Format(ServiceQuerysConstants.QryPostCloseOrderById, sampleOrder.SaleOrderId), string.Empty);
+
+                    if (!closeOrderResponse.Success)
+                    {
+                        this.logger.Error(string.Format(ServiceConstants.CloseSampleOrderErrorToCloseOrder, sampleOrder.SaleOrderId, closeOrderResponse.UserError));
+                        return (
+                            string.Format(ServiceConstants.DictionaryKeyErrorGenericFormat, sampleOrder.SaleOrderId),
+                            ServiceUtils.GetDictionaryValueString(
+                                ServiceConstants.RelationMessagesServiceLayer,
+                                closeOrderResponse.UserError,
+                                string.Format(ServiceConstants.DictionaryValueErrorGenericFormat, closeOrderResponse.UserError)));
+                    }
                 }
 
-                return (string.Format(ServiceConstants.DictionaryKeyOkGenericFormat, sampleOrder.SaleOrderId), ServiceConstants.OkLabelResponse);
+                return (string.Format(ServiceConstants.DictionaryKeyOkIdResult, sampleOrder.SaleOrderId, resultCloseOrder.DocEntry), ServiceConstants.OkLabelResponse);
             }
             catch (Exception ex)
             {

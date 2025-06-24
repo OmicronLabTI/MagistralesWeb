@@ -200,5 +200,13 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="productionOrderIds">Production Orders id's.</param>
         /// <returns>Invalid tecnic id.</returns>
         Task<ResultModel> GetInvalidOrdersByMissingTecnicSign(List<string> productionOrderIds);
+
+        /// <summary>
+        /// Retrieves the user orders based on invoice ids and order types.
+        /// </summary>
+        /// <param name="invoicesid"> List of invoice ids. </param>
+        /// <param name="type">List of production order types to include in the search.</param>
+        /// <returns>A result model containing the matching user production orders.</returns>
+        Task<ResultModel> GetUserOrdersByInvoiceId(List<int> invoicesid, string type);
     }
 }

@@ -62,14 +62,93 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <summary>
         /// Gets the orders.
         /// </summary>
-        /// <param name="type">The type of scanned item.</param>
         /// <param name="code">The code scanned.</param>
         /// <returns>the data.</returns>
-        [Route("/scanner/{type}/{code}")]
+        [Route("/scanner/magistral/{code}")]
         [HttpGet]
-        public async Task<IActionResult> GetScannedOrder(string type, string code)
+        public async Task<IActionResult> GetScannedOrderMagistral(string code)
         {
-            var response = await this.sapAlmacenFacade.GetScannedData(type, code);
+            var response = await this.sapAlmacenFacade.GetScannedDataMagistral(code);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="code">The code scanned.</param>
+        /// <param name="orderId">The order Id.</param>
+        /// <returns>the data.</returns>
+        [Route("/scanner/linea/{code}/{orderId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetScannedOrderLinea(string code, int orderId)
+        {
+            var response = await this.sapAlmacenFacade.GetScannedDataLinea(code, orderId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="code">The code scanned.</param>
+        /// <returns>the data.</returns>
+        [Route("/scanner/remision/{code}")]
+        [HttpGet]
+        public async Task<IActionResult> GetScannedOrderRemision(string code)
+        {
+            var response = await this.sapAlmacenFacade.GetScannedDataRemision(code);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="code">The code scanned.</param>
+        /// <returns>the data.</returns>
+        [Route("/scanner/remisionmg/{code}")]
+        [HttpGet]
+        public async Task<IActionResult> GetScannedOrderRemisionMg(string code)
+        {
+            var response = await this.sapAlmacenFacade.GetScannedDataRemisionMg(code);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="code">The code scanned.</param>
+        /// <returns>the data.</returns>
+        [Route("/scanner/remisionln/{code}")]
+        [HttpGet]
+        public async Task<IActionResult> GetScannedOrderRemisionLn(string code)
+        {
+            var response = await this.sapAlmacenFacade.GetScannedDataRemisionLn(code);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="code">The code scanned.</param>
+        /// <param name="subcode"> the invoice line num. </param>
+        /// <returns>the data.</returns>
+        [Route("/scanner/factura/{code}")]
+        [HttpGet]
+        public async Task<IActionResult> GetScannedOrderFactura(string code, string subcode)
+        {
+            var response = await this.sapAlmacenFacade.GetScannedDataFactura(code, subcode);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Gets the orders.
+        /// </summary>
+        /// <param name="orderId">The order id.</param>
+        /// <returns>the data.</returns>
+        [Route("/orderdetail/{orderId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetOrderDetail(int orderId)
+        {
+            var response = await this.sapAlmacenFacade.GetDetailOrder(orderId);
             return this.Ok(response);
         }
 
@@ -151,6 +230,19 @@ namespace Omicron.SapAdapter.Api.Controllers
         }
 
         /// <summary>
+        /// GetDeliveryIdsByInvoice.
+        /// </summary>
+        /// <param name="invoiceId">The invoiceId.</param>
+        /// <returns>the data.</returns>
+        [Route("/deliveryids/related/invoiceid/{invoiceId}")]
+        [HttpGet]
+        public async Task<IActionResult> GetDeliveryIdsByInvoice(int invoiceId)
+        {
+            var response = await this.sapAlmacenFacade.GetDeliveryIdsByInvoice(invoiceId);
+            return this.Ok(response);
+        }
+
+        /// <summary>
         /// Gets the orders.
         /// </summary>
         /// <param name="saleId">The parameters.</param>
@@ -211,7 +303,7 @@ namespace Omicron.SapAdapter.Api.Controllers
         /// <returns>the data.</returns>
         [Route("/invoice/{invoiceId}/{type}/products")]
         [HttpPost]
-        public async Task<IActionResult> GetInvoiceProducts([FromRoute] int invoiceId, [FromRoute] string type, [FromBody] List<int> deliveriesIds)
+        public async Task<IActionResult> GetInvoiceProducts([FromRoute] string invoiceId, [FromRoute] string type, [FromBody] List<int> deliveriesIds)
         {
             var response = await this.sapAlmacenFacade.GetInvoiceProducts(invoiceId, type, deliveriesIds);
             return this.Ok(response);

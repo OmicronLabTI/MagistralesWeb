@@ -907,5 +907,24 @@ namespace Omicron.Pedidos.Test.Facade
             Assert.That(response.UserError, Is.Empty);
             Assert.That(response.Code.Equals(200));
         }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task GetUserOrdersByInvoiceId()
+        {
+            // act
+            var response = await this.pedidoFacade.GetUserOrdersByInvoiceId(new List<int>(), string.Empty);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
+        }
     }
 }

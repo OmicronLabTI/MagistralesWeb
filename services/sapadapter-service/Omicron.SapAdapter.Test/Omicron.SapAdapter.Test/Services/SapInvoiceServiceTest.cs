@@ -271,7 +271,7 @@ namespace Omicron.SapAdapter.Test.Services
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
 
             // act
-            var response = await service.GetInvoiceProducts(1, "Distribucion", Enumerable.Empty<int>().ToList());
+            var response = await service.GetInvoiceProducts("1", "Distribucion", Enumerable.Empty<int>().ToList());
 
             // assert
             Assert.That(response, Is.Not.Null);
@@ -334,8 +334,8 @@ namespace Omicron.SapAdapter.Test.Services
         /// <param name="code">the code to look.</param>
         /// <returns>the data.</returns>
         [Test]
-        [TestCase("Linea1-1")]
-        [TestCase("Linea10-1")]
+        [TestCase("Linea1-1-0")]
+        [TestCase("Linea10-1-0")]
         public async Task GetDeliveryScannedDataLn(string code)
         {
             // arrange
@@ -409,10 +409,11 @@ namespace Omicron.SapAdapter.Test.Services
         /// Test the method to get the orders for almacen.
         /// </summary>
         /// <param name="code">the code to look.</param>
+        /// <param name="subcode"> the sub code to look.</param>
         /// <returns>the data.</returns>
         [Test]
-        [TestCase("1")]
-        public async Task GetInvoiceData(string code)
+        [TestCase("1", "1")]
+        public async Task GetInvoiceData(string code, string subcode)
         {
             // arrange
             var packages = new List<PackageModel>();
@@ -431,10 +432,30 @@ namespace Omicron.SapAdapter.Test.Services
                 new DoctorAddressModel { AddressId = "Address1", BetweenStreets = "steets", References = "reference", EtablishmentName = "stabblishment" },
             };
 
+            var userorders = new List<UserOrderDto>
+            {
+                new UserOrderDto { InvoiceId = 1, InvoiceLineNum = 1, StatusInvoice = "Empaquetado" },
+                new UserOrderDto { InvoiceId = 1, InvoiceLineNum = 2 },
+            };
+
+            var userordersResponse = this.GetResultDto(userorders);
+
             var mockPedidos = new Mock<IPedidosService>();
+
+            mockPedidos.Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(userordersResponse));
+
+            var lineproducts = new List<LineProductsDto>
+            {
+                new LineProductsDto { InvoiceId = 1, InvoiceLineNum = 3 },
+            };
+
+            var lineproductsResponse = this.GetResultDto(lineproducts);
+
             var mockAlmacen = new Mock<IAlmacenService>();
             mockAlmacen
-                .Setup(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(lineproductsResponse))
                 .Returns(Task.FromResult(packagesResponse));
 
             mockAlmacen
@@ -455,7 +476,7 @@ namespace Omicron.SapAdapter.Test.Services
             var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
 
             // act
-            var response = await service.GetInvoiceData(code);
+            var response = await service.GetInvoiceData(code, subcode);
 
             // assert
             Assert.That(response, Is.Not.Null);
@@ -594,6 +615,89 @@ namespace Omicron.SapAdapter.Test.Services
             Assert.That(response.Comments, Is.Null);
             Assert.That(response.UserError, Is.Null);
             Assert.That(response.Success);
+        }
+
+        /// <summary>
+        /// Test the method to get the invoices by ids.
+        /// </summary>
+        [Test]
+        public void CalculateStored()
+        {
+            var lineProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { Id = 51, SaleOrderId = 175528, ItemCode = "REVE 44", StatusAlmacen = "Empaquetado", BatchName = JsonConvert.SerializeObject(new[] { new AlmacenBatchModel { BatchNumber = "AXB-23", BatchQty = 1, WarehouseCode = "PT" } }), DeliveryId = 135500, InvoiceId = 150199 },
+                new LineProductsModel { Id = 52, SaleOrderId = 175528, ItemCode = "REVE 14", StatusAlmacen = "Empaquetado",  BatchName = JsonConvert.SerializeObject(new[] { new AlmacenBatchModel { BatchNumber = "OMD0122-1", BatchQty = 3, WarehouseCode = "CUA" } }), DeliveryId = 135500, InvoiceId = 150199 },
+                new LineProductsModel { Id = 53, SaleOrderId = 175528,  ItemCode = "REVE 44", StatusAlmacen = "Empaquetado", BatchName = JsonConvert.SerializeObject(new[] { new AlmacenBatchModel { BatchNumber = "AXB-23", BatchQty = 1, WarehouseCode = "PT" } }), DeliveryId = 135501, InvoiceId = 150199 },
+            };
+
+            var usersOrder = new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 40, InvoiceId = 150199, StatusAlmacen = "Empaquetado", Salesorderid = "175524", Productionorderid = "226236", MagistralQr = JsonConvert.SerializeObject(new PedidosMagistralQrModel { SaleOrder = 175524, ProductionOrder = 226236, Quantity = 2, ItemCode = "567   30 ML" }) },
+                new UserOrderModel { Id = 41, InvoiceId = 150199, StatusAlmacen = "Empaquetado", Salesorderid = "175525", Productionorderid = "226237", MagistralQr = JsonConvert.SerializeObject(new PedidosMagistralQrModel { SaleOrder = 175525, ProductionOrder = 226237, Quantity = 5, ItemCode = "BQ 01" }) },
+                new UserOrderModel { Id = 42, InvoiceId = 150199, StatusAlmacen = "Empaquetado", Salesorderid = "175526", Productionorderid = "226238", MagistralQr = JsonConvert.SerializeObject(new PedidosMagistralQrModel { SaleOrder = 175526, ProductionOrder = 226238, Quantity = 1, ItemCode = "BQ 01" }) },
+                new UserOrderModel { Id = 43, InvoiceId = 150199, StatusAlmacen = "Empaquetado", Salesorderid = "175527", Productionorderid = "226239", MagistralQr = JsonConvert.SerializeObject(new PedidosMagistralQrModel { SaleOrder = 175527, ProductionOrder = 226239, Quantity = 2, ItemCode = "BE 01   30 CAP" }) },
+            };
+
+            var invoice = 150199;
+
+            var mockPedidos = new Mock<IPedidosService>();
+            var mockAlmacen = new Mock<IAlmacenService>();
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var mockDoctors = new Mock<IDoctorService>();
+
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
+
+            // act
+            var (piezas, productos) = service.CalculateStored(lineProducts, usersOrder, invoice);
+
+            // assert
+            Assert.That(piezas, Is.EqualTo(15));
+            Assert.That(productos, Is.EqualTo(7));
+        }
+
+        /// <summary>
+        /// Test the method to get the invoices by ids.
+        /// </summary>
+        [Test]
+        public void CalculateStoredBatchNameList()
+        {
+            var lineProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel
+                {
+                    Id = 24, SaleOrderId = 175289, ItemCode = "REVE 42", StatusAlmacen = "Empaquetado",
+                    BatchName = JsonConvert.SerializeObject(new[]
+                    {
+                     new AlmacenBatchModel { BatchNumber = "B25-AX6", BatchQty = 5, WarehouseCode = "PT" },
+                     new AlmacenBatchModel { BatchNumber = "B25-AX7", BatchQty = 5, WarehouseCode = "PT" },
+                     new AlmacenBatchModel { BatchNumber = "B25-AX5", BatchQty = 2, WarehouseCode = "PT" },
+                     new AlmacenBatchModel { BatchNumber = "B25-AX4", BatchQty = 3, WarehouseCode = "PT" },
+                    }),
+                    DeliveryId = 135189, InvoiceId = 150163,
+                },
+                new LineProductsModel { Id = 25, SaleOrderId = 175289, ItemCode = "REVE 23", StatusAlmacen = "Empaquetado",  BatchName = JsonConvert.SerializeObject(new[] { new AlmacenBatchModel { BatchNumber = "BAX-25", BatchQty = 1, WarehouseCode = "GENERAL" } }), DeliveryId = 135189, InvoiceId = 150163 },
+                new LineProductsModel { Id = 26, SaleOrderId = 175289,  ItemCode = "REVE 16", StatusAlmacen = "Empaquetado", BatchName = JsonConvert.SerializeObject(new[] { new AlmacenBatchModel { BatchNumber = "AXB-25", BatchQty = 1, WarehouseCode = "CUA" } }), DeliveryId = 135189, InvoiceId = 150163 },
+                new LineProductsModel { Id = 27, SaleOrderId = 175289,  ItemCode = "REVE 14", StatusAlmacen = "Empaquetado", BatchName = JsonConvert.SerializeObject(new[] { new AlmacenBatchModel { BatchNumber = "AXB-23", BatchQty = 1, WarehouseCode = "CUA" } }), DeliveryId = 135189, InvoiceId = 150163 },
+                new LineProductsModel { Id = 28, SaleOrderId = 175289,  ItemCode = null, StatusAlmacen = "Almacenado", BatchName = null, DeliveryId = 135189, InvoiceId = 0 },
+            };
+
+            var usersOrder = new List<UserOrderModel>();
+
+            var invoice = 150163;
+
+            var mockPedidos = new Mock<IPedidosService>();
+            var mockAlmacen = new Mock<IAlmacenService>();
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var mockDoctors = new Mock<IDoctorService>();
+
+            var service = new SapInvoiceService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctors.Object);
+
+            // act
+            var (piezas, productos) = service.CalculateStored(lineProducts, usersOrder, invoice);
+
+            // assert
+            Assert.That(piezas, Is.EqualTo(18));
+            Assert.That(productos, Is.EqualTo(4));
         }
     }
 }

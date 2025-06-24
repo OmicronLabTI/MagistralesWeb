@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Charts
+import DGCharts
 
 class ChartCollectionViewCell: UICollectionViewCell, ChartViewDelegate {
 

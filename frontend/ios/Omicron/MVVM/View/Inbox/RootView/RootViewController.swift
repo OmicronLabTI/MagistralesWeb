@@ -49,7 +49,7 @@ class RootViewController: UIViewController {
     }
 
     func showModalAutoHideBind() {
-        self.rootViewModel.modalHideAuto.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
+        self.rootViewModel.modalHideAuto.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] message in
             if message != "" {
                 let alert = UIAlertController(
                     title: message,
@@ -111,7 +111,7 @@ class RootViewController: UIViewController {
 
         // Búsqueda de órdenes
         self.searchOrdesSearchBar.rx.text.orEmpty.bind(to: self.rootViewModel.searchFilter).disposed(by: disposeBag)
-        inboxViewModel.deselectRow.observeOn(MainScheduler.instance)
+        inboxViewModel.deselectRow.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
             guard let self = self else { return }
             self.viewTable.deselectRow(at: self.lastRow, animated: false)
@@ -142,14 +142,14 @@ class RootViewController: UIViewController {
     }
     func rootViewModelBinding() {
         // Cuando se presiona el botón de cerrar sesión  se redirije a Login
-        self.rootViewModel.goToLoginViewController.observeOn(MainScheduler.instance).subscribe(onNext: { _ in
+        self.rootViewModel.goToLoginViewController.observe(on: MainScheduler.instance).subscribe(onNext: { _ in
             if let window = UIApplication.shared.windows.first {
                 let storyboard = UIStoryboard(name: ViewControllerIdentifiers.storieboardName, bundle: nil)
                 let loginViewController = storyboard.instantiateViewController(
                     identifier: ViewControllerIdentifiers.loginViewController) as? LoginViewController
                 UIApplication.shared.windows.first?.rootViewController = loginViewController
                 UIApplication.shared.windows.first?.makeKeyAndVisible()
-                Resolver.cached.reset()
+                ResolverScope.cached.reset()
                 let options: UIView.AnimationOptions = .transitionCrossDissolve
                 let duration: TimeInterval = 0.5
                 UIView.transition(with: window, duration: duration, options: options, animations: {})
@@ -163,7 +163,7 @@ class RootViewController: UIViewController {
             cell.indicatorStatusNameLabel.text = data.statusName
             cell.indicatorStatusNumber.text = String(data.numberTask)
         }.disposed(by: disposeBag)
-        rootViewModel.loading.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] loadingResponse in
+        rootViewModel.loading.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] loadingResponse in
             if loadingResponse {
                 self?.lottieManager.showLoading()
             } else {
@@ -171,7 +171,7 @@ class RootViewController: UIViewController {
             }
         }).disposed(by: self.disposeBag)
 
-        rootViewModel.error.observeOn(MainScheduler.instance).subscribe(onNext: { [unowned self] error in
+        rootViewModel.error.observe(on: MainScheduler.instance).subscribe(onNext: { [unowned self] error in
             AlertManager.shared.showAlert(message: error, view: self)
         }).disposed(by: self.disposeBag)
     }
@@ -196,7 +196,7 @@ class RootViewController: UIViewController {
             }
         }).disposed(by: disposeBag)
         // Muestra u oculta el refreshControl en la tabla
-        rootViewModel.showRefreshControl.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        rootViewModel.showRefreshControl.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.refreshControl.endRefreshing()
         }).disposed(by: self.disposeBag)
         rootViewModel.refreshSearch.subscribe(onNext: { [weak self] itemToSearch in

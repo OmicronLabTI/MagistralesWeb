@@ -42,6 +42,15 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>
         /// Int Description.
         /// </value>
+        [Column("subfacturaid")]
+        public short SubFacturaId { get; set; }
+
+        /// <summary>
+        /// Gets or sets Description.
+        /// </summary>
+        /// <value>
+        /// Int Description.
+        /// </value>
         [Column("facturaqrroute")]
         public string FacturaQrRoute { get; set; }
     }

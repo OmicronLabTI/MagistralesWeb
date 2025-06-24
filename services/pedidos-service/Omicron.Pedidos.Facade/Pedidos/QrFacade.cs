@@ -54,7 +54,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> CreateInvoiceQr(List<int> invoiceIds)
+        public async Task<ResultDto> CreateInvoiceQr(List<string> invoiceIds)
         {
             return this.mapper.Map<ResultDto>(await this.qrsService.CreateInvoiceQr(invoiceIds));
         }

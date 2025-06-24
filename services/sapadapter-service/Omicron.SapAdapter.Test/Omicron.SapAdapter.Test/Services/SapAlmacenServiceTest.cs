@@ -436,6 +436,68 @@ namespace Omicron.SapAdapter.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetOrdersDetailsRemittedPieces()
+        {
+            // arrange
+            var parameters = new List<ParametersModel>
+            {
+                new ParametersModel { Value = "10" },
+            };
+
+            var parametersResponse = this.GetResultDto(parameters);
+
+            var mockPedidos = new Mock<IPedidosService>();
+            mockPedidos
+                .Setup(m => m.PostPedidos(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserOrderDetailModelAlmacen()));
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+            mockAlmacen
+                .SetupSequence(m => m.PostAlmacenOrders(It.IsAny<string>(), It.IsAny<object>()))
+                .Returns(Task.FromResult(this.GetLineProductsRecepcionDetail()));
+
+            var mockCatalogos = new Mock<ICatalogsService>();
+            mockCatalogos
+                .Setup(m => m.GetParams(It.IsAny<string>()))
+                .Returns(Task.FromResult(parametersResponse));
+
+            var ids = 75000;
+
+            var payments = new List<PaymentsDto>()
+            {
+                new PaymentsDto { CardCode = "C00007", ShippingCostAccepted = 1, TransactionId = "ac901443-c548-4860-9fdc-fa5674847822" },
+            };
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            mockProccessPayments
+                .Setup(m => m.PostProccessPayments(It.IsAny<List<string>>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(payments)));
+
+            var mockDoctor = new Mock<IDoctorService>();
+            mockDoctor
+                .Setup(m => m.PostDoctors(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetDoctorsInfo()));
+
+            var localService = new SapAlmacenService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, mockCatalogos.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
+
+            // act
+            var response = await localService.GetOrdersDetails(ids);
+            var result = response.Response as ReceipcionPedidosDetailModel;
+
+            TestContext.WriteLine($"Result: {JsonConvert.SerializeObject(result, Formatting.Indented)}");
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result.AlmacenHeader.RemittedPieces, Is.EqualTo(1));
+            var linea1 = result.Items.FirstOrDefault(i => i.ItemCode == "Linea1");
+            Assert.That(linea1, Is.Not.Null);
+            Assert.That(linea1.RemittedPieces, Is.EqualTo(1));
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task GetMagistralScannedData()
         {
             // arrange
@@ -484,9 +546,10 @@ namespace Omicron.SapAdapter.Test.Services
 
             // arrange
             var order = "aa";
+            var orderId = 11;
 
             // act
-            var response = await sapService.GetLineScannedData(order);
+            var response = await sapService.GetLineScannedData(order, orderId);
 
             // assert
             Assert.That(response, Is.Not.Null);
@@ -504,6 +567,10 @@ namespace Omicron.SapAdapter.Test.Services
 
             var mockPedidoService = new Mock<IPedidosService>();
             var mockAlmacenService = new Mock<IAlmacenService>();
+            var almacenResult = new RemittedPiecesModel() { AvailablePieces = 0, ItemCode = "Linea1", RemissionPieces = 5, TotalPieces = 0 };
+            mockAlmacenService
+                .Setup(x => x.GetAlmacenOrders(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(almacenResult)));
             var mockCatalogs = new Mock<ICatalogsService>();
             var mockProccessPayments = new Mock<IProccessPayments>();
             var ptresult = new List<WarehouseDto> { new WarehouseDto { ItemCode = "Linea1", WarehouseCodes = new List<string> { "PT" } }, };
@@ -528,12 +595,72 @@ namespace Omicron.SapAdapter.Test.Services
 
             // arrange
             var order = "Linea1";
+            var orderId = 11;
 
             // act
-            var response = await sapService.GetLineScannedData(order);
+            var response = await sapService.GetLineScannedData(order, orderId);
+            var result = response.Response as LineScannerModel;
 
             // assert
             Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetLineScannedDataRemittedPieces()
+        {
+            var mockLog = new Mock<ILogger>();
+            mockLog.Setup(m => m.Information(It.IsAny<string>()));
+
+            var mockPedidoService = new Mock<IPedidosService>();
+            var mockAlmacenService = new Mock<IAlmacenService>();
+            var almacenResult = new RemittedPiecesModel() { AvailablePieces = 0, ItemCode = "Linea50", RemissionPieces = 5, TotalPieces = 0 };
+            mockAlmacenService
+                .Setup(x => x.GetAlmacenOrders(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(almacenResult)));
+
+            var mockCatalogs = new Mock<ICatalogsService>();
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var ptresult = new List<WarehouseDto> { new WarehouseDto { ItemCode = "Linea50", WarehouseCodes = new List<string> { "PT" } }, };
+            mockCatalogs
+                .Setup(x => x.PostCatalogs(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultDto(ptresult)));
+
+            var mockRedis = new Mock<IRedisService>();
+
+            mockRedis
+                .Setup(x => x.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(string.Empty));
+
+            mockRedis
+                .Setup(x => x.IsConnectedRedis())
+                .Returns(true);
+
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var sapDao = new SapDao(this.context, mockLog.Object);
+            var sapService = new SapAlmacenService(sapDao, mockPedidoService.Object, mockAlmacenService.Object, mockCatalogs.Object, mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
+
+            // arrange
+            var order = "Linea50";
+            var orderId = 11;
+
+            // act
+            var response = await sapService.GetLineScannedData(order, orderId);
+            var result = response.Response as LineScannerModel;
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Pieces, Is.Not.Null);
+
+            Assert.That(result.Pieces.ItemCode, Is.EqualTo(order));
+            Assert.That(result.Pieces.RemissionPieces, Is.EqualTo(5));
+            Assert.That(result.Pieces.AvailablePieces, Is.EqualTo(5));
+            Assert.That(result.Pieces.TotalPieces, Is.EqualTo(10));
         }
 
         /// <summary>
@@ -572,9 +699,10 @@ namespace Omicron.SapAdapter.Test.Services
 
             // arrange
             var order = "Linea1";
+            var orderId = 11;
 
             // act
-            var response = await sapService.GetLineScannedData(order);
+            var response = await sapService.GetLineScannedData(order, orderId);
 
             // assert
             Assert.That(response.Code == 404);
@@ -618,9 +746,10 @@ namespace Omicron.SapAdapter.Test.Services
 
             // arrange
             var order = "Linea1";
+            var orderId = 11;
 
             // act
-            var response = await sapService.GetLineScannedData(order);
+            var response = await sapService.GetLineScannedData(order, orderId);
 
             // assert
             Assert.That(response.Code == 404);
