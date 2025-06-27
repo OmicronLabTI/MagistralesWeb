@@ -1001,6 +1001,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             LineNum = invoiceDetail.LineNum,
                             ProductoId = invoiceDetail.ProductoId,
                             Quantity = invoiceDetail.Quantity,
+                            BaseLineNum = invoiceDetail.BaseLineNum,
                         };
             return await this.RetryQuery(query);
         }

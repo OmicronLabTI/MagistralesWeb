@@ -854,7 +854,8 @@ namespace Omicron.SapAdapter.Services.Sap
                 var item = items.FirstOrDefault(x => x.ProductoId == invoice.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == invoice.BaseEntry.Value, x.ProductoId == invoice.ProductoId));
+                var deliveriesDetail = deliveryDetails
+                    .FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == invoice.BaseEntry.Value, x.ProductoId == invoice.ProductoId, x.LineNum == invoice.BaseLineNum));
                 var saleId = deliveriesDetail?.BaseEntry ?? 0;
                 var prodId = deliveriesDetail?.ProductoId ?? string.Empty;
 
@@ -862,8 +863,6 @@ namespace Omicron.SapAdapter.Services.Sap
                 {
                     usedDeliveries.Add(new DeliveryDetailModel { BaseEntry = saleId, ProductoId = prodId });
                 }
-
-                var localDeliverDetails = deliveryDetails.Where(x => !usedDeliveries.Any(y => y.ProductoId == x.ProductoId && y.BaseEntry == x.BaseEntry)).ToList();
 
                 var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
@@ -878,7 +877,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice, saleId);
 
-                var canCancel = this.DetermineCanCancel(isMagistral: item.IsMagistral.Equals("Y"), invoice.BaseEntry.Value,  saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
+                var canCancel = this.DetermineCanCancel(isMagistral: item.IsMagistral.Equals("Y"), invoice.BaseEntry.Value, saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
 
                 var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == product.Item3, x.ItemCode == item.ProductoId));
                 incidentdb ??= new IncidentsModel();
@@ -1017,7 +1016,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { delivery.BaseEntry.Value });
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
-            invoices = invoices.Where(x => x.BaseEntry.HasValue && x.BaseEntry.Value == delivery.DeliveryId).ToList();
+            var deliveriesIds = deliveries.Select(x => x.DeliveryId).ToList();
+            invoices = invoices.Where(x => x.BaseEntry.HasValue && deliveriesIds.Contains(x.BaseEntry.Value)).ToList();
             var products = await this.GetProductModels(invoices, deliveries, userOrders, lineProducts, orders, incidents);
 
             var listSales = products.Select(x => x.SaleOrderId).Distinct().ToList();
