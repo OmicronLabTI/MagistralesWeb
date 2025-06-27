@@ -275,6 +275,42 @@ namespace Omicron.Pedidos.Test.Facade
         /// </summary>
         /// <returns>returns nothing.</returns>
         [Test]
+        public async Task CancelTotalInfo()
+        {
+            // arrange
+            var delivery = new List<int> { 150158 };
+
+            // act
+            var response = await this.almacenFacade.CancelTotalInfo(delivery);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
+        /// Test for get possible orders active for dxp project.
+        /// </summary>
+        /// <returns>nothing.</returns>
+        [Test]
+        public async Task CancelPackaging()
+        {
+            var request = new CancelPackagingDto { ItemCode = "REVE 14", DeliveryId = 15800, InvoiceId = 15700 };
+
+            // Act
+            var response = await this.almacenFacade.CancelPackaging(request);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Code == 200, Is.True);
+            Assert.That(response.Comments == null, Is.True);
+        }
+
+        /// <summary>
+        /// the test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
         public async Task CleanInvoices()
         {
             // arrange
@@ -364,6 +400,22 @@ namespace Omicron.Pedidos.Test.Facade
             // arrange
             // act
             var response = await this.almacenFacade.GetUserOrdersForInvoiceByDeliveryIds([]);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
+        /// test tet.
+        /// </summary>
+        /// <returns>test.</returns>
+        [Test]
+        public async Task GetInfoPiecesByOrderId()
+        {
+            // arrange
+            // act
+            var response = await this.almacenFacade.GetInfoPiecesByOrderId(new InvoiceProductsDto());
 
             // Assert
             Assert.That(response, Is.Not.Null);

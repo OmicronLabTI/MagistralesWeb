@@ -26,7 +26,7 @@ extension OrderDetailFormViewController {
     }
 
     func viewModelBinding () {
-        orderDetailFormViewModel.loading.observeOn(MainScheduler.instance)
+        orderDetailFormViewModel.loading.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] showLoading in
             if showLoading {
                 self?.lottieManager.showLoading()
@@ -35,7 +35,7 @@ extension OrderDetailFormViewController {
             self?.lottieManager.hideLoading()
         }).disposed(by: self.disposeBag)
 
-        orderDetailFormViewModel.showAlert.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] message in
+        orderDetailFormViewModel.showAlert.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] message in
             let alert = UIAlertController(title: message, message: nil, preferredStyle: .alert)
             let okAction = UIAlertAction(title: CommonStrings.OKConst, style: .default,
                                          handler: {[weak self] _ in self?.refreshOrderDetail()})
@@ -44,7 +44,7 @@ extension OrderDetailFormViewController {
         }).disposed(by: self.disposeBag)
         // Aqui es en donde se hace el manda a llamar el servicio para volver a traer
         // los datos de detalle de la fórmnula
-        orderDetailFormViewModel.success.observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] _ in
+        orderDetailFormViewModel.success.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] _ in
             self?.orderDetailViewModel.getOrdenDetail(isRefresh: true)
         }).disposed(by: self.disposeBag)
     }

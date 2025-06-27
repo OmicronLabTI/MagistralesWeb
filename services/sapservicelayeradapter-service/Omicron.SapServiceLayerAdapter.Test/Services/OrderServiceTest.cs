@@ -117,21 +117,24 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                             ItemCode = "Item Code 23",
                             Batches = new List<AlmacenBatchDto>
                             {
-                                new () { BatchNumber = "BATCH1", BatchQty = 1 },
-                                new () { BatchNumber = "BATCH2", BatchQty = 2.5M },
+                                new () { BatchNumber = "BATCH1", BatchQty = 1, WarehouseCode = "PT" },
+                                new () { BatchNumber = "BATCH2", BatchQty = 2.5M, WarehouseCode = "PT" },
                             },
                         },
                         new ()
                         {
                             OrderType = "magistral",
                             ItemCode = "DZ 50",
+                            Batches = new List<AlmacenBatchDto>(),
                         },
                         new ()
                         {
                             OrderType = "magistral",
                             ItemCode = "FL 1",
+                            Batches = new List<AlmacenBatchDto>(),
                         },
                     },
+                    CloseOrder = true,
                 },
             };
 
@@ -144,9 +147,9 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                     DocumentEntry = 3,
                     OrderLines = new List<OrderLineDto>
                     {
-                        new () { ItemCode = "Item Code 23", LineNum = 0, Quantity = 1 },
-                        new () { ItemCode = "DZ 50", LineNum = 1, Quantity = 1 },
-                        new () { ItemCode = "FL 1", LineNum = 2, Quantity = 1 },
+                        new () { ItemCode = "Item Code 23", LineNum = 0, Quantity = 1, BaseLine = 1 },
+                        new () { ItemCode = "DZ 50", LineNum = 1, Quantity = 1, BaseLine = 2 },
+                        new () { ItemCode = "FL 1", LineNum = 2, Quantity = 1, BaseLine = 3 },
                     },
                 };
             }
@@ -156,7 +159,8 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services
                 .Setup(sl => sl.GetAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(responseOrder));
 
-            var responseInventoryGenExit = GetGenericResponseModel(400, isResponseInventoryGenExitSuccess, null, userError, null, null);
+            var closeOrderResponse = new InventoryGenExitDto() { DocEntry = 1 };
+            var responseInventoryGenExit = GetGenericResponseModel(400, isResponseInventoryGenExitSuccess, closeOrderResponse, userError, null, null);
             var responseCloseOrder = GetGenericResponseModel(400, isCloseOrderSuccess, null, userError, null, null);
 
             mockServiceLayerClient

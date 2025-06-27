@@ -33,6 +33,7 @@ enum ApiService {
     case createOrderBulk(data: BulkOrderCreate)
     case createComponents(data: SendToStoreRequest)
     case getHistory(data: RawMaterialHistoryReq)
+    case getLotsByProduct(data: LotsByProductRequest)
 }
 
 extension ApiService: AuthorizedTargetType {
@@ -100,6 +101,8 @@ extension ApiService: AuthorizedTargetType {
             return "/warehouses/request/rawmaterial"
         case .getHistory:
             return "/sapadapter/get/rawmaterialrequest"
+        case .getLotsByProduct:
+            return "/sapadapter/components/lotes/byitemcode"
         }
     }
     var method: Moya.Method {
@@ -124,7 +127,8 @@ extension ApiService: AuthorizedTargetType {
              .getMostCommonComponents,
              .getBulks,
              .getContainer,
-             .getHistory:
+             .getHistory,
+             .getLotsByProduct:
             return .get
         case .deleteItemOfOrdenDetail,
              .changeStatusOrder,
@@ -161,6 +165,8 @@ extension ApiService: AuthorizedTargetType {
         case .getComponents(let data):
             return .requestParameters(parameters: data.toDictionary(), encoding: URLEncoding.queryString)
         case .getWorkload(let data):
+            return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
+        case .getLotsByProduct(let data):
             return .requestParameters(parameters: data.dictionary ?? [:], encoding: URLEncoding.queryString)
         case .postOrdersPDF(let data):
             return .requestJSONEncodable(data)
@@ -309,6 +315,12 @@ extension ApiService: AuthorizedTargetType {
               return data
         case .createComponents:
             guard let url = Bundle.main.url(forResource: "createSupplie", withExtension: "json"),
+                let data = try? Data(contentsOf: url) else {
+                    return Data()
+            }
+            return data
+        case .getLotsByProduct:
+            guard let url = Bundle.main.url(forResource: "lotsByProduct", withExtension: "json"),
                 let data = try? Data(contentsOf: url) else {
                     return Data()
             }

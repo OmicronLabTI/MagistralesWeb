@@ -13,6 +13,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
     using Omicron.Pedidos.Services.Broker;
@@ -172,6 +173,55 @@ namespace Omicron.Pedidos.Services.Pedidos
             await this.pedidosDao.UpdateUserOrders(listToUpdate);
             listSaleOrder = listSaleOrder.DistinctBy(x => x.DeliveryId).ToList();
             return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(listSaleOrder), null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CancelTotalInfo(List<int> deliveryIds)
+        {
+            var ordersFromDeliveries = (await this.pedidosDao.GetUserOrderByDeliveryId(deliveryIds)).ToList();
+            var salesOrderIds = ordersFromDeliveries.Select(x => x.Salesorderid).Distinct().ToList();
+            var ordersFromSalesOrders = (await this.pedidosDao.GetUserOrderBySaleOrder(salesOrderIds)).ToList();
+
+            var isTotalRemission = ordersFromSalesOrders
+                .GroupBy(o => o.Salesorderid)
+                .All(group =>
+                {
+                    var distinctDeliveries = group.Where(g => g.Productionorderid != null).Select(g => g.DeliveryId).Distinct().Count();
+                    var header = group.FirstOrDefault(g => g.Productionorderid == null);
+
+                    return header != null && distinctDeliveries <= 1 && header.StatusAlmacen == ServiceConstants.Almacenado;
+                });
+
+            return ServiceUtils.CreateResult(true, 200, null, isTotalRemission, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> CancelPackaging(CancelPackagingDto cancelPackaging)
+        {
+            var userOrders = await this.pedidosDao.GetUserOrderByInvoiceId(new List<int> { cancelPackaging.InvoiceId });
+
+            var userOrdersToUpdate = userOrders.FirstOrDefault(uo =>
+            uo.DeliveryId == cancelPackaging.DeliveryId &&
+            uo.StatusInvoice == null &&
+            !string.IsNullOrWhiteSpace(uo.MagistralQr) &&
+            uo.MagistralQr.Contains($"\"{cancelPackaging.ItemCode}\""));
+
+            if (userOrdersToUpdate == null)
+            {
+                return ServiceUtils.CreateResult(true, 400, null, null, null, string.Format(ServiceConstants.ErrorDesempaquetar, cancelPackaging.ItemCode, cancelPackaging.DeliveryId, cancelPackaging.InvoiceId));
+            }
+
+            userOrdersToUpdate.InvoiceId = 0;
+            userOrdersToUpdate.UserInvoiceStored = null;
+            userOrdersToUpdate.InvoiceStoreDate = null;
+            userOrdersToUpdate.StatusAlmacen = ServiceConstants.Almacenado;
+            userOrdersToUpdate.InvoiceQr = null;
+            userOrdersToUpdate.InvoiceType = null;
+            userOrdersToUpdate.InvoiceLineNum = 0;
+
+            await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { userOrdersToUpdate });
+
+            return ServiceUtils.CreateResult(true, 200, null, null, null);
         }
 
         /// <inheritdoc/>

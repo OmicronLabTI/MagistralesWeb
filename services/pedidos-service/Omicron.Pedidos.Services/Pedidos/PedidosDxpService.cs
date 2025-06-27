@@ -45,12 +45,14 @@ namespace Omicron.Pedidos.Services.Pedidos
                 x.Productionorderid,
                 x.Status,
                 x.StatusAlmacen,
+                x.DeliveryId,
                 x.StatusInvoice,
                 x.IsSalesOrder,
                 x.InvoiceStoreDate,
                 x.InvoiceId,
                 x.PlanningDate,
                 x.InvoiceType,
+                x.Quantity,
             }).ToList();
             return ServiceUtils.CreateResult(true, 200, null, listToReturn, null, null);
         }

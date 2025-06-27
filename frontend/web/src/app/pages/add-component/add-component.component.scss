@@ -1,0 +1,169 @@
+// MARK: TABLA COMPONENTES
+.seleccion {
+    width: 1.5% !important;
+}
+
+.column-cons {
+    width: 3%;
+    max-width: 50px;
+}
+
+.column-codigoProducto {
+    width: 5%;
+    max-width: 50px;
+}
+
+.column-descripcionProducto {
+    width: 10%;
+    max-width: 150px;
+}
+
+.column-cantidadBase {
+    width: 8%;
+    max-width: 150px;
+}
+
+.column-cantidadRequerida {
+    width: 8%;
+    max-width: 150px;
+}
+
+.column-consumido {
+    width: 3%;
+    max-width: 50px;
+}
+
+.column-disponible {
+    width: 5%;
+    max-width: 75px;
+}
+
+.column-unidad {
+    width: 3%;
+    max-width: 50px;
+}
+
+.column-almacen {
+    width: 8%;
+    max-width: 150px;
+}
+
+.column-cantidadPendiente {
+    width: 5%;
+    max-width: 75px;
+}
+
+.column-enStock {
+    width: 5%;
+    max-width: 75px;
+}
+
+.column-cantidadAlmacen {
+    width: 5%;
+    max-width: 75px;
+}
+
+.column-totalNecesario {
+    width: 5%;
+    max-width: 75px;
+}
+
+.column-totalSeleccionado {
+    width: 5%;
+    max-width: 75px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+
+// MARK: TABLA LOTES DISPONIBLE
+
+.lotesconsecutivo {
+    width: 25% !important;
+}
+
+.disponible {
+    width: 20% !important;
+}
+
+.lotesseleccionado {
+    width: 18% !important;
+}
+
+.lotesasignados {
+    width: 23% !important;
+}
+
+.tdactions {
+    width: 19% !important;
+}
+
+
+// MARK: TABLA LOTES SELECCIONADOS
+.pllote {
+    width: 30% !important;
+}
+
+.plseleccionada {
+    width: 50% !important;
+}
+
+.table-pl .tdactions {
+    width: 20% !important;
+}
+
+// MARK:
+//tabla productos
+.consecutivo {
+    width: 5% !important;
+}
+
+.codigoproducto {
+    width: 15% !important;
+}
+
+.descripcion {
+    width: 30% !important;
+}
+
+.almacen {
+    width: 15% !important;
+}
+
+.cantreq {
+    width: 15% !important;
+}
+
+.cantseleccionada {
+    width: 15% !important;
+}
+
+tr.selected {
+    // background-color: #0081C2 !important;
+    border: #0081C2 2px solid !important;
+    font-family: omicron-bold, Arial, Helvetica, sans-serif !important;
+    font-weight: bold !important;
+}
+
+tr.selected td {
+    // color: #fff !important;
+}
+
+.table-pl {
+    margin-bottom: 20px !important;
+}
+
+tr.caduco td {
+    color: red !important;
+}
+
+div.docbase {
+    margin-top: 5% !important;
+}
+
+.text-bold {
+    font-family: omicron-bold, Arial, Helvetica, sans-serif !important;
+    font-weight: bold !important;
+}

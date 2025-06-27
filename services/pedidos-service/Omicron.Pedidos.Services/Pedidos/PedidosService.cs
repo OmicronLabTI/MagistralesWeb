@@ -161,7 +161,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             listComponents = listComponents.Where(x => ServiceConstants.ListComponentsMostAssigned.Any(y => x.Contains(y))).ToList();
             await utils.UpdateMostUsedComponents(listComponents, ServiceConstants.RedisComponents);
 
-            return ServiceUtils.CreateResult(true, 200, null, JsonConvert.SerializeObject(resultSapApi.Response), null);
+            return ServiceUtils.CreateResult(resultSapApi.Success, resultSapApi.Code, null, JsonConvert.SerializeObject(resultSapApi.Response), null);
         }
 
         /// <inheritdoc/>
@@ -947,6 +947,14 @@ namespace Omicron.Pedidos.Services.Pedidos
             });
 
             return ServiceUtils.CreateResult(true, 200, null, invalidProductionOrderIds, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetUserOrdersByInvoiceId(List<int> invoicesid, string type)
+        {
+            var result = await this.pedidosDao.GetUserOrderByInvoiceTypeAndId(new List<string> { type }, invoicesid);
+
+            return ServiceUtils.CreateResult(true, 200, null, result, null);
         }
 
         /// <summary>

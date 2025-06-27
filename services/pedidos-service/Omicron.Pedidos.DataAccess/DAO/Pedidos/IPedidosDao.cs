@@ -31,6 +31,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<IEnumerable<UserOrderModel>> GetUserOrderBySaleOrder(List<string> listIDs);
 
         /// <summary>
+        /// Returns the user orders by InvoiceId (Pedido)
+        /// </summary>
+        /// <param name="listIDs">the list ids.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceId(List<int> listIDs);
+
+        /// <summary>
         /// Gets only the sale orders by id.
         /// </summary>
         /// <param name="listIds">the list ids.</param>
@@ -287,6 +294,14 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         Task<List<UserOrderModel>> GetUserOrdersByInvoiceId(List<int> invoiceId);
 
+                /// <summary>
+        /// Gets the production qr invoice by invoiceid.
+        /// </summary>
+        /// <param name="invoiceId">the invoice.</param>
+        /// <param name="linenumbers">the list of linenumbers.</param>
+        /// <returns>the data.</returns>
+        Task<List<UserOrderModel>> GetUserOrdersByInvoiceIdAndLineNumber(List<int> invoiceId, List<int> linenumbers);
+
         /// <summary>
         /// Returns the user order by user id.
         /// </summary>
@@ -310,7 +325,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="types">the list of users.</param>
         /// <param name="invoiceId">invoiceId.</param>
         /// <returns>the data.</returns>
-        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, int invoiceId);
+        Task<IEnumerable<UserOrderModel>> GetUserOrderByInvoiceTypeAndId(List<string> types, List<int> invoiceId);
 
         /// <summary>
         /// Get the data by finalized date.
@@ -402,5 +417,12 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="statusForOrder">the status for the order.</param>
         /// </summary>
         Task<IEnumerable<UserOrdersForInvoicesModel>> GetUserOrdersForInvoiceByDeliveryIds(List<int> deliveryIds, string statusForSale, string statusForOrder);
+
+        /// <summary>
+        /// Updates the data to the data base.
+        /// </summary>
+        /// <param name="modelsToSave"> the models to save. </param>
+        /// <returns> the data. </returns>
+        Task<bool> UpdatesQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave);
     }
 }

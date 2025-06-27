@@ -28,7 +28,7 @@ extension InboxViewModel {
 
     func changeStatusService(_ orders: [ChangeStatusRequest]) {
         networkManager.changeStatusOrder(orders)
-            .observeOn(MainScheduler.instance).subscribe(onNext: {[weak self] res in
+            .observe(on: MainScheduler.instance).subscribe(onNext: {[weak self] res in
                 guard let self = self else { return }
                 if res.code == 200 {
                     self.processButtonIsEnable.onNext(false)

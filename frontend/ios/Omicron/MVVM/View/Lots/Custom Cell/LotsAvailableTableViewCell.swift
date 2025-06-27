@@ -11,6 +11,10 @@ import RxSwift
 import RxCocoa
 import Resolver
 
+protocol ChangeInputValueDelegate: AnyObject {
+    var lastResponder: PublishSubject<Any?> { get }
+}
+
 class LotsAvailableTableViewCell: UITableViewCell {
     // MARK: - OUTLETS
     @IBOutlet weak var lotsLabel: UILabel!
@@ -22,6 +26,7 @@ class LotsAvailableTableViewCell: UITableViewCell {
     var disposeBag = DisposeBag()
     var row: Int?
     weak var itemModel: LotsAvailable?
+    var delegate: ChangeInputValueDelegate?
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -55,7 +60,7 @@ extension LotsAvailableTableViewCell: UITextFieldDelegate {
             tableView!.selectRow(at: indexPath, animated: false, scrollPosition: .none)
             tableView!.delegate?.tableView?(tableView!, didSelectRowAt: indexPath)
         }
-        self.lotsViewModel.lastResponder.onNext(textField)
+        self.delegate?.lastResponder.onNext(textField)
     }
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
         return true
@@ -75,7 +80,8 @@ extension LotsAvailableTableViewCell: UITextFieldDelegate {
         if numberOfMathces == 0 {
             return false
         }
-        self.itemModel?.cantidadSeleccionada = newString.isEmpty ? 0 : Decimal(string: newString)
+        let selected = newString.isEmpty ? 0 : Decimal(string: newString)
+        self.itemModel?.cantidadSeleccionada = selected
         return true
     }
 }

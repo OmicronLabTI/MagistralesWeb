@@ -13,25 +13,13 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
     /// <summary>
     /// The batch component.
     /// </summary>
-    public class BatchesComponentModel
+    public class BatchesComponentModel : BaseBatchesComponentModel
     {
         /// <summary>
         /// Gets or sets Code.
         /// </summary>
         /// <value>The code.</value>
-        public string CodigoProducto { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
         public string DescripcionProducto { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public string Almacen { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
@@ -44,12 +32,6 @@ namespace Omicron.SapAdapter.Entities.Model.BusinessModels
         /// </summary>
         /// <value>The code.</value>
         public double TotalSeleccionado { get; set; }
-
-        /// <summary>
-        /// Gets or sets Code.
-        /// </summary>
-        /// <value>The code.</value>
-        public List<ValidBatches> Lotes { get; set; }
 
         /// <summary>
         /// Gets or sets Code.

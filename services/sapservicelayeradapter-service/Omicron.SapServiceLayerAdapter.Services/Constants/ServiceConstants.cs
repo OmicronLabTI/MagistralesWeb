@@ -74,6 +74,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public const string DictionaryKeyOkGenericFormat = "{0}-Ok";
 
         /// <summary>
+        /// Query to get the Dictionary Key Ok Generic Format.
+        /// </summary>
+        public const string DictionaryKeyOkIdResult = "{0}-{1}-Ok";
+
+        /// <summary>
         /// Query to get the Ok Label response.
         /// </summary>
         public const string OkLabelResponse = "Ok";
@@ -405,6 +410,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         /// String DictionaryValueFormat.
         /// </value>
         public static string DictionaryValueFormat => "{0}, {1}";
+
+        /// <summary>
+        /// Gets maxSapTrackingLength.
+        /// </summary>
+        public static int MaxSapTrackingLength => 30;
+
+        /// <summary>
+        /// Gets CommaChar.
+        /// </summary>
+        public static char CommaChar => ',';
+
+        /// <summary>
+        /// Gets HypenChar.
+        /// </summary>
+        public static char HypenChar => '-';
 
         /// <summary>
         /// Gets the status of the order.

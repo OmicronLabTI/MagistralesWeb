@@ -315,6 +315,23 @@ namespace Omicron.Pedidos.Entities.Model
         public DateTime? ReassignmentDate { get; set; }
 
         /// <summary>
+        /// Gets or sets InvoiceLineNum.
+        /// </summary>
+        /// <value>
+        /// Datetime InvoiceLineNum.
+        /// </value>
+        [Column("invoicelinenum")]
+        public short InvoiceLineNum { get; set; }
+
+        /// <summary>
+        /// Gets or sets close user id.
+        /// </summary>
+        /// <value>
+        /// String user id.
+        [Column("closeorderid")]
+        public int CloseSampleOrderId { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether gets.
         /// </summary>
         /// <value>

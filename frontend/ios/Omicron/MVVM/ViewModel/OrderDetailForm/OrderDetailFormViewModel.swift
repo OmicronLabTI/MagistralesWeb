@@ -35,7 +35,8 @@ class  OrderDetailFormViewModel {
                                    warehouse: werehouse, pendingQuantity: data.details?[index].pendingQuantity ?? 0,
                                    stock: data.details?[index].stock ?? 0,
                                    warehouseQuantity: data.details?[index].warehouseQuantity ?? 0,
-                                   action: Actions.update.rawValue)]
+                                   action: Actions.update.rawValue,
+                                   assignedBatches: [])]
         let fechaFinFormated = UtilsManager.shared.formattedDateFromString(
             dateString: data.dueDate ?? CommonStrings.empty, withFormat: DateFormat.yyyymmdd
         )
@@ -50,7 +51,7 @@ class  OrderDetailFormViewModel {
 
     func updateDeleteItemOfTableService(_ order: OrderDetailRequest, _ data: OrderDetail, _ index: Int) {
         self.networkManager.updateDeleteItemOfTableInOrderDetail(order)
-            .observeOn(MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
                 self.loading.onNext(false)

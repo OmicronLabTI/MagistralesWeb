@@ -8,6 +8,8 @@
 
 namespace Omicron.Pedidos.Dtos.Models
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// class for the component.
     /// </summary>
@@ -90,5 +92,11 @@ namespace Omicron.Pedidos.Dtos.Models
         /// </summary>
         /// <value>The code.</value>
         public string Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets AssignedBatches.
+        /// </summary>
+        /// <value>The AssignedBatches.</value>
+        public List<AssignBatchDto> AssignedBatches { get; set; }
     }
 }

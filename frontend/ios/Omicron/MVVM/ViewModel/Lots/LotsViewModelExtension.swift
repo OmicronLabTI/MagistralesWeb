@@ -12,7 +12,7 @@ import RxSwift
 extension LotsViewModel {
     func getLots() {
         self.loading.onNext(true)
-        self.networkManager.getLots(orderId).observeOn(MainScheduler.instance).subscribe(onNext: { [weak self] data in
+        self.networkManager.getLots(orderId).observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] data in
             guard let self = self else { return }
             self.loading.onNext(false)
             if let lotsData = data.response {
@@ -201,23 +201,4 @@ extension LotsViewModel {
                         && $0.batchNumber == batchNumber && $0.action != Actions.delete.rawValue })
             .map({ $0.toLotsSelected() })
     }
-
-    // MARK: - Function Helpers
-    func calculateExpiredBatch(date: String?) -> Bool {
-        let date = date?.replacingOccurrences(
-            of: "\"", with: CommonStrings.empty, options: String.CompareOptions.literal, range: nil)
-        if let date = date {
-            let formatter = DateFormatter()
-            formatter.dateFormat = DateFormat.ddMMyyyy
-            if let dateFormatter = formatter.date(from: date) {
-                let roundedToday = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())
-                let roundedDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: dateFormatter)
-                if roundedDate ?? Date() <= roundedToday ?? Date() {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
 }

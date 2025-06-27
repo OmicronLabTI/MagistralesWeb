@@ -48,6 +48,7 @@ namespace Omicron.SapAdapter.Test.Services
             this.context.BatchesTransactionQtyModel.AddRange(this.GetBatchesTransactionQtyModel());
             this.context.ClientCatalogModel.AddRange(this.GetClients());
             this.context.LblContainerModel.AddRange(this.GetLblContainer());
+            this.context.InvoiceHeaderModel.AddRange(this.GetInvoiceHeader());
             this.context.SaveChanges();
 
             var mockLog = new Mock<ILogger>();
@@ -353,6 +354,66 @@ namespace Omicron.SapAdapter.Test.Services
 
             // assert
             Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// GetDeliveryIdsByInvoice.
+        /// </summary>
+        /// <param name="invoiceId">the invoiceId.</param>
+        /// <returns>the data.</returns>
+        [Test]
+        [TestCase(1)]
+        public async Task GetDeliveryIdsByInvoice(int invoiceId)
+        {
+            // arrange
+            var mockPedidos = new Mock<IPedidosService>();
+            var mockAlmacen = new Mock<IAlmacenService>();
+            var mockProccessPayments = new Mock<IProccessPayments>();
+            var mockDoctor = new Mock<IDoctorService>();
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
+
+            // act
+            var response = await service.GetDeliveryIdsByInvoice(invoiceId);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Code == 200);
+            Assert.That(response.Response, Is.InstanceOf<IEnumerable<int>>());
+        }
+
+        /// <summary>
+        /// Test the method to get the orders for almacen.
+        /// </summary>
+        [Test]
+        public void CalculateRemittedPieces()
+        {
+            // arrange
+            var itemCode = "REVE 16 - 1003";
+
+            var lineProducts = new List<LineProductsModel>
+            {
+                new LineProductsModel { ItemCode = "REVE 16", BatchName = "[{\"BatchQty\":5}]", DeliveryId = 123 },
+                new LineProductsModel { ItemCode = "REVE 16", BatchName = "[{\"BatchQty\":10}]", DeliveryId = 123 },
+                new LineProductsModel { ItemCode = "REVE 15", BatchName = "[{\"BatchQty\":10}]", DeliveryId = 123 },
+            };
+
+            var mockPedidos = new Mock<IPedidosService>();
+
+            var mockAlmacen = new Mock<IAlmacenService>();
+
+            var mockProccessPayments = new Mock<IProccessPayments>();
+
+            var mockDoctor = new Mock<IDoctorService>();
+
+            var service = new SapAlmacenDeliveryService(this.sapDao, mockPedidos.Object, mockAlmacen.Object, this.catalogService.Object, this.mockRedis.Object, mockProccessPayments.Object, mockDoctor.Object);
+
+            // act
+            var response = service.CalculateRemittedPieces(itemCode, lineProducts);
+
+            // assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response, Is.EqualTo(15));
         }
     }
 }

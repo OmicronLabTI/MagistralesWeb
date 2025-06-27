@@ -32,6 +32,13 @@ namespace Omicron.SapAdapter.Services.Sap
         Task<ResultModel> GetOrdersDeliveryDetail(int deliveryId);
 
         /// <summary>
+        /// GetDeliveryIdsByInvoice.
+        /// </summary>
+        /// <param name="invoiceId">the invoiceId.</param>
+        /// <returns>the data.</returns>
+        Task<ResultModel> GetDeliveryIdsByInvoice(int invoiceId);
+
+        /// <summary>
         /// Gets the products by sales.
         /// </summary>
         /// <param name="saleId">the sale ids.</param>
