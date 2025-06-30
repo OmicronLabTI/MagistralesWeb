@@ -426,6 +426,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const int QfbRoleId = 2;
 
         /// <summary>
+        /// Const for the all classifications.
+        /// </summary>
+        public const string AllClassifications = "Todas";
+
+        /// <summary>
+        /// Const for the classifications.
+        /// </summary>
+        public const string Classifications = "classifications";
+
+        /// <summary>
         /// Reason not found.
         /// </summary>
         public const string ReasonNotExistsOrder = "No existe la orden.";
@@ -979,6 +989,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// Get the value for format.
         /// </summary>
         public const string QrPng = "qr.png";
+
+        /// <summary>
+        /// const for OrdersToExcludeKey.
+        /// </summary>
+        public const string OrdersToExcludeKey = "OrdersToExclude";
 
         /// <summary>
         /// Gets the status of the order.

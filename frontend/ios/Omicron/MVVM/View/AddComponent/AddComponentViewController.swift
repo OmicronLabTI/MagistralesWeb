@@ -283,7 +283,7 @@ class AddComponentViewController: LotsBaseViewController, ComponentsDelegate, Ch
                                         fontSize: 15)
         
         UtilsManager.shared.setStyleButtonStatus(button: self.addComponentButton,
-                                                 title: StatusNameConstants.addComponent,
+                                                 title: StatusNameConstants.addComponentAndLots,
                                                  color: OmicronColors.primaryBlue,
                                                  titleColor: OmicronColors.primaryBlue)
         

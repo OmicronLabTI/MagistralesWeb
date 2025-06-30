@@ -1006,6 +1006,90 @@ namespace Omicron.Pedidos.Test.Services
         /// </summary>
         /// <returns>the data.</returns>
         [Test]
+        public async Task GetFabOrdersAllClassifications()
+        {
+            var dates = new DateTime(2025, 05, 28).ToString("dd/MM/yyyy");
+            var dateFinal = new DateTime(2025, 05, 30).ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                { ServiceConstants.Classifications, "Todas" },
+            };
+
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockUsers = new Mock<IUsersService>();
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetFabricacionOrderModelClassifications()));
+
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserModel()));
+
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object);
+
+            // act
+            var result = await localService.GetFabOrders(dicParams);
+            var response = result.Response as List<CompleteOrderModel>;
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(response.Count, Is.EqualTo(4));
+            Assert.That(response.Any(x => x.FabOrderId == 226274), Is.True);
+            Assert.That(response.Any(x => x.FabOrderId == 226275), Is.True);
+            Assert.That(response.Any(x => x.FabOrderId == 226276), Is.True);
+            Assert.That(response.Any(x => x.FabOrderId == 226277), Is.True);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
+        public async Task GetFabOrdersSomeClassifications()
+        {
+            var dates = new DateTime(2025, 05, 28).ToString("dd/MM/yyyy");
+            var dateFinal = new DateTime(2025, 05, 30).ToString("dd/MM/yyyy");
+            var dicParams = new Dictionary<string, string>
+            {
+                { ServiceConstants.FechaInicio, string.Format("{0}-{1}", dates, dateFinal) },
+                { ServiceConstants.Classifications, "MG" },
+            };
+
+            var localSapAdapter = new Mock<ISapAdapter>();
+            var mockUsers = new Mock<IUsersService>();
+
+            localSapAdapter
+                .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetFabricacionOrderModelClassifications()));
+
+            mockUsers
+                .Setup(m => m.PostSimpleUsers(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetUserModel()));
+
+            var mockSapFile = new Mock<ISapFileService>();
+            var mockSaDiApi = new Mock<ISapDiApi>();
+            var localService = new PedidosService(localSapAdapter.Object, this.pedidosDao, mockUsers.Object, mockSapFile.Object, this.configuration.Object, this.reportingService.Object, this.redisService.Object, this.kafkaConnector.Object, this.sapServiceLayerService.Object, mockSaDiApi.Object);
+
+            // act
+            var result = await localService.GetFabOrders(dicParams);
+            var response = result.Response as List<CompleteOrderModel>;
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(response.Count, Is.EqualTo(2));
+            Assert.That(response.Any(x => x.FabOrderId == 226274), Is.True);
+            Assert.That(response.Any(x => x.FabOrderId == 226277), Is.True);
+        }
+
+        /// <summary>
+        /// Get last isolated production order id.
+        /// </summary>
+        /// <returns>the data.</returns>
+        [Test]
         public async Task CompletedBatches()
         {
             var orderId = 200;

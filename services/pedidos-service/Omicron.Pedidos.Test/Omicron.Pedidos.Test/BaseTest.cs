@@ -167,6 +167,12 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 143, Productionorderid = "224159", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
 
                 new UserOrderModel { Id = 144, Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), FinishedLabel = 1, FinalizedDate = DateTime.Now, MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+
+                // UserOrderModel for fabOrders
+                new UserOrderModel { Id = 145, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175623", Productionorderid = "226274",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderModel { Id = 146, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175624", Productionorderid = "226275",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderModel { Id = 147, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175625", Productionorderid = "226276",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderModel { Id = 148, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175626", Productionorderid = "226277",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
             };
         }
 
@@ -520,6 +526,28 @@ namespace Omicron.Pedidos.Test
         /// <summary>
         /// Gets user Dto.
         /// </summary>
+        /// <param name="isTecnic">Is tecnic.</param>
+        /// <returns>the user.</returns>
+        public ResultModel GetUserModel()
+        {
+            var listUsers = new List<UserModel>
+            {
+                new UserModel { Activo = 1, FirstName = "Sutano", Id = "8df154e0-5061-4749-b06e-6bd3a1aebef8", LastName = "Lope", Password = "as", Role = 1, UserName = "sutan", Piezas = 1000, Asignable = 1, TechnicalRequire = true },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listUsers),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
         /// <returns>the user.</returns>
         public ResultModel GetResultAssignBatch()
         {
@@ -560,6 +588,30 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetFabricacionOrderModelClassifications()
+        {
+            var listData = new List<FabricacionOrderModel>
+            {
+                new FabricacionOrderModel { OrdenId = 226274, PedidoId = 175623, Quantity = 20, ProductoId = "567   30 ML", OrderType = "MG" },
+                new FabricacionOrderModel { OrdenId = 226275, PedidoId = 175624, Quantity = 20, ProductoId = "567   30 ML", OrderType = "MN" },
+                new FabricacionOrderModel { OrdenId = 226276, PedidoId = 175625, Quantity = 20, ProductoId = "567   30 ML", OrderType = "BE" },
+                new FabricacionOrderModel { OrdenId = 226277, PedidoId = null, Quantity = 20, ProductoId = "567   30 ML", OrderType = null },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = JsonConvert.SerializeObject(listData),
                 Success = true,
                 UserError = string.Empty,
             };

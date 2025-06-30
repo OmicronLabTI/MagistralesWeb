@@ -10,9 +10,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Omicron.SapAdapter.DataAccess.Extensions;
@@ -49,18 +47,18 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaIni(DateTime initDate, DateTime endDate)
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByFechaIni(DateTime initDate, DateTime endDate, OrderFiltersByConfigType orderFiltersByConfigType)
         {
-            var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
+            var query = this.GetCompleteOrdersByConfigClassificationQueryWrap(orderFiltersByConfigType)
                 .Where(s => s.OrderModel.FechaInicio >= initDate && s.OrderModel.FechaInicio <= endDate)
                 .GetCompleteOrdery();
             return await this.RetryQuery(query);
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByIds(List<int> ids)
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersByIds(List<int> ids, OrderFiltersByConfigType orderFiltersByConfigType)
         {
-            var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
+            var query = this.GetCompleteOrdersByConfigClassificationQueryWrap(orderFiltersByConfigType)
                 .Where(x => ids.Contains(x.OrderModel.DocNum))
                 .AsNoTracking()
                 .GetCompleteOrdery();
@@ -71,9 +69,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// Get the orders.
         /// </summary>
         /// <returns>get the orders.</returns>
-        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int init, int end)
+        public async Task<IEnumerable<CompleteOrderModel>> GetAllOrdersById(int init, int end, OrderFiltersByConfigType orderFiltersByConfigType)
         {
-            var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
+            var query = this.GetCompleteOrdersByConfigClassificationQueryWrap(orderFiltersByConfigType)
                 .Where(s => s.OrderModel.DocNum >= init && s.OrderModel.DocNum <= end)
                 .AsNoTracking()
                 .GetCompleteOrdery();
@@ -81,9 +79,9 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         }
 
         /// <inheritdoc/>
-        public async Task<List<CompleteOrderModel>> GetAllOrdersByDocNumDxp(string docNumDxp)
+        public async Task<List<CompleteOrderModel>> GetAllOrdersByDocNumDxp(string docNumDxp, OrderFiltersByConfigType orderFiltersByConfigType)
         {
-            var query = this.GetCompleteOrderyJoinDoctorQueryWrap()
+            var query = this.GetCompleteOrdersByConfigClassificationQueryWrap(orderFiltersByConfigType)
                 .Where(s => s.OrderModel.DocNumDxp == docNumDxp || s.OrderModel.DocNumDxp.Contains(docNumDxp))
                 .AsNoTracking()
                 .GetCompleteOrdery();
@@ -126,59 +124,31 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
 
         }
 
-        /// <summary>
-        /// gets the details.
-        /// </summary>
-        /// <param name="pedidoId">Pedido id.</param>
-        /// <returns>the details.</returns>
-        public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> pedidoId)
+        /// <inheritdoc/>
+        public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetails(List<int?> ordersIds)
         {
-            var query = (from d in this.databaseContext.DetallePedido.Where(x => pedidoId.Contains(x.PedidoId))
-                         join o in this.databaseContext.OrdenFabricacionModel on
-                         new
-                         {
-                             Pedido = d.PedidoId,
-                             ItemCode = d.ProductoId
-                         }
-                         equals
-                         new
-                         {
-                             Pedido = o.PedidoId,
-                             ItemCode = o.ProductoId
-                         }
-                         into DetallePedido
-                         from dp in DetallePedido.DefaultIfEmpty()
-                         join p in this.databaseContext.ProductoModel on d.ProductoId equals p.ProductoId
-                         join firm in this.databaseContext.ProductFirmModel on p.ProductFirmCode equals firm.ProductFirmCode
-                         into productFirm
-                         from fm in productFirm.DefaultIfEmpty()
-                         join ped in this.databaseContext.OrderModel on d.PedidoId equals ped.PedidoId
-                         join g in this.databaseContext.CatalogProductModel on p.ProductGroupId equals g.ProductGroupId
-                         where p.IsMagistral == "Y"
-                         select new CompleteDetailOrderModel
-                         {
-                             OrdenFabricacionId = dp == default ? 0 : dp.OrdenId,
-                             CodigoProducto = d.ProductoId,
-                             DescripcionProducto = p.LargeDescription,
-                             DescripcionCorta = p.ProductoName,
-                             QtyPlanned = dp == default ? 0 : dp.Quantity,
-                             QtyPlannedDetalle = (int)d.Quantity,
-                             FechaOf = dp.PostDate.HasValue ? dp.PostDate.Value.ToString("dd/MM/yyyy") : string.Empty,
-                             FechaOfFin = dp.DueDate.HasValue ? dp.DueDate.Value.ToString("dd/MM/yyyy") : string.Empty,
-                             Status = dp == default ? string.Empty : dp.Status,
-                             IsChecked = false,
-                             CreatedDate = dp.CreatedDate.HasValue ? dp.CreatedDate.Value : null,
-                             Label = d.Label,
-                             NeedsCooling = p.NeedsCooling,
-                             Container = d.Container,
-                             PatientName = ped.Patient ?? string.Empty,
-                             PedidoId = d.PedidoId ?? 0,
-                             CatalogGroup = g.CatalogName,
-                             IsOmigenomics = g.CatalogName.ToLower() == "omigenomics",
-                             ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
-                         }).AsNoTracking();
+            var query = this.GetDetailOrderModelsQueryWrap(ordersIds)
+                .AsNoTracking()
+                .GetCompleteDetailOrderModel();
 
-            return await this.RetryQuery(query);
+            return (await this.RetryQuery(query));
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<CompleteDetailOrderModel>> GetAllDetailsByRoutesConfiguration(List<int?> ordersIds, OrderFiltersByConfigType orderFiltersByConfigType)
+        {
+            var query = this.GetDetailOrderModelsQueryWrap(ordersIds)
+                .Where(x =>
+                      x.OrdenFabricacionModel.PedidoId.HasValue ||
+                      (x.OrdenFabricacionModel == default &&
+                      (orderFiltersByConfigType.ClassificationCodes.Contains(x.OrderModel.OrderType) ||
+                      orderFiltersByConfigType.ItemCodesIncludedByConfigRules.Contains(x.DetallePedidoModel.ProductoId))
+                      && !orderFiltersByConfigType.InvalidCatalogsGroups.Contains(x.CatalogProductModel.CatalogName)
+                      && !orderFiltersByConfigType.ItemCodesExcludedByException.Contains(x.DetallePedidoModel.ProductoId)))
+                .AsNoTracking()
+                .GetCompleteDetailOrderModel();
+
+            return (await this.RetryQuery(query));
         }
 
         /// <inheritdoc/>
@@ -267,11 +237,14 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return (await (from order in this.databaseContext.OrdenFabricacionModel.Where(x => pedidoId.Contains(x.OrdenId))
                            join prod in this.databaseContext.ProductoModel on order.ProductoId equals prod.ProductoId
                            join catalog in this.databaseContext.CatalogProductModel on prod.ProductGroupId equals catalog.ProductGroupId
-                           select new { order, catalog })
+                           join pedidoGroup in this.databaseContext.OrderModel on order.PedidoId equals pedidoGroup.PedidoId into pedidosJoin
+                           from pedido in pedidosJoin.DefaultIfEmpty()
+                           select new { order, catalog, pedido })
             .ToListAsync())
             .Select(x =>
             {
                 x.order.IsOmigenomics = x.catalog.CatalogName.ToLower() == "omigenomics";
+                x.order.OrderType = x.pedido != null ? x.pedido.OrderType : null;
                 return x.order;
             });
         }
@@ -368,6 +341,10 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         {
             var query = from saleOrder in this.databaseContext.OrderModel.Where(x => x.PedidoId == pedidoId)
                         join saleDetail in this.databaseContext.DetallePedido on saleOrder.PedidoId equals saleDetail.PedidoId
+                        join o in this.databaseContext.OrdenFabricacionModel on
+                        new { Pedido = saleDetail.PedidoId, ItemCode = saleDetail.ProductoId }
+                            equals new { Pedido = o.PedidoId, ItemCode = o.ProductoId } into DetallePedido
+                        from fabOrder in DetallePedido.DefaultIfEmpty()
                         join product in this.databaseContext.ProductoModel on saleDetail.ProductoId equals product.ProductoId
                         where product.IsWorkableProduct == "Y"
                         select new DetallePedidoModel
@@ -383,7 +360,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             PedidoId = saleDetail.PedidoId,
                             ProductoId = saleDetail.ProductoId,
                             Quantity = saleDetail.Quantity,
-                            CanceledOrder = saleOrder.Canceled
+                            CanceledOrder = saleOrder.Canceled,
+                            ProductionOrderId = fabOrder != default ? fabOrder.OrdenId : 0,
                         };
             return await this.RetryQuery(query);
         }
@@ -604,6 +582,10 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                          join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                          into DetalleOrden
                          from dp in DetalleOrden.DefaultIfEmpty()
+                         join o in this.databaseContext.OrdenFabricacionModel on
+                         new { Pedido = dp.PedidoId, ItemCode = dp.ProductoId }
+                            equals new { Pedido = o.PedidoId, ItemCode = o.ProductoId } into DetallePedido
+                         from fabOrder in DetallePedido.DefaultIfEmpty()
                          join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
                          join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                          join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
@@ -639,6 +621,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              DocNumDxp = order.DocNumDxp,
                              IsOmigenomics = order.IsOmigenomics,
                              IsSecondary = order.IsSecondary,
+                             ProductionOrderId = fabOrder != default ? fabOrder.OrdenId : 0,
                          });
 
             return await this.RetryQuery(query);
@@ -1001,6 +984,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             LineNum = invoiceDetail.LineNum,
                             ProductoId = invoiceDetail.ProductoId,
                             Quantity = invoiceDetail.Quantity,
+                            BaseLineNum = invoiceDetail.BaseLineNum,
                         };
             return await this.RetryQuery(query);
         }
@@ -1602,6 +1586,17 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
             return await query.ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<LblContainerModel>> GetAllClassifications()
+        {
+            var query = this.databaseContext.LblContainerModel
+                .Where(classification => classification.FieldId == 24
+                && (classification.TableId == "ADOC" || classification.TableId == "OCIN"));
+
+            return await query.ToListAsync();
+        }
+
+
         private IQueryable<InvoiceHeaderModel> GetInvoiceHeaderJoinDoctorBaseQuery()
         {
             return from invoice in this.databaseContext.InvoiceHeaderModel
@@ -1692,6 +1687,10 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
                     into DetalleOrden
                     from dp in DetalleOrden.DefaultIfEmpty()
+                    join o in this.databaseContext.OrdenFabricacionModel on
+                       new { Pedido = dp.PedidoId, ItemCode = dp.ProductoId }
+                       equals new { Pedido = o.PedidoId, ItemCode = o.ProductoId } into DetallePedido
+                    from fabOrder in DetallePedido.DefaultIfEmpty()
                     join product in this.databaseContext.ProductoModel on dp.ProductoId equals product.ProductoId
                     join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
                     join doctordet in this.databaseContext.DoctorInfoModel.Where(x => x.AdressType == "S") on
@@ -1731,7 +1730,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                         DocNumDxp = order.DocNumDxp,
                         IsOmigenomics = order.IsOmigenomics,
                         IsSecondary = order.IsSecondary,
-                    });
+                        ProductionOrderId = fabOrder != default ? fabOrder.OrdenId : 0,
+                    }).OrderByDescending(x => x.DocNum);
         }
 
         private IQueryable<CompleteAlmacenOrderModel> GetOrdersByTransactionIdsForAlmacenQuery(List<string> transactionIds)
@@ -1909,23 +1909,54 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     });
         }
 
-        private IQueryable<CompleteOrderModelWrap> GetCompleteOrderyJoinDoctorQueryWrap()
+        private IQueryable<CompleteOrderModelWrap> GetCompleteOrdersByConfigClassificationQueryWrap(OrderFiltersByConfigType orderFiltersByConfigType)
         {
             return (from order in this.databaseContext.OrderModel
-                    join detalle in this.databaseContext.DetallePedido on order.PedidoId equals detalle.PedidoId
-                    into DetalleOrden
-                    from dp in DetalleOrden.DefaultIfEmpty()
-                    join producto in this.databaseContext.ProductoModel on dp.ProductoId equals producto.ProductoId
-                    join asesor in this.databaseContext.AsesorModel on order.AsesorId equals asesor.AsesorId
+                    join detail in this.databaseContext.DetallePedido on order.PedidoId equals detail.PedidoId
+                    join fab in this.databaseContext.OrdenFabricacionModel on
+                       new { Pedido = detail.PedidoId, ItemCode = detail.ProductoId }
+                       equals new { Pedido = fab.PedidoId, ItemCode = fab.ProductoId } into DetallePedido
+                    from fabOrder in DetallePedido.DefaultIfEmpty()
+                    join product in this.databaseContext.ProductoModel on detail.ProductoId equals product.ProductoId
+                    join advisor in this.databaseContext.AsesorModel on order.AsesorId equals advisor.AsesorId
                     join doctor in this.databaseContext.ClientCatalogModel on order.Codigo equals doctor.ClientId
-                    where producto.IsMagistral == "Y"
+                    join catalog in this.databaseContext.CatalogProductModel on product.ProductGroupId equals catalog.ProductGroupId
+                    where
+                    fabOrder.PedidoId.HasValue ||
+                   (fabOrder == default && (orderFiltersByConfigType.ClassificationCodes.Contains(order.OrderType) || orderFiltersByConfigType.ItemCodesIncludedByConfigRules.Contains(detail.ProductoId)) &&
+                    !orderFiltersByConfigType.InvalidCatalogsGroups.Contains(catalog.CatalogName) &&
+                    !orderFiltersByConfigType.ItemCodesExcludedByException.Contains(detail.ProductoId))
                     select new CompleteOrderModelWrap
                     {
                         OrderModel = order,
                         ClientCatalogModel = doctor,
-                        AsesorModel = asesor,
-                        DetallePedidoModel = dp,
+                        AsesorModel = advisor,
+                        DetallePedidoModel = detail,
                     }).AsNoTracking();
+        }
+
+        private IQueryable<DetailOrderJoinModelWrap> GetDetailOrderModelsQueryWrap(List<int?> ordersIds)
+        {
+            return from d in this.databaseContext.DetallePedido
+                   join o in this.databaseContext.OrdenFabricacionModel on
+                       new { Pedido = d.PedidoId, ItemCode = d.ProductoId }
+                       equals new { Pedido = o.PedidoId, ItemCode = o.ProductoId } into DetallePedido
+                   from dp in DetallePedido.DefaultIfEmpty()
+                   join p in this.databaseContext.ProductoModel on d.ProductoId equals p.ProductoId
+                   join firm in this.databaseContext.ProductFirmModel on p.ProductFirmCode equals firm.ProductFirmCode into productFirm
+                   from fm in productFirm.DefaultIfEmpty()
+                   join ped in this.databaseContext.OrderModel on d.PedidoId equals ped.PedidoId
+                   join g in this.databaseContext.CatalogProductModel on p.ProductGroupId equals g.ProductGroupId
+                   where ordersIds.Contains(d.PedidoId)
+                   select new DetailOrderJoinModelWrap
+                   {
+                       DetallePedidoModel = d,
+                       OrdenFabricacionModel = dp,
+                       ProductoModel = p,
+                       ProductFirmModel = fm,
+                       OrderModel = ped,
+                       CatalogProductModel = g
+                   };
         }
     }
 }

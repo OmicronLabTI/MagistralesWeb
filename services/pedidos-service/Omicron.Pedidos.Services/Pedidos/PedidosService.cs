@@ -677,7 +677,7 @@ namespace Omicron.Pedidos.Services.Pedidos
 
                 var saleOrder = allOrders.Where(x => x.IsSalesOrder).ToList();
                 var saleIds = saleOrder.Select(y => int.Parse(y.Salesorderid)).ToList();
-                var preProdOrderSap = await ServiceUtils.GetSalesOrdersFromSap(saleIds, this.sapAdapter);
+                var preProdOrderSap = await ServiceUtils.GetOrdersDetailsForMagistral(this.sapAdapter, saleIds);
 
                 saleOrder.ForEach(sale =>
                 {
@@ -772,6 +772,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 return ServiceUtils.CreateResult(true, 200, null, new List<FabricacionOrderModel>(), null);
             }
 
+            sapOrders = FilterByClassifications(sapOrders, parameters);
             var sapOrdersId = sapOrders.Select(x => x.OrdenId.ToString()).ToList();
             var userOrders = (await this.pedidosDao.GetUserOrderByProducionOrder(sapOrdersId)).ToList();
             var usersId = userOrders.Select(x => x.Userid).ToList();
@@ -955,6 +956,23 @@ namespace Omicron.Pedidos.Services.Pedidos
             var result = await this.pedidosDao.GetUserOrderByInvoiceTypeAndId(new List<string> { type }, invoicesid);
 
             return ServiceUtils.CreateResult(true, 200, null, result, null);
+        }
+
+        private static List<FabricacionOrderModel> FilterByClassifications(List<FabricacionOrderModel> orders, Dictionary<string, string> parameters)
+        {
+            if (!parameters.ContainsKey(ServiceConstants.Classifications) || string.IsNullOrWhiteSpace(parameters[ServiceConstants.Classifications]) || parameters[ServiceConstants.Classifications] == ServiceConstants.AllClassifications)
+            {
+                return orders;
+            }
+
+            var allowedClassifications = parameters[ServiceConstants.Classifications]
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(c => c.Trim())
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            return orders
+                .Where(order => allowedClassifications.Contains(order.OrderType) || string.IsNullOrWhiteSpace(order.OrderType))
+                .ToList();
         }
 
         /// <summary>

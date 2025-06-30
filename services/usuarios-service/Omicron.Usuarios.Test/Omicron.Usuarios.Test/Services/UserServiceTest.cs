@@ -16,6 +16,8 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
     {
         private IUsersService userServices;
 
+        private ICatalogosService catalogosService;
+
         private IMapper mapper;
 
         private IUserDao userDao;
@@ -25,14 +27,15 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         /// <summary>
         /// Init configuration.
         /// </summary>
-        [OneTimeSetUp]
+        [SetUp]
         public void Init()
         {
             var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
             this.mapper = mapperConfiguration.CreateMapper();
 
+            var dbname = Guid.NewGuid().ToString();
             var options = new DbContextOptionsBuilder<DatabaseContext>()
-                .UseInMemoryDatabase(databaseName: "Temporal")
+                .UseInMemoryDatabase(dbname)
                 .Options;
 
             this.context = new DatabaseContext(options);
@@ -50,8 +53,13 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
                 .Setup(m => m.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultFabOrders()));
 
+            var mockCatalogosService = new Mock<ICatalogosService>();
+            mockCatalogosService
+                .Setup(m => m.GetCatalogos(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetClassificationDescriptionModel()));
+
             this.userDao = new UserDao(this.context);
-            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object, mockSapAdapter.Object);
+            this.userServices = new UsersService(this.mapper, this.userDao, mockPedidoService.Object, mockSapAdapter.Object, mockCatalogosService.Object);
         }
 
         /// <summary>
@@ -118,6 +126,68 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
         }
 
         /// <summary>
+        /// Test To create user.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task CreateUserAnyClassification()
+        {
+            // arrange
+            var user = new UserModel
+            {
+                UserName = "pruebaDesinger",
+                FirstName = "prueba",
+                LastName = "usuario",
+                Password = "QXhpdHkyMDI0",
+                Activo = 1,
+                Role = 4,
+                Asignable = 1,
+                Piezas = 200,
+                Classification = "MN, MG",
+                TechnicalRequire = false,
+                TecnicId = null,
+            };
+
+            // act
+            var response = await this.userServices.CreateUser(user);
+
+            // arrange
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
+        /// Test To create user.
+        /// </summary>
+        /// <returns>return nothing.</returns>
+        [Test]
+        public async Task CreateUserAllClassification()
+        {
+            // arrange
+            var user = new UserModel
+            {
+                UserName = "pruebaLogistica",
+                FirstName = "prueba",
+                LastName = "usuario",
+                Password = "QXhpdHkyMDI0",
+                Activo = 1,
+                Role = 3,
+                Asignable = 1,
+                Piezas = 200,
+                Classification = "Todas",
+                TechnicalRequire = false,
+                TecnicId = null,
+            };
+
+            // act
+            var response = await this.userServices.CreateUser(user);
+
+            // arrange
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+        }
+
+        /// <summary>
         /// creates the user with error the user exist.
         /// </summary>
         [Test]
@@ -172,6 +242,95 @@ namespace Omicron.Usuarios.Test.Services.Catalogs
 
             // Assert
             Assert.That(response, Is.Not.Null);
+        }
+
+        /// <summary>
+        /// Gets the users with offset.
+        /// </summary>
+        /// <param name="classifications">Clasiffications.</param>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        [TestCase("MN")]
+        public async Task GetAllUsersWithFiltersClassifications(string classifications)
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+                { ServiceConstants.TypeQfb, classifications },
+            };
+
+            // act
+            var response = await this.userServices.GetUsers(dic);
+            var result = response.Response as List<UserModel>;
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "Janettelog"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "danyTodas"));
+        }
+
+        /// <summary>
+        /// Gets the users with offset.
+        /// </summary>
+        /// <param name="classifications">Clasiffications.</param>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        [TestCase("MN, BE")]
+        public async Task GetAllUsersWithFiltersClassificationsTwo(string classifications)
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+                { ServiceConstants.TypeQfb, classifications },
+            };
+
+            // act
+            var response = await this.userServices.GetUsers(dic);
+            var result = response.Response as List<UserModel>;
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "Janettelog"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "danyTodas"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "vicDesigner"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "benny"));
+        }
+
+        /// <summary>
+        /// Gets the users with offset.
+        /// </summary>
+        /// <param name="classifications">Clasiffications.</param>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        [TestCase("MG,BE,DZ")]
+        public async Task GetAllUsersWithFiltersClassificationsThree(string classifications)
+        {
+            // arrange
+            var dic = new Dictionary<string, string>
+            {
+                { "offset", "0" },
+                { "limit", "10" },
+                { ServiceConstants.TypeQfb, classifications },
+            };
+
+            // act
+            var response = await this.userServices.GetUsers(dic);
+            var result = response.Response as List<UserModel>;
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(5));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "vicDesigner"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "KarenAD"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "danyTodas"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "javierlog"));
+            Assert.That(result, Has.Some.Matches<UserModel>(u => u.UserName == "benny"));
         }
 
         /// <summary>

@@ -121,6 +121,10 @@ namespace Omicron.SapAdapter.Services.Sap
             var localNeigbors = await ServiceUtils.GetLocalNeighbors(this.catalogsService, this.redisService);
             var userOrdersResponse = await this.pedidosService.PostPedidos(details.SaleOrders, ServiceConstants.GetUserSalesOrder);
             var userOrders = JsonConvert.DeserializeObject<List<UserOrderModel>>(userOrdersResponse.Response.ToString());
+            var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetLinesBySaleOrder, details.SaleOrders);
+            var lineOrders = JsonConvert.DeserializeObject<List<LineProductsModel>>(almacenResponse.Response.ToString());
+
+            var sapOrdersFiltered = await ServiceUtilsAlmacen.GetFilterSapOrdersByConfig(sapOrders, userOrders, lineOrders, this.catalogsService, this.redisService);
             var transactionsIds = sapOrders.Where(o => !string.IsNullOrEmpty(o.DocNumDxp)).Select(o => o.DocNumDxp).Distinct().ToList();
             var payments = await ServiceShared.GetPaymentsByTransactionsIds(this.proccessPayments, transactionsIds);
 
@@ -129,6 +133,7 @@ namespace Omicron.SapAdapter.Services.Sap
             var doctorPrescriptionData = await ServiceUtils.GetDoctorDeliveryAddressData(this.doctorService, adressesToFind);
             var doctor = doctorPrescriptionData.FirstOrDefault(x => x.AddressId == order.DeliveryAddressId);
             doctor ??= new DoctorDeliveryAddressModel { Contact = order.Cliente };
+            var classifications = await this.sapDao.GetClassificationsByValue(sapOrders.Select(x => x.TypeOrder).ToList());
 
             var saleModel = new SalesByDoctorModel
             {
@@ -137,15 +142,15 @@ namespace Omicron.SapAdapter.Services.Sap
                     Client = ServiceShared.CalculateTernary(string.IsNullOrEmpty(doctor.Contact), order.Medico, doctor.Contact),
                     Address = details.Address,
                     Doctor = details.Name,
-                    TotalItems = sapOrders.Count(y => y.Detalles != null),
-                    TotalPieces = sapOrders.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
+                    TotalItems = sapOrdersFiltered.Count(y => y.Detalles != null),
+                    TotalPieces = sapOrdersFiltered.Where(y => y.Detalles != null).Sum(x => x.Detalles.Quantity),
                     IsPackage = details.IsPackage,
                     DxpId = details.DxpId.GetShortShopTransaction(),
                     TotalShopOrders = ordersByDxp.GroupBy(x => x.DocNum).Count(),
                     TotalOrdersWithDelivery = totalOrdersWithDeliverys,
                     IsOmigenomics = sapOrders.Exists(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))),
                 },
-                Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrders, localNeigbors, userOrders, payments),
+                Items = ServiceUtilsAlmacen.GetTotalOrdersForDoctorAndDxp(sapOrdersFiltered, localNeigbors, userOrders, payments, classifications.ToList()),
             };
 
             return ServiceUtils.CreateResult(true, 200, null, saleModel, null, null);
@@ -165,16 +170,11 @@ namespace Omicron.SapAdapter.Services.Sap
             List<int>> lineProductTuple,
             List<string> types)
         {
-            var lineProducts = await ServiceUtils.GetLineProducts(this.sapDao, this.redisService);
-            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, sapOrdersByTransactionId, hasChips, userOrders, startDate, endDate, lineProductTuple, true);
+            var sapOrders = await ServiceUtilsAlmacen.GetSapOrderForRecepcionPedidos(this.sapDao, sapOrdersByTransactionId, hasChips, userOrders, startDate, endDate, lineProductTuple, true, this.catalogsService, this.redisService);
             var orderWithPackages = sapOrders.Where(x => x.IsPackage == ServiceConstants.IsPackage).Select(p => p.DocNumDxp).Distinct().ToList();
             var orderWithOmigenomics = sapOrders.Where(x => ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsOmigenomics), ServiceConstants.IsOmigenomicsValue.Contains(x.IsSecondary))).Select(p => p.DocNumDxp).Distinct().ToList();
             var sapCancelled = sapOrders.Where(x => x.Canceled == "Y").ToList();
             sapOrders = sapOrders.Where(x => x.Canceled == "N").ToList();
-
-            var possibleIdsToIgnore = sapOrders.Where(x => !userOrders.Any(y => y.Salesorderid == x.DocNum.ToString())).ToList();
-            var idsToTake = possibleIdsToIgnore.GroupBy(x => x.DocNum).Where(y => !y.All(z => lineProducts.Contains(z.Detalles.ProductoId))).Select(a => a.Key).ToList();
-            sapOrders = sapOrders.Where(x => !idsToTake.Contains(x.DocNum)).ToList();
 
             sapOrders = ServiceUtilsAlmacen.GetOrdersValidsToReceiveByProducts(userOrders, lineProductTuple.Item1, sapOrders);
             sapOrders = sapOrders.Where(x => x.PedidoMuestra != ServiceConstants.IsSampleOrder).ToList();

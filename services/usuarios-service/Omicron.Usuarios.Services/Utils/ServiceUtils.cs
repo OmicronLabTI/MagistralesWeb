@@ -57,7 +57,16 @@ namespace Omicron.Usuarios.Services.Utils
             users = criteria.ContainsKey(ServiceConstants.Role) ? users.Where(x => x.Role.ToString() == criteria[ServiceConstants.Role]).ToList() : users;
             users = criteria.ContainsKey(ServiceConstants.Assignable) ? users.Where(x => x.Asignable.ToString() == criteria[ServiceConstants.Assignable] && (x.Role == ServiceConstants.RoleQfb || x.Role == ServiceConstants.RoleTecnic)).ToList() : users;
             users = criteria.ContainsKey(ServiceConstants.Status) ? users.Where(x => x.Activo.ToString() == criteria[ServiceConstants.Status]).ToList() : users;
-            users = criteria.ContainsKey(ServiceConstants.TypeQfb) ? users.Where(x => x.Classification == criteria[ServiceConstants.TypeQfb]).ToList() : users;
+
+            if (criteria.ContainsKey(ServiceConstants.TypeQfb))
+            {
+                var requestedTypes = criteria[ServiceConstants.TypeQfb].Split(',', StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                users = users.Where(user =>
+                    string.Equals(user.Classification, ServiceConstants.AllClassifications, StringComparison.OrdinalIgnoreCase) ||
+                    (!string.IsNullOrWhiteSpace(user.Classification) && user.Classification.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(t => t.Trim()).Any(c => requestedTypes.Contains(c)))).ToList();
+            }
+
             return users;
         }
 

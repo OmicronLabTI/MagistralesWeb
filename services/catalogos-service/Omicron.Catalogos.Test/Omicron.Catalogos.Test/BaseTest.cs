@@ -112,5 +112,29 @@ namespace Omicron.Catalogos.Test
                 Response = JsonConvert.SerializeObject(data),
             };
         }
+
+        /// <summary>
+        /// GetConfigRoutesModel.
+        /// </summary>
+        /// <returns>All ConfigRoutesModel.</returns>
+        public List<ConfigRoutesModel> GetConfigRoutesModel()
+        {
+            return new List<ConfigRoutesModel>
+            {
+                new ConfigRoutesModel { Id = 1, Classification = "De Línea", ClassificationCode = "LN", Exceptions = "Item Code 1", ItemCode = "Item code 2", IsActive = true },
+                new ConfigRoutesModel { Id = 2, Classification = "Bioelite", ClassificationCode = "BE", Exceptions = "Item Code 3", ItemCode = "Item code 4", IsActive = false },
+                new ConfigRoutesModel { Id = 3, Classification = "Magistrales", ClassificationCode = "MG", Exceptions = null, ItemCode = null, IsActive = true },
+            };
+        }
+
+        /// <summary>
+        /// GetConfigRoutesModel from redis.
+        /// </summary>
+        /// <returns>All ConfigRoutesModel.</returns>
+        public string GetConfigRoutesModelFromRedis()
+        {
+            var configRoutes = this.GetConfigRoutesModel();
+            return JsonConvert.SerializeObject(configRoutes);
+        }
     }
 }

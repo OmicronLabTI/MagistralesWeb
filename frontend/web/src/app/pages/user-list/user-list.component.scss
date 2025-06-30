@@ -48,3 +48,9 @@
 .mt-15 {
   margin-top: 15px;
 }
+.td-clasificacion {
+  max-width: 50px;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

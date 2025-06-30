@@ -57,6 +57,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   lengthPaginator = CONST_NUMBER.zero;
   offset = CONST_NUMBER.zero;
   limit = CONST_NUMBER.ten;
+  userClasification = CONST_STRING.empty;
   queryString = CONST_STRING.empty;
   fullQueryString = CONST_STRING.empty;
   isDateInit =  true;
@@ -86,6 +87,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.userClasification = this.localStorageService.getUserClasification();
     if (this.localStorageService.getOrderIsolated()) {
       this.filterDataOrders.docNum = this.localStorageService.getOrderIsolated();
       this.queryString = `?docNum=${this.localStorageService.getOrderIsolated()}`;
@@ -198,7 +200,7 @@ export class FabordersListComponent implements OnInit, OnDestroy {
   }
 
   getFullQueryString() {
-    this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}`;
+    this.fullQueryString = `${this.queryString}&offset=${this.offset}&limit=${this.limit}&classifications=${this.userClasification}`;
   }
 
   getDateFormatted(initDate: Date, finishDate: Date, isBeginDate: boolean) {

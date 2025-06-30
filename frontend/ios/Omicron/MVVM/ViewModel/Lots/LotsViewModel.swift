@@ -145,12 +145,12 @@ class LotsViewModel {
         self.removeLotDidTap.withLatestFrom(inputsRemove).subscribe(onNext: { [weak self] document, batch in
             self?.enableRemoveButton.onNext(false)
             if let existing = self?.selectedBatches.first(where: { batchItem in
-                return batchItem.batchNumber == batch?.numeroLote
+                return batchItem.batchNumber == batch?.numeroLote && batchItem.itemCode == document?.codigoProducto
             }) {
                 if existing.action != nil {
                     if let index = self?.selectedBatches
                         .firstIndex(
-                            where: { $0.batchNumber == existing.batchNumber && $0.action != Actions.delete.rawValue }) {
+                            where: { $0.batchNumber == existing.batchNumber && $0.action != Actions.delete.rawValue && $0.itemCode == existing.itemCode }) {
                         self?.selectedBatches.remove(at: index)
                         let newSelected = self?.getFilteredSelected(itemCode: existing.itemCode) ?? []
                         self?.dataLotsSelected.onNext(newSelected)

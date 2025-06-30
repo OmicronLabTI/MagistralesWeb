@@ -56,5 +56,31 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         /// <param name="warehouses"> warehouses to search. </param>
         /// <returns> boolean indicating whether the insert was successful. </returns>
          Task<List<WarehouseModel>> GetActiveWarehouses();
+
+        /// <summary>
+        /// Method to insert new sortingroute.
+        /// </summary>
+        /// <param name="sortingroute"> new sortingroute to be inserted. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<bool> InsertSortingRoute(List<ConfigRoutesModel> sortingroute);
+
+        /// <summary>
+        /// Method to obtain classifications.
+        /// </summary>
+        /// <param name="classifications"> classifications to search. </param>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<List<ConfigRoutesModel>> GetSortingRoutes(List<string> classifications);
+
+        /// <summary>
+        /// Gets the configuration route used for processing or classification logic.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<List<ConfigRoutesModel>> GetConfigurationRoute();
+
+        /// <summary>
+        /// GetConfigRoutesModel.
+        /// </summary>
+        /// <returns> boolean indicating whether the insert was successful. </returns>
+        Task<List<ConfigRoutesModel>> GetConfigRoutesModel();
     }
 }

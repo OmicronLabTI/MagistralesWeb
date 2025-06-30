@@ -106,7 +106,22 @@
                 </div>
                 <div class="row-form-user" *ngIf="addUserForm.get('userTypeR')?.value !== '9'">
                     <div class="form-field">
-                        <mat-form-field appearance="outline" class="custom-field magin-top-field">
+                        <mat-form-field *ngIf="addUserForm.get('userTypeR').value !== '2'" appearance="outline"
+                            class="custom-field magin-top-field">
+                            <mat-label>Selecciona clasificación</mat-label>
+                            <mat-select formControlName="clasificationLogDis" multiple>
+                                <ng-container *ngFor="let clasification of activeClasifications">
+                                    <mat-option [value]="clasification.value">
+                                        {{ clasification.description}}
+                                    </mat-option>
+                                </ng-container>
+                            </mat-select>
+                            <mat-error *ngIf="addUserForm.controls.clasificationLogDis.hasError('required')">
+                                Clasificación <strong>requerida</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field *ngIf="addUserForm.get('userTypeR').value === '2'" appearance="outline"
+                            class="custom-field magin-top-field">
                             <mat-label>Selecciona clasificación</mat-label>
                             <mat-select formControlName="classificationQFB" (selectionChange)="changeClasification()">
                                 <ng-container *ngFor="let clasification of activeClasifications">

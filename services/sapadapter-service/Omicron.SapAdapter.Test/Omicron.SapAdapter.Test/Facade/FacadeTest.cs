@@ -515,6 +515,20 @@ namespace Omicron.SapAdapter.Test.Facade
         }
 
         /// <summary>
+        /// Gets the classification data based on the provided parameters.
+        /// </summary>
+        /// <returns> containing the classification data. </returns>
+        [Test]
+        public async Task GetClassificationsByDescription()
+        {
+            // act
+            var response = await this.sapFacade.GetClassificationsByDescription(new List<string>());
+
+            // assert
+            this.AssertResponse(response);
+        }
+
+        /// <summary>
         /// Assert response.
         /// </summary>
         /// <param name="response">Response to validate.</param>

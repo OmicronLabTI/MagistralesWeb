@@ -11,7 +11,6 @@ namespace Omicron.Pedidos.Services.Utils
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
@@ -296,7 +295,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <param name="sapAdapter">the sapAdapter.</param>
         /// <param name="salesOrdersId">the "Pedido" id.</param>
         /// <returns>the data.</returns>
-        public static async Task<List<OrderWithDetailModel>> GetOrdersWithFabOrders(ISapAdapter sapAdapter, List<int> salesOrdersId)
+        public static async Task<List<OrderWithDetailModel>> GetOrdersDetailsForMagistral(ISapAdapter sapAdapter, List<int> salesOrdersId)
         {
             var sapResponse = await sapAdapter.PostSapAdapter(salesOrdersId, ServiceConstants.GetOrderWithDetail);
             return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(sapResponse.Response));
@@ -312,18 +311,6 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var sapResults = await GetSalesOrdersFromSapBySaleId(new List<int> { int.Parse(salesOrder.Salesorderid) }, sapAdapter);
             return sapResults.PreProductionOrders;
-        }
-
-        /// <summary>
-        /// check if the folder exist and created is if not.
-        /// </summary>
-        /// <param name="salesOrderId">Sales order id.</param>
-        /// <param name="sapAdapter">The sap adapter.</param>
-        /// <returns>Sales order.</returns>
-        public static async Task<List<OrderWithDetailModel>> GetSalesOrdersFromSap(List<int> salesOrderId, ISapAdapter sapAdapter)
-        {
-            var orders = await sapAdapter.PostSapAdapter(salesOrderId, ServiceConstants.GetOrderWithDetail);
-            return JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
         }
 
         /// <summary>
@@ -365,8 +352,7 @@ namespace Omicron.Pedidos.Services.Utils
         /// <returns>Sales order.</returns>
         public static async Task<(List<OrderWithDetailModel> SapOrder, List<CompleteDetailOrderModel> ProductionOrders, List<CompleteDetailOrderModel> PreProductionOrders)> GetSalesOrdersFromSapBySaleId(List<int> salesOrderId, ISapAdapter sapAdapter)
         {
-            var orders = await sapAdapter.PostSapAdapter(salesOrderId, ServiceConstants.GetOrderWithDetail);
-            var sapOrders = JsonConvert.DeserializeObject<List<OrderWithDetailModel>>(JsonConvert.SerializeObject(orders.Response));
+            var sapOrders = await GetOrdersDetailsForMagistral(sapAdapter, salesOrderId);
             var preProductionOrders = new List<CompleteDetailOrderModel>();
             var productionOrders = new List<CompleteDetailOrderModel>();
 

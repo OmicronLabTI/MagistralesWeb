@@ -34,8 +34,8 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ShippingAddressName = "Nombre de la dirección", ClientType = "institucional" },
-                new OrderModel { PedidoId = 101, AsesorId = 1, Codigo = "Codigo", DocNum = 101, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "institucional", OrderType = "LN" },
+                new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ShippingAddressName = "Nombre de la direcciï¿½n", ClientType = "institucional", Canceled = "N" },
+                new OrderModel { PedidoId = 101, AsesorId = 1, Codigo = "Codigo", DocNum = 101, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "institucional", OrderType = "LN", Canceled = "N" },
                 new OrderModel { PedidoId = 102, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2, OrderType = "MN", Patient = "paciente" },
                 new OrderModel { PedidoId = 103, AsesorId = 1, Codigo = "Codigo1234", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ClientType = "general" },
                 new OrderModel { PedidoId = 104, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "clinica", OrderType = "LN" },
@@ -790,6 +790,26 @@ namespace Omicron.SapAdapter.Test
         /// </summary>
         /// <param name="dataToSend">the data to send.</param>
         /// <returns>the object.</returns>
+        public ResultDto GetResultCatalogosDto()
+        {
+            var userOrders = new List<ParametersModel>
+            {
+                new ParametersModel { Id = 1, Field = ServiceConstants.CardCodeResponsibleMedic, Value = "C05298" },
+            };
+
+            return new ResultDto
+            {
+                Code = 200,
+                Comments = null,
+                Response = JsonConvert.SerializeObject(userOrders),
+            };
+        }
+
+        /// <summary>
+        /// Gets the resultDto.
+        /// </summary>
+        /// <param name="dataToSend">the data to send.</param>
+        /// <returns>the object.</returns>
         public ResultModel GetResultModel(object dataToSend)
         {
             return new ResultModel
@@ -798,6 +818,16 @@ namespace Omicron.SapAdapter.Test
                 Comments = null,
                 Response = JsonConvert.SerializeObject(dataToSend),
             };
+        }
+
+        /// <summary>
+        /// Gets the resultDto.
+        /// </summary>
+        /// <param name="classifications">the data to send.</param>
+        /// <returns>the object.</returns>
+        public List<ActiveConfigRoutesModel> GetConfigs(List<string> classifications)
+        {
+            return classifications.Select(x => new ActiveConfigRoutesModel() { Classification = x, ClassificationCode = x, IsActive = true, ItemCode = string.Empty, Exceptions = string.Empty, Route = "ALM" }).ToList();
         }
 
         /// <summary>
@@ -902,7 +932,7 @@ namespace Omicron.SapAdapter.Test
             {
                 new OrderModel { PedidoId = 84503, AsesorId = 1, Codigo = "Codigo", DocNum = 84503, FechaFin = DateTime.Now, FechaInicio = DateTime.Today.AddDays(-1), Medico = "Medico A", PedidoStatus = "O", AtcEntry = 1, OrderType = "MQ", Canceled = "N", Address = "CDMX", DocNumDxp = "1234A1" },
                 new OrderModel { PedidoId = 84517, AsesorId = 1, Codigo = "Codigo", DocNum = 84517, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX", DocNumDxp = "1234A2" },
-                new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX", DocNumDxp = "1234A3", IsOmigenomics = "Y" },
+                new OrderModel { PedidoId = 84515, AsesorId = 1, Codigo = "Codigo", DocNum = 84515, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today.AddDays(-2), Medico = "Medico B", PedidoStatus = "O", Canceled = "N", Address = "CDMX", DocNumDxp = "1234A3", IsOmigenomics = "Y", OrderType = "MG" },
             };
         }
 
@@ -993,12 +1023,12 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<RawMaterialRequestDetailModel>
             {
-               new RawMaterialRequestDetailModel { DocEntry = 1, ItemCode = "ITM 1", Description = "Descripción", Quantity = 1.234M, TargetWarehosue = "MG", Unit = "Paquete" },
-               new RawMaterialRequestDetailModel { DocEntry = 2, ItemCode = "ITM 2", Description = "Descripción", Quantity = 2.234M, TargetWarehosue = "MG", Unit = "Paquete" },
-               new RawMaterialRequestDetailModel { DocEntry = 3, ItemCode = "ITM 3", Description = "Descripción", Quantity = 3.234M, TargetWarehosue = "MG", Unit = "Paquete" },
-               new RawMaterialRequestDetailModel { DocEntry = 4, ItemCode = "ITM 4", Description = "Descripción", Quantity = 4.234M, TargetWarehosue = "MG", Unit = "Paquete" },
-               new RawMaterialRequestDetailModel { DocEntry = 5, ItemCode = "ITM 5", Description = "Descripción", Quantity = 5.234M, TargetWarehosue = "MG", Unit = "Paquete" },
-               new RawMaterialRequestDetailModel { DocEntry = 6, ItemCode = "ITM 6", Description = "Descripción", Quantity = 6.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 1, ItemCode = "ITM 1", Description = "Descripciï¿½n", Quantity = 1.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 2, ItemCode = "ITM 2", Description = "Descripciï¿½n", Quantity = 2.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 3, ItemCode = "ITM 3", Description = "Descripciï¿½n", Quantity = 3.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 4, ItemCode = "ITM 4", Description = "Descripciï¿½n", Quantity = 4.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 5, ItemCode = "ITM 5", Description = "Descripciï¿½n", Quantity = 5.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 6, ItemCode = "ITM 6", Description = "Descripciï¿½n", Quantity = 6.234M, TargetWarehosue = "MG", Unit = "Paquete" },
             };
         }
 
@@ -1012,6 +1042,61 @@ namespace Omicron.SapAdapter.Test
             {
                new WarehouseModel { WarehouseCode = "AMP", WarehouseName = "Materias Primas Alfareros", },
                new WarehouseModel { WarehouseCode = "be", WarehouseName = "BIOEQUAL", },
+            };
+        }
+
+        /// <summary>
+        /// Gets the attachments models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public List<CompleteOrderModel> GetCompleteOrderModel()
+        {
+            return new List<CompleteOrderModel>
+            {
+               new CompleteOrderModel { DocNum = 175623, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "MG", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
+               new CompleteOrderModel { DocNum = 175627, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "MN", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
+               new CompleteOrderModel { DocNum = 175629, Cliente = "LUIS JAVIER GARCIA AQUINO", Codigo = "C02804", FechaInicio = "28/05/2025", FechaFin = "07/06/2025", PedidoStatus = "O", OrderType = "BE", DocNumDxp = "37058e65-2de5-44ae-bb22-a5be0c891ad2", ClientType = "general" },
+            };
+        }
+
+        /// <summary>
+        /// Gets the attachments models.
+        /// </summary>
+        /// <returns>the data.</returns>
+        public ResultDto GetUserOrders()
+        {
+            var userOrders = new List<UserOrderModel>
+            {
+                new UserOrderModel { Id = 1000, Productionorderid = "226274", Salesorderid = "175623", Status = "Finalizado", Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", CloseDate = new DateTime(2025, 5, 28), Comments = "comments", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1 },
+                new UserOrderModel { Id = 1002, Productionorderid = "226278", Salesorderid = "175627", Status = "Finalizado", Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", CloseDate = new DateTime(2025, 5, 28), Comments = "comments", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1 },
+                new UserOrderModel { Id = 1003, Productionorderid = "226280", Salesorderid = "175629", Status = "Finalizado", Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", CloseDate = new DateTime(2025, 5, 28), Comments = "comments", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1 },
+            };
+
+            return new ResultDto
+            {
+                Response = JsonConvert.SerializeObject(userOrders),
+                Code = 200,
+                Comments = string.Empty,
+                ExceptionMessage = string.Empty,
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// GetActiveConfigRoutesModel.
+        /// </summary>
+        /// <returns>ActiveConfigRoutesModel.</returns>
+        public List<ActiveConfigRoutesModel> GetActiveConfigRoutesModel()
+        {
+            return new List<ActiveConfigRoutesModel>
+            {
+                new ActiveConfigRoutesModel { Id = 1, ClassificationCode = "MG", Exceptions = null, ItemCode = null, IsActive = true, Route = "MAG" },
+                new ActiveConfigRoutesModel { Id = 2, ClassificationCode = "LN", Exceptions = null, ItemCode = null, IsActive = true, Route = "MAG" },
+                new ActiveConfigRoutesModel { Id = 3, ClassificationCode = "BE", Exceptions = null, ItemCode = null, IsActive = true, Route = "MAG" },
+                new ActiveConfigRoutesModel { Id = 4, ClassificationCode = "BQ", Exceptions = "BQ 41", ItemCode = null, IsActive = true, Route = "ALM" },
+                new ActiveConfigRoutesModel { Id = 5, ClassificationCode = "DZ", Exceptions = "DZ 51", ItemCode = "REVE 53", IsActive = true, Route = "MAG" },
+                new ActiveConfigRoutesModel { Id = 6, ClassificationCode = "REVE", Exceptions = "REVE 1", ItemCode = null, IsActive = true, Route = "ALM" },
             };
         }
     }
