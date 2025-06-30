@@ -412,6 +412,21 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public static string DictionaryValueFormat => "{0}, {1}";
 
         /// <summary>
+        /// Gets maxSapTrackingLength.
+        /// </summary>
+        public static int MaxSapTrackingLength => 30;
+
+        /// <summary>
+        /// Gets CommaChar.
+        /// </summary>
+        public static char CommaChar => ',';
+
+        /// <summary>
+        /// Gets HypenChar.
+        /// </summary>
+        public static char HypenChar => '-';
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

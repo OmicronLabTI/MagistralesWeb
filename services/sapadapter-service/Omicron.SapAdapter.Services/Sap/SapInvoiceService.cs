@@ -866,8 +866,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 var localDeliverDetails = deliveryDetails.Where(x => !usedDeliveries.Any(y => y.ProductoId == x.ProductoId && y.BaseEntry == x.BaseEntry)).ToList();
 
                 var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+                var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice, saleId);
 
-                if (item.IsMagistral.Equals("N"))
+                if (product.Item2 == 0)
                 {
                     var lineProduct = lineProducts.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == saleId, x.ItemCode == invoice.ProductoId, x.DeliveryId == invoice.BaseEntry.Value));
                     lineProduct ??= new LineProductsModel();
@@ -876,9 +877,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, batchName);
                 }
 
-                var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice, saleId);
-
-                var canCancel = this.DetermineCanCancel(isMagistral: item.IsMagistral.Equals("Y"), invoice.BaseEntry.Value,  saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
+                var canCancel = this.DetermineCanCancel(isMagistral: product.Item2 != 0, invoice.BaseEntry.Value,  saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
 
                 var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == product.Item3, x.ItemCode == item.ProductoId));
                 incidentdb ??= new IncidentsModel();
@@ -896,12 +895,12 @@ namespace Omicron.SapAdapter.Services.Sap
                     Batches = listBatches,
                     Container = invoice.Container,
                     Description = item.LargeDescription.ToUpper(),
-                    ItemCode = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), $"{item.ProductoId} - {product.Item2}", item.ProductoId),
+                    ItemCode = ServiceShared.CalculateTernary(product.Item2 != 0, $"{item.ProductoId} - {product.Item2}", item.ProductoId),
                     NeedsCooling = item.NeedsCooling.Equals("Y"),
                     ProductType = $"Producto {productType}",
                     Quantity = invoice.Quantity,
                     Status = product.Item1,
-                    IsMagistral = item.IsMagistral.Equals("Y"),
+                    IsMagistral = product.Item2 != 0,
                     DeliveryId = invoice.BaseEntry.Value,
                     OrderId = product.Item2,
                     SaleOrderId = product.Item3,
