@@ -361,7 +361,7 @@ namespace Omicron.Catalogos.Test.Services
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Response, Is.Not.Null);
             Assert.That(result.Response, Is.InstanceOf<List<ConfigRoutesModel>>());
-            Assert.That(response.Count == 2, Is.True);
+            Assert.That(response.Count == 3, Is.True);
         }
 
         /// <summary>
