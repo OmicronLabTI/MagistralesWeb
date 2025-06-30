@@ -75,5 +75,12 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.Invoices
         /// <value>Invoice Lines.</value>
         [JsonProperty("DocumentLines")]
         public List<InvoiceLineDto> InvoiceLines { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ExtendedTrackingNumbers.
+        /// </summary>
+        /// <value>ExtendedTrackingNumbers.</value>
+        [JsonProperty("U_Comentarios")]
+        public string ExtendedTrackingNumbers { get; set; }
     }
 }

@@ -129,9 +129,17 @@ class ComponentsViewModel {
     func saveComponent(req: OrderDetailRequest) {
         inboxViewModel.rootViewModel.loading.onNext(true)
         self.networkManager.updateDeleteItemOfTableInOrderDetail(req)
-            .subscribe(onNext: { [weak self] _ in
+            .subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
+                guard let response = res.response else { return }
+                self.loading.onNext(false)
                 self.inboxViewModel.rootViewModel.loading.onNext(false)
+                if (res.code != 200) {
+                    let errorMessage = UtilsManager.shared.getResponseErrors(jsonString: response)
+                    self.dataError.onNext(errorMessage)
+                    return
+                }
+
                 self.saveSuccess.onNext(())
                 self.orderDetailViewModel.getOrdenDetail(isRefresh: true)
             }, onError: { [weak self] _ in
