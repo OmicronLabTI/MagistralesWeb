@@ -54,7 +54,14 @@ class  OrderDetailFormViewModel {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] res in
                 guard let self = self else { return }
+                guard let response = res.response else { return }
                 self.loading.onNext(false)
+                if (res.code != 200) {
+                    let errorMessage = UtilsManager.shared.getResponseErrors(jsonString: response)
+                    self.showAlert.onNext(errorMessage)
+                    return
+                }
+
                 self.showAlert.onNext(CommonStrings.changesSuccess)
                 self.response.onNext(res.response ?? CommonStrings.empty)
                 self.success.onNext(data.details?[index].orderFabID ?? 0)

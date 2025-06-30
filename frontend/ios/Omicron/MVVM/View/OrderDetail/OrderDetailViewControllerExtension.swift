@@ -158,9 +158,11 @@ extension OrderDetailViewController {
                 cell.baseQuantityLabel.text =  data.unit == CommonStrings.piece ?
                     String(format: "%.0f", data.baseQuantity ?? 0.0) :
                     self?.formatter.string(from: NSNumber(value: data.baseQuantity ?? 0.0))
+        
                 cell.requiredQuantityLabel.text = data.unit == CommonStrings.piece ?
                     String(format: "%.0f", data.requiredQuantity ?? 0.0) :
                     self?.formatter.string(from: NSNumber(value: data.requiredQuantity ?? 0.0))
+    
                 cell.unitLabel.text = data.unit ?? String()
                 cell.werehouseLabel.text = data.warehouse
                 let hasStock = data.stock ?? 0.0 > 0.0
