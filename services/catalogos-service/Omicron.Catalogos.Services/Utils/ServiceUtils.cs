@@ -134,6 +134,19 @@ namespace Omicron.Catalogos.Services.Utils
         }
 
         /// <summary>
+        /// Calculate string value.
+        /// </summary>
+        /// <typeparam name="T">The value.</typeparam>
+        /// <param name="validation">Validation.</param>
+        /// <param name="firstValue">First Value.</param>
+        /// <param name="defaultValue">Default Value.</param>
+        /// <returns>result.</returns>
+        public static T CalculateTernary<T>(bool validation, T firstValue, T defaultValue)
+        {
+            return validation ? firstValue : defaultValue;
+        }
+
+        /// <summary>
         /// Normalizes input string by removing accents, converting to uppercase.
         /// </summary>
         /// <param name="input">Input string to normalize.</param>
