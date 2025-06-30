@@ -93,5 +93,11 @@ namespace Omicron.Catalogos.Facade.Catalogs
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.GetActiveRouteConfigurationsForProducts());
         }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> UploadProductTypeColorsFromExcel()
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.UploadProductTypeColorsFromExcel());
+        }
     }
 }
