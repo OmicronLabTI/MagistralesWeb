@@ -31,6 +31,18 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         Task<IEnumerable<ParametersModel>> GetParamsByField(List<string> fields);
 
         /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
+        Task<IEnumerable<ClassificationQfbModel>> GetActiveClassificationQfb();
+
+        /// <summary>
+        /// Get products colors.
+        /// </summary>
+        /// <returns>colors.</returns>
+        Task<IEnumerable<ProductTypeColorsModel>> GetProductsColors();
+
+        /// <summary>
         /// Method to obtain warehouses.
         /// </summary>
         /// <param name="warehouses"> warehouses to search. </param>

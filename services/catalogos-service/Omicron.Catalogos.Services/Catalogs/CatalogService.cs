@@ -14,6 +14,7 @@ namespace Omicron.Catalogos.Services.Catalogs
     using System.Net;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Microsoft.IdentityModel.Tokens;
     using Omicron.Catalogos.DataAccess.DAO.Catalog;
     using Omicron.Catalogos.Dtos.User;
@@ -33,6 +34,8 @@ namespace Omicron.Catalogos.Services.Catalogs
         private readonly ICatalogsDxpService catalogsdxp;
         private readonly IRedisService redisService;
 
+        private readonly IMapper mapper;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CatalogService"/> class.
         /// </summary>
@@ -42,7 +45,8 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <param name="sapAdapter"> the sap service. </param>
         /// <param name="catalogsdxp"> the catalogs dxp. </param>
         /// <param name="redisService"> Redis Service. </param>
-        public CatalogService(ICatalogDao catalogDao, IConfiguration configuration, IAzureService azureService, ISapAdapterService sapAdapter, ICatalogsDxpService catalogsdxp, IRedisService redisService)
+        /// <param name="mapper"> Mapper Service. </param>
+        public CatalogService(ICatalogDao catalogDao, IConfiguration configuration, IAzureService azureService, ISapAdapterService sapAdapter, ICatalogsDxpService catalogsdxp, IRedisService redisService, IMapper mapper)
         {
             this.catalogDao = catalogDao ?? throw new ArgumentNullException(nameof(catalogDao));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -50,6 +54,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.catalogsdxp = catalogsdxp ?? throw new ArgumentNullException(nameof(catalogsdxp));
             this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -226,6 +231,24 @@ namespace Omicron.Catalogos.Services.Catalogs
             TimeSpan.FromHours(12));
 
             return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetProductsColors(List<string> themesIds)
+        {
+            var colors = await ServiceUtils.DeserializeRedisValue(
+                new List<ProductTypeColorsModel>(),
+                ServiceConstants.ProductTypeColors,
+                this.redisService);
+
+            colors = colors.Where(x => x.IsActive).ToList();
+            if (colors.Count == 0)
+            {
+                colors = (await this.catalogDao.GetProductsColors()).ToList();
+            }
+
+            var filterColors = colors.ToList().Where(x => themesIds.Any(theme => ServiceUtils.NormalizeComplete(theme) == ServiceUtils.NormalizeComplete(x.TemaId)));
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, this.mapper.Map<List<ProductColorsDto>>(filterColors.ToList()), null);
         }
 
         private static List<string> GetValidStringList(string value)

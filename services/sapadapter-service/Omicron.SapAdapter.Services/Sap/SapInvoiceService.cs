@@ -848,6 +848,9 @@ namespace Omicron.SapAdapter.Services.Sap
             invoices = invoices.Where(x => x.BaseEntry.HasValue).ToList();
             var usedDeliveries = new List<DeliveryDetailModel>();
             var items = (await this.sapDao.GetProductByIds(invoices.Select(x => x.ProductoId).ToList())).ToList();
+            var themeIds = items.Select(x => x.ThemeId).Distinct().ToList();
+            var themesResponse = await this.catalogsService.PostCatalogs(themeIds, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
             foreach (var invoice in invoices)
             {
                 var listBatches = new List<string>();
@@ -858,6 +861,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     .FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == invoice.BaseEntry.Value, x.ProductoId == invoice.ProductoId, x.LineNum == invoice.BaseLineNum));
                 var saleId = deliveriesDetail?.BaseEntry ?? 0;
                 var prodId = deliveriesDetail?.ProductoId ?? string.Empty;
+                var selectedTheme = ServiceShared.GetSelectedTheme(item.ThemeId, themes);
 
                 if (deliveriesDetail != null)
                 {
@@ -905,6 +909,9 @@ namespace Omicron.SapAdapter.Services.Sap
                     SaleOrderId = product.Item3,
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     CanCancel = canCancel,
+                    BackgroundColor = selectedTheme.BackgroundColor,
+                    LabelText = selectedTheme.LabelText,
+                    LabelColor = selectedTheme.TextColor,
                 });
             }
 
