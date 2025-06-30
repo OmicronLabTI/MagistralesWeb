@@ -225,4 +225,12 @@ export class DataService {
   }
 
   getTwoDigitsNumber = (digit: number) => digit > 9 ? digit : `0${digit}`;
+
+  validHexadecimalColor(color: string): boolean {
+    return /^#([0-9A-F]{3}){1,2}$/i.test(color);
+  }
+
+  validateValidString(text: string): boolean {
+    return this.calculateAndValueList([text !== '', text !== undefined, text !== null]);
+  }
 }

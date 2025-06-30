@@ -28,6 +28,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ObservableService } from '../../services/observable.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { MatMenuModule, MatTooltipModule } from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 export class MatDialogMock {
   open() {
     return {
@@ -66,7 +67,6 @@ describe('UserListComponent', () => {
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
       return validation ? firstValue : secondaValue;
     });
-    dataServiceSpy.calculateTernary.and.returnValue(true);
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return new Promise(resolve => { resolve(''); });
     });
@@ -102,7 +102,8 @@ describe('UserListComponent', () => {
         MatSelectModule,
         RouterTestingModule,
         MatMenuModule,
-        MatTooltipModule],
+        MatTooltipModule,
+        BrowserAnimationsModule],
       declarations: [UserListComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [DatePipe,
