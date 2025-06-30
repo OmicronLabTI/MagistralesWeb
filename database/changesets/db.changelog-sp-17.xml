@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+  <changeSet author="lreyes" id="changelog-1.1">
+	<createTable tableName="productypecolors">
+	  <column name="id" type="VARCHAR(50)" autoIncrement="false">
+	    <constraints nullable="false" primaryKey="true" />
+	  </column>
+	  <column name="backgroundcolor" type="VARCHAR(9)">
+		<constraints nullable="true" />
+	  </column>
+	  <column name="labeltext" type="VARCHAR(20)">
+		<constraints nullable="true" />
+	  </column>
+	  <column name="textcolor" type="VARCHAR(9)">
+		<constraints nullable="true" />
+	  </column>
+	  <column name="isactive" type="BOOLEAN" defaultValueBoolean="true">
+		<constraints nullable="true" />
+	  </column>
+	</createTable>
+  </changeSet>
+</databaseChangeLog>

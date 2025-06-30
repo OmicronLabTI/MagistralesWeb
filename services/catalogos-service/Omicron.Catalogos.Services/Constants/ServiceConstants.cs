@@ -44,6 +44,11 @@ namespace Omicron.Catalogos.Services.Constants
         public const string IsActive = "activo";
 
         /// <summary>
+        /// Is active excel.
+        /// </summary>
+        public const string IsActiveProduct = "1";
+
+        /// <summary>
         /// Is magistrales.
         /// </summary>
         public const string Magistrales = "MAG";
@@ -102,6 +107,16 @@ namespace Omicron.Catalogos.Services.Constants
         /// NoMatching.
         /// </summary>
         public const string DefaultColor = "#FBC115";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ProductTypeColorsFileUrl = "ProductTypeColorsFileUrl";
+
+        /// <summary>
+        /// the container file.
+        /// </summary>
+        public const string ProductTypeColors = "ProductTypeColors";
 
         /// <summary>
         /// Gets the order.

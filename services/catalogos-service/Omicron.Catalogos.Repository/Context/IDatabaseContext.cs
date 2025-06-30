@@ -63,5 +63,13 @@ namespace Omicron.Catalogos.Entities.Context
         /// Object sortingroute model.
         /// </value>
         DbSet<ConfigRoutesModel> ConfigRoutesModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets producttypecolors model.
+        /// </summary>
+        /// <value>
+        /// Object producttypecolors model.
+        /// </value>
+        DbSet<ProductTypeColorsModel> ProductTypeColorsModel { get; set; }
     }
 }

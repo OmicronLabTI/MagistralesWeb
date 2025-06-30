@@ -67,5 +67,11 @@ namespace Omicron.Catalogos.Facade.Catalogs
         /// </summary>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
         Task<ResultDto> GetActiveRouteConfigurationsForProducts();
+
+        /// <summary>
+        /// GetActiveRouteConfigurationsForProducts.
+        /// </summary>
+        /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
+        Task<ResultDto> UploadProductTypeColorsFromExcel();
     }
 }
