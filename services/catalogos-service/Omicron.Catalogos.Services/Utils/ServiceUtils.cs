@@ -145,6 +145,8 @@ namespace Omicron.Catalogos.Services.Utils
         {
             return validation ? firstValue : defaultValue;
         }
+
+        /// <summary>
         /// Normalizes input string by removing accents, converting to uppercase.
         /// </summary>
         /// <param name="input">Input string to normalize.</param>

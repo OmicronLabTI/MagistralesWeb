@@ -138,7 +138,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             List<ClassificationDto> byfilter = await this.FilterClasifications();
             List<ColorsDto> colors = await this.ClassificationColors();
 
-            ClassificationGroupDto result = new()
+            ClassificationGroupDto result = new ()
             {
                 Filters = byfilter,
                 Colors = colors,
@@ -150,8 +150,8 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <inheritdoc/>
         public async Task<ResultModel> UploadConfigurationRouteFromExcel()
         {
-            List<ConfigRoutesModel> valids = new();
-            List<ConfigRoutesModel> invalids = new();
+            List<ConfigRoutesModel> valids = new ();
+            List<ConfigRoutesModel> invalids = new ();
 
             var configroute = await this.GetConfigurationRoutesFromExcel();
 
