@@ -109,6 +109,7 @@ namespace Omicron.SapAdapter.Test
             new ActiveConfigRoutesModel(),
             new OrderFiltersByConfigType(),
             new DetailOrderJoinModelWrap(),
+            new ProductColorsDto(),
         };
 
         /// <summary>

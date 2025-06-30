@@ -86,6 +86,20 @@ namespace Omicron.Catalogos.Test
         }
 
         /// <summary>
+        /// Gets the parameters.
+        /// </summary>
+        /// <returns>the parameters.</returns>
+        public IEnumerable<ProductTypeColorsModel> GetProductsColors()
+        {
+            return new List<ProductTypeColorsModel>
+            {
+                new ProductTypeColorsModel { TemaId = "LÃ­nea", BackgroundColor = "#ffffff", IsActive = true, LabelText = "Linea", TextColor = "#fff" },
+                new ProductTypeColorsModel { TemaId = "Magistral", BackgroundColor = "#ffffff", IsActive = true, LabelText = "Linea", TextColor = "#fff" },
+                new ProductTypeColorsModel { TemaId = "Bioelite", BackgroundColor = "#ffffff", IsActive = true, LabelText = "Linea", TextColor = "#fff" },
+            };
+        }
+
+        /// <summary>
         /// Test to import of valid warehouses through the Excel file.
         /// </summary>
         /// <returns> the parameters. </returns>
@@ -121,7 +135,7 @@ namespace Omicron.Catalogos.Test
         {
             return new List<ConfigRoutesModel>
             {
-                new ConfigRoutesModel { Id = 1, Classification = "De Línea", ClassificationCode = "LN", Exceptions = "Item Code 1", ItemCode = "Item code 2", IsActive = true },
+                new ConfigRoutesModel { Id = 1, Classification = "De Lï¿½nea", ClassificationCode = "LN", Exceptions = "Item Code 1", ItemCode = "Item code 2", IsActive = true },
                 new ConfigRoutesModel { Id = 2, Classification = "Bioelite", ClassificationCode = "BE", Exceptions = "Item Code 3", ItemCode = "Item code 4", IsActive = false },
                 new ConfigRoutesModel { Id = 3, Classification = "Magistrales", ClassificationCode = "MG", Exceptions = null, ItemCode = null, IsActive = true },
             };
