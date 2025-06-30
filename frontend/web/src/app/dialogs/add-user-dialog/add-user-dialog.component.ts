@@ -197,9 +197,9 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     const rolId = Number(this.addUserForm.get('userTypeR').value);
     const rol = this.getRol(rolId);
     if (rol.toUpperCase() === CONST_USER_DIALOG.defaultQfb.toUpperCase()) {
-      this.activeClasifications = this.clasifications.filter(clasification => clasification.classificationQfb);
+      this.activeClasifications = this.clasifications.filter(clasification => clasification.value !== 'Todas');
     } else {
-      this.activeClasifications = this.clasifications.filter(clasification => !clasification.classificationQfb);
+      this.activeClasifications = this.clasifications;
     }
   }
   setFormValues(): void {

@@ -97,6 +97,7 @@ export class IPedidoReq {
     orderType: string;
     canceled?: string;
     clientType: string;
+    color?: string;
 }
 
 export class CancelOrderReq {

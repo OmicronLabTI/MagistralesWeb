@@ -25,6 +25,7 @@ import { ErrorService } from 'src/app/services/error.service';
 import { Router } from '@angular/router';
 import { CommentsConfig } from 'src/app/model/device/incidents.model';
 import { IOrdersRefuseReq, IPedidoRefuseRes, ReasonRefuse } from 'src/app/model/http/detallepedidos.model';
+import { ClasificationColorList } from 'src/mocks/userListMock';
 
 describe('PedidosComponent', () => {
   let component: PedidosComponent;
@@ -56,7 +57,8 @@ describe('PedidosComponent', () => {
       'getFiltersActives',
       'removeFiltersActive',
       'getFiltersActivesAsModel',
-      'getUserClasification'
+      'getUserClasification',
+      'getClasificationList'
     ]);
     // localStorageServiceSpy.getUserRole.and.returnValue('');
     dataServiceSpy = jasmine.createSpyObj<DataService>('DataService',
@@ -71,6 +73,7 @@ describe('PedidosComponent', () => {
     localStorageServiceSpy.getFiltersActives.and.returnValue('');
     localStorageServiceSpy.getFiltersActivesAsModel.and.returnValue(paramsPedidos);
     localStorageServiceSpy.getUserClasification.and.returnValue('MN,MG');
+    localStorageServiceSpy.getClasificationList.and.returnValue(ClasificationColorList);
     pedidosServiceSpy = jasmine.createSpyObj<PedidosService>('PedidosService', [
       'getPedidos',
       'processOrders',

@@ -86,27 +86,10 @@ export class FindOrdersDialogComponent implements OnInit, OnDestroy {
                 this.dialogRef.close();
                 this.errorService.httpError(error);
             });
-        this.getClassifications();
+        this.clasifications = this.setClasificationListUser(this.localStorageService.getClasificationList());
         this.setFormValues();
         this.getMaxDate();
         this.formValueChangesSubscription();
-    }
-
-    getClassifications(): void {
-        this.usersService.getClasifications().subscribe((res) => {
-            this.clasifications = this.deleteDuplicateClasifications(res.response);
-            this.setFormValues();
-        }, error => {
-            this.errorService.httpError(error);
-            this.dialogRef.close();
-        });
-    }
-
-    deleteDuplicateClasifications(clasifications: Clasification[]): Clasification[] {
-        const clasificationList = Array.from(
-            new Map(clasifications.map(clasification => [clasification.value, clasification])).values()
-        );
-        return this.setClasificationListUser(clasificationList);
     }
 
     setClasificationListUser(clasifications: Clasification[]): Clasification[] {
