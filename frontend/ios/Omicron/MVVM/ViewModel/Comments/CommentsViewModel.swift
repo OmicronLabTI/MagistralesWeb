@@ -39,9 +39,16 @@ class CommentsViewModel {
                 self.loading.onNext(true)
                 self.networkmanager.updateDeleteItemOfTableInOrderDetail(order)
                     .observe(on: MainScheduler.instance)
-                    .subscribe(onNext: { [weak self] _ in
+                    .subscribe(onNext: { [weak self] res in
                         guard let self = self else { return }
+                        guard let response = res.response else { return }
                         self.loading.onNext(false)
+                        if (res.code != 200) {
+                            let errorMessage = UtilsManager.shared.getResponseErrors(jsonString: response)
+                            self.showAlert.onNext(errorMessage)
+                            return
+                        }
+
                         self.backToOriginView()
                         }, onError: { [weak self] _ in
                             guard let self = self else { return }

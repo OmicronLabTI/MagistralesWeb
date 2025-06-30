@@ -207,31 +207,13 @@ class AddComponentViewModel {
                 return
             }
 
-            let errorMessage = getResponseErrors(jsonString: response)
+            let errorMessage = UtilsManager.shared.getResponseErrors(jsonString: response)
             self.showAlert.onNext(errorMessage)
         }, onError: { [weak self] _ in
             guard let self = self else { return }
             self.loading.onNext(false)
             self.showAlert.onNext(CommonStrings.errorSaveLots)
         }).disposed(by: disposeBag)
-    }
-    
-    func getResponseErrors(jsonString: String) -> String {
-        guard let data = jsonString.data(using: .utf8) else {
-                return ""
-        }
-        
-        do {
-            if let dictionary = try JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
-                // Ordena las keys alfabéticamente y extrae los valores
-                let valores = dictionary.keys.sorted().compactMap { dictionary[$0] }
-                return valores.joined(separator: ", ")
-            } else {
-                return ""
-            }
-        } catch {
-            return ""
-        }
     }
 
     func changeWarehouseCode(productId: String, warehouseCode: String) {
