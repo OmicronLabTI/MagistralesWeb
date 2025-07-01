@@ -196,6 +196,11 @@ namespace Omicron.SapAdapter.Services.Constants
         public const string GetUserSalesOrder = "getUserOrder/salesOrder";
 
         /// <summary>
+        /// route to get the users sales orders.
+        /// </summary>
+        public const string GetThemes = "products/themes";
+
+        /// <summary>
         /// route to get the user fab order.
         /// </summary>
         public const string GetUserOrders = "getUserOrder/fabOrder";

@@ -129,7 +129,8 @@ export const ConstToken = {
     productNoLabel: 'productNoLabel',
     materialRequest: 'materialRequest',
     historyQuery: 'historyQuery',
-    clasification: 'clasification'
+    clasification: 'clasification',
+    clasificationList: 'clasificationList'
 };
 export const BOOLEANS = {
     verdadero: true,
@@ -364,3 +365,6 @@ export const AllClasification = {
     description: 'Todas',
     classificationQfb: false
 };
+
+export const defaultClasificationColor = '#FBC115';
+export const initialClasificationModal = 'MG';

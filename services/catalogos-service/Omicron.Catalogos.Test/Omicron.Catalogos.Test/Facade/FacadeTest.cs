@@ -69,11 +69,19 @@ namespace Omicron.Catalogos.Test.Facade
                .Returns(Task.FromResult(response));
 
             mockServicesCat
+                .Setup(m => m.UploadProductTypeColorsFromExcel())
+                .Returns(Task.FromResult(response));
+
+            mockServicesCat
                .Setup(m => m.UploadConfigurationRouteFromExcel())
                .Returns(Task.FromResult(response));
 
             mockServicesCat
                .Setup(m => m.GetActiveRouteConfigurationsForProducts())
+               .Returns(Task.FromResult(response));
+
+            mockServicesCat
+               .Setup(m => m.GetProductsColors(It.IsAny<List<string>>()))
                .Returns(Task.FromResult(response));
 
             this.catalogFacade = new CatalogFacade(mockServicesCat.Object, this.mapper);
@@ -194,6 +202,35 @@ namespace Omicron.Catalogos.Test.Facade
 
             // Assert
             Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
+        }
+
+        /// <summary>
+        /// Test to verify upload product type colors from excel.
+        /// </summary>
+        /// <returns>Upload product type colors from excel result.</returns>
+        [Test]
+        public async Task UploadProductTypeColorsFromExcel()
+        {
+            // Act
+            var response = await this.catalogFacade.UploadProductTypeColorsFromExcel();
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
+        }
+
+        /// <summary>
+        /// Test to verify upload product type colors from excel.
+        /// </summary>
+        /// <returns>Upload product type colors from excel result.</returns>
+        [Test]
+        public async Task GetProductsColors()
+        {
+            // Act
+            var response = await this.catalogFacade.GetProductsColors(new List<string>());
+
+            // Assert
             Assert.That(response.Success, Is.True);
         }
 

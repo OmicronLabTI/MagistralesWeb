@@ -131,5 +131,30 @@ namespace Omicron.Catalogos.Api.Controllers
             var response = await this.catalogFacade.GetActiveRouteConfigurationsForProducts();
             return this.Ok(response);
         }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task{ResultDto}"/> contains color configurations by product type. </returns>
+        [Route("/product/type/colors")]
+        [HttpPost]
+        public async Task<IActionResult> UploadProductTypeColorsFromExcel()
+        {
+            var response = await this.catalogFacade.UploadProductTypeColorsFromExcel();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves classification data based on the provided parameters.
+        /// </summary>
+        /// <param name="themesIds">the parameters.</param>
+        /// <returns>A <see cref="Task{ResultDto}"/> contains color configurations by product type. </returns>
+        [Route("/products/themes")]
+        [HttpPost]
+        public async Task<IActionResult> GetProductsColors([FromBody] List<string> themesIds)
+        {
+            var response = await this.catalogFacade.GetProductsColors(themesIds);
+            return this.Ok(response);
+        }
     }
 }

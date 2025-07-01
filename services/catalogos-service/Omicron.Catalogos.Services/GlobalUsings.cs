@@ -27,3 +27,4 @@ global using System.Text;
 global using System.Threading.Tasks;
 global using StackExchange.Redis;
 global using Newtonsoft.Json;
+global using System.Text.RegularExpressions;

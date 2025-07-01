@@ -40,6 +40,7 @@ namespace Omicron.Catalogos.Test.Services
             var sapAdapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
             var redis = new Mock<IRedisService>();
+            var mapper = new Mock<IMapper>();
 
             this.context = new DatabaseContext(options);
             this.context.RoleModel.AddRange(this.GetListRoles());
@@ -47,10 +48,11 @@ namespace Omicron.Catalogos.Test.Services
             this.context.ClassificationQfbModel.AddRange(this.GetActiveClassificationQfbModel());
             this.context.WarehousesModel.AddRange(this.GetWarehouses());
             this.context.ConfigRoutesModel.AddRange(this.GetConfigRoutesModel());
+            this.context.ProductTypeColorsModel.AddRange(this.GetProductsColors());
             this.context.SaveChanges();
 
             this.catalogDao = new CatalogDao(this.context);
-            this.catalogService = new CatalogService(this.catalogDao, config.Object, azure.Object, sapAdapter.Object, catalogsdxp.Object, redis.Object);
+            this.catalogService = new CatalogService(this.catalogDao, config.Object, azure.Object, sapAdapter.Object, catalogsdxp.Object, redis.Object, mapper.Object);
         }
 
         /// <summary>
@@ -135,8 +137,9 @@ namespace Omicron.Catalogos.Test.Services
                 {
                     workbook.CopyTo(stream);
                 });
+            var mapper = new Mock<IMapper>();
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object, mapper.Object);
 
             var result = await service.UploadWarehouseFromExcel();
 
@@ -145,6 +148,80 @@ namespace Omicron.Catalogos.Test.Services
             Assert.That(result.Success, Is.True);
             Assert.That(result.UserError, Is.Null);
             Assert.That(result.Code == 200, Is.True);
+        }
+
+        /// <summary>
+        /// Method to verify upload product type colors from excel.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
+        public async Task UploadProductTypeColorsFromExcel()
+        {
+            // Arrange
+            var config = new Mock<IConfiguration>();
+            var azure = new Mock<IAzureService>();
+            var sapadapter = new Mock<ISapAdapterService>();
+            var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
+            var catalogDao = new Mock<ICatalogDao>();
+            var mapper = new Mock<IMapper>();
+
+            // Setup configuration for Azure
+            config.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountKey")]).Returns("AzureAccountKey");
+            config.SetupGet(x => x[It.Is<string>(s => s == "AzureAccountName")]).Returns("AzureAccountName");
+            config.SetupGet(x => x[It.Is<string>(s => s == "ProductTypeColorsFileUrl")]).Returns("ProductTypeColorsFileUrl");
+
+            var productTypeColorsFromExcel = new List<ProductTypeColorsModel>
+            {
+                new ProductTypeColorsModel { TemaId = "TEMA-1", BackgroundColor = "#FF0000", LabelText = "LINEA", TextColor = "#0000FF" },
+                new ProductTypeColorsModel { TemaId = "TEMA-2", BackgroundColor = "#00FF00", LabelText = "LINEA" },
+                new ProductTypeColorsModel { TemaId = "TEMA-3", BackgroundColor = "#0000FF", LabelText = "MAGISTRAL" },
+                new ProductTypeColorsModel { TemaId = "TEMA-4", BackgroundColor = "#FFFF00", LabelText = "MAGISTRAL" },
+            };
+
+            var existingTemaIds = new List<string> { "TEMA-1", "TEMA-2" };
+
+            using var memoryStream = new MemoryStream();
+            var workbook = CreateExcelProductTypeColors();
+
+            azure
+                .Setup(x => x.GetElementsFromAzure(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Stream>()))
+                .Callback<string, string, string, Stream>((param1, param2, param3, stream) =>
+                {
+                    workbook.CopyTo(stream);
+                });
+
+            catalogDao.Setup(x => x.GetExistingTemaIds(It.IsAny<List<string>>()))
+              .ReturnsAsync(existingTemaIds);
+
+            catalogDao.Setup(x => x.UpdateProductTypecolors(It.IsAny<List<ProductTypeColorsModel>>()))
+                      .ReturnsAsync(true);
+
+            catalogDao.Setup(x => x.InsertProductTypecolors(It.IsAny<List<ProductTypeColorsModel>>()))
+                      .ReturnsAsync(true);
+
+            redis.Setup(x => x.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()))
+                      .ReturnsAsync(true);
+
+            var service = new CatalogService(
+                catalogDao.Object, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object, mapper.Object);
+
+            var result = await service.UploadProductTypeColorsFromExcel();
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Code == 200, Is.True);
+
+            catalogDao.Verify(x => x.GetExistingTemaIds(It.IsAny<List<string>>()), Times.Once);
+            catalogDao.Verify(x => x.UpdateProductTypecolors(It.IsAny<List<ProductTypeColorsModel>>()), Times.Once);
+            catalogDao.Verify(x => x.InsertProductTypecolors(It.IsAny<List<ProductTypeColorsModel>>()), Times.Once);
+
+            redis.Verify(
+                x => x.WriteToRedis(
+            ServiceConstants.ProductTypeColors,
+            It.IsAny<string>(),
+            It.Is<TimeSpan>(ts => ts == TimeSpan.FromHours(12))), Times.Once);
         }
 
         /// <summary>
@@ -159,10 +236,11 @@ namespace Omicron.Catalogos.Test.Services
             var sapadapter = new Mock<ISapAdapterService>();
             var catalogsdxp = new Mock<ICatalogsDxpService>();
             var redis = new Mock<IRedisService>();
+            var mapper = new Mock<IMapper>();
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object, mapper.Object);
 
-            var products = new List<ActiveWarehouseDto>() { new ActiveWarehouseDto { ItemCode = "REVE 42", CatalogName = string.Empty, FirmName = "REVE" }, };
+            var products = new List<ActiveWarehouseDto>() { new ActiveWarehouseDto { ItemCode = "REVE 42", CatalogName = string.Empty, FirmName = "REVE" }, };
             var result = await service.GetActivesWarehouses(products);
 
             // assert
@@ -189,8 +267,9 @@ namespace Omicron.Catalogos.Test.Services
 
             catalogsdxp.SetupSequence(x => x.Get(It.IsAny<string>()))
                 .Returns(Task.FromResult(this.GetResultDto(manufacturers)));
+            var mapper = new Mock<IMapper>();
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object, mapper.Object);
 
             var result = await service.GetClassifications();
 
@@ -234,8 +313,9 @@ namespace Omicron.Catalogos.Test.Services
                 {
                     workbook.CopyTo(stream);
                 });
+            var mapper = new Mock<IMapper>();
 
-            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
+            var service = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object, mapper.Object);
 
             var result = await service.UploadConfigurationRouteFromExcel();
 
@@ -270,8 +350,8 @@ namespace Omicron.Catalogos.Test.Services
             redis.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
 
             redis.Setup(m => m.IsConnectedRedis()).Returns(isRedisConnected);
-
-            var catalogServiceMock = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object);
+            var mapper = new Mock<IMapper>();
+            var catalogServiceMock = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object, mapper.Object);
 
             // Act
             var result = await catalogServiceMock.GetActiveRouteConfigurationsForProducts();
@@ -281,7 +361,42 @@ namespace Omicron.Catalogos.Test.Services
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Response, Is.Not.Null);
             Assert.That(result.Response, Is.InstanceOf<List<ConfigRoutesModel>>());
-            Assert.That(response.Count == 2, Is.True);
+            Assert.That(response.Count == 3, Is.True);
+        }
+
+        /// <summary>
+        /// Get product and container catalog without parameters.
+        /// </summary>
+        /// <param name="isRedisConnected">If redis is conected.</param>
+        /// <returns>representing the asynchronous unit test.</returns>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task GetProductsColors(bool isRedisConnected)
+        {
+            // Arrange
+            var config = new Mock<IConfiguration>();
+            var azure = new Mock<IAzureService>();
+            var sapadapter = new Mock<ISapAdapterService>();
+            var catalogsdxp = new Mock<ICatalogsDxpService>();
+            var redis = new Mock<IRedisService>();
+
+            redis
+                .Setup(m => m.GetRedisKey(It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetConfigRoutesModelFromRedis()));
+
+            redis.Setup(m => m.WriteToRedis(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()));
+
+            redis.Setup(m => m.IsConnectedRedis()).Returns(isRedisConnected);
+            var mapper = new Mock<IMapper>();
+            var catalogServiceMock = new CatalogService(this.catalogDao, config.Object, azure.Object, sapadapter.Object, catalogsdxp.Object, redis.Object, mapper.Object);
+
+            // Act
+            var result = await catalogServiceMock.GetProductsColors(new List<string> { "linea", "magistral" });
+
+            // Assets
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code == 200, Is.True);
         }
 
         private static MemoryStream CreateExcelSortingRoute()
@@ -343,6 +458,39 @@ namespace Omicron.Catalogos.Test.Services
 
             var mss = new MemoryStream();
             var wb = new XLWorkbook();
+            wb.Worksheets.Add(dataTable);
+            wb.SaveAs(mss);
+            mss.Position = 0;
+
+            return mss;
+        }
+
+        private static MemoryStream CreateExcelProductTypeColors()
+        {
+            var dataTable = new DataTable();
+            dataTable.TableName = "ProductTypeColors";
+            dataTable.Columns.Add("IdTema");
+            dataTable.Columns.Add("Background");
+            dataTable.Columns.Add("ProductType");
+            dataTable.Columns.Add("TextColor");
+            dataTable.Columns.Add("IsActive");
+
+            var models = new List<object[]>
+            {
+                new object[] { "TEMA-1", "#FF0000", "LINEA", "#FF0000", ServiceConstants.IsActive },
+                new object[] { "TEMA-2", "#FF0000", "LINEA", "#FF0000", ServiceConstants.IsActive },
+                new object[] { "TEMA-3", "#FF0000", "MAGISTRAL", "#FF0000", ServiceConstants.IsActive },
+                new object[] { "TEMA-4", "#FF0000", "MAGISTRAL", "#FF0000", ServiceConstants.IsActive },
+            };
+
+            models.ForEach(model =>
+            {
+                dataTable.Rows.Add(model);
+            });
+
+            var mss = new MemoryStream();
+            var wb = new XLWorkbook();
+
             wb.Worksheets.Add(dataTable);
             wb.SaveAs(mss);
             mss.Position = 0;

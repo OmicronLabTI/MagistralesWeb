@@ -47,6 +47,12 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
             return await this.databaseContext.ClassificationQfbModel.Where(c => c.Active).ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductTypeColorsModel>> GetProductsColors()
+        {
+            return await this.databaseContext.ProductTypeColorsModel.Where(c => c.IsActive).ToListAsync();
+        }
+
         /// <summary>
         /// Looks the values by field.
         /// </summary>
@@ -87,6 +93,29 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
             return true;
         }
 
+        public async Task<bool> UpdateProductTypecolors(List<ProductTypeColorsModel> producttypecolors)
+        {
+            this.databaseContext.ProductTypeColorsModel.UpdateRange(producttypecolors);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> InsertProductTypecolors(List<ProductTypeColorsModel> producttypecolors)
+        {
+            await this.databaseContext.ProductTypeColorsModel.AddRangeAsync(producttypecolors);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<string>> GetExistingTemaIds(List<string> temaIds)
+        {
+            return await this.databaseContext.ProductTypeColorsModel
+                .Where(x => temaIds.Contains(x.TemaId))
+                .Select(x => x.TemaId)
+                .ToListAsync();
+        }
+
         public async Task<List<WarehouseModel>> GetActiveWarehouses()
         {
             return await this.databaseContext.WarehousesModel.Where(x => x.IsActive).AsNoTracking().ToListAsync();
@@ -107,6 +136,15 @@ namespace Omicron.Catalogos.DataAccess.DAO.Catalog
         public async Task<List<ConfigRoutesModel>> GetConfigurationRoute()
         {
             return await this.databaseContext.ConfigRoutesModel.Where(x => x.IsActive).AsNoTracking().ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<ConfigRoutesModel>> GetActiveClassificationColorsByRoutes(List<string> routes)
+        {
+            return await this.databaseContext.ConfigRoutesModel
+                .Where(x => x.IsActive && routes.Contains(x.Route))
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

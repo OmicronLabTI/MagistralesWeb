@@ -61,6 +61,15 @@ namespace Omicron.SapAdapter.Test.Services
             var mockAlmacen = new Mock<IAlmacenService>();
             var mockRedis = new Mock<IRedisService>();
             var mockCatalogos = new Mock<ICatalogsService>();
+            var colorsResponse = new List<ProductColorsDto>
+            {
+                new ProductColorsDto() { BackgroundColor = "#f3f3f3", TemaId = string.Empty, LabelText = "tema 1", TextColor = "#ffffff" },
+                new ProductColorsDto() { BackgroundColor = "#f3f3f3", TemaId = "tema1", LabelText = "tema 1", TextColor = "#ffffff" },
+            };
+
+            mockCatalogos
+                .Setup(m => m.PostCatalogs(It.IsAny<object>(), ServiceConstants.GetThemes))
+                .Returns(Task.FromResult(this.GetResultDto(colorsResponse)));
             mockCatalogos
                 .Setup(m => m.GetParams(ServiceConstants.GetActiveRouteConfigurationsEndPoint))
                 .Returns(Task.FromResult(this.GetResultDto(this.GetConfigs(new List<string> { "LN", "BQ", "MQ", "MG", "MN", "BE", "mixto" }))));
