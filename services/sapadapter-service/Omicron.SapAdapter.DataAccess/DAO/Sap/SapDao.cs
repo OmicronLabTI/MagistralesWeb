@@ -1675,6 +1675,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                     Stock = p.OnHand,
                     WarehouseQuantity = datoToAssign.OnHand,
                     IsLabel = !string.IsNullOrEmpty(p.IsLabel) && p.IsLabel.ToUpper() == "Y",
+                    ManagedByBatches = !string.IsNullOrEmpty(p.ManagedBatches) && p.ManagedBatches?.ToUpper() == "Y"
                 });
             });
 
