@@ -61,5 +61,12 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
         /// <param name="isolatedFabOrder">Isolated production order.</param>
         /// <returns>Operation result.</returns>
         Task<ResultModel> CreateIsolatedProductionOrder(CreateIsolatedFabOrderDto isolatedFabOrder);
+
+        /// <summary>
+        /// Primary Validation For Production Order Finalization In Sap.
+        /// </summary>
+        /// <param name="productionOrderInfoToValidate">Production Order Info To Validate.</param>
+        /// <returns>Operation result.</returns>
+        Task<ResultModel> PrimaryValidationForProductionOrderFinalizationInSap(List<CloseProductionOrderDto> productionOrderInfoToValidate);
     }
 }

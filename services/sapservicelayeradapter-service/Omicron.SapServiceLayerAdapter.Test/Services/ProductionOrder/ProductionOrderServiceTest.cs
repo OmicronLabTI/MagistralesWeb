@@ -60,7 +60,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
 
             var item1 = new CloseProductionOrderDto()
             {
-                OrderId = 1022,
+                ProductionOrderId = 1022,
             };
             var request = new List<CloseProductionOrderDto>();
             request.Add(item1);
@@ -474,6 +474,53 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             Assert.That(result.Code, Is.EqualTo(200));
         }
 
+        /// <summary>
+        /// PrimaryValidationForProductionOrderFinalizationInSap.
+        /// </summary>
+        /// <param name="isOk">Is Ok.</param>
+        /// <param name="statusSap">Status Sap.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        [TestCase(false, "boposReleased")]
+        [TestCase(true, "boposClosed")]
+        [TestCase(true, "boposPlanned")]
+        [TestCase(true, "boposReleased")]
+        public async Task PrimaryValidationForProductionOrderFinalizationInSap(bool isOk, string statusSap)
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+
+            var productionOrderRespone = GetProductionOrder(statusSap, 0, 0);
+
+            mockServiceLayerClient
+                .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(isOk, productionOrderRespone)))
+                .Returns(Task.FromResult(GetResult(true, GetProduct("EM-123", "tYES", 100))));
+
+            var request = new List<CloseProductionOrderDto>
+            {
+                new CloseProductionOrderDto()
+                {
+                    ProductionOrderId = 1022,
+                },
+            };
+
+            var result = await service.PrimaryValidationForProductionOrderFinalizationInSap(request);
+            var resultTest = (List<ValidationsToFinalizeProductionOrdersResultDto>)result.Response;
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
+            Assert.That(resultTest.Any(), Is.True);
+
+            if (isOk && statusSap.Equals("boposReleased"))
+            {
+                Assert.That(resultTest.All(x => string.IsNullOrEmpty(x.ErrorMessage)), Is.True);
+            }
+            else
+            {
+                Assert.That(resultTest.All(x => !string.IsNullOrEmpty(x.ErrorMessage)), Is.True);
+            }
+        }
+
         private static CloseProductionOrderDto GetCloseProductionOrderDto(int orderId, bool batches)
         {
             var batch = new BatchesConfigurationDto()
@@ -485,7 +532,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             };
             var item = new CloseProductionOrderDto()
             {
-                OrderId = orderId,
+                ProductionOrderId = orderId,
                 Batches = batches ? new List<BatchesConfigurationDto>() { batch } : null,
             };
 

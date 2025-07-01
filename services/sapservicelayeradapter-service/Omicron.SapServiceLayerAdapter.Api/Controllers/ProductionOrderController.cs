@@ -37,6 +37,16 @@ namespace Omicron.SapServiceLayerAdapter.Api.Controllers
             => this.Ok(await this.productionOrderFacade.FinishOrder(productionOrdes));
 
         /// <summary>
+        /// Primary Validation For Production Order Finalization In Sap.
+        /// </summary>
+        /// <param name="productionOrderInfoToValidate">Production Order Info To Validate.</param>
+        /// <returns>Result.</returns>
+        [HttpPost]
+        [Route("/validation/productionorders/finalization")]
+        public async Task<IActionResult> PrimaryValidationForProductionOrderFinalizationInSap([FromBody] List<CloseProductionOrderDto> productionOrderInfoToValidate)
+            => this.Ok(await this.productionOrderFacade.PrimaryValidationForProductionOrderFinalizationInSap(productionOrderInfoToValidate));
+
+        /// <summary>
         /// Update Production Orders Batches.
         /// </summary>
         /// <param name="batchesToAssign">Batches to assign.</param>

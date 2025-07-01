@@ -427,6 +427,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Constants
         public static char HypenChar => '-';
 
         /// <summary>
+        /// Gets FailReasonClosedProductionOrder.
+        /// </summary>
+        public static string FailReasonClosedProductionOrder => "La orden de producción {0} está cerrada.";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

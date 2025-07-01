@@ -37,7 +37,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             var results = new Dictionary<int, string>();
             foreach (var productionOrderConfig in productionOrders)
             {
-                var productionOrderId = productionOrderConfig.OrderId;
+                var productionOrderId = productionOrderConfig.ProductionOrderId;
                 try
                 {
                     this.logger.Information($"{logBase} - Trying to finish production order {productionOrderId}");
@@ -283,6 +283,95 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
             }
 
             return ServiceUtils.CreateResult(true, 200, null, dictResult, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> PrimaryValidationForProductionOrderFinalizationInSap(
+            List<CloseProductionOrderDto> productionOrderInfoToValidate)
+        {
+            var validationsResult = new List<ValidationsToFinalizeProductionOrdersResultDto>();
+
+            foreach (var productionOrderInfo in productionOrderInfoToValidate)
+            {
+                var logBase = string.Format("{0} - SapServiceLayerAdapter - Primary Validation For Production Order Finalization", productionOrderInfo.ProcessId);
+                string error;
+                try
+                {
+                    this.logger.Information("{LogBase} - Search production order {ProductionOrderId} on SAP", logBase, productionOrderInfo.ProductionOrderId);
+                    var productionOrder = await this.GetFromServiceLayer<ProductionOrderDto>(
+                        string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderInfo.ProductionOrderId),
+                        string.Format("La orden de produción {0} no existe.", productionOrderInfo.ProductionOrderId));
+
+                    if (productionOrder.ProductionOrderStatus.Equals(ServiceConstants.ProductionOrderClosed))
+                    {
+                        this.logger.Error("{LogBase} - Production order is closed - {ProductionOrderId}", logBase, productionOrderInfo.ProductionOrderId);
+                        validationsResult.Add(
+                            GenerateValidationResult(
+                                productionOrderInfo.ProcessId,
+                                productionOrderInfo.ProductionOrderId,
+                                string.Format(ServiceConstants.FailReasonClosedProductionOrder, productionOrderInfo.ProductionOrderId)));
+                        continue;
+                    }
+
+                    if (!productionOrder.ProductionOrderStatus.Equals(ServiceConstants.ProductionOrderReleased))
+                    {
+                        this.logger.Error("{LogBase} - Production order not released - {ProductionOrderId}", logBase, productionOrderInfo.ProductionOrderId);
+                        validationsResult.Add(
+                            GenerateValidationResult(
+                                productionOrderInfo.ProcessId,
+                                productionOrderInfo.ProductionOrderId,
+                                string.Format(ServiceConstants.FailReasonNotReleasedProductionOrder, productionOrderInfo.ProductionOrderId)));
+                        continue;
+                    }
+
+                    this.logger.Information("{LogBase} - Validate required quantity for retroactive issues - {ProductionOrderId}", logBase, productionOrderInfo.ProductionOrderId);
+                    await this.ValidateRequiredQuantityForRetroactiveIssues(productionOrder);
+
+                    this.logger.Information("{LogBase} - Validating new batches - {ProductionOrderId}", logBase, productionOrderInfo.ProductionOrderId);
+                    await this.ValidateNewBatches(productionOrder.ItemNo, productionOrderInfo.Batches);
+
+                    validationsResult.Add(
+                            GenerateValidationResult(
+                                productionOrderInfo.ProcessId,
+                                productionOrderInfo.ProductionOrderId,
+                                string.Empty));
+                }
+                catch (CustomServiceException ex)
+                {
+                    error = string.Format("{0} - {1}", logBase, ex.Message);
+                    this.logger.Error(ex, error);
+                    validationsResult.Add(
+                            GenerateValidationResult(
+                                productionOrderInfo.ProcessId,
+                                productionOrderInfo.ProductionOrderId,
+                                ex.Message));
+                }
+                catch (Exception ex)
+                {
+                    error = string.Format("{0} - {1} - {2}", logBase, ex.StackTrace, ex.Message);
+                    this.logger.Error(ex, error);
+                    validationsResult.Add(
+                            GenerateValidationResult(
+                                productionOrderInfo.ProcessId,
+                                productionOrderInfo.ProductionOrderId,
+                                ServiceConstants.FailReasonUnexpectedError));
+                }
+            }
+
+            return ServiceUtils.CreateResult(true, 200, null, validationsResult, null);
+        }
+
+        private static ValidationsToFinalizeProductionOrdersResultDto GenerateValidationResult(
+            string processId,
+            int productionOrderId,
+            string errorMessage)
+        {
+            return new ValidationsToFinalizeProductionOrdersResultDto
+            {
+                ProcessId = processId,
+                ProductionOrderId = productionOrderId,
+                ErrorMessage = errorMessage,
+            };
         }
 
         private static Dictionary<string, string> GetDictionaryResult(Dictionary<string, string> dictResult, int code, string error, List<AssignBatchDto> batches, int productionOrderId, bool success)
