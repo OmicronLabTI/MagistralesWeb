@@ -30,11 +30,11 @@ namespace Omicron.Catalogos.Entities.Model
         public string Description { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether gets or sets Classification qfb.
+        /// Gets or sets Color.
         /// </summary>
         /// <value>
-        /// Bool Classification.
+        /// Color.
         /// </value>
-        public bool ClassificationQfb { get; set; }
+        public string Color { get; set; }
     }
 }

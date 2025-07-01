@@ -93,10 +93,10 @@ describe('AddUserDialogComponent', () => {
 
     userServiceSpy.getClasifications.and.returnValue(of({
       response: [
-        { value: 'MN', description: 'Bioelite (MN)', classificationQfb: true },
-        { value: 'BE', description: 'Bioequal (BE)', classificationQfb: true },
-        { value: 'MG', description: 'Magistral (MG)', classificationQfb: true },
-        { value: 'DZ', description: 'Dermazon (DZ)', classificationQfb: true }
+        { value: 'MN', description: 'Bioelite (MN)', color: '#FBC115' },
+        { value: 'BE', description: 'Bioequal (BE)', color: '#FBC115' },
+        { value: 'MG', description: 'Magistral (MG)', color: '#FBC115' },
+        { value: 'DZ', description: 'Dermazon (DZ)', color: '#FBC115' }
       ]
     }));
 
@@ -205,37 +205,37 @@ describe('AddUserDialogComponent', () => {
     component.clasifications = [
       {
         value: 'MN', description: 'Bioelite (MN)',
-        classificationQfb: true
+        color: '#FBC115'
       },
       {
         value: 'BE', description: 'Bioequal (BE)',
-        classificationQfb: true
+        color: '#FBC115'
       },
       {
         value: 'MG', description: 'Magistral (MG)',
-        classificationQfb: true
+        color: '#FBC115'
       },
       {
         value: 'DZ', description: 'Dermazon (DZ)',
-        classificationQfb: true
+        color: '#FBC115'
       }];
     component.addUserForm.get('userTypeR').setValue(RolesMock.response[0].id, { emitEvent: false });
     component.activeClasifications = [
       {
         value: 'MN', description: 'Bioelite (MN)',
-        classificationQfb: true
+        color: '#FBC115'
       },
       {
         value: 'BE', description: 'Bioequal (BE)',
-        classificationQfb: true
+        color: '#FBC115'
       },
       {
         value: 'MG', description: 'Magistral (MG)',
-        classificationQfb: true
+        color: '#FBC115'
       },
       {
         value: 'DZ', description: 'Dermazon (DZ)',
-        classificationQfb: true
+        color: '#FBC115'
       }];
     component.validateClasification();
     expect(component.activeClasifications.length).toBe(4);
@@ -246,19 +246,19 @@ describe('AddUserDialogComponent', () => {
     component.activeClasifications = [
       {
         value: 'MN', description: 'Bioelite (MN)',
-        classificationQfb: false
+        color: '#FBC115'
       },
       {
         value: 'BE', description: 'Bioequal (BE)',
-        classificationQfb: false
+        color: '#FBC115'
       },
       {
         value: 'MG', description: 'Magistral (MG)',
-        classificationQfb: false
+        color: '#FBC115'
       },
       {
         value: 'DZ', description: 'Dermazon (DZ)',
-        classificationQfb: false
+        color: '#FBC115'
       }];
     component.validateClasification();
     expect(component.activeClasifications.length).toBe(0);

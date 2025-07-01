@@ -85,44 +85,47 @@ export const userClasificationMock: ClasificationsResponse = {
     success: true,
     response: [
         {
-            value: 'Todas',
-            description: 'TODAS',
-            classificationQfb: false
-        },
-        {
             value: 'MN',
             description: 'OMIGENOMICS',
-            classificationQfb: false
-        },
-        {
-            value: 'BE',
-            description: 'BIOELITE',
-            classificationQfb: false
-        },
-        {
-            value: 'MN',
-            description: 'Bioelite (MN)',
-            classificationQfb: true
+            color: '#5F2184'
         },
         {
             value: 'BE',
             description: 'Bioequal (BE)',
-            classificationQfb: true
+            color: '#E1CA6A'
         },
         {
             value: 'DZ',
             description: 'Dermazone (DZ)',
-            classificationQfb: true
+            color: '#50AADE'
         },
         {
             value: 'MG',
             description: 'Magistral (MG)',
-            classificationQfb: true
-        },
-        {
-            value: 'MG',
-            description: 'MAGISTRALES',
-            classificationQfb: false
+            color: ''
         }
     ]
 };
+
+export const ClasificationColorList: Clasification[] = [
+    {
+        value: 'MN',
+        description: 'OMIGENOMICS',
+        color: '#5F2184'
+    },
+    {
+        value: 'BE',
+        description: 'Bioequal (BE)',
+        color: '#E1CA6A'
+    },
+    {
+        value: 'DZ',
+        description: 'Dermazone (DZ)',
+        color: '#50AADE'
+    },
+    {
+        value: 'MG',
+        description: 'Magistral (MG)',
+        color: '#F54'
+    }
+];

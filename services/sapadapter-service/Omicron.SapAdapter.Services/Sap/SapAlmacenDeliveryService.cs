@@ -15,6 +15,7 @@ namespace Omicron.SapAdapter.Services.Sap
     using Newtonsoft.Json;
     using Omicron.SapAdapter.DataAccess.DAO.Sap;
     using Omicron.SapAdapter.Dtos.DxpModels;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
@@ -463,6 +464,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var batchesQty = await this.GetBatchesBySale(baseDelivery, saleId, deliveryDetails.Select(x => x.ProductoId).ToList());
             var tuple = batchesQty.Select(x => (x.SysNumber, x.ItemCode)).ToList();
             var batches = (await this.sapDao.GetSelectedBatches(tuple)).ToList();
+            var themeIds = deliveryDetails.Select(x => x.Producto.ThemeId).Distinct().ToList();
+            var themesResponse = await this.catalogsService.PostCatalogs(themeIds, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
             foreach (var order in deliveryDetails)
             {
                 order.BaseEntry ??= 0;
@@ -499,6 +503,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     Status = incidentdb.Status,
                 };
 
+                var selectedTheme = ServiceShared.GetSelectedTheme(order.Producto.ThemeId, themes);
                 listToReturn.Add(new ProductListRemisionModel
                 {
                     Container = order.Container,
@@ -514,6 +519,9 @@ namespace Omicron.SapAdapter.Services.Sap
                     DeliveryId = order.DeliveryId,
                     SaleOrderId = order.BaseEntry.Value,
                     TotalOrderPieces = (int)orderDetail.Where(x => x.ProductoId == itemcode).Sum(x => x.Quantity),
+                    BackgroundColor = selectedTheme.BackgroundColor,
+                    LabelText = selectedTheme.LabelText,
+                    LabelColor = selectedTheme.TextColor,
                 });
             }
 

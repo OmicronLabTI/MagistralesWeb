@@ -14,6 +14,7 @@ namespace Omicron.Catalogos.Services.Catalogs
     using System.Net;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Microsoft.IdentityModel.Tokens;
     using Omicron.Catalogos.DataAccess.DAO.Catalog;
     using Omicron.Catalogos.Dtos.User;
@@ -33,6 +34,8 @@ namespace Omicron.Catalogos.Services.Catalogs
         private readonly ICatalogsDxpService catalogsdxp;
         private readonly IRedisService redisService;
 
+        private readonly IMapper mapper;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CatalogService"/> class.
         /// </summary>
@@ -42,7 +45,8 @@ namespace Omicron.Catalogos.Services.Catalogs
         /// <param name="sapAdapter"> the sap service. </param>
         /// <param name="catalogsdxp"> the catalogs dxp. </param>
         /// <param name="redisService"> Redis Service. </param>
-        public CatalogService(ICatalogDao catalogDao, IConfiguration configuration, IAzureService azureService, ISapAdapterService sapAdapter, ICatalogsDxpService catalogsdxp, IRedisService redisService)
+        /// <param name="mapper"> Mapper Service. </param>
+        public CatalogService(ICatalogDao catalogDao, IConfiguration configuration, IAzureService azureService, ISapAdapterService sapAdapter, ICatalogsDxpService catalogsdxp, IRedisService redisService, IMapper mapper)
         {
             this.catalogDao = catalogDao ?? throw new ArgumentNullException(nameof(catalogDao));
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -50,6 +54,7 @@ namespace Omicron.Catalogos.Services.Catalogs
             this.sapAdapter = sapAdapter ?? throw new ArgumentNullException(nameof(sapAdapter));
             this.catalogsdxp = catalogsdxp ?? throw new ArgumentNullException(nameof(catalogsdxp));
             this.redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
+            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -79,25 +84,15 @@ namespace Omicron.Catalogos.Services.Catalogs
         public async Task<ResultModel> GetActiveClassificationQfb()
         {
             var textInfo = CultureInfo.CurrentCulture.TextInfo;
-            var classifications = (await this.catalogDao.GetActiveClassificationQfb())
+            var classifications = (await this.catalogDao.GetActiveClassificationColorsByRoutes([ServiceConstants.Magistrales]))
                 .Select(x => new ClassificationMagistralModel
-                {
-                    Value = x.Value,
-                    Description = x.Description,
-                    ClassificationQfb = true,
-                }).ToList();
-
-            var newClassifications = (await this.catalogDao.GetConfigurationRoute())
-                .Where(x => x.Route == ServiceConstants.Magistrales).Select(x => new ClassificationMagistralModel
                 {
                     Value = x.ClassificationCode,
                     Description = $"{textInfo.ToTitleCase(x.Classification.ToLower())} ({x.ClassificationCode})",
-                    ClassificationQfb = false,
-                }).ToList();
+                    Color = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.Color), x.Color, ServiceConstants.DefaultColor),
+                }).OrderBy(x => x.Description).ToList();
 
-            var combinedList = classifications.Concat(newClassifications).OrderBy(x => x.Description).ToList();
-
-            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, combinedList, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, classifications, null);
         }
 
         /// <inheritdoc/>
@@ -198,6 +193,62 @@ namespace Omicron.Catalogos.Services.Catalogs
             }
 
             return ServiceUtils.CreateResult(true, 200, null, routeConfiguration.Where(x => x.IsActive).ToList(), null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> UploadProductTypeColorsFromExcel()
+        {
+            var productTypeColors = await this.GetProductTypeColorsFromExcel();
+
+            foreach (var item in productTypeColors)
+            {
+                item.TemaId = ServiceUtils.NormalizeComplete(item.TemaId);
+            }
+
+            productTypeColors = productTypeColors
+                .GroupBy(p => p.TemaId)
+                .Select(g => g.First())
+                .ToList();
+
+            var temaIds = productTypeColors.Select(x => x.TemaId).ToList();
+            var existingTemaIds = await this.catalogDao.GetExistingTemaIds(temaIds);
+            var recordsToUpdate = productTypeColors.Where(x => existingTemaIds.Contains(x.TemaId)).ToList();
+            var recordsToInsert = productTypeColors.Where(x => !existingTemaIds.Contains(x.TemaId)).ToList();
+
+            if (recordsToUpdate.Any())
+            {
+                await this.catalogDao.UpdateProductTypecolors(recordsToUpdate);
+            }
+
+            if (recordsToInsert.Any())
+            {
+                await this.catalogDao.InsertProductTypecolors(recordsToInsert);
+            }
+
+            await this.redisService.WriteToRedis(
+            ServiceConstants.ProductTypeColors,
+            JsonConvert.SerializeObject(productTypeColors),
+            TimeSpan.FromHours(12));
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetProductsColors(List<string> themesIds)
+        {
+            var colors = await ServiceUtils.DeserializeRedisValue(
+                new List<ProductTypeColorsModel>(),
+                ServiceConstants.ProductTypeColors,
+                this.redisService);
+
+            colors = colors.Where(x => x.IsActive).ToList();
+            if (colors.Count == 0)
+            {
+                colors = (await this.catalogDao.GetProductsColors()).ToList();
+            }
+
+            var filterColors = colors.ToList().Where(x => themesIds.Any(theme => ServiceUtils.NormalizeComplete(theme) == ServiceUtils.NormalizeComplete(x.TemaId)));
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, this.mapper.Map<List<ProductColorsDto>>(filterColors.ToList()), null);
         }
 
         private static List<string> GetValidStringList(string value)
@@ -616,6 +667,31 @@ namespace Omicron.Catalogos.Services.Catalogs
             }
 
             return valids;
+        }
+
+        private async Task<List<ProductTypeColorsModel>> GetProductTypeColorsFromExcel()
+        {
+            var table = await this.ObtainDataFromExcel(ServiceConstants.ProductTypeColorsFileUrl, 1);
+
+            var columns = table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToList();
+
+            var temaId = columns[0];
+            var backgroundColor = columns[1];
+            var labelText = columns[2];
+            var textColor = columns[3];
+            var isActive = columns[4];
+
+            var typeColors = table.AsEnumerable()
+            .Select(row => new ProductTypeColorsModel
+            {
+                TemaId = row[temaId].ToString().Trim(),
+                BackgroundColor = row[backgroundColor].ToString(),
+                LabelText = row[labelText].ToString(),
+                TextColor = row[textColor].ToString(),
+                IsActive = row[isActive].ToString().Trim().Equals(ServiceConstants.IsActiveProduct, StringComparison.OrdinalIgnoreCase),
+            }).ToList();
+
+            return typeColors;
         }
 
         private async Task<List<WarehouseModel>> GetWarehousesFromExcel()

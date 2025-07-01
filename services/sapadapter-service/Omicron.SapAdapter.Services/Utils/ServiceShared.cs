@@ -12,9 +12,12 @@ namespace Omicron.SapAdapter.Services.Utils
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.SapAdapter.Dtos.DxpModels;
+    using Omicron.SapAdapter.Dtos.Models;
     using Omicron.SapAdapter.Entities.Model.AlmacenModels;
     using Omicron.SapAdapter.Entities.Model.BusinessModels;
     using Omicron.SapAdapter.Entities.Model.JoinsModels;
@@ -274,6 +277,37 @@ namespace Omicron.SapAdapter.Services.Utils
         {
             DateTime fechaLocal = DateTime.ParseExact(date, ServiceConstants.DateTimeFormatddMMyyyy, CultureInfo.InvariantCulture);
             return DateTime.SpecifyKind(fechaLocal, DateTimeKind.Local).ToUniversalTime();
+        }
+
+        /// <summary>
+        /// Normalizes input string by removing accents, converting to uppercase.
+        /// </summary>
+        /// <param name="input">Input string to normalize.</param>
+        /// <returns>Normalized string with only letters, numbers and hyphens in uppercase format.</returns>
+        public static string NormalizeComplete(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            string normalized = new string(input.Normalize(NormalizationForm.FormD)
+                .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                .ToArray())
+                .ToUpper();
+
+            return Regex.Replace(normalized, @"[^A-Z0-9\-]+", string.Empty).Trim('-');
+        }
+
+        /// <summary>
+        /// Normalizes input string by removing accents, converting to uppercase.
+        /// </summary>
+        /// <param name="theme">The theme.</param>
+        /// <param name="themes">The themes list.</param>
+        /// <returns>Normalized string with only letters, numbers and hyphens in uppercase format.</returns>
+        public static ProductColorsDto GetSelectedTheme(string theme, List<ProductColorsDto> themes)
+        {
+            return themes.Where(x => NormalizeComplete(x.TemaId) == NormalizeComplete(theme)).FirstOrDefault() ?? new ProductColorsDto() { BackgroundColor = "#FBC115", LabelText = "Tipo de producto NA", TextColor = "#FFFFFF" };
         }
     }
 }
