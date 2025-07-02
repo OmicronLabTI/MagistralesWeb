@@ -9,8 +9,8 @@
 namespace Omicron.Catalogos.Entities.Context
 {
     using Microsoft.EntityFrameworkCore;
-    using Omicron.Catalogos.Entities.Model;
     using Omicron.Catalogos.Entities.Interceptor;
+    using Omicron.Catalogos.Entities.Model;
 
     /// <summary>
     /// Class DBcontext.
@@ -68,6 +68,14 @@ namespace Omicron.Catalogos.Entities.Context
         /// Object sortingroute model.
         /// </value>
         public virtual DbSet<ConfigRoutesModel> ConfigRoutesModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets producttypecolors model.
+        /// </summary>
+        /// <value>
+        /// Object producttypecolors model.
+        /// </value>
+        public DbSet<ProductTypeColorsModel> ProductTypeColorsModel { get; set; }
 
         /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

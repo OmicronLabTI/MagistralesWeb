@@ -822,6 +822,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             ProductoId = deliveryDet.ProductoId,
                             Quantity = deliveryDet.Quantity,
                             WarehouseCode = deliveryDet.WarehouseCode,
+                            Producto = product,
                         };
             return (await this.RetryQuery(query));
         }
@@ -984,6 +985,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                             LineNum = invoiceDetail.LineNum,
                             ProductoId = invoiceDetail.ProductoId,
                             Quantity = invoiceDetail.Quantity,
+                            BaseLineNum = invoiceDetail.BaseLineNum,
                         };
             return await this.RetryQuery(query);
         }
@@ -1160,6 +1162,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              Groupname = g.CatalogName,
                              IsWorkableProduct = p.IsWorkableProduct,
                              IsPackage = p.IsPackage,
+                             ThemeId = p.ThemeId,
                          });
 
             return await this.RetryQuery(query);
@@ -1399,7 +1402,8 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              CardCode = order.Codigo,
                              DeliveryAddressId = order.ShippingAddressName,
                              IsOmigenomics = string.IsNullOrEmpty(order.IsOmigenomics) ? order.IsSecondary : order.IsOmigenomics == "1" ? "Y" : "N",
-                             IsSecondary = order.IsSecondary
+                             IsSecondary = order.IsSecondary,
+                             ThemeId = p.ThemeId,
                          });
 
             return (await this.RetryQuery(query)).ToList();

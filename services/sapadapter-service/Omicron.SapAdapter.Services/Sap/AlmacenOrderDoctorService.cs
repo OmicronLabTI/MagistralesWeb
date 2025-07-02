@@ -68,6 +68,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { saleorderid });
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
             var filterDetails = await this.GetFilterDetails(details, saleorderid);
+            var themeIds = details.Select(x => x.ThemeId).Distinct().ToList();
+            var themesResponse = await this.catalogsService.PostCatalogs(themeIds, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
             foreach (var detail in filterDetails)
             {
                 var item = productItems.FirstOrDefault(x => x.ProductoId == detail.Detalles.ProductoId);
@@ -79,6 +82,7 @@ namespace Omicron.SapAdapter.Services.Sap
 
                 var incidentdb = incidents.FirstOrDefault(x => x.SaleOrderId == saleorderid && x.ItemCode == item.ProductoId);
                 incidentdb ??= new IncidentsModel();
+                var selectedTheme = ServiceShared.GetSelectedTheme(detail.Producto.ThemeId, themes);
 
                 var localIncident = new IncidentInfoModel
                 {
@@ -97,6 +101,9 @@ namespace Omicron.SapAdapter.Services.Sap
                     Container = detail.Detalles.Container,
                     Status = ServiceShared.CalculateTernary(detail.Detalles.CanceledOrder == "Y", ServiceConstants.Cancelado, ServiceConstants.PorRecibir),
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
+                    BackgroundColor = selectedTheme.BackgroundColor,
+                    LabelText = selectedTheme.LabelText,
+                    LabelColor = selectedTheme.TextColor,
                 };
                 listDetails.Add(detailItem);
             }

@@ -29,6 +29,8 @@ namespace Omicron.Catalogos.Test
             new ClassificationMagistralModel(),
             new ColorsDto(),
             new ClassificationGroupDto(),
+            new ProductTypeColorsModel(),
+            new ProductColorsDto(),
         };
 
         /// <summary>

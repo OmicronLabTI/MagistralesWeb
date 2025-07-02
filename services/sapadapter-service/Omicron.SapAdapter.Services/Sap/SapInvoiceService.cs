@@ -848,22 +848,25 @@ namespace Omicron.SapAdapter.Services.Sap
             invoices = invoices.Where(x => x.BaseEntry.HasValue).ToList();
             var usedDeliveries = new List<DeliveryDetailModel>();
             var items = (await this.sapDao.GetProductByIds(invoices.Select(x => x.ProductoId).ToList())).ToList();
+            var themeIds = items.Select(x => x.ThemeId).Distinct().ToList();
+            var themesResponse = await this.catalogsService.PostCatalogs(themeIds, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
             foreach (var invoice in invoices)
             {
                 var listBatches = new List<string>();
                 var item = items.FirstOrDefault(x => x.ProductoId == invoice.ProductoId);
                 item ??= new ProductoModel { IsMagistral = "N", LargeDescription = string.Empty, ProductoId = string.Empty };
 
-                var deliveriesDetail = deliveryDetails.FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == invoice.BaseEntry.Value, x.ProductoId == invoice.ProductoId));
+                var deliveriesDetail = deliveryDetails
+                    .FirstOrDefault(x => ServiceShared.CalculateAnd(x.DeliveryId == invoice.BaseEntry.Value, x.ProductoId == invoice.ProductoId, x.LineNum == invoice.BaseLineNum));
                 var saleId = deliveriesDetail?.BaseEntry ?? 0;
                 var prodId = deliveriesDetail?.ProductoId ?? string.Empty;
+                var selectedTheme = ServiceShared.GetSelectedTheme(item.ThemeId, themes);
 
                 if (deliveriesDetail != null)
                 {
                     usedDeliveries.Add(new DeliveryDetailModel { BaseEntry = saleId, ProductoId = prodId });
                 }
-
-                var localDeliverDetails = deliveryDetails.Where(x => !usedDeliveries.Any(y => y.ProductoId == x.ProductoId && y.BaseEntry == x.BaseEntry)).ToList();
 
                 var productType = ServiceShared.CalculateTernary(item.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
                 var product = this.GetProductStatus(deliveryDetails, userOrders, lineProducts, orders, invoice, saleId);
@@ -906,6 +909,9 @@ namespace Omicron.SapAdapter.Services.Sap
                     SaleOrderId = product.Item3,
                     Incident = ServiceShared.CalculateTernary(string.IsNullOrEmpty(localIncident.Status), null, localIncident),
                     CanCancel = canCancel,
+                    BackgroundColor = selectedTheme.BackgroundColor,
+                    LabelText = selectedTheme.LabelText,
+                    LabelColor = selectedTheme.TextColor,
                 });
             }
 
@@ -1016,7 +1022,8 @@ namespace Omicron.SapAdapter.Services.Sap
             var almacenResponse = await this.almacenService.PostAlmacenOrders(ServiceConstants.GetIncidents, new List<int> { delivery.BaseEntry.Value });
             var incidents = JsonConvert.DeserializeObject<List<IncidentsModel>>(almacenResponse.Response.ToString());
 
-            invoices = invoices.Where(x => x.BaseEntry.HasValue && x.BaseEntry.Value == delivery.DeliveryId).ToList();
+            var deliveriesIds = deliveries.Select(x => x.DeliveryId).ToList();
+            invoices = invoices.Where(x => x.BaseEntry.HasValue && deliveriesIds.Contains(x.BaseEntry.Value)).ToList();
             var products = await this.GetProductModels(invoices, deliveries, userOrders, lineProducts, orders, incidents);
 
             var listSales = products.Select(x => x.SaleOrderId).Distinct().ToList();
