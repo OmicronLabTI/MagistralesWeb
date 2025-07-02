@@ -557,28 +557,6 @@ namespace Omicron.Pedidos.Test.Facade
         /// </summary>
         /// <returns>returns nothing.</returns>
         [Test]
-        public async Task FinalizeProductionOrdersAsync()
-        {
-            // arrange
-            var productionOrdersToFinalize = new List<FinalizeProductionOrderModel>();
-
-            // act
-            var response = await this.pedidoFacade.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
-
-            // Assert
-            Assert.That(response, Is.Not.Null);
-            Assert.That(response.Success);
-            Assert.That(response.Response, Is.Not.Null);
-            Assert.That(response.ExceptionMessage, Is.Empty);
-            Assert.That(response.UserError, Is.Empty);
-            Assert.That(response.Code.Equals(200));
-        }
-
-        /// <summary>
-        /// test test.
-        /// </summary>
-        /// <returns>returns nothing.</returns>
-        [Test]
         public async Task RejectSalesOrders()
         {
             // arrange
@@ -944,6 +922,94 @@ namespace Omicron.Pedidos.Test.Facade
         {
             // act
             var response = await this.pedidoFacade.GetUserOrdersByInvoiceId(new List<int>(), string.Empty);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
+        }
+
+        /// <summary>
+        /// FinalizeProductionOrdersAsync.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task FinalizeProductionOrdersAsync()
+        {
+            // arrange
+            var productionOrdersToFinalize = new List<FinalizeProductionOrderModel>();
+
+            // act
+            var response = await this.pedidoFacade.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
+        }
+
+        /// <summary>
+        /// FinalizeProductionOrdersOnSapAsync.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task FinalizeProductionOrdersOnSapAsync()
+        {
+            // arrange
+            var productionOrderProcessingPayload = new ProductionOrderProcessingStatusModel();
+
+            // act
+            var response = await this.pedidoFacade.FinalizeProductionOrdersOnSapAsync(productionOrderProcessingPayload);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
+        }
+
+        /// <summary>
+        /// FinalizeProductionOrdersOnPostgresqlAsync.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task FinalizeProductionOrdersOnPostgresqlAsync()
+        {
+            // arrange
+            var productionOrderProcessingPayload = new ProductionOrderProcessingStatusModel();
+
+            // act
+            var response = await this.pedidoFacade.FinalizeProductionOrdersOnPostgresqlAsync(productionOrderProcessingPayload);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
+        }
+
+        /// <summary>
+        /// ProductionOrderPdfGenerationAsync.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task ProductionOrderPdfGenerationAsync()
+        {
+            // arrange
+            var productionOrderProcessingPayload = new ProductionOrderProcessingStatusModel();
+
+            // act
+            var response = await this.pedidoFacade.ProductionOrderPdfGenerationAsync(productionOrderProcessingPayload);
 
             // Assert
             Assert.That(response, Is.Not.Null);

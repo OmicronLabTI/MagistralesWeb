@@ -12,6 +12,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using System.Threading.Tasks;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
+    using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
@@ -102,13 +103,6 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultDto> CloseSalesOrders(List<OrderIdDto> finishOrders);
-
-        /// <summary>
-        /// Finalize Production Orders Async.
-        /// </summary>
-        /// <param name="productionOrdersToFinalize">Production Orders To Finalize.</param>
-        /// <returns>Process Result.</returns>urns>
-        Task<ResultDto> FinalizeProductionOrdersAsync(List<FinalizeProductionOrderModel> productionOrdersToFinalize);
 
         /// <summary>
         /// reject order (status to reject).
@@ -300,5 +294,33 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="type"> List of production order types to include in the search. </param>
         /// <returns> A result containing the matching user production orders. </returns>
         Task<ResultDto> GetUserOrdersByInvoiceId(List<int> invoicesid, string type);
+
+        /// <summary>
+        /// Finalize Production Orders Async.
+        /// </summary>
+        /// <param name="productionOrdersToFinalize">Production Orders To Finalize.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> FinalizeProductionOrdersAsync(List<FinalizeProductionOrderModel> productionOrdersToFinalize);
+
+        /// <summary>
+        /// Finalize Production Orders On Sap Async.
+        /// </summary>
+        /// <param name="productionOrderProcessingPayload">Payload With info.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> FinalizeProductionOrdersOnSapAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload);
+
+        /// <summary>
+        /// Finalize Production Orders On Postgresql Async.
+        /// </summary>
+        /// <param name="productionOrderProcessingPayload">Payload With info.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> FinalizeProductionOrdersOnPostgresqlAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload);
+
+        /// <summary>
+        /// Production Order Pdf Generation Async.
+        /// </summary>
+        /// <param name="productionOrderProcessingPayload">Payload With info.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload);
     }
 }

@@ -152,14 +152,6 @@ namespace Omicron.Pedidos.Facade.Pedidos
             return this.mapper.Map<ResultDto>(await this.pedidoService.CloseSalesOrders(this.mapper.Map<List<OrderIdModel>>(finishOrders)));
         }
 
-        /// <inheritdoc/>
-        public async Task<ResultDto> FinalizeProductionOrdersAsync(List<FinalizeProductionOrderModel> productionOrdersToFinalize)
-        {
-            return this.mapper.Map<ResultDto>(
-                await this.productionOrdersService.FinalizeProductionOrdersAsync(
-                    this.mapper.Map<List<FinalizeProductionOrderModel>>(productionOrdersToFinalize)));
-        }
-
         /// <summary>
         /// reject order (status to reject).
         /// </summary>
@@ -335,6 +327,38 @@ namespace Omicron.Pedidos.Facade.Pedidos
         public async Task<ResultDto> GetUserOrdersByInvoiceId(List<int> invoicesid, string type)
         {
             return this.mapper.Map<ResultDto>(await this.pedidoService.GetUserOrdersByInvoiceId(invoicesid, type));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> FinalizeProductionOrdersAsync(List<FinalizeProductionOrderModel> productionOrdersToFinalize)
+        {
+            return this.mapper.Map<ResultDto>(
+                await this.productionOrdersService.FinalizeProductionOrdersAsync(
+                    this.mapper.Map<List<FinalizeProductionOrderModel>>(productionOrdersToFinalize)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> FinalizeProductionOrdersOnSapAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
+        {
+            return this.mapper.Map<ResultDto>(
+                await this.productionOrdersService.FinalizeProductionOrdersOnSapAsync(
+                    this.mapper.Map<ProductionOrderProcessingStatusModel>(productionOrderProcessingPayload)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> FinalizeProductionOrdersOnPostgresqlAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
+        {
+            return this.mapper.Map<ResultDto>(
+                await this.productionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(
+                    this.mapper.Map<ProductionOrderProcessingStatusModel>(productionOrderProcessingPayload)));
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultDto> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
+        {
+            return this.mapper.Map<ResultDto>(
+                await this.productionOrdersService.ProductionOrderPdfGenerationAsync(
+                    this.mapper.Map<ProductionOrderProcessingStatusModel>(productionOrderProcessingPayload)));
         }
     }
 }
