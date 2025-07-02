@@ -1052,6 +1052,22 @@ namespace Omicron.Pedidos.Services.Constants
         public static string KafkaFinalizeProductionOrderSapConfigName => "finalizeproductionordersap";
 
         /// <summary>
+        /// Gets KafkaFinalizeProductionOrderPostgresqlConfigName.
+        /// </summary>
+        /// <value>
+        /// KafkaFinalizeProductionOrderPostgresqlConfigName.
+        /// </value>
+        public static string KafkaFinalizeProductionOrderPostgresqlConfigName => "finalizeproductionorderpostgresql";
+
+        /// <summary>
+        /// Gets KafkaProductionOrderPdfGenerationConfigName.
+        /// </summary>
+        /// <value>
+        /// KafkaProductionOrderPdfGenerationConfigName.
+        /// </value>
+        public static string KafkaProductionOrderPdfGenerationConfigName => "productionorderpdfgeneration";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

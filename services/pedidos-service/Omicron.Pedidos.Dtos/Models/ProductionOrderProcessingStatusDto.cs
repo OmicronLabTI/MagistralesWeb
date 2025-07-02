@@ -1,22 +1,19 @@
 ﻿// <summary>
-// <copyright file="ProductionOrderProcessingStatusModel.cs" company="Axity">
+// <copyright file="ProductionOrderProcessingStatusDto.cs" company="Axity">
 // This source code is Copyright Axity and MAY NOT be copied, reproduced,
 // published, distributed or transmitted to or stored in any manner without prior
 // written consent from Axity (www.axity.com).
 // </copyright>
 // </summary>
 
-namespace Omicron.Pedidos.Entities.Model.Db
+namespace Omicron.Pedidos.Dtos.Models
 {
     using System;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
-    /// ProductionOrderProcessingStatusModel.
+    /// ProductionOrderProcessingStatusDto.
     /// </summary>
-    [Table("productionorderprocessingstatus")]
-    public class ProductionOrderProcessingStatusModel
+    public class ProductionOrderProcessingStatusDto
     {
         /// <summary>
         /// Gets or sets Id.
@@ -24,8 +21,6 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>
         /// string Id.
         /// </value>
-        [Key]
-        [Column("id")]
         public string Id { get; set; }
 
         /// <summary>
@@ -34,7 +29,6 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>
         /// Int ProductionOrderId.
         /// </value>
-        [Column("productionorderid")]
         public int ProductionOrderId { get; set; }
 
         /// <summary>
@@ -43,7 +37,6 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>
         /// String Step.
         /// </value>
-        [Column("step")]
         public string Step { get; set; }
 
         /// <summary>
@@ -52,8 +45,7 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>
         /// String Status.
         /// </value>
-        [Column("status")]
-        public string Status { get; set; } // "In Progress", "Success", "Failed"
+        public string Status { get; set; }
 
         /// <summary>
         /// Gets or sets ErrorMessage.
@@ -61,7 +53,6 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>
         /// String ErrorMessage.
         /// </value>
-        [Column("errormessage")]
         public string ErrorMessage { get; set; }
 
         /// <summary>
@@ -70,7 +61,6 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>
         /// String Payload.
         /// </value>
-        [Column("payload", TypeName = "json")]
         public string Payload { get; set; }
 
         /// <summary>
@@ -79,7 +69,6 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>
         /// DateTime CreatedAt.
         /// </value>
-        [Column("createdat")]
         public DateTime CreatedAt { get; set; }
 
         /// <summary>
@@ -88,7 +77,6 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>
         /// DateTime LastUpdated.
         /// </value>
-        [Column("lastupdated")]
         public DateTime LastUpdated { get; set; }
     }
 }

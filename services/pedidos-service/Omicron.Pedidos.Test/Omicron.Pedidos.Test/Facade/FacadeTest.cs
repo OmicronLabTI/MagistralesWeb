@@ -962,7 +962,7 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task FinalizeProductionOrdersOnSapAsync()
         {
             // arrange
-            var productionOrderProcessingPayload = new ProductionOrderProcessingStatusModel();
+            var productionOrderProcessingPayload = new ProductionOrderProcessingStatusDto();
 
             // act
             var response = await this.pedidoFacade.FinalizeProductionOrdersOnSapAsync(productionOrderProcessingPayload);
@@ -984,7 +984,7 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task FinalizeProductionOrdersOnPostgresqlAsync()
         {
             // arrange
-            var productionOrderProcessingPayload = new ProductionOrderProcessingStatusModel();
+            var productionOrderProcessingPayload = new ProductionOrderProcessingStatusDto();
 
             // act
             var response = await this.pedidoFacade.FinalizeProductionOrdersOnPostgresqlAsync(productionOrderProcessingPayload);
@@ -1006,7 +1006,7 @@ namespace Omicron.Pedidos.Test.Facade
         public async Task ProductionOrderPdfGenerationAsync()
         {
             // arrange
-            var productionOrderProcessingPayload = new ProductionOrderProcessingStatusModel();
+            var productionOrderProcessingPayload = new ProductionOrderProcessingStatusDto();
 
             // act
             var response = await this.pedidoFacade.ProductionOrderPdfGenerationAsync(productionOrderProcessingPayload);

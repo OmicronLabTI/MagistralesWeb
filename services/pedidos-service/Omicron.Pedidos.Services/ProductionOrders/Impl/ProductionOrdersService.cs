@@ -139,12 +139,23 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         /// <inheritdoc/>
         public async Task<ResultModel> FinalizeProductionOrdersOnSapAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // _ = this.kafkaConnector.PushMessage([], ServiceConstants.KafkaFinalizeProductionOrderPostgresqlConfigName);
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+            }
+            catch (Exception ex)
+            {
+                var error = string.Format(LogsConstants.EndFinalizeProductionOrderOnSapWithError, ex.Message, ex.InnerException);
+                this.logger.Error(ex, error);
+                return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, LogsConstants.AnUnexpectedErrorOccurred, null, null);
+            }
         }
 
         /// <inheritdoc/>
         public async Task<ResultModel> FinalizeProductionOrdersOnPostgresqlAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
         {
+            // _ = this.kafkaConnector.PushMessage([], ServiceConstants.KafkaProductionOrderPdfGenerationConfigName);
             throw new NotImplementedException();
         }
 

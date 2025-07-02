@@ -307,20 +307,20 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// </summary>
         /// <param name="productionOrderProcessingPayload">Payload With info.</param>
         /// <returns>Process Result.</returns>urns>
-        Task<ResultDto> FinalizeProductionOrdersOnSapAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload);
+        Task<ResultDto> FinalizeProductionOrdersOnSapAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload);
 
         /// <summary>
         /// Finalize Production Orders On Postgresql Async.
         /// </summary>
         /// <param name="productionOrderProcessingPayload">Payload With info.</param>
         /// <returns>Process Result.</returns>urns>
-        Task<ResultDto> FinalizeProductionOrdersOnPostgresqlAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload);
+        Task<ResultDto> FinalizeProductionOrdersOnPostgresqlAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload);
 
         /// <summary>
         /// Production Order Pdf Generation Async.
         /// </summary>
         /// <param name="productionOrderProcessingPayload">Payload With info.</param>
         /// <returns>Process Result.</returns>urns>
-        Task<ResultDto> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload);
+        Task<ResultDto> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload);
     }
 }

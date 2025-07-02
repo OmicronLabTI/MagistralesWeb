@@ -70,6 +70,14 @@ namespace Omicron.Pedidos.Services.Constants
         public static string EndFinalizeAllProductionOrdersWithError => "Pedidos Service - End Finalize All Production Orders With Error - Message Exception: {0} - Inner Exception: {1}";
 
         /// <summary>
+        /// Gets EndFinalizeProductionOrderOnSapWithError.
+        /// </summary>
+        /// <value>
+        /// EndFinalizeProductionOrderOnSapWithError.
+        /// </value>
+        public static string EndFinalizeProductionOrderOnSapWithError => "Pedidos Service - End Finalize Production Order On Sap With Error - Message Exception: {0} - Inner Exception: {1}";
+
+        /// <summary>
         /// Gets AnUnexpectedErrorOccurred.
         /// </summary>
         /// <value>

@@ -338,7 +338,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> FinalizeProductionOrdersOnSapAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
+        public async Task<ResultDto> FinalizeProductionOrdersOnSapAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload)
         {
             return this.mapper.Map<ResultDto>(
                 await this.productionOrdersService.FinalizeProductionOrdersOnSapAsync(
@@ -346,7 +346,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> FinalizeProductionOrdersOnPostgresqlAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
+        public async Task<ResultDto> FinalizeProductionOrdersOnPostgresqlAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload)
         {
             return this.mapper.Map<ResultDto>(
                 await this.productionOrdersService.FinalizeProductionOrdersOnPostgresqlAsync(
@@ -354,7 +354,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
         }
 
         /// <inheritdoc/>
-        public async Task<ResultDto> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
+        public async Task<ResultDto> ProductionOrderPdfGenerationAsync(ProductionOrderProcessingStatusDto productionOrderProcessingPayload)
         {
             return this.mapper.Map<ResultDto>(
                 await this.productionOrdersService.ProductionOrderPdfGenerationAsync(

@@ -6,8 +6,6 @@
 // </copyright>
 // </summary>
 
-using Pipelines.Sockets.Unofficial.Arenas;
-
 namespace Omicron.SapServiceLayerAdapter.Services.Constants
 {
     /// <summary>
