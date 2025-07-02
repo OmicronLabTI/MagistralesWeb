@@ -146,8 +146,8 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             Assert.That(response.Success, Is.False);
             Assert.That(response.Response, Is.Null);
             Assert.That(response.ExceptionMessage, Is.Null);
-            Assert.That(response.UserError.Equals("Internal Error"));
-            Assert.That(response.Code.Equals(400));
+            Assert.That(response.UserError.Equals("An unexpected error occurred."));
+            Assert.That(response.Code.Equals(500));
         }
     }
 }

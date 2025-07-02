@@ -11,6 +11,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
@@ -68,16 +69,16 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             {
                 var failed = new List<ProductionOrderFailedResultModel>();
                 var successfuly = new List<FinalizeProductionOrderModel>();
-                this.logger.Information("Pedidos Service - Start Finalize All Production Orders - {ProductionOrdersToFinalize}", JsonConvert.SerializeObject(productionOrdersToFinalize));
+                this.logger.Information(LogsConstants.StartFinalizeAllProductionOrders, JsonConvert.SerializeObject(productionOrdersToFinalize));
                 var productionOrderProcessingStatusInBD = await this.pedidosDao.GetProductionOrderProcessingStatusByProductionOrderIds(productionOrdersToFinalize.Select(po => po.ProductionOrderId));
                 var productionOrderProcessingStatus = new List<ProductionOrderProcessingStatusModel>();
                 foreach (var productionOrder in productionOrdersToFinalize)
                 {
                     var processId = Guid.NewGuid().ToString();
-                    var logBase = string.Format("{0} - Pedidos Service - Finalize Production Orders Async", processId);
+                    var logBase = string.Format(LogsConstants.FinalizeProductionOrdersAsync, processId);
                     var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrder.ProductionOrderId);
                     var productionOrderInBD = productionOrderProcessingStatusInBD.FirstOrDefault(x => x.ProductionOrderId == productionOrder.ProductionOrderId);
-                    this.logger.Information("{LogBase} - Start Validate Primary Rules - {ProductionOrderId}", logBase, productionOrder.ProductionOrderId);
+                    this.logger.Information(LogsConstants.StartValidatePrimaryRules, logBase, productionOrder.ProductionOrderId);
                     var (isValidProductionOrder, deleteRedisKey) = await this.ValidatePrimaryRules(
                         productionOrder,
                         productionOrderInBD,
@@ -111,11 +112,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
                     successfuly.Add(productionOrder);
                     productionOrderProcessingStatus.Add(productionOrderProcessing);
-                    this.logger.Information("{LogBase} - Send Kafka Message Finalize Production Order Sap - {ProductionOrderProcessing}", logBase, JsonConvert.SerializeObject(productionOrderProcessing));
+                    this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderSap, logBase, JsonConvert.SerializeObject(productionOrderProcessing));
                     _ = this.kafkaConnector.PushMessage(productionOrderProcessing, ServiceConstants.KafkaFinalizeProductionOrderSapConfigName);
                 }
 
-                this.logger.Information("Pedidos Service - Insert All ProductionOrder Processing Status - {ProductionOrderProcessingStatus}", JsonConvert.SerializeObject(productionOrderProcessingStatus));
+                this.logger.Information(LogsConstants.InsertAllProductionOrderProcessingStatus, JsonConvert.SerializeObject(productionOrderProcessingStatus));
                 _ = this.pedidosDao.InsertProductionOrderProcessingStatus(productionOrderProcessingStatus);
 
                 var validationsResult = new
@@ -124,14 +125,14 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     failed = failed.Distinct(),
                 };
 
-                this.logger.Information("Pedidos Service - End Finalize All Production Orders - {ProductionOrdersToFinalize}", JsonConvert.SerializeObject(productionOrdersToFinalize));
-                return ServiceUtils.CreateResult(true, 200, null, validationsResult, null);
+                this.logger.Information(LogsConstants.EndFinalizeAllProductionOrders, JsonConvert.SerializeObject(productionOrdersToFinalize));
+                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, validationsResult, null);
             }
             catch (Exception ex)
             {
-                var error = string.Format("Pedidos Service - End Finalize All Production Orders With Error - Message Exception: {0} - Inner Exception: {1}", ex.Message, ex.InnerException);
+                var error = string.Format(LogsConstants.EndFinalizeAllProductionOrdersWithError, ex.Message, ex.InnerException);
                 this.logger.Error(ex, error);
-                return ServiceUtils.CreateResult(false, 400, "Internal Error", null, null);
+                return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, LogsConstants.AnUnexpectedErrorOccurred, null, null);
             }
         }
 
@@ -194,12 +195,12 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             var isProductionOrderFinalizing = await this.CheckOrSetProductionOrderFinalizing(redisKey, JsonConvert.SerializeObject(orderToFinish), productionOrderInBD);
             if (isProductionOrderFinalizing)
             {
-                this.logger.Error("{LogBase} - ProductionOrderIs Already Beign Processed - {ProductionOrderId}", logBase, orderToFinish.ProductionOrderId);
+                this.logger.Error(LogsConstants.ProductionOrderIsAlreadyBeignProcessed, logBase, orderToFinish.ProductionOrderId);
                 failed.Add(CreateFinalizedFailedResponse(orderToFinish, ServiceConstants.ProductionOrderIsAlreadyBeignProcessed));
                 return (false, false);
             }
 
-            this.logger.Information("{LogBase} - Post Sap Validation Finalization - {OrderToFinish}", logBase, JsonConvert.SerializeObject(orderToFinish));
+            this.logger.Information(LogsConstants.PostSapValidationFinalization, logBase, JsonConvert.SerializeObject(orderToFinish));
             var result = await this.serviceLayerAdapterService.PostAsync(
                 new List<ValidateProductionOrderModel>
                 {
@@ -214,7 +215,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
             if (!result.Success)
             {
-                this.logger.Error("{LogBase} - Error On SAP - {ProductionOrderId}", logBase, orderToFinish.ProductionOrderId);
+                this.logger.Error(LogsConstants.ErrorOnSAP, logBase, orderToFinish.ProductionOrderId);
                 failed.Add(CreateFinalizedFailedResponse(orderToFinish, ServiceConstants.ReasonSapConnectionError));
                 return (false, true);
             }
@@ -223,13 +224,13 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             var orderValidationResult = resultMessages.FirstOrDefault(x => x.ProductionOrderId == orderToFinish.ProductionOrderId);
             if (orderValidationResult == null)
             {
-                this.logger.Error("{LogBase} - Error On SAP Response Null - {ProductionOrderId}", logBase, orderToFinish.ProductionOrderId);
+                this.logger.Error(LogsConstants.ErrorOnSAPResponseNull, logBase, orderToFinish.ProductionOrderId);
                 return (false, true);
             }
 
             if (!string.IsNullOrEmpty(orderValidationResult.ErrorMessage))
             {
-                this.logger.Error("{LogBase} - Validation Error On SAP - {ProductionOrderId}", logBase, orderToFinish.ProductionOrderId);
+                this.logger.Error(LogsConstants.ValidationErrorOnSAP, logBase, orderToFinish.ProductionOrderId);
                 failed.Add(CreateFinalizedFailedResponse(orderToFinish, orderValidationResult.ErrorMessage));
                 return (false, true);
             }

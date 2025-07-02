@@ -293,18 +293,18 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
             foreach (var productionOrderInfo in productionOrderInfoToValidate)
             {
-                var logBase = string.Format("{0} - SapServiceLayerAdapter - Primary Validation For Production Order Finalization", productionOrderInfo.ProcessId);
+                var logBase = string.Format(LogsConstants.PrimaryValidationForProductionOrderFinalization, productionOrderInfo.ProcessId);
                 string error;
                 try
                 {
-                    this.logger.Information("{LogBase} - Search production order {ProductionOrderId} on SAP", logBase, productionOrderInfo.ProductionOrderId);
+                    this.logger.Information(LogsConstants.SearchProductionOrder, logBase, productionOrderInfo.ProductionOrderId);
                     var productionOrder = await this.GetFromServiceLayer<ProductionOrderDto>(
                         string.Format(ServiceQuerysConstants.QryProductionOrderById, productionOrderInfo.ProductionOrderId),
-                        string.Format("La orden de produción {0} no existe.", productionOrderInfo.ProductionOrderId));
+                        string.Format(LogsConstants.NotFoundProductionOrder, productionOrderInfo.ProductionOrderId));
 
                     if (productionOrder.ProductionOrderStatus.Equals(ServiceConstants.ProductionOrderClosed))
                     {
-                        this.logger.Error("{LogBase} - Production order is closed - {ProductionOrderId}", logBase, productionOrderInfo.ProductionOrderId);
+                        this.logger.Error(LogsConstants.ProductionOrderIsClosed, logBase, productionOrderInfo.ProductionOrderId);
                         validationsResult.Add(
                             GenerateValidationResult(
                                 productionOrderInfo.ProcessId,
@@ -315,7 +315,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
                     if (!productionOrder.ProductionOrderStatus.Equals(ServiceConstants.ProductionOrderReleased))
                     {
-                        this.logger.Error("{LogBase} - Production order not released - {ProductionOrderId}", logBase, productionOrderInfo.ProductionOrderId);
+                        this.logger.Error(LogsConstants.ProductionOrderNotReleased, logBase, productionOrderInfo.ProductionOrderId);
                         validationsResult.Add(
                             GenerateValidationResult(
                                 productionOrderInfo.ProcessId,
@@ -324,10 +324,10 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                         continue;
                     }
 
-                    this.logger.Information("{LogBase} - Validate required quantity for retroactive issues - {ProductionOrderId}", logBase, productionOrderInfo.ProductionOrderId);
+                    this.logger.Information(LogsConstants.ValidateRequiredQuantityForRetroactiveIssue, logBase, productionOrderInfo.ProductionOrderId);
                     await this.ValidateRequiredQuantityForRetroactiveIssues(productionOrder);
 
-                    this.logger.Information("{LogBase} - Validating new batches - {ProductionOrderId}", logBase, productionOrderInfo.ProductionOrderId);
+                    this.logger.Information(LogsConstants.ValidatingNewBatches, logBase, productionOrderInfo.ProductionOrderId);
                     await this.ValidateNewBatches(productionOrder.ItemNo, productionOrderInfo.Batches);
 
                     validationsResult.Add(
@@ -338,7 +338,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 }
                 catch (CustomServiceException ex)
                 {
-                    error = string.Format("{0} - {1}", logBase, ex.Message);
+                    error = string.Format(LogsConstants.ProcessLogTwoParts, logBase, ex.Message);
                     this.logger.Error(ex, error);
                     validationsResult.Add(
                             GenerateValidationResult(
@@ -348,7 +348,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 }
                 catch (Exception ex)
                 {
-                    error = string.Format("{0} - {1} - {2}", logBase, ex.StackTrace, ex.Message);
+                    error = string.Format(LogsConstants.ProcessLogThreeParts, logBase, ex.StackTrace, ex.Message);
                     this.logger.Error(ex, error);
                     validationsResult.Add(
                             GenerateValidationResult(
@@ -358,7 +358,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                 }
             }
 
-            return ServiceUtils.CreateResult(true, 200, null, validationsResult, null);
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, validationsResult, null);
         }
 
         private static ValidationsToFinalizeProductionOrdersResultDto GenerateValidationResult(
