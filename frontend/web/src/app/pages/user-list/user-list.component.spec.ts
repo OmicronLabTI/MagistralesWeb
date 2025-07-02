@@ -66,7 +66,6 @@ describe('UserListComponent', () => {
     dataServiceSpy.calculateTernary.and.callFake(<T, U>(validation: boolean, firstValue: T, secondaValue: U): T | U => {
       return validation ? firstValue : secondaValue;
     });
-    dataServiceSpy.calculateTernary.and.returnValue(true);
     messagesServiceSpy.presentToastCustom.and.callFake(() => {
       return new Promise(resolve => { resolve(''); });
     });
