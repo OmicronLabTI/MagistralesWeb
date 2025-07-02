@@ -77,7 +77,7 @@ namespace Omicron.Pedidos.Services.Utils
             });
 
             await pedidosDao.UpdateUserOrders(userOrders);
-            _ = kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }
@@ -124,7 +124,7 @@ namespace Omicron.Pedidos.Services.Utils
             var listOrderLogToInsert = getUpdateUserOrderModel.Item2;
 
             await pedidosDao.UpdateUserOrders(userOrdersByProd);
-            _ = kafkaConnector.PushMessage(listOrderLogToInsert);
+            _ = kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
 
             return ServiceUtils.CreateResult(true, 200, userError, listErrorId, null);
         }

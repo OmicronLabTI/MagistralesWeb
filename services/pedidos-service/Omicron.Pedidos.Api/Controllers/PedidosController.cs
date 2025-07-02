@@ -13,6 +13,7 @@ namespace Omicron.Pedidos.Api.Controllers
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Omicron.Pedidos.Dtos.Models;
+    using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Facade.Pedidos;
     using Omicron.Pedidos.Resources.Enums;
 
@@ -191,6 +192,19 @@ namespace Omicron.Pedidos.Api.Controllers
         public async Task<IActionResult> CloseSalesOrders(List<OrderIdDto> finishOrders)
         {
             var response = await this.pedidoFacade.CloseSalesOrders(finishOrders);
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Finalize Production Orders Async.
+        /// </summary>
+        /// <param name="productionOrdersToFinalize">Production Orders to Finalize.</param>
+        /// <returns>Order with updated info.</returns>
+        [Route("/finalize/productionorders")]
+        [HttpPut]
+        public async Task<IActionResult> FinalizeProductionOrdersAsync(List<FinalizeProductionOrderModel> productionOrdersToFinalize)
+        {
+            var response = await this.pedidoFacade.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
             return this.Ok(response);
         }
 

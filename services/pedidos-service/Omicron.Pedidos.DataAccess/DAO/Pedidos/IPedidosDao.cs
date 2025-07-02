@@ -294,7 +294,7 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <returns>the data.</returns>
         Task<List<UserOrderModel>> GetUserOrdersByInvoiceId(List<int> invoiceId);
 
-                /// <summary>
+        /// <summary>
         /// Gets the production qr invoice by invoiceid.
         /// </summary>
         /// <param name="invoiceId">the invoice.</param>
@@ -424,5 +424,19 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <param name="modelsToSave"> the models to save. </param>
         /// <returns> the data. </returns>
         Task<bool> UpdatesQrRouteFactura(List<ProductionFacturaQrModel> modelsToSave);
+
+        /// <summary>
+        /// InsertProductionOrderProcessingStatus.
+        /// </summary>
+        /// <param name="productionOrderProcessingStatus">productionOrderProcessingStatus.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<bool> InsertProductionOrderProcessingStatus(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatus);
+
+        /// <summary>
+        /// GetProductionOrderProcessingStatusByProductionOrderIds.
+        /// </summary>
+        /// <param name="productionOrderIds">productionOrderIds.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<IEnumerable<ProductionOrderProcessingStatusModel>> GetProductionOrderProcessingStatusByProductionOrderIds(IEnumerable<int> productionOrderIds);
     }
 }

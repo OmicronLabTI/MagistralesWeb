@@ -996,6 +996,62 @@ namespace Omicron.Pedidos.Services.Constants
         public const string OrdersToExcludeKey = "OrdersToExclude";
 
         /// <summary>
+        /// Gets ProductionOrderIsAlreadyBeignProcessed.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderIsAlreadyBeignProcessed.
+        /// </value>
+        public static string ProductionOrderIsAlreadyBeignProcessed => "La orden de producción ya está siendo procesada.";
+
+        /// <summary>
+        /// Gets SapValidationFinalizationEndpoint.
+        /// </summary>
+        /// <value>
+        /// SapValidationFinalizationEndpoint.
+        /// </value>
+        public static string SapValidationFinalizationEndpoint => "validation/productionorders/finalization";
+
+        /// <summary>
+        /// Gets StepPrimaryValidations.
+        /// </summary>
+        /// <value>
+        /// StepPrimaryValidations.
+        /// </value>
+        public static string StepPrimaryValidations => "Primary Validations";
+
+        /// <summary>
+        /// Gets FinalizeProcessInProgressStatus.
+        /// </summary>
+        /// <value>
+        /// FinalizeProcessInProgressStatus.
+        /// </value>
+        public static string FinalizeProcessInProgressStatus => "In Progress";
+
+        /// <summary>
+        /// Gets ProductionOrderFinalizingKey.
+        /// </summary>
+        /// <value>
+        /// ProductionOrderFinalizingKey.
+        /// </value>
+        public static string ProductionOrderFinalizingKey => "production-order-finalizing:{0}";
+
+        /// <summary>
+        /// Gets KafkaInsertLogsConfigName.
+        /// </summary>
+        /// <value>
+        /// KafkaInsertLogsConfigName.
+        /// </value>
+        public static string KafkaInsertLogsConfigName => "insertlogs";
+
+        /// <summary>
+        /// Gets KafkaFinalizeProductionOrderSapConfigName.
+        /// </summary>
+        /// <value>
+        /// KafkaFinalizeProductionOrderSapConfigName.
+        /// </value>
+        public static string KafkaFinalizeProductionOrderSapConfigName => "finalizeproductionordersap";
+
+        /// <summary>
         /// Gets the status of the order.
         /// </summary>
         /// <value>

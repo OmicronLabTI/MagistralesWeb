@@ -88,5 +88,13 @@ namespace Omicron.Pedidos.Entities.Context
         /// Object componets of custom lists.
         /// </value>
         DbSet<ProductionFacturaQrModel> ProductionFacturaQrModel { get; set; }
+
+        /// <summary>
+        /// Gets or sets ProductionOrderProcessingStatusModel.
+        /// </summary>
+        /// <value>
+        /// Object ProductionOrderProcessingStatusModel.
+        /// </value>
+        DbSet<ProductionOrderProcessingStatusModel> ProductionOrderProcessingStatusModel { get; set; }
     }
 }

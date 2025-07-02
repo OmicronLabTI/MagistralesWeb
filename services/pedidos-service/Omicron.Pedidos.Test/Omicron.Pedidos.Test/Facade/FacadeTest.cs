@@ -8,6 +8,8 @@
 
 namespace Omicron.Pedidos.Test.Facade
 {
+    using Omicron.Pedidos.Services.ProductionOrders;
+
     /// <summary>
     /// Class UsersServiceTest.
     /// </summary>
@@ -40,6 +42,7 @@ namespace Omicron.Pedidos.Test.Facade
             var mockCancelPedidosServices = new Mock<ICancelPedidosService>();
             var mockFormulasPedidosServices = new Mock<IFormulaPedidosService>();
             var mockProcess = new Mock<IProcessOrdersService>();
+            var mockProductionOrderService = new Mock<IProductionOrdersService>();
 
             mockProcess.SetReturnsDefault(Task.FromResult(response));
             mockerAssignPedidosService.SetReturnsDefault(Task.FromResult(response));
@@ -47,6 +50,7 @@ namespace Omicron.Pedidos.Test.Facade
             mockServicesPedidos.SetReturnsDefault(Task.FromResult(response));
             mockCancelPedidosServices.SetReturnsDefault(Task.FromResult(response));
             mockFormulasPedidosServices.SetReturnsDefault(Task.FromResult(response));
+            mockProductionOrderService.SetReturnsDefault(Task.FromResult(response));
 
             this.pedidoFacade = new PedidoFacade(
                 mockServicesPedidos.Object,
@@ -55,7 +59,8 @@ namespace Omicron.Pedidos.Test.Facade
                 mockCancelPedidosServices.Object,
                 mockProductivityService.Object,
                 mockFormulasPedidosServices.Object,
-                mockProcess.Object);
+                mockProcess.Object,
+                mockProductionOrderService.Object);
         }
 
         /// <summary>
@@ -537,6 +542,28 @@ namespace Omicron.Pedidos.Test.Facade
 
             // act
             var response = await this.pedidoFacade.CloseSalesOrders(salesOrders);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success);
+            Assert.That(response.Response, Is.Not.Null);
+            Assert.That(response.ExceptionMessage, Is.Empty);
+            Assert.That(response.UserError, Is.Empty);
+            Assert.That(response.Code.Equals(200));
+        }
+
+        /// <summary>
+        /// test test.
+        /// </summary>
+        /// <returns>returns nothing.</returns>
+        [Test]
+        public async Task FinalizeProductionOrdersAsync()
+        {
+            // arrange
+            var productionOrdersToFinalize = new List<FinalizeProductionOrderModel>();
+
+            // act
+            var response = await this.pedidoFacade.FinalizeProductionOrdersAsync(productionOrdersToFinalize);
 
             // Assert
             Assert.That(response, Is.Not.Null);

@@ -607,6 +607,23 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return true;
         }
 
+        /// <inheritdoc/>
+        public async Task<bool> InsertProductionOrderProcessingStatus(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatus)
+        {
+            this.databaseContext.ProductionOrderProcessingStatusModel.AddRange(productionOrderProcessingStatus);
+            await ((DatabaseContext)this.databaseContext).SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ProductionOrderProcessingStatusModel>> GetProductionOrderProcessingStatusByProductionOrderIds(IEnumerable<int> productionOrderIds)
+        {
+            return await this.databaseContext.ProductionOrderProcessingStatusModel
+                .Where(po => productionOrderIds.Contains(po.ProductionOrderId))
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         private async Task<List<UserOrderModel>> GetSaleOrderForAlmacenCommon(
             IQueryable<UserOrderModel> ordersQuery,
             List<string> statusPending,

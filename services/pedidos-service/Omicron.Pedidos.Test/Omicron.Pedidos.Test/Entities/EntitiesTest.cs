@@ -74,6 +74,12 @@ namespace Omicron.Pedidos.Test.Entities
             new CreateOrderPdfDto(),
             new UserOrdersForInvoicesModel(),
             new UserOrderByInvoiceAndLineNum(),
+            new ProductionOrderProcessingStatusModel(),
+            new FinalizeProductionOrderModel(),
+            new FinalizeProductionOrderPayload(),
+            new ProductionOrderFailedResultModel(),
+            new ValidateProductionOrderModel(),
+            new ValidationsToFinalizeProductionOrdersResultModel(),
         };
 
         /// <summary>

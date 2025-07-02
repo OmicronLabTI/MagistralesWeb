@@ -817,6 +817,61 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// GetProductionOrderProcessingStatusModel.
+        /// </summary>
+        /// <returns>List ProductionOrderProcessingStatusModel.</returns>
+        public List<ProductionOrderProcessingStatusModel> GetProductionOrderProcessingStatusModel()
+        {
+            return new List<ProductionOrderProcessingStatusModel>
+            {
+                new ProductionOrderProcessingStatusModel
+                {
+                    Id = "2d982b6a-e3d9-463d-9c36-e80f8e466a17",
+                    ProductionOrderId = 100001,
+                    Step = "Primary Validations",
+                    Status = "In Progress",
+                    Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"35642b3a-9471-4b89-9862-8bee6d98c361\",\"ProductionOrderId\":226357,\"SourceProcess\":null,\"Batches\":null}}",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    LastUpdated = DateTime.Now,
+                },
+            };
+        }
+
+        /// <summary>
+        /// GetRedisFinalizeProductionOrderString.
+        /// </summary>
+        /// <param name="hasRedisValue">Has Redis Value.</param>
+        /// <returns>the user.</returns>
+        public string GetRedisFinalizeProductionOrderString(bool hasRedisValue)
+        {
+            var redisValue = new List<FinalizeProductionOrderModel>();
+            if (hasRedisValue)
+            {
+                redisValue.Add(new FinalizeProductionOrderModel { ProductionOrderId = 100002, UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e", SourceProcess = "SaleOrder" });
+            }
+
+            return JsonConvert.SerializeObject(redisValue);
+        }
+
+        /// <summary>
+        /// Creates a resultModle.
+        /// </summary>
+        /// <param name="response">the object to send.</param>
+        /// <param name="isOk">flag to define if the service returns an error.</param>
+        /// <param name="comments">the comments.</param>
+        /// <returns>the data.</returns>
+        public ResultModel GetResultModel(object response, bool isOk = true, string comments = "")
+        {
+            return new ResultModel
+            {
+                Code = isOk ? 200 : 400,
+                Response = JsonConvert.SerializeObject(response),
+                Success = isOk,
+                Comments = string.Empty,
+            };
+        }
+
+        /// <summary>
         /// Get new db context for in memory database.
         /// </summary>
         /// <param name="dbname">Data base name.</param>

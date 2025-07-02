@@ -11,6 +11,7 @@ namespace Omicron.Pedidos.Facade.Pedidos
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Omicron.Pedidos.Dtos.Models;
+    using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Resources.Enums;
 
     /// <summary>
@@ -101,6 +102,13 @@ namespace Omicron.Pedidos.Facade.Pedidos
         /// <param name="finishOrders">Orders to finish.</param>
         /// <returns>Orders with updated info.</returns>urns>
         Task<ResultDto> CloseSalesOrders(List<OrderIdDto> finishOrders);
+
+        /// <summary>
+        /// Finalize Production Orders Async.
+        /// </summary>
+        /// <param name="productionOrdersToFinalize">Production Orders To Finalize.</param>
+        /// <returns>Process Result.</returns>urns>
+        Task<ResultDto> FinalizeProductionOrdersAsync(List<FinalizeProductionOrderModel> productionOrdersToFinalize);
 
         /// <summary>
         /// reject order (status to reject).

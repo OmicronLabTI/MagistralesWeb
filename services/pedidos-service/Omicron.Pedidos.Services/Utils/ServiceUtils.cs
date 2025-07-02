@@ -14,6 +14,7 @@ namespace Omicron.Pedidos.Services.Utils
     using System.Linq;
     using System.Threading.Tasks;
     using Newtonsoft.Json;
+    using Omicron.Pedidos.DataAccess.DAO.Pedidos;
     using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Enums;
     using Omicron.Pedidos.Entities.Model;
@@ -386,6 +387,33 @@ namespace Omicron.Pedidos.Services.Utils
         {
             var resultUsers = await userService.PostSimpleUsers(qfbIds, ServiceConstants.GetQfbInfoById);
             return JsonConvert.DeserializeObject<List<QfbTecnicInfoDto>>(JsonConvert.SerializeObject(resultUsers.Response));
+        }
+
+        /// <summary>
+        /// GetRelatedOrdersToSalesOrder.
+        /// </summary>
+        /// <param name="pedidosDao">Pedidos Dao.</param>
+        /// <param name="salesOrderId">Sales Order Id.</param>
+        /// <param name="ignoredProductionOrderStatus">Ignored Production Order Status.</param>
+        /// <returns>sale orders y production orders.</returns>
+        public static async Task<(List<UserOrderModel> salesOrder, List<UserOrderModel> productionOrders)> GetRelatedOrdersToSalesOrder(
+            IPedidosDao pedidosDao,
+            List<int> salesOrderId,
+            params string[] ignoredProductionOrderStatus)
+        {
+            var relatedOrders = (await pedidosDao.GetUserOrderBySaleOrder(salesOrderId.Select(x => x.ToString()).ToList())).ToList();
+            var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).Where(x => !ignoredProductionOrderStatus.Contains(x.Status));
+            return (relatedOrders.Where(x => x.IsSalesOrder).ToList(), productionOrders.ToList());
+        }
+
+        /// <summary>
+        /// Calculates the "or´s" conditions.
+        /// </summary>
+        /// <param name="list">list of bools to evaluate.</param>
+        /// <returns>the data.</returns>
+        public static bool CalculateOr(params bool[] list)
+        {
+            return list.Any(element => element);
         }
 
         /// <summary>

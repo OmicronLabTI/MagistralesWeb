@@ -521,6 +521,36 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             }
         }
 
+        /// <summary>
+        /// PrimaryValidationForProductionOrderFinalizationInSapError.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        public async Task PrimaryValidationForProductionOrderFinalizationInSapError()
+        {
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+
+            mockServiceLayerClient
+                .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
+                .ThrowsAsync(new Exception("Connection Refused."));
+
+            var request = new List<CloseProductionOrderDto>
+            {
+                new CloseProductionOrderDto()
+                {
+                    ProductionOrderId = 1022,
+                },
+            };
+
+            var result = await service.PrimaryValidationForProductionOrderFinalizationInSap(request);
+            var resultTest = (List<ValidationsToFinalizeProductionOrdersResultDto>)result.Response;
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
+            Assert.That(resultTest.Any(), Is.True);
+            Assert.That(resultTest.All(x => !string.IsNullOrEmpty(x.ErrorMessage)), Is.True);
+        }
+
         private static CloseProductionOrderDto GetCloseProductionOrderDto(int orderId, bool batches)
         {
             var batch = new BatchesConfigurationDto()
