@@ -290,6 +290,7 @@ namespace Omicron.Pedidos.Services.Pedidos
                 // "validation/productionorders/finalization"
                 var result = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.FinishFabOrder);
 
+                // var result = await this.ProductionOrdersService.FinalizeProductionOrdersAsync();
                 if (!result.Success)
                 {
                     failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, ServiceConstants.ReasonSapConnectionError));
