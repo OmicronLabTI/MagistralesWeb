@@ -11,7 +11,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     /// <summary>
     /// Class for the magistral scanner.
     /// </summary>
-    public class MagistralScannerModel
+    public class MagistralScannerModel : BaseProductColorModel
     {
         /// <summary>
         /// Gets or sets Code.

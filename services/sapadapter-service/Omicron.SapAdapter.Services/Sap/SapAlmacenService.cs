@@ -149,6 +149,9 @@ namespace Omicron.SapAdapter.Services.Sap
 
             var itemCode = (await this.sapDao.GetProductById(order.CodigoProducto)).FirstOrDefault();
             var productType = ServiceShared.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
+            var themesResponse = await this.catalogsService.PostCatalogs(new List<string> { itemCode.ThemeId }, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            var selectedTheme = ServiceShared.GetSelectedTheme(itemCode.ThemeId, themes);
 
             var magistralData = new MagistralScannerModel
             {
@@ -158,6 +161,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 NeedsCooling = itemCode.NeedsCooling,
                 Pieces = order.QtyPlanned.Value,
                 ProductType = $"Producto {productType}",
+                BackgroundColor = selectedTheme.BackgroundColor,
+                LabelText = selectedTheme.LabelText,
+                LabelColor = selectedTheme.TextColor,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, magistralData, null, null);
@@ -202,6 +208,9 @@ namespace Omicron.SapAdapter.Services.Sap
             }
 
             var remissionPieces = await this.CalculateRemissionPieces(orderId, product.ProductoId);
+            var themesResponse = await this.catalogsService.PostCatalogs(new List<string> { product.ThemeId }, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            var selectedTheme = ServiceShared.GetSelectedTheme(product.ThemeId, themes);
 
             var lineData = new LineScannerModel
             {
@@ -211,6 +220,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 ProductType = $"Producto {productType}",
                 NeedsCooling = product.NeedsCooling,
                 Pieces = remissionPieces,
+                BackgroundColor = selectedTheme.BackgroundColor,
+                LabelText = selectedTheme.LabelText,
+                LabelColor = selectedTheme.TextColor,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
