@@ -8,7 +8,7 @@
 			<column name="productionorderid" type="INT">
 				<constraints nullable="false" />
 			</column>
-			<column name="step" type="NVARCHAR(100)">
+			<column name="laststep" type="NVARCHAR(100)">
 				<constraints nullable="false" />
 			</column>
 			<column name="status" type="NVARCHAR(20)">

@@ -178,7 +178,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         private static ProductionOrderProcessingStatusModel CreateProductionOrderProcessingStatusModel(
             string processId,
             int productionOrderId,
-            string step,
+            string lastStep,
             string status,
             string payload,
             DateTime createdAt)
@@ -187,7 +187,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             {
                 Id = processId,
                 ProductionOrderId = productionOrderId,
-                Step = step,
+                LastStep = lastStep,
                 Status = status,
                 Payload = payload,
                 CreatedAt = createdAt,

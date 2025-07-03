@@ -43,8 +43,8 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>
         /// String Step.
         /// </value>
-        [Column("step")]
-        public string Step { get; set; }
+        [Column("laststep")]
+        public string LastStep { get; set; } // Last Succesfully Step.
 
         /// <summary>
         /// Gets or sets Status.
