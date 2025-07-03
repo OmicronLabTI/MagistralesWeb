@@ -13,7 +13,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     /// <summary>
     /// The delivery scanned data.
     /// </summary>
-    public class DeliveryScannedModel
+    public class DeliveryScannedModel : BaseProductColorModel
     {
         /// <summary>
         /// Gets or sets Code.
