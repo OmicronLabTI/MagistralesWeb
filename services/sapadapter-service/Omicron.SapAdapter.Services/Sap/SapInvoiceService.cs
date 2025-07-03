@@ -310,6 +310,9 @@ namespace Omicron.SapAdapter.Services.Sap
             lineProduct ??= new LineProductsModel { BatchName = JsonConvert.SerializeObject(new List<AlmacenBatchModel>()) };
             var batchModel = JsonConvert.DeserializeObject<List<AlmacenBatchModel>>(lineProduct.BatchName);
             var batches = await this.GetBatchesForInvoice(itemCode, batchModel);
+            var themesResponse = await this.catalogsService.PostCatalogs(new List<string> { itemCode.ThemeId }, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            var selectedTheme = ServiceShared.GetSelectedTheme(itemCode.ThemeId, themes);
 
             var lineData = new LineScannerModel
             {
@@ -320,6 +323,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 InvoiceId = sapData.Item2.DocNum,
                 DeliveryId = sapData.Item1.BaseEntry.Value,
                 NeedsCooling = itemCode.NeedsCooling,
+                BackgroundColor = selectedTheme.BackgroundColor,
+                LabelText = selectedTheme.LabelText,
+                LabelColor = selectedTheme.TextColor,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, lineData, null, null);
