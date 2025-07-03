@@ -272,6 +272,9 @@ namespace Omicron.SapAdapter.Services.Sap
             var productType = ServiceShared.CalculateTernary(itemCode.IsMagistral.Equals("Y"), ServiceConstants.Magistral, ServiceConstants.Linea);
 
             var sapData = await this.GetSaleOrderInvoiceDataByItemCode(saleOrder, itemCode.ProductoId);
+            var themesResponse = await this.catalogsService.PostCatalogs(new List<string> { itemCode.ThemeId }, ServiceConstants.GetThemes);
+            var themes = JsonConvert.DeserializeObject<List<ProductColorsDto>>(themesResponse.Response.ToString());
+            var selectedTheme = ServiceShared.GetSelectedTheme(itemCode.ThemeId, themes);
 
             var product = new MagistralScannerModel
             {
@@ -283,6 +286,9 @@ namespace Omicron.SapAdapter.Services.Sap
                 ProductType = $"Producto {productType}",
                 DeliveryId = sapData.Item1.BaseEntry.Value,
                 InvoiceId = sapData.Item2.DocNum,
+                BackgroundColor = selectedTheme.BackgroundColor,
+                LabelText = selectedTheme.LabelText,
+                LabelColor = selectedTheme.TextColor,
             };
 
             return ServiceUtils.CreateResult(true, 200, null, product, null, null);
@@ -886,7 +892,7 @@ namespace Omicron.SapAdapter.Services.Sap
                     listBatches = await this.GetBatchesByDelivery(invoice.BaseEntry.Value, invoice.ProductoId, batchName);
                 }
 
-                var canCancel = this.DetermineCanCancel(isMagistral: product.Item2 != 0, invoice.BaseEntry.Value,  saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
+                var canCancel = this.DetermineCanCancel(isMagistral: product.Item2 != 0, invoice.BaseEntry.Value, saleOrderId: saleId, productId: invoice.ProductoId, userOrders: userOrders, lineProducts: lineProducts);
 
                 var incidentdb = incidents.FirstOrDefault(x => ServiceShared.CalculateAnd(x.SaleOrderId == product.Item3, x.ItemCode == item.ProductoId));
                 incidentdb ??= new IncidentsModel();
