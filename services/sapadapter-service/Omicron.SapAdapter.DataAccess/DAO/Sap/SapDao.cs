@@ -853,6 +853,7 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
                              IsWorkableProduct = p.IsWorkableProduct,
                              IsPackage = p.IsPackage,
                              ProductFirmName = fm == default ? string.Empty : fm.ProductFirmName,
+                             ThemeId = p.ThemeId,
                          }).AsNoTracking();
 
             return await this.RetryQuery(query);

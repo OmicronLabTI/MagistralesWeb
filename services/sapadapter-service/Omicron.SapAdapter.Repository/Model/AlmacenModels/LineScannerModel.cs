@@ -13,7 +13,7 @@ namespace Omicron.SapAdapter.Entities.Model.AlmacenModels
     /// <summary>
     /// class for the line scanner.
     /// </summary>
-    public class LineScannerModel
+    public class LineScannerModel : BaseProductColorModel
     {
         /// <summary>
         /// Gets or sets Code.
