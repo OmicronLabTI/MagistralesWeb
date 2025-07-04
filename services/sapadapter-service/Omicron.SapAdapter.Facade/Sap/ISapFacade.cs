@@ -219,5 +219,12 @@ namespace Omicron.SapAdapter.Facade.Sap
         /// <param name="warehouses"> warehouse collection to search. </param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<ResultDto> GetWarehouses(List<string> warehouses);
+
+        /// <summary>
+        /// Gets the matching warehouse.
+        /// </summary>
+        /// <param name="itemCodes"> warehouse collection to search. </param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ResultDto> GetUnitProducts(List<string> itemCodes);
     }
 }

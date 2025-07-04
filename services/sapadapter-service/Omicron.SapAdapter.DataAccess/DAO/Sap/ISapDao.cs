@@ -680,5 +680,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// <param name="docNums">docNums.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<InvoiceHeaderModel>> GetClosedInvoicesByDocNum(List<int> docNums);
+
+        /// <summary>
+        /// GetProductsUnits.
+        /// </summary>
+        /// <param name="itemCodes">itemCodes.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ProductoModel>> GetProductsUnits(List<string> itemCodes);
     }
 }

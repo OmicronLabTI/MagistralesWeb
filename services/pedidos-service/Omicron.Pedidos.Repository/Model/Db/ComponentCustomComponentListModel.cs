@@ -56,5 +56,12 @@ namespace Omicron.Pedidos.Entities.Model.Db
         /// <value>The base quantity.</value>
         [Column("basequantity")]
         public decimal BaseQuantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets base quantity.
+        /// </summary>
+        /// <value>The base quantity.</value>
+        [NotMapped]
+        public string Unit { get; set; }
     }
 }

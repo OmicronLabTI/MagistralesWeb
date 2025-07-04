@@ -34,7 +34,7 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<OrderModel>
             {
-                new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ShippingAddressName = "Nombre de la dirección", ClientType = "institucional" },
+                new OrderModel { PedidoId = 100, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ShippingAddressName = "Nombre de la direcciï¿½n", ClientType = "institucional" },
                 new OrderModel { PedidoId = 101, AsesorId = 1, Codigo = "Codigo", DocNum = 101, FechaFin = DateTime.Today.AddDays(1), FechaInicio = DateTime.Today, Medico = "Medico", PedidoStatus = "O", Patient = "paciente", ShippingAddressName = "3. LUIS JAVIER GARCIA AQUINO C.6019043", ClientType = "institucional", OrderType = "LN" },
                 new OrderModel { PedidoId = 102, AsesorId = 1, Codigo = "Codigo", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 2, OrderType = "MN", Patient = "paciente" },
                 new OrderModel { PedidoId = 103, AsesorId = 1, Codigo = "Codigo1234", DocNum = 100, FechaFin = DateTime.Now, FechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), Medico = "Medico", PedidoStatus = "C", AtcEntry = 1, OrderType = "MN", DocNumDxp = "A1", Patient = "paciente", ClientType = "general" },
@@ -293,6 +293,9 @@ namespace Omicron.SapAdapter.Test
 
                 // For omigenomics
                 new ProductoModel { IsMagistral = "N", ProductoId = "Omigenomics", ProductoName = "Omigenomics", Unit = "PZ", LargeDescription = "Omigenomics", NeedsCooling = "Y", BarCode = "Omicenomics", IsLine = "Y", ProductGroupId = 2, IsWorkableProduct = "N" },
+
+                // For omigenomics
+                new ProductoModel { IsMagistral = "N", ProductoId = "TEST 1", ProductoName = "Omigenomics", Unit = "PZ", LargeDescription = "Omigenomics", NeedsCooling = "Y", BarCode = "Omicenomics", IsLine = "Y", ProductGroupId = 2, IsWorkableProduct = "N", UnitId = 1 },
             };
         }
 
@@ -993,12 +996,12 @@ namespace Omicron.SapAdapter.Test
         {
             return new List<RawMaterialRequestDetailModel>
             {
-               new RawMaterialRequestDetailModel { DocEntry = 1, ItemCode = "ITM 1", Description = "Descripción", Quantity = 1.234M, TargetWarehosue = "MG", Unit = "Paquete" },
-               new RawMaterialRequestDetailModel { DocEntry = 2, ItemCode = "ITM 2", Description = "Descripción", Quantity = 2.234M, TargetWarehosue = "MG", Unit = "Paquete" },
-               new RawMaterialRequestDetailModel { DocEntry = 3, ItemCode = "ITM 3", Description = "Descripción", Quantity = 3.234M, TargetWarehosue = "MG", Unit = "Paquete" },
-               new RawMaterialRequestDetailModel { DocEntry = 4, ItemCode = "ITM 4", Description = "Descripción", Quantity = 4.234M, TargetWarehosue = "MG", Unit = "Paquete" },
-               new RawMaterialRequestDetailModel { DocEntry = 5, ItemCode = "ITM 5", Description = "Descripción", Quantity = 5.234M, TargetWarehosue = "MG", Unit = "Paquete" },
-               new RawMaterialRequestDetailModel { DocEntry = 6, ItemCode = "ITM 6", Description = "Descripción", Quantity = 6.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 1, ItemCode = "ITM 1", Description = "Descripciï¿½n", Quantity = 1.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 2, ItemCode = "ITM 2", Description = "Descripciï¿½n", Quantity = 2.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 3, ItemCode = "ITM 3", Description = "Descripciï¿½n", Quantity = 3.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 4, ItemCode = "ITM 4", Description = "Descripciï¿½n", Quantity = 4.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 5, ItemCode = "ITM 5", Description = "Descripciï¿½n", Quantity = 5.234M, TargetWarehosue = "MG", Unit = "Paquete" },
+               new RawMaterialRequestDetailModel { DocEntry = 6, ItemCode = "ITM 6", Description = "Descripciï¿½n", Quantity = 6.234M, TargetWarehosue = "MG", Unit = "Paquete" },
             };
         }
 
@@ -1012,6 +1015,19 @@ namespace Omicron.SapAdapter.Test
             {
                new WarehouseModel { WarehouseCode = "AMP", WarehouseName = "Materias Primas Alfareros", },
                new WarehouseModel { WarehouseCode = "be", WarehouseName = "BIOEQUAL", },
+            };
+        }
+
+        /// <summary>
+        /// GetBaseUnitProducts.
+        /// </summary>
+        /// <returns>ActiveConfigRoutesModel.</returns>
+        public List<UnitCatalogModel> GetBaseUnitProducts()
+        {
+            return new List<UnitCatalogModel>
+            {
+                new UnitCatalogModel { Id = 1, Code = "KG", Description = "Kilogramos" },
+                new UnitCatalogModel { Id = 2, Code = "GR", Description = "Gramos" },
             };
         }
     }
