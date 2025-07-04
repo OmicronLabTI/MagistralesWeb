@@ -19,13 +19,13 @@ namespace Omicron.SapServiceLayerAdapter.Common.DTOs.ProductionOrders
         public int ProductionOrderId { get; set; }
 
         /// <summary>
-        /// Gets or sets ProcessId.
-        /// </summary>
-        public string ProcessId { get; set; }
-
-        /// <summary>
         /// Gets or sets ErrorMessage.
         /// </summary>
         public string ErrorMessage { get; set; }
+
+        /// <summary>
+        /// Gets or sets LastStep.
+        /// </summary>
+        public string LastStep { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
     /// Class ProductionOrderServiceTest.
     /// </summary>
     [TestFixture]
-    public class ProductionOrderServiceTest
+    public class ProductionOrderServiceTest : BaseTest
     {
         private Mock<ILogger> mockLogger;
         private IProductionOrderService productionOrderService;
@@ -551,102 +551,187 @@ namespace Omicron.SapServiceLayerAdapter.Test.Services.ProductionOrder
             Assert.That(resultTest.All(x => !string.IsNullOrEmpty(x.ErrorMessage)), Is.True);
         }
 
-        private static CloseProductionOrderDto GetCloseProductionOrderDto(int orderId, bool batches)
+        /// <summary>
+        /// FinalizeProductionOrderInSap.
+        /// </summary>
+        /// <param name="lastStep">Last Step.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        [TestCase("Primary Validations")]
+        [TestCase("Create Inventory")]
+        [TestCase("Create Receipt")]
+        [TestCase("Invalid Step")]
+        public async Task FinalizeProductionOrderInSap(string lastStep)
         {
-            var batch = new BatchesConfigurationDto()
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+
+            if (lastStep == "Primary Validations")
             {
-                Quantity = "1.0",
-                BatchCode = "Code",
-                ManufacturingDate = DateTime.Now,
-                ExpirationDate = DateTime.Now,
-            };
-            var item = new CloseProductionOrderDto()
+                mockServiceLayerClient
+                   .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
+                   .Returns(Task.FromResult(GetResult(true, GetProductionOrder("boposReleased", 0, 0))))
+                   .Returns(Task.FromResult(GetResult(true, GetProductionOrder("boposReleased", 0, 0))))
+                   .Returns(Task.FromResult(GetResult(true, GetProduct("EM-123", "tYES", 100))));
+            }
+            else
             {
-                ProductionOrderId = orderId,
-                Batches = batches ? new List<BatchesConfigurationDto>() { batch } : null,
+                mockServiceLayerClient
+                   .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
+                   .Returns(Task.FromResult(GetResult(true, GetProductionOrder("boposReleased", 0, 0))))
+                   .Returns(Task.FromResult(GetResult(true, GetProduct("EM-123", "tYES", 100))));
+            }
+
+            mockServiceLayerClient
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, null)));
+
+            mockServiceLayerClient
+                .Setup(x => x.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, null)));
+
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+
+            var request = new List<CloseProductionOrderDto>
+            {
+                new CloseProductionOrderDto()
+                {
+                    ProductionOrderId = 1022,
+                    LastStep = lastStep,
+                    ProcessId = "4c1e8273-0312-4514-b985-d0a53403d1bb",
+                    Batches = new List<BatchesConfigurationDto>
+                    {
+                        new BatchesConfigurationDto { BatchCode = "Batch Code", ExpirationDate = DateTime.Now.AddYears(2), ManufacturingDate = DateTime.Now, Quantity = "2" },
+                    },
+                },
             };
 
-            return item;
+            var result = await service.FinalizeProductionOrderInSap(request);
+            var response = (List<ValidationsToFinalizeProductionOrdersResultDto>)result.Response;
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
+            Assert.That(response.Count, Is.EqualTo(1));
+            Assert.That(response.All(x => string.IsNullOrEmpty(x.ErrorMessage)), Is.True);
+
+            if (lastStep != "Invalid Step")
+            {
+                Assert.That(response.All(x => x.LastStep == "Successfully Closed In SAP"), Is.True);
+            }
+            else
+            {
+                Assert.That(response.All(x => x.LastStep == lastStep), Is.True);
+            }
         }
 
-        private static ProductionOrderDto GetProductionOrder(string status, double issuedQuantityB, double issuedQuantityM)
+        /// <summary>
+        /// FinalizeProductionOrderInSap.
+        /// </summary>
+        /// <param name="lastStep">Last Step.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        public async Task FinalizeProductionOrderInSapConnectionError()
         {
-            var firstProduct = new ProductionOrderLineDto()
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+
+            mockServiceLayerClient
+               .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
+               .Returns(Task.FromResult(GetResult(true, GetProductionOrder("boposReleased", 0, 0))))
+               .Returns(Task.FromResult(GetResult(true, GetProductionOrder("boposReleased", 0, 0))))
+               .Returns(Task.FromResult(GetResult(true, GetProduct("EM-123", "tYES", 100))));
+
+            mockServiceLayerClient
+                .SetupSequence(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, null)))
+                .ThrowsAsync(new Exception("Connection Refused."));
+
+            mockServiceLayerClient
+                .Setup(x => x.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, null)));
+
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+
+            var request = new List<CloseProductionOrderDto>
             {
-                ProductionOrderIssueType = "im_Backflush",
-                ItemNo = "EM-123",
-                Warehouse = "MN",
-                PlannedQuantity = 1,
-                IssuedQuantity = issuedQuantityB,
-                BatchNumbers = new List<ProductionOrderItemBatchDto>(),
+                new CloseProductionOrderDto()
+                {
+                    ProductionOrderId = 1022,
+                    LastStep = "Primary Validations",
+                    ProcessId = "4c1e8273-0312-4514-b985-d0a53403d1dd",
+                    Batches = new List<BatchesConfigurationDto>
+                    {
+                        new BatchesConfigurationDto { BatchCode = "Batch Code", ExpirationDate = DateTime.Now.AddYears(2), ManufacturingDate = DateTime.Now, Quantity = "2" },
+                    },
+                },
             };
 
-            var batch = new ProductionOrderItemBatchDto()
-            {
-                BatchNumber = "X-111",
-                Quantity = 1,
-                ItemCode = "EN-123",
-            };
-
-            var secondProduct = new ProductionOrderLineDto()
-            {
-                ProductionOrderIssueType = "im_Manual",
-                ItemNo = "EN-123",
-                Warehouse = "MG",
-                PlannedQuantity = 1,
-                IssuedQuantity = issuedQuantityM,
-                BatchNumbers = new List<ProductionOrderItemBatchDto>() { batch },
-            };
-
-            var productionOrder = new ProductionOrderDto()
-            {
-                ProductionOrderStatus = status,
-                AbsoluteEntry = 1,
-                DocumentNumber = 1,
-                Series = 3,
-                ProductionOrderLines = new List<ProductionOrderLineDto>() { firstProduct, secondProduct },
-                PlannedQuantity = 1,
-                Warehouse = "MN",
-            };
-
-            return productionOrder;
+            var result = await service.FinalizeProductionOrderInSap(request);
+            var response = (List<ValidationsToFinalizeProductionOrdersResultDto>)result.Response;
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
+            Assert.That(response.Count, Is.EqualTo(1));
+            Assert.That(response.All(x => !string.IsNullOrEmpty(x.ErrorMessage)), Is.True);
+            Assert.That(response.All(x => x.LastStep == "Create Inventory"), Is.True);
         }
 
-        private static ItemDto GetProduct(string name, string manageBatchNumbers, double stock)
+        /// <summary>
+        /// FinalizeProductionOrderInSap.
+        /// </summary>
+        /// <param name="lastStep">Last Step.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        [Test]
+        public async Task FinalizeProductionOrderInSapServiceLayerError()
         {
-            var itemWareHouse = new ItemWarehouseInfoDto()
+            var mockServiceLayerClient = new Mock<IServiceLayerClient>();
+
+            mockServiceLayerClient
+               .SetupSequence(x => x.GetAsync(It.IsAny<string>()))
+               .Returns(Task.FromResult(GetResult(true, GetProductionOrder("boposReleased", 0, 0))))
+               .Returns(Task.FromResult(GetResult(true, GetProductionOrder("boposReleased", 0, 0))))
+               .Returns(Task.FromResult(GetResult(true, GetProduct("EM-123", "tYES", 100))));
+
+            mockServiceLayerClient
+                .Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(true, null)));
+
+            var deadLockResult = new ServiceLayerErrorResponseDto
             {
-                WarehouseCode = "MN",
-                InStock = stock,
+                Error = new ServiceLayerErrorDetailDto
+                {
+                    Code = -2038,
+                    Message = new ServiceLayerErrorMessageDto
+                    {
+                        Lang = "en-us",
+                        Value = "Could not commit transaction: Deadlock (-2038) detected during transaction",
+                    },
+                },
             };
 
-            var firstItem = new ItemDto()
+            mockServiceLayerClient
+                .Setup(x => x.PatchAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(GetResult(false, deadLockResult)));
+
+            var service = new ProductionOrderService(mockServiceLayerClient.Object, this.mockLogger.Object, this.mapper);
+
+            var request = new List<CloseProductionOrderDto>
             {
-                ManageBatchNumbers = manageBatchNumbers,
-                ItemCode = name,
-                ItemWarehouseInfoCollection = new List<ItemWarehouseInfoDto>() { itemWareHouse },
+                new CloseProductionOrderDto()
+                {
+                    ProductionOrderId = 1022,
+                    LastStep = "Primary Validations",
+                    ProcessId = "4c1e8273-0312-4514-b985-d0a53403d1dd",
+                    Batches = new List<BatchesConfigurationDto>
+                    {
+                        new BatchesConfigurationDto { BatchCode = "Batch Code", ExpirationDate = DateTime.Now.AddYears(2), ManufacturingDate = DateTime.Now, Quantity = "2" },
+                    },
+                },
             };
 
-            return firstItem;
-        }
-
-        private static BatchNumberResponseDto GetBatchNumber(bool hasResults)
-        {
-            return new BatchNumberResponseDto()
-            {
-                Results = hasResults ? new List<BatchNumberDetailDto>() { new BatchNumberDetailDto() } : new List<BatchNumberDetailDto>(),
-            };
-        }
-
-        private static ResultModel GetResult(bool success, object data)
-        {
-            return new ResultModel()
-            {
-                Code = success ? 200 : 400,
-                Success = success,
-                Response = JsonConvert.SerializeObject(data),
-                UserError = success ? null : "Error",
-            };
+            var result = await service.FinalizeProductionOrderInSap(request);
+            var response = (List<ValidationsToFinalizeProductionOrdersResultDto>)result.Response;
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code, Is.EqualTo(200));
+            Assert.That(response.Count, Is.EqualTo(1));
+            Assert.That(response.All(x => !string.IsNullOrEmpty(x.ErrorMessage)), Is.True);
+            Assert.That(response.All(x => x.LastStep == "Create Receipt"), Is.True);
         }
     }
 }

@@ -28,5 +28,13 @@ namespace Omicron.Pedidos.Entities.Model
         /// ErrorMessage.
         /// </value>
         public string ErrorMessage { get; set; }
+
+        /// <summary>
+        /// Gets or sets LastStep.
+        /// </summary>
+        /// <value>
+        /// LastStep.
+        /// </value>
+        public string LastStep { get; set; }
     }
 }
