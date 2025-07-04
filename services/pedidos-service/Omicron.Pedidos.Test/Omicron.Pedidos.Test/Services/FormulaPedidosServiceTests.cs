@@ -20,6 +20,8 @@ namespace Omicron.Pedidos.Test.Services
 
         private DatabaseContext context;
 
+        private Mock<ISapAdapter> sapAdapter;
+
         private string userId = "abc";
 
         /// <summary>
@@ -63,7 +65,14 @@ namespace Omicron.Pedidos.Test.Services
             this.context.ComponentsCustomComponentLists.AddRange(this.GetComponentsCustomListsForTests());
             this.context.SaveChanges();
             this.pedidosDao = new PedidosDao(this.context);
-            this.formulaPedidosService = new FormulaPedidosService(this.pedidosDao);
+            this.sapAdapter = new Mock<ISapAdapter>();
+
+            var resultList = new List<ProductUnitDto>();
+            this.sapAdapter
+                .Setup(x => x.PostSapAdapter(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResulModel(resultList)));
+
+            this.formulaPedidosService = new FormulaPedidosService(this.pedidosDao, this.sapAdapter.Object);
         }
 
         /// <summary>

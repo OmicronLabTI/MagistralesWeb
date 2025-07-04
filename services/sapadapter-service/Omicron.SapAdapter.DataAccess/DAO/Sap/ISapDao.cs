@@ -703,5 +703,12 @@ namespace Omicron.SapAdapter.DataAccess.DAO.Sap
         /// </summary>
         /// <returns>A <see cref="Task{ResultModel}"/> containing the classification data.</returns>
         Task<IEnumerable<LblContainerModel>> GetAllClassifications();
+        
+        /// <summary>
+        /// GetProductsUnits.
+        /// </summary>
+        /// <param name="itemCodes">itemCodes.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<ProductoModel>> GetProductsUnits(List<string> itemCodes);
     }
 }
