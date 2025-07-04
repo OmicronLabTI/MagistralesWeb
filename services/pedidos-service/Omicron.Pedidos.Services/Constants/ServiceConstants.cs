@@ -388,6 +388,11 @@ namespace Omicron.Pedidos.Services.Constants
         /// <summary>
         /// the route to get the users by ids.
         /// </summary>
+        public const string ProductUnit = "products/units";
+
+        /// <summary>
+        /// the route to get the users by ids.
+        /// </summary>
         public const string GetUsersByOrdersById = "fabOrderId";
 
         /// <summary>

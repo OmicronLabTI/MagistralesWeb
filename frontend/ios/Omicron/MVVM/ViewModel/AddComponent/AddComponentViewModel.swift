@@ -50,7 +50,8 @@ class AddComponentViewModel {
                                       totalNecesary: Decimal(component.requiredQuantity),
                                       selectedTotal: 0,
                                       componentInfo: component.selectedComponent,
-                                      unit: component.selectedComponent.unit ?? String())
+                                      unit: component.selectedComponent.unit ?? String(),
+                                      managedByBatches: component.selectedComponent.managedByBatches ?? false)
         
         loadLotsByProductAndWarehouse(productId: productId, warehouseCode: component.warehouse, product: newProduct, callback: addNewComponent)
     }
@@ -64,9 +65,9 @@ class AddComponentViewModel {
         let quantityDecimal = quantity as NSDecimalNumber
         let totalNecesaryDecimal = product.totalNecesary as NSDecimalNumber
         
-        var first = quantityDecimal.compare(totalNecesaryDecimal) == .orderedDescending
-        var second = available.cantidadDisponible == 0
-        var third = quantity > (available.cantidadDisponible ?? 0)
+        let first = quantityDecimal.compare(totalNecesaryDecimal) == .orderedDescending
+        let second = available.cantidadDisponible == 0
+        let third = quantity > (available.cantidadDisponible ?? 0)
 
         if quantity == 0 || first || second || third {
             return
@@ -155,7 +156,7 @@ class AddComponentViewModel {
             return
         }
         
-        let allBatchesAssigned = products.allSatisfy(({ $0.totalNecesary == 0}))
+        let allBatchesAssigned = products.allSatisfy(({ ($0.totalNecesary == 0 && $0.managedByBatches) || !$0.managedByBatches}))
         saveButtonEnabled.onNext(allBatchesAssigned)
     }
 

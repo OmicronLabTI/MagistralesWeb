@@ -106,6 +106,7 @@ namespace Omicron.SapAdapter.Test
             new LineProductsDto(),
             new PedidosMagistralQrModel(),
             new BaseBatchesComponentModel(),
+            new UnitCatalogModel(),
         };
 
         /// <summary>

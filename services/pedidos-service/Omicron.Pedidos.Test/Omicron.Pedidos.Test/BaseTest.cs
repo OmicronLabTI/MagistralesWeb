@@ -765,6 +765,21 @@ namespace Omicron.Pedidos.Test
         }
 
         /// <summary>
+        /// Gets the resultDto.
+        /// </summary>
+        /// <param name="dataToSend">the data to send.</param>
+        /// <returns>the object.</returns>
+        public ResultModel GetResulModel(object dataToSend)
+        {
+            return new ResultModel
+            {
+                Code = 200,
+                Comments = null,
+                Response = JsonConvert.SerializeObject(dataToSend),
+            };
+        }
+
+        /// <summary>
         /// Get new db context for in memory database.
         /// </summary>
         /// <param name="dbname">Data base name.</param>
