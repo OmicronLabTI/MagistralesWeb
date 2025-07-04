@@ -293,6 +293,9 @@ namespace Omicron.SapAdapter.Test
 
                 // For omigenomics
                 new ProductoModel { IsMagistral = "N", ProductoId = "Omigenomics", ProductoName = "Omigenomics", Unit = "PZ", LargeDescription = "Omigenomics", NeedsCooling = "Y", BarCode = "Omicenomics", IsLine = "Y", ProductGroupId = 2, IsWorkableProduct = "N" },
+
+                // For omigenomics
+                new ProductoModel { IsMagistral = "N", ProductoId = "TEST 1", ProductoName = "Omigenomics", Unit = "PZ", LargeDescription = "Omigenomics", NeedsCooling = "Y", BarCode = "Omicenomics", IsLine = "Y", ProductGroupId = 2, IsWorkableProduct = "N", UnitId = 1 },
             };
         }
 
@@ -1097,6 +1100,19 @@ namespace Omicron.SapAdapter.Test
                 new ActiveConfigRoutesModel { Id = 4, ClassificationCode = "BQ", Exceptions = "BQ 41", ItemCode = null, IsActive = true, Route = "ALM" },
                 new ActiveConfigRoutesModel { Id = 5, ClassificationCode = "DZ", Exceptions = "DZ 51", ItemCode = "REVE 53", IsActive = true, Route = "MAG" },
                 new ActiveConfigRoutesModel { Id = 6, ClassificationCode = "REVE", Exceptions = "REVE 1", ItemCode = null, IsActive = true, Route = "ALM" },
+            };
+        }
+
+        /// <summary>
+        /// GetBaseUnitProducts.
+        /// </summary>
+        /// <returns>ActiveConfigRoutesModel.</returns>
+        public List<UnitCatalogModel> GetBaseUnitProducts()
+        {
+            return new List<UnitCatalogModel>
+            {
+                new UnitCatalogModel { Id = 1, Code = "KG", Description = "Kilogramos" },
+                new UnitCatalogModel { Id = 2, Code = "GR", Description = "Gramos" },
             };
         }
     }
