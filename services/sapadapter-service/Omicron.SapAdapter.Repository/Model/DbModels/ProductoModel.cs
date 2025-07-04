@@ -100,7 +100,7 @@ namespace Omicron.SapAdapter.Entities.Model
         /// </summary>
         /// <value>The code.</value>
         [Column("UgpEntry")]
-        public short UnitId { get; set; }
+        public int UnitId { get; set; }
 
         /// <summary>
         /// Gets or sets Code.
