@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material';
 import { PedidosService } from '../../services/pedidos.service';
 import { DataService } from '../../services/data.service';
 import {
+  ClasificationMUConstant,
   ClassCssOrderType,
   ClassNames,
   CONST_NUMBER,
@@ -196,7 +197,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
   getClasificationColor(clasification: string): string {
     const color = this.clasificationList.find(clas => clas.value === clasification) !== undefined
       ? this.clasificationList.find(clas => clas.value === clasification).color : defaultClasificationColor;
-    return color;
+    return clasification !== ClasificationMUConstant.value ? color : ClasificationMUConstant.color;
   }
 
   updateAllComplete() {
