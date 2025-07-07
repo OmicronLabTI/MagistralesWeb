@@ -368,3 +368,8 @@ export const AllClasification = {
 
 export const defaultClasificationColor = '#FBC115';
 export const initialClasificationModal = 'MG';
+
+export const ClasificationMUConstant = {
+    value: 'MU',
+    color: '#bc8716'
+};
