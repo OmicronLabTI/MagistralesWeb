@@ -124,5 +124,69 @@ namespace Omicron.Pedidos.Services.Constants
         /// ValidationErrorOnSAP.
         /// </value>
         public static string ValidationErrorOnSAP => "{LogBase} - Validation Error On SAP - {ProductionOrderId}";
+
+        /// <summary>
+        /// Gets FinalizeProductionOrdersOnSapAsync.
+        /// </summary>
+        /// <value>
+        /// FinalizeProductionOrdersOnSapAsync.
+        /// </value>
+        public static string FinalizeProductionOrdersOnSapAsync => "{0} - Pedidos Service - Finalize Production Orders Async On SAP";
+
+        /// <summary>
+        /// Gets PostSapFinalizeProductionOrderProcess.
+        /// </summary>
+        /// <value>
+        /// PostSapFinalizeProductionOrderProcess.
+        /// </value>
+        public static string PostSapFinalizeProductionOrderProcess => "{LogBase} - Post Sap Finalize Production Order Process - {OrderToFinish}";
+
+        /// <summary>
+        /// Gets ErrorInSAPWhileFinalizingTheOrder.
+        /// </summary>
+        /// <value>
+        /// ErrorInSAPWhileFinalizingTheOrder.
+        /// </value>
+        public static string ErrorInSAPWhileFinalizingTheOrder => "{LogBase} - Error In SAP While Finalizing The Order - {ProductionOrderId}";
+
+        /// <summary>
+        /// Gets StartFinalizeProductionOrderInSap.
+        /// </summary>
+        /// <value>
+        /// StartFinalizeProductionOrderInSap.
+        /// </value>
+        public static string StartFinalizeProductionOrderInSap => "Pedidos Service - Start Finalize Production Order On SAP - {ProductionOrdersToFinalize}";
+
+        /// <summary>
+        /// Gets EndFinalizeProductionOrderInSap.
+        /// </summary>
+        /// <value>
+        /// EndFinalizeProductionOrderInSap.
+        /// </value>
+        public static string EndFinalizeProductionOrderInSap => "Pedidos Service - End Finalize Production Order On SAP - {ProductionOrdersToFinalize}";
+
+        /// <summary>
+        /// Gets SendKafkaMessageFinalizeProductionOrderPostgresql.
+        /// </summary>
+        /// <value>
+        /// SendKafkaMessageFinalizeProductionOrderPostgresql.
+        /// </value>
+        public static string SendKafkaMessageFinalizeProductionOrderPostgresql => "{LogBase} - Send Kafka Message Finalize Production Order Postgresql - {ProductionOrderProcessing}";
+
+        /// <summary>
+        /// Gets UpdateProductionOrderProcessingStatus.
+        /// </summary>
+        /// <value>
+        /// UpdateProductionOrderProcessingStatus.
+        /// </value>
+        public static string UpdateProductionOrderProcessingStatus => "{LogBase} - Update ProductionOrder Processing Status - {ProductionOrderProcessingStatus}";
+
+        /// <summary>
+        /// Gets GenericErrorLog.
+        /// </summary>
+        /// <value>
+        /// GenericErrorLog.
+        /// </value>
+        public static string GenericErrorLog => "Internal Error: {0} - {1}";
     }
 }

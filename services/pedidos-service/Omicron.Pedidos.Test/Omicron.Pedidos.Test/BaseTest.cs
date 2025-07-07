@@ -828,7 +828,7 @@ namespace Omicron.Pedidos.Test
                 {
                     Id = "2d982b6a-e3d9-463d-9c36-e80f8e466a17",
                     ProductionOrderId = 100001,
-                    Step = "Primary Validations",
+                    LastStep = "Primary Validations",
                     Status = "In Progress",
                     Payload = "{\"FinalizeProductionOrder\":{\"UserId\":\"35642b3a-9471-4b89-9862-8bee6d98c361\",\"ProductionOrderId\":226357,\"SourceProcess\":null,\"Batches\":null}}",
                     CreatedAt = DateTime.Now.AddDays(-1),

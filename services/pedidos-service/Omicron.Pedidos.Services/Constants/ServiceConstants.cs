@@ -1028,6 +1028,14 @@ namespace Omicron.Pedidos.Services.Constants
         public static string FinalizeProcessInProgressStatus => "In Progress";
 
         /// <summary>
+        /// Gets FinalizeProcessFailedStatus.
+        /// </summary>
+        /// <value>
+        /// FinalizeProcessFailedStatus.
+        /// </value>
+        public static string FinalizeProcessFailedStatus => "Failed";
+
+        /// <summary>
         /// Gets ProductionOrderFinalizingKey.
         /// </summary>
         /// <value>
@@ -1066,6 +1074,14 @@ namespace Omicron.Pedidos.Services.Constants
         /// KafkaProductionOrderPdfGenerationConfigName.
         /// </value>
         public static string KafkaProductionOrderPdfGenerationConfigName => "productionorderpdfgeneration";
+
+        /// <summary>
+        /// Gets ErrorOccurredWhileCommunicatingWithServiceLayerAdapter.
+        /// </summary>
+        /// <value>
+        /// ErrorOccurredWhileCommunicatingWithServiceLayerAdapter.
+        /// </value>
+        public static string ErrorOccurredWhileCommunicatingWithServiceLayerAdapter => "An error occurred while communicating with the Service Layer Adapter.";
 
         /// <summary>
         /// Gets the status of the order.

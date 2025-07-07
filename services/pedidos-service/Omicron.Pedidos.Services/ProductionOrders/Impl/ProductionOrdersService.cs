@@ -139,17 +139,24 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
         /// <inheritdoc/>
         public async Task<ResultModel> FinalizeProductionOrdersOnSapAsync(ProductionOrderProcessingStatusModel productionOrderProcessingPayload)
         {
-            try
+            this.logger.Information(LogsConstants.StartFinalizeProductionOrderInSap, JsonConvert.SerializeObject(productionOrderProcessingPayload));
+            var logBase = string.Format(LogsConstants.FinalizeProductionOrdersOnSapAsync, productionOrderProcessingPayload.Id);
+
+            var (productionOrderUpdated, isProcessSuccesfully) = await this.FinalizeProductionOrdersOnSapProcess(productionOrderProcessingPayload, logBase);
+            this.logger.Information(LogsConstants.UpdateProductionOrderProcessingStatus, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
+            _ = this.pedidosDao.UpdatesProductionOrderProcessingStatus([productionOrderUpdated]);
+
+            if (!isProcessSuccesfully)
             {
-                // _ = this.kafkaConnector.PushMessage([], ServiceConstants.KafkaFinalizeProductionOrderPostgresqlConfigName);
-                return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
+                var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrderUpdated.ProductionOrderId);
+                await this.redisService.DeleteKey(redisKey);
+                return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, null, null, null);
             }
-            catch (Exception ex)
-            {
-                var error = string.Format(LogsConstants.EndFinalizeProductionOrderOnSapWithError, ex.Message, ex.InnerException);
-                this.logger.Error(ex, error);
-                return ServiceUtils.CreateResult(false, (int)HttpStatusCode.InternalServerError, LogsConstants.AnUnexpectedErrorOccurred, null, null);
-            }
+
+            this.logger.Information(LogsConstants.SendKafkaMessageFinalizeProductionOrderPostgresql, logBase, JsonConvert.SerializeObject(productionOrderUpdated));
+            _ = this.kafkaConnector.PushMessage(productionOrderUpdated, ServiceConstants.KafkaFinalizeProductionOrderPostgresqlConfigName);
+            this.logger.Information(LogsConstants.EndFinalizeProductionOrderInSap, JsonConvert.SerializeObject(productionOrderProcessingPayload));
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, null, null);
         }
 
         /// <inheritdoc/>
@@ -193,6 +200,92 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 CreatedAt = createdAt,
                 LastUpdated = DateTime.Now,
             };
+        }
+
+        private static ProductionOrderProcessingStatusModel UpdateProcessingStatusAsync(
+            ProductionOrderProcessingStatusModel model,
+            string status,
+            string errorMessage = null,
+            string lastStep = null)
+        {
+            model.Status = status;
+            model.ErrorMessage = errorMessage;
+            model.LastStep = lastStep;
+            model.LastUpdated = DateTime.Now;
+            return model;
+        }
+
+        private async Task<(ProductionOrderProcessingStatusModel, bool)> FinalizeProductionOrdersOnSapProcess(
+            ProductionOrderProcessingStatusModel productionOrderProcessingPayload,
+            string logBase)
+        {
+            var payload = JsonConvert.DeserializeObject<FinalizeProductionOrderPayload>(productionOrderProcessingPayload.Payload);
+            var productionOrderProcessingStatusInBD = await this.pedidosDao.GetFirstProductionOrderProcessingStatusByProductionOrderId(productionOrderProcessingPayload.ProductionOrderId);
+            try
+            {
+                this.logger.Information(
+                    LogsConstants.PostSapFinalizeProductionOrderProcess, logBase, JsonConvert.SerializeObject(payload.FinalizeProductionOrder));
+
+                var result = await this.serviceLayerAdapterService.PostAsync(
+                    new List<ValidateProductionOrderModel>
+                    {
+                        new ValidateProductionOrderModel
+                        {
+                            Batches = payload.FinalizeProductionOrder.Batches,
+                            ProductionOrderId = payload.FinalizeProductionOrder.ProductionOrderId,
+                            ProcessId = productionOrderProcessingPayload.Id,
+                            LastStep = productionOrderProcessingPayload.LastStep,
+                        },
+                    },
+                    ServiceConstants.SapValidationFinalizationEndpoint);
+
+                if (!result.Success)
+                {
+                    this.logger.Error(LogsConstants.ErrorOnSAP, logBase, payload.FinalizeProductionOrder.ProductionOrderId);
+                    productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
+                        productionOrderProcessingStatusInBD,
+                        ServiceConstants.FinalizeProcessFailedStatus,
+                        ServiceConstants.ErrorOccurredWhileCommunicatingWithServiceLayerAdapter);
+
+                    return (productionOrderProcessingStatusInBD, false);
+                }
+
+                var resultMessages = JsonConvert.DeserializeObject<List<ValidationsToFinalizeProductionOrdersResultModel>>(result.Response.ToString());
+                var finalizeProcessResult = resultMessages.First(x => x.ProductionOrderId == productionOrderProcessingPayload.ProductionOrderId);
+
+                if (!string.IsNullOrEmpty(finalizeProcessResult.ErrorMessage))
+                {
+                    this.logger.Error(LogsConstants.ErrorInSAPWhileFinalizingTheOrder, logBase, productionOrderProcessingPayload.ProductionOrderId);
+                    productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
+                        productionOrderProcessingStatusInBD,
+                        ServiceConstants.FinalizeProcessFailedStatus,
+                        finalizeProcessResult.ErrorMessage,
+                        finalizeProcessResult.LastStep);
+
+                    return (productionOrderProcessingStatusInBD, false);
+                }
+
+                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
+                        productionOrderProcessingStatusInBD,
+                        ServiceConstants.FinalizeProcessInProgressStatus,
+                        productionOrderProcessingStatusInBD.ErrorMessage,
+                        finalizeProcessResult.LastStep);
+
+                return (productionOrderProcessingStatusInBD, true);
+            }
+            catch (Exception ex)
+            {
+                var error = string.Format(LogsConstants.EndFinalizeProductionOrderOnSapWithError, ex.Message, ex.InnerException);
+                this.logger.Error(ex, error);
+
+                productionOrderProcessingStatusInBD = UpdateProcessingStatusAsync(
+                        productionOrderProcessingStatusInBD,
+                        ServiceConstants.FinalizeProcessFailedStatus,
+                        string.Format(LogsConstants.GenericErrorLog, ex.Message, ex.InnerException),
+                        productionOrderProcessingStatusInBD.LastStep);
+
+                return (productionOrderProcessingStatusInBD, false);
+            }
         }
 
         private async Task<(bool, bool)> ValidatePrimaryRules(

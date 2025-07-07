@@ -433,10 +433,24 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         Task<bool> InsertProductionOrderProcessingStatus(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatus);
 
         /// <summary>
+        /// UpdatesProductionOrderProcessingStatus.
+        /// </summary>
+        /// <param name="productionOrderProcessingStatus">productionOrderProcessingStatus.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<bool> UpdatesProductionOrderProcessingStatus(List<ProductionOrderProcessingStatusModel> productionOrderProcessingStatus);
+
+        /// <summary>
         /// GetProductionOrderProcessingStatusByProductionOrderIds.
         /// </summary>
         /// <param name="productionOrderIds">productionOrderIds.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         Task<IEnumerable<ProductionOrderProcessingStatusModel>> GetProductionOrderProcessingStatusByProductionOrderIds(IEnumerable<int> productionOrderIds);
+
+        /// <summary>
+        /// GetFirstProductionOrderProcessingStatusByProductionOrderId.
+        /// </summary>
+        /// <param name="productionOrderId">productionOrderId.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        Task<ProductionOrderProcessingStatusModel> GetFirstProductionOrderProcessingStatusByProductionOrderId(int productionOrderId);
     }
 }

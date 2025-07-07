@@ -149,5 +149,140 @@ namespace Omicron.Pedidos.Test.Services.ProductionOrders
             Assert.That(response.UserError.Equals("An unexpected error occurred."));
             Assert.That(response.Code.Equals(500));
         }
+
+        /// <summary>
+        /// FinalizeProductionOrdersOnSapAsync.
+        /// </summary>
+        /// <param name="isServiceLayerSuccess">isServiceLayerSuccess.</param>
+        /// <param name="errorMessage">Error Message.</param>
+        /// <returns>Test.</returns>
+        [Test]
+        [TestCase(false, "")]
+        [TestCase(true, "")]
+        [TestCase(true, "No se ha podido crear recepción de producción para la orden de fabricación {0}.")]
+        public async Task FinalizeProductionOrdersOnSapAsync(bool isServiceLayerSuccess, string errorMessage)
+        {
+            var payload = new FinalizeProductionOrderPayload
+            {
+                FinalizeProductionOrder = new FinalizeProductionOrderModel
+                {
+                    ProductionOrderId = 100001,
+                    UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e",
+                    SourceProcess = "SaleOrder",
+                    Batches = new List<BatchesConfigurationModel>(),
+                },
+            };
+
+            var productionOrdersToFinalize = new ProductionOrderProcessingStatusModel
+            {
+                Id = "9e7ea1ba-5950-4a94-a34e-5b7a5db112a4",
+                ProductionOrderId = 100001,
+                LastStep = "Primary Validations",
+                CreatedAt = DateTime.Now.AddMinutes(-5),
+                ErrorMessage = null,
+                LastUpdated = DateTime.Now.AddMinutes(-5),
+                Payload = JsonConvert.SerializeObject(payload),
+                Status = "In Progress",
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
+
+            var resultMessages = new List<ValidationsToFinalizeProductionOrdersResultModel>
+                {
+                    new ValidationsToFinalizeProductionOrdersResultModel
+                    {
+                        ProductionOrderId = 100001,
+                        ErrorMessage = string.Format(errorMessage, 100001),
+                    },
+                };
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            mockServiceLayerAdapterService
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(this.GetResultModel(resultMessages, isServiceLayerSuccess)));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                this.pedidosDao,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                this.logger.Object);
+
+            var response = await mockProductionOrdersService.FinalizeProductionOrdersOnSapAsync(productionOrdersToFinalize);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Response, Is.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.UserError, Is.Null);
+
+            if (isServiceLayerSuccess && string.IsNullOrEmpty(errorMessage))
+            {
+                Assert.That(response.Success, Is.True);
+                Assert.That(response.Code.Equals((int)HttpStatusCode.OK));
+            }
+            else
+            {
+                Assert.That(response.Success, Is.False);
+                Assert.That(response.Code.Equals((int)HttpStatusCode.InternalServerError));
+            }
+        }
+
+        /// <summary>
+        /// FinalizeProductionOrdersOnSapAsync.
+        /// </summary>
+        /// <returns>Test.</returns>
+        [Test]
+        public async Task FinalizeProductionOrdersOnSapAsyncWithError()
+        {
+            var payload = new FinalizeProductionOrderPayload
+            {
+                FinalizeProductionOrder = new FinalizeProductionOrderModel
+                {
+                    ProductionOrderId = 100001,
+                    UserId = "2b8211b7-30a0-4841-ad79-d01c5d3ff71e",
+                    SourceProcess = "SaleOrder",
+                    Batches = new List<BatchesConfigurationModel>(),
+                },
+            };
+
+            var productionOrdersToFinalize = new ProductionOrderProcessingStatusModel
+            {
+                Id = "9e7ea1ba-5950-4a94-a34e-5b7a5db112a4",
+                ProductionOrderId = 100001,
+                LastStep = "Primary Validations",
+                CreatedAt = DateTime.Now.AddMinutes(-10),
+                ErrorMessage = null,
+                LastUpdated = DateTime.Now,
+                Payload = JsonConvert.SerializeObject(payload),
+                Status = "In Progress",
+            };
+
+            var mockRedisService = new Mock<IRedisService>();
+            mockRedisService.Setup(m => m.DeleteKey(It.IsAny<string>()));
+
+            var mockServiceLayerAdapterService = new Mock<ISapServiceLayerAdapterService>();
+            mockServiceLayerAdapterService
+                .Setup(msl => msl.PostAsync(It.IsAny<object>(), It.IsAny<string>()))
+                .ThrowsAsync(new Exception("Connection Refused."));
+
+            var mockProductionOrdersService = new ProductionOrdersService(
+                this.pedidosDao,
+                mockServiceLayerAdapterService.Object,
+                mockRedisService.Object,
+                this.mockKafkaConnector.Object,
+                this.logger.Object);
+
+            var response = await mockProductionOrdersService.FinalizeProductionOrdersOnSapAsync(productionOrdersToFinalize);
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Response, Is.Null);
+            Assert.That(response.ExceptionMessage, Is.Null);
+            Assert.That(response.UserError, Is.Null);
+            Assert.That(response.Success, Is.False);
+            Assert.That(response.Code.Equals((int)HttpStatusCode.InternalServerError));
+        }
     }
 }

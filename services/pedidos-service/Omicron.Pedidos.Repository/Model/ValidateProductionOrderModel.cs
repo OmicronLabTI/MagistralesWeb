@@ -30,6 +30,14 @@ namespace Omicron.Pedidos.Entities.Model
         public string ProcessId { get; set; }
 
         /// <summary>
+        /// Gets or sets ProcessId.
+        /// </summary>
+        /// <value>
+        /// ProcessId.
+        /// </value>
+        public string LastStep { get; set; }
+
+        /// <summary>
         /// Gets or sets batches.
         /// </summary>
         /// <value>The order batches.</value>
