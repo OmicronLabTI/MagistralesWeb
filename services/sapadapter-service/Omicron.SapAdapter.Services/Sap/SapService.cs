@@ -943,6 +943,13 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetUnitProducts(List<string> itemCodes)
+        {
+            var products = await this.sapDao.GetProductsUnits(itemCodes);
+            return ServiceUtils.CreateResult(true, 200, null, products, null, null);
+        }
+
         private static string NormalizeAndToUpper(string input)
         {
             return new string(input.Normalize(NormalizationForm.FormD)

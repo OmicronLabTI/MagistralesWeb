@@ -28,6 +28,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     public class FormulaPedidosService : IFormulaPedidosService
     {
         private readonly IPedidosDao pedidosDao;
+        private readonly ISapAdapter sapAdapter;
 
         private readonly ISapAdapter sapAdapter;
 
