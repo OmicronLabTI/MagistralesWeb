@@ -77,20 +77,15 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                     var logBase = string.Format(LogsConstants.FinalizeProductionOrdersAsync, processId);
                     var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrder.ProductionOrderId);
                     this.logger.Information(LogsConstants.StartValidatePrimaryRules, logBase, productionOrder.ProductionOrderId);
-                    var (isValidProductionOrder, deleteRedisKey) = await this.ValidatePrimaryRules(
+                    var isValidProductionOrder = await this.ValidatePrimaryRules(
                         productionOrder,
                         failed,
-                        redisKey,
                         logBase,
                         processId);
 
-                    if (deleteRedisKey)
-                    {
-                        await this.redisService.DeleteKey(redisKey);
-                    }
-
                     if (!isValidProductionOrder)
                     {
+                        await this.redisService.DeleteKey(redisKey);
                         continue;
                     }
 
@@ -285,10 +280,9 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             }
         }
 
-        private async Task<(bool, bool)> ValidatePrimaryRules(
+        private async Task<bool> ValidatePrimaryRules(
             FinalizeProductionOrderModel orderToFinish,
             List<ProductionOrderFailedResultModel> failed,
-            string redisKey,
             string logBase,
             string processId)
         {
@@ -309,7 +303,7 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             {
                 this.logger.Error(LogsConstants.ErrorOnSAP, logBase, orderToFinish.ProductionOrderId);
                 failed.Add(CreateFinalizedFailedResponse(orderToFinish, ServiceConstants.ReasonSapConnectionError));
-                return (false, true);
+                return false;
             }
 
             var resultMessages = JsonConvert.DeserializeObject<List<ValidationsToFinalizeProductionOrdersResultModel>>(result.Response.ToString());
@@ -317,27 +311,17 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             if (orderValidationResult == null)
             {
                 this.logger.Error(LogsConstants.ErrorOnSAPResponseNull, logBase, orderToFinish.ProductionOrderId);
-                return (false, true);
+                return false;
             }
 
             if (!string.IsNullOrEmpty(orderValidationResult.ErrorMessage))
             {
                 this.logger.Error(LogsConstants.ValidationErrorOnSAP, logBase, orderToFinish.ProductionOrderId);
                 failed.Add(CreateFinalizedFailedResponse(orderToFinish, orderValidationResult.ErrorMessage));
-                return (false, true);
+                return false;
             }
 
-            return (true, false);
-        }
-
-        private async Task<bool> CheckOrSetProductionOrderFinalizing(string redisKey, string value, ProductionOrderProcessingStatusModel productionOrderInBD)
-        {
-            var existingValue = await this.redisService.GetRedisKey(redisKey);
-            var existsInRedis = !string.IsNullOrEmpty(existingValue);
-
-            var productionOrderExistsInDatabase = productionOrderInBD != null;
-            var isProductionOrderFinalizing = ServiceShared.CalculateOr(existsInRedis, productionOrderExistsInDatabase);
-            return false;
+            return true;
         }
     }
 }

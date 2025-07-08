@@ -204,12 +204,11 @@ namespace Omicron.SapServiceLayerAdapter.Services.Utils
         /// Validate if list is null or empty.
         /// </summary>
         /// <typeparam name="T">Type.</typeparam>
-        /// <param name="source">Generic list source.</param>
+        /// <param name="listSource">Generic list source.</param>
         /// <returns>Validation Result.</returns>
-        public static bool ListIsNullOrEmpty<T>(this IEnumerable<T> source)
+        public static bool ListIsNullOrEmpty<T>(this IEnumerable<T> listSource)
         {
-            return source == null || !source.Any();
+            return listSource == null || !listSource.Any();
         }
-
     }
 }

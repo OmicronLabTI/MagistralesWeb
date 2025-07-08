@@ -708,7 +708,7 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
 
         private async Task ValidateNewBatches(string itemCode, List<BatchesConfigurationDto> batches)
         {
-            if (batches == null)
+            if (batches.ListIsNullOrEmpty())
             {
                 return;
             }
