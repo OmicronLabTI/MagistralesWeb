@@ -130,7 +130,8 @@ export const ConstToken = {
     materialRequest: 'materialRequest',
     historyQuery: 'historyQuery',
     clasification: 'clasification',
-    clasificationList: 'clasificationList'
+    clasificationList: 'clasificationList',
+    clasificationColors: 'clasificationColors'
 };
 export const BOOLEANS = {
     verdadero: true,

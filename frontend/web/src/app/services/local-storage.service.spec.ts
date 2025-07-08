@@ -128,4 +128,9 @@ describe('LocalStorageService', () => {
     service.setClasificationList(ClasificationColorList);
     expect(service.getClasificationList).toBeTruthy();
   });
+  it('should getClasificationColors', () => {
+    const service: LocalStorageService = TestBed.get(LocalStorageService);
+    service.setClasificationColors(ClasificationColorList);
+    expect(service.getClasificationColors).toBeTruthy();
+  });
 });

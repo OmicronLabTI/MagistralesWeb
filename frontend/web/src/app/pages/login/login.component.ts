@@ -86,6 +86,19 @@ export class LoginComponent implements OnInit {
         this.errorService.httpError(error);
         this.observableService.setGeneralNotificationMessage('Error al obtener las clasificaciones');
       });
+      await this.userService.getColors().toPromise().then(clasificationsResponse => {
+        clasificationsResponse.response.forEach(clasification => {
+          clasification.color = this.dataService.calculateTernary(
+            this.dataService.validHexadecimalColor(clasification.color),
+            clasification.color,
+            defaultClasificationColor
+          );
+        });
+        this.localStorageService.setClasificationColors(clasificationsResponse.response);
+      }).catch(error => {
+        this.errorService.httpError(error);
+        this.observableService.setGeneralNotificationMessage('Error al obtener los colores de las clasificaciones');
+      });
       this.observableService.setIsLogin(true);
       this.evaluatedGoTo();
     }).catch((error: ErrorHttpInterface) => {

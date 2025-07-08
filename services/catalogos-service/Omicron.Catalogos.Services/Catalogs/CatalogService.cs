@@ -96,6 +96,21 @@ namespace Omicron.Catalogos.Services.Catalogs
         }
 
         /// <inheritdoc/>
+        public async Task<ResultModel> GetActiveAllClassificationQfb()
+        {
+            var textInfo = CultureInfo.CurrentCulture.TextInfo;
+            var classifications = (await this.catalogDao.GetActiveClassificationColorsByRoutes(ServiceConstants.Routes))
+                .Select(x => new ClassificationMagistralModel
+                {
+                    Value = x.ClassificationCode,
+                    Description = $"{textInfo.ToTitleCase(x.Classification.ToLower())} ({x.ClassificationCode})",
+                    Color = ServiceUtils.CalculateTernary(!string.IsNullOrEmpty(x.Color), x.Color, ServiceConstants.DefaultColor),
+                }).OrderBy(x => x.Description).ToList();
+
+            return ServiceUtils.CreateResult(true, (int)HttpStatusCode.OK, null, classifications, null);
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultModel> UploadWarehouseFromExcel()
         {
             var warehousesfile = await this.GetWarehousesFromExcel();
