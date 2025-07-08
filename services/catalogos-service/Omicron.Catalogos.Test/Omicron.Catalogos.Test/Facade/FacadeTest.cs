@@ -65,6 +65,10 @@ namespace Omicron.Catalogos.Test.Facade
                .Returns(Task.FromResult(response));
 
             mockServicesCat
+              .Setup(m => m.GetActiveAllClassificationQfb())
+              .Returns(Task.FromResult(response));
+
+            mockServicesCat
                .Setup(m => m.UploadWarehouseFromExcel())
                .Returns(Task.FromResult(response));
 

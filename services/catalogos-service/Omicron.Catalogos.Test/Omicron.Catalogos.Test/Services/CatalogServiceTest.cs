@@ -109,6 +109,24 @@ namespace Omicron.Catalogos.Test.Services
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Test]
+        public async Task GetActiveAllClassificationQfb()
+        {
+            var result = await this.catalogService.GetActiveAllClassificationQfb();
+
+            // assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Success, Is.True);
+            Assert.That(result.Code == 200, Is.True);
+            Assert.That(result.Response, Is.Not.Null);
+            Assert.That(result.UserError, Is.Null);
+            Assert.That(result.Response, Is.InstanceOf<object>());
+        }
+
+        /// <summary>
+        /// Method to verify Get All Users.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Test]
         public async Task UploadWarehouseFromExcel()
         {
             var config = new Mock<IConfiguration>();

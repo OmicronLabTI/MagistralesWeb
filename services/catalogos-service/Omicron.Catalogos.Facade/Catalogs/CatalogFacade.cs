@@ -65,6 +65,12 @@ namespace Omicron.Catalogos.Facade.Catalogs
         }
 
         /// <inheritdoc/>
+        public async Task<ResultDto> GetActiveAllClassificationQfb()
+        {
+            return this.mapper.Map<ResultDto>(await this.catalogService.GetActiveAllClassificationQfb());
+        }
+
+        /// <inheritdoc/>
         public async Task<ResultDto> UploadWarehouseFromExcel()
         {
             return this.mapper.Map<ResultDto>(await this.catalogService.UploadWarehouseFromExcel());

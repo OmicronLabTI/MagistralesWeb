@@ -38,6 +38,12 @@ namespace Omicron.Catalogos.Facade.Catalogs
         Task<ResultDto> GetActiveClassificationQfb();
 
         /// <summary>
+        /// Get All classification qfb.
+        /// </summary>
+        /// <returns>All Classification qfb.</returns>
+        Task<ResultDto> GetActiveAllClassificationQfb();
+
+        /// <summary>
         /// Import of valid warehouses through the Excel file.
         /// </summary>
         /// <returns> A <see cref="Task{TResult}"/> representing the result of the asynchronous operation. </returns>
