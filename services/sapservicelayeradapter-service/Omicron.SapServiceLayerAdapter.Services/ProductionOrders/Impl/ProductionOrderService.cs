@@ -366,6 +366,8 @@ namespace Omicron.SapServiceLayerAdapter.Services.ProductionOrders
                         PlannedQuantity = (double)component.RequiredQuantity,
                         DocumentAbsoluteEntry = orderId,
                         BatchNumbers = AssignedBatchesOnNewComponent(component),
+                        UoMEntry = component.UnitCode,
+                        UoMCode = component.UnitCode,
                     }));
 
             return completeList;
