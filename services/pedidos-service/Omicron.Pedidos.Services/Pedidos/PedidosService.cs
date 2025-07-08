@@ -25,6 +25,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Resources.Extensions;
     using Omicron.Pedidos.Services.Broker;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.ProductionOrders;
     using Omicron.Pedidos.Services.Redis;
     using Omicron.Pedidos.Services.Reporting;
     using Omicron.Pedidos.Services.SapAdapter;
@@ -33,6 +34,7 @@ namespace Omicron.Pedidos.Services.Pedidos
     using Omicron.Pedidos.Services.SapServiceLayerAdapter;
     using Omicron.Pedidos.Services.User;
     using Omicron.Pedidos.Services.Utils;
+    using Serilog;
 
     /// <summary>
     /// the pedidos service.
@@ -59,6 +61,10 @@ namespace Omicron.Pedidos.Services.Pedidos
 
         private readonly ISapDiApi sapDiApi;
 
+        private readonly IProductionOrdersService productionOrdersService;
+
+        private readonly ILogger logger;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PedidosService"/> class.
         /// </summary>
@@ -71,8 +77,10 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <param name="redisService">The redis Service.</param>
         /// <param name="kafkaConnector">The kafka conector.</param>
         /// <param name="sapServiceLayerAdapterService">The sapServiceLayerAdapterService.</param>
+        /// <param name="productionOrdersService">The productionOrdersService.</param>
         /// <param name="sapDiApi">the sapdiapi.</param>
-        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService sapServiceLayerAdapterService, ISapDiApi sapDiApi)
+        /// <param name="logger">the logger.</param>
+        public PedidosService(ISapAdapter sapAdapter, IPedidosDao pedidosDao, IUsersService userService, ISapFileService sapFileService, IConfiguration configuration, IReportingService reporting, IRedisService redisService, IKafkaConnector kafkaConnector, ISapServiceLayerAdapterService sapServiceLayerAdapterService, ISapDiApi sapDiApi, IProductionOrdersService productionOrdersService, ILogger logger)
         {
             this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
@@ -84,6 +92,8 @@ namespace Omicron.Pedidos.Services.Pedidos
             this.kafkaConnector = kafkaConnector.ThrowIfNull(nameof(kafkaConnector));
             this.sapDiApi = sapDiApi.ThrowIfNull(nameof(sapDiApi));
             this.serviceLayerAdapterService = sapServiceLayerAdapterService.ThrowIfNull(nameof(sapServiceLayerAdapterService));
+            this.productionOrdersService = productionOrdersService.ThrowIfNull(nameof(productionOrdersService));
+            this.logger = logger.ThrowIfNull(nameof(logger));
         }
 
         /// <inheritdoc/>
@@ -267,10 +277,7 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <inheritdoc/>
         public async Task<ResultModel> CloseSalesOrders(List<OrderIdModel> finishOrders)
         {
-            var successfuly = new List<object>();
-            var failed = new List<object>();
-            var listToGenPdf = new List<int>();
-            var listOrderLogToInsert = new List<SalesLogs>();
+            var failed = new List<ProductionOrderFailedResultModel>();
             var listSaleOrdersToFinish = finishOrders.Select(x => x.OrderId).ToList();
 
             var (saleOrders, productionOrders) = await ServiceUtils.GetRelatedOrdersToSalesOrder(
@@ -278,83 +285,33 @@ namespace Omicron.Pedidos.Services.Pedidos
                 listSaleOrdersToFinish,
                 ServiceConstants.Cancelled);
 
-            var orderFabSuccesfullFinalized = new List<int>();
-            foreach (var orderToFinish in finishOrders)
+            var fnalizeProductionOrder = finishOrders
+                .SelectMany(fo =>
+                {
+                    return productionOrders.Where(po => !string.IsNullOrWhiteSpace(po.Productionorderid) && int.TryParse(po.Salesorderid, out var salesId) && salesId == fo.OrderId)
+                        .Select(po => new FinalizeProductionOrderModel
+                        {
+                            UserId = fo.UserId,
+                            ProductionOrderId = int.Parse(po.Productionorderid),
+                            SourceProcess = ServiceConstants.SalesOrders,
+                            Batches = new List<BatchesConfigurationModel>(),
+                        });
+                }).ToList();
+
+            var request = await ServiceUtils.IsProductionOrderBeingProcessed(fnalizeProductionOrder, failed, this.pedidosDao, this.redis, this.logger);
+
+            var result = await this.productionOrdersService.FinalizeProductionOrdersAsync(request);
+            var response = result.Response as FinalizeProductionOrdersResult;
+
+            var allFailed = response.Failed.Concat(failed).Distinct().ToList();
+
+            var finalResult = new FinalizeProductionOrdersResult
             {
-                var localSalesOrder = saleOrders.FirstOrDefault(x => x.Salesorderid == orderToFinish.OrderId.ToString());
-                var localProductionOrders = productionOrders.Where(x => x.Salesorderid == orderToFinish.OrderId.ToString());
-
-                // Update in SAP
-                var payload = localProductionOrders.Select(x => new { OrderId = x.Productionorderid });
-
-                // "validation/productionorders/finalization"
-                var result = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.FinishFabOrder);
-
-                // var result = await this.ProductionOrdersService.FinalizeProductionOrdersAsync();
-                if (!result.Success)
-                {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, ServiceConstants.ReasonSapConnectionError));
-                    continue;
-                }
-
-                var resultMessages = JsonConvert.DeserializeObject<Dictionary<int, string>>(result.Response.ToString());
-
-                // Map errors
-                foreach (var error in resultMessages.Where(x => x.Key > 0))
-                {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderToFinish, error.Value));
-                }
-
-                // Update production order status
-                foreach (var userOrder in localProductionOrders)
-                {
-                    int prodOrderId = int.Parse(userOrder.Productionorderid);
-                    if (!resultMessages.Keys.Any(x => x.Equals(prodOrderId)))
-                    {
-                        userOrder.CloseUserId = orderToFinish.UserId;
-                        userOrder.CloseDate = DateTime.Now;
-                        userOrder.Status = ServiceShared.CalculateTernary(userOrder.Status != ServiceConstants.Almacenado, ServiceConstants.Finalizado, userOrder.Status);
-                        userOrder.FinalizedDate = DateTime.Now;
-                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { userOrder }));
-                        orderFabSuccesfullFinalized.Add(prodOrderId);
-                    }
-                }
-
-                await this.pedidosDao.UpdateUserOrders(productionOrders);
-
-                // Update sales order status
-                if (resultMessages.Keys.Any(x => x.Equals(0)))
-                {
-                    var previousStatusSalesOrder = localSalesOrder.Status;
-                    localSalesOrder.CloseUserId = orderToFinish.UserId;
-                    localSalesOrder.CloseDate = DateTime.Now;
-                    localSalesOrder.Status = ServiceConstants.Finalizado;
-                    localSalesOrder.FinalizedDate = DateTime.Now;
-
-                    if (previousStatusSalesOrder != localSalesOrder.Status)
-                    {
-                        listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { localSalesOrder }));
-                    }
-
-                    await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { localSalesOrder });
-                    successfuly.Add(orderToFinish);
-                }
-
-                listToGenPdf.Add(int.Parse(localSalesOrder.Salesorderid));
-            }
-
-            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
-
-            // validate that the quantity consumed and required is equal in orders finished, if not is equal send a warning message.
-            failed.AddRange(await this.ValidateQuantityConsumedFinishOrders(finishOrders.Select(x => new CloseProductionOrderModel { OrderId = x.OrderId, UserId = x.UserId }).ToList(), orderFabSuccesfullFinalized));
-            var results = new
-            {
-                success = successfuly.Distinct(),
-                failed = failed.Distinct(),
+                Successful = response.Successful,
+                Failed = allFailed,
             };
 
-            await SendToGeneratePdfUtils.CreateModelGeneratePdf(listToGenPdf, new List<int>(), this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
-            return ServiceUtils.CreateResult(true, 200, null, results, null);
+            return ServiceUtils.CreateResult(true, 200, null, finalResult, null);
         }
 
         /// <summary>
@@ -442,122 +399,30 @@ namespace Omicron.Pedidos.Services.Pedidos
         /// <returns>Orders with updated info.</returns>urns>
         public async Task<ResultModel> CloseFabOrders(List<CloseProductionOrderModel> finishOrders)
         {
-            var successfuly = new List<object>();
-            var failed = new List<object>();
-            var affectedSalesOrderIds = new List<KeyValuePair<string, string>>();
-            var listIsolated = new List<int>();
-            var listSalesOrder = new List<int>();
-            var listOrderLogToInsert = new List<SalesLogs>();
+            var failed = new List<ProductionOrderFailedResultModel>();
 
-            var productionsOrderList = (await this.pedidosDao.GetUserOrderByProducionOrder(finishOrders.Select(fo => fo.OrderId.ToString()).Distinct().ToList())).ToList();
-            foreach (var orderToFinish in finishOrders)
+            var fnalizeProductionOrder = finishOrders.Select(fo => new FinalizeProductionOrderModel
+                {
+                    UserId = fo.UserId,
+                    ProductionOrderId = fo.OrderId,
+                    SourceProcess = ServiceConstants.FabOrders,
+                    Batches = fo.Batches,
+                }).ToList();
+
+            var request = await ServiceUtils.IsProductionOrderBeingProcessed(fnalizeProductionOrder, failed, this.pedidosDao, this.redis, this.logger);
+
+            var result = await this.productionOrdersService.FinalizeProductionOrdersAsync(request);
+            var response = result.Response as FinalizeProductionOrdersResult;
+
+            var allFailed = response.Failed.Concat(failed).Distinct().ToList();
+
+            var finalResult = new FinalizeProductionOrdersResult
             {
-                var orderIdModel = new OrderIdModel { UserId = orderToFinish.UserId, OrderId = orderToFinish.OrderId };
-                var productionOrderId = orderToFinish.OrderId;
-                var productionOrder = productionsOrderList.FirstOrDefault(o => o.Productionorderid == productionOrderId.ToString());
-
-                if (productionOrder == null)
-                {
-                    var message = string.Format(ServiceConstants.ReasonProductionOrderNotExists, productionOrderId);
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderIdModel, message));
-                    continue;
-                }
-
-                // Validate finished production orders
-                if (productionOrder.Status.Equals(ServiceConstants.Finalizado))
-                {
-                    successfuly.Add(orderIdModel);
-                    continue;
-                }
-
-                if (productionOrder.IsIsolatedProductionOrder)
-                {
-                    listIsolated.Add(int.Parse(productionOrder.Productionorderid));
-                }
-
-                // Validate completed production orders
-                if (!productionOrder.Status.Equals(ServiceConstants.Completed))
-                {
-                    var message = string.Format(ServiceConstants.ReasonProductionOrderNonCompleted, productionOrderId);
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderIdModel, message));
-                    continue;
-                }
-
-                // Update in SAP
-                var payload = new List<object> { orderToFinish };
-                var result = await this.serviceLayerAdapterService.PostAsync(payload, ServiceConstants.FinishFabOrder);
-
-                if (!result.Success)
-                {
-                    failed.Add(ServiceUtils.CreateCancellationFail(orderIdModel, ServiceConstants.ReasonSapConnectionError));
-                    continue;
-                }
-
-                var resultMessages = JsonConvert.DeserializeObject<Dictionary<int, string>>(result.Response.ToString());
-
-                // Map errors
-                var errorsDiApi = resultMessages
-                    .Where(x => x.Key > 0)
-                    .Select(error => ServiceUtils.CreateCancellationFail(orderIdModel, error.Value))
-                    .ToList();
-                failed.AddRange(errorsDiApi);
-
-                // Update production order status
-                if (!resultMessages.Keys.Any(x => x.Equals(productionOrderId)))
-                {
-                    productionOrder.CloseUserId = orderToFinish.UserId;
-                    productionOrder.CloseDate = DateTime.Now;
-                    productionOrder.Status = ServiceConstants.Finalizado;
-                    productionOrder.FinalizedDate = DateTime.Now;
-
-                    var batch = orderToFinish.Batches != null && orderToFinish.Batches.Any() ? orderToFinish.Batches.FirstOrDefault() : new BatchesConfigurationModel { BatchCode = string.Empty };
-                    productionOrder.BatchFinalized = batch.BatchCode;
-
-                    /* logs */
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(orderToFinish.UserId, new List<UserOrderModel> { productionOrder }));
-                    await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { productionOrder });
-                    successfuly.Add(orderIdModel);
-
-                    if (!productionOrder.IsIsolatedProductionOrder)
-                    {
-                        affectedSalesOrderIds.Add(KeyValuePair.Create(orderToFinish.UserId, productionOrder.Salesorderid));
-                    }
-                }
-            }
-
-            // Validate affected sales order
-            foreach (var salesOrderToValidate in affectedSalesOrderIds.Distinct())
-            {
-                var userId = salesOrderToValidate.Key;
-                var salesOrderIdAsInt = int.Parse(salesOrderToValidate.Value);
-
-                var (salesOrder, productionOrders) = await this.GetRelatedOrdersToSalesOrder(salesOrderIdAsInt, ServiceConstants.Cancelled);
-                var preProductionOrders = await ServiceUtils.GetPreProductionOrdersFromSap(salesOrder, this.sapAdapter);
-                listSalesOrder.Add(int.Parse(salesOrder.Salesorderid));
-
-                if (productionOrders.All(x => ServiceConstants.ValidStatusFinalizar.Contains(x.Status)) && !preProductionOrders.Any())
-                {
-                    salesOrder.CloseUserId = userId;
-                    salesOrder.CloseDate = DateTime.Now;
-                    salesOrder.Status = ServiceConstants.Finalizado;
-                    salesOrder.FinalizedDate = DateTime.Now;
-                    /* logs */
-                    listOrderLogToInsert.AddRange(ServiceUtils.AddSalesLog(userId, new List<UserOrderModel> { salesOrder }));
-                    await this.pedidosDao.UpdateUserOrders(new List<UserOrderModel> { salesOrder });
-                }
-            }
-
-            // validate that the quantity consumed and required is equal in orders finished, if not is equal send a warning message.
-            failed.AddRange(await this.ValidateQuantityConsumedFinishOrders(finishOrders, successfuly.Cast<OrderIdModel>().Select(x => x.OrderId).ToList()));
-            await SendToGeneratePdfUtils.CreateModelGeneratePdf(listSalesOrder, listIsolated, this.sapAdapter, this.pedidosDao, this.sapFileService, this.userService, true);
-            _ = this.kafkaConnector.PushMessage(listOrderLogToInsert, ServiceConstants.KafkaInsertLogsConfigName);
-
-            var results = new
-            {
-                success = successfuly.Distinct(),
-                failed = failed.Distinct(),
+                Successful = response.Successful,
+                Failed = allFailed,
             };
-            return ServiceUtils.CreateResult(true, 200, null, results, null);
+
+            return ServiceUtils.CreateResult(true, 200, null, finalResult, null);
         }
 
         /// <inheritdoc/>

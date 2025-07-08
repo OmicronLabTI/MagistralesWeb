@@ -81,6 +81,7 @@ namespace Omicron.Pedidos.Test.Entities
             new ValidateProductionOrderModel(),
             new ValidationsToFinalizeProductionOrdersResultModel(),
             new ProductionOrderProcessingStatusDto(),
+            new FinalizeProductionOrdersResult(),
         };
 
         /// <summary>

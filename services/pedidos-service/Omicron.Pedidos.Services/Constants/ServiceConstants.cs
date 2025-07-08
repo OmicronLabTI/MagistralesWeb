@@ -31,6 +31,16 @@ namespace Omicron.Pedidos.Services.Constants
         public const string Cancelled = "Cancelado";
 
         /// <summary>
+        /// close salesOrders.
+        /// </summary>
+        public const string SalesOrders = "SalesOrders";
+
+        /// <summary>
+        /// close fabOrders.
+        /// </summary>
+        public const string FabOrders = "FabOrders";
+
+        /// <summary>
         /// Completed status.
         /// </summary>
         public const string Completed = "Terminado";

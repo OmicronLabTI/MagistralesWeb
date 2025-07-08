@@ -70,18 +70,15 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 var failed = new List<ProductionOrderFailedResultModel>();
                 var successfuly = new List<FinalizeProductionOrderModel>();
                 this.logger.Information(LogsConstants.StartFinalizeAllProductionOrders, JsonConvert.SerializeObject(productionOrdersToFinalize));
-                var productionOrderProcessingStatusInBD = await this.pedidosDao.GetProductionOrderProcessingStatusByProductionOrderIds(productionOrdersToFinalize.Select(po => po.ProductionOrderId));
                 var productionOrderProcessingStatus = new List<ProductionOrderProcessingStatusModel>();
                 foreach (var productionOrder in productionOrdersToFinalize)
                 {
                     var processId = Guid.NewGuid().ToString();
                     var logBase = string.Format(LogsConstants.FinalizeProductionOrdersAsync, processId);
                     var redisKey = string.Format(ServiceConstants.ProductionOrderFinalizingKey, productionOrder.ProductionOrderId);
-                    var productionOrderInBD = productionOrderProcessingStatusInBD.FirstOrDefault(x => x.ProductionOrderId == productionOrder.ProductionOrderId);
                     this.logger.Information(LogsConstants.StartValidatePrimaryRules, logBase, productionOrder.ProductionOrderId);
                     var (isValidProductionOrder, deleteRedisKey) = await this.ValidatePrimaryRules(
                         productionOrder,
-                        productionOrderInBD,
                         failed,
                         redisKey,
                         logBase,
@@ -119,10 +116,10 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
                 this.logger.Information(LogsConstants.InsertAllProductionOrderProcessingStatus, JsonConvert.SerializeObject(productionOrderProcessingStatus));
                 _ = this.pedidosDao.InsertProductionOrderProcessingStatus(productionOrderProcessingStatus);
 
-                var validationsResult = new
+                var validationsResult = new FinalizeProductionOrdersResult
                 {
-                    success = successfuly.Distinct(),
-                    failed = failed.Distinct(),
+                    Successful = successfuly.Distinct().ToList(),
+                    Failed = failed.Distinct().ToList(),
                 };
 
                 this.logger.Information(LogsConstants.EndFinalizeAllProductionOrders, JsonConvert.SerializeObject(productionOrdersToFinalize));
@@ -290,20 +287,11 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
 
         private async Task<(bool, bool)> ValidatePrimaryRules(
             FinalizeProductionOrderModel orderToFinish,
-            ProductionOrderProcessingStatusModel productionOrderInBD,
             List<ProductionOrderFailedResultModel> failed,
             string redisKey,
             string logBase,
             string processId)
         {
-            var isProductionOrderFinalizing = await this.CheckOrSetProductionOrderFinalizing(redisKey, JsonConvert.SerializeObject(orderToFinish), productionOrderInBD);
-            if (isProductionOrderFinalizing)
-            {
-                this.logger.Error(LogsConstants.ProductionOrderIsAlreadyBeignProcessed, logBase, orderToFinish.ProductionOrderId);
-                failed.Add(CreateFinalizedFailedResponse(orderToFinish, ServiceConstants.ProductionOrderIsAlreadyBeignProcessed));
-                return (false, false);
-            }
-
             this.logger.Information(LogsConstants.PostSapValidationFinalization, logBase, JsonConvert.SerializeObject(orderToFinish));
             var result = await this.serviceLayerAdapterService.PostAsync(
                 new List<ValidateProductionOrderModel>
@@ -347,14 +335,9 @@ namespace Omicron.Pedidos.Services.ProductionOrders.Impl
             var existingValue = await this.redisService.GetRedisKey(redisKey);
             var existsInRedis = !string.IsNullOrEmpty(existingValue);
 
-            if (!existsInRedis)
-            {
-                await this.redisService.WriteToRedis(redisKey, value, new TimeSpan(12, 0, 0));
-            }
-
             var productionOrderExistsInDatabase = productionOrderInBD != null;
             var isProductionOrderFinalizing = ServiceShared.CalculateOr(existsInRedis, productionOrderExistsInDatabase);
-            return isProductionOrderFinalizing;
+            return false;
         }
     }
 }

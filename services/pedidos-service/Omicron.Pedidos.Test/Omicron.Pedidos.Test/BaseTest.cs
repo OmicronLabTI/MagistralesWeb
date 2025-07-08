@@ -166,7 +166,7 @@ namespace Omicron.Pedidos.Test
                 new UserOrderModel { Id = 142, Productionorderid = "224211", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
                 new UserOrderModel { Id = 143, Productionorderid = "224159", Salesorderid = "903", Status = "Asignado", Userid = "abcquimicocd",  TecnicId = "tecnicoqfb2", Comments = "Hello", FinishDate = new DateTime(2020, 8, 29), CloseDate = new DateTime(2020, 8, 28), CloseUserId = "abc", CreationDate = "28/08/2020", CreatorUserId = "abc", Quantity = 1, StatusForTecnic = "Asignado" },
 
-                new UserOrderModel { Id = 144, Salesorderid = "104", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), FinishedLabel = 1, FinalizedDate = DateTime.Now, MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
+                new UserOrderModel { Id = 144, Salesorderid = "104", Productionorderid = "5599", Status = "Finalizado", Userid = "abc", FinishDate = new DateTime(2020, 8, 29), FinishedLabel = 1, FinalizedDate = DateTime.Now, MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
 
                 // UserOrderModel for fabOrders
                 new UserOrderModel { Id = 145, Userid = "8df154e0-5061-4749-b06e-6bd3a1aebef8", Salesorderid = "175623", Productionorderid = "226274",  Status = "Proceso", FinishDate = new DateTime(2025, 5, 28), FinishedLabel = 1, FinalizedDate = new DateTime(2025, 5, 28), MagistralQr = JsonConvert.SerializeObject(magistralQr), RemisionQr = JsonConvert.SerializeObject(remisionQr), Quantity = 24, InvoiceId = 1, InvoiceLineNum = 1 },
@@ -485,6 +485,34 @@ namespace Omicron.Pedidos.Test
                 Code = 200,
                 ExceptionMessage = string.Empty,
                 Response = JsonConvert.SerializeObject(listOrders),
+                Success = true,
+                UserError = string.Empty,
+            };
+        }
+
+        /// <summary>
+        /// Gets user Dto.
+        /// </summary>
+        /// <returns>the user.</returns>
+        public ResultModel GetResultFinalizeProductionOrdersAsync()
+        {
+            var listResult = new FinalizeProductionOrdersResult
+            {
+                Successful = new List<FinalizeProductionOrderModel>
+                {
+                    new FinalizeProductionOrderModel { UserId = "Prueba", ProductionOrderId = 123, SourceProcess = "pruebas", Batches = new List<BatchesConfigurationModel>() },
+                },
+                Failed = new List<ProductionOrderFailedResultModel>
+                {
+                    new ProductionOrderFailedResultModel { UserId = "Prueba", OrderId = 123, Reason = "prueba falla" },
+                },
+            };
+
+            return new ResultModel
+            {
+                Code = 200,
+                ExceptionMessage = string.Empty,
+                Response = listResult,
                 Success = true,
                 UserError = string.Empty,
             };
