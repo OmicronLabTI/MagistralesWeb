@@ -8,8 +8,6 @@
 
 namespace Omicron.Pedidos.Dtos.Models
 {
-    using System.Collections.Generic;
-
     /// <summary>
     /// class for proccess order.
     /// </summary>

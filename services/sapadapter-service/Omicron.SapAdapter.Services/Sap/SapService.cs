@@ -890,13 +890,6 @@ namespace Omicron.SapAdapter.Services.Sap
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
         }
 
-        /// <inheritdoc/>
-        public async Task<ResultModel> GetUnitProducts(List<string> itemCodes)
-        {
-            var products = await this.sapDao.GetProductsUnits(itemCodes);
-            return ServiceUtils.CreateResult(true, 200, null, products, null, null);
-        }
-
         /// <summary>
         /// Get client dxp.
         /// </summary>
@@ -941,6 +934,13 @@ namespace Omicron.SapAdapter.Services.Sap
             var response = items.Where(x => classifications.Contains(x.Description)).DistinctBy(x => x.Description).ToList();
 
             return ServiceUtils.CreateResult(true, 200, null, response, null, null);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ResultModel> GetUnitProducts(List<string> itemCodes)
+        {
+            var products = await this.sapDao.GetProductsUnits(itemCodes);
+            return ServiceUtils.CreateResult(true, 200, null, products, null, null);
         }
 
         private static string NormalizeAndToUpper(string input)
