@@ -30,8 +30,6 @@ namespace Omicron.Pedidos.Services.Pedidos
         private readonly IPedidosDao pedidosDao;
         private readonly ISapAdapter sapAdapter;
 
-        private readonly ISapAdapter sapAdapter;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="FormulaPedidosService"/> class.
         /// </summary>
@@ -148,7 +146,7 @@ namespace Omicron.Pedidos.Services.Pedidos
             var customLists = await this.pedidosDao.GetCustomComponentListByProductAndName(productId, name);
             if (customLists.Any())
             {
-               return customLists.FirstOrDefault();
+                return customLists.FirstOrDefault();
             }
 
             return new CustomComponentListModel
