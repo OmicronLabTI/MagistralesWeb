@@ -392,23 +392,6 @@ namespace Omicron.Pedidos.Services.Utils
         }
 
         /// <summary>
-        /// GetRelatedOrdersToSalesOrder.
-        /// </summary>
-        /// <param name="pedidosDao">Pedidos Dao.</param>
-        /// <param name="salesOrderId">Sales Order Id.</param>
-        /// <param name="ignoredProductionOrderStatus">Ignored Production Order Status.</param>
-        /// <returns>sale orders y production orders.</returns>
-        public static async Task<(List<UserOrderModel> salesOrder, List<UserOrderModel> productionOrders)> GetRelatedOrdersToSalesOrder(
-            IPedidosDao pedidosDao,
-            List<int> salesOrderId,
-            params string[] ignoredProductionOrderStatus)
-        {
-            var relatedOrders = (await pedidosDao.GetUserOrderBySaleOrder(salesOrderId.Select(x => x.ToString()).ToList())).ToList();
-            var productionOrders = relatedOrders.Where(x => x.IsProductionOrder).Where(x => !ignoredProductionOrderStatus.Contains(x.Status));
-            return (relatedOrders.Where(x => x.IsSalesOrder).ToList(), productionOrders.ToList());
-        }
-
-        /// <summary>
         /// Calculates the "or´s" conditions.
         /// </summary>
         /// <param name="productionOrders">list of FinalizeProductionOrderModel.</param>
@@ -420,7 +403,7 @@ namespace Omicron.Pedidos.Services.Utils
         public static async Task<List<FinalizeProductionOrderModel>> IsProductionOrderBeingProcessed(List<FinalizeProductionOrderModel> productionOrders, List<ProductionOrderFailedResultModel> failed, IPedidosDao pedidosDao, IRedisService redisService, ILogger logger)
         {
             var productionOrdersBd = await pedidosDao.GetProductionOrderProcessingStatusByProductionOrderIds(productionOrders.Select(x => x.ProductionOrderId));
-            var validpProductionOrders = new List<FinalizeProductionOrderModel>();
+            var validProductionOrders = new List<FinalizeProductionOrderModel>();
 
             foreach (var productionOrder in productionOrders)
             {
@@ -439,7 +422,7 @@ namespace Omicron.Pedidos.Services.Utils
 
                 if (!isProductionOrderFinalizing)
                 {
-                    validpProductionOrders.Add(productionOrder);
+                    validProductionOrders.Add(productionOrder);
                     continue;
                 }
 
@@ -447,7 +430,7 @@ namespace Omicron.Pedidos.Services.Utils
                 failed.Add(CreateFinalizedFailedResponse(productionOrder, ServiceConstants.ProductionOrderIsAlreadyBeignProcessed));
             }
 
-            return validpProductionOrders;
+            return validProductionOrders;
         }
 
         /// <summary>

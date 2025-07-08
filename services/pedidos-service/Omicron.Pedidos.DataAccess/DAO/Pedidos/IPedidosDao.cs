@@ -83,6 +83,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
         /// <summary>
         /// Returns the user order by user id.
         /// </summary>
+        /// <param name="listIds">the list of sale order id.</param>
+        /// <returns>the data.</returns>
+        Task<IEnumerable<UserOrderModel>> GetUserOrderBySalesOrderIdAndNotInStatus(List<string> listIDs, List<string> status);
+
+        /// <summary>
+        /// Returns the user order by user id.
+        /// </summary>
         /// <param name="listStatus">the list of users.</param>
         /// <returns>the data.</returns>
         Task<IEnumerable<UserOrderModel>> GetUserOrderByStatus(List<string> listStatus);

@@ -99,6 +99,13 @@ namespace Omicron.Pedidos.DataAccess.DAO.Pedidos
             return await this.databaseContext.UserOrderModel.Where(x => listIds.Contains(x.Userid) && !status.Contains(x.Status)).ToListAsync();
         }
 
+        /// <inheritdoc/>
+        public async Task<IEnumerable<UserOrderModel>> GetUserOrderBySalesOrderIdAndNotInStatus(List<string> listIDs, List<string> status)
+        {
+            return await this.databaseContext.UserOrderModel
+                .Where(x => listIDs.Contains(x.Salesorderid) && !status.Contains(x.Status) && !string.IsNullOrEmpty(x.Productionorderid)).ToListAsync();
+        }
+
         /// <summary>
         /// Returns the user order by user id.
         /// </summary>

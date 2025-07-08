@@ -278,12 +278,9 @@ namespace Omicron.Pedidos.Services.Pedidos
         public async Task<ResultModel> CloseSalesOrders(List<OrderIdModel> finishOrders)
         {
             var failed = new List<ProductionOrderFailedResultModel>();
-            var listSaleOrdersToFinish = finishOrders.Select(x => x.OrderId).ToList();
+            var listSaleOrdersToFinish = finishOrders.Select(x => x.OrderId.ToString()).ToList();
 
-            var (saleOrders, productionOrders) = await ServiceUtils.GetRelatedOrdersToSalesOrder(
-                this.pedidosDao,
-                listSaleOrdersToFinish,
-                ServiceConstants.Cancelled);
+            var productionOrders = await this.pedidosDao.GetUserOrderBySalesOrderIdAndNotInStatus(listSaleOrdersToFinish, new List<string> { ServiceConstants.Cancelled });
 
             var fnalizeProductionOrder = finishOrders
                 .SelectMany(fo =>
