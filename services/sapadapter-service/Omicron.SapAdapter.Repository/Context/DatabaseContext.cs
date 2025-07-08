@@ -53,6 +53,9 @@ namespace Omicron.SapAdapter.Entities.Context
         public virtual DbSet<ProductoModel> ProductoModel { get; set; }
 
         /// <inheritdoc/>
+        public virtual DbSet<UnitCatalogModel> UnitCatalogModel { get; set; }
+
+        /// <inheritdoc/>
         public virtual DbSet<OrdenFabricacionModel> OrdenFabricacionModel { get; set; }
 
         /// <inheritdoc/>
