@@ -199,6 +199,21 @@ namespace Omicron.Catalogos.Test.Facade
         /// </summary>
         /// <returns>the roles.</returns>
         [Test]
+        public async Task GetActiveAllClassificationQfb()
+        {
+            // Act
+            var response = await this.catalogFacade.GetActiveAllClassificationQfb();
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.Success, Is.True);
+        }
+
+        /// <summary>
+        /// Test getting the roles.
+        /// </summary>
+        /// <returns>the roles.</returns>
+        [Test]
         public async Task UploadWarehouseFromExcel()
         {
             // Act
