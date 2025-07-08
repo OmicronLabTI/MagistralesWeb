@@ -14,6 +14,7 @@ export const Endpoints = {
     qfbs: `${environment.baseUrl}/api/usuarios/role`,
     qfbsWithOrders: `${environment.baseUrl}/api/usuarios/qfb/countOrders`,
     getClasifications: `${environment.baseUrl}/api/catalogos/getclassificationqfb`,
+    getColors: `${environment.baseUrl}/api/catalogos/getallclassificationqfb`,
     getTechnical: `${environment.baseUrl}/api/usuarios/getUsers/tecnics`,
     workTeam: `${environment.baseUrl}/api/usuarios/getUsers/inforelation`
   },

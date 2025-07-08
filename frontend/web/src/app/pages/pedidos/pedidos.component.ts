@@ -97,7 +97,7 @@ export class PedidosComponent implements OnInit, OnDestroy {
     this.titleService.setTitle('OmicronLab - Pedidos');
     this.dataSource.paginator = this.paginator;
     this.userClasification = this.localStorageService.getUserClasification();
-    this.clasificationList = [...this.localStorageService.getClasificationList()];
+    this.clasificationList = [...this.localStorageService.getClasificationColors()];
     if (this.localStorageService.getFiltersActives()) {
       this.onSuccessSearchOrderModal(this.localStorageService.getFiltersActivesAsModel());
     } else {

@@ -75,6 +75,18 @@ namespace Omicron.Catalogos.Api.Controllers
         /// Get classification qfb.
         /// </summary>
         /// <returns>Classification qfb.</returns>
+        [Route("/getallclassificationqfb")]
+        [HttpGet]
+        public async Task<IActionResult> GetActiveAllClassificationQfb()
+        {
+            var response = await this.catalogFacade.GetActiveAllClassificationQfb();
+            return this.Ok(response);
+        }
+
+        /// <summary>
+        /// Get classification qfb.
+        /// </summary>
+        /// <returns>Classification qfb.</returns>
         [Route("/upload/warehouses")]
         [HttpPost]
         public async Task<IActionResult> UploadWarehouseFromExcel()
