@@ -181,12 +181,18 @@ export class AddComponentComponent implements OnInit {
       totalSeleccionado: 0,
       action: CONST_DETAIL_FORMULA.insert,
       lotes: dataLotesTable,
-      lotesAsignados: []
+      lotesAsignados: [],
+      managedByBatches: resultNewFormulaComponent.managedByBatches
     };
     this.componentsData.push(resultNewFormulaComponent);
     this.dataSourceComponents.data.push(dataComponentRow);
     this.dataSourceComponents._updateChangeSubscription();
+    this.validateIsReadyToSave();
     this.setSelectedTr(dataComponentRow);
+  }
+
+  validateIsReadyToSave(): void {
+    this.isReadyToSave = this.dataSourceComponents.data.every( element => !element.managedByBatches);
   }
 
   setSelectedTr(elements?: IAddComponentsAndLotesTable): void {
@@ -381,6 +387,7 @@ export class AddComponentComponent implements OnInit {
         this.dataSourceComponents.data.splice(index, 1);
         this.componentsData.splice(indexelementComponentData, 1);
       });
+      this.validateIsReadyToSave();
       this.dataSourceComponents._updateChangeSubscription();
     }
   }

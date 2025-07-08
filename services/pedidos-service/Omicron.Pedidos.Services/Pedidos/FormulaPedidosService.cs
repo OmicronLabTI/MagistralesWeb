@@ -12,12 +12,14 @@ namespace Omicron.Pedidos.Services.Pedidos
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore.Internal;
+    using Newtonsoft.Json;
     using Omicron.Pedidos.DataAccess.DAO.Pedidos;
+    using Omicron.Pedidos.Dtos.Models;
     using Omicron.Pedidos.Entities.Model;
     using Omicron.Pedidos.Entities.Model.Db;
     using Omicron.Pedidos.Resources.Extensions;
     using Omicron.Pedidos.Services.Constants;
+    using Omicron.Pedidos.Services.SapAdapter;
     using Omicron.Pedidos.Services.Utils;
 
     /// <summary>
@@ -26,14 +28,19 @@ namespace Omicron.Pedidos.Services.Pedidos
     public class FormulaPedidosService : IFormulaPedidosService
     {
         private readonly IPedidosDao pedidosDao;
+        private readonly ISapAdapter sapAdapter;
+
+        private readonly ISapAdapter sapAdapter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FormulaPedidosService"/> class.
         /// </summary>
         /// <param name="pedidosDao">pedidos dao.</param>
-        public FormulaPedidosService(IPedidosDao pedidosDao)
+        /// <param name="sapAdapter">sapAdapter service.</param>
+        public FormulaPedidosService(IPedidosDao pedidosDao, ISapAdapter sapAdapter)
         {
             this.pedidosDao = pedidosDao.ThrowIfNull(nameof(pedidosDao));
+            this.sapAdapter = sapAdapter.ThrowIfNull(nameof(sapAdapter));
         }
 
         /// <summary>
@@ -77,6 +84,15 @@ namespace Omicron.Pedidos.Services.Pedidos
         {
             var customLists = await this.pedidosDao.GetCustomComponentListByProduct(productId);
             var allDetails = await this.pedidosDao.GetComponentsByCustomListId(customLists.Select(x => x.Id).ToList());
+
+            var productsIds = allDetails.Select(x => x.ProductId).Distinct().ToList();
+            var sapUnitsResponse = await this.sapAdapter.PostSapAdapter(productsIds, ServiceConstants.ProductUnit);
+            var productUnits = JsonConvert.DeserializeObject<List<ProductUnitDto>>(sapUnitsResponse.Response.ToString());
+            allDetails.ForEach(detail =>
+            {
+                var unit = productUnits.Where(x => x.ProductoId == detail.ProductId).FirstOrDefault() ?? new ProductUnitDto() { UnitDescription = string.Empty };
+                detail.Unit = unit.UnitDescription;
+            });
 
             foreach (var list in customLists)
             {
